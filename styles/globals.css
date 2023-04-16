@@ -1,0 +1,28 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+.bg-primary {
+    @apply bg-white dark:bg-slate-800
+}
+
+h1, h2, h3, h4, h5, h6 {
+    @apply text-slate-900 dark:text-green-300
+}
+
+pre {
+    @apply text-slate-900 dark:text-white
+}
+
+footer {
+    @apply text-gray-600 dark:text-white bg-gray-100 dark:bg-gray-600/50
+}
+
+a {
+    @apply text-slate-500 hover:text-slate-700 dark:text-slate-400
+}
+
+p {
+    @apply text-slate-900 dark:text-slate-400
+}
