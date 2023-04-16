@@ -11,16 +11,13 @@ export default function Header(){
                 <Image src="/brunnerLogo.png" height={100} width={100} />
                 </Link>
                 <Link className="flex title-font font-medium items-center text-gray-900 mb-4 md:mb-0" href="/">
-                <h1 className="title-font sm:text-4xl text-3xl mb-4 font-medium text-orange-900">
-                Brunner
+                <h1 className="title-font sm:text-4xl text-3xl mb-4 font-medium text-orange-900">Brunner
                     <br className="hidden lg:inline-block"/>
                 </h1>
                 </Link>
-
                 <span className="ml-3 text-xl"></span>
                 <nav className="md:ml-auto flex flex-wrap items-center text-base justify-center">
                 <Link className="mr-5 hover:text-gray-900" href="/">Home</Link>
-
                 <Link className="mr-5 hover:text-gray-900" href="/services">Service</Link>
                 <Link className="mr-5 hover:text-gray-900" href="/support">Support</Link>
                 <Link className="mr-5 hover:text-gray-900" href="/portal">Portal</Link>
