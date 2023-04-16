@@ -16,7 +16,6 @@ export default function Support(){
               <SupportIntro></SupportIntro>
             </div>
           </section>
-        <h1>기술 지원</h1>
       </Layout>
     );
 }
