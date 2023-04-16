@@ -9,9 +9,9 @@ export default function PortalIntro(){
               <br className="hidden lg:inline-block"/>
             </h1>
             <pre className="mb-8 leading-relaxed text-white-900">
-              자유롭게 협업하는 문화는 Brunner의 최고의 자산입니다. <br/>
-              모든 구성원이 하나가 되어 함께 연구하는 문화는 모두가 부러워합니다. <br/>
-              서로 존중하는 관계속에서 우리 스스로 가치를 찾아 냅니다. <br/>
+              모든 구성원이 자유롭게 하나가 되어 <br/>
+              함께 일하는 문화를 모두가 부러워합니다. <br/>
+              서로 존중하는 관계속에서 우리 스스로의 가치를 찾아 냅니다. <br/>
             </pre>
             <div className="flex justify-center">
               <button className="inline-flex text-white bg-indigo-500 border-0 py-2 px-6 focus:outline-none hover:bg-indigo-600 rounded text-lg">
