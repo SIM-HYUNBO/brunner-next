@@ -1,4 +1,4 @@
-import IntroAnimation from './intro-animation'
+import PortalIntroAnimation from './portal-intro-animation'
 
 export default function PortalIntro(){
     return (
@@ -19,7 +19,7 @@ export default function PortalIntro(){
             </div>
           </div>
           <div className="lg:max-w-lg lg:w-full md:w-1/2 w-5/6">
-            <IntroAnimation/>
+            <PortalIntroAnimation/>
           </div>
         </>
     );
