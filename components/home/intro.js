@@ -9,10 +9,9 @@ export default function Intro(){
               <br className="hidden lg:inline-block"/>
             </h1>
             <pre className="mb-8 leading-relaxed text-white-900">
-              시스템 구축을 원하십니까? <br/>
-              언제든 고객이 원하는 플랫폼을 빠르게 구축하고 사용해 볼 수 있습니다. <br/>
-              최신의 기술을 보유하고 있는 최고의 기술진들이 항상 준비하고 있습니다. <br/>
-              바로 시작하십시요.
+              빠르게 변하는 세상의 기술<br/>
+              언제든 원하는 플랫폼을 빠르게 구축하고 사용할 수 있도록 <br/>
+              최신의 기술을 연구하는 사람들이 모여 있습니다<br/>
             </pre>
             <div className="flex justify-center">
             <button className="inline-flex text-white bg-indigo-500 border-0 py-2 px-6 focus:outline-none hover:bg-indigo-600 rounded text-lg">
