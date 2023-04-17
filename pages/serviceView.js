@@ -17,7 +17,7 @@ export default function IntroView() {
             <div className="flex flex-wrap -m-12">
               <div className="p-12 md:w-1/2 flex flex-col items-start">
                 <span className="inline-block py-1 px-2 rounded bg-indigo-50 text-indigo-500 text-xs font-medium tracking-widest">CATEGORY</span>
-                <h2 className="sm:text-3xl text-2xl title-font font-medium text-gray-900 mt-4 mb-4">Roof party normcore before they sold out, cornhole vape</h2>
+                <h2 className="sm:text-3xl text-2xl title-font font-medium text-gray-900 mt-4 mb-4">플랫폼 구축 서비스</h2>
                 <p className="leading-relaxed mb-8">Live-edge letterpress cliche, salvia fanny pack humblebrag narwhal portland. VHS man braid palo santo hoodie brunch trust fund. Bitters hashtag waistcoat fashion axe chia unicorn. Plaid fixie chambray 90's, slow-carb etsy tumeric. Cray pug you probably haven't heard of them hexagon kickstarter craft beer pork chic.</p>
                 <div className="flex items-center flex-wrap pb-4 mb-4 border-b-2 border-gray-100 mt-auto w-full">
                   <a className="text-indigo-500 inline-flex items-center">Learn More
@@ -48,7 +48,7 @@ export default function IntroView() {
               </div>
               <div className="p-12 md:w-1/2 flex flex-col items-start">
                 <span className="inline-block py-1 px-2 rounded bg-indigo-50 text-indigo-500 text-xs font-medium tracking-widest">CATEGORY</span>
-                <h2 className="sm:text-3xl text-2xl title-font font-medium text-gray-900 mt-4 mb-4">Pinterest DIY dreamcatcher gentrify single-origin coffee</h2>
+                <h2 className="sm:text-3xl text-2xl title-font font-medium text-gray-900 mt-4 mb-4">플랫폼 운영 서비스</h2>
                 <p className="leading-relaxed mb-8">Live-edge letterpress cliche, salvia fanny pack humblebrag narwhal portland. VHS man braid palo santo hoodie brunch trust fund. Bitters hashtag waistcoat fashion axe chia unicorn. Plaid fixie chambray 90's, slow-carb etsy tumeric.</p>
                 <div className="flex items-center flex-wrap pb-4 mb-4 border-b-2 border-gray-100 mt-auto w-full">
                   <a className="text-indigo-500 inline-flex items-center">Learn More
