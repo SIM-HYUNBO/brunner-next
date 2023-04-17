@@ -14,7 +14,7 @@ export default function SupportIntro(){
               서로 존중하는 관계속에서 우리 스스로의 가치를 찾아 냅니다. <br/>
             </pre>
             <div className="flex justify-center">
-            <button className="inline-flex text-white bg-indigo-500 border-0 py-2 px-6 focus:outline-none hover:bg-indigo-600 rounded text-lg">
+            <button onClick={() => router.push('/portalView')}className="inline-flex text-white bg-indigo-500 border-0 py-2 px-6 focus:outline-none hover:bg-indigo-600 rounded text-lg">
               포탈 구경하기
             </button>
             </div>

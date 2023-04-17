@@ -14,7 +14,7 @@ export default function Intro(){
               최신의 기술을 연구하는 사람들이 모여 있습니다<br/>
             </pre>
             <div className="flex justify-center">
-            <button className="inline-flex text-white bg-indigo-500 border-0 py-2 px-6 focus:outline-none hover:bg-indigo-600 rounded text-lg">
+            <button onClick={() => router.push('/introView')} className="inline-flex text-white bg-indigo-500 border-0 py-2 px-6 focus:outline-none hover:bg-indigo-600 rounded text-lg">
                 둘러보기
             </button>
             </div>

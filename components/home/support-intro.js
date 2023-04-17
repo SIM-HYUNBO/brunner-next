@@ -15,7 +15,7 @@ export default function SupportIntro(){
               바로 연락하십시요.
             </pre>
             <div className="flex justify-center">
-            <button className="inline-flex text-white bg-indigo-500 border-0 py-2 px-6 focus:outline-none hover:bg-indigo-600 rounded text-lg">
+            <button onClick={() => router.push('/supportView')}className="inline-flex text-white bg-indigo-500 border-0 py-2 px-6 focus:outline-none hover:bg-indigo-600 rounded text-lg">
               콜센터 연결하기
             </button>
             </div>
