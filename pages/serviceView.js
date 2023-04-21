@@ -1,7 +1,7 @@
 import Layout from '../components/layout'
 import Head from 'next/head'
 
-export default function IntroView() {
+export default function ServiceView() {
   return (
     <Layout>    
       <Head>

@@ -8,7 +8,7 @@ export default function Header(){
             <header className="text-gray-600 body-font">
             <div className="container mx-auto flex flex-wrap p-5 flex-col md:flex-row items-center">
                 <Link className="flex title-font font-medium items-center text-gray-900 mb-4 md:mb-0" href="/">
-                <Image src="/brunnerLogo.png" height={100} width={100} />
+                <Image src="/brunnerLogo.png" height={100} width={100} alt='brunner logo' priority='true' />
                 </Link>
                 <Link className="flex title-font font-medium items-center text-gray-900 mb-4 md:mb-0" href="/">
                 <h1 className="title-font sm:text-4xl text-3xl mb-4 font-medium text-orange-900">Brunner
