@@ -7,7 +7,7 @@ export default function BoardItem({data}){
     const tags=data.properties.태그.multi_select.map(tagItem=>(tagItem.name));
 
     return (
-        <div className="p-6 m-3 bg-slate-600 rounded-md">
+        <div className="p-6 m-3 rounded-md">
             <h1>{title}</h1>
             <hr></hr>
             <h1>{content}</h1>
