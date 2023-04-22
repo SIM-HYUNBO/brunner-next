@@ -7,7 +7,7 @@ export default function BoardItem({data}){
     const tag=data.properties.태그;
 
     return (
-        <div className="p-6 m-3 bg-slate-400 rounded-md">
+        <div className="p-6 m-3 bg-slate-700 rounded-md">
             <h1>{startDate} : </h1>
             <h1>{writer} : </h1>
             <h1>{content} : </h1>
