@@ -18,7 +18,7 @@ export default function SupportIntro(){
             </pre>
             <div className="flex justify-center">
             <button onClick={() => router.push('/portalView')}className="inline-flex text-white bg-indigo-500 border-0 py-2 px-6 focus:outline-none hover:bg-indigo-600 rounded text-lg">
-              포탈 구경하기
+              최근 게시글 보기
             </button>
             </div>
           </div>
