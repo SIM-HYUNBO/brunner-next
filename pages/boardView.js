@@ -8,17 +8,24 @@ export default function PortalView(pages) {
 
   return (
     <Layout>    
+    <div className="flex flex-col items-center justify-center min-h-screen px-5 mb-10">
       <Head>
-        <title>Brunner 홈페이지</title>
-        <meta name="description" content="서비스플랫폼"></meta>
-        <meta rel="icon" href="brunnerLogo.png"></meta>
-        <link></link>
-      </Head>   
-      <h1>게시글 : {pages.results.length} </h1>
+          <title>Brunner 홈페이지</title>
+          <meta name="description" content="서비스플랫폼"></meta>
+          <meta rel="icon" href="brunnerLogo.png"></meta>
+          <link></link>
+        </Head>   
+        <h1 className="text-2xl">
+          게시글 : <span className="pl-2 text-blue-500">{pages.results.length}</span>
+          </h1>
 
-      {pages.results.map(aPage=>(
-        <BoardItem data={aPage} key={aPage.id}></BoardItem> 
-      ))}
+        <div className='grid grid-cols-1 md:grid-cols-2 py-10 m-3 gap-6 sm:w-full'>
+          {pages.results.map(aPage=>(
+            <BoardItem data={aPage} key={aPage.id}></BoardItem> 
+          ))}
+        </div>
+
+    </div>
     </Layout>
   )
 }

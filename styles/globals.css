@@ -8,7 +8,7 @@
 }
 
 h1, h2, h3, h4, h5, h6 {
-    @apply text-slate-900 dark:text-green-300
+    @apply text-green-600 dark:text-green-300
 }
 
 pre {
@@ -25,4 +25,9 @@ a {
 
 p {
     @apply text-slate-900 dark:text-slate-400
+}
+
+.board-item {
+    @apply flex flex-col m-3 p-3 bg-slate-700 rounded-xl w-full transition duration-300 transform border border-gray-300
+    hover:scale-105 hover:shadow-lg dark:border-gray-200/50
 }

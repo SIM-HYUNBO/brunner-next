@@ -1,7 +1,7 @@
-import PortalIntroAnimation from './portal-intro-animation'
+import BoardIntroAnimation from './board-intro-animation'
 import { useRouter } from 'next/router'
 
-export default function SupportIntro(){
+export default function BoardIntro(){
   const router = useRouter()
   
     return (
@@ -17,13 +17,13 @@ export default function SupportIntro(){
               서로 존중하는 관계속에서 우리 스스로의 가치를 찾아 냅니다. <br/>
             </pre>
             <div className="flex justify-center">
-            <button onClick={() => router.push('/portalView')}className="inline-flex text-white bg-indigo-500 border-0 py-2 px-6 focus:outline-none hover:bg-indigo-600 rounded text-lg">
+            <button onClick={() => router.push('/boardView')}className="inline-flex text-white bg-indigo-500 border-0 py-2 px-6 focus:outline-none hover:bg-indigo-600 rounded text-lg">
               최근 게시글 보기
             </button>
             </div>
           </div>
           <div className="lg:max-w-lg lg:w-full md:w-1/2 w-5/6">
-            <PortalIntroAnimation/>
+            <BoardIntroAnimation/>
           </div>
         </>
     );

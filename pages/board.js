@@ -1,8 +1,8 @@
 import Layout from '../components/layout'
 import Head from 'next/head'
-import PortalIntro from '../components/home/portal-intro'
+import BoardIntro from '../components/home/board-intro'
 
-export default function Portal(){
+export default function Board(){
   return (
     <Layout>      
       <Head>
@@ -13,7 +13,7 @@ export default function Portal(){
       </Head>         
       <section className="text-gray-600 body-font">
         <div className="container mx-auto flex px-5 py-24 md:flex-row flex-col items-center">
-          <PortalIntro></PortalIntro>
+          <BoardIntro></BoardIntro>
         </div>
       </section>
     </Layout>

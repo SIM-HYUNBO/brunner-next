@@ -20,7 +20,7 @@ export default function Header(){
                 <Link className="mr-5 hover:text-gray-900" href="/">Home</Link>
                 <Link className="mr-5 hover:text-gray-900" href="/services">Service</Link>
                 <Link className="mr-5 hover:text-gray-900" href="/support">Support</Link>
-                <Link className="mr-5 hover:text-gray-900" href="/portal">Portal</Link>
+                <Link className="mr-5 hover:text-gray-900" href="/board">Portal</Link>
                 <Link className="mr-5 hover:text-gray-900" href="/contact">Contact</Link>
                 </nav>
                 <DarkModeToggleButton />
