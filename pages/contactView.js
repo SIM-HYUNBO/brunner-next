@@ -18,10 +18,8 @@ export default function ContactView() {
               <h1 className="sm:text-3xl text-2xl font-medium title-font mb-2 text-gray-900">교육센터</h1>
               <p className="lg:w-1/2 w-full leading-relaxed text-gray-500">
                 <br></br>
-              교육센터를 통해서 Brunner와 함께할 수 있습니다. <br></br>
-              별도의 입사지원 없이 개인의 커리어패스에 맞게 교육 과정을 이수합니다.<br></br>
-              업무에 맞게 적합한 인재를 선별하여 배정합니다. <br></br> 
-              원한다면 누구나 언제든 도전할 수 있습니다. <br></br> 
+              교육센터를 통해서 누구나 언제든 Brunner와 함께 할 수 있습니다. <br></br>
+              지원자 개인의 커리어패스에 맞게 교육 과정을 이수하고 프로젝트에 참여하세요.<br></br>
               아래 "지원하기"를 눌러 지금 참여하세요.</p>
             </div>
             <div className="flex flex-wrap -m-4">
