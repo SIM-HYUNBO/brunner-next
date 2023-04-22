@@ -28,6 +28,6 @@ p {
 }
 
 .board-item {
-    @apply flex flex-col m-3 p-3 bg-slate-700 rounded-xl w-full transition duration-300 transform border border-gray-300
+    @apply flex flex-col m-3 rounded-xl w-full transition duration-300 transform border
     hover:scale-105 hover:shadow-lg dark:border-gray-200/50
 }
