@@ -17,11 +17,11 @@ export default function Header(){
                 </Link>
                 <span className="ml-3 text-xl"></span>
                 <nav className="md:ml-auto flex flex-wrap items-center text-base justify-center">
-                <Link className="mr-5 hover:text-gray-900" href="/">Home</Link>
-                <Link className="mr-5 hover:text-gray-900" href="/services">Service</Link>
-                <Link className="mr-5 hover:text-gray-900" href="/support">Support</Link>
-                <Link className="mr-5 hover:text-gray-900" href="/board">Portal</Link>
-                <Link className="mr-5 hover:text-gray-900" href="/contact">Contact</Link>
+                <Link className="mr-5 text-gray-600 dark:text-gray-100 hover:text-gray-400" href="/">Home</Link>
+                <Link className="mr-5 text-gray-600 dark:text-gray-100 hover:text-gray-400" href="/services">Service</Link>
+                <Link className="mr-5 text-gray-600 dark:text-gray-100 hover:text-gray-400" href="/support">Support</Link>
+                <Link className="mr-5 text-gray-600 dark:text-gray-100 hover:text-gray-400" href="/board">Portal</Link>
+                <Link className="mr-5 text-gray-600 dark:text-gray-100 hover:text-gray-400" href="/contact">Contact</Link>
                 </nav>
                 <DarkModeToggleButton />
             </div>
