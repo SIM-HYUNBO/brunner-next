@@ -19,7 +19,7 @@ export default function PortalView(pages) {
           게시글 : <span className="pl-2 text-blue-500">{pages.results.length}</span>
           </h1>
 
-        <div className='grid grid-cols-1 md:grid-cols-2 py-10 m-3 gap-6'>
+        <div className='grid grid-cols-1 md:grid-cols-5 py-10 m-3 gap-6'>
           {pages.results.map(aPage=>(
             <BoardItem data={aPage} key={aPage.id}></BoardItem> 
           ))}
