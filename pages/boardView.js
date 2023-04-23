@@ -10,7 +10,7 @@ export default function PortalView(pages) {
     <Layout>    
     <div className="flex flex-col items-center justify-center min-h-screen px-5 mb-10">
       <Head>
-          <title>Brunner 홈페이지</title>
+          <title>Brunner Home</title>
           <meta name="description" content="서비스플랫폼"></meta>
           <meta rel="icon" href="brunnerLogo.png"></meta>
           <link></link>
@@ -55,7 +55,6 @@ export async function getStaticProps() {
 
   //console.log(`https://api.notion.com/v1/databases/${DATABASE_ID}/query`);
   //console.log(`https://api.notion.com/v1/databases/97a6fdd0f8ce4a81a7ebba64bb47ba10/query`);
-  
   //console.log(options);
 
   const jRes = await res.json();

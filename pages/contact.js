@@ -6,7 +6,7 @@ export default function Contact(){
   return (
     <Layout>      
       <Head>
-        <title>Brunner 홈페이지</title>
+        <title>Brunner Home</title>
         <meta name="description" content="ContactUs"></meta>
         <meta rel="icon" href="brunnerLogo.png"></meta>
         <link></link>

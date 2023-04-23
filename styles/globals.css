@@ -20,7 +20,7 @@ footer {
 }
 
 a {
-    @apply text-slate-500 hover:text-slate-700 dark:text-slate-400
+    @apply text-slate-100
 }
 
 p {

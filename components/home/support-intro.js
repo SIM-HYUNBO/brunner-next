@@ -18,8 +18,8 @@ export default function SupportIntro(){
               바로 연락하십시요.
             </pre>
             <div className="flex justify-center">
-            <button onClick={() => router.push('/supportView')}className="inline-flex text-white bg-indigo-500 border-0 py-2 px-6 focus:outline-none hover:bg-indigo-600 rounded text-lg">
-              콜센터 연결하기
+            <button className="inline-flex text-white bg-indigo-500 border-0 py-2 px-6 focus:outline-none hover:bg-indigo-600 rounded text-lg">
+              <GetCallCenter/>
             </button>
             </div>
           </div>
@@ -28,4 +28,10 @@ export default function SupportIntro(){
           </div>
         </>
     );
+}
+
+export function GetCallCenter(){
+  return (
+    <a className="text-white-900" href={`tel:01075448698`}>콜센터 연결하기</a>    
+  )
 }

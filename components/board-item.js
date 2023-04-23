@@ -11,15 +11,8 @@ export default function BoardItem({data}){
 
     return (
         <div className="board-item">
-           <Image src={imgSrc} 
-           width={0}
-           height={0}
-           sizes="100vw"
-           style={{ width: '100%', height: '100%' }}
-           objectfit="cover"
-           quality={100}
-           alt="cover image"
-           /> 
+           <Image src={imgSrc} alt="cover image"
+                  width={0} height={0} sizes="100vw" style={{ width: '100%', height: '100%' }} objectfit="cover" quality={100} /> 
 
             <div className="p-4 flex flex-col">    
                 <h1>{title}</h1>
@@ -29,8 +22,7 @@ export default function BoardItem({data}){
                     {tags.map(
                         (tag)=>(
                             <h1 className="px-2 py-1 mr-1 rounded-md bg-sky-200 dark:bg-sky-700 w-30" key={tag.id}>{tag.name}</h1>
-                        )
-                    )
+                        ))
                     }
                 </div>
                 <h6>게시자: {writer}</h6>

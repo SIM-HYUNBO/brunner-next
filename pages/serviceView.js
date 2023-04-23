@@ -5,7 +5,7 @@ export default function ServiceView() {
   return (
     <Layout>    
       <Head>
-        <title>Brunner 홈페이지</title>
+        <title>Brunner Home</title>
         <meta name="description" content="서비스플랫폼"></meta>
         <meta rel="icon" href="brunnerLogo.png"></meta>
         <link></link>
@@ -18,9 +18,13 @@ export default function ServiceView() {
               <div className="p-12 md:w-1/2 flex flex-col items-start">
                 <span className="inline-block py-1 px-2 rounded bg-indigo-50 text-indigo-500 text-xs font-medium tracking-widest">CATEGORY</span>
                 <h2 className="sm:text-3xl text-2xl title-font font-medium text-gray-900 mt-4 mb-4">플랫폼 구축 서비스</h2>
-                <p className="leading-relaxed mb-8">Live-edge letterpress cliche, salvia fanny pack humblebrag narwhal portland. VHS man braid palo santo hoodie brunch trust fund. Bitters hashtag waistcoat fashion axe chia unicorn. Plaid fixie chambray 90's, slow-carb etsy tumeric. Cray pug you probably haven't heard of them hexagon kickstarter craft beer pork chic.</p>
+                <p className="leading-relaxed mb-8">고객이 원하는 서비스를 수행할 플랫폼을 구축해주는 서비스입니다. 
+                플랫폼을 구축하기 위해 필요한 권장 아키텍처 구성을 제안하고 충분한 협의를 거쳐 완성한 후 프로젝트를 착수합니다. 
+                프로젝트를 수행하는 모든 과정은 고객 참여형으로 이루어집니다. 
+                그 과정에서 고객은 필요한 의견을 제시할 수 있고 중간 결과물을 검토할 수 있습니다. 
+                최종 완성된 모습은 프로젝트 운영팀으로 자연스럽게 인수인계 되어 향후 지속적으로 운영지원을 받습니다.</p>
                 <div className="flex items-center flex-wrap pb-4 mb-4 border-b-2 border-gray-100 mt-auto w-full">
-                  <a className="text-indigo-500 inline-flex items-center">Learn More
+                  <a className="text-indigo-500 inline-flex items-center">Our Coworkers
                     <svg className="w-4 h-4 ml-2" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round">
                       <path d="M5 12h14"></path>
                       <path d="M12 5l7 7-7 7"></path>
@@ -41,17 +45,18 @@ export default function ServiceView() {
                 <a className="inline-flex items-center">
                   {/* <img alt="blog" src="https://dummyimage.com/104x104" className="w-12 h-12 rounded-full flex-shrink-0 object-cover object-center"> */}
                   <span className="flex-grow flex flex-col pl-4">
-                    <span className="title-font font-medium text-gray-900">Holden Caulfield</span>
-                    <span className="text-gray-400 text-xs tracking-widest mt-0.5">UI DEVELOPER</span>
+                    <span className="title-font font-medium text-gray-900">Joseph J.</span>
+                    <span className="text-gray-400 text-xs tracking-widest mt-0.5">Chief Project Manager</span>
                   </span>
                 </a>
               </div>
               <div className="p-12 md:w-1/2 flex flex-col items-start">
                 <span className="inline-block py-1 px-2 rounded bg-indigo-50 text-indigo-500 text-xs font-medium tracking-widest">CATEGORY</span>
                 <h2 className="sm:text-3xl text-2xl title-font font-medium text-gray-900 mt-4 mb-4">플랫폼 운영 서비스</h2>
-                <p className="leading-relaxed mb-8">Live-edge letterpress cliche, salvia fanny pack humblebrag narwhal portland. VHS man braid palo santo hoodie brunch trust fund. Bitters hashtag waistcoat fashion axe chia unicorn. Plaid fixie chambray 90's, slow-carb etsy tumeric.</p>
+                <p className="leading-relaxed mb-8">Brunner의 플랫폼 운영팀은 플랫폼 구축팀과 밀접하게 협업합니다. 
+                운영팀은 콜센터와도 유기적으로 연결되어 있어 Brunner의 플랫폼 운영 서비스를 받을 경우 24시간 연중 무휴 고품질의 기술지원 서비스를 받을 수 있습니다.</p>
                 <div className="flex items-center flex-wrap pb-4 mb-4 border-b-2 border-gray-100 mt-auto w-full">
-                  <a className="text-indigo-500 inline-flex items-center">Learn More
+                  <a className="text-indigo-500 inline-flex items-center">Our Coworkers
                     <svg className="w-4 h-4 ml-2" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round">
                       <path d="M5 12h14"></path>
                       <path d="M12 5l7 7-7 7"></path>
@@ -72,8 +77,8 @@ export default function ServiceView() {
                 <a className="inline-flex items-center">
                   {/* <img alt="blog" src="https://dummyimage.com/103x103" className="w-12 h-12 rounded-full flex-shrink-0 object-cover object-center"> */}
                   <span className="flex-grow flex flex-col pl-4">
-                    <span className="title-font font-medium text-gray-900">Alper Kamu</span>
-                    <span className="text-gray-400 text-xs tracking-widest mt-0.5">DESIGNER</span>
+                    <span className="title-font font-medium text-gray-900">Fred S.</span>
+                    <span className="text-gray-400 text-xs tracking-widest mt-0.5">Chief Operating Leader</span>
                   </span>
                 </a>
               </div>

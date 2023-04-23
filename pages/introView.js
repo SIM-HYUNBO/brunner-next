@@ -5,7 +5,7 @@ export default function IntroView() {
   return (
     <Layout>    
       <Head>
-        <title>Brunner 홈페이지</title>
+        <title>Brunner Home</title>
         <meta name="description" content="서비스플랫폼"></meta>
         <meta rel="icon" href="brunnerLogo.png"></meta>
         <link></link>
