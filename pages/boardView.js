@@ -58,33 +58,7 @@ export async function getStaticProps() {
   //console.log(options);
 
   const jRes = await res.json();
-  //console.log(jRes);
   const results = jRes.results;
-  
-/*
-  const tags= jRes.results.map(aPage => (
-    aPage.properties.태그.multi_select.map((tag) => (
-      tag.name
-  ))));
-  
-  const categories= jRes.results.map(aPage => (
-    aPage.properties.분류.rich_text[0].plain_text
-  ));
-
-  const writers= jRes.results.map(aPage => (
-    aPage.properties.게시자.rich_text[0].plain_text
-  ));
-
-  const writeDate= jRes.results.map(aPage => (
-    JSON.stringify(aPage.properties.게시일.date.start)
-  ));
-  */
-  
-  //console.log(`titles: ${titles}`);
-  //console.log(`tags: ${tags}`);
-  //console.log(`categories: ${categories}`);
-  //console.log(`writers: ${writers}`);
-  //console.log(`writeDate: ${writeDate}`);
 
   return {
     props: {results}, // will be passed to the page component as props
