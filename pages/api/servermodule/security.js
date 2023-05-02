@@ -1,17 +1,39 @@
 
-
-export function login(jRequest){
+export default function executeService(jRequest){
+    const commandName = jRequest.commandName;
     var jResponse = {};
 
+    switch(commandName){
+        case "security.login":
+          jResponse = login(jRequest);
+          break;
+        case "security.logout":
+          jResponse = logout(jRequest);
+            break;
+        case "security.createUser":
+          jResponse = createUser(jRequest);
+            break;
+        case "security.deleteUser":
+          jResponse = deleteUser(jRequest);
+            break;
+        default:
+            break;
+      }
+      return jResponse;
+}
+
+const login = (jRequest) => {
+    var jResponse = {};
+    
     jResponse.commanaName = jRequest.commandName;
     jResponse.__REMOTE_CLIENT_IP = jRequest.__REMOTE_CLIENT_IP;
     jResponse.userId=jRequest.userId;
     jResponse.password=jRequest.password;
 
     return jResponse;
-}
+};
 
-export function logout(jRequest){
+const logout = (jRequest) => {
     var jResponse = {};
 
     jResponse.commanaName = jRequest.commandName;
@@ -20,8 +42,9 @@ export function logout(jRequest){
     jResponse.password=jRequest.password;
     
     return jResponse;
-}
-export function createUser(jRequest){
+};
+
+const createUser = (jRequest) => {
     var jResponse = {};
 
     jResponse.commanaName = jRequest.commandName;
@@ -30,8 +53,9 @@ export function createUser(jRequest){
     jResponse.password=jRequest.password;
     
     return jResponse;
-}
-export function deleteUser(jRequest){
+};
+
+const deleteUser = (jRequest) => {
     var jResponse = {};
 
     jResponse.commanaName = jRequest.commandName;
@@ -40,4 +64,4 @@ export function deleteUser(jRequest){
     jResponse.password=jRequest.password;
     
     return jResponse;
-}
+};
