@@ -42,10 +42,9 @@ const login = async (connection, jRequest) => {
     jResponse.userId=jRequest.userId;
     jResponse.password=jRequest.password;
 
-    var sql = TB_COR_USER_MST.select_DB_COR_USER_MST_01;
-    var params=[jRequest.userId];
-    
-    await execSql(connection, sql, params).then((rows) => {
+    await execSql(connection, 
+                  TB_COR_USER_MST.select_DB_COR_USER_MST_01, 
+                  [jRequest.userId]).then((rows) => {
       jResponse.results = rows;
      }).catch((e)=>{
       console.log(e);
