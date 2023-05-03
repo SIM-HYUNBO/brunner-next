@@ -24,7 +24,7 @@ export default function IntroView() {
           <button onClick={() => (
             RequestServer(
               `{"commandName": "security.login",
-               "userId": "hbsim0605",
+               "userId": "root",
                "password": "hbSim@6575"
               }`)
             )} className="inline-flex text-white bg-indigo-500 border-0 py-2 px-6 focus:outline-none hover:bg-indigo-600 rounded text-lg m-2">

@@ -16,32 +16,26 @@ server.listen(serverPort, ()=>{
 });
 
 // get 요청을 받을 경우 (/executeJson/:requestJson)
-server.get('/executeJson/:requestJson', (req, res)=>{
+server.get('/executeJson/:requestJson', async (req, res)=>{
   var jRequest = JSON.parse(req.params.requestJson);
-  var remoteIp= req.headers['x-forwarded-for'] ||  req.connection.remoteAddress;
-  jRequest.__REMOTE_CLIENT_IP = remoteIp;
-  var jResponse = executeService(jRequest);
-  res.send(`${JSON.stringify(jResponse)}`);    
-}
-)
-
-function executeService(jRequest){
   var jResponse = {};
-  console.log(`request: ${JSON.stringify(jRequest)}`);
+  var remoteIp= req.headers['x-forwarded-for'] ||  req.connection.remoteAddress;
+
+  console.log(`request: ${JSON.stringify(jRequest)} from ${remoteIp}`);
  
   const commandName = jRequest.commandName;
 
   if(commandName.startsWith('security.')){
-    jResponse = security(jRequest);
+    jResponse = await security(jRequest);
   } else if(commandName.startsWith('program.')){
-    jResponse = program(jRequest);  
+    jResponse = await program(jRequest);  
   } else if(commandName.startsWith('commonCode.')){
-    jResponse = commonCode(jRequest);
+    jResponse = await commonCode(jRequest);
   }  
 
   console.log(`reply: ${JSON.stringify(jResponse)}`);
-  return jResponse;
-}
+  res.send(`${JSON.stringify(jResponse)}`);    
+})
 
 // Brunner 글자 로고 표시
 figlet("Brunner", (err, data)=>{
