@@ -17,7 +17,7 @@ export default function Signin() {
   };
     
   var requestLoginResult=()=> {
-    var jLoginResult = RequestServer(
+    RequestServer(
       `{"commandName": "security.login",
       "userId": "${userId}",
       "password": "${password}"
