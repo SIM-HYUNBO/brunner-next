@@ -8,6 +8,8 @@ export default async function RequestServer(jRequest) {
     headers: {
       'Content-Type': 'application/json',
     //   'API-Key': process.env.DATA_API_KEY,
+      'meta': {'http-equiv':"Content-Security-Policy",
+               'content':"upgrade-insecure-requests"}
     },
   });
 
