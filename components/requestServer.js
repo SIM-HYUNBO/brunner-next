@@ -1,5 +1,3 @@
-import { NextResponse } from 'next/server';
-
 export default async function RequestServer(jRequest) {
   
   const serverIp='112.156.201.62'; 
@@ -12,6 +10,5 @@ export default async function RequestServer(jRequest) {
   });
 
   const jResponse = await res.json();
-  alert(JSON.stringify(jResponse));
-  return NextResponse.json({ jResponse })
+  return jResponse;
 }

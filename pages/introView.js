@@ -1,7 +1,7 @@
 import Layout from '../components/layout'
 import Head from 'next/head'
-
 import RequestServer from '../components/requestServer'
+
 import { useRouter } from 'next/router'
 
 export default function IntroView() {
