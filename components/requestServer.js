@@ -3,13 +3,11 @@ import { NextResponse } from 'next/server';
 export default async function RequestServer(jRequest) {
   
   const serverIp='112.156.201.62'; 
-  const serverPort=8080;
-  const res = await fetch(`http://${serverIp}:${serverPort}/executeJson/${jRequest}`, {
+  const serverPort=8443;
+  const res = await fetch(`https://${serverIp}:${serverPort}/executeJson/${jRequest}`, {
     headers: {
       'Content-Type': 'application/json',
     //   'API-Key': process.env.DATA_API_KEY,
-      'meta': {'http-equiv':"Content-Security-Policy",
-               'content':"upgrade-insecure-requests"}
     },
   });
 
