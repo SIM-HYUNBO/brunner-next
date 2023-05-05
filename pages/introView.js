@@ -2,9 +2,10 @@ import Layout from '../components/layout'
 import Head from 'next/head'
 
 import RequestServer from '../components/requestServer'
+import { useRouter } from 'next/router'
 
 export default function IntroView() {
-  // const requestServer = RequestServer('{"commandName": "test"}');
+  const router = useRouter();
 
   return (
     <Layout>    
@@ -22,7 +23,8 @@ export default function IntroView() {
           간단한 정보를 입력한 후 회원가입을 하실 수 있습니다.
         </p>
         
-        <button onClick={() => router.push('/signin') } className="inline-flex text-white bg-indigo-500 border-0 py-2 px-6 focus:outline-none hover:bg-indigo-600 rounded text-lg m-2">
+        <button className="inline-flex text-white bg-indigo-500 border-0 py-2 px-6 focus:outline-none hover:bg-indigo-600 rounded text-lg m-2"
+                onClick={() => router.push('/signin') } >
                 로그인
         </button>
         <button onClick={() => (
