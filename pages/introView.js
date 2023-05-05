@@ -21,15 +21,9 @@ export default function IntroView() {
           아직 회원이 아니시면 회원 가입을 먼저 해주세요. <br></br>
           간단한 정보를 입력한 후 회원가입을 하실 수 있습니다.
         </p>
-          <button onClick={() => (
-            RequestServer(
-              `{"commandName": "security.login",
-               "userId": "root",
-               "password": "hbSim@6575"
-              }`)
-            )} className="inline-flex text-white bg-indigo-500 border-0 py-2 px-6 focus:outline-none hover:bg-indigo-600 rounded text-lg m-2">
+          <button onClick={() => router.push('/signin') } className="inline-flex text-white bg-indigo-500 border-0 py-2 px-6 focus:outline-none hover:bg-indigo-600 rounded text-lg m-2">
                 로그인
-            </button>
+          </button>
             <button onClick={() => (
             RequestServer(
               `{"commandName": "security.createUser",
