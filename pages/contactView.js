@@ -91,5 +91,5 @@ export default function ContactView() {
 }
 
 function handleClick() {
-  window.location.href = `mailto:hbsim0605@gmail.com`;
+  window.location.href ='mailto:hbsim0605@gmail.com';
 }
