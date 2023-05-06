@@ -4,8 +4,7 @@ export default async function RequestServer(jRequest) {
   const serverPort=8443;
   const res = await fetch(`https://${serverIp}:${serverPort}/executeJson/${jRequest}`, {
     headers: {
-      'Content-Type': 'application/json',
-    //   'API-Key': process.env.DATA_API_KEY,
+      'Content-Type': 'application/json'
     },
   });
 

@@ -1,6 +1,7 @@
 import Link from "next/link";
 import Image from 'next/image'
 import DarkModeToggleButton from "./dark-mode-toggle-button";
+import UserInfo from "./user-info";
 
 export default function Header(){
     return (
@@ -24,6 +25,7 @@ export default function Header(){
                 <Link className="mr-5 text-gray-600 dark:text-gray-100 hover:text-gray-400" href="/contact">Contact</Link>
                 </nav>
                 <DarkModeToggleButton />
+                <UserInfo/>
             </div>
             </header>
         </>

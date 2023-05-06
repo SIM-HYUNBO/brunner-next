@@ -21,9 +21,10 @@ export default function Signin() {
       `{"commandName": "security.login",
       "userId": "${userId}",
       "password": "${password}"
-      }`).then((result) => {
+      }`)
+      .then((result) => {
         if(result.error_code==0){
-          alert(`${userId}님 Bunner에 오신것을 환영합니다.`);
+          process.env.userInfo=result.userInfo;
           router.push('/')  
         }else {
           alert(JSON.stringify(result.error_message));
