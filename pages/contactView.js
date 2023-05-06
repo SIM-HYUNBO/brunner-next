@@ -1,10 +1,7 @@
 import Layout from '../components/layout'
 import Head from 'next/head'
-import dotenv from 'dotenv'
 
 export default function ContactView() {
-  dotenv.config();
-  
   return (
     <Layout>    
       <Head>
@@ -94,5 +91,5 @@ export default function ContactView() {
 }
 
 function handleClick() {
-  window.location.href = `mailto:${process.env.BRUNNER_MAIL_ADDRESS}`;
+  window.location.href = `mailto:hbsim0605@gmail.com`;
 }
