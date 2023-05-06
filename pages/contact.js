@@ -9,7 +9,7 @@ export default function Contact(){
         <title>Brunner Home</title>
         <meta name="description" content="ContactUs"></meta>
         <meta rel="icon" href="brunnerLogo.png"></meta>
-        <link></link>
+        <link> </link>
       </Head>         
       <section className="text-gray-600 body-font">
         <div className="container mx-auto flex px-5 py-24 md:flex-row flex-col items-center">
