@@ -1,6 +1,6 @@
 import Layout from '../components/layout';
 import Head from 'next/head';
-import { DATABASE_ID, TOKEN } from '../config';
+import dotenv from 'dotenv';
 import BoardItem from "../components/board-item";
 
 export default function PortalView(pages) {
@@ -31,14 +31,15 @@ export default function PortalView(pages) {
 }
 
 export async function getStaticProps() { 
+  dotenv.config();
+
   const options = {
     method: 'POST',
     headers: {
         Accept: 'application/json',
         'Notion-Version': '2022-06-28',
         'Content-Type': 'application/json',
-        // Authorization: `Bearer ${TOKEN}`
-        Authorization: `Bearer secret_9vZIZNPXvbPBJGMNnqCL3KzLBcJIgq3CZQ1KBFFQB88`
+        Authorization: `Bearer ${process.env.DATABASE_TOKEN}`
     },
     body: JSON.stringify({
       sorts: [
@@ -50,13 +51,11 @@ export async function getStaticProps() {
       page_size:100})
   };
 
-  //const res = await fetch(`https://api.notion.com/v1/databases/${DATABASE_ID}/query`, options);
-  const res = await fetch(`https://api.notion.com/v1/databases/97a6fdd0f8ce4a81a7ebba64bb47ba10/query`, options);
-
-  //console.log(`https://api.notion.com/v1/databases/${DATABASE_ID}/query`);
-  //console.log(`https://api.notion.com/v1/databases/97a6fdd0f8ce4a81a7ebba64bb47ba10/query`);
-  //console.log(options);
-
+  console.log(`https://api.notion.com/v1/databases/${process.env.DATABASE_ID}/query`);
+  console.log(options);
+  
+  const res = await fetch(`https://api.notion.com/v1/databases/${process.env.DATABASE_ID}/query`, options);
+  
   const jRes = await res.json();
   const results = jRes.results;
 
