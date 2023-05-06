@@ -39,7 +39,7 @@ export async function getStaticProps() {
         Accept: 'application/json',
         'Notion-Version': '2022-06-28',
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${process.env.DATABASE_TOKEN}`
+        Authorization: `Bearer ${process.env.NOTION_DATABASE_TOKEN}`
     },
     body: JSON.stringify({
       sorts: [
@@ -51,10 +51,10 @@ export async function getStaticProps() {
       page_size:100})
   };
 
-  console.log(`https://api.notion.com/v1/databases/${process.env.DATABASE_ID}/query`);
+  console.log(`https://api.notion.com/v1/databases/${process.env.NOTION_DATABASE_ID}/query`);
   console.log(options);
   
-  const res = await fetch(`https://api.notion.com/v1/databases/${process.env.DATABASE_ID}/query`, options);
+  const res = await fetch(`https://api.notion.com/v1/databases/${process.env.NOTION_DATABASE_ID}/query`, options);
   
   const jRes = await res.json();
   const results = jRes.results;
