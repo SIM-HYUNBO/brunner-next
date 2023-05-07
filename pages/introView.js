@@ -28,10 +28,11 @@ export default function IntroView() {
                 로그인
         </button>
         <button onClick={() => (
-            RequestServer(
-              `{"commandName": "security.createUser",
-               "userId": "hbsim0605",
-               "password": "hbSim@6575"
+            RequestServer("POST",
+              `{
+                "commandName": "security.createUser",
+                "userId": "hbsim0605",
+                "password": "hbSim@6575"
               }`)
         )} className="inline-flex text-white bg-indigo-500 border-0 py-2 px-6 focus:outline-none hover:bg-indigo-600 rounded text-lg">
                 회원가입

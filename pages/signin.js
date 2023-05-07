@@ -17,11 +17,10 @@ export default function Signin() {
   };
     
   var requestLoginResult=()=> {
-    RequestServer(
+    RequestServer("POST",
       `{"commandName": "security.login",
-      "userId": "${userId}",
-      "password": "${password}"
-      }`)
+        "userId": "${userId}",
+        "password": "${password}"}`)
       .then((result) => {
         if(result.error_code==0){
           process.env.userInfo=result.userInfo;

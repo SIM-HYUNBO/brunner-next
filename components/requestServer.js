@@ -1,13 +1,36 @@
-export default async function RequestServer(jRequest) {
-  
-  const serverIp='112.156.201.62'; 
-  const serverPort=8443;
-  const res = await fetch(`https://${serverIp}:${serverPort}/executeJson/${jRequest}`, {
+'use strict'
+
+async function RequestServerGet(serverIp, serverPort, strJsonRequest) {
+  const res = await fetch(`https://${serverIp}:${serverPort}/executeJson/${strJsonRequest}`, {
     headers: {
       'Content-Type': 'application/json'
     },
   });
 
-  const jResponse = await res.json();
+  const jResponse = res.json();
   return jResponse;
+}
+
+async function RequestServerPost(serverIp, serverPort, strJsonRequest) {
+  const res = await fetch(`https://${serverIp}:${serverPort}/executeJson/`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: strJsonRequest,
+  });
+  
+  const jResponse = res.json();
+  return jResponse;
+}
+
+export default function RequestServer(method, jRequest){
+  const serverIp='112.156.201.62'; 
+  const serverPort=8443;
+
+  if(method === 'GET'){
+    return RequestServerGet(serverIp, serverPort, jRequest);
+  } else if (method === 'POST'){
+    return RequestServerPost(serverIp, serverPort, jRequest);
+  }
 }
