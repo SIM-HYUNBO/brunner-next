@@ -64,21 +64,21 @@ export default function ResetPassword() {
             <input type="text" id="id" name="Id" onChange={(e) => changeUserIdValue(e)} class="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"/>
           </div>
           <div class="relative mb-4">
-            <label for="id" class="leading-7 text-sm text-gray-600">Registered Number</label>
+            <label for="register-number" class="leading-7 text-sm text-gray-600">Register Number</label>
             <input type="text" id="register-number" name="Id" onChange={(e) => changeRegisterNoValue(e)} class="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"/>
           </div>
           <div class="relative mb-4">
-            <label for="id" class="leading-7 text-sm text-gray-600">Phone Number</label>
+            <label for="phone-number" class="leading-7 text-sm text-gray-600">Phone Number</label>
             <input type="text" id="phone-number" name="Id" onChange={(e) => changePhoneNumberValue(e)} class="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"/>
           </div>
           <div class="relative mb-4">
-            <label for="password" class="leading-7 text-sm text-gray-600">New Password</label>
+            <label for="new-password" class="leading-7 text-sm text-gray-600">New Password</label>
             <input type="password" id="new-password" name="new-password" 
                    class="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"
                    onChange={(e) => changePasswordValue(e)}></input>
           </div>
           <div class="relative mb-4">
-            <label for="password" class="leading-7 text-sm text-gray-600">Confirm Password</label>
+            <label for="confirm-password" class="leading-7 text-sm text-gray-600">Confirm Password</label>
             <input type="password" id="confirm-password" name="confirm-password" 
                    class="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"
                    onChange={(e) => changeConfirmPasswordValue(e)}></input>
