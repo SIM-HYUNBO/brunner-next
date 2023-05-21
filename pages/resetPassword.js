@@ -44,7 +44,7 @@ export default function ResetPassword() {
           alert(`the password reset.`);
           router.push('/signin')  
         }else {
-          alert(JSON.stringify(result.error_message));
+          alert('failed to reset password. please check your information again.');
         }
       });
    };
