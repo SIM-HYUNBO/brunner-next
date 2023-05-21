@@ -24,7 +24,7 @@ export default function Signin() {
       .then((result) => {
         if(result.error_code==0){
           process.env.userInfo=result.userInfo;
-          console.log(JSON.stringify(process.env.userInfo));
+          // console.log(JSON.stringify(process.env.userInfo));
           router.push('/')  
         }else {
           alert(JSON.stringify(result.error_message));
