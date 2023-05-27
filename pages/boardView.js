@@ -30,6 +30,8 @@ export default function BoardView(pages) {
   )
 }
 
+// If you export a function called getStaticProps (Static Site Generation) from a page, 
+// Next.js will pre-render this page at build time using the props returned by getStaticProps.
 export async function getStaticProps() { 
   dotenv.config();
 
