@@ -1,4 +1,4 @@
-import SupportIntroAnimation from './support-intro-animation'
+import SupportContentAnimation from './support-content-animation'
 import { useRouter } from 'next/router'
 
 export default function SupportIntro(){
@@ -11,7 +11,7 @@ export default function SupportIntro(){
             항상 곁에 있습니다. <br></br>
               <br className="hidden lg:inline-block"/>
             </h1>
-            <pre className="mb-8 leading-relaxed text-white-900">
+            <pre className="mb-8 leading-relaxed text-white-900 h-96">
               도움이 필요하십니까? <br/>
               고객이 성공할 수 있도록 길을 열어 리딩합니다. <br/>
               Brunner의 콜센터는 언제나 고객과 함께합니다. <br/>
@@ -24,7 +24,7 @@ export default function SupportIntro(){
             </div>
           </div>
           <div className="lg:max-w-lg lg:w-full md:w-1/2 w-5/6">
-            <SupportIntroAnimation/>
+            <SupportContentAnimation/>
           </div>
         </>
     );

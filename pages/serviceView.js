@@ -11,14 +11,14 @@ export default function ServiceView() {
         <link></link>
       </Head>   
       <section className="text-gray-600 body-font">
-        <div className="container mx-auto flex px-5 py-24 md:flex-row flex-col items-center">
+        <div className="container mx-auto flex px-5 py-20 md:flex-row flex-col items-center">
         <section className="text-gray-600 body-font overflow-hidden">
-          <div className="container px-5 py-24 mx-auto">
+          <div className="container px-5 py-5 mx-auto">
             <div className="flex flex-wrap -m-12">
               <div className="p-12 md:w-1/2 flex flex-col items-start">
                 <span className="inline-block py-1 px-2 rounded bg-indigo-50 text-indigo-500 text-xs font-medium tracking-widest">CATEGORY</span>
                 <h2 className="sm:text-3xl text-2xl title-font font-medium text-gray-900 mt-4 mb-4">플랫폼 구축 서비스</h2>
-                <p className="leading-relaxed mb-8">고객이 원하는 서비스를 수행할 플랫폼을 구축해주는 서비스입니다. 
+                <p className="leading-relaxed mb-8 h-80">고객이 원하는 서비스를 수행할 플랫폼을 구축해주는 서비스입니다. 
                 플랫폼을 구축하기 위해 필요한 권장 아키텍처 구성을 제안하고 충분한 협의를 거쳐 완성한 후 프로젝트를 착수합니다. 
                 프로젝트를 수행하는 모든 과정은 고객 참여형으로 이루어집니다. 
                 그 과정에서 고객은 필요한 의견을 제시할 수 있고 중간 결과물을 검토할 수 있습니다. 

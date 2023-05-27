@@ -1,6 +1,6 @@
 import Layout from '../components/layout'
 import Head from 'next/head'
-import ServiceIntro from '../components/home/service-intro'
+import ServiceContent from '../components/home/service-content'
 
 export default function Services(){
   return (
@@ -13,7 +13,7 @@ export default function Services(){
       </Head>         
       <section className="text-gray-600 body-font">
         <div className="container mx-auto flex px-5 py-24 md:flex-row flex-col items-center">
-          <ServiceIntro></ServiceIntro>
+          <ServiceContent></ServiceContent>
         </div>
       </section>
     </Layout>

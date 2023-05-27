@@ -1,7 +1,7 @@
-import BoardIntroAnimation from './board-intro-animation'
+import BoardContentAnimation from './board-content-animation'
 import { useRouter } from 'next/router'
 
-export default function BoardIntro(){
+export default function BoardContent(){
   const router = useRouter()
   
     return (
@@ -11,7 +11,7 @@ export default function BoardIntro(){
             모두가 함께합니다. <br></br>
               <br className="hidden lg:inline-block"/>
             </h1>
-            <pre className="mb-8 leading-relaxed text-white-900">
+            <pre className="mb-8 leading-relaxed text-white-900 h-96">
               모든 구성원이 자유롭게 하나가 되어 <br/>
               함께 일하는 문화를 모두가 부러워합니다. <br/>
               서로 존중하는 관계속에서 우리 스스로의 가치를 찾아 냅니다. <br/>
@@ -23,7 +23,7 @@ export default function BoardIntro(){
             </div>
           </div>
           <div className="lg:max-w-lg lg:w-full md:w-1/2 w-5/6">
-            <BoardIntroAnimation/>
+            <BoardContentAnimation/>
           </div>
         </>
     );

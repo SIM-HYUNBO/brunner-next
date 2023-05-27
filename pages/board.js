@@ -1,6 +1,6 @@
 import Layout from '../components/layout'
 import Head from 'next/head'
-import BoardIntro from '../components/home/board-intro'
+import BoardContent from '../components/home/board-content'
 
 export default function Board(){
   return (
@@ -13,7 +13,7 @@ export default function Board(){
       </Head>         
       <section className="text-gray-600 body-font">
         <div className="container mx-auto flex px-5 py-24 md:flex-row flex-col items-center">
-          <BoardIntro></BoardIntro>
+          <BoardContent></BoardContent>
         </div>
       </section>
     </Layout>

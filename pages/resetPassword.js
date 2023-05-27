@@ -60,7 +60,7 @@ export default function ResetPassword() {
       <link></link>
     </Head>
     <section class="text-gray-600 body-font">
-      <div class="container px-5 py-24 mx-auto flex flex-wrap items-center">
+      <div class="container px-5 py-14 mx-auto flex flex-wrap items-center">
         <div class="lg:w-3/5 md:w-1/2 md:pr-16 lg:pr-0 pr-0">
           <h1 class="title-font font-medium text-3xl text-gray-900">Did you forget your password? </h1>
           <p class="leading-relaxed mt-4">Enter your ID, phone number, and register number to reset password.</p>

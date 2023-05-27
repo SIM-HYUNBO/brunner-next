@@ -1,6 +1,6 @@
 import Layout from '../components/layout'
 import Head from 'next/head'
-import SupportIntro from '../components/home/support-intro'
+import SupportContent from '../components/home/support-content'
 
 export default function Support(){
   return (
@@ -13,7 +13,7 @@ export default function Support(){
       </Head>
       <section className="text-gray-600 body-font">
         <div className="container mx-auto flex px-5 py-24 md:flex-row flex-col items-center">
-          <SupportIntro></SupportIntro>
+          <SupportContent></SupportContent>
         </div>
       </section>
   </Layout>

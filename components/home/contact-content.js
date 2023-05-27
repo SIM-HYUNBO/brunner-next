@@ -1,7 +1,7 @@
-import ContactIntroAnimation from './contact-intro-animation'
+import ContactContentAnimation from './contact-content-animation'
 import { useRouter } from 'next/router'
 
-export default function ContactIntro(){
+export default function ContactContent(){
   const router = useRouter()
 
     return (
@@ -10,7 +10,7 @@ export default function ContactIntro(){
             <h1 className="title-font sm:text-4xl text-3xl mb-4 font-medium text-green-900">언제나 환영합니다. <br></br>
               <br className="hidden lg:inline-block"/>
             </h1>
-            <pre className="mb-8 leading-relaxed text-white-900">
+            <pre className="mb-8 leading-relaxed text-white-900 h-96">
               Brunner의 교육센터를 통해 Brunner와 함께 할 수 있습니다. <br/>
               최선을 다해서 구성원들의 미래을 열어드리겠습니다. <br/>
               지금 바로 참여하십시요.
@@ -22,7 +22,7 @@ export default function ContactIntro(){
             </div>
           </div>
           <div className="lg:max-w-lg lg:w-full md:w-1/2 w-5/6">
-            <ContactIntroAnimation/>
+            <ContactContentAnimation/>
           </div>
         </>
     );

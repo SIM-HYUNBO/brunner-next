@@ -1,6 +1,6 @@
 import Layout from '../components/layout'
 import Head from 'next/head'
-import Intro from '../components/home/intro'
+import HomeContent from '../components/home/home-content'
 
 export default function Home() {
   return (
@@ -13,7 +13,7 @@ export default function Home() {
       </Head>   
       <section className="text-gray-600 body-font">
         <div className="container mx-auto flex px-5 py-24 md:flex-row flex-col items-center">
-          <Intro></Intro>
+          <HomeContent></HomeContent>
         </div>
       </section>
     </Layout>

@@ -1,6 +1,6 @@
 import Layout from '../components/layout'
 import Head from 'next/head'
-import ContactIntro from '../components/home/contact-intro'
+import ContractContent from '../components/home/contact-content'
 
 export default function Contact(){
   return (
@@ -13,7 +13,7 @@ export default function Contact(){
       </Head>         
       <section className="text-gray-600 body-font">
         <div className="container mx-auto flex px-5 py-24 md:flex-row flex-col items-center">
-          <ContactIntro></ContactIntro>
+          <ContractContent></ContractContent>
         </div>
       </section>
     </Layout>
