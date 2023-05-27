@@ -11,7 +11,7 @@ export default function Support(){
         <meta rel="icon" href="brunnerLogo.png"></meta>
         <link></link>
       </Head>
-      <section className="text-gray-600 body-font min-h-[calc(100vh-_15rem)]">
+      <section className="text-gray-600 body-font min-h-[calc(100vh-_18rem)]">
         <div className="container mx-auto flex px-5 md:flex-row flex-col items-center">
           <SupportContent></SupportContent>
         </div>

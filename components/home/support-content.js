@@ -7,7 +7,7 @@ export default function SupportIntro(){
     return (
         <>
           <div className="lg:flex-grow md:w-1/2 lg:pr-24 md:pr-16 flex flex-col md:items-start md:text-left mb-16 md:mb-0 items-center text-center">
-            <h1 className="title-font sm:text-4xl text-3xl mb-4 font-medium text-green-900">
+            <h1 className="title-font sm:text-4xl text-3xl mb-10 font-medium text-green-900">
             항상 곁에 있습니다.
             </h1>
             <pre className="mb-8 leading-relaxed text-white-900">
