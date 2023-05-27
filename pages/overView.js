@@ -17,7 +17,7 @@ export default function OverView() {
       </Head>   
       <section className="text-gray-600 body-font">
         <div className="container mx-auto flex px-5 py-40 md:flex-row flex-col items-center">
-        <p className="leading-relaxed mb-8 h-96">
+        <p className="leading-relaxed mb-8">
           둘러보기 전에 간단한 사용자 인증 정보 입력 후 로그인 하세요. <br></br>
           아직 회원이 아니시면 회원 가입을 먼저 해주세요. <br></br>
           간단한 정보를 입력한 후 회원가입을 하실 수 있습니다.

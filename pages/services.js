@@ -11,8 +11,8 @@ export default function Services(){
         <meta rel="icon" href="brunnerLogo.png"></meta>
         <link></link>
       </Head>         
-      <section className="text-gray-600 body-font">
-        <div className="container mx-auto flex px-5 py-24 md:flex-row flex-col items-center">
+      <section className="text-gray-600 body-font min-h-[calc(100vh-_15rem)]">
+        <div className="container mx-auto flex px-5 md:flex-row flex-col items-center">
           <ServiceContent></ServiceContent>
         </div>
       </section>

@@ -12,7 +12,12 @@ export default function BoardItem({data}){
     return (
         <div className="board-item">
            <Image src={imgSrc} alt="cover image"
-                  width={0} height={0} sizes="100vw" style={{ width: '100%', height: '100%' }} objectfit="cover" quality={100} /> 
+                  width={0} 
+                  height={0} 
+                  sizes="100vw" 
+                  style={{ width: '100%', height: '100%' }} 
+                  objectfit="cover" 
+                  quality={100}/> 
 
             <div className="p-4 flex flex-col">    
                 <h1>{title}</h1>

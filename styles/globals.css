@@ -2,7 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-
 .bg-primary {
     @apply bg-white dark:bg-slate-800
 }
@@ -13,6 +12,11 @@ h1, h2, h3, h4, h5, h6 {
 
 pre {
     @apply text-slate-900 dark:text-white
+}
+
+html {
+    position: relative;
+    min-height: 100%;
 }
 
 footer {
@@ -28,6 +32,16 @@ p {
 }
 
 .board-item {
-    @apply flex flex-col m-3 rounded-xl w-full transition duration-300 transform border
-    hover:scale-105 hover:shadow-lg dark:border-gray-200/50
+    @apply flex 
+           flex-col 
+           m-3 
+           rounded-xl 
+           w-full 
+           transition 
+           duration-300 
+           transform 
+           border 
+           hover:scale-105 
+           hover:shadow-lg 
+           dark:border-gray-200/50
 }

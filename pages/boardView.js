@@ -3,12 +3,12 @@ import Head from 'next/head';
 import dotenv from 'dotenv';
 import BoardItem from "../components/board-item";
 
-export default function PortalView(pages) {
+export default function BoardView(pages) {
   console.log(pages);
 
   return (
     <Layout>    
-    <div className="flex flex-col items-center justify-center min-h-screen px-5 mb-10">
+    <div className="flex flex-col items-center justify-center min-h-[calc(100vh-_15rem)] px-5 mb-10">
       <Head>
           <title>Brunner Home</title>
           <meta name="description" content="서비스플랫폼"></meta>
@@ -19,7 +19,7 @@ export default function PortalView(pages) {
           게시글 : <span className="pl-2 text-blue-500">{pages.results.length}</span>
           </h1>
 
-        <div className='grid grid-cols-1 md:grid-cols-5 py-10 m-3 gap-6'>
+        <div className='grid grid-cols-1 md:grid-cols-6 py-10 m-10 gap-20'>
           {pages.results.map(aPage=>(
             <BoardItem data={aPage} key={aPage.id}></BoardItem> 
           ))}
