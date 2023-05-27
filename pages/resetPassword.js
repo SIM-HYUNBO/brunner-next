@@ -1,3 +1,5 @@
+import Layout from '../components/layout'
+import Head from 'next/head'
 import RequestServer from '../components/requestServer'
 import { useRouter } from 'next/router'
 
@@ -50,7 +52,13 @@ export default function ResetPassword() {
    };
 
   return (
-    <>
+    <Layout>    
+    <Head>
+      <title>Brunner Home</title>
+      <meta name="description" content="서비스플랫폼"></meta>
+      <meta rel="icon" href="brunnerLogo.png"></meta>
+      <link></link>
+    </Head>
     <section class="text-gray-600 body-font">
       <div class="container px-5 py-24 mx-auto flex flex-wrap items-center">
         <div class="lg:w-3/5 md:w-1/2 md:pr-16 lg:pr-0 pr-0">
@@ -88,6 +96,6 @@ export default function ResetPassword() {
         </div>
       </div>
     </section>  
-    </>
+    </Layout>
   )
 }
