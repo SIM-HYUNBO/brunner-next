@@ -9,7 +9,12 @@ export default function DarkModeToggleButton(){
 
     return (
         <>
-            <button className="inline-flex items-center bg-gray-100 boder-0 py-1 px-3 focus:outline-none 
+            <button className="inline-flex 
+                               items-center 
+                               boder-0 
+                               py-1 
+                               px-3 
+                               focus:outline-none 
                                bg-gray-100  
                                hover:bg-gray-50 
                                hover:text-orange-500
@@ -19,7 +24,7 @@ export default function DarkModeToggleButton(){
                                rounded text-base mt-4 md:mt-0"
             type="button"
             onClick={() => setTheme(theme === 'dark' ? 'light': 'dark')}>
-
+              {/* 구글에서 heroicon 검색해서 svg Copy   */}
               {/* 라이트 모드 이미지*/}
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" 
                    className="visible dark:invisible dark:w-0 h-5 w-5">

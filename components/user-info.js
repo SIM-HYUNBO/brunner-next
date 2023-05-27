@@ -6,7 +6,7 @@ export default function UserInfo(){
     // setUserInfo : 현재값 바꾸기 setter
     return (
         <>
-          <p className="ml-1 mr-5 text-gray-600 dark:text-gray-400">
+          <p className="ml-3 mr-1 text-gray-600 dark:text-gray-400">
             {process.env.userInfo == undefined || process.env.userInfo.USER_NAME == undefined ? '': `${process.env.userInfo.USER_NAME}님`}
           </p>
           <LogoutButton />
