@@ -19,7 +19,7 @@ export default function Signin() {
   };
     
   var requestSigninResult=()=> {
-    RequestServer("GET",
+    RequestServer("POST",
       `{"commandName": "security.signin",
         "userId": "${userId}",
         "password": "${password}"}`)

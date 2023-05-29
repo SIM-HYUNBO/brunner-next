@@ -22,7 +22,7 @@ export default function SignoutButton(){
                                rounded text-base mt-4 md:mt-0"
             type="button"
             onClick={() => {
-                RequestServer("GET",
+                RequestServer("POST",
                 `{"commandName": "security.signout",
                   "userId": "${process.env.userInfo.userId}"}`)
                 .then((result) => {
