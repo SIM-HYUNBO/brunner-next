@@ -1,5 +1,7 @@
 import Layout from '../components/layout'
 import Head from 'next/head'
+import BodySection from '../components/body-section'
+
 import RequestServer from '../components/requestServer'
 
 import { useRouter } from 'next/router'
@@ -15,7 +17,7 @@ export default function OverView() {
         <meta rel="icon" href="brunnerLogo.png"></meta>
         <link></link>
       </Head>   
-      <section className="text-gray-600 body-font min-h-[calc(100vh-_18rem)]">
+      <BodySection >
         <div className="container mx-auto flex px-5 py-40 md:flex-col flex-col items-start">
         <h1 className="title-font sm:text-4xl text-3xl mb-4 font-medium text-green-900">
           둘러보기
@@ -31,12 +33,13 @@ export default function OverView() {
                 로그인
         </button>
         <button 
-        className="inline-flex text-white bg-indigo-500 border-0 py-2 px-6 focus:outline-none hover:bg-indigo-600 rounded text-lg">
+        className="inline-flex text-white bg-indigo-500 border-0 py-2 px-6 focus:outline-none hover:bg-indigo-600 rounded text-lg"
+                onClick={() => router.push('/signup') } >
                 회원가입
         </button>
         </div>
         </div>
-      </section>
+      </BodySection>
     </Layout>
   )
 }

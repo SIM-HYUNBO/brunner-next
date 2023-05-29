@@ -1,15 +1,18 @@
 
-import {useTheme} from 'next-themes'
-import RequestServer from '../components/requestServer'
+import RequestServer from './requestServer'
 import { useRouter } from 'next/router'
 
-export default function LogoutButton(){
+export default function SignoutButton(){
     const router = useRouter();
     return (
         <>
             {process.env.userInfo && 
              process.env.userInfo.USER_NAME && 
-             <button className="inline-flex items-center bg-gray-100 boder-0 py-1 px-3 focus:outline-none 
+             <button className="inline-flex items-center 
+                                boder-0 
+                                py-1 
+                                px-3 
+                                focus:outline-none 
                                bg-gray-100  
                                hover:bg-gray-50 
                                hover:text-orange-500
@@ -20,7 +23,7 @@ export default function LogoutButton(){
             type="button"
             onClick={() => {
                 RequestServer("GET",
-                `{"commandName": "security.logout",
+                `{"commandName": "security.signout",
                   "userId": "${process.env.userInfo.userId}"}`)
                 .then((result) => {
                   if(result.error_code==0){

@@ -12,7 +12,7 @@ export default function Header(){
                 <Image src="/brunnerLogo.png" height={100} width={100} alt='brunner logo' priority='true' />
                 </Link>
                 <Link className="flex title-font font-medium items-center text-gray-900 mb-4 md:mb-0" href="/">
-                <h1 className="title-font sm:text-4xl text-3xl mb-4 font-medium text-orange-900">Brunner
+                <h1 className="title-font sm:text-4xl text-3xl m-5 font-medium text-orange-900">Brunner
                     <br className="hidden lg:inline-block"/>
                 </h1>
                 </Link>

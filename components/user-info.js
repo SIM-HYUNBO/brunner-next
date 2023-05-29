@@ -1,4 +1,4 @@
-import LogoutButton from "./logout-button";
+import SignoutButton from "./signout-button";
 
 export default function UserInfo(){
 
@@ -9,7 +9,7 @@ export default function UserInfo(){
           <p className="ml-3 mr-1 text-gray-600 dark:text-gray-400">
             {process.env.userInfo == undefined || process.env.userInfo.USER_NAME == undefined ? '': `${process.env.userInfo.USER_NAME}님`}
           </p>
-          <LogoutButton />
+          <SignoutButton />
         </>
     );
 }

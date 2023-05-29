@@ -1,5 +1,6 @@
 import Layout from '../components/layout'
 import Head from 'next/head'
+import BodySection from '../components/body-section'
 import BoardContent from '../components/home/board-content'
 
 export default function Board(){
@@ -11,11 +12,11 @@ export default function Board(){
         <meta rel="icon" href="brunnerLogo.png"></meta>
         <link></link>
       </Head>         
-      <section className="text-gray-600 body-font min-h-[calc(100vh-_18rem)]">
+      <BodySection>
         <div className="container mx-auto flex px-5 md:flex-row flex-col items-center">
           <BoardContent></BoardContent>
         </div>
-      </section>
+      </BodySection>
     </Layout>
     );
 }

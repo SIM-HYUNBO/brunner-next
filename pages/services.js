@@ -1,5 +1,7 @@
 import Layout from '../components/layout'
 import Head from 'next/head'
+import BodySection from '../components/body-section'
+
 import ServiceContent from '../components/home/service-content'
 
 export default function Services(){
@@ -11,11 +13,11 @@ export default function Services(){
         <meta rel="icon" href="brunnerLogo.png"></meta>
         <link></link>
       </Head>         
-      <section className="text-gray-600 body-font min-h-[calc(100vh-_18rem)]">
+      <BodySection>
         <div className="container mx-auto flex px-5 md:flex-row flex-col items-center">
           <ServiceContent></ServiceContent>
         </div>
-      </section>
+      </BodySection>
     </Layout>
   );
 }

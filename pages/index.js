@@ -1,5 +1,7 @@
 import Layout from '../components/layout'
 import Head from 'next/head'
+import BodySection from '../components/body-section'
+
 import HomeContent from '../components/home/home-content'
 
 export default function Home() {
@@ -11,11 +13,11 @@ export default function Home() {
         <meta rel="icon" href="brunnerLogo.png"></meta>
         <link></link>
       </Head>   
-      <section className="text-gray-600 body-font min-h-[calc(100vh-_18rem)]">
+      <BodySection>
         <div className="container mx-auto flex px-5 md:flex-row flex-col items-center">
           <HomeContent></HomeContent>
         </div>
-      </section>
+      </BodySection>
     </Layout>
   )
 }

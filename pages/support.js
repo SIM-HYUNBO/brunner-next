@@ -1,5 +1,7 @@
 import Layout from '../components/layout'
 import Head from 'next/head'
+import BodySection from '../components/body-section'
+
 import SupportContent from '../components/home/support-content'
 
 export default function Support(){
@@ -11,11 +13,11 @@ export default function Support(){
         <meta rel="icon" href="brunnerLogo.png"></meta>
         <link></link>
       </Head>
-      <section className="text-gray-600 body-font min-h-[calc(100vh-_18rem)]">
+      <BodySection>
         <div className="container mx-auto flex px-5 md:flex-row flex-col items-center">
           <SupportContent></SupportContent>
         </div>
-      </section>
+      </BodySection>
   </Layout>
   );
 }

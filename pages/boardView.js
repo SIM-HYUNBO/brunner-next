@@ -1,6 +1,9 @@
+import dotenv from 'dotenv';
+
 import Layout from '../components/layout';
 import Head from 'next/head';
-import dotenv from 'dotenv';
+import BodySection from '../components/body-section'
+
 import BoardItem from "../components/board-item";
 
 export default function BoardView(pages) {
@@ -14,7 +17,7 @@ export default function BoardView(pages) {
           <meta rel="icon" href="brunnerLogo.png"></meta>
           <link></link>
       </Head>   
-      <section className="text-gray-600 body-font min-h-[calc(100vh-_18rem)]">
+      <BodySection>
         <div className="flex 
                     flex-col 
                     items-left 
@@ -30,7 +33,7 @@ export default function BoardView(pages) {
               ))}
             </div>
         </div>
-      </section>
+      </BodySection>
     </Layout>
   )
 }

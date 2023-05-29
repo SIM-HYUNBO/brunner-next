@@ -1,5 +1,6 @@
 import Layout from '../components/layout'
 import Head from 'next/head'
+import BodySection from '../components/body-section'
 
 export default function ContactView() {
   return (
@@ -10,7 +11,7 @@ export default function ContactView() {
         <meta rel="icon" href="brunnerLogo.png"></meta>
         <link></link>
       </Head>   
-      <section className="text-gray-600 body-font">
+      <BodySection >
         <div className="container mx-auto flex px-5 py-1 md:flex-row flex-col align-items: flex-start;">
         <section className="text-gray-600 body-font">
           <div className="container px-5 py-5 mx-auto">
@@ -85,7 +86,7 @@ export default function ContactView() {
           </div>
         </section>
         </div>
-      </section>
+      </BodySection>
     </Layout>
   )
 }
