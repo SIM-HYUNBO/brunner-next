@@ -60,23 +60,21 @@ export default function Signup() {
 
   var requestSignupResult=()=> {
     RequestServer("POST",
-      `{"commandName": "security.signup",
-        "userId": "${userId}",
-        "password": "${password}",
-        "userName": "${userName}",
-        "phoneNumber": "${phoneNumber}",
-        "email": "${email}",
-        "registerNo": "${registerNo}",
-        "registerName": "${registerName}",
-        "address": "${address}",
-        "salesType": "${salesType}",
-        "salesCategory": "${salesCategory}"
-       }`
-      ).then((result) => {
+                  `{"commandName": "security.signup",
+                    "userId": "${userId}",
+                    "password": "${password}",
+                    "userName": "${userName}",
+                    "phoneNumber": "${phoneNumber}",
+                    "email": "${email}",
+                    "registerNo": "${registerNo}",
+                    "registerName": "${registerName}",
+                    "address": "${address}",
+                    "salesType": "${salesType}",
+                    "salesCategory": "${salesCategory}"}`).then((result) => {
         if(result.error_code==0){
           process.env.userInfo=result.userInfo;
-          // console.log(JSON.stringify(process.env.userInfo));
-          router.push('/')  
+          alert(`successfully signed up. you will move to sign-in page.`);
+          router.push('/signin')  
         }else {
           alert(JSON.stringify(result.error_message));
         }

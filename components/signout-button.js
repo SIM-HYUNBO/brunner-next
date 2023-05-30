@@ -22,10 +22,11 @@ export default function SignoutButton(){
                                rounded text-base mt-4 md:mt-0"
             type="button"
             onClick={() => {
-                RequestServer("POST",
-                `{"commandName": "security.signout",
-                  "userId": "${process.env.userInfo.userId}"}`)
-                .then((result) => {
+              // alert(`${JSON.stringify(process.env.userInfo.USER_ID)}`);
+                RequestServer("POST", 
+                              `{"commandName": "security.signout", 
+                                "userId": "${process.env.userInfo.USER_ID}"
+                               }`).then((result) => {
                   if(result.error_code==0){
                     process.env.userInfo=result.userInfo;
                     router.push('/')  

@@ -35,15 +35,13 @@ export default function ResetPassword() {
 
   var requestResetPasswordResult=()=> {
     RequestServer("POST",
-      `{"commandName": "security.resetPassword",
-        "userId": "${userId}",
-        "registerNo": "${registerNo}",
-        "phoneNumber": "${phoneNumber}",
-        "newPassword": "${newPassword}",
-        "confirmPassword": "${confirmPassword}"}`
-        )
-      .then((result) => {
-        console.log(JSON.stringify(result));
+                  `{"commandName": "security.resetPassword",
+                    "userId": "${userId}",
+                    "registerNo": "${registerNo}",
+                    "phoneNumber": "${phoneNumber}",
+                    "newPassword": "${newPassword}",
+                    "confirmPassword": "${confirmPassword}"}`).then((result) => {
+        // console.log(JSON.stringify(result));
         if(result.affectedRows==1){
           alert(`the password reset.`);
           router.push('/signin')  
