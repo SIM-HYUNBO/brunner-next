@@ -1,7 +1,7 @@
 'use strict'
 
-import dotenv from 'dotenv';
-dotenv.config();
+//import dotenv from 'dotenv';
+//dotenv.config();
 
 async function RequestServerGet(serverIp, serverPort, strJsonRequest) {
   const res = await fetch(`https://${serverIp}:${serverPort}/executeJson/${strJsonRequest}`, {
