@@ -28,7 +28,6 @@ async function RequestServerPost(serverIp, serverPort, strJsonRequest) {
 }
 
 export default async function RequestServer(method, jRequest){
-
   const serverIp= 'brunner-server-nodejs.vercel.app'; //process.env.REMOTE_SERVER_IP; 
   const serverPort=8443; //process.env.REMOTE_SERVER_PORT; 
 
