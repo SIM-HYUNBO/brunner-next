@@ -30,7 +30,7 @@ export default async function RequestServer(method, jRequest){
 
   if(method === 'GET'){
     return await RequestServerGet(serverIp, serverPort, jRequest);
-  } else if (method === 'POST'){cd 
+  } else if (method === 'POST'){ 
     return await RequestServerPost(serverIp, serverPort, jRequest);
   }
 }
