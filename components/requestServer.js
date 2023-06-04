@@ -28,8 +28,8 @@ async function RequestServerPost(serverIp, serverPort, strJsonRequest) {
 export default async function RequestServer(method, jRequest){
   dotenv.config();
 
-  const serverIp= process.env.BACKEND_SERVER_IP;
-  const serverPort=process.env.BACKEND_SERVER_PORT;
+  const serverIp= '0.0.0.0' // process.env.BACKEND_SERVER_IP;
+  const serverPort=3000 // process.env.BACKEND_SERVER_PORT;
 
   if(method === 'GET'){
     return await RequestServerGet(serverIp, serverPort, jRequest);

@@ -52,9 +52,9 @@ app.prepare().then(() => {
     return handle(req, res);
   });
  
-  server.listen(process.env.BACKEND_SERVER_PORT, process.env.BACKEND_SERVER_IP, (err) => {
+  server.listen(3000, '0.0.0.0', (err) => {
     if (err) throw err;
-    console.log(`> Ready on http://${process.env.BACKEND_SERVER_IP}:${process.env.BACKEND_SERVER_PORT}`);
+    console.log(`> Ready on http://0.0.0.0:3000`);
   });
 });
 
