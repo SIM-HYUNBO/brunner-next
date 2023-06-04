@@ -1,4 +1,5 @@
 'use strict'
+import dotenv from 'dotenv';
 
 async function RequestServerGet(serverIp, serverPort, strJsonRequest) {
   const res = await fetch(`http://${serverIp}:${serverPort}/executeJson/${strJsonRequest}`, {
@@ -25,6 +26,8 @@ async function RequestServerPost(serverIp, serverPort, strJsonRequest) {
 }
 
 export default async function RequestServer(method, jRequest){
+  dotenv.config();
+
   const serverIp= process.env.BACKEND_SERVER_IP;
   const serverPort=process.env.BACKEND_SERVER_PORT;
 
