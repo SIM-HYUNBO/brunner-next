@@ -6,10 +6,10 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 const pool = mysql.createPool({
-  host     : `112.156.201.62`/*process.env.DATABASE_SERVER_IP*/,
-  user     : `root`/*process.env.DATABASE_USER_NAME*/,
-  password : `admin`/*process.env.DATABASE_PASSWORD*/,
-  database : `brunner`/*process.env.DATABASE_SCHEMA_NAME*/
+  host     : process.env.DATABASE_SERVER_IP,
+  user     : process.env.DATABASE_USER_NAME,
+  password : process.env.DATABASE_PASSWORD,
+  database : process.env.DATABASE_SCHEMA_NAME
 });
 
 const promisePool = pool.promise();
