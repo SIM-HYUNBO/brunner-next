@@ -1,10 +1,7 @@
 'use strict'
 
-//import dotenv from 'dotenv';
-//dotenv.config();
-
 async function RequestServerGet(serverIp, serverPort, strJsonRequest) {
-  const res = await fetch(`https://${serverIp}:${serverPort}/executeJson/${strJsonRequest}`, {
+  const res = await fetch(`http://${serverIp}:${serverPort}/executeJson/${strJsonRequest}`, {
     headers: {
       'Content-Type': 'application/json'
     }
@@ -15,7 +12,7 @@ async function RequestServerGet(serverIp, serverPort, strJsonRequest) {
 }
 
 async function RequestServerPost(serverIp, serverPort, strJsonRequest) {
-  const res = await fetch(`https://${serverIp}:${serverPort}/executeJson/`, {
+  const res = await fetch(`http://${serverIp}:${serverPort}/executeJson/`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -28,8 +25,8 @@ async function RequestServerPost(serverIp, serverPort, strJsonRequest) {
 }
 
 export default async function RequestServer(method, jRequest){
-  const serverIp= 'brunner-server-nodejs.vercel.app'; //process.env.REMOTE_SERVER_IP; 
-  const serverPort=8443; //process.env.REMOTE_SERVER_PORT; 
+  const serverIp= 'localhost';
+  const serverPort=3000;
 
   if(method === 'GET'){
     return await RequestServerGet(serverIp, serverPort, jRequest);

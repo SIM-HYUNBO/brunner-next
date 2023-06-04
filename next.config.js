@@ -6,6 +6,11 @@ const nextConfig = {
     'images.unsplash.com',
     's3.us-west-2.amazononaws.com'
   ]
+},
+webpack: (config) => {
+  config.resolve.fallback = { fs: false };
+
+  return config;
 }
 }
 
