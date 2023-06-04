@@ -26,7 +26,7 @@ async function RequestServerPost(serverIp, serverPort, strJsonRequest) {
 
 export default async function RequestServer(method, jRequest){
   const serverIp= process.env.BACKEND_SERVER_IP;
-  const serverPort=BACKEND_SERVER_PORT;
+  const serverPort=process.env.BACKEND_SERVER_PORT;
 
   if(method === 'GET'){
     return await RequestServerGet(serverIp, serverPort, jRequest);
