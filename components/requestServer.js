@@ -2,7 +2,7 @@
 import dotenv from 'dotenv';
 
 async function RequestServerGet(serverIp, serverPort, strJsonRequest) {
-  const res = await fetch(`https://${serverIp}:${serverPort}/executeJson/${strJsonRequest}`, {
+  const res = await fetch(`http://${serverIp}:${serverPort}/executeJson/${strJsonRequest}`, {
     headers: {
       'Content-Type': 'application/json'
     }
@@ -13,7 +13,7 @@ async function RequestServerGet(serverIp, serverPort, strJsonRequest) {
 }
 
 async function RequestServerPost(serverIp, serverPort, strJsonRequest) {
-  const res = await fetch(`https://${serverIp}:${serverPort}/executeJson/`, {
+  const res = await fetch(`http://${serverIp}:${serverPort}/executeJson/`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -28,7 +28,7 @@ async function RequestServerPost(serverIp, serverPort, strJsonRequest) {
 export default async function RequestServer(method, jRequest){
   dotenv.config();
 
-  const serverIp= 'brunner-client-next.vercel.app'
+  const serverIp= process.env.NODE_ENV ==='dev' ? '127.0.0.1':'brunner-client-next.vercel.app';
   const serverPort=3000 // process.env.BACKEND_SERVER_PORT;
 
   if(method === 'GET'){

@@ -1,11 +1,9 @@
 `use strict`
 
 import express from 'express';
-import https from 'https';
 import session from 'express-session';
 import cors from  'cors';
 import next from 'next';
-import fs from 'fs';
 
 // // server's modules.
 import security from './components/security.mjs'
@@ -16,19 +14,6 @@ const handle = app.getRequestHandler();
 
 app.prepare().then(() => {
   const server = express();
-  const key = fs.readFileSync('server/key.pem', 'utf8');
-  const cert = fs.readFileSync('server/cert.pem', 'utf8');
-  const credentials = {
-    key: key,
-    cert: cert
-  };
-  server.use(cors());
-  const httpsServer = https.createServer(credentials, server);
-  httpsServer.listen(3000, '0.0.0.0', (err) => {
-    if (err) throw err;
-    console.log(`> Ready on https://0.0.0.0:3000`);
-  });
-
   server.use(express.json())
 
   server.use(cors({
@@ -65,6 +50,11 @@ app.prepare().then(() => {
  
   server.get('*/*', (req, res) => {
     return handle(req, res);
+  });
+ 
+  server.listen(process.env.BACKEND_SERVER_PORT, process.env.BACKEND_SERVER_IP, (err) => {
+    if (err) throw err;
+    console.log(`> Ready on http://${process.env.BACKEND_SERVER_IP}:${process.env.BACKEND_SERVER_PORT}`);
   });
 });
 
