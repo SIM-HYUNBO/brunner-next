@@ -14,6 +14,19 @@ const handle = app.getRequestHandler();
 
 app.prepare().then(() => {
   const server = express();
+  const key = fs.readFileSync('src/cert/key.pem', 'utf8');
+  const cert = fs.readFileSync('src/cert/cert.pem', 'utf8');
+  const credentials = {
+    key: key,
+    cert: cert
+  };
+  server.use(cors());
+  const httpsServer = https.createServer(credentials, server);
+  httpsServer.listen(3000, '0.0.0.0', (err) => {
+    if (err) throw err;
+    console.log(`> Ready on https://0.0.0.0:3000`);
+  });
+
   server.use(express.json())
 
   server.use(cors({
@@ -50,11 +63,6 @@ app.prepare().then(() => {
  
   server.get('*/*', (req, res) => {
     return handle(req, res);
-  });
- 
-  server.listen(3000, '0.0.0.0', (err) => {
-    if (err) throw err;
-    console.log(`> Ready on http://0.0.0.0:3000`);
   });
 });
 
