@@ -1,5 +1,4 @@
 'use strict'
-import dotenv from 'dotenv';
 
 async function RequestServerGet(serverIp, serverPort, strJsonRequest) {
   const res = await fetch(`http://${serverIp}:${serverPort}/executeJson/${strJsonRequest}`, {
@@ -25,10 +24,11 @@ async function RequestServerPost(serverIp, serverPort, strJsonRequest) {
   return jResponse;
 }
 
+/*
+ 백엔드 호출
+*/
 export default async function RequestServer(method, jRequest){
-  dotenv.config();
-
-  const serverIp= process.env.NODE_ENV ==='dev' ? '127.0.0.1':'brunner-client-next.vercel.app';
+  const serverIp= '127.0.0.1'; // process.env.BACKEND_SERVER_IP;
   const serverPort=3000 // process.env.BACKEND_SERVER_PORT;
 
   if(method === 'GET'){
