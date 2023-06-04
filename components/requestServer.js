@@ -2,7 +2,7 @@
 import dotenv from 'dotenv';
 
 async function RequestServerGet(serverIp, serverPort, strJsonRequest) {
-  const res = await fetch(`http://${serverIp}:${serverPort}/executeJson/${strJsonRequest}`, {
+  const res = await fetch(`https://${serverIp}:${serverPort}/executeJson/${strJsonRequest}`, {
     headers: {
       'Content-Type': 'application/json'
     }
@@ -13,7 +13,7 @@ async function RequestServerGet(serverIp, serverPort, strJsonRequest) {
 }
 
 async function RequestServerPost(serverIp, serverPort, strJsonRequest) {
-  const res = await fetch(`http://${serverIp}:${serverPort}/executeJson/`, {
+  const res = await fetch(`https://${serverIp}:${serverPort}/executeJson/`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
