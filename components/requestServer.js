@@ -28,7 +28,7 @@ async function RequestServerPost(serverIp, serverPort, strJsonRequest) {
 export default async function RequestServer(method, jRequest){
   dotenv.config();
 
-  const serverIp= 'brunner-client-next.vercel.app' // process.env.BACKEND_SERVER_IP;
+  const serverIp= 'brunner-client-next.vercel.app'
   const serverPort=3000 // process.env.BACKEND_SERVER_PORT;
 
   if(method === 'GET'){

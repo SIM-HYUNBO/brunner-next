@@ -1,9 +1,11 @@
 `use strict`
 
 import express from 'express';
+import https from 'https';
 import session from 'express-session';
 import cors from  'cors';
 import next from 'next';
+import fs from 'fs';
 
 // // server's modules.
 import security from './components/security.mjs'
@@ -14,8 +16,8 @@ const handle = app.getRequestHandler();
 
 app.prepare().then(() => {
   const server = express();
-  const key = fs.readFileSync('src/cert/key.pem', 'utf8');
-  const cert = fs.readFileSync('src/cert/cert.pem', 'utf8');
+  const key = fs.readFileSync('server/key.pem', 'utf8');
+  const cert = fs.readFileSync('server/cert.pem', 'utf8');
   const credentials = {
     key: key,
     cert: cert
