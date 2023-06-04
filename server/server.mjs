@@ -1,3 +1,5 @@
+`use strict`
+
 import express from 'express';
 import session from 'express-session';
 import cors from  'cors';
@@ -6,11 +8,9 @@ import next from 'next';
 // // server's modules.
 import security from './components/security.mjs'
 
-const port = 3000
 const dev = process.env.NODE_ENV !== 'production';
 const app = next({ dev });
 const handle = app.getRequestHandler();
-
 
 app.prepare().then(() => {
   const server = express();
@@ -52,9 +52,9 @@ app.prepare().then(() => {
     return handle(req, res);
   });
  
-  server.listen(port, '0.0.0.0', (err) => {
+  server.listen(process.env.BACKEND_SERVER_PORT, process.env.BACKEND_SERVER_IP, (err) => {
     if (err) throw err;
-    console.log(`> Ready on http://0.0.0.0:${port}`);
+    console.log(`> Ready on http://${process.env.BACKEND_SERVER_IP}:${process.env.BACKEND_SERVER_PORT}`);
   });
 });
 

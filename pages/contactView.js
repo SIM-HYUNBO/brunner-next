@@ -1,6 +1,9 @@
+import dotenv from 'dotenv'
 import Layout from '../components/layout'
 import Head from 'next/head'
 import BodySection from '../components/body-section'
+
+dotenv.config();
 
 export default function ContactView() {
   return (
@@ -92,5 +95,5 @@ export default function ContactView() {
 }
 
 function handleClick() {
-  window.location.href ='mailto:hbsim0605@gmail.com';
+  window.location.href =`mailto:${process.env.BRUNNER_MAIL_ADDRESS}`;
 }

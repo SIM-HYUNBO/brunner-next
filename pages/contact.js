@@ -1,7 +1,6 @@
 import Layout from '../components/layout'
 import Head from 'next/head'
 import BodySection from '../components/body-section'
-
 import ContractContent from '../components/home/contact-content'
 
 export default function Contact(){
