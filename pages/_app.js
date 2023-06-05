@@ -1,11 +1,13 @@
+import dotenv from 'dotenv'
 import '@/styles/globals.css'
 import styles from '../styles/signin.css'
 import { ThemeProvider } from 'next-themes'
 
 export const signinCss = styles;
-
 export default function App({ Component, pageProps }) {
-
+  dotenv.config();
+  // console.log(`process.env:${JSON.stringify(process.env)}`);
+  
   return  (
     <div>
       <ThemeProvider attribute='class'>

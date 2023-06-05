@@ -25,11 +25,11 @@ async function RequestServerPost(serverIp, serverPort, strJsonRequest) {
 }
 
 /*
- 백엔드 호출
+ call backend server by http request
 */
 export default async function RequestServer(method, jRequest){
-  const serverIp= '127.0.0.1'; // process.env.BACKEND_SERVER_IP;
-  const serverPort=3000 // process.env.BACKEND_SERVER_PORT;
+  const serverIp= process.env.NEXT_PUBLIC_NODE_ENV === 'production' ?  process.env.NEXT_PUBLIC_BACKEND_SERVER_IP_PROD: process.env.NEXT_PUBLIC_BACKEND_SERVER_IP_DEV;
+  const serverPort= process.env.NEXT_PUBLIC_NODE_ENV === 'production' ?  process.env.NEXT_PUBLIC_BACKEND_SERVER_PORT_PROD: process.env.NEXT_PUBLIC_BACKEND_SERVER_PORT_DEV;
 
   if(method === 'GET'){
     return await RequestServerGet(serverIp, serverPort, jRequest);

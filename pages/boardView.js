@@ -1,5 +1,3 @@
-import dotenv from 'dotenv';
-
 import Layout from '../components/layout';
 import Head from 'next/head';
 import BodySection from '../components/body-section'
@@ -42,8 +40,6 @@ export default function BoardView(pages) {
 // Next.js will pre-render this page at build time using the props returned by getStaticProps.
 
 export async function getStaticProps() { 
-  dotenv.config();
-
   const options = {
     method: 'POST',
     headers: {

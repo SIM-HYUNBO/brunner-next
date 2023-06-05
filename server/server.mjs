@@ -1,9 +1,10 @@
 `use strict`
 
-import express from 'express';
-import session from 'express-session';
-import cors from  'cors';
-import next from 'next';
+import express from 'express'
+import session from 'express-session'
+import cors from  'cors'
+import next from 'next'
+import rateLimit from 'express-rate-limit'
 
 // // server's modules.
 import security from './components/security.mjs'
@@ -13,6 +14,8 @@ const app = next({ dev });
 const handle = app.getRequestHandler();
 
 app.prepare().then(() => {
+  console.log(`NODE_ENV:${process.env.NODE_ENV}`);
+
   const server = express();
   server.use(express.json())
 
@@ -28,13 +31,17 @@ app.prepare().then(() => {
     cookie: { secure: true }
   }));
 
-//   const limiter = rateLimit({
-//     windowMs: 10 * 1000, // 15 minutes
-//     max: 3, // limit each IP to 100 requests per windowMs
-//   });
+  // throttling
+  const limiter = rateLimit({
+    windowMs: 1 * 1 * 60 * 1000, // 24 hrs in milliseconds
+    max: 100,
+    message: 'You have exceeded the 100 requests in 1 min. limit!', 
+    standardHeaders: true,
+    legacyHeaders: false,
+  });
 
-//   server.use(limiter);
-//   server.set('trust proxy', 1);
+  server.use(limiter);
+  // server.set('trust proxy', 1);
 
   server.get('/executeJson', async(req, res) => {
     var jResponse=null;
@@ -52,9 +59,12 @@ app.prepare().then(() => {
     return handle(req, res);
   });
  
-  server.listen(process.env.BACKEND_SERVER_PORT, process.env.BACKEND_SERVER_IP, (err) => {
+  const serverIp= process.env.NODE_ENV === 'production' ?  process.env.BACKEND_SERVER_IP_PROD: process.env.BACKEND_SERVER_IP_DEV;
+  const serverPort= process.env.NODE_ENV === 'production' ?  process.env.BACKEND_SERVER_PORT_PROD: process.env.BACKEND_SERVER_PORT_DEV;
+
+  server.listen(serverPort, serverIp, (err) => {
     if (err) throw err;
-    console.log(`> Ready on http://${process.env.BACKEND_SERVER_IP}:${process.env.BACKEND_SERVER_PORT}`);
+    console.log(`> Ready on http://${serverIp}:${serverPort}`);
   });
 });
 

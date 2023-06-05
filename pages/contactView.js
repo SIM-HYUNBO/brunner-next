@@ -1,9 +1,6 @@
-import dotenv from 'dotenv'
 import Layout from '../components/layout'
 import Head from 'next/head'
 import BodySection from '../components/body-section'
-
-dotenv.config();
 
 export default function ContactView() {
   return (
