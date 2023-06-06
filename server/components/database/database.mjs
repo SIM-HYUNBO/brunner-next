@@ -4,11 +4,11 @@ import * as mysql from 'mysql2'
 
 export const querySQL = async (sql, params)=>{
   try{
-    // console.log(`
-    // host     : ${process.env.DATABASE_SERVER_IP},
-    // user     : ${process.env.DATABASE_USER_NAME},
-    // password : ${process.env.DATABASE_PASSWORD},
-    // database : ${process.env.DATABASE_SCHEMA_NAME}`);
+    console.log(`
+    host     : ${process.env.DATABASE_SERVER_IP},
+    user     : ${process.env.DATABASE_USER_NAME},
+    password : ${process.env.DATABASE_PASSWORD},
+    database : ${process.env.DATABASE_SCHEMA_NAME}`);
 
     const pool = mysql.createPool({
       host     : process.env.DATABASE_SERVER_IP,

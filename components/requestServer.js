@@ -1,5 +1,19 @@
 'use strict'
 
+/*
+ call backend server
+*/
+export default async function RequestServer(method, jRequest){
+  const serverIp= process.env.NEXT_PUBLIC_NODE_ENV === 'production' ?  process.env.NEXT_PUBLIC_BACKEND_SERVER_IP_PROD: process.env.NEXT_PUBLIC_BACKEND_SERVER_IP_DEV;
+  const serverPort= process.env.NEXT_PUBLIC_NODE_ENV === 'production' ?  process.env.NEXT_PUBLIC_BACKEND_SERVER_PORT_PROD: process.env.NEXT_PUBLIC_BACKEND_SERVER_PORT_DEV;
+
+  if(method === 'GET'){
+    return await RequestServerGet(serverIp, serverPort, jRequest);
+  } else if (method === 'POST'){ 
+    return await RequestServerPost(serverIp, serverPort, jRequest);
+  }
+}
+
 async function RequestServerGet(serverIp, serverPort, strJsonRequest) {
   const res = await fetch(`http://${serverIp}:${serverPort}/executeJson/${strJsonRequest}`, {
     headers: {
@@ -22,18 +36,4 @@ async function RequestServerPost(serverIp, serverPort, strJsonRequest) {
   
   const jResponse = res.json();
   return jResponse;
-}
-
-/*
- call backend server by http request
-*/
-export default async function RequestServer(method, jRequest){
-  const serverIp= process.env.NEXT_PUBLIC_NODE_ENV === 'production' ?  process.env.NEXT_PUBLIC_BACKEND_SERVER_IP_PROD: process.env.NEXT_PUBLIC_BACKEND_SERVER_IP_DEV;
-  const serverPort= process.env.NEXT_PUBLIC_NODE_ENV === 'production' ?  process.env.NEXT_PUBLIC_BACKEND_SERVER_PORT_PROD: process.env.NEXT_PUBLIC_BACKEND_SERVER_PORT_DEV;
-
-  if(method === 'GET'){
-    return await RequestServerGet(serverIp, serverPort, jRequest);
-  } else if (method === 'POST'){ 
-    return await RequestServerPost(serverIp, serverPort, jRequest);
-  }
 }
