@@ -9,7 +9,7 @@ import cors from  'cors'
 import next from 'next'
 import rateLimit from 'express-rate-limit'
 
-// // server's modules.
+// server's modules.
 import security from './components/security.mjs'
 
 const dev = process.env.NODE_ENV !== 'production';
@@ -20,6 +20,7 @@ app.prepare().then(() => {
   console.log(`NODE_ENV:${process.env.NODE_ENV}`);
 
   const server = express();
+
   server.use(express.json())
 
   server.use(cors({
@@ -27,6 +28,7 @@ app.prepare().then(() => {
     methods: ['GET', 'POST'],
     credentials:true,
   }));
+
   server.use(session({
     secret: '1@%24^%$3^*&98&^%$',   // 쿠키에 저장할 connect.sid값을 암호화할 키값 입력
     resave: false,                  //세션 아이디를 접속할때마다 새롭게 발급하지 않음
@@ -35,15 +37,14 @@ app.prepare().then(() => {
   }));
 
   // throttling
-  const limiter = rateLimit({
+  server.use(rateLimit({
     windowMs: 1 * 1 * 60 * 1000, // 24 hrs in milliseconds
     max: 100,
     message: 'You have exceeded the 100 requests in 1 min. limit!', 
     standardHeaders: true,
     legacyHeaders: false,
-  });
-
-  server.use(limiter);
+  }));
+  
   // server.set('trust proxy', 1);
  
   const serverIp= dev ? process.env.BACKEND_SERVER_IP_DEV: process.env.BACKEND_SERVER_IP_PROD;
@@ -96,4 +97,4 @@ const executeService = async(method, req)=>{
     } 
     console.log(`reply: ${JSON.stringify(jResponse)}`);
     return jResponse;
-  }
+}
