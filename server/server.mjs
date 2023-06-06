@@ -1,6 +1,9 @@
 `use strict`
 
+import fs from 'fs'
 import express from 'express'
+import https from 'https';
+
 import session from 'express-session'
 import cors from  'cors'
 import next from 'next'
@@ -42,6 +45,27 @@ app.prepare().then(() => {
 
   server.use(limiter);
   // server.set('trust proxy', 1);
+ 
+  const serverIp= dev ? process.env.BACKEND_SERVER_IP_DEV: process.env.BACKEND_SERVER_IP_PROD;
+  const serverPort= dev ? process.env.BACKEND_SERVER_PORT_DEV: process.env.BACKEND_SERVER_PORT_PROD;
+
+  if(dev) {
+    server.listen(serverPort, serverIp, (err) => {
+      if (err) throw err;
+      console.log(`> Ready on http://${serverIp}:${serverPort}`);
+    });
+  }
+  else {
+    var privateKey  = fs.readFileSync('sslcert/server.key', 'utf8');
+    var certificate = fs.readFileSync('sslcert/server.crt', 'utf8');
+    var credentials = {key: privateKey, cert: certificate};
+    var httpsServer = https.createServer(credentials, app);
+    
+    httpsServer.listen(serverPort, serverIp, (err) => {
+      if (err) throw err;
+      console.log(`> Ready on https://${serverIp}:${serverPort}`);
+    }); 
+  }
 
   server.get('/executeJson', async(req, res) => {
     var jResponse=null;
@@ -57,15 +81,7 @@ app.prepare().then(() => {
  
   server.get('*/*', (req, res) => {
     return handle(req, res);
-  });
- 
-  const serverIp= process.env.NODE_ENV === 'production' ?  process.env.BACKEND_SERVER_IP_PROD: process.env.BACKEND_SERVER_IP_DEV;
-  const serverPort= process.env.NODE_ENV === 'production' ?  process.env.BACKEND_SERVER_PORT_PROD: process.env.BACKEND_SERVER_PORT_DEV;
-
-  server.listen(serverPort, serverIp, (err) => {
-    if (err) throw err;
-    console.log(`> Ready on http://${serverIp}:${serverPort}`);
-  });
+  });  
 });
 
 const executeService = async(method, req)=>{
