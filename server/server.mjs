@@ -64,7 +64,7 @@ app.prepare().then(() => {
     httpsServer.listen(serverPort, serverIp, (err) => {
       if (err) throw err;
       console.log(`> Ready on https://${serverIp}:${serverPort}`);
-    }); 
+    });
   }
 
   server.get('/executeJson', async(req, res) => {
