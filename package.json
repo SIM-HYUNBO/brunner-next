@@ -3,9 +3,10 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "node server/server.mjs",
+    "dev": "next dev",
     "build": "next build",
-    "start": "node server/server.mjs"
+    "start": "next start",
+    "lint": "next lint"
   },
   "dependencies": {
     "autoprefixer": "10.4.14",
