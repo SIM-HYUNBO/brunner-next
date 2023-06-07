@@ -4,10 +4,12 @@
  call backend server
 */
 export default async function RequestServer(method, jRequest){
-  const protocol= process.env.NEXT_PUBLIC_NODE_ENV === 'production' ?  `https`: `http`;
-  const serverIp= process.env.NEXT_PUBLIC_NODE_ENV === 'production' ?  process.env.NEXT_PUBLIC_BACKEND_SERVER_IP_PROD: process.env.NEXT_PUBLIC_BACKEND_SERVER_IP_DEV;
-  const serverPort= process.env.NEXT_PUBLIC_NODE_ENV === 'production' ?  process.env.NEXT_PUBLIC_BACKEND_SERVER_PORT_PROD: process.env.NEXT_PUBLIC_BACKEND_SERVER_PORT_DEV;
+  const protocol= process.env.NEXT_PUBLIC_BACKEND_SERVER_PROTOCOL;
+  const serverIp= process.env.NEXT_PUBLIC_BACKEND_SERVER_IP;
+  const serverPort= process.env.NEXT_PUBLIC_BACKEND_SERVER_PORT;
+
   console.log(`NODE_ENV:${process.env.NEXT_PUBLIC_NODE_ENV}`)
+
   if(method === 'GET'){
     return await RequestServerGet(protocol, serverIp, serverPort, jRequest);
   } else if (method === 'POST'){ 
