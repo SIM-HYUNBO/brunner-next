@@ -4,18 +4,19 @@ import BodySection from '../components/body-section'
 
 import RequestServer from '../components/requestServer'
 import { useRouter } from 'next/router'
+import { useState } from 'react'
 
 export default function Signin() {
   const router = useRouter();
 
-  var userId='';
+  const [userId, setUserId]=useState('');
   const changeUserIdValue = (e) => {
-    userId = e.target.value
+    setUserId(e.target.value);
   };
   
-  var password='';
+  const [password, setPassword]=useState('');
   const changePasswordValue = (e) => {
-    password = e.target.value
+    setPassword(e.target.value);
   };
     
   var requestSigninResult=()=> {

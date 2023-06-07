@@ -4,33 +4,34 @@ import BodySection from '../components/body-section'
 
 import RequestServer from '../components/requestServer'
 import { useRouter } from 'next/router'
+import { useState } from 'react'
 
 export default function ResetPassword() {
   const router = useRouter();
 
-  var userId='';
+  const [userId, setUserId] = useState('');
   const changeUserIdValue = (e) => {
-    userId = e.target.value
+    setUserId(e.target.value);
   };
 
-  var registerNo='';
+  const [registerNo, setRegisterNo] = useState('');
   const changeRegisterNoValue = (e) => {
-    registerNo = e.target.value
+    setRegisterNo(e.target.value);
   };  
 
-  var phoneNumber='';
+  const [phoneNumber, setPhoneNumber]=useState('');
   const changePhoneNumberValue = (e) => {
-    phoneNumber = e.target.value
+    setPhoneNumber(e.target.value);
   };  
 
-  var newPassword='';
+  const [newPassword, setNewPassword]=useState('');
   const changePasswordValue = (e) => {
-    newPassword = e.target.value
+    setNewPassword(e.target.value);
   };
 
-  var confirmPassword='';
+  const [confirmPassword, setConfirmPassword]=useState('');
   const changeConfirmPasswordValue = (e) => {
-    confirmPassword = e.target.value
+    setConfirmPassword(e.target.value);
   };  
 
   var requestResetPasswordResult=()=> {

@@ -4,58 +4,59 @@ import Head from 'next/head'
 import BodySection from '../components/body-section'
 import RequestServer from '../components/requestServer'
 import { useRouter } from 'next/router'
+import { useState } from 'react'
 
 export default function Signup() {
   const router = useRouter();
 
-  var userId='';
+  const [userId,setUserId]=useState('');
   const changeUserIdValue = (e) => {
-    userId = e.target.value
+    setUserId(e.target.value);
   };
   
-  var password='';
+  const [password,setPassword]=useState('');
   const changePasswordValue = (e) => {
-    password = e.target.value
+    setPassword(e.target.value);
   };
 
-  var userName='';
+  const [userName,setUserName]=useState('');
   const changeUserNameValue = (e) => {
-    userName = e.target.value
+    setUserName(e.target.value);
   };
 
-  var address='';
+  const [address,setAddress]=useState('');
   const changeAddressValue = (e) => {
-    address = e.target.value
+    setAddress(e.target.value);
   };
   
-  var phoneNumber='';
+  const [phoneNumber,setPhoneNumber]=useState('');
   const changePhoneNumberValue = (e) => {
-    phoneNumber = e.target.value
+    setPhoneNumber(e.target.value);
   };
   
-  var email='';
+  const [email,setEmail]=useState('');
   const changeEMailValue = (e) => {
-    email = e.target.value
+    setEmail(e.target.value);
   };
   
-  var registerName='';
+  const [registerName,setRegisterName]=useState('');
   const changeRegisterNameValue = (e) => {
-    registerName = e.target.value
+    setRegisterName(e.target.value);
   };
   
-  var registerNo='';
+  const [registerNo,setRegisterNo]=useState('');
   const changeRegisterNoValue = (e) => {
-    registerNo = e.target.value
+    setRegisterNo(e.target.value);
   };
   
-  var salesType='';
+  const [salesType,setSalesType]=useState('');
   const changeSalesTypeValue = (e) => {
-    salesType = e.target.value
+    setSalesType(e.target.value);
   };
   
-  var salesCategory='';
+  const [salesCategory,setSalesCategory]=useState('');
   const changeSalesCategoryValue = (e) => {
-    salesCategory = e.target.value
+    setSalesCategory(e.target.value);
   };
 
 
