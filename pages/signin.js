@@ -4,7 +4,7 @@ import BodySection from '../components/body-section'
 
 import RequestServer from '../components/requestServer'
 import { useRouter } from 'next/router'
-import { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
 
 export default function Signin() {
   const router = useRouter();
@@ -18,6 +18,8 @@ export default function Signin() {
   const changePasswordValue = (e) => {
     setPassword(e.target.value);
   };
+
+  const userIdRef = useRef();
     
   var requestSigninResult=()=> {
     RequestServer("POST",
@@ -32,6 +34,10 @@ export default function Signin() {
         }
       });
    };
+
+   useEffect(()=>{
+      userIdRef.current.focus();
+   }, []);
 
   return (
     <Layout>    
@@ -50,7 +56,7 @@ export default function Signin() {
           </div>
           <div className="relative mb-4">
             <label htmlFor="id" className="leading-7 text-sm text-gray-400">ID</label>
-            <input type="text" id="id" name="Id" onChange={(e) => changeUserIdValue(e)} className="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"/>
+            <input type="text" ref={userIdRef}  id="id" name="Id" onChange={(e) => changeUserIdValue(e)} className="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"/>
           </div>
           <div className="relative mb-4">
             <label htmlFor="password" className="leading-7 text-sm text-gray-400">Password</label>
