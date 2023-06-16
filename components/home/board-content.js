@@ -2,7 +2,7 @@ import BoardContentAnimation from './board-content-animation'
 import { useRouter } from 'next/router'
 
 export default function BoardContent(){
-  const router = useRouter()
+  const router = useRouter();
   
     return (
         <>
