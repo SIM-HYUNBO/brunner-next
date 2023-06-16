@@ -26,11 +26,12 @@ export default function TalkView(pages) {
                   <Link className="mr-5 text-gray-600 dark:text-yellow-100 hover:text-gray-400" href="">회의</Link>
                   <Link className="mr-5 text-gray-600 dark:text-yellow-100 hover:text-gray-400" href="">IT</Link>
                   <Link className="mr-5 text-gray-600 dark:text-yellow-100 hover:text-gray-400" href="">모임</Link>
+                  <Link className="mr-5 text-gray-600 dark:text-yellow-100 hover:text-gray-400" href="">스터디</Link>
                   <Link className="mr-5 text-gray-600 dark:text-yellow-100 hover:text-gray-400" href="">뉴스</Link>
                   <Link className="mr-5 text-gray-600 dark:text-yellow-100 hover:text-gray-400" href="">경제</Link>
                   <Link className="mr-5 text-gray-600 dark:text-yellow-100 hover:text-gray-400" href="">스포츠</Link>
-                  <Link className="mr-5 text-gray-600 dark:text-yellow-100 hover:text-gray-400" href="">기타</Link>
                   <Link className="mr-5 text-gray-600 dark:text-yellow-100 hover:text-gray-400" href="">만남</Link>
+                  <Link className="mr-5 text-gray-600 dark:text-yellow-100 hover:text-gray-400" href="">기타</Link>
                 </nav>
             <div className='grid grid-cols-1 md:grid-cols-5 py-1 mx-1 gap-20'>
               {/* {pages.results.map(aPage=>(
