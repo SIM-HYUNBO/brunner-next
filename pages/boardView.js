@@ -22,10 +22,10 @@ export default function BoardView(pages) {
                     justify-center 
                     min-h-[calc(100vh-_15rem)] 
                     px-5 mb-10">
-            <h1 className="text-2xl ml-10 mb-10">
+            <h1 className="text-2xl ml-10 mb-5">
               게시글 : <span className="pl-2 text-blue-500">{pages.results.length}</span>
             </h1>
-            <div className='grid grid-cols-1 md:grid-cols-6 py-5 mx-5 gap-20'>
+            <div className='grid grid-cols-1 md:grid-cols-5 py-1 mx-1 gap-20'>
               {pages.results.map(aPage=>(
                 <BoardItem data={aPage} key={aPage.id}></BoardItem> 
               ))}

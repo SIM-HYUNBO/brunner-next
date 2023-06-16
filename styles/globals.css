@@ -34,7 +34,7 @@ p {
 .board-item {
     @apply flex 
            flex-col 
-           m-1 
+           m-0 
            rounded-xl 
            transition 
            duration-300 
