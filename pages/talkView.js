@@ -1,7 +1,7 @@
 import Layout from '../components/layout';
 import Head from 'next/head';
 import BodySection from '../components/body-section'
-
+import Link from "next/link";
 import TalkItem from "../components/talk-item";
 
 export default function TalkView(pages) {
@@ -19,12 +19,19 @@ export default function TalkView(pages) {
         <div className="flex 
                     flex-col 
                     items-left 
-                    justify-center 
+                    justify-top 
                     min-h-[calc(100vh-_15rem)] 
                     px-5 mb-10">
-            <h1 className="text-white text-2xl ml-10 mb-5">
-              글목록
-            </h1>
+                <nav className="flex flex-wrap items-center text-base justify-center">
+                  <Link className="mr-5 text-gray-600 dark:text-yellow-100 hover:text-gray-400" href="">회의</Link>
+                  <Link className="mr-5 text-gray-600 dark:text-yellow-100 hover:text-gray-400" href="">IT</Link>
+                  <Link className="mr-5 text-gray-600 dark:text-yellow-100 hover:text-gray-400" href="">모임</Link>
+                  <Link className="mr-5 text-gray-600 dark:text-yellow-100 hover:text-gray-400" href="">뉴스</Link>
+                  <Link className="mr-5 text-gray-600 dark:text-yellow-100 hover:text-gray-400" href="">경제</Link>
+                  <Link className="mr-5 text-gray-600 dark:text-yellow-100 hover:text-gray-400" href="">스포츠</Link>
+                  <Link className="mr-5 text-gray-600 dark:text-yellow-100 hover:text-gray-400" href="">기타</Link>
+                  <Link className="mr-5 text-gray-600 dark:text-yellow-100 hover:text-gray-400" href="">만남</Link>
+                </nav>
             <div className='grid grid-cols-1 md:grid-cols-5 py-1 mx-1 gap-20'>
               {/* {pages.results.map(aPage=>(
                 <TalkItem data={aPage} key={aPage.id}></TalkItem> 
