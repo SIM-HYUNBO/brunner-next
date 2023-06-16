@@ -1,8 +1,11 @@
 import Layout from '../components/layout'
 import Head from 'next/head'
 import BodySection from '../components/body-section'
+import { useRouter } from 'next/router'
 
 export default function ContactView() {
+  const router = useRouter();
+  
   return (
     <Layout>    
       <Head>
@@ -82,7 +85,9 @@ export default function ContactView() {
                 </div>
               </div>
             </div>
-            <button onClick={() => router.push('/boardView')}className="inline-flex text-white bg-indigo-500 border-0 py-2 px-6 focus:outline-none hover:bg-indigo-600 rounded text-lg">강좌 보기</button>
+            <button onClick={() => router.push('/boardView')}className="inline-flex text-white bg-indigo-500 border-0 py-2 px-6 focus:outline-none hover:bg-indigo-600 rounded text-lg">
+              강좌 보기
+            </button>
             <button className="flex mx-auto mt-16 text-white bg-indigo-500 border-0 py-2 px-8 focus:outline-none hover:bg-indigo-600 rounded text-lg" onClick={handleClick}>지원하기</button>
           </div>
         </section>
