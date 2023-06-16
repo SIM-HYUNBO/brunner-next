@@ -1,6 +1,6 @@
 import Image from 'next/image';
 
-export default function BoardItem({data: boardItem}){
+export default function LectureItem({data: boardItem}){
     const startDate = boardItem.properties.게시일.date.start;
     const writer = boardItem.properties.게시자.rich_text[0].plain_text;
     const content = boardItem.properties.내용.rich_text[0].plain_text;;

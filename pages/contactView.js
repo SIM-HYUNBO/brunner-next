@@ -87,7 +87,7 @@ export default function ContactView() {
             </div>
             <div>
               <button className="flex mt-3 text-white bg-indigo-500 border-0 py-2 px-8 focus:outline-none hover:bg-indigo-600 rounded text-lg"
-                      onClick={() => router.push('/boardView')}>
+                      onClick={() => router.push('/lectureView')}>
                 열린 강좌 목록
               </button>
               <button className="flex mt-3 text-white bg-indigo-500 border-0 py-2 px-8 focus:outline-none hover:bg-indigo-600 rounded text-lg" 

@@ -2,7 +2,7 @@ import Layout from '../components/layout';
 import Head from 'next/head';
 import BodySection from '../components/body-section'
 
-import BoardItem from "../components/board-item";
+import LectureItem from "../components/lecture-item";
 
 export default function BoardView(pages) {
   console.log(pages);
@@ -28,7 +28,7 @@ export default function BoardView(pages) {
             </h1>
             <div className='grid grid-cols-1 md:grid-cols-5 py-1 mx-1 gap-20'>
               {pages.results.map(aPage=>(
-                <BoardItem data={aPage} key={aPage.id}></BoardItem> 
+                <LectureItem data={aPage} key={aPage.id}></LectureItem> 
               ))}
             </div>
         </div>
