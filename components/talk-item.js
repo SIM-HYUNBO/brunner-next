@@ -27,13 +27,13 @@ export default function TalkItem({data: talkItem}){
                     />
 
                 {/* 글 제목 */}
-                <div className="p-4 flex flex-col w-full border-2 border-gray-500">
+                <div className="flex flex-col w-full p-2 border-2 border-gray-500">
                   글제목
                 </div>
           </div>
           
           {/* 글 본문 */}
-          <div className="flex w-full flex-row h-full border-2 border-gray-500">  
+          <div className="flex flex-row w-full h-full p-2 border-2 border-gray-500">  
           글 본문
           </div>
 
