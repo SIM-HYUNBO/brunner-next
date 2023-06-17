@@ -10,30 +10,31 @@ export default function TalkItem({data: talkItem}){
     // const imgSrc = talkItem.cover.file?.url || talkItem.cover.external.url;
 
     return (
-        <></>
-        // <div className="board-item">
-        //    <Image src={imgSrc} alt="cover image"
-        //           width={0} 
-        //           height={0} 
-        //           sizes="100vw" 
-        //           style={{ width: '100%', height: '100%', padding: '10px' }} 
-        //           objectfit="cover" 
-        //           quality={100}/> 
+        // 대화 항목
+        <div className="talk-item flex flex-col w-3/4 h-40 mx-auto border-yellow-500 border-1 mb-1">
 
-        //     <div className="p-4 flex flex-col">    
-        //         <h1>{title}</h1>
-        //         <h6>{content}</h6>
-        //         <h6>분류: {category}</h6>
-        //         <div className="flex items-start mt-2">
-        //             {tags.map(
-        //                 (tag)=>(
-        //                     <h1 className="px-1 py-1 rounded-md bg-sky-200 dark:bg-sky-700 w-30" key={tag.id}>{tag.name}</h1>
-        //                 ))
-        //             }
-        //         </div>
-        //         <h6>게시자: {writer}</h6>
-        //         <h6>게시일: {startDate.substring(0, 10)}</h6>
-        //     </div>   
-        // </div>
+          {/* 타이틀 */}
+          <div className="flex flex-row w-full h-auto bg-slate-100">  
+            
+            {/* 타이틀 이미지 */}
+            <Image src='' alt="title image"
+                    width={0} 
+                    height={0} 
+                    sizes="100vw" 
+                    style={{ width: '100px', padding: '10px' }} 
+                    objectfit="cover" 
+                    quality={100}
+                    />
+
+                {/* 글 제목 */}
+                <div className="p-4 flex flex-col bg-gray-50 w-full border-2">
+                </div>
+          </div>
+          
+          {/* 글 본문 */}
+          <div className="flex w-full flex-row bg-white h-full">  
+          </div>
+
+        </div>
     )
 }

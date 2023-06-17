@@ -33,10 +33,25 @@ export default function TalkView(pages) {
                   <Link className="mr-5 text-gray-600 dark:text-yellow-100 hover:text-gray-400" href="">만남</Link>
                   <Link className="mr-5 text-gray-600 dark:text-yellow-100 hover:text-gray-400" href="">기타</Link>
                 </nav>
-            <div className='grid grid-cols-1 md:grid-cols-5 py-1 mx-1 gap-20'>
+            <div className='grid py-1 mx-1 mt-10'>
+            <TalkItem></TalkItem> 
+            <TalkItem></TalkItem> 
+            <TalkItem></TalkItem> 
+            <TalkItem></TalkItem> 
+            <TalkItem></TalkItem> 
+            <TalkItem></TalkItem> 
+            <TalkItem></TalkItem> 
+            <TalkItem></TalkItem> 
+            <TalkItem></TalkItem> 
+            <TalkItem></TalkItem> 
+            <TalkItem></TalkItem> 
+            <TalkItem></TalkItem> 
+            <TalkItem></TalkItem> 
+            <TalkItem></TalkItem> 
+            <TalkItem></TalkItem> 
               {/* {pages.results.map(aPage=>(
                 <TalkItem data={aPage} key={aPage.id}></TalkItem> 
-              ))} */}
+               ))} */}
             </div>
         </div>
       </BodySection>
