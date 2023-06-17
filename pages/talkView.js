@@ -17,7 +17,7 @@ export default function TalkView() {
   const getTalkItems = (systemCode, talkCategory, lastTalkId) => {
     // 해당 category에서 lastTalkId 이전에 작섣된 talkItem을 pageSize 갯수만클 조회함
     RequestServer("POST",
-    `{"commandName": "board.getTalkItems",
+    `{"commandName": "talk.getTalkItems",
       "systemCode": "${systemCode}",
       "talkCategory": "${talkCategory}",
       "lastTalkId": "${lastTalkId}",

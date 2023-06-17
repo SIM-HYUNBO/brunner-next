@@ -3,7 +3,7 @@ import Head from 'next/head'
 import BodySection from '../components/body-section'
 import BoardContent from '../components/home/board-content'
 
-export default function Board(){
+export default function Talk(){
   return (
     <Layout>      
       <Head>
