@@ -28,7 +28,7 @@ export default function TalkView(pages) {
                   <Link className="mr-5 text-gray-600 dark:text-yellow-100 hover:text-gray-400" href="">IT</Link>
                   <Link className="mr-5 text-gray-600 dark:text-yellow-100 hover:text-gray-400" href="">모임</Link>
                   <Link className="mr-5 text-gray-600 dark:text-yellow-100 hover:text-gray-400" href="">연애</Link>
-                  <Link className="mr-5 text-gray-600 dark:text-yellow-100 hover:text-gray-400" href="">기타</Link>
+                  <Link className="mr-5 text-gray-600 dark:text-yellow-100 hover:text-gray-400" href="">잡담</Link>
                 </nav>
             <div className='grid py-1 mx-1 mt-10'>
             <TalkItem></TalkItem> 
