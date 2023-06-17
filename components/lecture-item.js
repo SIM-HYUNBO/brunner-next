@@ -1,13 +1,13 @@
 import Image from 'next/image';
 
-export default function LectureItem({data: boardItem}){
-    const startDate = boardItem.properties.게시일.date.start;
-    const writer = boardItem.properties.게시자.rich_text[0].plain_text;
-    const content = boardItem.properties.내용.rich_text[0].plain_text;;
-    const category = boardItem.properties.분류.rich_text[0].plain_text;;
-    const title = boardItem.properties.제목.title[0].plain_text;
-    const tags = boardItem.properties.태그.multi_select;
-    const imgSrc = boardItem.cover.file?.url || boardItem.cover.external.url;
+export default function LectureItem({data: lectureItem}){
+    const startDate = lectureItem.properties.게시일.date.start;
+    const writer = lectureItem.properties.게시자.rich_text[0].plain_text;
+    const content = lectureItem.properties.내용.rich_text[0].plain_text;;
+    const category = lectureItem.properties.분류.rich_text[0].plain_text;;
+    const title = lectureItem.properties.제목.title[0].plain_text;
+    const tags = lectureItem.properties.태그.multi_select;
+    const imgSrc = lectureItem.cover.file?.url || lectureItem.cover.external.url;
 
     return (
         <div className="board-item">

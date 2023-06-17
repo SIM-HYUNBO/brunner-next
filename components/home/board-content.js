@@ -17,7 +17,7 @@ export default function BoardContent(){
             </pre>
             <div className="flex justify-center">
             <button onClick={() => router.push('/talkView')}className="inline-flex text-white bg-indigo-500 border-0 py-2 px-6 focus:outline-none hover:bg-indigo-600 rounded text-lg">
-              Brunner Talk
+              Open Talk
             </button>
             </div>
           </div>
