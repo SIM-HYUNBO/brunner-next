@@ -14,25 +14,27 @@ export default function TalkItem({data: talkItem}){
         <div className="talk-item flex flex-col w-full h-40 mx-auto border-yellow-500 border-1 mb-1">
 
           {/* 타이틀 */}
-          <div className="flex flex-row w-full h-auto bg-slate-100">  
+          <div className="flex flex-row w-full h-auto">  
             
             {/* 타이틀 이미지 */}
             <Image src='' alt="title image"
                     width={0} 
                     height={0} 
                     sizes="100vw" 
-                    style={{ width: '100px', padding: '10px' }} 
+                    style={{ width: '100px', padding: '10px', borderColor:'gray', borderWidth: '2px' }} 
                     objectfit="cover" 
                     quality={100}
                     />
 
                 {/* 글 제목 */}
-                <div className="p-4 flex flex-col bg-gray-50 w-full border-2">
+                <div className="p-4 flex flex-col w-full border-2 border-gray-500">
+                  글제목
                 </div>
           </div>
           
           {/* 글 본문 */}
-          <div className="flex w-full flex-row bg-white h-full">  
+          <div className="flex w-full flex-row h-full border-2 border-gray-500">  
+          글 본문
           </div>
 
         </div>
