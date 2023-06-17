@@ -49,12 +49,25 @@ export default function TalkView() {
                     min-h-[calc(100vh-_15rem)] 
                     px-5 mb-10">
                 <nav className="flex flex-wrap items-center text-base justify-center">
-                <Link className="mr-5 text-gray-600 dark:text-yellow-100 hover:text-gray-400" href="">회의</Link>
-                  <Link className="mr-5 text-gray-600 dark:text-yellow-100 hover:text-gray-400" href="">스터디</Link>
-                  <Link className="mr-5 text-gray-600 dark:text-yellow-100 hover:text-gray-400" href="">IT</Link>
-                  <Link className="mr-5 text-gray-600 dark:text-yellow-100 hover:text-gray-400" href="">모임</Link>
-                  <Link className="mr-5 text-gray-600 dark:text-yellow-100 hover:text-gray-400" href="">연애</Link>
-                  <Link className="mr-5 text-gray-600 dark:text-yellow-100 hover:text-gray-400" href="">잡담</Link>
+                  <Link className="mr-5 text-gray-600 dark:text-yellow-100 hover:text-gray-400" href="">
+                    <a onClick={(e) => getTalkItems("00", '회의', '99991231240000_zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz')}>회의</a>
+                  </Link>
+                  <Link className="mr-5 text-gray-600 dark:text-yellow-100 hover:text-gray-400" href="">
+                    <a onClick={(e) => getTalkItems("00", '스터디', '99991231240000_zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz')}>스터디</a>
+                  </Link>
+                  <Link className="mr-5 text-gray-600 dark:text-yellow-100 hover:text-gray-400" href="">
+                    <a onClick={(e) => getTalkItems("00", 'IT', '99991231240000_zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz')}>IT</a>
+                  </Link>
+                  <Link className="mr-5 text-gray-600 dark:text-yellow-100 hover:text-gray-400" href="">
+                    <a onClick={(e) => getTalkItems("00", '모임', '99991231240000_zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz')}>모임</a>
+                  </Link>
+                  <Link className="mr-5 text-gray-600 dark:text-yellow-100 hover:text-gray-400" href="">
+                    <a onClick={(e) => getTalkItems("00", '연애', '99991231240000_zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz')}>연애</a>
+                  </Link>
+                  <Link className="mr-5 text-gray-600 dark:text-yellow-100 hover:text-gray-400" href="">
+                    <a onClick={(e) => getTalkItems("00", '잡담', '99991231240000_zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz')}>잡담</a>
+                  </Link>
+
                 </nav>
             <div className='grid py-1 mx-1 mt-10'>
             {talkItems.map(aTalkItem=>(

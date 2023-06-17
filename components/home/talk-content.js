@@ -1,7 +1,7 @@
-import BoardContentAnimation from './board-content-animation'
+import TalkContentAnimation from './talk-content-animation'
 import { useRouter } from 'next/router'
 
-export default function BoardContent(){
+export default function TalkContent(){
   const router = useRouter();
   
     return (
@@ -17,12 +17,12 @@ export default function BoardContent(){
             </pre>
             <div className="flex justify-center">
             <button onClick={() => router.push('/talkView')}className="inline-flex text-white bg-indigo-500 border-0 py-2 px-6 focus:outline-none hover:bg-indigo-600 rounded text-lg">
-              Open Talk
+              오픈톡
             </button>
             </div>
           </div>
           <div className="lg:h-2/6 lg:w-2/6">
-            <BoardContentAnimation/>
+            <TalkContentAnimation/>
           </div>
         </>
     );

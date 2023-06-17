@@ -1,7 +1,7 @@
 import Layout from '../components/layout'
 import Head from 'next/head'
 import BodySection from '../components/body-section'
-import BoardContent from '../components/home/board-content'
+import TalkContent from '../components/home/talk-content'
 
 export default function Talk(){
   return (
@@ -14,7 +14,7 @@ export default function Talk(){
       </Head>         
       <BodySection>
         <div className="container mx-auto flex px-5 md:flex-row flex-col items-center">
-          <BoardContent></BoardContent>
+          <TalkContent></TalkContent>
         </div>
       </BodySection>
     </Layout>
