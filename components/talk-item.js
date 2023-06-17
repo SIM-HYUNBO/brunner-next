@@ -11,7 +11,7 @@ export default function TalkItem({data: talkItem}){
 
     return (
         // 대화 항목
-        <div className="talk-item flex flex-col w-3/4 h-40 mx-auto border-yellow-500 border-1 mb-1">
+        <div className="talk-item flex flex-col w-full h-40 mx-auto border-yellow-500 border-1 mb-1">
 
           {/* 타이틀 */}
           <div className="flex flex-row w-full h-auto bg-slate-100">  
