@@ -86,7 +86,8 @@ class NewTalkEditor extends Component {
 
     const category = this.state.category;
     const title = this.state.title;
-    const content = JSON.stringify(convertToRaw(this.state.editorState.getCurrentContent()));
+    const jcontent = convertToRaw(this.state.editorState.getCurrentContent());
+    const content = JSON.stringify(jcontent).replace(/"/g, '\\"');
   
     if(process.env.userInfo === undefined || process.env.userInfo.USER_ID === undefined || process.env.userInfo.USER_ID === ''){
       alert(`the user is not logged in. sign in first.`);
@@ -95,14 +96,14 @@ class NewTalkEditor extends Component {
 
     RequestServer("POST", 
     `{"commandName": "talk.createTalkItem", 
+      "systemCode":"00",
       "talkCategory": "${category}",
       "title": "${title}",
       "content": "${content}",
       "userId": "${process.env.userInfo.USER_ID}"
      }`).then((result) => {
       if(result.error_code==0){
-        process.env.userInfo=result.userInfo;
-        router.push('/')  
+        ;
       }else {
         alert(JSON.stringify(result.error_message));
       }
