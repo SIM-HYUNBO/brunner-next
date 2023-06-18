@@ -1,7 +1,11 @@
 import React, { Component } from 'react';
 import { EditorState } from 'draft-js';
-import { Editor } from 'react-draft-wysiwyg';
-import '../node_modules/react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
+import dynamic from 'next/dynamic';
+const Editor = dynamic(
+  () => import('react-draft-wysiwyg').then((mod) => mod.Editor),
+  { ssr: false }
+)
+import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
 import Link from "next/link";
 import { convertToRaw } from 'draft-js';
 import RequestServer from './requestServer'
