@@ -29,7 +29,7 @@ export default function TalkItem({data: talkItem}){
 
                 {/* 글 제목 */}
                 <div className="flex flex-col w-full p-2 border-b-gray-300 border-b-2 text-black dark:text-white">
-                  <b>[{talkUserId}]{talkTitle}</b>
+                  <b>[{talkUserId}] {talkTitle}</b>
                 </div>
           </div>
           
