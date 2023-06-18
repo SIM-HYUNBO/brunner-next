@@ -62,9 +62,6 @@ export default function TalkView() {
                     <a className="w-14 text-center" onClick={(e) => getTalkItems("00", '자동차', '99991231240000_zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz')}>자동차</a>
                   </Link>
                   <Link className="text-gray-600 dark:text-yellow-100 hover:text-gray-400" legacyBehavior href="">
-                    <a className="w-14 text-center" onClick={(e) => getTalkItems("00", '모임', '99991231240000_zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz')}>모임</a>
-                  </Link>
-                  <Link className="text-gray-600 dark:text-yellow-100 hover:text-gray-400" legacyBehavior href="">
                     <a className="w-14 text-center" onClick={(e) => getTalkItems("00", '연애', '99991231240000_zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz')}>연애</a>
                   </Link>
                   <Link className="text-gray-600 dark:text-yellow-100 hover:text-gray-400" legacyBehavior href="">
