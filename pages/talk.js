@@ -59,13 +59,16 @@ export default function TalkView() {
                     <a className="w-14 text-center" onClick={(e) => getTalkItems("00", 'IT', '99991231240000_zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz')}>IT</a>
                   </Link>
                   <Link className="text-gray-600 dark:text-yellow-100 hover:text-gray-400" legacyBehavior href="">
+                    <a className="w-14 text-center" onClick={(e) => getTalkItems("00", '자동차', '99991231240000_zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz')}>자동차</a>
+                  </Link>
+                  <Link className="text-gray-600 dark:text-yellow-100 hover:text-gray-400" legacyBehavior href="">
                     <a className="w-14 text-center" onClick={(e) => getTalkItems("00", '모임', '99991231240000_zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz')}>모임</a>
                   </Link>
                   <Link className="text-gray-600 dark:text-yellow-100 hover:text-gray-400" legacyBehavior href="">
                     <a className="w-14 text-center" onClick={(e) => getTalkItems("00", '연애', '99991231240000_zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz')}>연애</a>
                   </Link>
                   <Link className="text-gray-600 dark:text-yellow-100 hover:text-gray-400" legacyBehavior href="">
-                    <a className="w-14 text-center" onClick={(e) => getTalkItems("00", '잡담', '99991231240000_zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz')}>잡담</a>
+                    <a className="w-14 text-center" onClick={(e) => getTalkItems("00", '스몰톡', '99991231240000_zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz')}>스몰톡</a>
                   </Link>
 
                 </nav>
