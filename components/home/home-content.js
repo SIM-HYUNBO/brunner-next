@@ -16,10 +16,17 @@ export default function HomeContent(){
               최신의 기술을 연구하는 사람들이 모여 있습니다.<br/>
             </pre>
             <div className="flex justify-center">
-            <button onClick={() => router.push('/overView')} 
-                    className="inline-flex text-white bg-indigo-500 border-0 py-2 px-6 focus:outline-none hover:bg-indigo-600 rounded text-lg">
-                둘러보기
-            </button>
+            <div>
+              <button className="inline-flex text-white bg-indigo-500 border-0 py-2 px-6 focus:outline-none hover:bg-indigo-600 rounded text-lg m-2"
+                      onClick={() => router.push('/signin') } >
+                      로그인
+              </button>
+              <button 
+              className="inline-flex text-white bg-indigo-500 border-0 py-2 px-6 focus:outline-none hover:bg-indigo-600 rounded text-lg"
+                      onClick={() => router.push('/signup') } >
+                      회원가입
+              </button>
+              </div>
             </div>
           </div>
           <div className="lg:h-2/6 lg:w-2/6">

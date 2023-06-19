@@ -9,8 +9,9 @@ import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
 import Link from "next/link";
 import { convertToRaw } from 'draft-js';
 import RequestServer from './requestServer'
+import Modal from 'react-modal'
 
-class NewTalkEditorModal extends Component {
+class TalkEditorModal extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -37,14 +38,43 @@ class NewTalkEditorModal extends Component {
       <div>
         <Link href="" onClick={this.openModal}><h2 className='mb-2'>Write</h2></Link>
         {showModal && (
-          <div className="modal">
+          <Modal className="modal" 
+                  isOpen={showModal}
+                  // onAfterOpen={openModal}
+                  // onRequestClose={closeModal}
+                  style={{overlay: {
+                    position: 'fixed',
+                    top: 40,
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
+                    backgroundColor: 'rgba(255, 255, 255, 0.75)'
+                  },
+                  content: {
+                    position: 'absolute',
+                    top: '40px',
+                    left: '40px',
+                    right: '40px',
+                    bottom: '40px',
+                    border: '1px solid #ccc',
+                    background: '#fff',
+                    overflow: 'auto',
+                    WebkitOverflowScrolling: 'touch',
+                    borderRadius: '4px',
+                    outline: 'none',
+                    padding: '20px',
+                    backgroundColor: 'rgba(30, 41, 59, 1)'
+                  }
+                  }}
+                  contentLabel="New Talk">
+
             <div className="modal-content">
               <span className="close" onClick={this.closeModal}>
                 &times;
               </span>
               <NewTalkEditor currentTalkCatetory={this.props.currentTalkCatetory} />
             </div>
-          </div>
+          </Modal>
         )}
       </div>
     );
@@ -92,8 +122,9 @@ class NewTalkEditor extends Component {
     const title = this.state.title;
     const jcontent = convertToRaw(this.state.editorState.getCurrentContent());
     const content = JSON.stringify(jcontent).replace(/"/g, '\\"');
-  
-    if(process.env.userInfo === undefined || process.env.userInfo.USER_ID === undefined || process.env.userInfo.USER_ID === ''){
+    if(process.env.userInfo === undefined || 
+       process.env.userInfo.USER_ID === undefined || 
+       process.env.userInfo.USER_ID === ''){
       alert(`the user is not logged in. sign in first.`);
       return;
     }
@@ -107,7 +138,8 @@ class NewTalkEditor extends Component {
       "userId": "${process.env.userInfo.USER_ID}"
      }`).then((result) => {
       if(result.error_code==0){
-        ;
+        alert("Suucessfully writed.");
+        
       }else {
         alert(JSON.stringify(result.error_message));
       }
@@ -117,33 +149,28 @@ class NewTalkEditor extends Component {
   render() {
     const { editorState, category, title, darkMode } = this.state;
 
-    const categoryInputStyle = {
-      flex: '1',
-      color: darkMode ? 'white' : 'darkgray' // Set text color based on dark or light mode
-    };
-
-    const titleInputStyle = {
-      flex: '1',
-      color: darkMode ? 'white' : 'darkgray' // Set text color based on dark or light mode
-    };
-
     return (
       <div>
-        <div style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
-          <label style={{ marginRight: '10px', width: '80px', color: darkMode ? 'white' : 'darkgray' }}>Category:</label>
-          <input className="bg-white w-full" type="text" value={category} onChange={this.handleCategoryChange}/>
+        <div className="flex items-center mb-2">
+          <label className="w-20 mr-2 text-slate-100">
+            Category
+          </label>
+          <input className="w-full" 
+                 type="text" 
+                 value={category} 
+                 onChange={this.handleCategoryChange}/>
         </div>
-        <div style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
-          <label style={{ marginRight: '10px', width: '80px', color: darkMode ? 'white' : 'darkgray' }}>Title:</label>
-          <input className="bg-white w-full" type="text" value={title} onChange={this.handleTitleChange} />
+        <div className="flex items-center mb-2">
+        <label className="w-20 mr-2 text-slate-100">Title</label>
+          <input className="w-full" type="text" value={title} onChange={this.handleTitleChange} />
         </div>
         <div style={{ height: '100%' }}>
           <Editor
             editorState={editorState}
-            wrapperClassName="rich-editor-wrapper"
-            editorClassName="rich-editor"
+            // wrapperClassName="rich-editor-wrapper"
+            // editorClassName="rich-editor"
             onEditorStateChange={this.onEditorStateChange}
-            toolbar={{
+            toolbar={{ 
               options: ['inline', 'blockType', 'fontSize', 'fontFamily', 'list', 'textAlign', 'colorPicker', 'link', 'emoji', 'remove', 'history'],
               inline: { options: ['bold', 'italic', 'underline', 'strikethrough'] },
               blockType: { options: ['Normal', 'H1', 'H2', 'H3', 'H4', 'H5', 'H6', 'Blockquote', 'Code'] },
@@ -152,15 +179,15 @@ class NewTalkEditor extends Component {
             }}
             editorStyle={{
               padding: 0,
-              height: '100%',
-              backgroundColor: 'white',
+              // height: '100%',
+              // backgroundColor: 'slate',
               border: '1px solid #ddd',
               borderRadius: '4px'
             }}
             placeholder="The message goes here..."
           />
         </div>
-        <button className="mb-5 text-gray-600 dark:text-gray-100 hover:text-gray-400" 
+        <button className="mb-5 text-slate-100" 
                 onClick={this.createTalkItem}>
           Save
         </button>
@@ -169,4 +196,4 @@ class NewTalkEditor extends Component {
   }
 }
 
-export { NewTalkEditorModal };
+export { TalkEditorModal };
