@@ -50,14 +50,14 @@ export default function Talk() {
           <link></link>
       </Head>   
       <BodySection>
-      <div className="container mx-auto flex flex-col">
+      <div className="container mx-auto flex flex-col px-5 md:flex-col items-center">
           <h1 className="title-font sm:text-4xl text-3xl mb-10 font-medium text-green-900">
             오픈톡
           </h1>
           <pre className="mb-8 leading-relaxed text-white-900">
               여기 있는 모든 사람들과 친분을 쌓아보세요.
             </pre>          
-          <nav className="flex flex-wrap items-center text-base justify-center">
+          <nav className="flex flex-wrap w-full items-center text-base justify-center">
             <Link legacyBehavior href="">
               <a className={currentTalkCatetory==="회의" ? 
                            "mr-5 text-yellow-500 dark:text-yellow-500 hover:text-gray-400" : 
@@ -108,9 +108,7 @@ export default function Talk() {
             </Link>
           </nav>
 
-          <div className="flex 
-                      flex-col 
-                      items-left 
+          <div className="flex flex-col w-full
                       justify-top 
                       min-h-[calc(100vh-_15rem)] 
                       px-5 
