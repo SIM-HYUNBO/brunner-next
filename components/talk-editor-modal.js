@@ -93,9 +93,11 @@ class TalkEditorModal extends Component {
 class TalkEditor extends Component {
   constructor(props) {
     super(props);
+    
+    // this.props.mode "New" or "Edit"
+    
     this.state = {
-      editorState: props.mode === 'New' ? EditorState.createEmpty(): 
-                                          EditorState.createWithContent(ContentState.createFromText(props.currentContent)),
+      editorState: EditorState.createWithContent(ContentState.createFromText(this.props.currentContent === undefined ? "": this.props.currentContent)),
       category: props.currentTalkCatetory,
       title: props.currentTitle,
       darkMode: false // Assuming you have a darkMode state in your application
