@@ -1,4 +1,6 @@
 import Image from 'next/image';
+import { useState, useRef } from 'react'
+import {TalkEditorModal} from '../components/talk-editor-modal';
 
 export default function TalkItem({data: talkItem}){
     const talkId = talkItem.TALK_ID;
@@ -8,11 +10,18 @@ export default function TalkItem({data: talkItem}){
     const talkCategory = talkItem.TALK_CATEGORY;
     const parentTalkId = talkItem.PARENT_TALK_ID;
     const imgSrc = "/brunnerLogo.png";
-
+    const talkEditorModal = useRef()
+    
     return (
         // 대화 항목
         <div className="talk-item flex flex-col w-full h-auto mx-auto border-y-2 border-gray-300 mb-1">
-
+          <TalkEditorModal className="m-10"
+                          ref={talkEditorModal} 
+                          mode='Edit'
+                          currentTalkCatetory={talkCategory}
+                          currentTitle={talkTitle}
+                          currentContent={talkContent}
+                          />
           {/* 타이틀 */}
           <div className="flex flex-row w-full h-auto">  
             
@@ -37,7 +46,6 @@ export default function TalkItem({data: talkItem}){
           <div className="flex flex-row w-full h-full p-2 text-black dark:text-white">  
           {talkContent}
           </div>
-
         </div>
     )
 }

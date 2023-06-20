@@ -6,7 +6,7 @@ import TalkItem from "../components/talk-item";
 import { useState, useEffect, useRef } from 'react'
 import RequestServer from '../components/requestServer'
 
-import {TalkEditorModal} from './../components/talk-editor';
+import {TalkEditorModal} from '../components/talk-editor-modal';
 
 export default function Talk() {
 
@@ -116,8 +116,10 @@ export default function Talk() {
               <div className='grid py-1 mx-1 mt-10'>
                 <TalkEditorModal className="m-10"
                                 ref={talkEditorModal} 
-                                currentTalkCatetory={currentTalkCatetory}>
-                </TalkEditorModal>
+                                mode='New'
+                                currentTalkCatetory={currentTalkCatetory}
+                                />
+
                 {talkItems.map(aTalkItem=>(
                   <TalkItem data={aTalkItem} key={aTalkItem.TALK_ID}></TalkItem> 
                 ))}              

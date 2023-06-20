@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { EditorState } from 'draft-js';
+import { EditorState, ContentState  } from 'draft-js';
 import dynamic from 'next/dynamic';
 const Editor = dynamic(
   () => import('react-draft-wysiwyg').then((mod) => mod.Editor),
@@ -36,7 +36,12 @@ class TalkEditorModal extends Component {
 
     return (
       <div>
-        <Link href="" onClick={this.openModal}><h2 className='mb-2'>Write</h2></Link>
+        <Link href="" onClick={this.openModal}>
+          <h2 className='mb-2'>
+            {this.props.mode} {/* New or Edit */}
+          </h2>
+        </Link>
+
         {showModal && (
           <Modal className="modal" 
                   isOpen={showModal}
@@ -72,7 +77,11 @@ class TalkEditorModal extends Component {
               <span className="close" onClick={this.closeModal}>
                 &times;
               </span>
-              <NewTalkEditor currentTalkCatetory={this.props.currentTalkCatetory} />
+              <TalkEditor currentTalkCatetory={this.props.currentTalkCatetory}
+                          currentTitle={this.props.currentTitle}
+                          currentContent={this.props.currentContent}
+                          currentMode={this.props.mode}
+              />
             </div>
           </Modal>
         )}
@@ -81,13 +90,14 @@ class TalkEditorModal extends Component {
   }
 }
 
-class NewTalkEditor extends Component {
+class TalkEditor extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      editorState: EditorState.createEmpty(),
+      editorState: props.mode === 'New' ? EditorState.createEmpty(): 
+                                          EditorState.createWithContent(ContentState.createFromText(props.currentContent)),
       category: props.currentTalkCatetory,
-      title: '',
+      title: props.currentTitle,
       darkMode: false // Assuming you have a darkMode state in your application
     };
   }
