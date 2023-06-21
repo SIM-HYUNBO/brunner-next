@@ -20,6 +20,14 @@ class TalkEditorModal extends Component {
   }
 
   openModal = () => {
+    if(process.env.userInfo === undefined || 
+      process.env.userInfo.USER_ID === undefined || 
+      process.env.userInfo.USER_ID === ''){
+     alert(`the user is not logged in. sign in first.`);
+     
+     return;
+   }
+
     this.setState({
       showModal: true
     });
@@ -37,7 +45,7 @@ class TalkEditorModal extends Component {
     return (
       <div>
         <Link href="" onClick={this.openModal}>
-          <h2 className='mb-2'>
+          <h2 className='mt-2'>
             {this.props.mode === 'New'? '📑': '🖌'}  
           </h2>
         </Link>
@@ -201,7 +209,7 @@ class TalkEditor extends Component {
         </div>
         <button className="mb-5 text-slate-100" 
                 onClick={this.createTalkItem}>
-          Save
+          ✔
         </button>
       </div>
     );
