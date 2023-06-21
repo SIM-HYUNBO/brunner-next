@@ -38,7 +38,7 @@ class TalkEditorModal extends Component {
       <div>
         <Link href="" onClick={this.openModal}>
           <h2 className='mb-2'>
-            {this.props.mode} {/* New or Edit */}
+            {this.props.mode === 'New'? '📑': '🖌'}  
           </h2>
         </Link>
 

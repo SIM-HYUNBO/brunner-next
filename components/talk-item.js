@@ -14,38 +14,40 @@ export default function TalkItem({data: talkItem}){
     
     return (
         // 대화 항목
-        <div className="talk-item flex flex-col w-full h-auto mx-auto border-y-2 border-gray-300 mb-1">
-          <TalkEditorModal className="m-10"
-                          ref={talkEditorModal} 
-                          mode='Edit'
-                          currentTalkCatetory={talkCategory}
-                          currentTitle={talkTitle}
-                          currentContent={talkContent}
-                          />
-          {/* 타이틀 */}
-          <div className="flex flex-row w-full h-auto">  
-            
-            {/* 타이틀 이미지 */}
-            <Image src={imgSrc} 
-                    alt='talkUserId'
-                    width={0} 
-                    height={0} 
-                    sizes="100vw" 
-                    style={{ width: '40px', height: '40px', padding: '10px' }} 
-                    objectfit="cover" 
-                    quality={100}
-                    />
+        <div className=" border-b-2 border-b-yellow-100">
+          <div className="talk-item flex flex-row w-full h-auto mx-auto mb-1">
+            <TalkEditorModal className="m-10"
+                            ref={talkEditorModal} 
+                            mode='Edit'
+                            currentTalkCatetory={talkCategory}
+                            currentTitle={talkTitle}
+                            currentContent={talkContent}
+                            />
+            {/* 타이틀 */}
+            <div className="flex flex-row w-full h-auto">  
+              
+              {/* 타이틀 이미지 */}
+              <Image src={imgSrc} 
+                      alt='talkUserId'
+                      width={0} 
+                      height={0} 
+                      sizes="100vw" 
+                      style={{ width: '40px', height: '40px', padding: '10px' }} 
+                      objectfit="cover" 
+                      quality={100}
+                      />
 
-                {/* 글 제목 */}
-                <div className="flex flex-col w-full p-2 border-b-gray-300 border-b-2 text-black dark:text-white">
-                  <b>[{talkUserId}] {talkTitle}</b>
-                </div>
+                  {/* 글 제목 */}
+                  <div className="flex flex-col w-full p-2 text-black dark:text-white">
+                    <b>[{talkUserId}] {talkTitle}</b>
+                  </div>
+            </div>
           </div>
-          
+         
           {/* 글 본문 */}
-          <div className="flex flex-row w-full h-full p-2 text-black dark:text-white">  
+          <div className="flex flex-row w-full h-full mb-2 p-2 text-black dark:text-white">  
           {talkContent}
           </div>
         </div>
-    )
+     )
 }
