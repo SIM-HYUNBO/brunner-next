@@ -6,7 +6,7 @@ export default function TalkItem({data: talkItem}){
     const talkId = talkItem.TALK_ID;
     const talkUserId = talkItem.TALK_USER_ID;
     const talkTitle = talkItem.TALK_TITLE;
-    const talkContent = talkItem.TALK_CONTENT;
+    const talkContent = talkItem.TALK_CONTENT; // json string array
     const talkCategory = talkItem.TALK_CATEGORY;
     const parentTalkId = talkItem.PARENT_TALK_ID;
     const imgSrc = "/brunnerLogo.png";
@@ -46,7 +46,9 @@ export default function TalkItem({data: talkItem}){
          
           {/* 글 본문 */}
           <div className="flex flex-row w-full h-full mb-2 p-2 text-black dark:text-white">  
-          {talkContent}
+            <pre>
+              {talkContent.replaceAll('"', '').replaceAll(',', '\n')}
+            </pre>
           </div>
         </div>
      )

@@ -105,7 +105,7 @@ class TalkEditor extends Component {
     // this.props.mode "New" or "Edit"
     
     this.state = {
-      editorState: EditorState.createWithContent(ContentState.createFromText(this.props.currentContent === undefined ? "": this.props.currentContent)),
+      editorState: EditorState.createWithContent(ContentState.createFromText(this.props.currentContent === undefined ? "": this.props.currentContent.replaceAll('"', '').replaceAll(',', '\n'))),
       category: props.currentTalkCatetory,
       title: props.currentTitle,
       darkMode: false // Assuming you have a darkMode state in your application
@@ -134,14 +134,13 @@ class TalkEditor extends Component {
     // Handle submission logic here
     // For example, you can access the category, title, and editorState using this.state
     // You can send the data to a backend API, update the state of the parent component, etc.
-    console.log('Category:', this.state.category);
-    console.log('Title:', this.state.title);
-    console.log('Editor State:', this.state.editorState);
-
+  
     const category = this.state.category;
     const title = this.state.title;
-    const jcontent = convertToRaw(this.state.editorState.getCurrentContent());
-    const content = JSON.stringify(jcontent).replace(/"/g, '\\"');
+
+    const blocks = convertToRaw(this.state.editorState.getCurrentContent()).blocks;
+    const content = blocks.map(block => block.text);
+    
     if(process.env.userInfo === undefined || 
        process.env.userInfo.USER_ID === undefined || 
        process.env.userInfo.USER_ID === ''){
