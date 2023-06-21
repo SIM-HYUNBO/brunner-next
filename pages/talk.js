@@ -55,7 +55,7 @@ export default function Talk() {
             오픈톡
           </h1>
           <pre className="mb-8 leading-relaxed text-white-900">
-              여기 있는 모든 사람들과 친분을 쌓아보세요.
+              모든 사람들과 친분을 쌓아보세요.
             </pre>          
           <nav className="flex flex-wrap w-full items-center text-base justify-center">
             <Link legacyBehavior href="">

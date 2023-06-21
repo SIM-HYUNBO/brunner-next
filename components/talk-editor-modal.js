@@ -102,10 +102,12 @@ class TalkEditor extends Component {
   constructor(props) {
     super(props);
     
-    // this.props.mode "New" or "Edit"
-    
+    // this.props.mode "New" or "Edit"    
     this.state = {
-      editorState: EditorState.createWithContent(ContentState.createFromText(this.props.currentContent === undefined ? "": this.props.currentContent.replaceAll('"', '').replaceAll(',', '\n'))),
+      editorState: EditorState.createWithContent(ContentState.createFromText(
+                     this.props.currentContent === undefined ? "": 
+                      this.props.currentContent.replaceAll('"', '').replaceAll(',', '\n')  // <= 여기 3번 : 조회한 내용으로 표시 
+                   )),
       category: props.currentTalkCatetory,
       title: props.currentTitle,
       darkMode: false // Assuming you have a darkMode state in your application
@@ -139,7 +141,7 @@ class TalkEditor extends Component {
     const title = this.state.title;
 
     const blocks = convertToRaw(this.state.editorState.getCurrentContent()).blocks;
-    const content = blocks.map(block => block.text);
+    const content = blocks.map(block => block.text); // <= 여기 1번 : 입력한 내용으로 저장
     
     if(process.env.userInfo === undefined || 
        process.env.userInfo.USER_ID === undefined || 

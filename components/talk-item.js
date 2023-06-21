@@ -47,7 +47,7 @@ export default function TalkItem({data: talkItem}){
           {/* 글 본문 */}
           <div className="flex flex-row w-full h-full mb-2 p-2 text-black dark:text-white">  
             <pre>
-              {talkContent.replaceAll('"', '').replaceAll(',', '\n')}
+              { talkContent.replaceAll('"', '').replaceAll(',', '\n') } {/* <= 여기 2번 : 조회한 내용으로 표시 */}
             </pre>
           </div>
         </div>
