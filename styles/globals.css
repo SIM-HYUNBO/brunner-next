@@ -14,11 +14,6 @@ pre {
     @apply text-slate-900 dark:text-white
 }
 
-html {
-    position: relative;
-    min-height: 100%;
-}
-
 footer {
     @apply text-gray-600 dark:text-white bg-gray-100 dark:bg-gray-600/50
 }
