@@ -14,7 +14,7 @@ export default function App({ Component, pageProps }) {
        <Component {...pageProps} />
       </ThemeProvider>
 
-      <style global jsx>{`
+      {/* <style global jsx>{`
         html,
         body,
         body > div:first-child,
@@ -22,7 +22,7 @@ export default function App({ Component, pageProps }) {
         div#__next > div {
           height: 100%;
         }
-      `}</style>
+      `}</style> */}
   </div>
   );
 }
