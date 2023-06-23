@@ -3,7 +3,7 @@ import Footer from './footer'
 
 export default function Layout({children}){
     return (
-        <div className="bg-primary h-100vh">
+        <div className="bg-primary h-screen w-screen">
             <Header/>
             <div>{children}</div>
             <Footer/>
