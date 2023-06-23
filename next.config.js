@@ -7,11 +7,12 @@ const nextConfig = {
     's3.us-west-2.amazononaws.com'
   ]
 },
-webpack: (config) => {
+webpack: function (config, options) {
+  // console.log(options.webpack.version); // Should be webpack v5 now
+  config.experiments = {};
   config.resolve.fallback = { fs: false };
-
   return config;
-}
+},
 }
 
 module.exports = nextConfig
