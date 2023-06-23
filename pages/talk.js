@@ -116,7 +116,7 @@ export default function Talk() {
               <div className='grid py-1 mx-1 mt-10'>
                 <TalkEditorModal className="m-10"
                                 ref={talkEditorModal} 
-                                mode='New'
+                                editMode='New'
                                 currentTalkCatetory={currentTalkCatetory}
                                 />
 

@@ -18,8 +18,9 @@ export default function TalkItem({data: talkItem}){
           <div className="talk-item flex flex-row w-full h-auto mx-auto mb-1">
             <TalkEditorModal className="m-10"
                             ref={talkEditorModal} 
-                            mode='Edit'
+                            editMode='Edit'
                             currentTalkCatetory={talkCategory}
+                            currentTalkId={talkId}
                             currentTitle={talkTitle}
                             currentContent={talkContent}
                             />

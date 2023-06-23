@@ -46,7 +46,7 @@ class TalkEditorModal extends Component {
       <div>
         <Link href="" onClick={this.openModal}>
           <h2 className='mt-2'>
-            {this.props.mode === 'New'? '📑': '🖌'}  
+            {this.props.editMode === 'New'? '📑': '🖌'}  
           </h2>
         </Link>
 
@@ -86,9 +86,10 @@ class TalkEditorModal extends Component {
                 &times;
               </span>
               <TalkEditor currentTalkCatetory={this.props.currentTalkCatetory}
+                          currentTalkId={this.props.currentTalkId}
                           currentTitle={this.props.currentTitle}
                           currentContent={this.props.currentContent}
-                          currentMode={this.props.mode}
+                          editMode={this.props.editMode}
               />
             </div>
           </Modal>
@@ -102,7 +103,6 @@ class TalkEditor extends Component {
   constructor(props) {
     super(props);
     
-    // this.props.mode "New" or "Edit"    
     this.state = {
       editorState: EditorState.createWithContent(ContentState.createFromText(
                      this.props.currentContent === undefined ? "": 
@@ -115,6 +115,11 @@ class TalkEditor extends Component {
   }
 
   onEditorStateChange = (editorState) => {
+    if(this.props.currentTalkId.endsWith(`_${process.env.userInfo.USER_ID}`) == false){
+      alert("this talk is read only.");
+      return;
+  }
+
     this.setState({
       editorState
     });
@@ -132,7 +137,7 @@ class TalkEditor extends Component {
     });
   };
 
-  createTalkItem = () => {
+  createOrEditTalkItem = () => {
     // Handle submission logic here
     // For example, you can access the category, title, and editorState using this.state
     // You can send the data to a backend API, update the state of the parent component, etc.
@@ -150,9 +155,18 @@ class TalkEditor extends Component {
       return;
     }
 
+    if(this.props.currentTalkId.endsWith(`_${process.env.userInfo.USER_ID}`) == false){
+        alert("Editing this talk is not permitted.");
+        return;
+    }
+
+    const commandName = this.props.editMode === "New"? "talk.createTalkItem": "talk.editTalkItem"
+  
     RequestServer("POST", 
-    `{"commandName": "talk.createTalkItem", 
+    `{"commandName": "${commandName}", 
       "systemCode":"00",
+      "editMode":"${this.props.editMode}",
+      "talkId":"${this.props.currentTalkId}",
       "talkCategory": "${category}",
       "title": "${title}",
       "content": "${content}",
@@ -166,6 +180,8 @@ class TalkEditor extends Component {
       }
     })
   }
+
+  
 
   render() {
     const { editorState, category, title, darkMode } = this.state;
@@ -209,7 +225,7 @@ class TalkEditor extends Component {
           />
         </div>
         <button className="mb-5 text-slate-100" 
-                onClick={this.createTalkItem}>
+                onClick={this.createOrEditTalkItem}>
           ✔
         </button>
       </div>
