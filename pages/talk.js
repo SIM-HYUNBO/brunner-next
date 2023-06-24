@@ -58,6 +58,14 @@ export default function Talk() {
               모든 사람들과 친분을 쌓아보세요.
             </pre>          
           <nav className="flex flex-wrap w-full items-center text-base justify-center">
+          <Link legacyBehavior href="">
+              <a className={currentTalkCatetory==="자동차" ? 
+                           "mr-5 text-yellow-500 dark:text-yellow-500 hover:text-gray-400" : 
+                           "mr-5 text-gray-600 dark:text-gray-100 hover:text-gray-400"} 
+                onClick={(e) => getTalkItems("00", '자동차', '99991231240000_zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz')}>
+                프로젝트
+              </a>
+            </Link>
             <Link legacyBehavior href="">
               <a className={currentTalkCatetory==="회의" ? 
                            "mr-5 text-yellow-500 dark:text-yellow-500 hover:text-gray-400" : 
@@ -75,27 +83,19 @@ export default function Talk() {
               </a>
             </Link>
             <Link legacyBehavior href="">
-              <a className={currentTalkCatetory==="IT" ? 
-                           "mr-5 text-yellow-500 dark:text-yellow-500 hover:text-gray-400" : 
-                           "mr-5 text-gray-600 dark:text-gray-100 hover:text-gray-400"} 
-                onClick={(e) => getTalkItems("00", 'IT', '99991231240000_zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz')}>
-                IT
-              </a>
-            </Link>
-            <Link legacyBehavior href="">
-              <a className={currentTalkCatetory==="자동차" ? 
-                           "mr-5 text-yellow-500 dark:text-yellow-500 hover:text-gray-400" : 
-                           "mr-5 text-gray-600 dark:text-gray-100 hover:text-gray-400"} 
-                onClick={(e) => getTalkItems("00", '자동차', '99991231240000_zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz')}>
-                프로젝트
-              </a>
-            </Link>
-            <Link legacyBehavior href="">
               <a className={currentTalkCatetory==="연애" ? 
                            "mr-5 text-yellow-500 dark:text-yellow-500 hover:text-gray-400" : 
                            "mr-5 text-gray-600 dark:text-gray-100 hover:text-gray-400"} 
                 onClick={(e) => getTalkItems("00", '연애', '99991231240000_zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz')}>
-                코드리뷰
+                코드 리뷰
+              </a>
+            </Link>
+            <Link legacyBehavior href="">
+              <a className={currentTalkCatetory==="IT" ? 
+                           "mr-5 text-yellow-500 dark:text-yellow-500 hover:text-gray-400" : 
+                           "mr-5 text-gray-600 dark:text-gray-100 hover:text-gray-400"} 
+                onClick={(e) => getTalkItems("00", 'IT', '99991231240000_zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz')}>
+                IT 기타
               </a>
             </Link>
             <Link legacyBehavior href="">
