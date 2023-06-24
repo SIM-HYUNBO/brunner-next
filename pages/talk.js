@@ -87,7 +87,7 @@ export default function Talk() {
                            "mr-5 text-yellow-500 dark:text-yellow-500 hover:text-gray-400" : 
                            "mr-5 text-gray-600 dark:text-gray-100 hover:text-gray-400"} 
                 onClick={(e) => getTalkItems("00", '자동차', '99991231240000_zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz')}>
-                자동차
+                프로젝트
               </a>
             </Link>
             <Link legacyBehavior href="">
@@ -95,7 +95,7 @@ export default function Talk() {
                            "mr-5 text-yellow-500 dark:text-yellow-500 hover:text-gray-400" : 
                            "mr-5 text-gray-600 dark:text-gray-100 hover:text-gray-400"} 
                 onClick={(e) => getTalkItems("00", '연애', '99991231240000_zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz')}>
-                연애
+                코드리뷰
               </a>
             </Link>
             <Link legacyBehavior href="">
