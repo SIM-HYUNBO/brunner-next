@@ -1,6 +1,13 @@
 import SignoutButton from "./signout-button";
+import { useState } from 'react'
 
 export default function UserInfo(){
+
+  const [loginUser, setLoginUser] = useState();
+
+  useEffect(() => {
+    setLoginUser(process.env.userInfo)
+  }, [process.env.userInfo]);  
 
     // userInfo : 현재값 가져오기 getter
     // setUserInfo : 현재값 바꾸기 setter
