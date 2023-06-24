@@ -39,6 +39,10 @@ class TalkEditorModal extends Component {
     });
   };
 
+  getTalkItems = () => {
+    this.props.getTalkItems();
+  };
+
   isMyTalk(){
     return this.props?.currentTalkId?.endsWith(`_${process.env.userInfo?.USER_ID}`)  
   }
@@ -96,6 +100,7 @@ class TalkEditorModal extends Component {
                           editMode={this.props.editMode}
                           isMyTalk={this.isMyTalk}
                           closeModal={this.closeModal}
+                          getTalkItems={this.getTalkItems}
               />
             </div>
           </Modal>
@@ -183,6 +188,7 @@ class TalkEditor extends Component {
       if(result.error_code==0){
         alert("Sucessfully writed.");
         this.props.closeModal();
+        this.props.getTalkItems();
       }else {
         alert(JSON.stringify(result.error_message));
       }

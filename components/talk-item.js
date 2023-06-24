@@ -11,6 +11,7 @@ export default function TalkItem({data: talkItem}){
     const parentTalkId = talkItem.PARENT_TALK_ID;
     const imgSrc = "/brunnerLogo.png";
     const talkEditorModal = useRef()
+    const getTalkItems = this.props.getTalkItems;
     
     return (
         // 대화 항목
@@ -23,6 +24,7 @@ export default function TalkItem({data: talkItem}){
                             currentTalkId={talkId}
                             currentTitle={talkTitle}
                             currentContent={talkContent}
+                            getTalkItems={getTalkItems}
                             />
             {/* 타이틀 */}
             <div className="flex flex-row w-full h-auto">  
