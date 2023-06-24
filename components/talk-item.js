@@ -2,7 +2,7 @@ import Image from 'next/image';
 import { useState, useRef } from 'react'
 import {TalkEditorModal} from '../components/talk-editor-modal';
 
-export default function TalkItem({data: talkItem}){
+export default function TalkItem({data: talkItem, refreshfunc: getTalkItems}){
     const talkId = talkItem.TALK_ID;
     const talkUserId = talkItem.TALK_USER_ID;
     const talkTitle = talkItem.TALK_TITLE;
@@ -11,7 +11,6 @@ export default function TalkItem({data: talkItem}){
     const parentTalkId = talkItem.PARENT_TALK_ID;
     const imgSrc = "/brunnerLogo.png";
     const talkEditorModal = useRef()
-    const getTalkItems = this.props.getTalkItems;
     
     return (
         // 대화 항목
