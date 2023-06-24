@@ -12,11 +12,9 @@ export default function App({ Component, pageProps }) {
     const prevUserInfo=localStorage.getItem('userInfo');
     console.log(`prevUserInfo ${prevUserInfo}`);
 
-    // if(!==undefined) {}
-    //   const
-    //   process.env.userInfo=JSON.parse()
-    
-      
+    if(prevUserInfo!==undefined) {
+      process.env.userInfo=JSON.parse(prevUserInfo)
+    }        
   }, []);
 
   return  (
