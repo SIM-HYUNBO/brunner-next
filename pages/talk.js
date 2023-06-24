@@ -121,7 +121,7 @@ export default function Talk() {
 
                 {talkItems.map(aTalkItem=>(
                   
-                  <TalkItem data={aTalkItem} refreshfunc={this.getTalkItems} key={aTalkItem.TALK_ID}></TalkItem> 
+                  <TalkItem data={aTalkItem} refreshfunc={getTalkItems} key={aTalkItem.TALK_ID}></TalkItem> 
                 ))}              
               </div>
           </div>
