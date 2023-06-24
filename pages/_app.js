@@ -11,10 +11,7 @@ export default function App({ Component, pageProps }) {
   useEffect(() => {
     const prevUserInfo=localStorage.getItem('userInfo');
     console.log(`prevUserInfo ${prevUserInfo}`);
-
-    if(prevUserInfo) {
-        process.env.userInfo=prevUserInfo;
-    }        
+    process.env.userInfo=prevUserInfo;
   }, []);
 
   return  (
