@@ -6,7 +6,7 @@ export default function UserInfo(){
   const userName = ()=>{
     return typeof process.env.userInfo == "undefined" || 
     typeof process.env.userInfo.USER_NAME == "undefined" ? 
-    '': process.env.userInfo.USER_NAME;
+    '': process.env.userInfo.USER_NAME +'님';
   }
 
     // userInfo : 현재값 가져오기 getter
@@ -15,7 +15,7 @@ export default function UserInfo(){
         <div className="flex flex-row ml-3 mr-1 text-gray-600 dark:text-gray-400 align-middle">
           <DarkModeToggleButton />
           <p >
-            {userName()}님
+            {userName()}
           </p>
           <SignoutButton />
         </div>
