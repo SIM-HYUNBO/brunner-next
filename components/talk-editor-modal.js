@@ -20,9 +20,9 @@ class TalkEditorModal extends Component {
   }
 
   openModal = () => {
-    if(process.env.userInfo === undefined || 
-      process.env.userInfo.USER_ID === undefined || 
-      process.env.userInfo.USER_ID === ''){
+    if(typeof process.env.userInfo == "undefined" || 
+      typeof process.env.userInfo.USER_ID === "undefined" || 
+      typeof process.env.userInfo.USER_ID === ''){
      alert(`the user is not logged in. sign in first.`);
      
      return;
@@ -40,7 +40,7 @@ class TalkEditorModal extends Component {
   };
 
   isMyTalk(){
-    return this.props?.currentTalkId?.endsWith(`_${process.env.userInfo.USER_ID}`)  
+    return this.props?.currentTalkId?.endsWith(`_${process.env.userInfo?.USER_ID}`)  
   }
 
   render() {
@@ -110,7 +110,7 @@ class TalkEditor extends Component {
     
     this.state = {
       editorState: EditorState.createWithContent(ContentState.createFromText(
-                     this.props.currentContent === undefined ? "": 
+                     typeof this.props.currentContent == "undefined" ? "": 
                       this.props.currentContent.replaceAll('"', '').replaceAll(',', '\n')  // <= 여기 3번 : 조회한 내용으로 표시 
                    )),
       category: props.currentTalkCatetory,
@@ -155,8 +155,8 @@ class TalkEditor extends Component {
     const blocks = convertToRaw(this.state.editorState.getCurrentContent()).blocks;
     const content = blocks.map(block => block.text); // <= 여기 1번 : 입력한 내용으로 저장
     
-    if(process.env.userInfo === undefined || 
-       process.env.userInfo.USER_ID === undefined || 
+    if(typeof process.env.userInfo == "undefined" || 
+       typeof process.env.userInfo.USER_ID == "undefined" || 
        process.env.userInfo.USER_ID === ''){
       alert(`the user is not logged in. sign in first.`);
       return;

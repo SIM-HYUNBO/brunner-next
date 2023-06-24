@@ -6,10 +6,13 @@ import { useEffect } from 'react'
 export const signinCss = styles;
 export default function App({ Component, pageProps }) {
   dotenv.config();
-  // console.log(`process.env:${JSON.stringify(process.env)}`);
+  let prevUserInfo = {};
   
   useEffect(() => {
-    const prevUserInfo=localStorage.getItem('userInfo');
+    prevUserInfo=localStorage.getItem('userInfo');
+    if(typeof prevUserInfo != "undefined")
+         prevUserInfo=JSON.parse(prevUserInfo);
+    
     console.log(`prevUserInfo ${prevUserInfo}`);
     process.env.userInfo=prevUserInfo;
   }, []);

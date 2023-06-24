@@ -28,7 +28,7 @@ export default function SignoutButton(){
                                }`).then((result) => {
                   if(result.error_code==0){
                     process.env.userInfo=result.userInfo;
-                    localStorage.setItem('userInfo', undefined);
+                    localStorage.setItem('userInfo', JSON.stringify(process.env.userInfo));
                     router.push('/')  
                   }else {
                     alert(JSON.stringify(result.error_message));
