@@ -16,7 +16,7 @@ export default function Talk() {
   const talkEditorModal = useRef()
 
   useEffect(()=>{
-    getTalkItems("00", '99991231240000_zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz');
+    getTalkItems("00", currentTalkCatetory, '99991231240000_zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz');
   }, []);
 
   const getTalkItems = (systemCode, talkCategory, lastTalkId) => {
