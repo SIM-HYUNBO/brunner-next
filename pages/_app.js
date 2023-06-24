@@ -9,8 +9,10 @@ export default function App({ Component, pageProps }) {
   // console.log(`process.env:${JSON.stringify(process.env)}`);
   
   useEffect(() => {
-    process.env.userInfo=JSON.parse(localStorage.getItem('userInfo')===undefined?'{}':localStorage.getItem('userInfo'))
-    console.log(`retrieved ${process.env.userInfo}`);
+    if(localStorage.getItem('userInfo')!==undefined)
+      process.env.userInfo=JSON.parse(localStorage.getItem('userInfo'))
+    
+      console.log(`retrieved ${process.env.userInfo}`);
   }, []);
 
   return  (
