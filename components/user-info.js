@@ -3,10 +3,10 @@ import { useState } from 'react'
 
 export default function UserInfo(){
 
-  const [loginUser, setLoginUser] = useState();
+  const [userInfo, setUserInfo] = useState();
 
   useEffect(() => {
-    setLoginUser(process.env.userInfo)
+    setUserInfo(process.env.userInfo)
   }, [process.env.userInfo]);  
 
     // userInfo : 현재값 가져오기 getter
@@ -14,7 +14,7 @@ export default function UserInfo(){
     return (
         <>
           <p className="ml-3 mr-1 text-gray-600 dark:text-gray-400">
-            {process.env.userInfo === undefined || process.env.userInfo.USER_NAME === undefined ? '': `${process.env.userInfo.USER_NAME}님`}
+            {userInfo === undefined || userInfo.USER_NAME === undefined ? '': `${userInfo.USER_NAME}님`}
           </p>
           <SignoutButton />
         </>
