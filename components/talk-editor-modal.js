@@ -39,8 +39,8 @@ class TalkEditorModal extends Component {
     });
   };
 
-  getTalkItems = () => {
-    this.props.getTalkItems();
+  getTalkItems = (systemCode, talkCategory, lastTalkId) => {
+    this.props.getTalkItems(systemCode, talkCategory, lastTalkId);
   };
 
   isMyTalk(){
@@ -188,7 +188,7 @@ class TalkEditor extends Component {
       if(result.error_code==0){
         alert("Sucessfully writed.");
         this.props.closeModal();
-        this.props.getTalkItems();
+        this.props.getTalkItems("00", category, '99991231240000_zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz');
       }else {
         alert(JSON.stringify(result.error_message));
       }
