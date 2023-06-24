@@ -13,7 +13,6 @@ export default function App({ Component, pageProps }) {
     if(isJson(prevUserInfo))
          prevUserInfo=JSON.parse(prevUserInfo);
     
-    console.log(`prevUserInfo ${prevUserInfo}`);
     process.env.userInfo=prevUserInfo;
   }, []);
 

@@ -8,8 +8,6 @@ export default async function RequestServer(method, jRequest){
   const serverIp= process.env.NEXT_PUBLIC_BACKEND_SERVER_IP;
   const serverPort= process.env.NEXT_PUBLIC_BACKEND_SERVER_PORT;
 
-  console.log(`:${process.env.NEXT_PUBLIC_NODE_ENV}`)
-
   if(method === 'GET'){
     return await RequestServerGet(protocol, serverIp, serverPort, jRequest);
   } else if (method === 'POST'){ 
