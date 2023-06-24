@@ -2,8 +2,19 @@
 @tailwind components;
 @tailwind utilities;
 
-.bg-primary {
-    @apply bg-white dark:bg-slate-800
+/* 주배경 (min-h-[footer높이(5rem)]) */
+.bg-primary { 
+    @apply
+     bg-white
+     dark:bg-slate-800 
+     h-fit 
+    min-h-[calc(100vh-5rem)] 
+    w-full
+}
+
+/* footer 높이:5rem */
+footer {
+    @apply text-gray-600 dark:text-white bg-gray-100 dark:bg-gray-600/50 h-20 w-screen relative bottom-0
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -15,13 +26,9 @@ pre {
 }
 
 html {
-    position: relative;
-    min-height: 100%;
+    @apply h-screen;
 }
 
-footer {
-    @apply text-gray-600 dark:text-white bg-gray-100 dark:bg-gray-600/50
-}
 
 a {
     @apply text-slate-100
@@ -43,4 +50,8 @@ p {
            hover:scale-105 
            hover:shadow-lg 
            dark:border-gray-200/50
+}
+
+.container {
+    @apply h-full
 }

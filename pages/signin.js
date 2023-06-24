@@ -49,7 +49,7 @@ export default function Signin() {
         <meta rel="icon" href="brunnerLogo.png"></meta>
         <link></link>
       </Head>   
-      <BodySection className="text-gray-600 body-font h-100vh min-h-[calc(100vh-_17.5rem)]">
+      <BodySection className="text-gray-600 body-font">
         <div className="container px-5 py-44 mx-auto flex flex-wrap items-center">
           <div className="lg:flex-grow md:w-1/2 lg:pr-24 md:pr-16 flex flex-col md:items-start md:text-left mb-16 md:mb-0 items-center text-center">
             <h2 className="text-gray-900 text-lg font-medium title-font">로그인</h2>

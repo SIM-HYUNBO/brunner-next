@@ -62,7 +62,7 @@ export default function Talk() {
               <a className={currentTalkCatetory==="자동차" ? 
                            "mr-5 text-yellow-500 dark:text-yellow-500 hover:text-gray-400" : 
                            "mr-5 text-gray-600 dark:text-gray-100 hover:text-gray-400"} 
-                onClick={(e) => getTalkItems("00", '자동차', '99991231240000_zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz')}>
+                onClick={(e) => getTalkItems("00", '프로젝트', '99991231240000_zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz')}>
                 프로젝트
               </a>
             </Link>
@@ -86,8 +86,8 @@ export default function Talk() {
               <a className={currentTalkCatetory==="연애" ? 
                            "mr-5 text-yellow-500 dark:text-yellow-500 hover:text-gray-400" : 
                            "mr-5 text-gray-600 dark:text-gray-100 hover:text-gray-400"} 
-                onClick={(e) => getTalkItems("00", '연애', '99991231240000_zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz')}>
-                코드 리뷰
+                onClick={(e) => getTalkItems("00", '코드리뷰', '99991231240000_zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz')}>
+                코드리뷰
               </a>
             </Link>
             <Link legacyBehavior href="">
@@ -95,7 +95,7 @@ export default function Talk() {
                            "mr-5 text-yellow-500 dark:text-yellow-500 hover:text-gray-400" : 
                            "mr-5 text-gray-600 dark:text-gray-100 hover:text-gray-400"} 
                 onClick={(e) => getTalkItems("00", 'IT', '99991231240000_zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz')}>
-                IT 기타
+                IT
               </a>
             </Link>
             <Link legacyBehavior href="">
@@ -110,7 +110,6 @@ export default function Talk() {
 
           <div className="flex flex-col w-full
                       justify-top 
-                      min-h-[calc(100vh-_15rem)] 
                       px-5 
                       mb-10">
               <div className='grid py-1 mx-1 mt-10'>

@@ -20,7 +20,6 @@ export default function BoardView(pages) {
                     flex-col 
                     items-left 
                     justify-center 
-                    min-h-[calc(100vh-_15rem)] 
                     px-5 mb-10">
             <h1 className="text-white text-2xl ml-10 mb-5">
               열린 강좌 목록
