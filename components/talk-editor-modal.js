@@ -39,6 +39,10 @@ class TalkEditorModal extends Component {
     });
   };
 
+  isMyTalk(){
+    return this.props?.currentTalkId?.endsWith(`_${process.env.userInfo.USER_ID}`)  
+  }
+
   render() {
     const { showModal } = this.state;
 
@@ -46,7 +50,7 @@ class TalkEditorModal extends Component {
       <div>
         <Link href="" onClick={this.openModal}>
           <h2 className='mt-2'>
-            {this.props.editMode === 'New'? '📑': '🖌'}  
+            {this.props.editMode === 'New'? '📑': this.isMyTalk() ? '🖌': ''}  
           </h2>
         </Link>
 
@@ -90,6 +94,7 @@ class TalkEditorModal extends Component {
                           currentTitle={this.props.currentTitle}
                           currentContent={this.props.currentContent}
                           editMode={this.props.editMode}
+                          isMyTalk={this.isMyTalk}
               />
             </div>
           </Modal>
@@ -115,7 +120,7 @@ class TalkEditor extends Component {
   }
 
   onEditorStateChange = (editorState) => {
-    if(this.props.currentTalkId.endsWith(`_${process.env.userInfo.USER_ID}`) == false){
+    if(this.props.isMyTalk() == false){
       alert("this talk is read only.");
       return;
   }
@@ -137,6 +142,8 @@ class TalkEditor extends Component {
     });
   };
 
+
+
   createOrEditTalkItem = () => {
     // Handle submission logic here
     // For example, you can access the category, title, and editorState using this.state
@@ -155,7 +162,7 @@ class TalkEditor extends Component {
       return;
     }
 
-    if(this.props.currentTalkId.endsWith(`_${process.env.userInfo.USER_ID}`) == false){
+    if(this.props.isMyTalk() == false){
         alert("Editing this talk is not permitted.");
         return;
     }

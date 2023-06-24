@@ -28,6 +28,8 @@ export default function Signin() {
                     "password": "${password}"}`).then((result) => {
         if(result.error_code==0){
           process.env.userInfo=result.userInfo;
+          localStorage.setItem('userInfo', JSON.stringify(process.env.userInfo));
+          console.log(`saved ${JSON.stringify(process.env.userInfo)}`);
           router.push('/')  
         }else {
           alert(JSON.stringify(result.error_message));
@@ -47,7 +49,7 @@ export default function Signin() {
         <meta rel="icon" href="brunnerLogo.png"></meta>
         <link></link>
       </Head>   
-      <BodySection className="text-gray-600 body-font min-h-[calc(100vh-_18rem)]">
+      <BodySection className="text-gray-600 body-font h-100vh min-h-[calc(100vh-_17.5rem)]">
         <div className="container px-5 py-44 mx-auto flex flex-wrap items-center">
           <div className="lg:flex-grow md:w-1/2 lg:pr-24 md:pr-16 flex flex-col md:items-start md:text-left mb-16 md:mb-0 items-center text-center">
             <h2 className="text-gray-900 text-lg font-medium title-font">로그인</h2>
@@ -62,7 +64,9 @@ export default function Signin() {
             <label htmlFor="password" className="leading-7 text-sm text-gray-400">Password</label>
             <input type="password" id="password" name="password" 
                   className="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"
-                  onChange={(e) => changePasswordValue(e)}></input>
+                  onChange={(e) => changePasswordValue(e)}
+                  okKeyPress={(e) => {if(e.key == 'Enter') requestSigninResult()}}
+                  ></input>
           </div>
           <button onClick={()=>requestSigninResult()} className="text-white bg-indigo-500 border-0 py-2 px-8 focus:outline-none hover:bg-indigo-600 rounded text-lg">Signin</button>
             <p className="text-xs text-gray-500 mt-10">Did you forget password? Reset now.</p>
