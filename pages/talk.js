@@ -120,7 +120,7 @@ export default function Talk() {
                                 />
 
                 {talkItems.map(aTalkItem=>(
-                  <TalkItem data={aTalkItem} getTalkItemss={getTalkItems} key={aTalkItem.TALK_ID}></TalkItem> 
+                  <TalkItem data={aTalkItem} getTalkItems={getTalkItems} key={aTalkItem.TALK_ID}></TalkItem> 
                 ))}              
               </div>
           </div>
