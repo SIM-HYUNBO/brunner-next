@@ -1,4 +1,5 @@
 import SignoutButton from "./signout-button";
+import DarkModeToggleButton from "./dark-mode-toggle-button";
 
 export default function UserInfo(){
 

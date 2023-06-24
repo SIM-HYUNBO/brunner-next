@@ -1,6 +1,5 @@
 import Link from "next/link";
 import Image from 'next/image'
-import DarkModeToggleButton from "./dark-mode-toggle-button";
 import UserInfo from "./user-info";
 
 export default function Header(){
