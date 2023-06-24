@@ -28,7 +28,7 @@ export default function Signin() {
                     "password": "${password}"}`).then((result) => {
         if(result.error_code==0){
           process.env.userInfo=result.userInfo;
-          localStorage.setItem('userInfo', JSON.stringify(process.env.userInfo));
+          localStorage.setItem('userInfo', process.env.userInfo);
           console.log(`saved ${JSON.stringify(process.env.userInfo)}`);
           router.push('/')  
         }else {

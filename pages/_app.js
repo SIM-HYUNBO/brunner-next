@@ -13,12 +13,7 @@ export default function App({ Component, pageProps }) {
     console.log(`prevUserInfo ${prevUserInfo}`);
 
     if(prevUserInfo) {
-      try{
-        process.env.userInfo=JSON.parse(prevUserInfo)
-      }
-      catch(e){
-
-      }
+        process.env.userInfo=prevUserInfo;
     }        
   }, []);
 
