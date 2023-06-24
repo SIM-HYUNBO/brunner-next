@@ -95,6 +95,7 @@ class TalkEditorModal extends Component {
                           currentContent={this.props.currentContent}
                           editMode={this.props.editMode}
                           isMyTalk={this.isMyTalk}
+                          closeModal={this.closeModal}
               />
             </div>
           </Modal>
@@ -180,8 +181,8 @@ class TalkEditor extends Component {
       "userId": "${process.env.userInfo.USER_ID}"
      }`).then((result) => {
       if(result.error_code==0){
-        alert("Suucessfully writed.");
-        
+        alert("Sucessfully writed.");
+        this.props.closeModal();
       }else {
         alert(JSON.stringify(result.error_message));
       }
