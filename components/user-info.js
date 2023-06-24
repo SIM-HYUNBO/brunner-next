@@ -12,7 +12,8 @@ export default function UserInfo(){
     // setUserInfo : 현재값 바꾸기 setter
     return (
         <div className="flex flex-row ml-3 mr-1 text-gray-600 dark:text-gray-400 align-middle">
-         <p >
+          <DarkModeToggleButton />
+          <p >
             {userName()}님
           </p>
           <SignoutButton />
