@@ -7,7 +7,7 @@ const Editor = dynamic(
 )
 import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
 import Link from "next/link";
-import { convertToRaw } from 'draft-js';
+import { convertFromRaw, convertToRaw } from 'draft-js';
 import RequestServer from './requestServer'
 import Modal from 'react-modal'
 
@@ -93,7 +93,7 @@ class TalkEditorModal extends Component {
               <span className="close" onClick={this.closeModal}>
                 &times;
               </span>
-              <TalkEditor currentTalkCatetory={this.props.currentTalkCatetory}
+              <TalkEditor currentTalkCategory={this.props.currentTalkCategory}
                           currentTalkId={this.props.currentTalkId}
                           currentTitle={this.props.currentTitle}
                           currentContent={this.props.currentContent}
@@ -115,11 +115,10 @@ class TalkEditor extends Component {
     super(props);
     
     this.state = {
-      editorState: EditorState.createWithContent(ContentState.createFromText(
-                     typeof this.props.currentContent == "undefined" ? "": 
-                      this.props.currentContent.replaceAll('"', '').replaceAll(',', '\n')  // <= 여기 3번 : 조회한 내용으로 표시 
-                   )),
-      category: props.currentTalkCatetory,
+      editorState: typeof this.props.currentContent == "undefined" ?  // <= 여기 3번 : 조회한 내용으로 표시 
+        EditorState.createWithContent(ContentState.createFromText("")) :
+        EditorState.createWithContent(convertFromRaw( JSON.parse( this.props.currentContent) )),
+      category: props.currentTalkCategory,
       title: props.currentTitle,
       darkMode: false // Assuming you have a darkMode state in your application
     };
@@ -157,10 +156,9 @@ class TalkEditor extends Component {
   
     const category = this.state.category;
     const title = this.state.title;
-
-    const blocks = convertToRaw(this.state.editorState.getCurrentContent()).blocks;
-    const content = blocks.map(block => block.text); // <= 여기 1번 : 입력한 내용으로 저장
+    const content = JSON.stringify( convertToRaw(this.state.editorState.getCurrentContent()) ).replace(/\\/g, "\\\\").replace(/"/g, '\\"')// <= 여기 1번 : 입력한 내용으로 저장
     
+
     if(typeof process.env.userInfo == "undefined" || 
        typeof process.env.userInfo.USER_ID == "undefined" || 
        process.env.userInfo.USER_ID === ''){

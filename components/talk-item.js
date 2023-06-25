@@ -6,11 +6,31 @@ export default function TalkItem({data: talkItem, refreshfunc: getTalkItems}){
     const talkId = talkItem.TALK_ID;
     const talkUserId = talkItem.TALK_USER_ID;
     const talkTitle = talkItem.TALK_TITLE;
-    const talkContent = talkItem.TALK_CONTENT; // json string array
     const talkCategory = talkItem.TALK_CATEGORY;
+    const talkContentRaw=talkItem.TALK_CONTENT.replaceAll('\\', '').substr(1).slice(0, -1);
     const parentTalkId = talkItem.PARENT_TALK_ID;
     const imgSrc = "/brunnerLogo.png";
     const talkEditorModal = useRef()
+    const getText= (rawText)=>{
+      const mappedBlocks = 
+      JSON.parse(rawText).blocks.map(block => (!block.text.trim() && "\n") || block.text);
+  
+      let newText = "";
+      for (let i = 0; i < mappedBlocks.length; i++) {
+        const block = mappedBlocks[i];
+  
+        // handle last block
+        if (i === mappedBlocks.length - 1) {
+          newText += block;
+        } else {
+          // otherwise we join with \n, except if the block is already a \n
+          if (block === "\n") newText += block;
+          else newText += block + "\n";
+        }
+      }  
+      return newText;
+    }
+    
     
     return (
         // 대화 항목
@@ -19,10 +39,10 @@ export default function TalkItem({data: talkItem, refreshfunc: getTalkItems}){
             <TalkEditorModal className="m-10"
                             ref={talkEditorModal} 
                             editMode='Edit'
-                            currentTalkCatetory={talkCategory}
+                            currentTalkCategory={talkCategory}
                             currentTalkId={talkId}
                             currentTitle={talkTitle}
-                            currentContent={talkContent}
+                            currentContent={talkContentRaw}
                             getTalkItems={getTalkItems}
                             />
             {/* 타이틀 */}
@@ -48,7 +68,7 @@ export default function TalkItem({data: talkItem, refreshfunc: getTalkItems}){
          
           {/* 글 본문 */}
           <div className="flex flex-row w-full h-full mb-2 p-2 text-black dark:text-white">  
-            { talkContent.replaceAll('"', '').replaceAll(',', '\n') } {/* <= 여기 2번 : 조회한 내용으로 표시 */}
+            { getText(talkContentRaw) } {/* <= 여기 2번 : 조회한 내용으로 표시 */}
           </div>
         </div>
      )

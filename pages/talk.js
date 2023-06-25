@@ -12,16 +12,16 @@ export default function Talk() {
 
   const pageSize = 100;
   const [talkItems, setTalkItems] = useState([]);
-  const [currentTalkCatetory, setCurrentTalkCatetory] = useState('회의');
+  const [currentTalkCategory, setCurrentTalkCategory] = useState('회의');
   const talkEditorModal = useRef()
 
   useEffect(()=>{
-    getTalkItems("00", currentTalkCatetory, '99991231240000_zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz');
+    getTalkItems("00", currentTalkCategory, '99991231240000_zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz');
   }, []);
 
   const getTalkItems = (systemCode, talkCategory, lastTalkId) => {
     talkEditorModal.current.closeModal();
-    setCurrentTalkCatetory(talkCategory);
+    setCurrentTalkCategory(talkCategory);
     
     // 해당 category에서 lastTalkId 이전에 작섣된 talkItem을 pageSize 갯수만클 조회함
     RequestServer("POST",
@@ -59,7 +59,7 @@ export default function Talk() {
             </pre>          
           <nav className="flex flex-wrap w-full items-center text-base justify-center">
           <Link legacyBehavior href="">
-              <a className={currentTalkCatetory==="프로젝트" ? 
+              <a className={currentTalkCategory==="프로젝트" ? 
                            "mr-5 text-yellow-500 dark:text-yellow-500 hover:text-gray-400" : 
                            "mr-5 text-gray-600 dark:text-gray-100 hover:text-gray-400"} 
                 onClick={(e) => getTalkItems("00", '프로젝트', '99991231240000_zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz')}>
@@ -67,7 +67,7 @@ export default function Talk() {
               </a>
             </Link>
             <Link legacyBehavior href="">
-              <a className={currentTalkCatetory==="회의" ? 
+              <a className={currentTalkCategory==="회의" ? 
                            "mr-5 text-yellow-500 dark:text-yellow-500 hover:text-gray-400" : 
                            "mr-5 text-gray-600 dark:text-gray-100 hover:text-gray-400"} 
                   onClick={(e) => getTalkItems("00", '회의', '99991231240000_zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz')}>
@@ -75,7 +75,7 @@ export default function Talk() {
               </a>
             </Link>
             <Link legacyBehavior href="">
-              <a className={currentTalkCatetory==="스터디" ? 
+              <a className={currentTalkCategory==="스터디" ? 
                            "mr-5 text-yellow-500 dark:text-yellow-500 hover:text-gray-400" : 
                            "mr-5 text-gray-600 dark:text-gray-100 hover:text-gray-400"} 
                   onClick={(e) => getTalkItems("00", '스터디', '99991231240000_zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz')}>
@@ -83,7 +83,7 @@ export default function Talk() {
               </a>
             </Link>
             <Link legacyBehavior href="">
-              <a className={currentTalkCatetory==="코드리뷰" ? 
+              <a className={currentTalkCategory==="코드리뷰" ? 
                            "mr-5 text-yellow-500 dark:text-yellow-500 hover:text-gray-400" : 
                            "mr-5 text-gray-600 dark:text-gray-100 hover:text-gray-400"} 
                 onClick={(e) => getTalkItems("00", '코드리뷰', '99991231240000_zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz')}>
@@ -91,7 +91,7 @@ export default function Talk() {
               </a>
             </Link>
             <Link legacyBehavior href="">
-              <a className={currentTalkCatetory==="IT" ? 
+              <a className={currentTalkCategory==="IT" ? 
                            "mr-5 text-yellow-500 dark:text-yellow-500 hover:text-gray-400" : 
                            "mr-5 text-gray-600 dark:text-gray-100 hover:text-gray-400"} 
                 onClick={(e) => getTalkItems("00", 'IT', '99991231240000_zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz')}>
@@ -99,7 +99,7 @@ export default function Talk() {
               </a>
             </Link>
             <Link legacyBehavior href="">
-              <a className={currentTalkCatetory==="스몰톡" ? 
+              <a className={currentTalkCategory==="스몰톡" ? 
                            "mr-5 text-yellow-500 dark:text-yellow-500 hover:text-gray-400" : 
                            "mr-5 text-gray-600 dark:text-gray-100 hover:text-gray-400"} 
                 onClick={(e) => getTalkItems("00", '스몰톡', '99991231240000_zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz')}>
@@ -116,7 +116,7 @@ export default function Talk() {
                 <TalkEditorModal className="m-10"
                                 ref={talkEditorModal} 
                                 editMode='New'
-                                currentTalkCatetory={currentTalkCatetory}
+                                currentTalkCategory={currentTalkCategory}
                                 getTalkItems={getTalkItems}
                                 />
 
