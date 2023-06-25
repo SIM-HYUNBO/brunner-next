@@ -117,6 +117,7 @@ export default function Talk() {
                                 ref={talkEditorModal} 
                                 editMode='New'
                                 currentTalkCatetory={currentTalkCatetory}
+                                getTalkItems={getTalkItems}
                                 />
 
                 {talkItems.map(aTalkItem=>(
