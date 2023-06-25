@@ -12,11 +12,11 @@ export default function Talk() {
 
   const pageSize = 100;
   const [talkItems, setTalkItems] = useState([]);
-  const [currentTalkCategory, setCurrentTalkCategory] = useState('회의');
+  const [currentTalkCategory, setCurrentTalkCategory] = useState('프로젝트');
   const talkEditorModal = useRef()
 
   useEffect(()=>{
-    getTalkItems("00", currentTalkCategory, '99991231240000_zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz');
+    getTalkItems("00", '프로젝트', '99991231240000_zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz');
   }, []);
 
   const getTalkItems = (systemCode, talkCategory, lastTalkId) => {
