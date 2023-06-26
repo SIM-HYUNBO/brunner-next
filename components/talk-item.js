@@ -68,9 +68,9 @@ export default function TalkItem({data: talkItem, refreshfunc: getTalkItems}){
          
           {/* 글 본문 */}
           <div className="flex flex-row w-full h-full mb-2 p-2 text-black dark:text-white">  
-          {/* <pre> */}
+          <pre>
             { getText(talkContentRaw) } {/* <= 여기 2번 : 조회한 내용으로 표시 */}
-          {/* </pre> */}
+          </pre>
           </div>
         </div>
      )
