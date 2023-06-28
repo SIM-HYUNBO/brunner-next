@@ -2,12 +2,15 @@ import { useState, useEffect } from 'react';
 import Layout from '../components/layout';
 import Head from 'next/head';
 import BodySection from '@/components/body-section'
-import {CategoryItem} from '../components/category-item'
+import {TalkCategoryModal} from '../components/talk-category-modal'
 import RequestServer from '@/components/requestServer'
+import Link from "next/link";
 
 export default function Talk() {
  
+  const [selectedCategoryName, setSelectedCategoryName] = useState([]);
   const [userCategories, setUserCategories] = useState([]);
+
   useEffect(()=>{
     setUserCategories([])
     getUserCategories();
@@ -47,19 +50,40 @@ export default function Talk() {
           <pre className="mb-8 leading-relaxed text-white-900 mb-20">
               토크에 참여하고 사람들과 친분을 쌓아보세요.
           </pre>          
-          <nav className="flex flex-wrap w-full items-center text-base justify-center">
+          <nav className="flex flex-row w-full items-start text-base justify-start">
             {userCategories.map(
               (category)=>(
-                <CategoryItem systemCode={category.SYSTEM_CODE} 
-                              categoryId={category.CATEGORY_ID} 
-                              categoryName={category.CATEGORY_NAME} 
-                              createUserId={category.CREATE_USER_ID} 
-                              pageSize='100'
-                              key={category.CATEGORY_ID} 
-                />
+                <Link legacyBehavior href="">
+                  <div>
+                    <a className={`mr-5
+                                   ${selectedCategoryName == category.CATEGORY_NAME? 'text-yellow-600 dark:text-yellow-300': 
+                                                                           'text-gray-600 dark:text-gray-100'} 
+                                  'hover:text-gray-400`
+                                } 
+                        onDoubleClick={
+                                  (e) => {
+                                    setSelectedCategoryName(category.CATEGORY_NAME)
+                                  }
+                                }
+                        >
+                        [{category.CREATE_USER_ID}] {category.CATEGORY_NAME}
+                    </a>
+                    { 
+                      selectedCategoryName == category.CATEGORY_NAME && 
+                      <TalkCategoryModal 
+                        systemCode={category.SYSTEM_CODE} 
+                        categoryId={category.CATEGORY_ID} 
+                        categoryName={category.CATEGORY_NAME} 
+                        createUserId={category.CREATE_USER_ID} 
+                        pageSize='100'
+                        key={category.CATEGORY_ID} />
+                      }
+                </div>
+              </Link>
               ))
             }
           </nav>
+
         </div>
       </BodySection>
     </Layout>
