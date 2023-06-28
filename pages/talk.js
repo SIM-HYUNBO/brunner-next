@@ -1,46 +1,36 @@
+import { useState, useEffect } from 'react';
 import Layout from '../components/layout';
 import Head from 'next/head';
-import BodySection from '../components/body-section'
-import Link from "next/link";
-import TalkItem from "../components/talk-item";
-import { useState, useEffect, useRef } from 'react'
-import RequestServer from '../components/requestServer'
-
-import {TalkEditorModal} from '../components/talk-editor-modal';
+import BodySection from '@/components/body-section'
+import {CategoryItem} from '../components/category-item'
+import RequestServer from '@/components/requestServer'
 
 export default function Talk() {
-
-  const pageSize = 100;
-  const [talkItems, setTalkItems] = useState([]);
-  const [currentTalkCategory, setCurrentTalkCategory] = useState('프로젝트');
-  const talkEditorModal = useRef()
-
+ 
+  const [userCategories, setUserCategories] = useState([]);
   useEffect(()=>{
-    getTalkItems("00", '프로젝트', '99991231240000_zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz');
-  }, []);
+    setUserCategories([])
+    getUserCategories();
+  }, [])
 
-  const getTalkItems = (systemCode, talkCategory, lastTalkId) => {
-    talkEditorModal.current.closeModal();
-    setCurrentTalkCategory(talkCategory);
+  // 사용자가 볼 카테고리의 목록을 조회
+  // 내가 생성한 카테고리 + 사용자들이 가장 최근에 생성한 카테고리 함께 조회
+  const getUserCategories = () =>{
     
-    // 해당 category에서 lastTalkId 이전에 작섣된 talkItem을 pageSize 갯수만클 조회함
     RequestServer("POST",
-    `{"commandName": "talk.getTalkItems",
-      "systemCode": "${systemCode}",
-      "talkCategory": "${talkCategory}",
-      "lastTalkId": "${lastTalkId}",
-      "pageSize": ${pageSize}}`).then((result) => {
+    `{"commandName": "talk.getUserCategories",
+      "systemCode": "00",
+      "userId": "${typeof process.env.userInfo == "undefined" ? "": process.env.userInfo.USER_ID}"}`).then((result) => {
       // console.log(JSON.stringify(result));
 
       if(result.error_code==0){
-        setTalkItems(result.talkItems);
+        setUserCategories(result.categories);
       }else {
         alert(JSON.stringify(result));
       }
     });
   }
 
- 
   return (
     <Layout>    
       <Head>
@@ -54,77 +44,22 @@ export default function Talk() {
           <h1 className="title-font sm:text-4xl text-3xl mb-10 font-medium text-green-900">
             오픈톡
           </h1>
-          <pre className="mb-8 leading-relaxed text-white-900">
-              모든 사람들과 친분을 쌓아보세요.
-            </pre>          
+          <pre className="mb-8 leading-relaxed text-white-900 mb-20">
+              토크에 참여하고 사람들과 친분을 쌓아보세요.
+          </pre>          
           <nav className="flex flex-wrap w-full items-center text-base justify-center">
-          <Link legacyBehavior href="">
-              <a className={currentTalkCategory==="프로젝트" ? 
-                           "mr-5 text-yellow-500 dark:text-yellow-500 hover:text-gray-400" : 
-                           "mr-5 text-gray-600 dark:text-gray-100 hover:text-gray-400"} 
-                onClick={(e) => getTalkItems("00", '프로젝트', '99991231240000_zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz')}>
-                프로젝트
-              </a>
-            </Link>
-            <Link legacyBehavior href="">
-              <a className={currentTalkCategory==="회의" ? 
-                           "mr-5 text-yellow-500 dark:text-yellow-500 hover:text-gray-400" : 
-                           "mr-5 text-gray-600 dark:text-gray-100 hover:text-gray-400"} 
-                  onClick={(e) => getTalkItems("00", '회의', '99991231240000_zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz')}>
-                회의
-              </a>
-            </Link>
-            <Link legacyBehavior href="">
-              <a className={currentTalkCategory==="스터디" ? 
-                           "mr-5 text-yellow-500 dark:text-yellow-500 hover:text-gray-400" : 
-                           "mr-5 text-gray-600 dark:text-gray-100 hover:text-gray-400"} 
-                  onClick={(e) => getTalkItems("00", '스터디', '99991231240000_zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz')}>
-                스터디
-              </a>
-            </Link>
-            <Link legacyBehavior href="">
-              <a className={currentTalkCategory==="코드리뷰" ? 
-                           "mr-5 text-yellow-500 dark:text-yellow-500 hover:text-gray-400" : 
-                           "mr-5 text-gray-600 dark:text-gray-100 hover:text-gray-400"} 
-                onClick={(e) => getTalkItems("00", '코드리뷰', '99991231240000_zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz')}>
-                코드리뷰
-              </a>
-            </Link>
-            <Link legacyBehavior href="">
-              <a className={currentTalkCategory==="IT" ? 
-                           "mr-5 text-yellow-500 dark:text-yellow-500 hover:text-gray-400" : 
-                           "mr-5 text-gray-600 dark:text-gray-100 hover:text-gray-400"} 
-                onClick={(e) => getTalkItems("00", 'IT', '99991231240000_zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz')}>
-                IT
-              </a>
-            </Link>
-            <Link legacyBehavior href="">
-              <a className={currentTalkCategory==="스몰톡" ? 
-                           "mr-5 text-yellow-500 dark:text-yellow-500 hover:text-gray-400" : 
-                           "mr-5 text-gray-600 dark:text-gray-100 hover:text-gray-400"} 
-                onClick={(e) => getTalkItems("00", '스몰톡', '99991231240000_zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz')}>
-                스몰톡
-              </a>
-            </Link>
+            {userCategories.map(
+              (category)=>(
+                <CategoryItem systemCode={category.SYSTEM_CODE} 
+                              categoryId={category.CATEGORY_ID} 
+                              categoryName={category.CATEGORY_NAME} 
+                              createUserId={category.CREATE_USER_ID} 
+                              pageSize='100'
+                              key={category.CATEGORY_ID} 
+                />
+              ))
+            }
           </nav>
-
-          <div className="flex flex-col w-full
-                      justify-top 
-                      px-5 
-                      mb-10">
-              <div className='grid py-1 mx-1 mt-10'>
-                <TalkEditorModal className="m-10"
-                                ref={talkEditorModal} 
-                                editMode='New'
-                                currentTalkCategory={currentTalkCategory}
-                                getTalkItems={getTalkItems}
-                                />
-
-                {talkItems.map(aTalkItem=>(
-                  <TalkItem data={aTalkItem} refreshfunc={getTalkItems} key={aTalkItem.TALK_ID}></TalkItem> 
-                ))}              
-              </div>
-          </div>
         </div>
       </BodySection>
     </Layout>

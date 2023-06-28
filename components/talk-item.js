@@ -6,7 +6,8 @@ export default function TalkItem({data: talkItem, refreshfunc: getTalkItems}){
     const talkId = talkItem.TALK_ID;
     const talkUserId = talkItem.TALK_USER_ID;
     const talkTitle = talkItem.TALK_TITLE;
-    const talkCategory = talkItem.TALK_CATEGORY;
+    const talkCategoryId = talkItem.TALK_CATEGORY_ID;
+    const talkCategoryName = talkItem.CATEGORY_NAME;
     const talkContentRaw=talkItem.TALK_CONTENT.replaceAll('\\', '').substr(1).slice(0, -1);
     const parentTalkId = talkItem.PARENT_TALK_ID;
     const imgSrc = "/brunnerLogo.png";
@@ -39,7 +40,8 @@ export default function TalkItem({data: talkItem, refreshfunc: getTalkItems}){
             <TalkEditorModal className="m-10"
                             ref={talkEditorModal} 
                             editMode='Edit'
-                            currentTalkCategory={talkCategory}
+                            categoryId={talkCategoryId}
+                            categoryName={talkCategoryName}
                             currentTalkId={talkId}
                             currentTitle={talkTitle}
                             currentContent={talkContentRaw}
