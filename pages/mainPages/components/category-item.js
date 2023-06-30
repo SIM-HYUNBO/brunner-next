@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import Link from "next/link";
-import RequestServer from '@/components/requestServer'
-import {TalkEditorModal} from '@/components/talk-editor-modal';
-import TalkItem from '@/components/talk-item' 
+import RequestServer from '@/pages/mainPages/components/requestServer'
+import {TalkEditorModal} from '@/pages/mainPages/components/talk-editor-modal';
+import TalkItem from '@/pages/mainPages/components/talk-item' 
 
 class CategoryItem extends Component {
   constructor(props) {

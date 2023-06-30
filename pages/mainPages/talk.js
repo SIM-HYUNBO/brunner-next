@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
-import Layout from '../../components/layout';
+import Layout from './components/layout';
 import Head from 'next/head';
-import BodySection from '@/components/body-section'
-import {TalkCategoryModal} from '../../components/talk-category-modal'
-import RequestServer from '@/components/requestServer'
+import BodySection from '@/pages/mainPages/components/body-section'
+import {TalkCategoryModal} from './components/talk-category-modal'
+import RequestServer from '@/pages/mainPages/components/requestServer'
 import Link from "next/link";
 
 export default function Talk() {
