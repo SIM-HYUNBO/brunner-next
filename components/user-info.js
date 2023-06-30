@@ -5,8 +5,8 @@ export default function UserInfo(){
 
   const userName = ()=>{
     return typeof process.env.userInfo == "undefined" || 
-    typeof process.env.userInfo.USER_NAME == "undefined" ? 
-    '': process.env.userInfo.USER_NAME +'님';
+    typeof process.env.userInfo?.USER_NAME == "undefined" ? 
+    '': process.env.userInfo?.USER_NAME +'님';
   }
 
     // userInfo : 현재값 가져오기 getter
