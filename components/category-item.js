@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import Link from "next/link";
-import RequestServer from '@/pages/mainPages/components/requestServer'
+import RequestServer from '@/components/requestServer'
 import {TalkEditorModal} from './talk-editor-modal';
 import TalkItem from './talk-item' 
 
@@ -55,4 +55,4 @@ class CategoryItem extends Component {
   }
 }
 
-export default {CategoryItem };
+export default CategoryItem;

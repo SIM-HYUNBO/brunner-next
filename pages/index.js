@@ -1,6 +1,6 @@
-import Layout from './mainPages/components/layout'
+import Layout from '../components/layout'
 import Head from 'next/head'
-import BodySection from './mainPages/components/body-section'
+import BodySection from '../components/body-section'
 
 import HomeContent from './mainPages/content/home-content'
 

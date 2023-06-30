@@ -1,6 +1,6 @@
 import Image from 'next/image';
 import { useState, useRef } from 'react'
-import {TalkEditorModal} from './talk-editor-modal';
+import TalkEditorModal from './talk-editor-modal';
 
 export default function TalkItem({data: talkItem, refreshfunc: getTalkItems}){
     const talkId = talkItem.TALK_ID;
