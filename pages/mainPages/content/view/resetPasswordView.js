@@ -1,8 +1,8 @@
-import Layout from './layout'
+import Layout from '../../../../components/layout'
 import Head from 'next/head'
-import BodySection from './body-section'
+import BodySection from '../../../../components/body-section'
 
-import RequestServer from './requestServer'
+import RequestServer from '../../../../components/requestServer'
 import { useRouter } from 'next/router'
 import { useState } from 'react'
 

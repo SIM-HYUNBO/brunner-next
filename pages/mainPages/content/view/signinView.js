@@ -70,7 +70,7 @@ export default function SigninView() {
           </div>
           <button onClick={()=>requestSigninResult()} className="text-white bg-indigo-500 border-0 py-2 px-8 focus:outline-none hover:bg-indigo-600 rounded text-lg">Signin</button>
             <p className="text-xs text-gray-500 mt-10">Did you forget password? Reset now.</p>
-            <button onClick={() => router.push('/mainPages/components/resetPassword')} className="text-white bg-indigo-500 border-0 py-2 px-8 focus:outline-none hover:bg-indigo-600 rounded text-lg mt-5">Reset Password</button>
+            <button onClick={() => router.push('/mainPages/content/view/resetPasswordView')} className="text-white bg-indigo-500 border-0 py-2 px-8 focus:outline-none hover:bg-indigo-600 rounded text-lg mt-5">Reset Password</button>
           </div>
         </div>
     </BodySection>  
