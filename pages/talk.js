@@ -62,6 +62,7 @@ export default function Talk() {
                                 } 
                         onDoubleClick={
                                   (e) => {
+                                    setSelectedCategoryName("")
                                     setSelectedCategoryName(talk_category.CATEGORY_NAME)
                                   }
                                 }
