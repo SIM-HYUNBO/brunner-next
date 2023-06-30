@@ -55,4 +55,4 @@ class CategoryItem extends Component {
   }
 }
 
-export {CategoryItem };
+export default {CategoryItem };

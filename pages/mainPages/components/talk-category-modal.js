@@ -267,4 +267,4 @@ class TalkEditor extends Component {
   }
 }
 
-export { TalkCategoryModal };
+export default { TalkCategoryModal };
