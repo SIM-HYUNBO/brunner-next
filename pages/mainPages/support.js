@@ -1,23 +1,23 @@
-import Layout from '../components/layout'
+import Layout from '../../components/layout'
 import Head from 'next/head'
-import BodySection from '../components/body-section'
+import BodySection from '../../components/body-section'
 
-import ServiceContent from '../components/home/service-content'
+import SupportContent from './content/support-content'
 
-export default function Services(){
+export default function Support(){
   return (
-    <Layout>
+    <Layout>      
       <Head>
         <title>IT 기술 연구소 - Brunner</title>
         <meta name="description" content="IT 기술 연구소"></meta>
         <meta rel="icon" href="brunnerLogo.png"></meta>
         <link></link>
-      </Head>         
+      </Head>
       <BodySection>
         <div className="container mx-auto flex px-5 md:flex-row flex-col items-center">
-          <ServiceContent></ServiceContent>
+          <SupportContent></SupportContent>
         </div>
       </BodySection>
-    </Layout>
+  </Layout>
   );
 }

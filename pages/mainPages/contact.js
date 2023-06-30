@@ -1,7 +1,7 @@
-import Layout from '../components/layout'
+import Layout from '../../components/layout'
 import Head from 'next/head'
-import BodySection from '../components/body-section'
-import ContractContent from '../components/home/contact-content'
+import BodySection from '../../components/body-section'
+import ContactContent from './content/contact-content'
 
 export default function Contact(){
   return (
@@ -14,7 +14,7 @@ export default function Contact(){
       </Head>         
       <BodySection>
         <div className="container mx-auto flex px-5 md:flex-row flex-col items-center">
-          <ContractContent></ContractContent>
+          <ContactContent></ContactContent>
         </div>
       </BodySection>
     </Layout>

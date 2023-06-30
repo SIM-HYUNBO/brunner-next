@@ -17,10 +17,10 @@ export default function Header(){
                 </Link>
                 <span className="ml-3 text-xl"></span>
                 <nav className="md:ml-auto flex flex-wrap items-center text-base justify-center">
-                    <Link className="mr-5 text-gray-600 dark:text-gray-100 hover:text-gray-400" href="/talk">Talk</Link>
-                    <Link className="mr-5 text-gray-600 dark:text-gray-100 hover:text-gray-400" href="/services">Service</Link>
-                    <Link className="mr-5 text-gray-600 dark:text-gray-100 hover:text-gray-400" href="/support">Support</Link>
-                    <Link className="mr-5 text-gray-600 dark:text-gray-100 hover:text-gray-400" href="/contact">Contact</Link>
+                    <Link className="mr-5 text-gray-600 dark:text-gray-100 hover:text-gray-400" href="/mainPages/talk">Talk</Link>
+                    <Link className="mr-5 text-gray-600 dark:text-gray-100 hover:text-gray-400" href="/mainPages/services">Service</Link>
+                    <Link className="mr-5 text-gray-600 dark:text-gray-100 hover:text-gray-400" href="/mainPages/support">Support</Link>
+                    <Link className="mr-5 text-gray-600 dark:text-gray-100 hover:text-gray-400" href="/mainPages/contact">Contact</Link>
                 </nav>
                 <UserInfo/>
             </div>

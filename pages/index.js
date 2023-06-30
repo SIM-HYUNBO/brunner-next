@@ -2,7 +2,7 @@ import Layout from '../components/layout'
 import Head from 'next/head'
 import BodySection from '../components/body-section'
 
-import HomeContent from '../components/home/home-content'
+import HomeContent from './mainPages/content/home-content'
 
 export default function Home() {
   return (

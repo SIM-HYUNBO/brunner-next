@@ -18,12 +18,12 @@ export default function HomeContent(){
             <div className="flex justify-center">
             <div>
               <button className="inline-flex text-white bg-indigo-500 border-0 py-2 px-6 focus:outline-none hover:bg-indigo-600 rounded text-lg m-2"
-                      onClick={() => router.push('/signin') } >
+                      onClick={() => router.push('/signinView') } >
                       로그인
               </button>
               <button 
               className="inline-flex text-white bg-indigo-500 border-0 py-2 px-6 focus:outline-none hover:bg-indigo-600 rounded text-lg"
-                      onClick={() => router.push('/signup') } >
+                      onClick={() => router.push('/signupView') } >
                       회원가입
               </button>
               </div>

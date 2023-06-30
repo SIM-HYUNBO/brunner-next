@@ -1,6 +1,6 @@
-import Layout from '../components/layout'
+import Layout from '../../../../components/layout'
 import Head from 'next/head'
-import BodySection from '../components/body-section'
+import BodySection from '../../../../components/body-section'
 import { useRouter } from 'next/router'
 
 export default function ContactView() {
@@ -87,7 +87,7 @@ export default function ContactView() {
             </div>
             <div>
               <button className="flex mt-3 text-white bg-indigo-500 border-0 py-2 px-8 focus:outline-none hover:bg-indigo-600 rounded text-lg"
-                      onClick={() => router.push('/lectureView')}>
+                      onClick={() => router.push('/mainPages/content/view/lectureView')}>
                 열린 강좌 목록
               </button>
               <button className="flex mt-3 text-white bg-indigo-500 border-0 py-2 px-8 focus:outline-none hover:bg-indigo-600 rounded text-lg" 
