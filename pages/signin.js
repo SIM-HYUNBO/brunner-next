@@ -44,8 +44,8 @@ export default function Signin() {
   return (
     <Layout>    
       <Head>
-        <title>Brunner Home</title>
-        <meta name="description" content="서비스플랫폼"></meta>
+        <title>IT 기술 연구소 - Brunner</title>
+        <meta name="description" content="IT 기술 연구소"></meta>
         <meta rel="icon" href="brunnerLogo.png"></meta>
         <link></link>
       </Head>   
