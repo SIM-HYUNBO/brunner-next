@@ -23,7 +23,7 @@ export default function Talk() {
     RequestServer("POST",
     `{"commandName": "talk.getUserCategories",
       "systemCode": "00",
-      "userId": "${typeof process.env.userInfo == "undefined" ? "": process.env.userInfo.USER_ID}"}`).then((result) => {
+      "userId": "${typeof process.env.userInfo == "undefined" ? "": process.env.userInfo?.USER_ID}"}`).then((result) => {
       // console.log(JSON.stringify(result));
 
       if(result.error_code==0){
