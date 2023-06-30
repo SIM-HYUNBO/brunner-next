@@ -52,31 +52,31 @@ export default function Talk() {
           </pre>          
           <nav className="flex flex-row w-full items-start text-base justify-start">
             {userCategories.map(
-              (category)=>(
+              (talk_category)=>(
                 <Link legacyBehavior href="">
                   <div>
-                    <a className={`mr-5
-                                   ${selectedCategoryName == category.CATEGORY_NAME? 'text-yellow-600 dark:text-yellow-300': 
+                    <a className={`mr-5 
+                                   ${selectedCategoryName == talk_category.CATEGORY_NAME? 'text-yellow-600 dark:text-yellow-300': 
                                                                            'text-gray-600 dark:text-gray-100'} 
                                   'hover:text-gray-400`
                                 } 
                         onDoubleClick={
                                   (e) => {
-                                    setSelectedCategoryName(category.CATEGORY_NAME)
+                                    setSelectedCategoryName(talk_category.CATEGORY_NAME)
                                   }
                                 }
                         >
-                        [{category.CREATE_USER_ID}] {category.CATEGORY_NAME}
+                        [{talk_category.CREATE_USER_ID}] {talk_category.CATEGORY_NAME}
                     </a>
                     { 
-                      selectedCategoryName == category.CATEGORY_NAME && 
+                      selectedCategoryName == talk_category.CATEGORY_NAME && 
                       <TalkCategoryModal 
-                        systemCode={category.SYSTEM_CODE} 
-                        categoryId={category.CATEGORY_ID} 
-                        categoryName={category.CATEGORY_NAME} 
-                        createUserId={category.CREATE_USER_ID} 
+                        systemCode={talk_category.SYSTEM_CODE} 
+                        categoryId={talk_category.CATEGORY_ID} 
+                        categoryName={talk_category.CATEGORY_NAME} 
+                        createUserId={talk_category.CREATE_USER_ID} 
                         pageSize='100'
-                        key={category.CATEGORY_ID} />
+                        key={talk_category.CATEGORY_ID} />
                       }
                 </div>
               </Link>
