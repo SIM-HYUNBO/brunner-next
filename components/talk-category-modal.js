@@ -2,7 +2,7 @@ import React, { Component, createRef  } from 'react';
 import RequestServer from './requestServer'
 import Modal from 'react-modal'
 import Link from "next/link";
-import {TalkEditorModal} from './talk-editor-modal';
+import TalkEditorModal from './talk-editor-modal';
 import TalkItem from './talk-item';
 
 class TalkCategoryModal extends Component {
