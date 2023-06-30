@@ -34,6 +34,7 @@ class TalkCategoryModal extends Component {
     this.setState({
       showModal: false
     });
+    this.props.setSelectedCategoryName('')
   };
 
   getTalkItems = (systemCode, talkCategoryId, lastTalkId) => {

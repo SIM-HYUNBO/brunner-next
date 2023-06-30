@@ -77,6 +77,7 @@ export default function Talk() {
                         categoryName={talk_category.CATEGORY_NAME} 
                         createUserId={talk_category.CREATE_USER_ID} 
                         pageSize='100'
+                        setSelectedCategoryName={setSelectedCategoryName}
                         key={talk_category.CATEGORY_ID} />
                       }
                 </div>
