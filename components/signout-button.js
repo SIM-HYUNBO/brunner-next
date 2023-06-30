@@ -6,7 +6,7 @@ export default function SignoutButton(){
     return (
         <>
             {process.env.userInfo && 
-             process.env.userInfo.USER_NAME && 
+             process.env.userInfo?.USER_NAME && 
              <button className="inline-flex items-center 
                                 boder-0 
                                 py-1 
