@@ -119,7 +119,8 @@ export default function Talk() {
 
         </div>  
         <div className="flex flex-row w-auto justify-top px-5 mb-10 h-full items-center">
-          <div className="flex flex-col w-1/2 justify-top px-5 mb-10 h-full "  id='users-category'>
+          <div className="flex flex-col w-1/2 justify-top px-5 mb-10 h-full align-top"  
+               id='users-category'>
             {userCategories.map(
                 (talk_category)=>(
                   <div key={talk_category.CATEGORY_ID}>
@@ -155,7 +156,8 @@ export default function Talk() {
                 ))
               }
           </div>
-          <div className="flex flex-col w-1/2 justify-top px-5 mb-10 h-full"  id='others-category'>
+          <div className="flex flex-col w-1/2 justify-top px-5 mb-10 h-full align-top"  
+               id='others-category'>
             {otherCategories.map(
                 (talk_category)=>(
                   <div key={talk_category.CATEGORY_ID}>
