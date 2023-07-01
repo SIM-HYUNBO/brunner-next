@@ -91,7 +91,7 @@ export default function Talk() {
           <pre className="leading-relaxed text-white-900 mb-10">
               토크에 참여하거나 새토크를 개설하고 사람들과 친해지세요.
           </pre>          
-          <nav className="flex flex-row w-full items-center text-base justify-start mb-10">
+          <nav className="flex flex-row w-full items-center text-base justify-center mb-10">
             <label className="leading-7 text-sm text-gray-400" 
                     htmlFor="password" 
                     >
