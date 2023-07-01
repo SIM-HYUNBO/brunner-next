@@ -91,13 +91,11 @@ export default function Talk() {
           <pre className="leading-relaxed text-white-900 mb-10">
               토크에 참여하거나 새토크를 개설하고 사람들과 친해지세요.
           </pre>          
-          <nav className="flex flex-row w-full items-center text-base justify-start my-10">
-          <label className="leading-7 text-sm text-gray-400" 
-                  htmlFor="password" 
-                  >
-                  글제목</label>
-            <input className="w-[calc(16vw)]
-                              ml-5
+          <nav className="flex flex-row w-full items-center text-base justify-start my-1 mb-10">
+          <label className="leading-7 text-sm text-gray-400 mx-1" >
+            글제목</label>
+            <input className="w-[calc(25vw)]
+                              mx-1
                             bg-white rounded 
                               border border-gray-300 
                               focus:border-indigo-500 
@@ -109,7 +107,7 @@ export default function Talk() {
                   ref={newCategoryNameRef}>
             </input>            
             <button className="text-white bg-slate-500 
-                                border-0 py-2 px-8 focus:outline-none hover:bg-indigo-600 rounded text-lg ml-5"
+                                border-0 py-2 px-8 focus:outline-none hover:bg-indigo-600 rounded text-lg mx-1 my-auto"
                     onClick={(e) => ( 
                       requestCreateCategoryResult(e)
                     )}>
@@ -118,21 +116,13 @@ export default function Talk() {
         </nav>
 
         </div>  
-        <div className="flex flex-row w-auto justify-top px-5 mb-10 h-full items-center">
-          <div className="flex flex-col w-1/2 justify-top px-5 mb-10 h-full align-top"  
+        <div className="flex flex-row w-auto align-top px-5 mb-10 items-center">
+          <div className="flex flex-col w-1/2 align-top px-5 mb-10 items-end"  
                id='users-category'>
             {userCategories.map(
                 (talk_category)=>(
-                  <div key={talk_category.CATEGORY_ID}>
-                    <button className="text-white 
-                                      bg-indigo-500 
-                                      border-0 py-2 
-                                      px-8 
-                                      focus:outline-none 
-                                      hover:bg-indigo-600 
-                                      rounded 
-                                      text-lg 
-                                      mt-5"
+                  <div className="flex flex-col items-start" key={talk_category.CATEGORY_ID}>
+                    <button className="text-white bg-indigo-500 border-0 py-2 px-8 focus:outline-none hover:bg-indigo-600 rounded text-lg my-1"
                             onClick={() => ( 
                               setSelectedCategoryName(talk_category.CATEGORY_NAME)
                             )} 
@@ -156,20 +146,12 @@ export default function Talk() {
                 ))
               }
           </div>
-          <div className="flex flex-col w-1/2 justify-top px-5 mb-10 h-full align-top"  
+          <div className="w-1/2"  
                id='others-category'>
             {otherCategories.map(
                 (talk_category)=>(
-                  <div key={talk_category.CATEGORY_ID}>
-                    <button className="text-white 
-                                      bg-indigo-500 
-                                      border-0 py-2 
-                                      px-8 
-                                      focus:outline-none 
-                                      hover:bg-indigo-600 
-                                      rounded 
-                                      text-lg 
-                                      mt-5"
+                  <div className="align-top" key={talk_category.CATEGORY_ID}>
+                    <button className="text-white bg-indigo-500 border-0 py-2 px-8 focus:outline-none hover:bg-indigo-600 rounded text-lg my-1"
                             onClick={() => ( 
                               setSelectedCategoryName(talk_category.CATEGORY_NAME)
                             )} 
