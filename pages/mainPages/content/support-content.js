@@ -1,4 +1,4 @@
-import SupportContentAnimation from './support-content-animation'
+import SupportContentAnimation from './content-animation/support-content-animation'
 import { useRouter } from 'next/router'
 
 export default function SupportIntro(){

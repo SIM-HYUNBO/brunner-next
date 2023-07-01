@@ -1,4 +1,4 @@
-import ContactContentAnimation from './contact-content-animation'
+import ContactContentAnimation from './content-animation/contact-content-animation'
 import { useRouter } from 'next/router'
 
 export default function ContactContent(){

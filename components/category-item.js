@@ -45,7 +45,7 @@ class CategoryItem extends Component {
                              getTalkItems={this.getTalkItems}
                              />
 
-            {this.state.talkItems.map(aTalkItem=>(
+            {this.state.result.map(aTalkItem=>(
               <TalkItem data={aTalkItem} refreshfunc={this.getTalkItems} key={aTalkItem.TALK_ID}></TalkItem> 
             ))}              
            </div>}

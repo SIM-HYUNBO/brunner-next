@@ -35,7 +35,7 @@ export default function TalkItem({data: talkItem, refreshfunc: getTalkItems}){
     
     return (
         // 대화 항목
-        <div className=" border-b-2 border-b-yellow-100">
+        <div className=" border-b border-b-slate-50">
           <div className="talk-item flex flex-row w-full h-auto mx-auto mb-1">
             <TalkEditorModal className="m-10"
                             ref={talkEditorModal} 

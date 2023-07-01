@@ -18,8 +18,8 @@ class TalkCategoryModal extends Component {
 
   openModal = () => {
     if(typeof process.env.userInfo == "undefined" || 
-      typeof process.env.userInfo.USER_ID === "undefined" || 
-      typeof process.env.userInfo.USER_ID === ''){
+      process.env.userInfo.USER_ID === "undefined" || 
+      process.env.userInfo.USER_ID === ''){
      alert(`the user is not logged in. sign in first.`);
      
      return;
@@ -50,7 +50,7 @@ class TalkCategoryModal extends Component {
       // console.log(JSON.stringify(result));
 
       if(result.error_code==0){
-        this.setTalkItems(result.talkItems);
+        this.setTalkItems(result.result);
       }else {
         alert(JSON.stringify(result));
       }
@@ -112,8 +112,7 @@ class TalkCategoryModal extends Component {
               <span className="close" onClick={this.closeModal}>
                 &times;
               </span>
-              <div className="flex flex-col w-full justify-top px-5 mb-10">
-              <div className='grid py-1 mx-1 mt-10'>
+              <div className="flex flex-col w-full justify-top px-5 mb-10 h-full overflow-auto">
                 <TalkEditorModal className="m-10"
                                 ref={this.talkEditorModalRef} 
                                 editMode='New'
@@ -126,8 +125,6 @@ class TalkCategoryModal extends Component {
                   <TalkItem data={aTalkItem} refreshfunc={this.getTalkItems} key={aTalkItem.TALK_ID}></TalkItem> 
                 ))}              
               </div>
-              
-        </div>
             </div>
           </Modal>
         )}

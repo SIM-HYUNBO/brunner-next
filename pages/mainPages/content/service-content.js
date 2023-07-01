@@ -1,4 +1,4 @@
-import ServiceContentAnimation from './service-content-animation'
+import ServiceContentAnimation from './content-animation/service-content-animation'
 import { useRouter } from 'next/router'
 
 export default function ServiceContent(){

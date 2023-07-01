@@ -21,8 +21,8 @@ class TalkEditorModal extends Component {
 
   openModal = () => {
     if(typeof process.env.userInfo == "undefined" || 
-      typeof process.env.userInfo.USER_ID === "undefined" || 
-      typeof process.env.userInfo.USER_ID === ''){
+       process.env.userInfo.USER_ID === "undefined" || 
+       process.env.userInfo.USER_ID === ''){
      alert(`the user is not logged in. sign in first.`);
      
      return;
@@ -157,7 +157,7 @@ class TalkEditor extends Component {
     
 
     if(typeof process.env.userInfo == "undefined" || 
-       typeof process.env.userInfo.USER_ID == "undefined" || 
+       process.env.userInfo.USER_ID == "undefined" || 
        process.env.userInfo.USER_ID === ''){
       alert(`the user is not logged in. sign in first.`);
       return;
