@@ -85,7 +85,7 @@ export default function TalkContent() {
         <label className="leading-7 text-sm text-gray-400 mr-2">
           글제목
         </label>
-        <input className="w-[calc(100vw-600px)] mx-1 bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 leading-8 transition-colors duration-200 ease-in-out"
+        <input className="w-auto mx-1 bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 leading-8 transition-colors duration-200 ease-in-out"
           type="input" onChange={(e) => changeCategoryTitleValue(e)} ref={newCategoryNameRef} >
         </input>
         <button className="text-white px-4 ml-2 bg-indigo-500 hover:bg-indigo-600 border-0 py-2 focus:outline-none rounded text-lg"
