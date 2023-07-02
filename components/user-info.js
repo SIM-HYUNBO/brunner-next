@@ -10,15 +10,13 @@ export default function UserInfo(){
     return '';
   }
 
-    // userInfo : 현재값 가져오기 getter
-    // setUserInfo : 현재값 바꾸기 setter
-    return (
-        <div className="flex flex-row ml-3 mr-1 text-gray-600 dark:text-gray-400 align-middle">
-          <DarkModeToggleButton />
-          <p className="mr-1 ml-1">
-            {userName()}
-          </p>
-          <SignoutButton />
-        </div>
-    );
+  return (
+      <div className="flex flex-row ml-3 mr-1 text-gray-600 dark:text-gray-400 align-middle">
+        <DarkModeToggleButton />
+        <p className="mr-1 ml-1">
+          {userName()}
+        </p>
+        <SignoutButton />
+      </div>
+  );
 }
