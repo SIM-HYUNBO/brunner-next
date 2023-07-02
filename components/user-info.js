@@ -4,7 +4,7 @@ import DarkModeToggleButton from "./dark-mode-toggle-button";
 export default function UserInfo(){
 
   const userName = ()=>{
-    const userName = process.env.userInfo.USER_NAME;
+    const userName = process.env.userInfo?.USER_NAME;
 
     return (userName === undefined ? '': process.env.userInfo.USER_NAME +'님');
   }
