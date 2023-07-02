@@ -78,7 +78,7 @@ export default function TalkContent() {
           오픈톡
         </h1>
         <div className="main-governing-text">
-          토크에 참여하거나 새토크를 개설하고 사람들과 친해지세요.
+          다른 사람의 대화에 참여하거나 새 대화를 시작하고 사람들과 친해지세요.
         </div>
       </div>
       <nav className="flex flex-row w-full items-center text-base justify-start mb-10">
