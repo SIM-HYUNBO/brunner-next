@@ -82,7 +82,7 @@ export default function TalkContent(){
         </div>
       </div>
       <nav className="flex flex-row w-full items-center text-base justify-start mb-10">
-          <label className="leading-7 text-sm text-gray-400 mx-1">
+          <label className="leading-7 text-sm text-gray-400 mr-2">
             글제목
           </label>
           <input className="w-[calc(16vw)]
@@ -115,13 +115,15 @@ export default function TalkContent(){
 
       <div className="flex w-full">
         
-        <div className="flex flex-row w-full align-top px-5 mb-10 items-center">
-            <div className="flex flex-col w-1/2 align-top px-5 mb-10 items-end"  
-                id='users-category'>
-            {userCategories.map(
+        <div className="flex flex-col w-full align-top mb-10 items-start">
+          <label className="leading-7 text-sm text-gray-400 mr-5">
+            내 글
+          </label>
+          <div className="flex flex-row w-full align-top mb-10 items-start" id='users-category'>
+              {userCategories.map(
                 (talk_category)=>(
                     <div className="flex flex-col items-start" key={talk_category.CATEGORY_ID}>
-                        <button className="text-white bg-indigo-500 border-0 py-2 px-8 focus:outline-none hover:bg-indigo-600 rounded text-lg my-1"
+                        <button className="text-white bg-indigo-500 border-0 py-2 px-8 focus:outline-none hover:bg-indigo-600 rounded text-lg mr-2 mb-2"
                                 onClick={() => ( 
                                     setSelectedCategoryName(talk_category.CATEGORY_NAME)
                                 )} 
@@ -143,14 +145,16 @@ export default function TalkContent(){
                         </div>
                     </div>
                 ))
-                }
+              }
             </div>
-            <div className="w-1/2"  
-                id='others-category'>
-            {otherCategories.map(
+            <label className="leading-7 text-sm text-gray-400 mr-5">
+                최신 글
+            </label>
+            <div className="flex flex-wrap w-full align-top items-start" id='others-category'>
+            { otherCategories.map(
                 (talk_category)=>(
                     <div className="align-top" key={talk_category.CATEGORY_ID}>
-                    <button className="text-white bg-indigo-500 border-0 py-2 px-8 focus:outline-none hover:bg-indigo-600 rounded text-lg my-1"
+                    <button className="text-white bg-indigo-500 border-0 py-2 px-8 focus:outline-none hover:bg-indigo-600 rounded text-lg mr-2 mb-2"
                             onClick={() => ( 
                                 setSelectedCategoryName(talk_category.CATEGORY_NAME)
                             )} 

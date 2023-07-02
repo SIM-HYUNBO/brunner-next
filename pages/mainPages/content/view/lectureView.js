@@ -1,7 +1,6 @@
 import Layout from '../../../../components/layout';
 import Head from 'next/head';
 import BodySection from '../../../../components/body-section'
-
 import LectureItem from "../../../../components/lecture-item";
 
 export default function BoardView(pages) {
