@@ -59,3 +59,37 @@ p {
 .main-governing-text {
     @apply leading-relaxed text-slate-900 mb-10 dark:text-slate-400
 }
+
+/*chat-bot */
+.react-chatbot-kit-chat-bot-message {
+    @apply 
+    bg-slate-100 dark:bg-slate-700
+    text-slate-900 dark:text-slate-100
+  }
+
+.react-chatbot-kit-chat-message-container {
+    @apply 
+    bg-slate-400 dark:bg-slate-700
+    text-slate-900 dark:text-slate-100
+  }
+
+.react-chatbot-kit-chat-input {
+    @apply 
+    bg-slate-300 dark:bg-slate-500
+    text-slate-900 dark:text-slate-100
+    placeholder-slate-900 dark:placeholder-slate-200
+  }
+
+.learning-options-container {
+display: flex;
+align-items: flex-start;
+flex-wrap: wrap;
+}
+
+.learning-option-button {
+padding: 0.5rem;
+border-radius: 25px;
+background: transparent;
+border: 1px solid green;
+margin: 3px;
+}

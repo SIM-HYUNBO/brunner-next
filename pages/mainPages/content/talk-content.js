@@ -74,9 +74,9 @@ export default function TalkContent() {
   return (
     <>
       <div className="lg:flex-grow md:w-1/2 lg:pr-24 md:pr-16 flex flex-col md:items-start md:text-left mb-16 md:mb-0 items-center text-center">
-        <h1 className="title-font sm:text-4xl text-3xl mb-10 font-medium text-green-900">
+        <h2 className="title-font sm:text-4xl text-3xl mb-10 font-medium text-green-900">
           오픈톡
-        </h1>
+        </h2>
         <div className="main-governing-text">
           다른 사람의 대화에 참여하거나 새 대화를 시작하고 사람들과 친해지세요.
         </div>

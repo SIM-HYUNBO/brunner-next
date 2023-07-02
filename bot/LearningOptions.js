@@ -2,8 +2,6 @@
 
 import React from "react";
 
-// import "./LearningOptions.css"
-
 const LearningOptions = (props) => {
     const options = [
         { text: "Javascript", handler: () => { }, id: 1 },

@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { EditorState, ContentState  } from 'draft-js';
+import { EditorState, ContentState } from 'draft-js';
 import dynamic from 'next/dynamic';
 const Editor = dynamic(
   () => import('react-draft-wysiwyg').then((mod) => mod.Editor),
@@ -20,13 +20,13 @@ class TalkEditorModal extends Component {
   }
 
   openModal = () => {
-    if(typeof process.env.userInfo == "undefined" || 
-       process.env.userInfo.USER_ID === "undefined" || 
-       process.env.userInfo.USER_ID === ''){
-     alert(`the user is not logged in. sign in first.`);
-     
-     return;
-   }
+    if (typeof process.env.userInfo == "undefined" ||
+      process.env.userInfo.USER_ID === "undefined" ||
+      process.env.userInfo.USER_ID === '') {
+      alert(`the user is not logged in. sign in first.`);
+
+      return;
+    }
 
     this.setState({
       showModal: true
@@ -43,10 +43,6 @@ class TalkEditorModal extends Component {
     this.props.getTalkItems(systemCode, talkCategory, lastTalkId);
   };
 
-  isMyTalk(){
-    return this.props?.currentTalkId?.endsWith(`_${process.env.userInfo?.USER_ID}`)  
-  }
-
   render() {
     const { showModal } = this.state;
 
@@ -54,54 +50,56 @@ class TalkEditorModal extends Component {
       <div>
         <Link href="" onClick={this.openModal}>
           <h2 className='mt-2'>
-            {this.props.editMode === 'New'? '📑': this.isMyTalk() ? '🖌': ''}  
+            {this.props.editMode === 'New' ?
+              (process.env.userInfo.USER_ID === undefined ? '' : '📑') :
+              process.env.userInfo.USER_ID === undefined ? '' : (this.props.currentTalkId.endsWith(`_${process.env.userInfo.USER_ID}`) ? '🖌' : '')}
           </h2>
         </Link>
 
         {showModal && (
-          <Modal className="modal" 
-                  isOpen={showModal}
-                  // onAfterOpen={openModal}
-                  // onRequestClose={closeModal}
-                  style={{overlay: {
-                    position: 'fixed',
-                    top: 40,
-                    left: 0,
-                    right: 0,
-                    bottom: 0,
-                    backgroundColor: 'rgba(255, 255, 255, 0.75)'
-                  },
-                  content: {
-                    position: 'absolute',
-                    top: '40px',
-                    left: '40px',
-                    right: '40px',
-                    bottom: '40px',
-                    border: '1px solid #ccc',
-                    background: '#fff',
-                    overflow: 'auto',
-                    WebkitOverflowScrolling: 'touch',
-                    borderRadius: '4px',
-                    outline: 'none',
-                    padding: '20px',
-                    backgroundColor: 'rgba(30, 41, 59, 1)'
-                  }
-                  }}
-                  contentLabel="New Talk">
+          <Modal className="modal"
+            isOpen={showModal}
+            // onAfterOpen={openModal}
+            // onRequestClose={closeModal}
+            style={{
+              overlay: {
+                position: 'fixed',
+                top: 40,
+                left: 0,
+                right: 0,
+                bottom: 0,
+                backgroundColor: 'rgba(255, 255, 255, 0.75)'
+              },
+              content: {
+                position: 'absolute',
+                top: '40px',
+                left: '40px',
+                right: '40px',
+                bottom: '40px',
+                border: '1px solid #ccc',
+                background: '#fff',
+                overflow: 'auto',
+                WebkitOverflowScrolling: 'touch',
+                borderRadius: '4px',
+                outline: 'none',
+                padding: '20px',
+                backgroundColor: 'rgba(30, 41, 59, 1)'
+              }
+            }}
+            contentLabel="New Talk">
 
             <div className="modal-content">
               <span className="close" onClick={this.closeModal}>
                 &times;
               </span>
               <TalkEditor categoryId={this.props.categoryId}
-                          categoryName={this.props.categoryName}
-                          currentTalkId={this.props.currentTalkId}
-                          currentTitle={this.props.currentTitle}
-                          currentContent={this.props.currentContent}
-                          editMode={this.props.editMode}
-                          isMyTalk={this.isMyTalk}
-                          closeModal={this.closeModal}
-                          getTalkItems={this.getTalkItems}
+                categoryName={this.props.categoryName}
+                currentTalkId={this.props.currentTalkId}
+                currentTitle={this.props.currentTitle}
+                currentContent={this.props.currentContent}
+                editMode={this.props.editMode}
+                closeModal={this.closeModal}
+                getTalkItems={this.getTalkItems}
               />
             </div>
           </Modal>
@@ -114,11 +112,11 @@ class TalkEditorModal extends Component {
 class TalkEditor extends Component {
   constructor(props) {
     super(props);
-    
+
     this.state = {
       editorState: typeof this.props.currentContent == "undefined" ?  // <= 여기 3번 : 조회한 내용으로 표시 
         EditorState.createWithContent(ContentState.createFromText("")) :
-        EditorState.createWithContent(convertFromRaw( JSON.parse( this.props.currentContent) )),
+        EditorState.createWithContent(convertFromRaw(JSON.parse(this.props.currentContent))),
       categoryId: props.categoryId,
       categoryName: props.categoryName,
       title: props.currentTitle,
@@ -127,10 +125,10 @@ class TalkEditor extends Component {
   }
 
   onEditorStateChange = (editorState) => {
-    if(this.props.isMyTalk() == false){
+    if (this.props.currentTalkId?.endsWith(`_${process.env.userInfo.USER_ID}`) == false) {
       alert("this talk is read only.");
       return;
-  }
+    }
 
     this.setState({
       editorState
@@ -149,29 +147,29 @@ class TalkEditor extends Component {
     // Handle submission logic here
     // For example, you can access the category, title, and editorState using this.state
     // You can send the data to a backend API, update the state of the parent component, etc.
-  
+
     const categoryId = this.state.categoryId;
     const categoryName = this.state.categoryName;
     const title = this.state.title;
-    const content = JSON.stringify( convertToRaw(this.state.editorState.getCurrentContent()) ).replace(/\\/g, "\\\\").replace(/"/g, '\\"')// <= 여기 1번 : 입력한 내용으로 저장
-    
+    const content = JSON.stringify(convertToRaw(this.state.editorState.getCurrentContent())).replace(/\\/g, "\\\\").replace(/"/g, '\\"')// <= 여기 1번 : 입력한 내용으로 저장
 
-    if(typeof process.env.userInfo == "undefined" || 
-       process.env.userInfo.USER_ID == "undefined" || 
-       process.env.userInfo.USER_ID === ''){
+
+    if (typeof process.env.userInfo == "undefined" ||
+      process.env.userInfo.USER_ID == "undefined" ||
+      process.env.userInfo.USER_ID === '') {
       alert(`the user is not logged in. sign in first.`);
       return;
     }
 
-    if(this.props.isMyTalk() == false){
-        alert("Editing this talk is not permitted.");
-        return;
+    if (this.props.currentTalkId && this.props.currentTalkId.endsWith(`_${process.env.userInfo.USER_ID}`) == false) {
+      alert("Editing this talk is not permitted.");
+      return;
     }
 
-    const commandName = this.props.editMode === "New"? "talk.createTalkItem": "talk.editTalkItem"
-  
-    RequestServer("POST", 
-    `{"commandName": "${commandName}", 
+    const commandName = this.props.editMode === "New" ? "talk.createTalkItem" : "talk.editTalkItem"
+
+    RequestServer("POST",
+      `{"commandName": "${commandName}", 
       "systemCode":"00",
       "editMode":"${this.props.editMode}",
       "talkId":"${this.props.currentTalkId}",
@@ -180,17 +178,17 @@ class TalkEditor extends Component {
       "content": "${content}",
       "userId": "${process.env.userInfo.USER_ID}"
      }`).then((result) => {
-      if(result.error_code==0){
-        alert("Sucessfully writed.");
-        this.props.closeModal();
-        this.props.getTalkItems("00", this.state.categoryId, '99991231240000_zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz');
-      }else {
-        alert(JSON.stringify(result.error_message));
-      }
-    })
+        if (result.error_code == 0) {
+          alert("Sucessfully writed.");
+          this.props.closeModal();
+          this.props.getTalkItems("00", this.state.categoryId, '99991231240000_zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz');
+        } else {
+          alert(JSON.stringify(result.error_message));
+        }
+      })
   }
 
-  
+
 
   render() {
     const { editorState, categoryId, categoryName, title, darkMode } = this.state;
@@ -201,13 +199,13 @@ class TalkEditor extends Component {
           <label className="w-20 mr-2 text-slate-100">
             Category
           </label>
-          <input className="w-full" 
-                 type="text" 
-                 value={categoryName} 
-                 onChange={this.handleCategoryChange}/>
+          <input className="w-full"
+            type="text"
+            value={categoryName}
+            onChange={this.handleCategoryChange} />
         </div>
         <div className="flex items-center mb-2">
-        <label className="w-20 mr-2 text-slate-100">Title</label>
+          <label className="w-20 mr-2 text-slate-100">Title</label>
           <input className="w-full" type="text" value={title} onChange={this.handleTitleChange} />
         </div>
         <div style={{ height: '100%' }}>
@@ -216,7 +214,7 @@ class TalkEditor extends Component {
             // wrapperClassName="rich-editor-wrapper"
             // editorClassName="rich-editor"
             onEditorStateChange={this.onEditorStateChange}
-            toolbar={{ 
+            toolbar={{
               options: ['inline', 'blockType', 'fontSize', 'fontFamily', 'list', 'textAlign', 'colorPicker', 'link', 'emoji', 'remove', 'history'],
               inline: { options: ['bold', 'italic', 'underline', 'strikethrough'] },
               blockType: { options: ['Normal', 'H1', 'H2', 'H3', 'H4', 'H5', 'H6', 'Blockquote', 'Code'] },
@@ -233,8 +231,8 @@ class TalkEditor extends Component {
             placeholder="The message goes here..."
           />
         </div>
-        <button className="mb-5 text-slate-100" 
-                onClick={this.createOrEditTalkItem}>
+        <button className="mb-5 text-slate-100"
+          onClick={this.createOrEditTalkItem}>
           ✔
         </button>
       </div>
