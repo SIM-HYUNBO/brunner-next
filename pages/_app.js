@@ -7,31 +7,31 @@ export const signinCss = styles;
 export default function App({ Component, pageProps }) {
   dotenv.config();
   let prevUserInfo = {};
-  
+
   useEffect(() => {
-    prevUserInfo=localStorage.getItem('userInfo');
-    if(isJson(prevUserInfo))
-         prevUserInfo=JSON.parse(prevUserInfo);
-    
-    process.env.userInfo=prevUserInfo;
+    prevUserInfo = localStorage.getItem('userInfo');
+    if (isJson(prevUserInfo))
+      prevUserInfo = JSON.parse(prevUserInfo);
+
+    process.env.userInfo = prevUserInfo;
   }, []);
 
   function isJson(str) {
     try {
-      if(typeof str == "undefined")
+      if (typeof str == "undefined")
         return false;
 
       JSON.parse(str);
     } catch (e) {
-        return false;
+      return false;
     }
     return true;
-}
+  }
 
-  return  (
+  return (
     <div>
       <ThemeProvider attribute='class'>
-       <Component {...pageProps} />
+        <Component {...pageProps} />
       </ThemeProvider>
 
       <style global jsx>{`
@@ -43,6 +43,6 @@ export default function App({ Component, pageProps }) {
           height: 100%;
         }
       `}</style>
-  </div>
+    </div>
   );
 }

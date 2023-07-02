@@ -2,9 +2,9 @@ import Layout from '../../components/layout'
 import Head from 'next/head'
 import BodySection from '../../components/body-section'
 
-import ServiceContent from './content/service-content'
+import BrunnerBotContent from './content/brunner-bot-content'
 
-export default function Services(){
+export default function Services() {
   return (
     <Layout>
       <Head>
@@ -12,10 +12,10 @@ export default function Services(){
         <meta name="description" content="IT 기술 연구소"></meta>
         <meta rel="icon" href="brunnerLogo.png"></meta>
         <link></link>
-      </Head>         
+      </Head>
       <BodySection>
         <div className="container mx-auto flex px-5 md:flex-row flex-col items-center">
-          <ServiceContent></ServiceContent>
+          <BrunnerBotContent></BrunnerBotContent>
         </div>
       </BodySection>
     </Layout>
