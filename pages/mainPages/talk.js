@@ -3,9 +3,8 @@ import { useState, useEffect, useRef } from 'react';
 import Layout from '../../components/layout'
 import Head from 'next/head'
 import BodySection from '../../components/body-section'
-import TalkCategoryModal from '../../components/talk-category-modal'
 import RequestServer from '../../components/requestServer'
-
+import TalkContent from './content/talk-content'
 export default function Talk() {
  
   const [selectedCategoryName, setSelectedCategoryName] = useState([]);
@@ -92,90 +91,30 @@ export default function Talk() {
               토크에 참여하거나 새토크를 개설하고 사람들과 친해지세요.
           </div>          
           <nav className="flex flex-row w-full items-center text-base justify-start my-1 mb-10">
-          <label className="leading-7 text-sm text-gray-400 mx-1">
-            글제목</label>
-            <input className="w-[calc(25vw)]
-                              mx-1
-                            bg-white rounded 
-                              border border-gray-300 
-                              focus:border-indigo-500 
-                              focus:ring-2 focus:ring-indigo-200 
-                              text-base outline-none text-gray-700 
-                              py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"
-                  type="input" 
-                  onChange={(e) => changeCategoryTitleValue(e)}
-                  ref={newCategoryNameRef}>
-            </input>            
-            <button className="text-white bg-slate-500 
-                                border-0 py-2 px-8 focus:outline-none hover:bg-indigo-600 rounded text-lg mx-1 my-auto"
-                    onClick={(e) => ( 
-                      requestCreateCategoryResult(e)
-                    )}>
-              새글쓰기
-            </button>
-        </nav>
-
+            <label className="leading-7 text-sm text-gray-400 mx-1">
+              글제목</label>
+              <input className="w-[calc(25vw)]
+                                mx-1
+                              bg-white rounded 
+                                border border-gray-300 
+                                focus:border-indigo-500 
+                                focus:ring-2 focus:ring-indigo-200 
+                                text-base outline-none text-gray-700 
+                                py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"
+                    type="input" 
+                    onChange={(e) => changeCategoryTitleValue(e)}
+                    ref={newCategoryNameRef}>
+              </input>            
+              <button className="text-white bg-slate-500 
+                                  border-0 py-2 px-8 focus:outline-none hover:bg-indigo-600 rounded text-lg mx-1 my-auto"
+                      onClick={(e) => ( 
+                        requestCreateCategoryResult(e)
+                      )}>
+                새글쓰기
+              </button>
+          </nav>
         </div>  
-        <div className="flex flex-row w-auto align-top px-5 mb-10 items-center">
-          <div className="flex flex-col w-1/2 align-top px-5 mb-10 items-end"  
-               id='users-category'>
-            {userCategories.map(
-                (talk_category)=>(
-                  <div className="flex flex-col items-start" key={talk_category.CATEGORY_ID}>
-                    <button className="text-white bg-indigo-500 border-0 py-2 px-8 focus:outline-none hover:bg-indigo-600 rounded text-lg my-1"
-                            onClick={() => ( 
-                              setSelectedCategoryName(talk_category.CATEGORY_NAME)
-                            )} 
-                    >
-                    [{talk_category.CREATE_USER_ID}] {talk_category.CATEGORY_NAME}
-                    </button>
-                    <div>
-                    { 
-                      selectedCategoryName == talk_category.CATEGORY_NAME && 
-                      <TalkCategoryModal 
-                        systemCode={talk_category.SYSTEM_CODE} 
-                        categoryId={talk_category.CATEGORY_ID} 
-                        categoryName={talk_category.CATEGORY_NAME} 
-                        createUserId={talk_category.CREATE_USER_ID} 
-                        pageSize='100'
-                        setSelectedCategoryName={setSelectedCategoryName}
-                        key={talk_category.CATEGORY_ID} />
-                      }
-                    </div>
-                  </div>
-                ))
-              }
-          </div>
-          <div className="w-1/2"  
-               id='others-category'>
-            {otherCategories.map(
-                (talk_category)=>(
-                  <div className="align-top" key={talk_category.CATEGORY_ID}>
-                    <button className="text-white bg-indigo-500 border-0 py-2 px-8 focus:outline-none hover:bg-indigo-600 rounded text-lg my-1"
-                            onClick={() => ( 
-                              setSelectedCategoryName(talk_category.CATEGORY_NAME)
-                            )} 
-                    >
-                    [{talk_category.CREATE_USER_ID}] {talk_category.CATEGORY_NAME}
-                    </button>
-                    <div>
-                    { 
-                      selectedCategoryName == talk_category.CATEGORY_NAME && 
-                      <TalkCategoryModal 
-                        systemCode={talk_category.SYSTEM_CODE} 
-                        categoryId={talk_category.CATEGORY_ID} 
-                        categoryName={talk_category.CATEGORY_NAME} 
-                        createUserId={talk_category.CREATE_USER_ID} 
-                        pageSize='100'
-                        setSelectedCategoryName={setSelectedCategoryName}
-                        key={talk_category.CATEGORY_ID} />
-                      }
-                    </div>
-                  </div>
-                ))
-              }
-          </div>
-        </div>
+        <TalkContent />
       </BodySection>
     </Layout>
   )
