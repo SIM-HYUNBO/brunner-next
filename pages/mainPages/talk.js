@@ -88,9 +88,9 @@ export default function Talk() {
           <h1 className="title-font sm:text-4xl text-3xl mb-10 font-medium text-green-900 items-start">
             오픈톡
           </h1>
-          <pre className="leading-relaxed text-white-900 mb-10">
+          <div className="leading-relaxed text-white-900 mb-10">
               토크에 참여하거나 새토크를 개설하고 사람들과 친해지세요.
-          </pre>          
+          </div>          
           <nav className="flex flex-row w-full items-center text-base justify-start my-1 mb-10">
           <label className="leading-7 text-sm text-gray-400 mx-1" >
             글제목</label>

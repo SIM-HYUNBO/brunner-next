@@ -10,12 +10,12 @@ export default function SupportIntro(){
             <h1 className="title-font sm:text-4xl text-3xl mb-10 font-medium text-green-900">
             항상 곁에 있습니다.
             </h1>
-            <pre className="mb-8 leading-relaxed text-white-900">
+            <div className="mb-8 leading-relaxed text-white-900">
               도움이 필요하십니까? <br/>
               고객이 성공할 수 있도록 길을 열어 리딩합니다. <br/>
               Brunner의 콜센터는 언제나 고객과 함께합니다. <br/>
               바로 연락하십시요.
-            </pre>
+            </div>
             <div className="flex justify-center">
             <button className="inline-flex text-white bg-indigo-500 border-0 py-2 px-6 focus:outline-none hover:bg-indigo-600 rounded text-lg">
               <GetCallCenter/>

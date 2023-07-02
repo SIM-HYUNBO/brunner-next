@@ -10,11 +10,11 @@ export default function HomeContent(){
             <h1 className="title-font sm:text-4xl text-3xl mb-10 font-medium text-green-900">
               항상 연구합니다.
             </h1>
-            <pre className="mb-8 leading-relaxed text-white-900">
+            <div className="mb-8 leading-relaxed text-white-900">
               빠르게 변하는 세상의 기술<br/>
               언제든 원하는 플랫폼을 빠르게 구축하고 사용할 수 있도록 <br/>
               최신의 기술을 연구하는 사람들이 모여 있습니다.<br/>
-            </pre>
+            </div>
             <div className="flex justify-center">
             <div>
               <button className="inline-flex text-white bg-indigo-500 border-0 py-2 px-6 focus:outline-none hover:bg-indigo-600 rounded text-lg m-2"
