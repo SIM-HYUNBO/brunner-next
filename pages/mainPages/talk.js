@@ -92,7 +92,7 @@ export default function Talk() {
               토크에 참여하거나 새토크를 개설하고 사람들과 친해지세요.
           </div>          
           <nav className="flex flex-row w-full items-center text-base justify-start my-1 mb-10">
-          <label className="leading-7 text-sm text-gray-400 mx-1" >
+          <label className="leading-7 text-sm text-gray-400 mx-1">
             글제목</label>
             <input className="w-[calc(25vw)]
                               mx-1
