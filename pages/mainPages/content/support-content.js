@@ -10,7 +10,7 @@ export default function SupportIntro(){
             <h1 className="title-font sm:text-4xl text-3xl mb-10 font-medium text-green-900">
             항상 곁에 있습니다.
             </h1>
-            <div className="mb-8 leading-relaxed text-white">
+            <div className="main-governing-text">
               도움이 필요하십니까? <br/>
               고객이 성공할 수 있도록 길을 열어 리딩합니다. <br/>
               Brunner의 콜센터는 언제나 고객과 함께합니다. <br/>

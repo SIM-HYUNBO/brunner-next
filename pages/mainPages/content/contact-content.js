@@ -10,7 +10,7 @@ export default function ContactContent(){
             <h1 className="title-font sm:text-4xl text-3xl mb-10 font-medium text-green-900">
               언제나 환영합니다.
             </h1>
-            <div className="mb-8 leading-relaxed text-white">
+            <div className="main-governing-text">
               교육센터를 통해 Brunner와 함께 할 수 있습니다. <br/>
               최선을 다해서 구성원들의 미래을 열어드리겠습니다. <br/>
               지금 바로 참여하십시요.

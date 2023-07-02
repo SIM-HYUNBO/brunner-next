@@ -55,3 +55,7 @@ p {
 .container {
     @apply h-full
 }
+
+.main-governing-text {
+    @apply leading-relaxed text-slate-900 mb-10 dark:text-slate-400
+}
