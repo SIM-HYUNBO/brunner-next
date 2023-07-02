@@ -80,33 +80,41 @@ export default function TalkContent(){
         <div className="main-governing-text">
         토크에 참여하거나 새토크를 개설하고 사람들과 친해지세요.
         </div>
-        <nav className="flex flex-row w-full items-center text-base justify-center mb-10">
+      </div>
+      <nav className="flex flex-row w-full items-center text-base justify-start mb-10">
           <label className="leading-7 text-sm text-gray-400 mx-1">
             글제목
           </label>
-          <input className="w-[calc(25vw)]
-                              mx-1
-                          bg-white rounded 
-                              border border-gray-300 
-                              focus:border-indigo-500 
-                              focus:ring-2 focus:ring-indigo-200 
-                              text-base outline-none text-gray-700 
-                              py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"
+          <input className="w-[calc(16vw)]
+                            mx-1
+                          bg-white rounded border 
+                          border-gray-300 
+                          focus:border-indigo-500 
+                            focus:ring-2 
+                          focus:ring-indigo-200 
+                            text-base 
+                            outline-none 
+                          text-gray-700 
+                            py-1 
+                            px-3 
+                            leading-8 
+                            transition-colors 
+                            duration-200 
+                            ease-in-out"
                   type="input" 
                   onChange={(e) => changeCategoryTitleValue(e)}
                   ref={newCategoryNameRef}>
           </input>            
-          <button className="text-white bg-slate-500 
-                              border-0 py-2 px-8 focus:outline-none hover:bg-indigo-600 rounded text-lg mx-1 my-auto"
+          <button className="text-white bg-indigo-500 border-0 py-2 px-4 ml-2 focus:outline-none hover:bg-indigo-600 rounded text-lg"
                   onClick={(e) => ( 
                       requestCreateCategoryResult(e)
                   )}>
               새글쓰기
           </button>
-      </nav>           
-      </div>
+        </nav>           
 
       <div className="flex w-full">
+        
         <div className="flex flex-row w-full align-top px-5 mb-10 items-center">
             <div className="flex flex-col w-1/2 align-top px-5 mb-10 items-end"  
                 id='users-category'>
