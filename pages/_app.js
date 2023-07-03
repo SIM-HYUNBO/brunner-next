@@ -1,4 +1,5 @@
 import dotenv from 'dotenv'
+import "react-chatbot-kit/build/main.css";
 import '@/styles/globals.css'
 import styles from '../styles/signin.css'
 
