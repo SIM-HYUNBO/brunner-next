@@ -19,8 +19,10 @@ class MessageParser {
             this.actionProvider.hiHandler(message);
         }
         else {
-            this.actionProvider.unknownMessageHandler(message);
+            // this.actionProvider.unknownMessageHandler(message);
+            this.actionProvider.chatGPTHandler(message);
         }
+
     }
 }
 
