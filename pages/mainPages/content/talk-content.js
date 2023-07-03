@@ -102,7 +102,7 @@ export default function TalkContent() {
           <label className="leading-7 text-sm text-gray-400 mr-5">
             내 글
           </label>
-          <div className="flex flex-row w-full align-top mb-10 items-start" id='users-category'>
+          <div className="flex flex-wrap w-full align-top mb-10 items-start" id='users-category'>
             {userCategories.map(
               (talk_category) => (
                 <div className="flex flex-col items-start" key={talk_category.CATEGORY_ID}>
