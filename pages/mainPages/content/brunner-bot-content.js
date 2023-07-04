@@ -12,7 +12,7 @@ export default function BrunnerBotContent() {
     <>
       <div className="lg:flex-grow md:w-full lg:pr-24 md:pr-16 flex flex-col md:items-start md:text-left mb-16 md:mb-0 items-center text-center">
         <h2 className="title-font sm:text-4xl text-3xl mb-10 font-medium text-green-900">
-          Brunner Bot
+          Brunner Larning Chat Bot
         </h2>
         <div className="main-governing-text">
           재미있게 봇과 대화 해보세요.
