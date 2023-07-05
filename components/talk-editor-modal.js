@@ -89,7 +89,7 @@ class TalkEditorModal extends Component {
             contentLabel="New Talk">
 
             <div className="modal-content">
-              <span className="close" onClick={this.closeModal}>
+              <span className="close flex flex-col items-end" onClick={this.closeModal}>
                 &times;
               </span>
               <TalkEditor categoryId={this.props.categoryId}

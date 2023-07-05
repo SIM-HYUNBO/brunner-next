@@ -105,7 +105,7 @@ class TalkCategoryModal extends Component {
             }}
             contentLabel="New Talk">
 
-            <div className="modal-content">
+            <div className="modal-content flex flex-col items-end">
               <span className="close" onClick={this.closeModal}>
                 &times;
               </span>

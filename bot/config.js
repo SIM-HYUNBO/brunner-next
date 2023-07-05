@@ -2,6 +2,7 @@
 import { createChatBotMessage } from "react-chatbot-kit";
 import LearningOptions from "./LearningOptions";
 const config = {
+    botName: "Brunner Learning Bot",
     initialMessages: [
         createChatBotMessage(
             "Hello! Do you have a question?"

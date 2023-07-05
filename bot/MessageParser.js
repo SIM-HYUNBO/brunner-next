@@ -22,7 +22,6 @@ class MessageParser {
             // this.actionProvider.unknownMessageHandler(message);
             this.actionProvider.chatGPTHandler(message);
         }
-
     }
 }
 
