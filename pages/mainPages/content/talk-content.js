@@ -82,7 +82,7 @@ export default function TalkContent() {
         </div>
       </div>
       <nav className="flex flex-row w-full items-center text-base justify-start mb-10">
-        <label className="leading-7 text-sm text-gray-600 mr-2">
+        <label className="leading-7 text-sm text-gray-600 dark:text-white mr-2">
           글제목
         </label>
         <input className="w-[calc(100vw-40rem)] mx-1 bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 leading-8 transition-colors duration-200 ease-in-out"
@@ -99,7 +99,7 @@ export default function TalkContent() {
       <div className="flex w-full">
 
         <div className="flex flex-col w-full align-top mb-10 items-start">
-          <label className="leading-7 text-sm text-gray-600 mr-5">
+          <label className="leading-7 text-sm text-gray-600 dark:text-white mr-5">
             내 글
           </label>
           <div className="flex flex-wrap w-full align-top mb-10 items-start" id='users-category'>
@@ -130,7 +130,7 @@ export default function TalkContent() {
               ))
             }
           </div>
-          <label className="leading-7 text-sm text-gray-600 mr-5">
+          <label className="leading-7 text-sm text-gray-600 dark:text-white mr-5">
             최신 글
           </label>
           <div className="flex flex-wrap w-full align-top items-start" id='others-category'>
