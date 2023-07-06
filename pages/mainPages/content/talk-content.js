@@ -106,7 +106,7 @@ export default function TalkContent() {
             {userCategories.map(
               (talk_category) => (
                 <div className="flex flex-col items-start w-full" key={talk_category.CATEGORY_ID}>
-                  <button className="text-gray-700 dark:text-white bg-transparent border-y-2 border-gray-400 w-full py-2 px-8 focus:outline-none hover:bg-indigo-600 rounded text-lg mr-2 mb-2"
+                  <button className="text-gray-500 dark:text-white bg-transparent border-y-2 border-gray-400 w-full py-2 px-8 focus:outline-none hover:bg-indigo-600 rounded text-lg mr-2 mb-2"
                     onClick={() => (
                       setSelectedCategoryName(talk_category.CATEGORY_NAME)
                     )}
@@ -137,7 +137,7 @@ export default function TalkContent() {
             {otherCategories.map(
               (talk_category) => (
                 <div className="align-top w-full" key={talk_category.CATEGORY_ID}>
-                  <button className="text-gray-700 dark:text-white bg-transparent border-y-2 border-gray-600 w-full py-2 px-8 focus:outline-none hover:bg-indigo-600 rounded text-lg mr-2 mb-2"
+                  <button className="text-gray-500 dark:text-white bg-transparent border-y-2 border-gray-600 w-full py-2 px-8 focus:outline-none hover:bg-indigo-600 rounded text-lg mr-2 mb-2"
                     onClick={() => (
                       setSelectedCategoryName(talk_category.CATEGORY_NAME)
                     )}
