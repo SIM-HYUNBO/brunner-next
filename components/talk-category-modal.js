@@ -106,9 +106,12 @@ class TalkCategoryModal extends Component {
             contentLabel="New Talk">
 
             <div className="modal-content flex flex-col items-end">
-              <span className="close" onClick={this.closeModal}>
+              <span className="close text-white" onClick={this.closeModal}>
                 &times;
               </span>
+              <h1 className='mt-2 ml-auto mr-auto'>
+                {`[${this.props.createUserId}] ${this.props.categoryName}`}
+              </h1>
               <div className="flex flex-col w-full justify-top px-5 mb-10 h-full overflow-auto">
                 <TalkEditorModal className="m-10"
                   ref={this.talkEditorModalRef}
