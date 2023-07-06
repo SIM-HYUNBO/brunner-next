@@ -85,7 +85,7 @@ export default function TalkContent() {
         <label className="leading-7 text-sm text-gray-400 mr-2">
           글제목
         </label>
-        <input className="w-auto mx-1 bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 leading-8 transition-colors duration-200 ease-in-out"
+        <input className="w-[calc(100vh-11rem)] mx-1 bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 leading-8 transition-colors duration-200 ease-in-out"
           type="input" onChange={(e) => changeCategoryTitleValue(e)} ref={newCategoryNameRef} >
         </input>
         <button className="text-white px-4 ml-2 bg-indigo-500 hover:bg-indigo-600 border-0 py-2 focus:outline-none rounded text-lg"
@@ -105,8 +105,8 @@ export default function TalkContent() {
           <div className="flex flex-wrap w-full align-top mb-10 items-start" id='users-category'>
             {userCategories.map(
               (talk_category) => (
-                <div className="flex flex-col items-start" key={talk_category.CATEGORY_ID}>
-                  <button className="text-white bg-indigo-500 border-0 py-2 px-8 focus:outline-none hover:bg-indigo-600 rounded text-lg mr-2 mb-2"
+                <div className="flex flex-col items-start w-full" key={talk_category.CATEGORY_ID}>
+                  <button className="text-white bg-indigo-500 border-0 w-[calc(100vh)] py-2 px-8 focus:outline-none hover:bg-indigo-600 rounded text-lg mr-2 mb-2"
                     onClick={() => (
                       setSelectedCategoryName(talk_category.CATEGORY_NAME)
                     )}
@@ -137,7 +137,7 @@ export default function TalkContent() {
             {otherCategories.map(
               (talk_category) => (
                 <div className="align-top" key={talk_category.CATEGORY_ID}>
-                  <button className="text-white bg-indigo-500 border-0 py-2 px-8 focus:outline-none hover:bg-indigo-600 rounded text-lg mr-2 mb-2"
+                  <button className="text-white bg-indigo-500 border-0 w-[calc(100vh)] py-2 px-8 focus:outline-none hover:bg-indigo-600 rounded text-lg mr-2 mb-2"
                     onClick={() => (
                       setSelectedCategoryName(talk_category.CATEGORY_NAME)
                     )}
