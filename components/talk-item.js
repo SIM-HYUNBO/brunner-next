@@ -62,14 +62,14 @@ export default function TalkItem({ data: talkItem, refreshfunc: getTalkItems }) 
           />
 
           {/* 글 제목 */}
-          <div className="flex flex-col w-full p-2 text-slate-400">
+          <div className="flex flex-col text-xs w-full p-2 text-slate-400">
             <b>[{talkUserId}] {talkTitle}</b>
           </div>
         </div>
       </div>
 
       {/* 글 본문 */}
-      <div className="flex flex-row w-full h-full mb-2 p-2 text-slate-400">
+      <div className="flex flex-row w-full h-full mb-2 p-2 text-slate-400 text-xs">
         {getText(talkContentRaw)} {/* <= 여기 2번 : 조회한 내용으로 표시 <= 이걸 pre tag로 표시하면 글이 길면 전체페이지 폭이 넘어가서 페이지 틀이 깨짐 */}
       </div>
     </div>
