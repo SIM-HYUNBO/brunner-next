@@ -60,6 +60,14 @@ p {
     @apply leading-relaxed text-slate-900 mb-10 dark:text-slate-400
 }
 
+.talkitem-title {
+    font-size: 14px;
+}
+
+.talkitem-content {
+    font-size: 12px;
+}
+
 /*chat-bot */
 
 .react-chatbot-kit-chat-inner-container {
