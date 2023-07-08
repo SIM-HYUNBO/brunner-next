@@ -7,31 +7,8 @@ import HomeContent from './mainPages/content/home-content'
 export default function Home() {
 
   useEffect(() => {
-    window.addEventListener('beforeunload', handleUnload)
 
-    return () => {
-      window.removeEventListener('beforeunload', handleUnload)
-    };
   }, []);
-
-  const handleUnload = () => {
-    alert('aaa');
-
-    if (process.env.userInfo?.USER_ID) {
-      RequestServer("POST",
-        `{"commandName": "security.signout", 
-      "userId": "${process.env.userInfo?.USER_ID}"
-    }`).then((result) => {
-
-          if (result.error_code == 0) {
-            process.env.userInfo = result.userInfo;
-            localStorage.setItem('userInfo', JSON.stringify(process.env.userInfo));
-          } else {
-            alert(JSON.stringify(result.error_message));
-          }
-        })
-    }
-  }
 
   return (
     <Layout>

@@ -12,10 +12,11 @@ export default function App({ Component, pageProps }) {
 
   useEffect(() => {
     prevUserInfo = localStorage.getItem('userInfo');
-    if (isJson(prevUserInfo))
-      prevUserInfo = JSON.parse(prevUserInfo);
 
-    process.env.userInfo = prevUserInfo;
+    if (isJson(prevUserInfo)) {
+      const jPrevUserInfo = JSON.parse(prevUserInfo);
+      process.env.userInfo = prevUserInfo;
+    }
   }, []);
 
   function isJson(str) {

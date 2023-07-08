@@ -5,7 +5,6 @@ import { useState, useEffect } from 'react';
 export default function UserInfo() {
 
   const [userName, setuserName] = useState([]);
-
   useEffect(() => {
     setuserName(process.env.userInfo?.USER_NAME === undefined ? '' : process.env.userInfo.USER_NAME + '님')
   }, [])
