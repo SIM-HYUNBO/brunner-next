@@ -196,17 +196,17 @@ class TalkEditor extends Component {
     return (
       <div>
         <div className="flex items-center mb-2">
-          <label className="w-20 mr-2 text-slate-100">
+          <label className="category-item w-20 mr-2 text-slate-100">
             Category
           </label>
-          <input className="w-full"
+          <input className="category-item w-full"
             type="text"
             value={categoryName}
             onChange={this.handleCategoryChange} />
         </div>
         <div className="flex items-center mb-2">
-          <label className="w-20 mr-2 text-slate-100">Title</label>
-          <input className="w-full" type="text" value={title} onChange={this.handleTitleChange} />
+          <label className="talkitem-title w-20 mr-2 text-slate-100">Title</label>
+          <input className="talkitem-title w-full" type="text" value={title} onChange={this.handleTitleChange} />
         </div>
         <div style={{ height: '100%' }}>
           <Editor
@@ -226,6 +226,8 @@ class TalkEditor extends Component {
               // height: '100%',
               // backgroundColor: 'slate',
               border: '1px solid #ddd',
+              color: 'white',
+              fontSize: '12px',
               borderRadius: '4px'
             }}
             placeholder="The message goes here..."

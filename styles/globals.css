@@ -61,10 +61,16 @@ p {
 }
 
 .category-item {
-    @apply text-green-600 dark:text-green-300 text-xs
+    font-size: 14px;
 }
+.category-item {
+    @apply text-green-600 dark:text-green-300 bg-slate-200 dark:bg-slate-800
+    
+}
+
 .talkitem-title {
     font-size: 14px;
+    background: rgb(30,41,59)
 }
 
 .talkitem-content {
