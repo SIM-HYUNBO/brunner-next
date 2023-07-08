@@ -107,7 +107,7 @@ export default function TalkContent() {
               (talk_category) => (
                 <div className="flex flex-col items-start w-full" key={talk_category.CATEGORY_ID}>
                   <p className="category-item 
-                                   bg-transparent border-y-2 
+                                   border-y-2 
                                    border-gray-400 
                                    w-full 
                                    py-2 
@@ -149,7 +149,6 @@ export default function TalkContent() {
               (talk_category) => (
                 <div className="align-top w-full" key={talk_category.CATEGORY_ID}>
                   <p className="category-item 
-                                 bg-transparent 
                                  border-y-2 
                                  border-gray-600 
                                  w-full 

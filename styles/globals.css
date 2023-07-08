@@ -64,7 +64,7 @@ p {
     font-size: 14px;
 }
 .category-item {
-    @apply text-green-600 dark:text-green-300 bg-slate-200 dark:bg-slate-800
+    @apply text-green-400 dark:text-green-300 bg-slate-700 dark:bg-slate-800
     
 }
 
