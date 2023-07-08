@@ -60,8 +60,11 @@ p {
     @apply leading-relaxed text-slate-900 mb-10 dark:text-slate-400
 }
 
+.category-item {
+    @apply text-green-600 dark:text-green-300 text-xs
+}
 .talkitem-title {
-    font-size: 12px;
+    font-size: 14px;
 }
 
 .talkitem-content {

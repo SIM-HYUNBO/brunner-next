@@ -103,10 +103,21 @@ export default function TalkContent() {
             내 글
           </label>
           <div className="flex flex-wrap w-full align-top mb-10 items-start" id='users-category'>
-            {userCategories.map(
+            {userCategories && userCategories.map(
               (talk_category) => (
                 <div className="flex flex-col items-start w-full" key={talk_category.CATEGORY_ID}>
-                  <button className="talkitem-title text-black dark:text-slate-400 hover:text-white bg-transparent border-y-2 border-gray-400 w-full py-2 px-8 focus:outline-none hover:bg-indigo-600 rounded text-lg mr-2 mb-2"
+                  <button className="category-item 
+                                   bg-transparent border-y-2 
+                                   border-gray-400 
+                                   w-full 
+                                   py-2 
+                                   px-8 
+                                   focus:outline-none 
+                                   hover:bg-indigo-600 
+                                   rounded 
+                                   text-lg 
+                                   mr-2 
+                                   mb-2"
                     onClick={() => (
                       setSelectedCategoryName(talk_category.CATEGORY_NAME)
                     )}
@@ -134,10 +145,22 @@ export default function TalkContent() {
             최신 글
           </label>
           <div className="flex flex-wrap w-full align-top items-start" id='others-category'>
-            {otherCategories.map(
+            {otherCategories && otherCategories.map(
               (talk_category) => (
                 <div className="align-top w-full" key={talk_category.CATEGORY_ID}>
-                  <button className="talkitem-title text-black hover:text-white dark:text-slate-400 bg-transparent border-y-2 border-gray-600 w-full py-2 px-8 focus:outline-none hover:bg-indigo-600 rounded text-lg mr-2 mb-2"
+                  <button className="category-item 
+                                 bg-transparent 
+                                 border-y-2 
+                                 border-gray-600 
+                                 w-full 
+                                 py-2 
+                                 px-8 
+                                 focus:outline-none 
+                                 hover:bg-indigo-600 
+                                 rounded 
+                                 text-lg 
+                                 mr-2 
+                                 mb-2"
                     onClick={() => (
                       setSelectedCategoryName(talk_category.CATEGORY_NAME)
                     )}

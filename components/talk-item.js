@@ -62,7 +62,7 @@ export default function TalkItem({ data: talkItem, refreshfunc: getTalkItems }) 
           />
 
           {/* 글 제목 */}
-          <div className="talkitem-titile flex flex-col w-full p-2 text-slate-400">
+          <div className="talkitem-title flex flex-col w-full p-2 text-slate-400">
             <b>[{talkUserId}] {talkTitle}</b>
           </div>
         </div>
