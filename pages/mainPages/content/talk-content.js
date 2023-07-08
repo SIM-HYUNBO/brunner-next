@@ -106,7 +106,7 @@ export default function TalkContent() {
             {userCategories && userCategories.map(
               (talk_category) => (
                 <div className="flex flex-col items-start w-full" key={talk_category.CATEGORY_ID}>
-                  <button className="category-item 
+                  <p className="category-item 
                                    bg-transparent border-y-2 
                                    border-gray-400 
                                    w-full 
@@ -123,7 +123,7 @@ export default function TalkContent() {
                     )}
                   >
                     [{talk_category.CREATE_USER_ID}] {talk_category.CATEGORY_NAME}
-                  </button>
+                  </p>
                   <div>
                     {
                       selectedCategoryName == talk_category.CATEGORY_NAME &&
@@ -148,7 +148,7 @@ export default function TalkContent() {
             {otherCategories && otherCategories.map(
               (talk_category) => (
                 <div className="align-top w-full" key={talk_category.CATEGORY_ID}>
-                  <button className="category-item 
+                  <p className="category-item 
                                  bg-transparent 
                                  border-y-2 
                                  border-gray-600 
@@ -166,7 +166,7 @@ export default function TalkContent() {
                     )}
                   >
                     [{talk_category.CREATE_USER_ID}] {talk_category.CATEGORY_NAME}
-                  </button>
+                  </p>
                   <div>
                     {
                       selectedCategoryName == talk_category.CATEGORY_NAME &&
