@@ -47,7 +47,7 @@ export default function BrunnerBotContent() {
         </div>
         <div className="flex justify-center w-full">
           <div className="flex justify-center w-full">
-            <section className="text-gray-600 body-font overflow-hidden w-full">
+            <section className="text-gray-600 body-font overflow-hidden w-full mb-10">
               <Chatbot
                 config={config}
                 messageParser={MessageParser}
