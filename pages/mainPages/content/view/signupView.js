@@ -132,9 +132,7 @@ export default function SignupView() {
                   onChange={(e) => changeEMailValue(e)}
                 />
               </div>
-            </div>
 
-            <div className="flex">
               <div className="relative mb-4 mr-5 w-40">
                 <label htmlFor="registerNo" className="leading-7 text-sm text-gray-400">Register No</label>
                 <input type="text"
@@ -154,6 +152,7 @@ export default function SignupView() {
                   onChange={(e) => changeAddressValue(e)}
                 />
               </div>
+
             </div>
 
             <button onClick={() => requestSignupResult()}
