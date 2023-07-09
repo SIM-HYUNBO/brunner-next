@@ -82,7 +82,6 @@ export default function SignupView() {
             </div>
 
             <div className="flex flex-wrap w-screen">
-
               <div className="relative mb-4 mr-5 w-40 ">
                 <label htmlFor="id" className="leading-7 text-sm text-gray-400">ID</label>
                 <input type="text"
@@ -92,7 +91,6 @@ export default function SignupView() {
                   onChange={(e) => changeUserIdValue(e)}
                 />
               </div>
-
               <div className="relative mb-4 mr-5 w-40">
                 <label htmlFor="password" className="leading-7 text-sm text-gray-400">Password</label>
                 <input type="password"
@@ -102,6 +100,8 @@ export default function SignupView() {
                   onChange={(e) => changePasswordValue(e)}
                 />
               </div>
+            </div>
+            <div className="flex flex-wrap w-screen">
 
               <div className="relative mb-4 mr-5 w-40">
                 <label htmlFor="name" className="leading-7 text-sm text-gray-400">Name</label>
@@ -123,7 +123,7 @@ export default function SignupView() {
                 />
               </div>
 
-              <div className="relative mb-4 w-40">
+              <div className="relative mb-4 mr-5 w-40">
                 <label htmlFor="email" className="leading-7 text-sm text-gray-400">E-Mail</label>
                 <input type="email"
                   id="phoneNumber"
@@ -152,7 +152,6 @@ export default function SignupView() {
                   onChange={(e) => changeAddressValue(e)}
                 />
               </div>
-
             </div>
 
             <button onClick={() => requestSignupResult()}
