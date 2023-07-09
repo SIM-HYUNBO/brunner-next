@@ -81,7 +81,7 @@ export default function SignupView() {
               <p className="leading-relaxed mt-4  mb-5">Enter your Information.</p>
             </div>
 
-            <div className="flex flex-wrap w-screen">
+            <div className="flex flex-col w-screen">
 
               <div className="relative mb-4 mr-5 w-40 ">
                 <label htmlFor="id" className="leading-7 text-sm text-gray-400">ID</label>
