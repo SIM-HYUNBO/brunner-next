@@ -156,7 +156,7 @@ export default function SignupView() {
             </div>
 
             <button onClick={() => requestSignupResult()}
-              className="text-white bg-indigo-500 border-0 py-2 px-8 focus:outline-none hover:bg-indigo-600 rounded text-lg">
+              className="text-white bg-indigo-500 w-full border-0 py-2 px-8 focus:outline-none hover:bg-indigo-600 rounded text-lg">
               Signup
             </button>
 
