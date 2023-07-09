@@ -1,6 +1,6 @@
 // bot/ActionProvider.js
 
-const API_KEY = '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'
+const API_KEY = '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'
 
 class ActionProvider {
     constructor(createChatbotMessage, setStateFunc, createClientMessage) {
@@ -37,7 +37,9 @@ class ActionProvider {
     chatGPTHandler = async (message) => {
         const newMessages = [message];
         const reply = await this.processMessageToChatGPT(newMessages);
-        this.setChatbotMessage(reply);
+
+        if (reply !== undefined)
+            this.setChatbotMessage(reply);
     }
 
     processMessageToChatGPT = async (chatMessages) => {
@@ -79,7 +81,8 @@ class ActionProvider {
         }).then((data) => {
             return data.json();
         }).then((data) => {
-            console.log(data);
+            alert(JSON.stringify(data, null, 4));
+            return undefined;
         })
     }
 
