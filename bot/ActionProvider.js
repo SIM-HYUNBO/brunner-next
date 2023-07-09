@@ -1,6 +1,6 @@
 // bot/ActionProvider.js
 
-const API_KEY = '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'
+const API_KEY = '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'
 
 class ActionProvider {
     constructor(createChatbotMessage, setStateFunc, createClientMessage) {
