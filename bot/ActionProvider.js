@@ -1,7 +1,5 @@
 // bot/ActionProvider.js
 
-const API_KEY = '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'
-
 class ActionProvider {
     constructor(createChatbotMessage, setStateFunc, createClientMessage) {
         this.createChatbotMessage = createChatbotMessage;
@@ -74,7 +72,7 @@ class ActionProvider {
         await fetch("https://api.openai.com/v1/chat/completions", {
             method: "POST",
             headers: {
-                "Authorization": "Bearer " + API_KEY,
+                "Authorization": "Bearer " + localStorage.getItem('openAPIKey'),
                 "Content-Type": "application/json"
             },
             body: JSON.stringify(apiRequestBody)
