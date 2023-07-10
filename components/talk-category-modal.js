@@ -69,7 +69,7 @@ class TalkCategoryModal extends Component {
       <div>
         <Link href="" onClick={this.openModal}>
           <h2 className='mt-2'>
-            {this.props.editMode === 'New' ? '📑' : this.props.currentTalkId?.endsWith(`_${process.env.userInfo.USER_ID}`) ? '🖌' : ''}
+            {this.props.editMode === 'New' ? '📑' : this.props.currentTalkId?.endsWith(`_${process.env.userInfo?.USER_ID}`) ? '🖌' : ''}
           </h2>
         </Link>
 
