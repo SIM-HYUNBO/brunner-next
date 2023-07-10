@@ -51,8 +51,8 @@ class TalkEditorModal extends Component {
         <Link href="" onClick={this.openModal}>
           <h2 className='mt-2'>
             {this.props.editMode === 'New' ?
-              (process.env.userInfo.USER_ID === undefined ? '' : '📑') :
-              process.env.userInfo.USER_ID === undefined ? '' : (this.props.currentTalkId.endsWith(`_${process.env.userInfo.USER_ID}`) ? '🖌' : '')}
+              (process.env.userInfo?.USER_ID === undefined ? '' : '📑') :
+              process.env.userInfo?.USER_ID === undefined ? '' : (this.props.currentTalkId.endsWith(`_${process.env.userInfo?.USER_ID}`) ? '🖌' : '')}
           </h2>
         </Link>
 
