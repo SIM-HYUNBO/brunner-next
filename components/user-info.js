@@ -1,11 +1,18 @@
 import SignoutButton from "./signout-button";
 import DarkModeToggleButton from "./dark-mode-toggle-button";
 import { useState, useEffect } from 'react';
+import isJson from './../pages/util';
 
 export default function UserInfo() {
 
   const [userName, setuserName] = useState([]);
   useEffect(() => {
+    let prevUserInfo = localStorage.getItem('userInfo');
+
+    if (isJson(prevUserInfo)) {
+      process.env.userInfo = JSON.parse(prevUserInfo);
+    }
+
     setuserName(process.env.userInfo?.USER_NAME === undefined ? '' : process.env.userInfo.USER_NAME + '님')
   }, [])
 

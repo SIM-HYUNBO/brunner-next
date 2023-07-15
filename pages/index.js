@@ -1,35 +1,10 @@
-import dotenv from 'dotenv'
-import { useEffect } from 'react';
 import Layout from '../components/layout'
 import Head from 'next/head'
 import BodySection from '../components/body-section'
 import HomeContent from './mainPages/content/home-content'
 
+// Home 페이지
 export default function Home() {
-  dotenv.config();
-
-  let prevUserInfo = {};
-
-  useEffect(() => {
-    prevUserInfo = localStorage.getItem('userInfo');
-
-    if (isJson(prevUserInfo)) {
-      const jPrevUserInfo = JSON.parse(prevUserInfo);
-      process.env.userInfo = prevUserInfo;
-    }
-  }, []);
-
-  function isJson(str) {
-    try {
-      if (typeof str == "undefined")
-        return false;
-
-      JSON.parse(str);
-    } catch (e) {
-      return false;
-    }
-    return true;
-  }
 
   return (
     <Layout>
