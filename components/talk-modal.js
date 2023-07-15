@@ -5,7 +5,7 @@ import Link from "next/link";
 import TalkEditorModal from './talk-editor-modal';
 import TalkItem from './talk-item';
 
-class TalkCategoryModal extends Component {
+class TalkModal extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -13,7 +13,7 @@ class TalkCategoryModal extends Component {
       talkItems: []
     };
     this.talkEditorModalRef = createRef();
-    this.getTalkItems(props.systemCode, props.categoryId, '99991231240000_zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz')
+    this.getTalkItems(props.systemCode, props.talkId, '99991231240000_zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz')
   }
 
   openModal = () => {
@@ -34,18 +34,18 @@ class TalkCategoryModal extends Component {
     this.setState({
       showModal: false
     });
-    this.props.setSelectedCategoryName('')
+    this.props.setSelectedTalkName('')
   };
 
-  getTalkItems = (systemCode, talkCategoryId, lastTalkId) => {
+  getTalkItems = (systemCode, talkId, lastTalkItemId) => {
     this.talkEditorModalRef.current?.closeModal();
 
     // 해당 category에서 lastTalkId 이전에 작섣된 talkItem을 pageSize 갯수만클 조회함
     RequestServer("POST",
       `{"commandName": "talk.getTalkItems",
       "systemCode": "${systemCode}",
-      "talkCategory": "${talkCategoryId}",
-      "lastTalkId": "${lastTalkId}",
+      "talkId": "${talkId}",
+      "lastTalkItemId": "${lastTalkItemId}",
       "pageSize": ${this.props.pageSize}}`).then((result) => {
         // console.log(JSON.stringify(result));
 
@@ -69,7 +69,7 @@ class TalkCategoryModal extends Component {
       <div>
         <Link href="" onClick={this.openModal}>
           <h2 className='mt-2'>
-            {this.props.editMode === 'New' ? '📑' : this.props.currentTalkId?.endsWith(`_${process.env.userInfo?.USER_ID}`) ? '🖌' : ''}
+            {this.props.editMode === 'New' ? '📑' : this.props.talkId?.endsWith(`_${process.env.userInfo?.USER_ID}`) ? '🖌' : ''}
           </h2>
         </Link>
 
@@ -110,14 +110,14 @@ class TalkCategoryModal extends Component {
                 &times;
               </span>
               <h1 className='mt-2 ml-auto mr-auto'>
-                {`[${this.props.createUserId}] ${this.props.categoryName}`}
+                {`[${this.props.createUserId}] ${this.props.talkName}`}
               </h1>
               <div className="flex flex-col w-full justify-top px-5 mb-10 h-full overflow-auto">
                 <TalkEditorModal className="m-10"
                   ref={this.talkEditorModalRef}
                   editMode='New'
-                  categoryId={this.props.categoryId}
-                  categoryName={this.props.categoryName}
+                  talkId={this.props.talkId}
+                  talkName={this.props.talkName}
                   getTalkItems={this.getTalkItems}
                 />
 
@@ -141,8 +141,8 @@ class TalkEditor extends Component {
       editorState: typeof this.props.currentContent == "undefined" ?  // <= 여기 3번 : 조회한 내용으로 표시 
         EditorState.createWithContent(ContentState.createFromText("")) :
         EditorState.createWithContent(convertFromRaw(JSON.parse(this.props.currentContent))),
-      categoryId: props.categoryId,
-      categoryName: props.categoryName,
+      talkId: props.talkId,
+      talkName: props.talkName,
       title: props.currentTitle,
       darkMode: false // Assuming you have a darkMode state in your application
     };
@@ -168,12 +168,9 @@ class TalkEditor extends Component {
 
 
   createOrEditTalkItem = () => {
-    // Handle submission logic here
-    // For example, you can access the category, title, and editorState using this.state
-    // You can send the data to a backend API, update the state of the parent component, etc.
 
-    const categoryId = this.state.categoryId;
-    const categoryName = this.state.categoryName;
+    const talkId = this.state.talkId;
+    const talkName = this.state.talkName;
     const title = this.state.title;
     const content = JSON.stringify(convertToRaw(this.state.editorState.getCurrentContent())).replace(/\\/g, "\\\\").replace(/"/g, '\\"')// <= 여기 1번 : 입력한 내용으로 저장
 
@@ -196,8 +193,8 @@ class TalkEditor extends Component {
       `{"commandName": "${commandName}", 
       "systemCode":"00",
       "editMode":"${this.props.editMode}",
-      "talkId":"${this.props.currentTalkId}",
-      "talkCategory": "${this.state.categoryId}",
+      "talkItemId":"${this.props.currentTalkItemId}",
+      "talkId": "${this.state.talkId}",
       "title": "${title}",
       "content": "${content}",
       "userId": "${process.env.userInfo.USER_ID}"
@@ -205,7 +202,7 @@ class TalkEditor extends Component {
         if (result.error_code == 0) {
           alert("Sucessfully writed.");
           this.props.closeModal();
-          this.props.getTalkItems("00", this.state.categoryId, '99991231240000_zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz');
+          this.props.getTalkItems("00", this.state.talkId, '99991231240000_zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz');
         } else {
           alert(JSON.stringify(result.error_message));
         }
@@ -264,4 +261,4 @@ class TalkEditor extends Component {
   }
 }
 
-export default TalkCategoryModal;
+export default TalkModal;

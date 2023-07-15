@@ -17,6 +17,8 @@ class TalkEditorModal extends Component {
     this.state = {
       showModal: false
     };
+
+    // alert(JSON.stringify(props));
   }
 
   openModal = () => {
@@ -39,8 +41,8 @@ class TalkEditorModal extends Component {
     });
   };
 
-  getTalkItems = (systemCode, talkCategory, lastTalkId) => {
-    this.props.getTalkItems(systemCode, talkCategory, lastTalkId);
+  getTalkItems = (systemCode, talkId, lastTalkItemId) => {
+    this.props.getTalkItems(systemCode, talkId, lastTalkItemId);
   };
 
   render() {
@@ -52,7 +54,7 @@ class TalkEditorModal extends Component {
           <h2 className='mt-2'>
             {this.props.editMode === 'New' ?
               (process.env.userInfo?.USER_ID === undefined ? '' : '📑') :
-              process.env.userInfo?.USER_ID === undefined ? '' : (this.props.currentTalkId.endsWith(`_${process.env.userInfo?.USER_ID}`) ? '🖌' : '')}
+              process.env.userInfo?.USER_ID === undefined ? '' : (this.props.currentTalkItemId.endsWith(`_${process.env.userInfo?.USER_ID}`) ? '🖌' : '')}
           </h2>
         </Link>
 
@@ -92,9 +94,9 @@ class TalkEditorModal extends Component {
               <span className="close flex flex-col text-white items-end" onClick={this.closeModal}>
                 &times;
               </span>
-              <TalkEditor categoryId={this.props.categoryId}
-                categoryName={this.props.categoryName}
-                currentTalkId={this.props.currentTalkId}
+              <TalkEditor talkId={this.props.talkId}
+                talkName={this.props.talkName}
+                currentTalkItemId={this.props.currentTalkItemId}
                 currentTitle={this.props.currentTitle}
                 currentContent={this.props.currentContent}
                 editMode={this.props.editMode}
@@ -117,8 +119,8 @@ class TalkEditor extends Component {
       editorState: typeof this.props.currentContent == "undefined" ?  // <= 여기 3번 : 조회한 내용으로 표시 
         EditorState.createWithContent(ContentState.createFromText("")) :
         EditorState.createWithContent(convertFromRaw(JSON.parse(this.props.currentContent))),
-      categoryId: props.categoryId,
-      categoryName: props.categoryName,
+      talkId: props.talkId,
+      talkName: props.talkName,
       title: props.currentTitle,
       darkMode: false // Assuming you have a darkMode state in your application
     };
@@ -144,12 +146,9 @@ class TalkEditor extends Component {
 
 
   createOrEditTalkItem = () => {
-    // Handle submission logic here
-    // For example, you can access the category, title, and editorState using this.state
-    // You can send the data to a backend API, update the state of the parent component, etc.
 
-    const categoryId = this.state.categoryId;
-    const categoryName = this.state.categoryName;
+    const talkId = this.state.talkId;
+    const talkName = this.state.talkName;
     const title = this.state.title;
     const content = JSON.stringify(convertToRaw(this.state.editorState.getCurrentContent())).replace(/\\/g, "\\\\").replace(/"/g, '\\"')// <= 여기 1번 : 입력한 내용으로 저장
 
@@ -161,7 +160,7 @@ class TalkEditor extends Component {
       return;
     }
 
-    if (this.props.currentTalkId && this.props.currentTalkId.endsWith(`_${process.env.userInfo.USER_ID}`) == false) {
+    if (this.props.currentTalkItemId && this.props.currentTalkItemId.endsWith(`_${process.env.userInfo.USER_ID}`) == false) {
       alert("Editing this talk is not permitted.");
       return;
     }
@@ -172,8 +171,8 @@ class TalkEditor extends Component {
       `{"commandName": "${commandName}", 
       "systemCode":"00",
       "editMode":"${this.props.editMode}",
-      "talkId":"${this.props.currentTalkId}",
-      "talkCategory": "${this.state.categoryId}",
+      "talkItemId":"${this.props.currentTalkItemId}",
+      "talkId": "${this.state.talkId}",
       "title": "${title}",
       "content": "${content}",
       "userId": "${process.env.userInfo.USER_ID}"
@@ -181,7 +180,7 @@ class TalkEditor extends Component {
         if (result.error_code == 0) {
           alert("Sucessfully writed.");
           this.props.closeModal();
-          this.props.getTalkItems("00", this.state.categoryId, '99991231240000_zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz');
+          this.props.getTalkItems("00", this.state.talkId, '99991231240000_zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz');
         } else {
           alert(JSON.stringify(result.error_message));
         }
@@ -191,7 +190,7 @@ class TalkEditor extends Component {
 
 
   render() {
-    const { editorState, categoryId, categoryName, title, darkMode } = this.state;
+    const { editorState, talkId, talkName, title, darkMode } = this.state;
 
     return (
       <div>
@@ -201,8 +200,8 @@ class TalkEditor extends Component {
           </label>
           <input className="category-item w-full"
             type="text"
-            value={categoryName}
-            onChange={this.handleCategoryChange} />
+            value={talkName}
+            onChange={this.handleTalkChange} />
         </div>
         <div className="flex items-center mb-2">
           <label className="talkitem-title w-20 mr-2 text-slate-100">Title</label>
@@ -211,8 +210,6 @@ class TalkEditor extends Component {
         <div style={{ height: '100%' }}>
           <Editor
             editorState={editorState}
-            // wrapperClassName="rich-editor-wrapper"
-            // editorClassName="rich-editor"
             onEditorStateChange={this.onEditorStateChange}
             toolbar={{
               options: ['inline', 'blockType', 'fontSize', 'fontFamily', 'list', 'textAlign', 'colorPicker', 'link', 'emoji', 'remove', 'history'],

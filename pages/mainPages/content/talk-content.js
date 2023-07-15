@@ -1,45 +1,42 @@
 import { useState, useEffect, useRef } from 'react';
 import RequestServer from './../../../components/requestServer'
-import TalkCategoryModal from './../../../components/talk-category-modal'
+import TalkModal from '../../../components/talk-modal'
 
 export default function TalkContent() {
 
-  const [selectedCategoryName, setSelectedCategoryName] = useState([]);
-  const [userCategories, setUserCategories] = useState([]);
-  const [otherCategories, setOtherCategories] = useState([]);
+  const [selectedTalkName, setSelectedTalkName] = useState([]);
+  const [userTalks, setUserTalks] = useState([]);
+  const [otherTalks, setOtherTalks] = useState([]);
 
-  // 현재 로그인 사용자가 볼 카테고리의 목록을 조회
-  // 현재 로그인 사용자가 생성한 카테고리 + 다른 사용자들이 최근에 생성한 카테고리 함께 조회
-  const getUserCategories = () => {
+  const getUserTalks = () => {
 
     RequestServer("POST",
-      `{"commandName": "talk.getUserCategories",
+      `{"commandName": "talk.getUserTalks",
       "systemCode": "00",
       "userId": "${typeof process.env.userInfo == "undefined" ? "" : process.env.userInfo?.USER_ID}"}`).then((result) => {
-        // console.log(JSON.stringify(result));
 
         if (result.error_code == 0) {
-          setUserCategories(result.users_categories);
-          setOtherCategories(result.others_categories);
+          setUserTalks(result.users_talks);
+          setOtherTalks(result.others_talks);
         } else {
           alert(JSON.stringify(result));
         }
       });
   }
 
-  const [newCategoryTitle, setNewCategoryTitle] = useState('');
-  const newCategoryNameRef = useRef()
+  const [newTalkTitle, setNewTalkTitle] = useState('');
+  const newTalkNameRef = useRef()
 
   useEffect(() => {
-    setUserCategories([])
-    getUserCategories();
+    setUserTalks([])
+    getUserTalks();
   }, [])
 
-  const changeCategoryTitleValue = (e) => {
-    setNewCategoryTitle(e.target.value);
+  const changeTalkTitleValue = (e) => {
+    setNewTalkTitle(e.target.value);
   }
 
-  const requestCreateCategoryResult = (e) => {
+  const requestCreateTalkResult = (e) => {
     if (typeof process.env.userInfo == "undefined" ||
       process.env.userInfo.USER_ID === "undefined" ||
       process.env.userInfo.USER_ID === '') {
@@ -48,26 +45,25 @@ export default function TalkContent() {
       return;
     }
 
-    if (newCategoryTitle === "undefined" ||
-      newCategoryTitle === '') {
+    if (newTalkTitle === "undefined" ||
+      newTalkTitle === '') {
       alert(`the new title of the talk is required.`);
       return;
     }
 
     RequestServer("POST",
-      `{"commandName": "talk.createTalkCategory",
+      `{"commandName": "talk.createTalk",
       "systemCode": "00",
       "userId": "${process.env.userInfo.USER_ID}",
-      "categoryName": "${newCategoryTitle}"}`).then((result) => {
-        // console.log(JSON.stringify(result));
+      "talkName": "${newTalkTitle}"}`).then((result) => {
 
         if (result.result.affectedRows == 1) {
           alert(`successfully created.`);
-          newCategoryNameRef.current.value = "";
+          newTalkNameRef.current.value = "";
         } else {
           alert('failed to create a talk.');
         }
-        getUserCategories();
+        getUserTalks();
       });
   };
 
@@ -86,11 +82,11 @@ export default function TalkContent() {
           글제목
         </label>
         <input className="w-[calc(100vw-40rem)] mx-1 bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 leading-8 transition-colors duration-200 ease-in-out"
-          type="input" onChange={(e) => changeCategoryTitleValue(e)} ref={newCategoryNameRef} >
+          type="input" onChange={(e) => changeTalkTitleValue(e)} ref={newTalkNameRef} >
         </input>
         <button className="text-white px-4 ml-2 bg-indigo-500 hover:bg-indigo-600 border-0 py-2 focus:outline-none rounded text-lg"
           onClick={(e) => (
-            requestCreateCategoryResult(e)
+            requestCreateTalkResult(e)
           )}>
           새글쓰기
         </button>
@@ -102,10 +98,10 @@ export default function TalkContent() {
           <label className="leading-7 text-sm text-gray-600 dark:text-slate-400 mr-5">
             내 글
           </label>
-          <div className="flex flex-wrap w-full align-top mb-10 items-start" id='users-category'>
-            {userCategories && userCategories.map(
-              (talk_category) => (
-                <div className="flex flex-col items-start w-full" key={talk_category.CATEGORY_ID}>
+          <div className="flex flex-wrap w-full align-top mb-10 items-start" id='users-talk'>
+            {userTalks && userTalks.map(
+              (talk) => (
+                <div className="flex flex-col items-start w-full" key={talk.TALK_ID}>
                   <p className="category-item 
                                    border-y-2 
                                    border-gray-400 
@@ -119,22 +115,22 @@ export default function TalkContent() {
                                    mr-2 
                                    mb-2"
                     onClick={() => (
-                      setSelectedCategoryName(talk_category.CATEGORY_NAME)
+                      setSelectedTalkName(talk.TALK_NAME)
                     )}
                   >
-                    [{talk_category.CREATE_USER_ID}] {talk_category.CATEGORY_NAME}
+                    [{talk.CREATE_USER_ID}] {talk.TALK_NAME}
                   </p>
                   <div>
                     {
-                      selectedCategoryName == talk_category.CATEGORY_NAME &&
-                      <TalkCategoryModal
-                        systemCode={talk_category.SYSTEM_CODE}
-                        categoryId={talk_category.CATEGORY_ID}
-                        categoryName={talk_category.CATEGORY_NAME}
-                        createUserId={talk_category.CREATE_USER_ID}
+                      selectedTalkName == talk.TALK_NAME &&
+                      <TalkModal
+                        systemCode={talk.SYSTEM_CODE}
+                        talkId={talk.TALK_ID}
+                        talkName={talk.TALK_NAME}
+                        createUserId={talk.CREATE_USER_ID}
                         pageSize='100'
-                        setSelectedCategoryName={setSelectedCategoryName}
-                        key={talk_category.CATEGORY_ID} />
+                        setSelectedTalkName={setSelectedTalkName}
+                        key={talk.TALK_ID} />
                     }
                   </div>
                 </div>
@@ -144,10 +140,10 @@ export default function TalkContent() {
           <label className="leading-7 text-sm text-gray-600 dark:text-slate-400 mr-5">
             최신 글
           </label>
-          <div className="flex flex-wrap w-full align-top items-start" id='others-category'>
-            {otherCategories && otherCategories.map(
-              (talk_category) => (
-                <div className="align-top w-full" key={talk_category.CATEGORY_ID}>
+          <div className="flex flex-wrap w-full align-top items-start" id='others-talk'>
+            {otherTalks && otherTalks.map(
+              (talk) => (
+                <div className="align-top w-full" key={talk.TALK_ID}>
                   <p className="category-item 
                                  border-y-2 
                                  border-gray-600 
@@ -161,22 +157,22 @@ export default function TalkContent() {
                                  mr-2 
                                  mb-2"
                     onClick={() => (
-                      setSelectedCategoryName(talk_category.CATEGORY_NAME)
+                      setSelectedTalkName(talk.TALK_NAME)
                     )}
                   >
-                    [{talk_category.CREATE_USER_ID}] {talk_category.CATEGORY_NAME}
+                    [{talk.CREATE_USER_ID}] {talk.TALK_NAME}
                   </p>
                   <div>
                     {
-                      selectedCategoryName == talk_category.CATEGORY_NAME &&
-                      <TalkCategoryModal
-                        systemCode={talk_category.SYSTEM_CODE}
-                        categoryId={talk_category.CATEGORY_ID}
-                        categoryName={talk_category.CATEGORY_NAME}
-                        createUserId={talk_category.CREATE_USER_ID}
+                      selectedTalkName == talk.TALK_NAME &&
+                      <TalkModal
+                        systemCode={talk.SYSTEM_CODE}
+                        talkId={talk.TALK_ID}
+                        talkName={talk.TALK_NAME}
+                        createUserId={talk.CREATE_USER_ID}
                         pageSize='100'
-                        setSelectedCategoryName={setSelectedCategoryName}
-                        key={talk_category.CATEGORY_ID} />
+                        setSelectedTalkName={setSelectedTalkName}
+                        key={talk.TALK_ID} />
                     }
                   </div>
                 </div>
