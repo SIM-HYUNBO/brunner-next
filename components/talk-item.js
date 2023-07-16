@@ -1,6 +1,7 @@
 import Image from 'next/image';
 import { useState, useRef } from 'react'
 import TalkEditorModal from './talk-editor-modal';
+import isJson from './../pages/util'
 
 export default function TalkItem({ data: talkItem, refreshfunc: getTalkItems }) {
   const talkItemId = talkItem.TALK_ITEM_ID;
@@ -16,8 +17,10 @@ export default function TalkItem({ data: talkItem, refreshfunc: getTalkItems }) 
   // alert(JSON.stringify(talkItem));
 
   const getText = (rawText) => {
-    const mappedBlocks =
-      JSON.parse(rawText).blocks.map(block => (!block.text.trim() && "\n") || block.text);
+
+    const mappedBlocks = isJson(rawText) ?
+      JSON.parse(rawText).blocks?.map(block => (!block.text.trim() && "\n") || block.text)
+      : [];
 
     let newText = "";
     for (let i = 0; i < mappedBlocks.length; i++) {

@@ -10,6 +10,7 @@ import Link from "next/link";
 import { convertFromRaw, convertToRaw } from 'draft-js';
 import RequestServer from './requestServer'
 import Modal from 'react-modal'
+import isJson from './../pages/util'
 
 class TalkEditorModal extends Component {
   constructor(props) {
@@ -116,7 +117,8 @@ class TalkEditor extends Component {
     super(props);
 
     this.state = {
-      editorState: typeof this.props.currentContent == "undefined" ?  // <= 여기 3번 : 조회한 내용으로 표시 
+      editorState: typeof this.props.currentContent == "undefined" ||
+        isJson(this.props.currentContent) == false ?  // <= 여기 3번 : 조회한 내용으로 표시 
         EditorState.createWithContent(ContentState.createFromText("")) :
         EditorState.createWithContent(convertFromRaw(JSON.parse(this.props.currentContent))),
       talkId: props.talkId,
