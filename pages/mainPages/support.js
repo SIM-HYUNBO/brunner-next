@@ -1,12 +1,14 @@
+`use strict`
+
 import Layout from '../../components/layout'
 import Head from 'next/head'
 import BodySection from '../../components/body-section'
 
 import SupportContent from './content/support-content'
 
-export default function Support(){
+export default function Support() {
   return (
-    <Layout>      
+    <Layout>
       <Head>
         <title>IT 기술 연구소 - Brunner</title>
         <meta name="description" content="IT 기술 연구소"></meta>
@@ -18,6 +20,6 @@ export default function Support(){
           <SupportContent></SupportContent>
         </div>
       </BodySection>
-  </Layout>
+    </Layout>
   );
 }

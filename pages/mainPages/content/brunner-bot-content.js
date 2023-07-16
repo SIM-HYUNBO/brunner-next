@@ -1,3 +1,5 @@
+`use strict`
+
 import BrunnerBotContentAnimation from './content-animation/brunner-bot-content-animation'
 import { useRouter } from 'next/router';
 import { useState, useRef } from 'react';

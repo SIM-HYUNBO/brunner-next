@@ -1,3 +1,5 @@
+`use strict`
+
 import { useState, useEffect, useRef } from 'react';
 import RequestServer from './../../../components/requestServer'
 import TalkModal from '../../../components/talk-modal'

@@ -1,3 +1,5 @@
+`use strict`
+
 import HomeContentAnimation from './content-animation/home-content-animation'
 import { useRouter } from 'next/router'
 

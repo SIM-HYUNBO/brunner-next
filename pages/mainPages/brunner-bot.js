@@ -1,3 +1,5 @@
+`use strict`
+
 import Layout from '../../components/layout'
 import Head from 'next/head'
 import BodySection from '../../components/body-section'

@@ -195,9 +195,9 @@ class TalkEditor extends Component {
       "editMode":"${this.props.editMode}",
       "talkItemId":"${this.props.currentTalkItemId}",
       "talkId": "${this.state.talkId}",
-      "title": "${title}",
-      "content": "${content}",
-      "userId": "${process.env.userInfo.USER_ID}"
+      "talkItemTitle": "${title}",
+      "talkItemContent": "${content}",
+      "talkItemUserId": "${process.env.userInfo.USER_ID}"
      }`).then((result) => {
         if (result.error_code == 0) {
           alert("Sucessfully writed.");
