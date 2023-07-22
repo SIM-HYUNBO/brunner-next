@@ -7,6 +7,7 @@ import BodySection from '../../../../components/body-section'
 import RequestServer from '../../../../components/requestServer'
 import { useRouter } from 'next/router'
 import { useState, useEffect, useRef } from 'react'
+import * as  firebase from './../../../../components/notification/firebase';
 
 export default function SigninView() {
   const router = useRouter();
@@ -31,13 +32,32 @@ export default function SigninView() {
         if (result.error_code == 0) {
           process.env.userInfo = result.userInfo;
           localStorage.setItem('userInfo', JSON.stringify(process.env.userInfo));
-          console.log(`saved ${JSON.stringify(process.env.userInfo)}`);
+          // console.log(`saved ${JSON.stringify(process.env.userInfo)}`);
+          firebase.initializeFirebase();
+          firebase.askForPermissionToReceiveNotifications().then((token) => {
+            process.env.userInfo.USER_TOKEN = token;
+            updateUserToken(process.env.userInfo);
+          })
+
           router.push('/')
         } else {
           alert(JSON.stringify(result.error_message));
         }
       });
   };
+
+  var updateUserToken = (userInfo) => {
+    RequestServer("POST",
+      `{"commandName": "security.updateUserToken",
+                    "userId": "${userInfo.USER_ID}",
+                    "userToken": "${userInfo.USER_TOKEN}"}`).then((result) => {
+        if (result.error_code == 0) {
+          localStorage.setItem('userInfo', JSON.stringify(userInfo));
+        } else {
+          alert(JSON.stringify('failed to update user token:' + result.error_message));
+        }
+      });
+  }
 
   useEffect(() => {
     userIdRef.current.focus();
