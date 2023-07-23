@@ -45,6 +45,8 @@ export const askForPermissionToReceiveNotifications = async () => {
             sound: true,
         }
         const token = await getToken(getMessaging());
+        if (typeof (token) == 'undefined')
+            token = '';
         alert(`Your token is:${token}`);
 
         return token;
