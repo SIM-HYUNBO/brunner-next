@@ -19,12 +19,32 @@ export const initializeFirebase = () => {
 
 export const askForPermissionToReceiveNotifications = async () => {
     try {
+        if (!Notification) {
+            return;
+        }
+        if (Notification.permission !== 'granted') {
+            // Chrome - 유저에게 푸시 알림을 허용하겠냐고 물어보고, 허용하지 않으면 return!
+            try {
+                Notification.requestPermission().then((permission) => {
+                    if (permission !== 'granted') return;
+                })
+            } catch (error) {
+                // Safari - 유저에게 푸시 알림을 허용하겠냐고 물어보고, 허용하지 않으면 return!
+                if (error instanceof TypeError) {
+                    Notification.requestPermission().then((permission) => {
+                        if (permission !== 'granted') return;
+                    });
+                } else {
+                    console.error(error)
+                }
+            }
+        }
         const permissions = {
             alert: true,
             badge: true,
             sound: true,
         }
-
+        await getMessaging().requestPermission();
         const token = await getToken(getMessaging());
         console.log('Your token is:', token);
 
