@@ -1,7 +1,7 @@
 'use strict'
 
 import * as  firebase from 'firebase/app';
-import { getMessaging, getToken } from "firebase/messaging";
+import { getMessaging, getToken, onMessage } from "firebase/messaging";
 
 export const initializeFirebase = () => {
     firebase.initializeApp({
@@ -15,9 +15,10 @@ export const initializeFirebase = () => {
     });
 
     console.log('firebase initialized');
+    return getMessaging();
 }
 
-export const askForPermissionToReceiveNotifications = async () => {
+export const askForPermissionToReceiveNotifications = async (messaging) => {
     try {
         if (!Notification) {
             return;
@@ -44,7 +45,7 @@ export const askForPermissionToReceiveNotifications = async () => {
             badge: true,
             sound: true,
         }
-        const token = await getToken(getMessaging());
+        const token = await getToken(messaging);
         console.log(`Your token is:${token}`);
 
         return token;
@@ -52,3 +53,10 @@ export const askForPermissionToReceiveNotifications = async () => {
         console.error(error);
     }
 }
+
+export const onMessageListener = (messaging) =>
+    new Promise((resolve) => {
+        onMessage(messaging, (payload) => {
+            resolve(payload);
+        });
+    });

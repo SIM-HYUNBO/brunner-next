@@ -11,18 +11,24 @@ import RequestServer from './../components/requestServer'
 // Entry Point
 export default function App({ Component, pageProps }) {
   dotenv.config();
+  let messaging;
+  let token;
 
   useEffect(() => {
-    firebase.initializeFirebase();
-    firebase.askForPermissionToReceiveNotifications().then((token) => {
-      if (process.env.userInfo && token) {
-        process.env.userInfo.USER_TOKEN = token;
-        updateUserToken(process.env.userInfo);
-      }
-    })
+    initializeFirebase();
   }, []);
 
-  var updateUserToken = (userInfo) => {
+  async function initializeFirebase() {
+    messaging = firebase.initializeFirebase();
+
+    token = await firebase.askForPermissionToReceiveNotifications(messaging);
+    if (process.env.userInfo !== undefined && token !== undefined) {
+      process.env.userInfo.USER_TOKEN = token;
+      updateUserToken(process.env.userInfo);
+    }
+  };
+
+  let updateUserToken = (userInfo) => {
     RequestServer("POST",
       `{"commandName": "security.updateUserToken",
                     "userId": "${userInfo.USER_ID}",
