@@ -22,6 +22,7 @@ export const askForPermissionToReceiveNotifications = async () => {
         if (!Notification) {
             return;
         }
+        alert(Notification.permission);
         if (Notification.permission !== 'granted') {
             // Chrome - 유저에게 푸시 알림을 허용하겠냐고 물어보고, 허용하지 않으면 return!
             try {
