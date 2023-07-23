@@ -15,7 +15,7 @@ export default function App({ Component, pageProps }) {
   useEffect(() => {
     firebase.initializeFirebase();
     firebase.askForPermissionToReceiveNotifications().then((token) => {
-      if (process.env.userInfo) {
+      if (process.env.userInfo && token) {
         process.env.userInfo.USER_TOKEN = token;
         updateUserToken(process.env.userInfo);
       }
