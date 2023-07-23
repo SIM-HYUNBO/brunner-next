@@ -44,7 +44,6 @@ export const askForPermissionToReceiveNotifications = async () => {
             badge: true,
             sound: true,
         }
-        await getMessaging().requestPermission();
         const token = await getToken(getMessaging());
         console.log('Your token is:', token);
 
