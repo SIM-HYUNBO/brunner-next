@@ -22,7 +22,7 @@ export default function App({ Component, pageProps }) {
     messaging = firebase.initializeFirebase();
 
     token = await firebase.askForPermissionToReceiveNotifications(messaging);
-    if (process.env.userInfo !== undefined && token !== undefined) {
+    if (process.env.userInfo != null && process.env.userInfo !== undefined && token !== undefined) {
       process.env.userInfo.USER_TOKEN = token;
       updateUserToken(process.env.userInfo);
     }
