@@ -2,7 +2,7 @@
 
 export default function isJson(str) {
     try {
-        if (typeof str == "undefined")
+        if (!str)
             return false;
 
         JSON.parse(str);

@@ -15,7 +15,7 @@ export default function TalkContent() {
     RequestServer("POST",
       `{"commandName": "talk.getUserTalks",
       "systemCode": "00",
-      "userId": "${typeof process.env.userInfo == "undefined" ? "" : process.env.userInfo?.USER_ID}"}`).then((result) => {
+      "userId": "${!process.env.userInfo ? "" : process.env.userInfo?.USER_ID}"}`).then((result) => {
 
         if (result.error_code == 0) {
           setUserTalks(result.users_talks);
@@ -39,16 +39,13 @@ export default function TalkContent() {
   }
 
   const requestCreateTalkResult = (e) => {
-    if (typeof process.env.userInfo == "undefined" ||
-      process.env.userInfo.USER_ID === "undefined" ||
-      process.env.userInfo.USER_ID === '') {
+    if (!process.env.userInfo || !process.env.userInfo.USER_ID) {
       alert(`the user is not logged in. sign in first.`);
 
       return;
     }
 
-    if (newTalkTitle === "undefined" ||
-      newTalkTitle === '') {
+    if (!newTalkTitle) {
       alert(`the new title of the talk is required.`);
       return;
     }
