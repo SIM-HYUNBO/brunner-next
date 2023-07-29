@@ -64,69 +64,73 @@ class TalkModal extends Component {
   render() {
 
     return (
-      <div>
+      <>
         <Link href="" onClick={this.openModal}>
           <h2 className='mt-2'>
             {this.props.editMode === 'New' ? '📑' : this.props.talkId?.endsWith(`_${process.env.userInfo?.USER_ID}`) ? '🖌' : ''}
           </h2>
         </Link>
 
-        {this.state.showModal && (
-          <Modal className="modal"
-            isOpen={this.state.showModal}
-            // onAfterOpen={openModal}
-            // onRequestClose={closeModal}
-            style={{
-              overlay: {
-                position: 'fixed',
-                top: 40,
-                left: 0,
-                right: 0,
-                bottom: 0,
-                backgroundColor: 'rgba(255, 255, 255, 0.75)'
-              },
-              content: {
-                position: 'absolute',
-                top: '40px',
-                left: '40px',
-                right: '40px',
-                bottom: '40px',
-                border: '1px solid #ccc',
-                background: '#fff',
-                overflow: 'auto',
-                WebkitOverflowScrolling: 'touch',
-                borderRadius: '4px',
-                outline: 'none',
-                padding: '20px',
-                backgroundColor: 'rgba(30, 41, 59, 1)'
-              }
-            }}
-            contentLabel="New Talk">
+        {
+          this.state.showModal && (
+            <Modal className="modal"
+              isOpen={this.state.showModal}
+              // onAfterOpen={openModal}
+              // onRequestClose={closeModal}
+              style={{
+                overlay: {
+                  position: 'fixed',
+                  top: 40,
+                  left: 0,
+                  right: 0,
+                  bottom: 0,
+                  backgroundColor: 'rgba(255, 255, 255, 0.75)'
+                },
+                content: {
+                  position: 'absolute',
+                  top: '40px',
+                  left: '40px',
+                  right: '40px',
+                  bottom: '40px',
+                  border: '1px solid #ccc',
+                  background: '#fff',
+                  overflow: 'auto',
+                  WebkitOverflowScrolling: 'touch',
+                  borderRadius: '4px',
+                  outline: 'none',
+                  padding: '20px',
+                  backgroundColor: 'rgba(30, 41, 59, 1)'
+                }
+              }}
+              contentLabel="New Talk">
 
-            <div className="modal-content flex flex-col items-end">
-              <span className="close text-white" onClick={this.closeModal}>
-                &times;
-              </span>
-              <h1 className='mt-2 ml-auto mr-auto'>
-                {`[${this.props.createUserId}] ${this.props.talkName}`}
-              </h1>
-              <div className="flex flex-col w-full justify-top px-5 mb-10 h-full overflow-auto">
-                <TalkEditorModal className="m-10"
-                  ref={this.talkEditorModalRef}
-                  editMode='New'
-                  talkId={this.props.talkId}
-                  talkName={this.props.talkName}
-                  getTalkItems={this.getTalkItems}
-                />
+              <div className="modal-content flex flex-col items-end">
+                <span className="close text-white" onClick={this.closeModal}>
+                  &times;
+                </span>
+                <h1 className='mt-2 ml-auto mr-auto'>
+                  {`[${this.props.createUserId}] ${this.props.talkName}`}
+                </h1>
 
-                {this.state.talkItems.map(aTalkItem => (
-                  <TalkItem data={aTalkItem} refreshfunc={this.getTalkItems} key={aTalkItem.TALK_ID}></TalkItem>
-                ))}
+                <div className="flex flex-col w-full justify-top px-5 mb-10 h-full overflow-auto">
+                  <TalkEditorModal className="m-10"
+                    ref={this.talkEditorModalRef}
+                    editMode='New'
+                    talkId={this.props.talkId}
+                    talkName={this.props.talkName}
+                    getTalkItems={this.getTalkItems}
+                  />
+
+                  {this.state.talkItems.map(aTalkItem => (
+                    <TalkItem data={aTalkItem} refreshfunc={this.getTalkItems} key={aTalkItem.TALK_ID}></TalkItem>
+                  ))}
+                </div>
+
               </div>
-            </div>
-          </Modal>
-        )}
-      </div>
+            </Modal>
+          )
+        }
+      </>
     );
   }
 }

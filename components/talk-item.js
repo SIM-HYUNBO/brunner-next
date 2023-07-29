@@ -17,7 +17,6 @@ export default function TalkItem({ data: talkItem, refreshfunc: getTalkItems }) 
   // alert(JSON.stringify(talkItem));
 
   const getText = (rawText) => {
-
     const mappedBlocks = isJson(rawText) ?
       JSON.parse(rawText).blocks?.map(block => (!block.text.trim() && "\n") || block.text)
       : [];
