@@ -44,7 +44,6 @@ export default function ResetPassword() {
                     "phoneNumber": "${phoneNumber}",
                     "newPassword": "${newPassword}",
                     "confirmPassword": "${confirmPassword}"}`).then((result) => {
-        // console.log(JSON.stringify(result));
         if (result.affectedRows == 1) {
           alert(`the password reset.`);
           router.push('/signin')
