@@ -84,7 +84,7 @@ class TalkModal extends Component {
                   left: 0,
                   right: 0,
                   bottom: 0,
-                  backgroundColor: 'rgba(255, 255, 255, 0.75)'
+                  // backgroundColor: 'rgba(255, 255, 255, 0.75)' (dark:)
                 },
                 content: {
                   position: 'absolute',
@@ -99,13 +99,13 @@ class TalkModal extends Component {
                   borderRadius: '4px',
                   outline: 'none',
                   padding: '20px',
-                  backgroundColor: 'rgba(30, 41, 59, 1)'
+                  // backgroundColor: 'rgba(30, 41, 59, 1)' (dark:)
                 }
               }}
               contentLabel="New Talk">
 
               <div className="modal-content flex flex-col items-end">
-                <span className="close text-white" onClick={this.closeModal}>
+                <span className="close text-black dark:text-black" onClick={this.closeModal}>
                   &times;
                 </span>
                 <h1 className='mt-2 ml-auto mr-auto'>

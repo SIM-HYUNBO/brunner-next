@@ -69,7 +69,7 @@ class TalkEditorModal extends Component {
                 left: 0,
                 right: 0,
                 bottom: 0,
-                backgroundColor: 'rgba(255, 255, 255, 0.75)'
+                // backgroundColor: 'rgba(255, 255, 255, 0.75)'
               },
               content: {
                 position: 'absolute',
@@ -84,13 +84,14 @@ class TalkEditorModal extends Component {
                 borderRadius: '4px',
                 outline: 'none',
                 padding: '20px',
-                backgroundColor: 'rgba(30, 41, 59, 1)'
+                // backgroundColor: 'rgba(30, 41, 59, 1)'
               }
             }}
             contentLabel="New Talk">
 
             <div className="modal-content">
-              <span className="close flex flex-col text-white items-end" onClick={this.closeModal}>
+              <span className="close flex flex-col dark:text-black text-black items-end"
+                onClick={this.closeModal}>
                 &times;
               </span>
               <TalkEditor talkId={this.props.talkId}
@@ -193,7 +194,7 @@ class TalkEditor extends Component {
     return (
       <div>
         <div className="flex items-center mb-2">
-          <label className="category-item w-20 mr-2 text-slate-100">
+          <label className="category-item w-20 mr-2">
             Category
           </label>
           <input className="category-item w-full"
@@ -202,8 +203,13 @@ class TalkEditor extends Component {
             onChange={this.handleTalkChange} />
         </div>
         <div className="flex items-center mb-2">
-          <label className="talkitem-title w-20 mr-2 text-slate-100">Title</label>
-          <input className="talkitem-title w-full" type="text" value={title} onChange={this.handleTitleChange} />
+          <label className="talkitem-title w-20 mr-2">
+            Title
+          </label>
+          <input className="talkitem-title w-full"
+            type="text"
+            value={title}
+            onChange={this.handleTitleChange} />
         </div>
         <div style={{ height: '100%' }}>
           <Editor
@@ -218,10 +224,11 @@ class TalkEditor extends Component {
             }}
             editorStyle={{
               padding: 0,
-              // height: '100%',
-              // backgroundColor: 'slate',
+              // backgroundColor: 'slate', (dark:)
+              backgroundColor: 'white',
+              // color: 'white',           (dark:)
+              color: 'black',
               border: '1px solid #ddd',
-              color: 'white',
               fontSize: '12px',
               borderRadius: '4px'
             }}

@@ -101,16 +101,14 @@ export default function TalkContent() {
             {userTalks && userTalks.map(
               (talk) => (
                 <div className="flex flex-col items-start w-full" key={talk.TALK_ID}>
-                  <p className="category-item 
-                                   border-y-2 
+                  <p className="border-y-2 
                                    border-gray-400 
                                    w-full 
                                    py-2 
                                    px-8 
-                                   focus:outline-none 
-                                   hover:bg-indigo-600 
+                                   focus:outline-none
                                    rounded 
-                                   text-lg 
+                                   text-sm 
                                    mr-2 
                                    mb-2"
                     onClick={() => (
@@ -143,16 +141,14 @@ export default function TalkContent() {
             {otherTalks && otherTalks.map(
               (talk) => (
                 <div className="align-top w-full" key={talk.TALK_ID}>
-                  <p className="category-item 
-                                 border-y-2 
+                  <p className="border-y-2 
                                  border-gray-600 
                                  w-full 
                                  py-2 
                                  px-8 
                                  focus:outline-none 
-                                 hover:bg-indigo-600 
                                  rounded 
-                                 text-lg 
+                                 text-sm 
                                  mr-2 
                                  mb-2"
                     onClick={() => (
