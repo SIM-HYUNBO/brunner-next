@@ -23,7 +23,10 @@ export default function DarkModeToggleButton() {
                                dark:hover:text-yellow-300 
                                rounded text-base mt-4 md:mt-0"
                 type="button"
-                onClick={() => { setTheme(theme === 'dark' ? 'light' : 'dark'); process.env.theme = theme === 'dark' ? 'light' : 'dark' }}>
+                onClick={() => {
+                    setTheme(theme === 'dark' ? 'light' : 'dark');
+                    process.env.theme = theme === 'dark' ? 'light' : 'dark'
+                }}>
                 {/* 구글에서 heroicon 검색해서 svg Copy   */}
                 {/* 라이트 모드 이미지*/}
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor"
