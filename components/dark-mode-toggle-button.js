@@ -25,7 +25,7 @@ export default function DarkModeToggleButton() {
                 type="button"
                 onClick={() => {
                     setTheme(theme === 'dark' ? 'light' : 'dark');
-                    process.env.theme = theme === 'dark' ? 'light' : 'dark'
+                    process.env.isDarkMode = theme === 'dark' ? false : true
                 }}>
                 {/* 구글에서 heroicon 검색해서 svg Copy   */}
                 {/* 라이트 모드 이미지*/}

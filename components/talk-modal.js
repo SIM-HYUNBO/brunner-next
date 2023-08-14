@@ -61,8 +61,8 @@ class TalkModal extends Component {
     });
   };
 
-  getModalStyle = (theme) => {
-    if (theme === 'dark') {
+  getModalStyle = (isDarkMode) => {
+    if (isDarkMode === true) {
       return {
         overlay: {
           position: 'fixed',
@@ -133,7 +133,7 @@ class TalkModal extends Component {
               isOpen={this.state.showModal}
               // onAfterOpen={openModal}
               // onRequestClose={closeModal}
-              style={this.getModalStyle(process.env.theme)} // <= 여기 모달 테마 스타일
+              style={this.getModalStyle(process.env.isDarkMode)}
               contentLabel="New Talk">
 
               <div className="modal-content flex flex-col items-end">

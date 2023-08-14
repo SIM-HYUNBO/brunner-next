@@ -44,8 +44,8 @@ class TalkEditorModal extends Component {
     this.props.getTalkItems(systemCode, talkId, lastTalkItemId);
   };
 
-  getModalStyle = (theme) => {
-    if (theme === 'dark') {
+  getModalStyle = (isDarkMode) => {
+    if (isDarkMode === true) {
       return {
         overlay: {
           position: 'fixed',
@@ -119,7 +119,7 @@ class TalkEditorModal extends Component {
             isOpen={showModal}
             // onAfterOpen={openModal}
             // onRequestClose={closeModal}
-            style={this.getModalStyle(process.env.theme)} // <= 모달 테마 스타일 
+            style={this.getModalStyle(process.env.isDarkMode)}
             contentLabel="New Talk">
 
             <div className="modal-content">
@@ -219,9 +219,9 @@ class TalkEditor extends Component {
       })
   }
 
-  getEditorStyle = (theme) => {
+  getEditorStyle = (isDarkMode) => {
 
-    if (theme === 'dark') {
+    if (isDarkMode === true) {
       return {
         padding: 0,
         backgroundColor: 'rgba(30, 41, 59, 1)', // (dark:)
@@ -277,7 +277,7 @@ class TalkEditor extends Component {
               fontSize: { options: [12, 14, 16, 18, 24, 30, 36, 48, 60, 72] },
               fontFamily: { options: ['Arial', 'Georgia', 'Impact', 'Tahoma', 'Times New Roman', 'Verdana'] }
             }}
-            editorStyle={this.getEditorStyle(process.env.theme)} // <= 여기 에디터 테마 스타일
+            editorStyle={this.getEditorStyle(process.env.isDarkMode)}
             placeholder="The message goes here..."
           />
         </div>
