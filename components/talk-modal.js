@@ -61,6 +61,63 @@ class TalkModal extends Component {
     });
   };
 
+  getModalStyle = (theme) => {
+    if (theme === 'dark') {
+      return {
+        overlay: {
+          position: 'fixed',
+          top: 40,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          backgroundColor: 'rgba(255, 255, 255, 0.75)'// (dark:)
+        },
+        content: {
+          position: 'absolute',
+          top: '40px',
+          left: '40px',
+          right: '40px',
+          bottom: '40px',
+          border: '1px solid #ccc',
+          background: '#fff',
+          overflow: 'auto',
+          WebkitOverflowScrolling: 'touch',
+          borderRadius: '4px',
+          outline: 'none',
+          padding: '20px',
+          backgroundColor: 'rgba(30, 41, 59, 1)' // (dark:)
+        }
+      }
+    }
+    else {
+      return {
+        overlay: {
+          position: 'fixed',
+          top: 40,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          backgroundColor: 'white' // (light:)
+        },
+        content: {
+          position: 'absolute',
+          top: '40px',
+          left: '40px',
+          right: '40px',
+          bottom: '40px',
+          border: '1px solid #ccc',
+          background: '#fff',
+          overflow: 'auto',
+          WebkitOverflowScrolling: 'touch',
+          borderRadius: '4px',
+          outline: 'none',
+          padding: '20px',
+          backgroundColor: 'white' // (light:)
+        }
+      }
+    }
+  }
+
   render() {
 
     return (
@@ -70,42 +127,17 @@ class TalkModal extends Component {
             {this.props.editMode === 'New' ? '📑' : this.props.talkId?.endsWith(`_${process.env.userInfo?.USER_ID}`) ? '🖌' : ''}
           </h2>
         </Link>
-
         {
           this.state.showModal && (
             <Modal className="modal"
               isOpen={this.state.showModal}
               // onAfterOpen={openModal}
               // onRequestClose={closeModal}
-              style={{
-                overlay: {
-                  position: 'fixed',
-                  top: 40,
-                  left: 0,
-                  right: 0,
-                  bottom: 0,
-                  // backgroundColor: 'rgba(255, 255, 255, 0.75)' (dark:)
-                },
-                content: {
-                  position: 'absolute',
-                  top: '40px',
-                  left: '40px',
-                  right: '40px',
-                  bottom: '40px',
-                  border: '1px solid #ccc',
-                  background: '#fff',
-                  overflow: 'auto',
-                  WebkitOverflowScrolling: 'touch',
-                  borderRadius: '4px',
-                  outline: 'none',
-                  padding: '20px',
-                  // backgroundColor: 'rgba(30, 41, 59, 1)' (dark:)
-                }
-              }}
+              style={this.getModalStyle(process.env.theme)} // <= 여기 모달 테마 스타일
               contentLabel="New Talk">
 
               <div className="modal-content flex flex-col items-end">
-                <span className="close text-black dark:text-black" onClick={this.closeModal}>
+                <span className="close text-black dark:text-white" onClick={this.closeModal}>
                   &times;
                 </span>
                 <h1 className='mt-2 ml-auto mr-auto'>
@@ -127,7 +159,7 @@ class TalkModal extends Component {
                 </div>
 
               </div>
-            </Modal>
+            </Modal >
           )
         }
       </>

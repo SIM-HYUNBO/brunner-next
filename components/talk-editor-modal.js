@@ -44,6 +44,63 @@ class TalkEditorModal extends Component {
     this.props.getTalkItems(systemCode, talkId, lastTalkItemId);
   };
 
+  getModalStyle = (theme) => {
+    if (theme === 'dark') {
+      return {
+        overlay: {
+          position: 'fixed',
+          top: 40,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          backgroundColor: 'rgba(255, 255, 255, 0.75)' // (dark:)
+        },
+        content: {
+          position: 'absolute',
+          top: '40px',
+          left: '40px',
+          right: '40px',
+          bottom: '40px',
+          border: '1px solid #ccc',
+          background: '#fff',
+          overflow: 'auto',
+          WebkitOverflowScrolling: 'touch',
+          borderRadius: '4px',
+          outline: 'none',
+          padding: '20px',
+          backgroundColor: 'rgba(30, 41, 59, 1)' // (dark:)
+        }
+      }
+    }
+    else {
+      return {
+        overlay: {
+          position: 'fixed',
+          top: 40,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          backgroundColor: 'white' // (light:)
+        },
+        content: {
+          position: 'absolute',
+          top: '40px',
+          left: '40px',
+          right: '40px',
+          bottom: '40px',
+          border: '1px solid #ccc',
+          background: '#fff',
+          overflow: 'auto',
+          WebkitOverflowScrolling: 'touch',
+          borderRadius: '4px',
+          outline: 'none',
+          padding: '20px',
+          backgroundColor: 'white', // (light:)
+        }
+      }
+    }
+  }
+
   render() {
     const { showModal } = this.state;
 
@@ -62,35 +119,11 @@ class TalkEditorModal extends Component {
             isOpen={showModal}
             // onAfterOpen={openModal}
             // onRequestClose={closeModal}
-            style={{
-              overlay: {
-                position: 'fixed',
-                top: 40,
-                left: 0,
-                right: 0,
-                bottom: 0,
-                // backgroundColor: 'rgba(255, 255, 255, 0.75)'
-              },
-              content: {
-                position: 'absolute',
-                top: '40px',
-                left: '40px',
-                right: '40px',
-                bottom: '40px',
-                border: '1px solid #ccc',
-                background: '#fff',
-                overflow: 'auto',
-                WebkitOverflowScrolling: 'touch',
-                borderRadius: '4px',
-                outline: 'none',
-                padding: '20px',
-                // backgroundColor: 'rgba(30, 41, 59, 1)'
-              }
-            }}
+            style={this.getModalStyle(process.env.theme)} // <= 모달 테마 스타일 
             contentLabel="New Talk">
 
             <div className="modal-content">
-              <span className="close flex flex-col dark:text-black text-black items-end"
+              <span className="close flex flex-col text-black dark:text-white  items-end"
                 onClick={this.closeModal}>
                 &times;
               </span>
@@ -186,10 +219,32 @@ class TalkEditor extends Component {
       })
   }
 
+  getEditorStyle = (theme) => {
 
+    if (theme === 'dark') {
+      return {
+        padding: 0,
+        backgroundColor: 'rgba(30, 41, 59, 1)', // (dark:)
+        color: 'white', // (dark:)
+        border: '1px solid #ddd',
+        fontSize: '12px',
+        borderRadius: '4px'
+      }
+    }
+    else {
+      return {
+        padding: 0,
+        backgroundColor: 'white', // (light:)
+        color: 'black', // (light)
+        border: '1px solid #ddd',
+        fontSize: '12px',
+        borderRadius: '4px'
+      }
+    }
+  }
 
   render() {
-    const { editorState, talkId, talkName, title, darkMode } = this.state;
+    const { editorState, talkId, talkName, title } = this.state;
 
     return (
       <div>
@@ -222,16 +277,7 @@ class TalkEditor extends Component {
               fontSize: { options: [12, 14, 16, 18, 24, 30, 36, 48, 60, 72] },
               fontFamily: { options: ['Arial', 'Georgia', 'Impact', 'Tahoma', 'Times New Roman', 'Verdana'] }
             }}
-            editorStyle={{
-              padding: 0,
-              // backgroundColor: 'slate', (dark:)
-              backgroundColor: 'white',
-              // color: 'white',           (dark:)
-              color: 'black',
-              border: '1px solid #ddd',
-              fontSize: '12px',
-              borderRadius: '4px'
-            }}
+            editorStyle={this.getEditorStyle(process.env.theme)} // <= 여기 에디터 테마 스타일
             placeholder="The message goes here..."
           />
         </div>
