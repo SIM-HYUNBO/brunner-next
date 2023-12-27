@@ -82,7 +82,7 @@ export default function SigninView() {
                 id="password"
                 name="password"
                 onChange={(e) => changePasswordValue(e)}
-                okKeyPress={(e) => { if (e.key == 'Enter') requestSigninResult() }}
+              // okkeypress={(e) => { if (e.key == 'Enter') requestSigninResult() }}
               ></input>
             </div>
             <button className="text-white bg-indigo-500 border-0 py-2 px-8 focus:outline-none hover:bg-indigo-600 rounded text-lg"
