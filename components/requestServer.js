@@ -12,8 +12,9 @@ export default async function RequestServer(method, jRequest) {
   let jResponse = null;
 
   try {
-    // res = await fetch(`${protocol}://${serverIp}:${serverPort}/executeJson/`, {
-    res = await fetch(`/api/service/`, {
+    res = await fetch(`${protocol}://${serverIp}/api/service`, {
+      // res = await fetch(`${protocol}://${serverIp}:${serverPort}/executeJson/`, {
+      // res = await fetch(`/api/service/`, {
       method: method,
       headers: {
         "Content-Type": "application/json",
