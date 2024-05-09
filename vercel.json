@@ -1,12 +1,10 @@
+// vercel.json:
+
 {
     "rewrites": [
       {
         "source": "/api/:path*",
-        "destination": "https://brunner-client-next.vercel.app/:path*"
-      },
-      {
-        "source": "/api/:path*/",
-        "destination": "https://brunner-client-next.vercel.app/:path*/"
+        "destination": "https://brunner-client-next.vercel.app/api/:path*"
       }
     ]
   }
