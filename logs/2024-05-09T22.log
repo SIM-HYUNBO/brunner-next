@@ -1,0 +1,452 @@
+2024-05-09 22:00:18.470 info: START TXN:11011,529840200
+
+2024-05-09 22:00:18.528 info: POST data:[object Object]
+2024-05-09 22:00:18.533 info: POST request: {"commandName":"security.signin","userId":"ssssss","password":"dddddd"} from ::1
+2024-05-09 22:00:18.540 info: Getting database connection pool from ...
+
+  DB_HOST:ep-cold-resonance-a47aecbi-pooler.us-east-1.aws.neon.tech
+,
+  DB_PORT:5432
+,
+  DB_DATABASE:brunner
+,
+  DB_USER:default
+, 
+  DB_PASSWORD:oniV6xuA3Gbk
+  SSL_MODE:require
+  
+2024-05-09 22:00:18.568 info: session info undefined
+2024-05-09 22:00:18.630 info: session에 로그인 정보가 없음.
+2024-05-09 22:00:18.707 info: 
+SQL:
+SELECT SYSTEM_CODE, USER_ID, PASSWORD, USER_NAME
+  FROM BRUNNER.TB_COR_USER_MST
+ WHERE USER_ID = $1
+ 
+PARAMS:
+    ["ssssss"]
+2024-05-09 22:00:20.665 error: relation "brunner.tb_cor_user_mst" does not exist
+2024-05-09 22:00:20.728 info: RESULT:
+undefined
+2024-05-09 22:00:20.730 info: reply: {"commanaName":"security.signin","userId":"ssssss","password":"dddddd","error_code":-3,"error_message":{}}
+2024-05-09 22:00:20.738 info: 
+END TXN:11011,529840200
+2024-05-09 22:03:27.486 info: START TXN:11200,546351400
+
+2024-05-09 22:03:27.491 info: POST data:[object Object]
+2024-05-09 22:03:27.493 info: POST request: {"commandName":"security.signin","userId":"ssssss","password":"dddddd"} from ::1
+2024-05-09 22:03:27.581 info: Getting database connection pool from ...
+
+  DB_HOST:ep-cold-resonance-a47aecbi-pooler.us-east-1.aws.neon.tech
+,
+  DB_PORT:5432
+,
+  DB_DATABASE:brunner
+,
+  DB_USER:default
+, 
+  DB_PASSWORD:oniV6xuA3Gbk
+  SSL_MODE:require
+  
+2024-05-09 22:03:27.665 info: session info undefined
+2024-05-09 22:03:27.687 info: session에 로그인 정보가 없음.
+2024-05-09 22:03:27.746 info: 
+SQL:
+SELECT SYSTEM_CODE, USER_ID, PASSWORD, USER_NAME
+  FROM BRUNNER.TB_COR_USER_MST
+ WHERE USER_ID = $1
+ 
+PARAMS:
+    ["ssssss"]
+2024-05-09 22:03:29.409 info: RESULT:
+undefined
+2024-05-09 22:03:29.411 info: reply: {"commanaName":"security.signin","userId":"ssssss","password":"dddddd","error_code":-3,"error_message":{}}
+2024-05-09 22:03:29.415 info: 
+END TXN:11200,546351400
+2024-05-09 22:04:58.398 info: START TXN:11291,458758400
+
+2024-05-09 22:04:58.440 info: POST data:[object Object]
+2024-05-09 22:04:58.442 info: POST request: {"commandName":"security.signin","userId":"ssssss","password":"dddddd"} from ::1
+2024-05-09 22:04:58.444 info: Getting database connection pool from ...
+
+  DB_HOST:ep-cold-resonance-a47aecbi-pooler.us-east-1.aws.neon.tech
+,
+  DB_PORT:5432
+,
+  DB_DATABASE:brunner
+,
+  DB_USER:default
+, 
+  DB_PASSWORD:oniV6xuA3Gbk
+  SSL_MODE:require
+  
+2024-05-09 22:04:58.457 info: session info undefined
+2024-05-09 22:04:58.458 info: session에 로그인 정보가 없음.
+2024-05-09 22:04:58.508 info: 
+SQL:
+SELECT SYSTEM_CODE, USER_ID, PASSWORD, USER_NAME
+  FROM BRUNNER.TB_COR_USER_MST
+ WHERE USER_ID = $1
+ 
+PARAMS:
+    ["ssssss"]
+2024-05-09 22:05:00.069 info: RESULT:
+undefined
+2024-05-09 22:05:00.071 info: reply: {"commanaName":"security.signin","userId":"ssssss","password":"dddddd","error_code":-3,"error_message":{}}
+2024-05-09 22:05:00.073 info: 
+END TXN:11291,458758400
+2024-05-09 22:06:20.826 info: START TXN:11373,886287300
+
+2024-05-09 22:06:20.828 info: POST data:[object Object]
+2024-05-09 22:06:20.829 info: POST request: {"commandName":"security.signin","userId":"ssssss","password":"dddddd"} from ::1
+2024-05-09 22:06:20.831 info: Getting database connection pool from ...
+
+  DB_HOST:ep-cold-resonance-a47aecbi-pooler.us-east-1.aws.neon.tech
+,
+  DB_PORT:5432
+,
+  DB_DATABASE:brunner
+,
+  DB_USER:default
+, 
+  DB_PASSWORD:oniV6xuA3Gbk
+  SSL_MODE:require
+  
+2024-05-09 22:06:20.834 info: session info undefined
+2024-05-09 22:06:20.835 info: session에 로그인 정보가 없음.
+2024-05-09 22:06:20.836 info: 
+SQL:
+SELECT SYSTEM_CODE, USER_ID, PASSWORD, USER_NAME
+  FROM BRUNNER.TB_COR_USER_MST
+ WHERE USER_ID = $1
+ 
+PARAMS:
+    ["ssssss"]
+2024-05-09 22:06:22.323 info: RESULT:
+undefined
+2024-05-09 22:06:22.325 info: reply: {"commanaName":"security.signin","userId":"ssssss","password":"dddddd","error_code":-3,"error_message":{}}
+2024-05-09 22:06:22.326 info: 
+END TXN:11373,886287300
+2024-05-09 22:07:36.423 info: START TXN:11449,483671600
+
+2024-05-09 22:07:36.470 info: POST data:[object Object]
+2024-05-09 22:07:36.528 info: POST request: {"commandName":"security.signin","userId":"ssssss","password":"dddddd"} from ::1
+2024-05-09 22:07:36.556 info: Getting database connection pool from ...
+
+  DB_HOST:ep-cold-resonance-a47aecbi-pooler.us-east-1.aws.neon.tech
+,
+  DB_PORT:5432
+,
+  DB_DATABASE:brunner
+,
+  DB_USER:default
+, 
+  DB_PASSWORD:oniV6xuA3Gbk
+  SSL_MODE:require
+  
+2024-05-09 22:07:36.631 info: session info undefined
+2024-05-09 22:07:36.635 info: session에 로그인 정보가 없음.
+2024-05-09 22:07:36.638 info: 
+SQL:
+SELECT SYSTEM_CODE, USER_ID, PASSWORD, USER_NAME
+  FROM BRUNNER.TB_COR_USER_MST
+ WHERE USER_ID = $1
+ 
+PARAMS:
+    ["ssssss"]
+2024-05-09 22:07:38.127 info: RESULT:
+{"command":"SELECT","rowCount":1,"oid":null,"rows":[{"system_code":"00","user_id":"ssssss","password":"aaaaaa","user_name":"test"}],"fields":[{"name":"system_code","tableID":40961,"columnID":1,"dataTypeID":1043,"dataTypeSize":-1,"dataTypeModifier":54,"format":"text"},{"name":"user_id","tableID":40961,"columnID":2,"dataTypeID":1043,"dataTypeSize":-1,"dataTypeModifier":54,"format":"text"},{"name":"password","tableID":40961,"columnID":3,"dataTypeID":1043,"dataTypeSize":-1,"dataTypeModifier":-1,"format":"text"},{"name":"user_name","tableID":40961,"columnID":4,"dataTypeID":1043,"dataTypeSize":-1,"dataTypeModifier":254,"format":"text"}],"_parsers":[null,null,null,null],"_types":{"_types":{"arrayParser":{},"builtins":{"BOOL":16,"BYTEA":17,"CHAR":18,"INT8":20,"INT2":21,"INT4":23,"REGPROC":24,"TEXT":25,"OID":26,"TID":27,"XID":28,"CID":29,"JSON":114,"XML":142,"PG_NODE_TREE":194,"SMGR":210,"PATH":602,"POLYGON":604,"CIDR":650,"FLOAT4":700,"FLOAT8":701,"ABSTIME":702,"RELTIME":703,"TINTERVAL":704,"CIRCLE":718,"MACADDR8":774,"MONEY":790,"MACADDR":829,"INET":869,"ACLITEM":1033,"BPCHAR":1042,"VARCHAR":1043,"DATE":1082,"TIME":1083,"TIMESTAMP":1114,"TIMESTAMPTZ":1184,"INTERVAL":1186,"TIMETZ":1266,"BIT":1560,"VARBIT":1562,"NUMERIC":1700,"REFCURSOR":1790,"REGPROCEDURE":2202,"REGOPER":2203,"REGOPERATOR":2204,"REGCLASS":2205,"REGTYPE":2206,"UUID":2950,"TXID_SNAPSHOT":2970,"PG_LSN":3220,"PG_NDISTINCT":3361,"PG_DEPENDENCIES":3402,"TSVECTOR":3614,"TSQUERY":3615,"GTSVECTOR":3642,"REGCONFIG":3734,"REGDICTIONARY":3769,"JSONB":3802,"REGNAMESPACE":4089,"REGROLE":4096}},"text":{},"binary":{}},"RowCtor":null,"rowAsArray":false,"_prebuiltEmptyResultObject":{"system_code":null,"user_id":null,"password":null,"user_name":null}}
+2024-05-09 22:07:38.131 info: reply: {"commanaName":"security.signin","userId":"ssssss","password":"dddddd","error_code":-3,"error_message":{}}
+2024-05-09 22:07:38.133 info: 
+END TXN:11449,483671600
+2024-05-09 22:08:33.826 info: START TXN:11506,886304400
+
+2024-05-09 22:08:33.972 info: POST data:[object Object]
+2024-05-09 22:08:34.032 info: POST request: {"commandName":"security.signin","userId":"ssssss","password":"dddddd"} from ::1
+2024-05-09 22:08:34.097 info: Getting database connection pool from ...
+
+  DB_HOST:ep-cold-resonance-a47aecbi-pooler.us-east-1.aws.neon.tech
+,
+  DB_PORT:5432
+,
+  DB_DATABASE:brunner
+,
+  DB_USER:default
+, 
+  DB_PASSWORD:oniV6xuA3Gbk
+  SSL_MODE:require
+  
+2024-05-09 22:08:34.225 info: session info undefined
+2024-05-09 22:08:34.290 info: session에 로그인 정보가 없음.
+2024-05-09 22:08:34.378 info: 
+SQL:
+SELECT SYSTEM_CODE, USER_ID, PASSWORD, USER_NAME
+  FROM BRUNNER.TB_COR_USER_MST
+ WHERE USER_ID = $1
+ 
+PARAMS:
+    ["ssssss"]
+2024-05-09 22:08:35.984 info: RESULT:
+{"system_code":"00","user_id":"ssssss","password":"aaaaaa","user_name":"test"}
+2024-05-09 22:08:35.986 info: reply: {"commanaName":"security.signin","userId":"ssssss","password":"dddddd","error_code":-3,"error_message":{}}
+2024-05-09 22:08:35.987 info: 
+END TXN:11506,886304400
+2024-05-09 22:11:59.055 info: START TXN:11712,115279000
+
+2024-05-09 22:11:59.119 info: POST data:[object Object]
+2024-05-09 22:11:59.230 info: POST request: {"commandName":"security.signin","userId":"aaa","password":"dddddd"} from ::1
+2024-05-09 22:11:59.299 info: Getting database connection pool from ...
+
+  DB_HOST:ep-cold-resonance-a47aecbi-pooler.us-east-1.aws.neon.tech
+,
+  DB_PORT:5432
+,
+  DB_DATABASE:brunner
+,
+  DB_USER:default
+, 
+  DB_PASSWORD:oniV6xuA3Gbk
+  SSL_MODE:require
+  
+2024-05-09 22:11:59.379 info: session info undefined
+2024-05-09 22:11:59.457 info: session에 로그인 정보가 없음.
+2024-05-09 22:11:59.484 info: 
+SQL:
+SELECT SYSTEM_CODE, USER_ID, PASSWORD, USER_NAME
+  FROM BRUNNER.TB_COR_USER_MST
+ WHERE USER_ID = $1
+ 
+PARAMS:
+    ["aaa"]
+2024-05-09 22:12:01.172 info: RESULT:
+undefined
+2024-05-09 22:12:01.174 info: reply: {"commanaName":"security.signin","userId":"aaa","password":"dddddd","error_code":-2,"error_message":"incorrect user info"}
+2024-05-09 22:12:01.177 info: 
+END TXN:11712,115279000
+2024-05-09 22:16:02.529 info: START TXN:11955,589054300
+
+2024-05-09 22:16:02.542 info: POST data:[object Object]
+2024-05-09 22:16:02.549 info: POST request: {"commandName":"security.signin","userId":"bbb","password":"1111"} from ::1
+2024-05-09 22:16:02.551 info: Getting database connection pool from ...
+
+  DB_HOST:ep-cold-resonance-a47aecbi-pooler.us-east-1.aws.neon.tech
+,
+  DB_PORT:5432
+,
+  DB_DATABASE:brunner
+,
+  DB_USER:default
+, 
+  DB_PASSWORD:oniV6xuA3Gbk
+  SSL_MODE:require
+  
+2024-05-09 22:16:02.558 info: session info undefined
+2024-05-09 22:16:02.583 info: session에 로그인 정보가 없음.
+2024-05-09 22:16:02.585 info: 
+SQL:
+SELECT SYSTEM_CODE, USER_ID, PASSWORD, USER_NAME
+  FROM BRUNNER.TB_COR_USER_MST
+ WHERE USER_ID = $1
+ 
+PARAMS:
+    ["bbb"]
+2024-05-09 22:16:04.134 info: RESULT:
+undefined
+2024-05-09 22:16:04.137 info: reply: {"commanaName":"security.signin","userId":"bbb","password":"1111","error_code":-2,"error_message":"incorrect user info"}
+2024-05-09 22:16:04.140 info: 
+END TXN:11955,589054300
+2024-05-09 22:16:46.376 info: START TXN:11999,436662200
+
+2024-05-09 22:16:46.396 info: POST data:[object Object]
+2024-05-09 22:16:46.397 info: POST request: {"commandName":"security.signin","userId":"bbb","password":"1111"} from ::1
+2024-05-09 22:16:46.399 info: Getting database connection pool from ...
+
+  DB_HOST:ep-cold-resonance-a47aecbi-pooler.us-east-1.aws.neon.tech
+,
+  DB_PORT:5432
+,
+  DB_DATABASE:brunner
+,
+  DB_USER:default
+, 
+  DB_PASSWORD:oniV6xuA3Gbk
+  SSL_MODE:require
+  
+2024-05-09 22:16:46.403 info: session info undefined
+2024-05-09 22:16:46.404 info: session에 로그인 정보가 없음.
+2024-05-09 22:16:46.429 info: 
+SQL:
+SELECT SYSTEM_CODE, USER_ID, PASSWORD, USER_NAME
+  FROM BRUNNER.TB_COR_USER_MST
+ WHERE USER_ID = $1
+ 
+PARAMS:
+    ["bbb"]
+2024-05-09 22:16:48.067 info: RESULT:
+{"command":"SELECT","rowCount":0,"oid":null,"rows":[],"fields":[{"name":"system_code","tableID":40961,"columnID":1,"dataTypeID":1043,"dataTypeSize":-1,"dataTypeModifier":54,"format":"text"},{"name":"user_id","tableID":40961,"columnID":2,"dataTypeID":1043,"dataTypeSize":-1,"dataTypeModifier":54,"format":"text"},{"name":"password","tableID":40961,"columnID":3,"dataTypeID":1043,"dataTypeSize":-1,"dataTypeModifier":-1,"format":"text"},{"name":"user_name","tableID":40961,"columnID":4,"dataTypeID":1043,"dataTypeSize":-1,"dataTypeModifier":254,"format":"text"}],"_parsers":[null,null,null,null],"_types":{"_types":{"arrayParser":{},"builtins":{"BOOL":16,"BYTEA":17,"CHAR":18,"INT8":20,"INT2":21,"INT4":23,"REGPROC":24,"TEXT":25,"OID":26,"TID":27,"XID":28,"CID":29,"JSON":114,"XML":142,"PG_NODE_TREE":194,"SMGR":210,"PATH":602,"POLYGON":604,"CIDR":650,"FLOAT4":700,"FLOAT8":701,"ABSTIME":702,"RELTIME":703,"TINTERVAL":704,"CIRCLE":718,"MACADDR8":774,"MONEY":790,"MACADDR":829,"INET":869,"ACLITEM":1033,"BPCHAR":1042,"VARCHAR":1043,"DATE":1082,"TIME":1083,"TIMESTAMP":1114,"TIMESTAMPTZ":1184,"INTERVAL":1186,"TIMETZ":1266,"BIT":1560,"VARBIT":1562,"NUMERIC":1700,"REFCURSOR":1790,"REGPROCEDURE":2202,"REGOPER":2203,"REGOPERATOR":2204,"REGCLASS":2205,"REGTYPE":2206,"UUID":2950,"TXID_SNAPSHOT":2970,"PG_LSN":3220,"PG_NDISTINCT":3361,"PG_DEPENDENCIES":3402,"TSVECTOR":3614,"TSQUERY":3615,"GTSVECTOR":3642,"REGCONFIG":3734,"REGDICTIONARY":3769,"JSONB":3802,"REGNAMESPACE":4089,"REGROLE":4096}},"text":{},"binary":{}},"RowCtor":null,"rowAsArray":false,"_prebuiltEmptyResultObject":{"system_code":null,"user_id":null,"password":null,"user_name":null}}
+2024-05-09 22:16:48.074 info: reply: {"commanaName":"security.signin","userId":"bbb","password":"1111","error_code":-2,"error_message":"incorrect user info"}
+2024-05-09 22:16:48.075 info: 
+END TXN:11999,436662200
+2024-05-09 22:18:44.974 info: START TXN:12118,33888300
+
+2024-05-09 22:18:45.019 info: POST data:[object Object]
+2024-05-09 22:18:45.065 info: POST request: {"commandName":"security.signin","userId":"ssssss","password":"1111"} from ::1
+2024-05-09 22:18:45.164 info: Getting database connection pool from ...
+
+  DB_HOST:ep-cold-resonance-a47aecbi-pooler.us-east-1.aws.neon.tech
+,
+  DB_PORT:5432
+,
+  DB_DATABASE:brunner
+,
+  DB_USER:default
+, 
+  DB_PASSWORD:oniV6xuA3Gbk
+  SSL_MODE:require
+  
+2024-05-09 22:18:45.287 info: session info undefined
+2024-05-09 22:18:45.347 info: session에 로그인 정보가 없음.
+2024-05-09 22:18:45.442 info: 
+SQL:
+SELECT SYSTEM_CODE, USER_ID, PASSWORD, USER_NAME
+  FROM BRUNNER.TB_COR_USER_MST
+ WHERE USER_ID = $1
+ 
+PARAMS:
+    ["ssssss"]
+2024-05-09 22:18:47.043 info: RESULT:
+{"system_code":"00","user_id":"ssssss","password":"aaaaaa","user_name":"test"}
+2024-05-09 22:18:47.045 info: reply: {"commanaName":"security.signin","userId":"ssssss","password":"1111","error_code":-3,"error_message":{}}
+2024-05-09 22:18:47.048 info: 
+END TXN:12118,33888300
+2024-05-09 22:19:05.870 info: START TXN:12138,930159600
+
+2024-05-09 22:19:05.872 info: POST data:[object Object]
+2024-05-09 22:19:05.873 info: POST request: {"commandName":"security.signin","userId":"ssssss","password":"1111"} from ::1
+2024-05-09 22:19:05.874 info: Getting database connection pool from ...
+
+  DB_HOST:ep-cold-resonance-a47aecbi-pooler.us-east-1.aws.neon.tech
+,
+  DB_PORT:5432
+,
+  DB_DATABASE:brunner
+,
+  DB_USER:default
+, 
+  DB_PASSWORD:oniV6xuA3Gbk
+  SSL_MODE:require
+  
+2024-05-09 22:19:05.877 info: session info undefined
+2024-05-09 22:19:05.878 info: session에 로그인 정보가 없음.
+2024-05-09 22:19:05.879 info: 
+SQL:
+SELECT SYSTEM_CODE, USER_ID, PASSWORD, USER_NAME
+  FROM BRUNNER.TB_COR_USER_MST
+ WHERE USER_ID = $1
+ 
+PARAMS:
+    ["ssssss"]
+2024-05-09 22:19:07.344 info: RESULT:
+{"system_code":"00","user_id":"ssssss","password":"aaaaaa","user_name":"test"}
+2024-05-09 22:19:07.346 info: reply: {"commanaName":"security.signin","userId":"ssssss","password":"1111","error_code":-3,"error_message":{}}
+2024-05-09 22:19:07.347 info: 
+END TXN:12138,930159600
+2024-05-09 22:19:49.332 info: START TXN:12182,391835400
+
+2024-05-09 22:19:49.334 info: POST data:[object Object]
+2024-05-09 22:19:49.336 info: POST request: {"commandName":"security.signin","userId":"ssssss","password":"1111"} from ::1
+2024-05-09 22:19:49.377 info: Getting database connection pool from ...
+
+  DB_HOST:ep-cold-resonance-a47aecbi-pooler.us-east-1.aws.neon.tech
+,
+  DB_PORT:5432
+,
+  DB_DATABASE:brunner
+,
+  DB_USER:default
+, 
+  DB_PASSWORD:oniV6xuA3Gbk
+  SSL_MODE:require
+  
+2024-05-09 22:19:49.399 info: session info undefined
+2024-05-09 22:19:49.426 info: session에 로그인 정보가 없음.
+2024-05-09 22:19:49.429 info: 
+SQL:
+SELECT SYSTEM_CODE, USER_ID, PASSWORD, USER_NAME
+  FROM BRUNNER.TB_COR_USER_MST
+ WHERE USER_ID = $1
+ 
+PARAMS:
+    ["ssssss"]
+2024-05-09 22:19:50.873 info: RESULT:
+{"system_code":"00","user_id":"ssssss","password":"aaaaaa","user_name":"test"}
+2024-05-09 22:19:50.875 info: aaaaaa,1111
+2024-05-09 22:19:50.876 info: reply: {"commanaName":"security.signin","userId":"ssssss","password":"1111","error_code":-1,"error_message":"incorrect password"}
+2024-05-09 22:19:50.878 info: 
+END TXN:12182,391835400
+2024-05-09 22:20:09.679 info: START TXN:12202,739113400
+
+2024-05-09 22:20:09.680 info: POST data:[object Object]
+2024-05-09 22:20:09.681 info: POST request: {"commandName":"security.signin","userId":"ssssss","password":"aaaaaa"} from ::1
+2024-05-09 22:20:09.682 info: Getting database connection pool from ...
+
+  DB_HOST:ep-cold-resonance-a47aecbi-pooler.us-east-1.aws.neon.tech
+,
+  DB_PORT:5432
+,
+  DB_DATABASE:brunner
+,
+  DB_USER:default
+, 
+  DB_PASSWORD:oniV6xuA3Gbk
+  SSL_MODE:require
+  
+2024-05-09 22:20:09.687 info: session info undefined
+2024-05-09 22:20:09.688 info: session에 로그인 정보가 없음.
+2024-05-09 22:20:09.689 info: 
+SQL:
+SELECT SYSTEM_CODE, USER_ID, PASSWORD, USER_NAME
+  FROM BRUNNER.TB_COR_USER_MST
+ WHERE USER_ID = $1
+ 
+PARAMS:
+    ["ssssss"]
+2024-05-09 22:20:11.153 info: RESULT:
+{"system_code":"00","user_id":"ssssss","password":"aaaaaa","user_name":"test"}
+2024-05-09 22:20:11.154 info: aaaaaa,aaaaaa
+2024-05-09 22:20:11.156 info: reply: {"commanaName":"security.signin","userId":"ssssss","password":"aaaaaa","error_code":-3,"error_message":{},"userInfo":{"system_code":"00","user_id":"ssssss","password":"*","user_name":"test"}}
+2024-05-09 22:20:11.158 info: 
+END TXN:12202,739113400
+2024-05-09 22:22:44.050 info: START TXN:12357,110827000
+
+2024-05-09 22:22:44.117 info: POST data:[object Object]
+2024-05-09 22:22:44.165 info: POST request: {"commandName":"security.signin","userId":"ssssss","password":"aaaaaa"} from ::1
+2024-05-09 22:22:44.195 info: Getting database connection pool from ...
+
+  DB_HOST:ep-cold-resonance-a47aecbi-pooler.us-east-1.aws.neon.tech
+,
+  DB_PORT:5432
+,
+  DB_DATABASE:brunner
+,
+  DB_USER:default
+, 
+  DB_PASSWORD:oniV6xuA3Gbk
+  SSL_MODE:require
+  
+2024-05-09 22:22:44.234 info: session info undefined
+2024-05-09 22:22:44.291 info: session에 로그인 정보가 없음.
+2024-05-09 22:22:44.349 info: 
+SQL:
+SELECT SYSTEM_CODE, USER_ID, PASSWORD, USER_NAME
+  FROM BRUNNER.TB_COR_USER_MST
+ WHERE USER_ID = $1
+ 
+PARAMS:
+    ["ssssss"]
+2024-05-09 22:22:46.112 info: RESULT:
+{"system_code":"00","user_id":"ssssss","password":"aaaaaa","user_name":"test"}
+2024-05-09 22:22:46.113 info: aaaaaa,aaaaaa
+2024-05-09 22:22:46.115 info: reply: {"commanaName":"security.signin","userId":"ssssss","password":"aaaaaa","error_code":-3,"error_message":{},"userInfo":{"system_code":"00","user_id":"ssssss","password":"*","user_name":"test"}}
+2024-05-09 22:22:46.118 info: 
+END TXN:12357,110827000
