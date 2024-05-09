@@ -13,7 +13,7 @@ export default async function RequestServer(method, jRequest) {
 
   try {
     // res = await fetch(`${protocol}://${serverIp}:${serverPort}/executeJson/`, {
-    res = await fetch(`${protocol}://${serverIp}:${serverPort}/api/service/`, {
+    res = await fetch(`/api/service/`, {
       method: method,
       headers: {
         "Content-Type": "application/json",

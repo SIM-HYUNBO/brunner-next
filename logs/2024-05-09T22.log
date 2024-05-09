@@ -450,3 +450,105 @@ PARAMS:
 2024-05-09 22:22:46.115 info: reply: {"commanaName":"security.signin","userId":"ssssss","password":"aaaaaa","error_code":-3,"error_message":{},"userInfo":{"system_code":"00","user_id":"ssssss","password":"*","user_name":"test"}}
 2024-05-09 22:22:46.118 info: 
 END TXN:12357,110827000
+2024-05-09 22:53:44.787 info: START TXN:14217,841047600
+
+2024-05-09 22:53:44.938 info: POST data:[object Object]
+2024-05-09 22:53:45.010 info: POST request: {"commandName":"security.signin","userId":"ssssss","password":"aaa"} from ::1
+2024-05-09 22:53:45.056 info: Getting database connection pool from ...
+
+  DB_HOST:ep-cold-resonance-a47aecbi-pooler.us-east-1.aws.neon.tech
+,
+  DB_PORT:5432
+,
+  DB_DATABASE:brunner
+,
+  DB_USER:default
+, 
+  DB_PASSWORD:oniV6xuA3Gbk
+  SSL_MODE:require
+  
+2024-05-09 22:53:45.125 info: session info undefined
+2024-05-09 22:53:45.187 info: session에 로그인 정보가 없음.
+2024-05-09 22:53:45.268 info: 
+SQL:
+SELECT SYSTEM_CODE, USER_ID, PASSWORD, USER_NAME
+  FROM BRUNNER.TB_COR_USER_MST
+ WHERE USER_ID = $1
+ 
+PARAMS:
+    ["ssssss"]
+2024-05-09 22:53:47.299 info: RESULT:
+{"system_code":"00","user_id":"ssssss","password":"aaaaaa","user_name":"test"}
+2024-05-09 22:53:47.301 info: aaaaaa,aaa
+2024-05-09 22:53:47.303 info: [object Object]
+2024-05-09 22:53:47.304 info: reply: {"commanaName":"security.signin","userId":"ssssss","password":"aaa","error_code":-1,"error_message":"incorrect password"}
+2024-05-09 22:53:47.308 info: 
+END TXN:14217,841047600
+2024-05-09 22:54:02.755 info: START TXN:14235,814619100
+
+2024-05-09 22:54:02.757 info: POST data:[object Object]
+2024-05-09 22:54:02.758 info: POST request: {"commandName":"security.signin","userId":"ssssss","password":"aaaaaa"} from ::1
+2024-05-09 22:54:02.760 info: Getting database connection pool from ...
+
+  DB_HOST:ep-cold-resonance-a47aecbi-pooler.us-east-1.aws.neon.tech
+,
+  DB_PORT:5432
+,
+  DB_DATABASE:brunner
+,
+  DB_USER:default
+, 
+  DB_PASSWORD:oniV6xuA3Gbk
+  SSL_MODE:require
+  
+2024-05-09 22:54:02.768 info: session info undefined
+2024-05-09 22:54:02.769 info: session에 로그인 정보가 없음.
+2024-05-09 22:54:02.770 info: 
+SQL:
+SELECT SYSTEM_CODE, USER_ID, PASSWORD, USER_NAME
+  FROM BRUNNER.TB_COR_USER_MST
+ WHERE USER_ID = $1
+ 
+PARAMS:
+    ["ssssss"]
+2024-05-09 22:54:04.213 info: RESULT:
+{"system_code":"00","user_id":"ssssss","password":"aaaaaa","user_name":"test"}
+2024-05-09 22:54:04.215 info: aaaaaa,aaaaaa
+2024-05-09 22:54:04.217 info: [object Object]
+2024-05-09 22:54:04.219 info: reply: {"commanaName":"security.signin","userId":"ssssss","password":"aaaaaa","error_code":0,"error_message":"OK"}
+2024-05-09 22:54:04.221 info: 
+END TXN:14235,814619100
+2024-05-09 22:55:01.771 info: START TXN:14294,831420600
+
+2024-05-09 22:55:01.867 info: POST data:[object Object]
+2024-05-09 22:55:01.901 info: POST request: {"commandName":"security.signin","userId":"ssssss","password":"aaaaaaa"} from ::1
+2024-05-09 22:55:01.955 info: Getting database connection pool from ...
+
+  DB_HOST:ep-cold-resonance-a47aecbi-pooler.us-east-1.aws.neon.tech
+,
+  DB_PORT:5432
+,
+  DB_DATABASE:brunner
+,
+  DB_USER:default
+, 
+  DB_PASSWORD:oniV6xuA3Gbk
+  SSL_MODE:require
+  
+2024-05-09 22:55:02.047 info: session info undefined
+2024-05-09 22:55:02.083 info: session에 로그인 정보가 없음.
+2024-05-09 22:55:02.188 info: 
+SQL:
+SELECT SYSTEM_CODE, USER_ID, PASSWORD, USER_NAME
+  FROM BRUNNER.TB_COR_USER_MST
+ WHERE USER_ID = $1
+ 
+PARAMS:
+    ["ssssss"]
+2024-05-09 22:55:06.861 info: RESULT:
+{"system_code":"00","user_id":"ssssss","password":"aaaaaa","user_name":"test"}
+2024-05-09 22:55:06.951 info: aaaaaa,aaaaaaa
+2024-05-09 22:55:06.978 info: [object Object]
+2024-05-09 22:55:07.043 info: reply: {"commanaName":"security.signin","userId":"ssssss","password":"aaaaaaa","error_code":-1,"error_message":"incorrect password"}
+2024-05-09 22:55:07.125 info: 
+END TXN:14294,831420600
