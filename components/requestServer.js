@@ -18,6 +18,7 @@ export default async function RequestServer(method, jRequest) {
       method: method,
       headers: {
         "Content-Type": "application/json",
+        'Access-Control-Allow-Origin': '*',
       },
       body: jRequest
     });
