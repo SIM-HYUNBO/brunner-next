@@ -9,8 +9,8 @@ export default async (req, res) => {
     var txnTime = null;
 
     try {
-        txnTime = process.hrtime()
-        logger.info(`START TXN:${txnTime}\n`)
+        // txnTime = process.hrtime()
+        logger.info(`\n\n>>>>>>>>>START TXN\n`)
 
         if (req.method === 'GET') {
             logger.info(`GET data:${req}`);
@@ -30,7 +30,7 @@ export default async (req, res) => {
     }
     finally {
         res.send(`${JSON.stringify(jResponse)}`);
-        logger.info(`\nEND TXN:${txnTime}`)
+        logger.info(`\n<<<<<<<<<<END TXN\n`)
     }
 }
 

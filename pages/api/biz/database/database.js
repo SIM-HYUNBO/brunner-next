@@ -7,11 +7,11 @@ import { Pool } from "pg";
 export const getPool = () => {
   dotenv.config();
 
-  logger.info(`Getting database connection pool from ...\n
-  DB_HOST:${process.env.DB_HOST}\n,
-  DB_PORT:${process.env.DB_PORT}\n,
-  DB_DATABASE:${process.env.DB_DATABASE}\n,
-  DB_USER:${process.env.DB_USER}\n, 
+  logger.info(`Getting database connection pool from ...
+  DB_HOST:${process.env.DB_HOST}
+  DB_PORT:${process.env.DB_PORT}
+  DB_DATABASE:${process.env.DB_DATABASE}
+  DB_USER:${process.env.DB_USER}
   DB_PASSWORD:${process.env.DB_PASSWORD}
   SSL_MODE:${process.env.SSL_MODE}
   `);
