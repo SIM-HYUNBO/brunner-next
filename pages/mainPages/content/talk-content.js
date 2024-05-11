@@ -12,7 +12,7 @@ export default function TalkContent() {
 
   const getUserTalks = () => {
 
-    RequestServer("POST",
+    RequestServer("GET",
       `{"commandName": "talk.getUserTalks",
       "systemCode": "00",
       "userId": "${!process.env.userInfo ? "" : process.env.userInfo?.USER_ID}"}`).then((result) => {
@@ -50,7 +50,7 @@ export default function TalkContent() {
       return;
     }
 
-    RequestServer("POST",
+    RequestServer("GET",
       `{"commandName": "talk.createTalk",
       "systemCode": "00",
       "userId": "${process.env.userInfo.USER_ID}",

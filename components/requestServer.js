@@ -4,21 +4,14 @@
  call backend server
 */
 export default async function RequestServer(method, jRequest) {
-  const protocol = process.env.NEXT_PUBLIC_BACKEND_SERVER_PROTOCOL;
-  const serverIp = process.env.NEXT_PUBLIC_BACKEND_SERVER_IP;
-  const serverPort = process.env.NEXT_PUBLIC_BACKEND_SERVER_PORT;
-
   let res = null;
   let jResponse = null;
 
   try {
-    // res = await fetch(`${protocol}://${serverIp}/api/service`, {
-    // res = await fetch(`${protocol}://${serverIp}:${serverPort}/executeJson/`, {
     res = await fetch(`/api/service/`, {
       method: method,
       headers: {
         "Content-Type": "application/json",
-        "Access-Control-Allow-Origin": "*",
       },
       body: jRequest
     });

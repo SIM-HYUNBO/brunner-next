@@ -39,7 +39,7 @@ class TalkModal extends Component {
     this.talkEditorModalRef.current?.closeModal();
 
     // 해당 category에서 lastTalkId 이전에 작섣된 talkItem을 pageSize 갯수만클 조회함
-    RequestServer("POST",
+    RequestServer("GET",
       `{"commandName": "talk.getTalkItems",
       "systemCode": "${systemCode}",
       "talkId": "${talkId}",
@@ -221,7 +221,7 @@ class TalkEditor extends Component {
 
     const commandName = this.props.editMode === "New" ? "talk.createTalkItem" : "talk.editTalkItem"
 
-    RequestServer("POST",
+    RequestServer("GET",
       `{"commandName": "${commandName}", 
       "systemCode":"00",
       "editMode":"${this.props.editMode}",

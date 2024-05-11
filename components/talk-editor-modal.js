@@ -199,7 +199,7 @@ class TalkEditor extends Component {
 
     const commandName = this.props.editMode === "New" ? "talk.createTalkItem" : "talk.editTalkItem"
 
-    RequestServer("POST",
+    RequestServer("GET",
       `{"commandName": "${commandName}", 
       "systemCode":"00",
       "editMode":"${this.props.editMode}",

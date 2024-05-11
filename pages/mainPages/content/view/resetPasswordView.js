@@ -37,7 +37,7 @@ export default function ResetPassword() {
   };
 
   var requestResetPasswordResult = () => {
-    RequestServer("POST",
+    RequestServer("GET",
       `{"commandName": "security.resetPassword",
                     "userId": "${userId}",
                     "registerNo": "${registerNo}",
