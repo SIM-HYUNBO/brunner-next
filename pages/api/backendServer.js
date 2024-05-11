@@ -10,15 +10,8 @@ export default async (req, res) => {
 
     try {
         logger.info(`\n\n>>>>>>>>>START TXN\n`)
-        logger.info(`${req.method} data:${JSON.stringify(req.body)}`);
-
-        // if (req.method === 'GET' || req.method === 'POST') {
+        logger.info(`method:${req.method} data:${JSON.stringify(req.body)}`);
         jResponse = await executeService(req.method, req);
-        // }
-        // else {
-        //     res.setHeader('Allow', ['GET', 'POST']);
-        //     res.status(405).end(`Method ${req.method} Not Allowed`);
-        // }
     }
     catch (e) {
         jResponse = `${e}`;

@@ -35,6 +35,7 @@ export default function executeService(req, jRequest) {
 
 const signup = async (promisePool, req, jRequest) => {
     var jResponse = {};
+
     try {
         jResponse.commanaName = jRequest.commandName;
         jResponse.userId = jRequest.userId;
@@ -91,44 +92,39 @@ const signup = async (promisePool, req, jRequest) => {
             return jResponse;
         }
         if (!jRequest.registerNo) {
-            jResponse.error_code = -2; // incorrect user info 
+            jResponse.error_code = -2;
             jResponse.error_message = `[registerNo] is missing.`;
             return jResponse;
         }
         if (!jRequest.address) {
-            jResponse.error_code = -2; // incorrect user info 
+            jResponse.error_code = -2;
             jResponse.error_message = `[address] is missing.`;
             return jResponse;
         }
 
-        await database.querySQL(promisePool,
+        var select_TB_COR_USER_MST_01 = await database.querySQL(promisePool,
             TB_COR_USER_MST.select_TB_COR_USER_MST_01,
             [
                 jRequest.userId
-            ]).then((result) => {
-                logger.info(`RESULT:\n${JSON.stringify(result)}`);
+            ]);
 
-                if (result.rowCount > 0) {
-                    jResponse.error_code = -1;
-                    jResponse.error_message = `The user Id is already using.`;
-                    return jResponse;
-                }
-                else {
-                    jResponse.error_code = 0;
-                    jResponse.error_message = ``;
-                }
-            }).catch((e) => {
-                jResponse.error_code = -3; // exception
-                jResponse.error_message = e;
-            }).finally(() => {
-                // logger.info(jResponse);
-            });
+        logger.info(`RESULT:\n${JSON.stringify(select_TB_COR_USER_MST_01)}`);
+
+        if (select_TB_COR_USER_MST_01.rowCount > 0) {
+            jResponse.error_code = -1;
+            jResponse.error_message = `The user id is already being used.`;
+            return jResponse;
+        }
+        else {
+            jResponse.error_code = 0;
+            jResponse.error_message = ``;
+        }
 
         if (jResponse.error_code < 0) {
             return jResponse;
         }
 
-        await database.executeSQL(promisePool,
+        var insert_TB_COR_USER_MST_01 = await database.executeSQL(promisePool,
             TB_COR_USER_MST.insert_TB_COR_USER_MST_01,
             [
                 jRequest.systemCode,
@@ -138,29 +134,25 @@ const signup = async (promisePool, req, jRequest) => {
                 jRequest.address,
                 jRequest.phoneNumber,
                 jRequest.email,
-                jRequest.registerNo,
                 'Y',
-                process.env.SYSTEM_USER_ID
-            ]).then((result) => {
-                logger.info(`RESULT:\n${JSON.stringify(result)}`);
-                if (result.rowCount == 1) {
-                    jResponse.error_code = 0;
-                    jResponse.error_message = `ok`;
-                }
-                else {
-                    jResponse.error_code = -3;
-                    jResponse.error_message = `database failed.`;
-                }
-            }).catch((e) => {
-                logger.error(`CATCH:\n${e}`);
-                jResponse.error_code = -3; // exception
-                jResponse.error_message = e;
-            }).finally(() => {
-                // logger.info(jResponse);
-            });
-        // }
+                jRequest.userId,
+                jRequest.registerNo,
+            ]);
+
+        logger.info(`RESULT:\n${JSON.stringify(insert_TB_COR_USER_MST_01)}`);
+
+        if (insert_TB_COR_USER_MST_01.rowCount == 1) {
+            jResponse.error_code = 0;
+            jResponse.error_message = `ok`;
+        }
+        else {
+            jResponse.error_code = -3;
+            jResponse.error_message = `database failed.`;
+        }
     } catch (e) {
-        logger.error(`CATCH:\n${e}`);
+        logger.error(`EXCEPTION:\n${e}`);
+        jResponse.error_code = -3; // exception
+        jResponse.error_message = e;
     } finally {
         return jResponse;
     }
@@ -169,130 +161,160 @@ const signup = async (promisePool, req, jRequest) => {
 const signin = async (promisePool, req, jRequest) => {
     var jResponse = {};
 
-    jResponse.commanaName = jRequest.commandName;
-    jResponse.userId = jRequest.userId;
-    jResponse.password = jRequest.password;
+    try {
+        jResponse.commanaName = jRequest.commandName;
+        jResponse.userId = jRequest.userId;
+        jResponse.password = jRequest.password;
 
-    logger.info(`session info ${JSON.stringify(req.session)}`);
+        logger.info(`session info ${JSON.stringify(req.session)}`);
 
-    if (req.session && req.session.userInfo) {
-        logger.info(`session에 이미 로그인 정보가 있음. ${JSON.stringify(req.session.userInfo)}`);
-        jResponse.userInfo = req.session.userInfo;
-    } else {
-        logger.info(`session에 로그인 정보가 없음.`);
+        if (req.session && req.session.userInfo) {
+            logger.info(`session에 이미 로그인 정보가 있음. ${JSON.stringify(req.session.userInfo)}`);
+            jResponse.userInfo = req.session.userInfo;
+        } else {
+            logger.info(`session에 로그인 정보가 없음.`);
 
-        await database.querySQL(promisePool,
-            TB_COR_USER_MST.select_TB_COR_USER_MST_01,
-            [
-                jRequest.userId
-            ]).then((result) => {
-                if (result.rows.length == 1) {
-                    logger.info(`RESULT:\n${JSON.stringify(result.rows[0])}`);
-                    logger.info(`${result.rows[0].password},${jRequest.password}`)
-                    if (result.rows[0].password === jRequest.password) {
-                        jResponse.error_code = 0;
-                        jResponse.error_message = `OK`;
-                    } else {
-                        jResponse.error_code = -1; // incorrect password 
-                        jResponse.error_message = `incorrect password`;
-                    }
+            var select_TB_COR_USER_MST_01 = await database.querySQL(promisePool,
+                TB_COR_USER_MST.select_TB_COR_USER_MST_01,
+                [
+                    jRequest.userId
+                ]);
+
+            if (select_TB_COR_USER_MST_01.rows.length == 1) {
+                logger.info(`RESULT:\n${JSON.stringify(select_TB_COR_USER_MST_01)}`);
+                logger.info(`${select_TB_COR_USER_MST_01.rows[0].password},${jRequest.password}`)
+                if (select_TB_COR_USER_MST_01.rows[0].password === jRequest.password) {
+                    jResponse.error_code = 0;
+                    jResponse.error_message = `OK`;
                 } else {
-                    jResponse.error_code = -2; // incorrect user info 
-                    jResponse.error_message = `incorrect user info`;
+                    jResponse.error_code = -1;
+                    jResponse.error_message = `incorrect password`;
                 }
-            }).catch((e) => {
-                jResponse.error_code = -3; // exception
-                jResponse.error_message = e;
-            }).finally(() => {
-                logger.info(jResponse);
-            });
+            } else {
+                jResponse.error_code = -2;
+                jResponse.error_message = `incorrect user info`;
+            }
+        }
+    } catch (e) {
+        logger.error(`EXCEPTION:\n${e}`);
+        jResponse.error_code = -3; // exception
+        jResponse.error_message = e;
+    } finally {
+        return jResponse;
     }
-
-    return jResponse;
 };
 
 const resetPassword = async (promisePool, req, jRequest) => {
     var jResponse = {};
 
-    jResponse.commanaName = jRequest.commandName;
-    jResponse.userId = jRequest.userId;
+    try {
+        jResponse.commanaName = jRequest.commandName;
+        jResponse.userId = jRequest.userId;
 
-    if (jRequest.userId === '') {
-        jResponse.error_code = -2;
-        jResponse.error_message = `the userId field value is missing.`;
-        return jResponse;
-    }
-    if (jRequest.registerNo === '') {
-        jResponse.error_code = -2;
-        jResponse.error_message = `the registerNo field value is missing.`;
-        return jResponse;
-    }
-    if (jRequest.phoneNumber === '') {
-        jResponse.error_code = -2;
-        jResponse.error_message = `the phoneNumber field value is missing.`;
-        return jResponse;
+        if (jRequest.userId === '') {
+            jResponse.error_code = -2;
+            jResponse.error_message = `the userId field value is missing.`;
+            return jResponse;
+        }
+        if (jRequest.registerNo === '') {
+            jResponse.error_code = -2;
+            jResponse.error_message = `the registerNo field value is missing.`;
+            return jResponse;
+        }
+        if (jRequest.phoneNumber === '') {
+            jResponse.error_code = -2;
+            jResponse.error_message = `the phoneNumber field value is missing.`;
+            return jResponse;
 
-    }
-    if (jRequest.newPassword === '') {
-        jResponse.error_code = -2;
-        jResponse.error_message = `the newPassword field value is missing.`;
-        return jResponse;
-    }
-    if (jRequest.confirmPassword === '') {
-        jResponse.error_code = -2;
-        jResponse.error_message = `the confirmPassword field value is missing.`;
-        return jResponse;
+        }
+        if (jRequest.newPassword === '') {
+            jResponse.error_code = -2;
+            jResponse.error_message = `the newPassword field value is missing.`;
+            return jResponse;
+        }
+        if (jRequest.confirmPassword === '') {
+            jResponse.error_code = -2;
+            jResponse.error_message = `the confirmPassword field value is missing.`;
+            return jResponse;
 
-    }
-    if (jRequest.newPassword !== jRequest.confirmPassword) {
-        jResponse.error_code = -2;
-        jResponse.error_message = `the newPassword and confirmPassword fields value are not same.`;
-        return jResponse;
-    }
+        }
+        if (jRequest.newPassword !== jRequest.confirmPassword) {
+            jResponse.error_code = -2;
+            jResponse.error_message = `the newPassword and confirmPassword fields value are not same.`;
+            return jResponse;
+        }
 
-    await database.executeSQL(promisePool,
-        TB_COR_USER_MST.update_TB_COR_USER_MST_01,
-        [
-            jRequest.newPassword,
-            jRequest.userId,
-            jRequest.registerNo,
-            jRequest.phoneNumber,
-            jRequest.newPassword
-        ]).then((result) => {
-            logger.info(`RESULT:\n${result}`);
+        var select_TB_COR_USER_MST_01 = await database.querySQL(promisePool,
+            TB_COR_USER_MST.select_TB_COR_USER_MST_01,
+            [
+                jRequest.userId
+            ]);
 
-            if (result[0].affectedRows == 1) {
-                jResponse = result[0];
+        logger.info(`RESULT:\n${JSON.stringify(select_TB_COR_USER_MST_01)}`);
+
+        if (select_TB_COR_USER_MST_01.rowCount <= 0) {
+            jResponse.error_code = -1;
+            jResponse.error_message = `The user Id not exist.`;
+            return jResponse;
+        }
+
+        logger.info(`OLD PASSWORD:${select_TB_COR_USER_MST_01.rows[0].password} NEW PASSWORD:${jRequest.newPassword}`);
+        if (select_TB_COR_USER_MST_01.rows[0].password === jRequest.newPassword) {
+            jResponse.error_code = -1;
+            jResponse.error_message = `The new password is same with current one.`;
+            jResponse.rowCount = 0;
+            return jResponse;
+        }
+        else {
+            var update_TB_COR_USER_MST_01 = await database.executeSQL(promisePool,
+                TB_COR_USER_MST.update_TB_COR_USER_MST_01,
+                [
+                    jRequest.newPassword,
+                    jRequest.userId,
+                    jRequest.registerNo,
+                    jRequest.phoneNumber,
+                    jRequest.newPassword
+                ]);
+
+            logger.info(`RESULT:\n${JSON.stringify(update_TB_COR_USER_MST_01)}`);
+            jResponse.rowCount = update_TB_COR_USER_MST_01.rowCount;
+            if (update_TB_COR_USER_MST_01.rowCount == 1) {
+                jResponse.error_code = 0;
+                jResponse.error_message = `The password successfully changed.`;
+                logger.info(`RESULT:\n${JSON.stringify(jResponse)}`);
             } else {
                 jResponse.error_code = -2;
-                jResponse.error_message = `database error occured.`;
+                jResponse.error_message = `${JSON.stringify(update_TB_COR_USER_MST_01.rowCount)} row updated.`;
             }
-        }).catch((e) => {
-            logger.info(`${e}`);
-            jResponse.error_code = -3; // exception
-            jResponse.error_message = e;
-        }).finally(() => {
-            // logger.info(jResponse);
-        });
-
-    return jResponse;
+        }
+    } catch (e) {
+        logger.error(`EXCEPTION:\n${e}`);
+    } finally {
+        return jResponse;
+    }
 };
 
 const signout = (promisePool, req, jRequest) => {
     var jResponse = {};
 
-    jResponse.commanaName = jRequest.commandName;
-    jResponse.__REMOTE_CLIENT_IP = jRequest.__REMOTE_CLIENT_IP;
+    try {
+        jResponse.commanaName = jRequest.commandName;
+        jResponse.__REMOTE_CLIENT_IP = jRequest.__REMOTE_CLIENT_IP;
 
-    jResponse.error_code = 0;
-    jResponse.error_message = `ok`;
-    req.session.userInfo = {};
-    req.session.save(() => {
-        logger.info(`session에 사용자 정보 삭제함.`);
-        logger.info(`session info ${JSON.stringify(req.session)}`);
-    });
-
-    return jResponse;
+        jResponse.error_code = 0;
+        jResponse.error_message = `ok`;
+        req.session.userInfo = {};
+        req.session.save(() => {
+            logger.info(`session에 사용자 정보 삭제함.`);
+            logger.info(`session info ${JSON.stringify(req.session)}`);
+        });
+    } catch (e) {
+        logger.error(`EXCEPTION:\n${e}`);
+        jResponse.error_code = -3; // exception
+        jResponse.error_message = e;
+    } finally {
+        return jResponse;
+    }
 };
 
 const validTelNo = (args) => {

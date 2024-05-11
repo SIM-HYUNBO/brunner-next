@@ -8,7 +8,7 @@ export default async function RequestServer(method, jRequest) {
   let jResponse = null;
 
   try {
-    res = await fetch(`/api/service/`, {
+    res = await fetch(`/api/backendServer/`, {
       method: method,
       headers: {
         "Content-Type": "application/json",

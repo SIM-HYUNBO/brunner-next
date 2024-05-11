@@ -56,7 +56,7 @@ export default function TalkContent() {
       "userId": "${process.env.userInfo.USER_ID}",
       "talkName": "${newTalkTitle}"}`).then((result) => {
 
-        if (result.result.affectedRows == 1) {
+        if (result.rowCount == 1) {
           alert(`successfully created.`);
           newTalkNameRef.current.value = "";
         } else {

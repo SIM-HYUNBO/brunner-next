@@ -46,7 +46,7 @@ export const executeSQL = async (dbConnectionPool, sql, params) => {
   try {
     logger.info(`
 SQL:\n${sql}\n
-PARAMS:\n
+PARAMS:
     ${JSON.stringify(params)}`)
 
     const result = await dbConnectionPool.query(sql, params);

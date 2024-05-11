@@ -44,12 +44,7 @@ export default function ResetPassword() {
                     "phoneNumber": "${phoneNumber}",
                     "newPassword": "${newPassword}",
                     "confirmPassword": "${confirmPassword}"}`).then((result) => {
-        if (result.affectedRows == 1) {
-          alert(`the password reset.`);
-          router.push('/signin')
-        } else {
-          alert('failed to reset password. please check your information again.');
-        }
+        alert(`${result.error_message}`);
       });
   };
 
