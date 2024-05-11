@@ -76,7 +76,7 @@ const signup = async (promisePool, req, jRequest) => {
             jResponse.error_message = `[phoneNumber] is missing.`;
             return jResponse;
         }
-        if (validTelNo(jRequest.phoneNumber) == false) {
+        if (verifyTelNo(jRequest.phoneNumber) == false) {
             jResponse.error_code = -2;
             jResponse.error_message = `[phoneNumber] is not valid.`;
             return jResponse;
@@ -86,7 +86,7 @@ const signup = async (promisePool, req, jRequest) => {
             jResponse.error_message = `[email] is missing.`;
             return jResponse;
         }
-        if (validEMail(jRequest.email) == false) {
+        if (verifyEMail(jRequest.email) == false) {
             jResponse.error_code = -2;
             jResponse.error_message = `[email] is not valid.`;
             return jResponse;
@@ -147,12 +147,12 @@ const signup = async (promisePool, req, jRequest) => {
         }
         else {
             jResponse.error_code = -3;
-            jResponse.error_message = `database failed.`;
+            jResponse.error_message = `${JSON.stringify(insert_TB_COR_USER_MST_01.rowCount)} rows created.`
         }
     } catch (e) {
         logger.error(`EXCEPTION:\n${e}`);
         jResponse.error_code = -3; // exception
-        jResponse.error_message = e;
+        jResponse.error_message = `EXCEPTION:\n${e}`;
     } finally {
         return jResponse;
     }
@@ -198,7 +198,7 @@ const signin = async (promisePool, req, jRequest) => {
     } catch (e) {
         logger.error(`EXCEPTION:\n${e}`);
         jResponse.error_code = -3; // exception
-        jResponse.error_message = e;
+        jResponse.error_message = `EXCEPTION:\n${e}`;
     } finally {
         return jResponse;
     }
@@ -289,6 +289,8 @@ const resetPassword = async (promisePool, req, jRequest) => {
         }
     } catch (e) {
         logger.error(`EXCEPTION:\n${e}`);
+        jResponse.error_code = -3; // exception
+        jResponse.error_message = `EXCEPTION:\n${e}`;
     } finally {
         return jResponse;
     }
@@ -303,21 +305,16 @@ const signout = (promisePool, req, jRequest) => {
 
         jResponse.error_code = 0;
         jResponse.error_message = `ok`;
-        req.session.userInfo = {};
-        req.session.save(() => {
-            logger.info(`session에 사용자 정보 삭제함.`);
-            logger.info(`session info ${JSON.stringify(req.session)}`);
-        });
     } catch (e) {
         logger.error(`EXCEPTION:\n${e}`);
         jResponse.error_code = -3; // exception
-        jResponse.error_message = e;
+        jResponse.error_message = `EXCEPTION:\n${e}`;
     } finally {
         return jResponse;
     }
 };
 
-const validTelNo = (args) => {
+const verifyTelNo = (args) => {
     const msg = '유효하지 않는 전화번호입니다.';
     // IE 브라우저에서는 당연히 var msg로 변경
 
@@ -328,7 +325,7 @@ const validTelNo = (args) => {
     return false;
 }
 
-const validEMail = (email) => {
+const verifyEMail = (email) => {
     const re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
     return re.test(String(email).toLowerCase());
 }
