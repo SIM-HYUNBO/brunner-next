@@ -199,9 +199,9 @@ class TalkEditor extends Component {
 
     const commandName = this.props.editMode === "New" ? "talk.createTalkItem" : "talk.editTalkItem"
 
-    RequestServer("POST",
+    RequestServer('POST',
       `{"commandName": "${commandName}", 
-      "systemCode":"00",
+      "systemCode":"${process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE}",
       "editMode":"${this.props.editMode}",
       "talkItemId":"${this.props.currentTalkItemId}",
       "talkId": "${this.state.talkId}",
@@ -212,7 +212,7 @@ class TalkEditor extends Component {
         if (result.error_code == 0) {
           alert("Sucessfully writed.");
           this.props.closeModal();
-          this.props.getTalkItems("00", this.state.talkId, '99991231240000_zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz');
+          this.props.getTalkItems(process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE, this.state.talkId, '99991231240000_zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz');
         } else {
           alert(JSON.stringify(result.error_message));
         }

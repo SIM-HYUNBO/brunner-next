@@ -35,22 +35,11 @@ export default function executeService(req, jRequest) {
 
 const signup = async (promisePool, req, jRequest) => {
     var jResponse = {};
+    try {
+        jResponse.commanaName = jRequest.commandName;
+        jResponse.userId = jRequest.userId;
+        jResponse.password = jRequest.password;
 
-    jResponse.commanaName = jRequest.commandName;
-    jResponse.userId = jRequest.userId;
-    jResponse.password = jRequest.password;
-
-    logger.info(`session 사용자 정보 확인. ${JSON.stringify(req.session.userInfo)}`);
-
-    if (req.session.userInfo && req.session.userInfo.userId) {
-        logger.info(`session에 이미 사용자 로그인 정보가 있음. ${JSON.stringify(req.session.userInfo)}`);
-        jResponse.userInfo = req.session.userInfo;
-
-        jResponse.error_code = -1; // already a user signined
-        jResponse.error_message = `already a user signined`;
-
-        return jResponse;
-    } else {
         if (!jRequest.userId) {
             jResponse.error_code = -2;
             jResponse.error_message = `[userId] is missing.`;
@@ -66,9 +55,9 @@ const signup = async (promisePool, req, jRequest) => {
             jResponse.error_message = `[password] is missing.`;
             return jResponse;
         }
-        if (jRequest.password.length < 5 || jRequest.password.length > 10) {
+        if (jRequest.password.length < 5) {
             jResponse.error_code = -2;
-            jResponse.error_message = `[password] length should be from 5 to 10.`;
+            jResponse.error_message = `[password] length should be more than 5.`;
             return jResponse;
         }
         if (!jRequest.userName) {
@@ -117,11 +106,11 @@ const signup = async (promisePool, req, jRequest) => {
             [
                 jRequest.userId
             ]).then((result) => {
-                logger.info(`RESULT:\n${JSON.stringify(result[0])}`);
+                logger.info(`RESULT:\n${JSON.stringify(result)}`);
 
-                if (result[0].length > 0) {
+                if (result.rowCount > 0) {
                     jResponse.error_code = -1;
-                    jResponse.error_message = `The user Id is already occupied.`;
+                    jResponse.error_message = `The user Id is already using.`;
                     return jResponse;
                 }
                 else {
@@ -142,7 +131,7 @@ const signup = async (promisePool, req, jRequest) => {
         await database.executeSQL(promisePool,
             TB_COR_USER_MST.insert_TB_COR_USER_MST_01,
             [
-                process.env.DEFAULT_SYSTEM_CODE,
+                jRequest.systemCode,
                 jRequest.userId,
                 jRequest.password,
                 jRequest.userName,
@@ -153,8 +142,8 @@ const signup = async (promisePool, req, jRequest) => {
                 'Y',
                 process.env.SYSTEM_USER_ID
             ]).then((result) => {
-                logger.info(`RESULT:\n${result}`);
-                if (result[0].affectedRows == 1) {
+                logger.info(`RESULT:\n${JSON.stringify(result)}`);
+                if (result.rowCount == 1) {
                     jResponse.error_code = 0;
                     jResponse.error_message = `ok`;
                 }
@@ -163,15 +152,18 @@ const signup = async (promisePool, req, jRequest) => {
                     jResponse.error_message = `database failed.`;
                 }
             }).catch((e) => {
-                logger.info(`CATCH:\n${e}`);
+                logger.error(`CATCH:\n${e}`);
                 jResponse.error_code = -3; // exception
                 jResponse.error_message = e;
             }).finally(() => {
                 // logger.info(jResponse);
             });
+        // }
+    } catch (e) {
+        logger.error(`CATCH:\n${e}`);
+    } finally {
+        return jResponse;
     }
-
-    return jResponse;
 };
 
 const signin = async (promisePool, req, jRequest) => {

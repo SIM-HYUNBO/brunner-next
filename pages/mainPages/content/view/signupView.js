@@ -47,8 +47,9 @@ export default function SignupView() {
 
 
   var requestSignupResult = () => {
-    RequestServer("POST",
+    RequestServer('POST',
       `{"commandName": "security.signup",
+                   "systemCode": "${process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE}",
                     "userId": "${userId}",
                     "password": "${password}",
                     "userName": "${userName}",

@@ -29,7 +29,7 @@ export default function App({ Component, pageProps }) {
   };
 
   let updateUserToken = (userInfo) => {
-    RequestServer("POST",
+    RequestServer('POST',
       `{"commandName": "security.updateUserToken",
                     "userId": "${userInfo.USER_ID}",
                     "userToken": "${userInfo.USER_TOKEN}"}`).then((result) => {

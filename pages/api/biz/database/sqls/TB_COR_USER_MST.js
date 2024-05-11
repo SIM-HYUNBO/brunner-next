@@ -33,6 +33,6 @@ export const insert_TB_COR_USER_MST_01 =
    VALUES
     ($1, $2, $3, $4, $5,
      $6, $7, $8, $9, $10,
-     SYSDATE(), NULL, NULL)
+     NOW(), NULL, NULL)
     `
   ;  

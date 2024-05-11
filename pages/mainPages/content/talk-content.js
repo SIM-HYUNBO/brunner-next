@@ -12,9 +12,9 @@ export default function TalkContent() {
 
   const getUserTalks = () => {
 
-    RequestServer("POST",
+    RequestServer('POST',
       `{"commandName": "talk.getUserTalks",
-      "systemCode": "00",
+      "systemCode": "${process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE}",
       "userId": "${!process.env.userInfo ? "" : process.env.userInfo?.USER_ID}"}`).then((result) => {
 
         if (result.error_code == 0) {
@@ -50,9 +50,9 @@ export default function TalkContent() {
       return;
     }
 
-    RequestServer("POST",
+    RequestServer('POST',
       `{"commandName": "talk.createTalk",
-      "systemCode": "00",
+      "systemCode": "${process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE}",
       "userId": "${process.env.userInfo.USER_ID}",
       "talkName": "${newTalkTitle}"}`).then((result) => {
 

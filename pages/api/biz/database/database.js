@@ -49,7 +49,7 @@ SQL:\n${sql}\n
 PARAMS:\n
     ${JSON.stringify(params)}`)
 
-    const result = await dbConnectionPool.execute(sql, params);
+    const result = await dbConnectionPool.query(sql, params);
     return result;
   }
   catch (err) {

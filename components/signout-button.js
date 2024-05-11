@@ -21,7 +21,7 @@ export default function SignoutButton() {
           type="button"
           onClick={() => {
             // alert(`${JSON.stringify(process.env.userInfo.USER_ID)}`);
-            RequestServer("POST",
+            RequestServer('POST',
               `{"commandName": "security.signout", 
                             "userId": "${process.env.userInfo?.USER_ID}"
                            }`).then((result) => {

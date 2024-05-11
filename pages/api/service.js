@@ -9,21 +9,16 @@ export default async (req, res) => {
     var txnTime = null;
 
     try {
-        // txnTime = process.hrtime()
         logger.info(`\n\n>>>>>>>>>START TXN\n`)
+        logger.info(`${req.method} data:${JSON.stringify(req.body)}`);
 
-        if (req.method === 'GET') {
-            logger.info(`GET data:${req}`);
-            jResponse = await executeService("GET", req);
-        }
-        else if (req.method === 'POST') {
-            logger.info(`POST data:${req}`);
-            jResponse = await executeService("POST", req);
-        }
-        else {
-            res.setHeader('Allow', ['GET', 'POST']);
-            res.status(405).end(`Method ${req.method} Not Allowed`);
-        }
+        // if (req.method === 'GET' || req.method === 'POST') {
+        jResponse = await executeService(req.method, req);
+        // }
+        // else {
+        //     res.setHeader('Allow', ['GET', 'POST']);
+        //     res.status(405).end(`Method ${req.method} Not Allowed`);
+        // }
     }
     catch (e) {
         jResponse = `${e}`;
