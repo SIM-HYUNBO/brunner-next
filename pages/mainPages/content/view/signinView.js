@@ -25,7 +25,7 @@ export default function SigninView() {
   const userIdRef = useRef();
 
   var requestSigninResult = () => {
-    RequestServer("GET",
+    RequestServer("POST",
       `{"commandName": "security.signin",
                     "userId": "${userId}",
                     "password": "${password}"}`).then((result) => {

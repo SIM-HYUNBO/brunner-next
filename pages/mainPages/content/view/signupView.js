@@ -47,7 +47,7 @@ export default function SignupView() {
 
 
   var requestSignupResult = () => {
-    RequestServer("GET",
+    RequestServer("POST",
       `{"commandName": "security.signup",
                     "userId": "${userId}",
                     "password": "${password}",
