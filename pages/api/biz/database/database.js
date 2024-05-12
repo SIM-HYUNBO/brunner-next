@@ -14,7 +14,7 @@ export const getPool = () => {
   DB_USER:${process.env.DB_USER}
   DB_PASSWORD:${process.env.DB_PASSWORD}
   SSL_MODE:${process.env.SSL_MODE}
-  `);
+  \n`);
 
   return new Pool({
     user: process.env.DB_USER,
@@ -26,28 +26,9 @@ export const getPool = () => {
   });
 };
 
-export const querySQL = async (dbConnectionPool, sql, params) => {
-  try {
-    logger.info(`
-SQL:\n${sql}
-PARAMS:
-    ${JSON.stringify(params)}`)
-
-    const result = await dbConnectionPool.query(sql, params);
-    return result;
-  }
-  catch (err) {
-    logger.error(err);
-    return err;
-  }
-};
-
 export const executeSQL = async (dbConnectionPool, sql, params) => {
   try {
-    logger.info(`
-SQL:\n${sql}\n
-PARAMS:
-    ${JSON.stringify(params)}`)
+    logger.info(`SQL:\n${sql}\nPARAMS:${JSON.stringify(params)}\n`)
 
     const result = await dbConnectionPool.query(sql, params);
     return result;

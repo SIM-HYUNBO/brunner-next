@@ -7,15 +7,13 @@ export const select_TB_COR_USER_MST_01 =
           USER_NAME
      FROM BRUNNER.TB_COR_USER_MST
     WHERE USER_ID = $1
- ;`
-  ;
+ ;`;
 
 export const select_TB_COR_USER_MST_02 =
   `SELECT USER_TOKEN
      FROM BRUNNER.TB_COR_USER_MST
     WHERE USER_ID IN ($1)
- ;`
-  ;
+ ;`;
 
 export const update_TB_COR_USER_MST_01 =
   `UPDATE BRUNNER.TB_COR_USER_MST 
@@ -24,8 +22,7 @@ export const update_TB_COR_USER_MST_01 =
       AND REGISTER_NO = $3
       AND PHONE_NUMBER = $4
       AND PASSWORD != $5
-   ;`
-  ;
+   ;`;
 
 
 export const insert_TB_COR_USER_MST_01 =
@@ -59,5 +56,4 @@ export const insert_TB_COR_USER_MST_01 =
      NULL,
      $10
      )
-   ;`
-  ;  
+   ;`;  

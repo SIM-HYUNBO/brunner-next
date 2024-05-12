@@ -9,8 +9,11 @@ export default async (req, res) => {
     var txnTime = null;
 
     try {
-        logger.info(`\n\n>>>>>>>>>START TXN\n`)
-        logger.info(`method:${req.method} data:${JSON.stringify(req.body)}`);
+        var jRequest = req.method === "GET" ? JSON.parse(req.params.requestJson) : req.method === "POST" ? req.body : null;
+        const commandName = jRequest.commandName;
+        var remoteIp = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
+        logger.info(`>>>>>>>>>START TXN ${commandName}\n`)
+        logger.info(`method:${req.method} from ${remoteIp} data:${JSON.stringify(req.body)}\n`);
         jResponse = await executeService(req.method, req);
     }
     catch (e) {
@@ -18,16 +21,14 @@ export default async (req, res) => {
     }
     finally {
         res.send(`${JSON.stringify(jResponse)}`);
-        logger.info(`\n<<<<<<<<<<END TXN\n`)
+        logger.info(`<<<<<<<<<<END TXN\n`)
     }
 }
 
 const executeService = async (method, req) => {
-    var jRequest = method === "GET" ? JSON.parse(req.params.requestJson) : method === "POST" ? req.body : null;
     var jResponse = null;
+    var jRequest = method === "GET" ? JSON.parse(req.params.requestJson) : method === "POST" ? req.body : null;
     const commandName = jRequest.commandName;
-    var remoteIp = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
-    logger.info(`${method} request: ${JSON.stringify(jRequest)} from ${remoteIp}`);
 
     if (commandName.startsWith('security.')) {
         jResponse = await new security(req, jRequest);
@@ -39,6 +40,6 @@ const executeService = async (method, req) => {
         })
     }
 
-    logger.info(`reply: ${JSON.stringify(jResponse)}`);
+    logger.info(`reply: ${JSON.stringify(jResponse)}\n`);
     return jResponse;
 }

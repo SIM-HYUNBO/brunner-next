@@ -102,25 +102,15 @@ const signup = async (promisePool, req, jRequest) => {
             return jResponse;
         }
 
-        var select_TB_COR_USER_MST_01 = await database.querySQL(promisePool,
+        var select_TB_COR_USER_MST_01 = await database.executeSQL(promisePool,
             TB_COR_USER_MST.select_TB_COR_USER_MST_01,
             [
                 jRequest.userId
             ]);
 
-        logger.info(`RESULT:\n${JSON.stringify(select_TB_COR_USER_MST_01)}`);
-
         if (select_TB_COR_USER_MST_01.rowCount > 0) {
             jResponse.error_code = -1;
             jResponse.error_message = `The user id is already being used.`;
-            return jResponse;
-        }
-        else {
-            jResponse.error_code = 0;
-            jResponse.error_message = ``;
-        }
-
-        if (jResponse.error_code < 0) {
             return jResponse;
         }
 
@@ -139,7 +129,7 @@ const signup = async (promisePool, req, jRequest) => {
                 jRequest.registerNo,
             ]);
 
-        logger.info(`RESULT:\n${JSON.stringify(insert_TB_COR_USER_MST_01)}`);
+        logger.info(`\nRESULT:rowCount=\n${insert_TB_COR_USER_MST_01.rowCount}\n`);
 
         if (insert_TB_COR_USER_MST_01.rowCount == 1) {
             jResponse.error_code = 0;
@@ -147,7 +137,7 @@ const signup = async (promisePool, req, jRequest) => {
         }
         else {
             jResponse.error_code = -3;
-            jResponse.error_message = `${JSON.stringify(insert_TB_COR_USER_MST_01.rowCount)} rows created.`
+            jResponse.error_message = `Failed to create new user.\n`
         }
     } catch (e) {
         logger.error(`EXCEPTION:\n${e}`);
@@ -166,34 +156,24 @@ const signin = async (promisePool, req, jRequest) => {
         jResponse.userId = jRequest.userId;
         jResponse.password = jRequest.password;
 
-        logger.info(`session info ${JSON.stringify(req.session)}`);
+        var select_TB_COR_USER_MST_01 = await database.executeSQL(promisePool,
+            TB_COR_USER_MST.select_TB_COR_USER_MST_01,
+            [
+                jRequest.userId
+            ]);
 
-        if (req.session && req.session.userInfo) {
-            logger.info(`session에 이미 로그인 정보가 있음. ${JSON.stringify(req.session.userInfo)}`);
-            jResponse.userInfo = req.session.userInfo;
-        } else {
-            logger.info(`session에 로그인 정보가 없음.`);
-
-            var select_TB_COR_USER_MST_01 = await database.querySQL(promisePool,
-                TB_COR_USER_MST.select_TB_COR_USER_MST_01,
-                [
-                    jRequest.userId
-                ]);
-
-            if (select_TB_COR_USER_MST_01.rows.length == 1) {
-                logger.info(`RESULT:\n${JSON.stringify(select_TB_COR_USER_MST_01)}`);
-                logger.info(`${select_TB_COR_USER_MST_01.rows[0].password},${jRequest.password}`)
-                if (select_TB_COR_USER_MST_01.rows[0].password === jRequest.password) {
-                    jResponse.error_code = 0;
-                    jResponse.error_message = `OK`;
-                } else {
-                    jResponse.error_code = -1;
-                    jResponse.error_message = `incorrect password`;
-                }
+        if (select_TB_COR_USER_MST_01.rows.length == 1) {
+            logger.info(`RESULT:\n${JSON.stringify(select_TB_COR_USER_MST_01.rows[0])}\n`);
+            if (select_TB_COR_USER_MST_01.rows[0].password === jRequest.password) {
+                jResponse.error_code = 0;
+                jResponse.error_message = `OK`;
             } else {
-                jResponse.error_code = -2;
-                jResponse.error_message = `incorrect user info`;
+                jResponse.error_code = -1;
+                jResponse.error_message = `incorrect password`;
             }
+        } else {
+            jResponse.error_code = -2;
+            jResponse.error_message = `incorrect user info`;
         }
     } catch (e) {
         logger.error(`EXCEPTION:\n${e}`);
@@ -244,21 +224,23 @@ const resetPassword = async (promisePool, req, jRequest) => {
             return jResponse;
         }
 
-        var select_TB_COR_USER_MST_01 = await database.querySQL(promisePool,
+        var select_TB_COR_USER_MST_01 = await database.executeSQL(promisePool,
             TB_COR_USER_MST.select_TB_COR_USER_MST_01,
             [
                 jRequest.userId
             ]);
 
-        logger.info(`RESULT:\n${JSON.stringify(select_TB_COR_USER_MST_01)}`);
-
-        if (select_TB_COR_USER_MST_01.rowCount <= 0) {
+        if (select_TB_COR_USER_MST_01.rowCount === 1) {
+            logger.info(`RESULT:\n${JSON.stringify(select_TB_COR_USER_MST_01.rows[0])}\n`);
+        }
+        else if (select_TB_COR_USER_MST_01.rowCount <= 0) {
             jResponse.error_code = -1;
             jResponse.error_message = `The user Id not exist.`;
             return jResponse;
         }
 
-        logger.info(`OLD PASSWORD:${select_TB_COR_USER_MST_01.rows[0].password} NEW PASSWORD:${jRequest.newPassword}`);
+        // logger.info(`OLD PASSWORD:${select_TB_COR_USER_MST_01.rows[0].password} NEW PASSWORD: ${jRequest.newPassword}\n`);
+
         if (select_TB_COR_USER_MST_01.rows[0].password === jRequest.newPassword) {
             jResponse.error_code = -1;
             jResponse.error_message = `The new password is same with current one.`;
@@ -276,15 +258,14 @@ const resetPassword = async (promisePool, req, jRequest) => {
                     jRequest.newPassword
                 ]);
 
-            logger.info(`RESULT:\n${JSON.stringify(update_TB_COR_USER_MST_01)}`);
-            jResponse.rowCount = update_TB_COR_USER_MST_01.rowCount;
+            logger.info(`RESULT: rowCount=${update_TB_COR_USER_MST_01.rowCount}\n`);
             if (update_TB_COR_USER_MST_01.rowCount == 1) {
                 jResponse.error_code = 0;
                 jResponse.error_message = `The password successfully changed.`;
-                logger.info(`RESULT:\n${JSON.stringify(jResponse)}`);
+                logger.info(`RESULT:\n${JSON.stringify(jResponse)}\n`);
             } else {
                 jResponse.error_code = -2;
-                jResponse.error_message = `${JSON.stringify(update_TB_COR_USER_MST_01.rowCount)} row updated.`;
+                jResponse.error_message = `Failed to reset password. Please check the phone number and register number.`;
             }
         }
     } catch (e) {
