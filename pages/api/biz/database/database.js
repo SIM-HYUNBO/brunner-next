@@ -13,8 +13,7 @@ export const getPool = () => {
   DB_DATABASE:${process.env.DB_DATABASE}
   DB_USER:${process.env.DB_USER}
   DB_PASSWORD:${process.env.DB_PASSWORD}
-  SSL_MODE:${process.env.SSL_MODE}
-  \n`);
+  SSL_MODE:${process.env.SSL_MODE}\n`);
 
   return new Pool({
     user: process.env.DB_USER,
