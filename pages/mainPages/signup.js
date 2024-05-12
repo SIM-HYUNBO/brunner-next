@@ -7,7 +7,7 @@ import RequestServer from '../../../../components/requestServer'
 import { useRouter } from 'next/router'
 import { useState } from 'react'
 
-export default function SignupView() {
+export default function Signup() {
   const router = useRouter();
 
   const [userId, setUserId] = useState('');

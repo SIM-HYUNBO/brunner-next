@@ -22,9 +22,6 @@ export default function Header() {
                         <Link className="mr-5 text-gray-600 dark:text-gray-100 hover:text-gray-400" href="/mainPages/talk">
                             Talk
                         </Link>
-                        <Link className="mr-5 text-gray-600 dark:text-gray-100 hover:text-gray-400" href="/mainPages/brunner-bot">
-                            Brunner-Bot
-                        </Link>
                         <Link className="mr-5 text-gray-600 dark:text-gray-100 hover:text-gray-400" href="/mainPages/support">
                             Support
                         </Link>

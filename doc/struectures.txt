@@ -1,0 +1,27 @@
+structure of prodject
+
+index.js
+ - layout.js
+   - header.js 
+     - nav: /mainPages/talk.js
+       - layout.js
+       - head
+       - /component/body-section.js
+         - /mainPages/content/talkContent.js
+     - nav: /mainPages/support.js
+       - layout.js
+       - head
+       - /component/body-section.js
+         - /mainPages/content/supportContent.js
+     - nav: /mainPages/contact.js
+       - layout.js
+       - head
+       - /component/body-section.js
+         - /mainPages/content/contactContent.js
+   - footer.js 
+ - head
+ - /component/body-section.js
+ - /mainPages/content/home-content.js
+   - router.push: /mainPages/signin
+     -  router.push: /mainPages/resetPassword
+   - router.push: /mainPages/signup

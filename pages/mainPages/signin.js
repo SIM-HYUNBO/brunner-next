@@ -1,15 +1,15 @@
 `use strict`
 
-import Layout from '../../../../components/layout'
+import Layout from '../../components/layout'
 import Head from 'next/head'
-import BodySection from '../../../../components/body-section'
+import BodySection from '../../components/body-section'
 
-import RequestServer from '../../../../components/requestServer'
+import RequestServer from '../../components/requestServer'
 import { useRouter } from 'next/router'
 import { useState, useEffect, useRef } from 'react'
 
 
-export default function SigninView() {
+export default function Signin() {
   const router = useRouter();
 
   const [userId, setUserId] = useState('');
@@ -94,7 +94,7 @@ export default function SigninView() {
               Did you forget password? Reset now.
             </p>
             <button className="text-white bg-indigo-500 border-0 py-2 px-8 focus:outline-none hover:bg-indigo-600 rounded text-lg mt-5"
-              onClick={() => router.push('/mainPages/content/view/resetPasswordView')}
+              onClick={() => router.push('/mainPages/resetPassword')}
             >
               Reset Password
             </button>
