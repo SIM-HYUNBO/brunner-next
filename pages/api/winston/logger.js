@@ -11,7 +11,6 @@ var alignColorsAndTime = winston.format.combine(
     winston.format.timestamp({
         format: "YYYY-MM-DD HH:mm:ss.SSS",
     }),
-    // winston.format.printf((info) => ` ${info.label}  ${info.timestamp}  ${info.level} : ${info.message}`)
     winston.format.printf((info) => `${info.timestamp} ${info.level} ${info.message}`)
 );
 
@@ -24,6 +23,14 @@ var notalignColorsAndTime = winston.format.combine(
     }),
     winston.format.printf((info) => `${info.timestamp} ${info.level}\n${info.message}`)
 );
+
+const colors = {
+    error: 'red',
+    warn: 'yellow',
+    info: 'green',
+    debug: 'gray'
+}
+winston.addColors(colors)
 
 const logger = winston.createLogger({
     level: "debug",
