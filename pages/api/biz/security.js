@@ -133,7 +133,7 @@ const signup = async (promisePool, req, jRequest) => {
 
         if (insert_TB_COR_USER_MST_01.rowCount == 1) {
             jResponse.error_code = 0;
-            jResponse.error_message = `ok`;
+            jResponse.error_message = "";
         }
         else {
             jResponse.error_code = -3;
@@ -166,7 +166,7 @@ const signin = async (promisePool, req, jRequest) => {
             logger.info(`RESULT:\n${JSON.stringify(select_TB_COR_USER_MST_01.rows[0])}\n`);
             if (select_TB_COR_USER_MST_01.rows[0].password === jRequest.password) {
                 jResponse.error_code = 0;
-                jResponse.error_message = `OK`;
+                jResponse.error_message = "";
             } else {
                 jResponse.error_code = -1;
                 jResponse.error_message = `incorrect password`;
@@ -285,7 +285,7 @@ const signout = (promisePool, req, jRequest) => {
         jResponse.__REMOTE_CLIENT_IP = jRequest.__REMOTE_CLIENT_IP;
 
         jResponse.error_code = 0;
-        jResponse.error_message = `ok`;
+        jResponse.error_message = "";
     } catch (e) {
         logger.error(`EXCEPTION:\n${e}`);
         jResponse.error_code = -3; // exception
