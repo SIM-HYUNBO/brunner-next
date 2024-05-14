@@ -34,7 +34,7 @@ export default function HomeContent() {
         </div>
       </div>
       <div className="lg:h-2/6 lg:w-2/6">
-        <HomeContentAnimation />
+        {/* <HomeContentAnimation /> */}
       </div>
     </>
   );

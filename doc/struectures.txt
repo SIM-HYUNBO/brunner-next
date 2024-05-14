@@ -3,11 +3,6 @@ structure of prodject
 index.js
  - layout.js
    - header.js 
-     - nav: /mainPages/talk.js
-       - layout.js
-       - head
-       - /component/body-section.js
-         - /mainPages/content/talkContent.js
      - nav: /mainPages/support.js
        - layout.js
        - head

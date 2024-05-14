@@ -13,13 +13,34 @@ export default function ContactContent() {
           언제나 환영합니다.
         </h1>
         <div className="main-governing-text">
-          교육센터를 통해 Brunner와 함께 할 수 있습니다. <br />
-          최선을 다해서 구성원들의 미래을 열어드리겠습니다. <br />
-          지금 바로 참여하십시요.
+          지금 바로 참여하십시요. <br /><br />
+          문의: hbsim0605@gmail.com <br />
+          전화: 010-7544-8698
         </div>
-        <div className="flex justify-center">
-          <button onClick={() => router.push('/mainPages/content/view/contactView')} className="inline-flex text-white bg-indigo-500 border-0 py-2 px-6 focus:outline-none hover:bg-indigo-600 rounded text-lg">
-            교육 센터
+        <div className="flex justify-center space-x-4">
+          <button className="inline-flex 
+                       text-white 
+                       bg-indigo-500 
+                         border-0 
+                         py-2 
+                         px-6 
+                         focus:outline-none 
+                       hover:bg-indigo-600 
+                         rounded 
+                         text-lg">
+            <GetQuestion />
+          </button>
+          <button className="inline-flex 
+                            text-white 
+                            bg-indigo-500 
+                             border-0 
+                             py-2 
+                             px-6 
+                             focus:outline-none 
+                             hover:bg-indigo-600 
+                             rounded 
+                             text-lg">
+            <GetCallCenter />
           </button>
         </div>
       </div>
@@ -28,4 +49,16 @@ export default function ContactContent() {
       </div>
     </>
   );
+}
+
+export function GetQuestion() {
+  return (
+    <a className="text-white-900" href={`mailto:kkhw1202@gmail.com`}>메일로 문의하기</a>
+  )
+}
+
+export function GetCallCenter() {
+  return (
+    <a className="text-white-900" href={`tel:01075448698`}>전화로 문의하기</a>
+  )
 }

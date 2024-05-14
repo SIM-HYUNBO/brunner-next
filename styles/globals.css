@@ -4,7 +4,7 @@
 
 /* 주배경 (min-h-[footer높이(5rem)]) */
 .bg-primary { 
-    @apply bg-white dark:bg-slate-800 h-fit min-h-[calc(100vh-5rem)] w-full
+    @apply bg-white dark:bg-slate-800 h-full min-h-[calc(100vh-5rem)] w-full
 }
 
 /* footer 높이:5rem */
@@ -60,18 +60,6 @@ p {
 }
 .category-item {
     @apply text-black dark:text-white bg-white dark:bg-slate-800
-}
-
-.talkitem-title {
-    font-size: 14px;
-}
-
-.talkitem-title {
-    @apply  text-black dark:text-white bg-white dark:bg-slate-800
-}
-
-.talkitem-content {
-    font-size: 12px;
 }
 
 /*chat-bot */
