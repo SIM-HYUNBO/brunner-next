@@ -2,7 +2,6 @@ import logger from "./winston/logger"
 
 // server modules.
 import security from './biz/security'
-import serviceQuery from './biz/serviceQuery'
 
 export default async (req, res) => {
     const response = {};

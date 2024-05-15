@@ -5,7 +5,7 @@ import Head from 'next/head'
 import BodySection from '../components/body-section'
 import HomeContent from './mainPages/content/home-content'
 import React from 'react';
-import * as serviceQuery from './api/biz/serviceQuery'
+import * as serviceSQL from './api/biz/serviceSQL'
 
 // Home 페이지
 export default function Home() {
@@ -28,12 +28,11 @@ export default function Home() {
 }
 
 export async function getServerSideProps() {
+  var ret = serviceSQL.loadAllSQL();
 
-  serviceQuery.loadServiceQuery();
-  var data = '';
   return {
     props: {
-      data,
+      ret,
     },
   };
 }
