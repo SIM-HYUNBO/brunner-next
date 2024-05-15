@@ -4,6 +4,8 @@ import Layout from '../components/layout'
 import Head from 'next/head'
 import BodySection from '../components/body-section'
 import HomeContent from './mainPages/content/home-content'
+import React from 'react';
+import * as serviceQuery from './api/biz/serviceQuery'
 
 // Home 페이지
 export default function Home() {
@@ -23,4 +25,15 @@ export default function Home() {
       </BodySection>
     </Layout>
   )
+}
+
+export async function getServerSideProps() {
+
+  serviceQuery.loadServiceQuery();
+  var data = '';
+  return {
+    props: {
+      data,
+    },
+  };
 }

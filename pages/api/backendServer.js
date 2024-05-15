@@ -2,6 +2,7 @@ import logger from "./winston/logger"
 
 // server modules.
 import security from './biz/security'
+import serviceQuery from './biz/serviceQuery'
 
 export default async (req, res) => {
     const response = {};
@@ -31,9 +32,8 @@ const executeService = async (method, req) => {
     const commandName = jRequest.commandName;
 
     if (commandName.startsWith('security.')) {
-        jResponse = await new security(req, jRequest);
-    }
-    else {
+        jResponse = await new security(jRequest);
+    } else {
         jResponse = JSON.stringify({
             error_code: -1,
             error_message: `[${commandName}] not supported function`
