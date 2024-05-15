@@ -5,6 +5,7 @@ import logger from "./../../winston/logger"
 export function getSQL(dbConnectionPool, systemCode, sqlName, sqlSeq) {
   try {
     if (!process.serviceQuery) {
+      dotenv.config();
       loadServiceQuery(dbConnectionPool);
     }
 
