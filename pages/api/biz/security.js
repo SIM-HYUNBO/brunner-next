@@ -2,6 +2,7 @@
 
 import logger from "./../winston/logger"
 import * as database from './database/database'
+import * as serviceQuery from './../biz/database/serviceQuery'
 import * as TB_COR_USER_MST from './database/sqls/TB_COR_USER_MST'
 
 export default function executeService(req, jRequest) {
@@ -103,7 +104,7 @@ const signup = async (promisePool, req, jRequest) => {
         }
 
         var select_TB_COR_USER_MST_01 = await database.executeSQL(promisePool,
-            TB_COR_USER_MST.select_TB_COR_USER_MST_01,
+            serviceQuery.getDefaultSQL(promisePool, 'select_TB_COR_USER_MST', '1'),
             [
                 jRequest.userId
             ]);
@@ -115,7 +116,7 @@ const signup = async (promisePool, req, jRequest) => {
         }
 
         var insert_TB_COR_USER_MST_01 = await database.executeSQL(promisePool,
-            TB_COR_USER_MST.insert_TB_COR_USER_MST_01,
+            serviceQuery.getDefaultSQL(promisePool, 'insert_TB_COR_USER_MST', '1'),
             [
                 jRequest.systemCode,
                 jRequest.userId,
@@ -157,7 +158,7 @@ const signin = async (promisePool, req, jRequest) => {
         jResponse.password = jRequest.password;
 
         var select_TB_COR_USER_MST_01 = await database.executeSQL(promisePool,
-            TB_COR_USER_MST.select_TB_COR_USER_MST_01,
+            serviceQuery.getDefaultSQL(promisePool, 'select_TB_COR_USER_MST', '1'),
             [
                 jRequest.userId
             ]);

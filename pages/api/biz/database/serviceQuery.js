@@ -1,19 +1,42 @@
 `use strict`
-import dotenv from 'dotenv'
-import * as database from './database'
+
 import logger from "./../../winston/logger"
 
-loadServiceQuery(database.getPool(), 'SELECT SQL_NAME, SQL_CONTENT FROM TB_SERVICE_QUERY_INFO', {});
+export function getSQL(dbConnectionPool, systemCode, sqlName, sqlSeq) {
+  try {
+    if (!process.serviceQuery) {
+      loadServiceQuery(dbConnectionPool);
+    }
 
-export const loadServiceQuery = async (dbConnectionPool, sql, params) => {
+    return process.serviceQuery.get(`${systemCode}_${sqlName}_${sqlSeq}`);
+  }
+  catch (err) {
+    throw err;
+  }
+};
+
+export function getDefaultSQL(dbConnectionPool, sqlName, sqlSeq) {
+  try {
+    return getSQL(dbConnectionPool, process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE, sqlName, sqlSeq);
+  }
+  catch (err) {
+    throw err;
+  }
+};
+
+async function loadServiceQuery(dbConnectionPool) {
+  process.serviceQuery = new Map();
   try {
     logger.info(`Start loading service queries.)}\n`)
 
-    const result = await dbConnectionPool.query(sql, params);
+    const result = await dbConnectionPool.query(`
+    SELECT SYSTEM_CODE, SQL_NAME, SQL_SEQ, SQL_CONTENT
+      FROM BRUNNER.TB_COR_SQL_INFO
+     WHERE SYSTEM_CODE = '${process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE}'
+     ;`, []);
 
-    const serviceQuery = new Map(); 
     result.rows.forEach(row => {
-        serviceQuery.set(row.key_column, row.value_column);
+      process.serviceQuery.set(`${row.system_code}_${row.sql_name}_${row.sql_seq}`, row.sql_content);
     });
     logger.info(`Complete loading service queries.)}\n`)
 
@@ -25,7 +48,7 @@ export const loadServiceQuery = async (dbConnectionPool, sql, params) => {
   catch (err) {
     throw err;
   }
-  finally{
-    return serviceQuery;
+  finally {
+    return process.serviceQuery;
   }
 };

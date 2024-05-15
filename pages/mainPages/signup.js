@@ -60,7 +60,6 @@ export default function Signup() {
         if (result.error_code == 0) {
           process.env.userInfo = result.userInfo;
           alert(`successfully signed up. you will move to sign-in page.`);
-          router.push('/mainPages/content/view/signinView')
         } else {
           alert(JSON.stringify(result.error_message));
         }
