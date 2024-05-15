@@ -11,7 +11,7 @@ export const loadServiceQuery = async (dbConnectionPool, sql, params) => {
 
     const result = await dbConnectionPool.query(sql, params);
 
-    const serviceQuery = new Map();
+    const serviceQuery = new Map(); 
     result.rows.forEach(row => {
         serviceQuery.set(row.key_column, row.value_column);
     });
