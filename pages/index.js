@@ -28,6 +28,7 @@ export default function Home() {
 }
 
 export async function getServerSideProps() {
+  // 최초 기동시 백엔드 호출해서 서비스쿼리 로딩
   serviceSQL.loadAllSQL();
   var ret = '';
 
