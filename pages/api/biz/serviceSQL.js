@@ -11,9 +11,9 @@ import * as database from './database/database'
 export async function loadAllSQL() {
   try {
     if (!process.serviceSQL || process.serviceSQL.size === 0) {
+      logger.info(`Start loading service queries.\n`)
 
       process.serviceSQL = new Map();
-      logger.info(`Start loading service queries.\n`)
 
       var sql = `
       SELECT SYSTEM_CODE, SQL_NAME, SQL_SEQ, SQL_CONTENT
@@ -36,6 +36,8 @@ export async function loadAllSQL() {
     }
   }
   catch (err) {
+    logger.info(`An exception occured while loading serviceSQL.\n`)
+
     throw err; // 로딩 중 오류 발생
   }
   finally {
