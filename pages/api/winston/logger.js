@@ -36,7 +36,7 @@ const logger = winston.createLogger({
     level: "debug",
     transports: [
         new winstonDaily({
-            filename: "/logs",
+            filename: "/var/logs",
             zippedArchive: true,
             format: winston.format.combine(notalignColorsAndTime),
         }),
