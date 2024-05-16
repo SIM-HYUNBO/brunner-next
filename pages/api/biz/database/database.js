@@ -16,11 +16,11 @@ export const getPool = () => {
   SSL_MODE:${process.env.SSL_MODE}\n`);
 
   return new Pool({
-    user: process.env.DB_USER,
-    host: process.env.DB_HOST,
-    database: process.env.DB_DATABASE,
-    password: process.env.DB_PASSWORD,
-    port: process.env.DB_PORT,
+    user: 'brunner', // process.env.DB_USER,
+    host: 'ep-cold-resonance-a47aecbi-pooler.us-east-1.aws.neon.tech', // process.env.DB_HOST,
+    database: 'brunner', // process.env.DB_DATABASE,
+    password: 'oniV6xuA3Gbk', // process.env.DB_PASSWORD,
+    port: 5432, // process.env.DB_PORT,
     ssl: true
   });
 };
