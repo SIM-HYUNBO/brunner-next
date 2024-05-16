@@ -28,7 +28,8 @@ export default function Home() {
 }
 
 export async function getServerSideProps() {
-  var ret = serviceSQL.loadAllSQL();
+  serviceSQL.loadAllSQL();
+  var ret = '';
 
   return {
     props: {
