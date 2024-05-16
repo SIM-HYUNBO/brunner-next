@@ -1,5 +1,5 @@
 import winston from "winston";
-import winstonDaily from "winston-daily-rotate-file";
+// import winstonDaily from "winston-daily-rotate-file";
 
 var alignColorsAndTime = winston.format.combine(
     winston.format.colorize({
@@ -32,19 +32,25 @@ const colors = {
 }
 winston.addColors(colors)
 
-const logger = winston.createLogger({
-    level: "debug",
-    transports: [
-        new winstonDaily({
-            filename: "/var/logs",
-            zippedArchive: true,
-            format: winston.format.combine(notalignColorsAndTime),
-        }),
+// const logger = winston.createLogger({
+//     level: "debug",
+//     transports: [
+//         new winstonDaily({
+//             filename: "/var/logs",
+//             zippedArchive: true,
+//             format: winston.format.combine(notalignColorsAndTime),
+//         }),
 
-        new winston.transports.Console({
-            format: winston.format.combine(winston.format.colorize(), alignColorsAndTime),
-        }),
-    ],
+//         new winston.transports.Console({
+//             format: winston.format.combine(winston.format.colorize(), alignColorsAndTime),
+//         }),
+//     ],
+// });
+
+const logger = winston.createLogger({
+    transports: [
+        new winston.transports.Console()
+    ]
 });
 
 module.exports = logger;
