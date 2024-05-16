@@ -47,6 +47,9 @@ export async function loadAllSQL() {
 
 export function getSQL(systemCode, sqlName, sqlSeq) {
   try {
+    if (!process.serviceSQL || process.serviceSQL.size === 0) {
+      loadAllSQL();
+    }
     var sql = process.serviceSQL.get(`${systemCode}_${sqlName}_${sqlSeq}`);
     return sql;
   }
