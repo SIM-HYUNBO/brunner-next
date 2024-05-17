@@ -49,7 +49,9 @@ winston.addColors(colors)
 
 const logger = winston.createLogger({
     transports: [
-        new winston.transports.Console()
+        new winston.transports.Console({
+            format: winston.format.combine(winston.format.colorize(), alignColorsAndTime),
+        })
     ]
 });
 
