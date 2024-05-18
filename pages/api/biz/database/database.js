@@ -27,10 +27,8 @@ async function getPool() {
 
 export const executeSQL = async (sql, params) => {
   try {
-    logger.info(`SQL:\n${sql}\nPARAMS:${JSON.stringify(params)}\n`)
-
-    const result = await getPool().query(sql, params);
-    return result;
+    logger.info(`SQL:\n${sql}\nPARAMS:${JSON.stringify(params)}\n`);
+    return await (await getPool()).query(sql, params);
   }
   catch (err) {
     logger.error(err);
