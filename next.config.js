@@ -6,7 +6,7 @@ const nextConfig = {
       'www.notion.so',
       'images.unsplash.com',
       's3.us-west-2.amazononaws.com'
-    ],
+    ]
   },
   webpack: function (config, options) {
     // console.log(options.webpack.version); // Should be webpack v5 now
@@ -14,12 +14,7 @@ const nextConfig = {
       topLevelAwait: true,
       layers: true,
     };
-
-    if (!options.isServer)
-      config.resolve.fallback = { fs: false, dns: false };
-    else
-      config.resolve.fallback = { fs: false };
-
+    config.resolve.fallback = { fs: false };
     return config;
   }
 }
