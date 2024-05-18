@@ -3,9 +3,18 @@ const nextConfig = {
   reactStrictMode: false,
   images: {
     remotePatterns: [
-      'www.notion.so',
-      'images.unsplash.com',
-      's3.us-west-2.amazononaws.com'
+      {
+        protocol: 'https',
+        hostname: 'www.notion.so',
+      },
+      {
+        protocol: 'https',
+        hostname: 'images.unsplash.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 's3.us-west-2.amazononaws.com',
+      }
     ],
   },
   webpack: function (config, options) {
