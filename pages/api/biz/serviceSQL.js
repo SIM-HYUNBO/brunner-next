@@ -1,5 +1,6 @@
 `use strict`
 
+import dotenv from 'dotenv'
 import logger from "../winston/logger"
 import * as database from './database/database'
 
@@ -10,6 +11,8 @@ import * as database from './database/database'
 */
 export async function loadAllSQL() {
   try {
+    dotenv.config();
+
     if (!process.serviceSQL || process.serviceSQL.size === 0) {
       logger.info(`Start loading service queries.\n`)
 
