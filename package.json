@@ -23,6 +23,7 @@
     "express-session": "^1.17.3",
     "figlet": "^1.6.0",
     "fs": "^0.0.1-security",
+    "hawk": "^9.0.2",
     "mysql2": "^3.2.4",
     "net": "^1.0.2",
     "next": "^13.4.4",
@@ -38,6 +39,7 @@
     "react-modal": "^3.16.1",
     "sharp": "^0.33.3",
     "tls": "^0.0.1",
+    "tomahawk": "^0.2.1",
     "winston": "^3.13.0",
     "winston-daily-rotate-file": "^5.0.0"
   },
