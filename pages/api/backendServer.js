@@ -1,6 +1,7 @@
 import logger from "./winston/logger"
 
 // server modules.
+import serviceSQL from './biz/serviceSQL'
 import security from './biz/security'
 
 export default async (req, res) => {
@@ -32,6 +33,8 @@ const executeService = async (method, req) => {
 
     if (commandName.startsWith('security.')) {
         jResponse = await new security(jRequest);
+    } else if (commandName.startsWith('serviceSQL.')) {
+        jResponse = await new serviceSQL(jRequest);
     } else {
         jResponse = JSON.stringify({
             error_code: -1,

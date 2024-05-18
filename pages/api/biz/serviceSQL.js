@@ -3,13 +3,34 @@
 import dotenv from 'dotenv'
 import logger from "../winston/logger"
 import * as database from './database/database'
+import { json } from 'express';
+
+export default function executeService(jRequest) {
+  var jResponse = {};
+
+  try {
+    switch (jRequest.commandName) {
+      case "serviceSQL.loadAllSQL":
+        loadAllSQL();
+        jResponse.error_message = `suceess loading serviceSQL`;
+        break;
+      default:
+        break;
+    }
+  } catch (error) {
+    logger.error(error);
+    jResponse.error_message = JSON.stringify(error);
+  } finally {
+    return jResponse;
+  }
+}
 
 /* 
 쿼리를 DB에서 모두 로딩함 
 처음 시작할 때 한번만 로딩함.
 
 */
-export async function loadAllSQL() {
+async function loadAllSQL() {
   try {
     dotenv.config();
 

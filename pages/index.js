@@ -5,10 +5,18 @@ import Head from 'next/head'
 import BodySection from '../components/body-section'
 import HomeContent from './mainPages/content/home-content'
 import React from 'react';
-import * as serviceSQL from './api/biz/serviceSQL'
+import { useEffect } from 'react'
+import RequestServer from './../components/requestServer'
 
 // Home 페이지
 export default function Home() {
+
+  useEffect(() => {
+    RequestServer('POST',
+      `{"commandName": "serviceSQL.loadAllSQL"}`).then((result) => {
+        alert(`${result.error_message}`);
+      }, []);
+  });
 
   return (
     <Layout>
@@ -25,16 +33,4 @@ export default function Home() {
       </BodySection>
     </Layout>
   )
-}
-
-export async function getServerSideProps() {
-  // 최초 기동시 백엔드 호출해서 서비스쿼리 로딩
-  serviceSQL.loadAllSQL();
-  var ret = '';
-
-  return {
-    props: {
-      ret,
-    },
-  };
 }
