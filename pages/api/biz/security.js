@@ -168,7 +168,7 @@ const signin = async (promisePool, jRequest) => {
                 jRequest.userId
             ]);
 
-        if (select_TB_COR_USER_MST_01.row && select_TB_COR_USER_MST_01.rows.length == 1) {
+        if (select_TB_COR_USER_MST_01.rows.length == 1) {
             logger.info(`RESULT:\n${JSON.stringify(select_TB_COR_USER_MST_01.rows[0])}\n`);
             if (select_TB_COR_USER_MST_01.rows[0].password === jRequest.password) {
                 jResponse.error_code = 0;

@@ -1,9 +1,11 @@
 `use strict`
+import dotenv from 'dotenv'
 import logger from "./../../winston/logger"
 import { Pool } from "pg";
 
 
 export const getPool = () => {
+  dotenv.config();
 
   logger.info(`Getting database connection pool from ...
   DB_HOST:${process.env.DB_HOST}
