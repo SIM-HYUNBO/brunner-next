@@ -12,6 +12,7 @@
     "autoprefixer": "10.4.14",
     "classnames": "^2.3.2",
     "cors": "^2.8.5",
+    "dns": "^0.2.2",
     "dotenv": "^16.0.3",
     "dotenv-webpack": "^8.0.1",
     "draft-js": "^0.11.7",
@@ -22,6 +23,7 @@
     "figlet": "^1.6.0",
     "fs": "^0.0.1-security",
     "mysql2": "^3.2.4",
+    "net": "^1.0.2",
     "next": "^13.4.4",
     "next-themes": "^0.2.1",
     "nodemon": "^3.1.0",
@@ -34,6 +36,7 @@
     "react-lottie-player": "^1.5.4",
     "react-modal": "^3.16.1",
     "sharp": "^0.33.3",
+    "tls": "^0.0.1",
     "winston": "^3.13.0",
     "winston-daily-rotate-file": "^5.0.0"
   },
