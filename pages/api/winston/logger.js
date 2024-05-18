@@ -30,6 +30,7 @@ const colors = {
     info: 'green',
     debug: 'gray'
 }
+
 addColors(colors)
 
 const logger = createLogger({
@@ -40,6 +41,5 @@ const logger = createLogger({
         })
     ]
 });
-
 
 module.exports = logger;

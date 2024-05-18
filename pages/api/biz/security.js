@@ -8,20 +8,18 @@ export default function executeService(jRequest) {
     var jResponse = {};
 
     try {
-        const dbConnectionPool = database.getPool();
-
         switch (jRequest.commandName) {
             case "security.signup":
-                jResponse = signup(dbConnectionPool, jRequest);
+                jResponse = signup(jRequest);
                 break;
             case "security.signin":
-                jResponse = signin(dbConnectionPool, jRequest);
+                jResponse = signin(jRequest);
                 break;
             case "security.signout":
-                jResponse = signout(dbConnectionPool, jRequest);
+                jResponse = signout(jRequest);
                 break;
             case "security.resetPassword":
-                jResponse = resetPassword(dbConnectionPool, jRequest);
+                jResponse = resetPassword(jRequest);
                 break;
             default:
                 break;
@@ -33,7 +31,7 @@ export default function executeService(jRequest) {
     }
 }
 
-const signup = async (promisePool, jRequest) => {
+const signup = async (jRequest) => {
     var jResponse = {};
 
     try {
@@ -103,8 +101,7 @@ const signup = async (promisePool, jRequest) => {
         }
 
         var sql = serviceSQL.getDefaultSystemSQL('select_TB_COR_USER_MST', 1);
-        var select_TB_COR_USER_MST_01 = await database.executeSQL(promisePool,
-            sql,
+        var select_TB_COR_USER_MST_01 = await database.executeSQL(sql,
             [
                 jRequest.userId
             ]);
@@ -116,8 +113,7 @@ const signup = async (promisePool, jRequest) => {
         }
 
         sql = serviceSQL.getDefaultSystemSQL('insert_TB_COR_USER_MST', 1);
-        var insert_TB_COR_USER_MST_01 = await database.executeSQL(promisePool,
-            sql,
+        var insert_TB_COR_USER_MST_01 = await database.executeSQL(sql,
             [
                 jRequest.systemCode,
                 jRequest.userId,
@@ -162,8 +158,7 @@ const signin = async (promisePool, jRequest) => {
 
         sql = serviceSQL.getDefaultSystemSQL('select_TB_COR_USER_MST', 1);
 
-        var select_TB_COR_USER_MST_01 = await database.executeSQL(promisePool,
-            sql,
+        var select_TB_COR_USER_MST_01 = await database.executeSQL(sql,
             [
                 jRequest.userId
             ]);
@@ -190,7 +185,7 @@ const signin = async (promisePool, jRequest) => {
     }
 };
 
-const resetPassword = async (promisePool, jRequest) => {
+const resetPassword = async (jRequest) => {
     var jResponse = {};
 
     try {
@@ -230,8 +225,8 @@ const resetPassword = async (promisePool, jRequest) => {
             return jResponse;
         }
 
-        var select_TB_COR_USER_MST_01 = await database.executeSQL(promisePool,
-            serviceSQL.getDefaultSystemSQL(promisePool, 'select_TB_COR_USER_MST', 1),
+        var sql = serviceSQL.getDefaultSystemSQL(promisePool, 'select_TB_COR_USER_MST', 1);
+        var select_TB_COR_USER_MST_01 = await database.executeSQL(sql,
             [
                 jRequest.userId
             ]);
@@ -254,8 +249,8 @@ const resetPassword = async (promisePool, jRequest) => {
             return jResponse;
         }
         else {
-            var update_TB_COR_USER_MST_01 = await database.executeSQL(promisePool,
-                serviceSQL.getDefaultSystemSQL(promisePool, 'update_TB_COR_USER_MST', 1),
+            var sql = serviceSQL.getDefaultSystemSQL(promisePool, 'update_TB_COR_USER_MST', 1);
+            var update_TB_COR_USER_MST_01 = await database.executeSQL(sql,
                 [
                     jRequest.newPassword,
                     jRequest.userId,
@@ -283,7 +278,7 @@ const resetPassword = async (promisePool, jRequest) => {
     }
 };
 
-const signout = (promisePool, jRequest) => {
+const signout = (jRequest) => {
     var jResponse = {};
 
     try {

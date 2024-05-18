@@ -4,7 +4,7 @@ import logger from "./../../winston/logger"
 import { Pool } from "pg";
 
 
-export const getPool = () => {
+async function getPool() {
   dotenv.config();
 
   logger.info(`Getting database connection pool from ...
@@ -25,11 +25,11 @@ export const getPool = () => {
   });
 };
 
-export const executeSQL = async (dbConnectionPool, sql, params) => {
+export const executeSQL = async (sql, params) => {
   try {
     logger.info(`SQL:\n${sql}\nPARAMS:${JSON.stringify(params)}\n`)
 
-    const result = await dbConnectionPool.query(sql, params);
+    const result = await getPool().query(sql, params);
     return result;
   }
   catch (err) {

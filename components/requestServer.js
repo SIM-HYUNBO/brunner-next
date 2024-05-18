@@ -1,14 +1,12 @@
 'use strict'
 
-/*
- call backend server
-*/
 export default async function RequestServer(method, jRequest) {
   let res = null;
   let jResponse = null;
+  const backendServerUrl = `/api/backendServer/`;
 
   try {
-    res = await fetch(`/api/backendServer/`, {
+    res = await fetch(backendServerUrl, {
       method: method,
       headers: {
         "Content-Type": "application/json",

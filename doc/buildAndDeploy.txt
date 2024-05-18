@@ -1,4 +1,4 @@
-1. 디버깅: npm run dev
+1. 디버깅: npm run dev (F5)
 2. 빌드: npm run build => .next 폴더에 빌드결과 생성
 3. npx next build => 빌드결과를 서버에 올림
 4. 서버에 올린 빌드 실행: npm next start
@@ -12,7 +12,6 @@
 1. package.json 에 아래의 항목을 추가 
  "homepage": "domin:port/folder",  의 형식으로 추가
  예)"homepage": "http://dev.test.com", 
-
 2. npm run build 실행
 3. .next 폴더 빌드결과들을 복사해서 tomcat의 webapps 폴더 아래에 복사
 4. localhost에 바로 올리고 싶으면.. ROOT 폴더에 넣어주고
