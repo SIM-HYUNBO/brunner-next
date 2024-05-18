@@ -31,6 +31,8 @@ async function loadAllSQL() {
 
     // 이미 로딩했으면 로딩 안하고 
     if (process && process.serviceSQL && process.serviceSQL.size > 0) {  // 성공 리턴
+      result.error_message = 'The ServiceSQLs already loaded';
+      result.error_code = 1;
       return result;
     }
 
@@ -51,7 +53,8 @@ async function loadAllSQL() {
       process.serviceSQL.set(`${row.system_code}_${row.sql_name}_${row.sql_seq}`, row.sql_content);
     });
 
-    logger.info(`End loading service queries.\n`)
+    result.error_message = 'The ServiceSQLs first loaded';
+    result.error_code = 0;
 
     return result; // 성공 리턴
   }
