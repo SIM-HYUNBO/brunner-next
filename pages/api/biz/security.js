@@ -146,7 +146,7 @@ const signup = async (jRequest) => {
     }
 };
 
-const signin = async (promisePool, jRequest) => {
+const signin = async (jRequest) => {
     var jResponse = {};
 
     try {
