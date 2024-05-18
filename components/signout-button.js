@@ -21,18 +21,20 @@ export default function SignoutButton() {
           type="button"
           onClick={() => {
             // alert(`${JSON.stringify(process.env.userInfo.USER_ID)}`);
-            RequestServer('POST',
-              `{"commandName": "security.signout", 
-                            "userId": "${process.env.userInfo?.USER_ID}"
-                           }`).then((result) => {
-                if (result.error_code == 0) {
-                  process.env.userInfo = result.userInfo;
-                  localStorage.setItem('userInfo', JSON.stringify(process.env.userInfo));
-                  router.push('/')
-                } else {
-                  alert(JSON.stringify(result.error_message));
-                }
-              });
+
+            var reqData = {};
+            reqData.commandName = "security.signout";
+            reqData.userId = process.env.userInfo?.USER_ID;
+
+            RequestServer('POST', JSON.stringify(reqData)).then((result) => {
+              if (result.error_code == 0) {
+                process.env.userInfo = result.userInfo;
+                localStorage.setItem('userInfo', JSON.stringify(process.env.userInfo));
+                router.push('/')
+              } else {
+                alert(JSON.stringify(result.error_message));
+              }
+            });
           }}>
 
           <svg className="w-3 h-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1" stroke="currentColor">

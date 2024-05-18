@@ -37,15 +37,17 @@ export default function ResetPassword() {
   };
 
   var requestResetPasswordResult = () => {
-    RequestServer('POST',
-      `{"commandName": "security.resetPassword",
-                    "userId": "${userId}",
-                    "registerNo": "${registerNo}",
-                    "phoneNumber": "${phoneNumber}",
-                    "newPassword": "${newPassword}",
-                    "confirmPassword": "${confirmPassword}"}`).then((result) => {
-        alert(`${result.error_message}`);
-      });
+    var reqData = {};
+    reqData.commandName = "security.resetPassword";
+    reqData.userId = userId;
+    reqData.registerNo = registerNo;
+    reqData.phoneNumber = phoneNumber;
+    reqData.newPassword = newPassword;
+    reqData.confirmPassword = confirmPassword;
+
+    RequestServer('POST', JSON.stringify(reqData)).then((result) => {
+      alert(result.error_message);
+    });
   };
 
   return (

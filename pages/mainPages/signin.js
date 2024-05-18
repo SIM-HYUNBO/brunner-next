@@ -25,19 +25,21 @@ export default function Signin() {
   const userIdRef = useRef();
 
   var requestSigninResult = () => {
-    RequestServer('POST',
-      `{"commandName": "security.signin",
-                    "userId": "${userId}",
-                    "password": "${password}"}`).then((result) => {
-        if (result.error_code == 0) {
-          process.env.userInfo = result.userInfo;
-          localStorage.setItem('userInfo', JSON.stringify(process.env.userInfo));
-          // console.log(`saved ${JSON.stringify(process.env.userInfo)}`);
-          router.push('/')
-        } else {
-          alert(JSON.stringify(result.error_message));
-        }
-      });
+    var reqData = {};
+    reqData.commandName = "security.signin";
+    reqData.userId = userId;
+    reqData.password = password;
+
+    RequestServer('POST', JSON.stringify(reqData)).then((result) => {
+      if (result.error_code == 0) {
+        process.env.userInfo = result.userInfo;
+        localStorage.setItem('userInfo', JSON.stringify(process.env.userInfo));
+        // console.log(`saved ${JSON.stringify(process.env.userInfo)}`);
+        router.push('/')
+      } else {
+        alert(JSON.stringify(result.error_message));
+      }
+    });
   };
 
   useEffect(() => {

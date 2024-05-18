@@ -44,10 +44,9 @@ async function loadAllSQL() {
     var sql = `
     SELECT SYSTEM_CODE, SQL_NAME, SQL_SEQ, SQL_CONTENT
       FROM BRUNNER.TB_COR_SQL_INFO
-      WHERE SYSTEM_CODE = $1
       ;`;
 
-    const sql_result = await database.getPool().query(sql, ["00"]);
+    const sql_result = await database.getPool().query(sql, []);
 
     sql_result.rows.forEach(row => {
       process.serviceSQL.set(`${row.system_code}_${row.sql_name}_${row.sql_seq}`, row.sql_content);

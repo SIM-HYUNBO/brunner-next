@@ -47,23 +47,24 @@ export default function Signup() {
 
 
   var requestSignupResult = () => {
-    RequestServer('POST',
-      `{"commandName": "security.signup",
-                   "systemCode": "${process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE}",
-                    "userId": "${userId}",
-                    "password": "${password}",
-                    "userName": "${userName}",
-                    "phoneNumber": "${phoneNumber}",
-                    "email": "${email}",
-                    "registerNo": "${registerNo}",
-                    "address": "${address}"}`).then((result) => {
-        if (result.error_code == 0) {
-          process.env.userInfo = result.userInfo;
-          alert(`successfully signed up. you will move to sign-in page.`);
-        } else {
-          alert(JSON.stringify(result.error_message));
-        }
-      });
+    var reqData = {};
+    reqData.commandName = "security.signin";
+    reqData.userId = userId;
+    reqData.password = password;
+    reqData.password = userName;
+    reqData.password = phoneNumber;
+    reqData.password = email;
+    reqData.password = registerNo;
+    reqData.password = address;
+
+    RequestServer('POST', JSON.stringify(reqData)).then((result) => {
+      if (result.error_code == 0) {
+        process.env.userInfo = result.userInfo;
+        alert(`successfully signed up. you will move to sign-in page.`);
+      } else {
+        alert(JSON.stringify(result.error_message));
+      }
+    });
   };
 
   return (
