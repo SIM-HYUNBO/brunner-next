@@ -14,6 +14,7 @@ const nextConfig = {
       topLevelAwait: true,
       layers: true,
     };
+
     if (!options.isServer)
       config.resolve.fallback = { fs: false, dns: false };
     else
