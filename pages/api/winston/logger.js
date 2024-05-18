@@ -1,27 +1,27 @@
-import winston from "winston";
+import { createLogger, transports, format, addColors } from "winston";
 // import winstonDaily from "winston-daily-rotate-file";
 
-var alignColorsAndTime = winston.format.combine(
-    winston.format.colorize({
+var alignColorsAndTime = format.combine(
+    format.colorize({
         all: true,
     }),
-    winston.format.label({
+    format.label({
         label: "[LOGGER]",
     }),
-    winston.format.timestamp({
+    format.timestamp({
         format: "YYYY-MM-DD HH:mm:ss.SSS",
     }),
-    winston.format.printf((info) => `${info.timestamp} ${info.level} ${info.message}`)
+    format.printf((info) => `${info.timestamp} ${info.level} ${info.message}`)
 );
 
-var notalignColorsAndTime = winston.format.combine(
-    winston.format.label({
+var notalignColorsAndTime = format.combine(
+    format.label({
         label: "[LOGGER]",
     }),
-    winston.format.timestamp({
+    format.timestamp({
         format: "YYYY-MM-DD HH:mm:ss.SSS",
     }),
-    winston.format.printf((info) => `${info.timestamp} ${info.level}\n${info.message}`)
+    format.printf((info) => `${info.timestamp} ${info.level}\n${info.message}`)
 );
 
 const colors = {
@@ -30,7 +30,7 @@ const colors = {
     info: 'green',
     debug: 'gray'
 }
-winston.addColors(colors)
+addColors(colors)
 
 // const logger = winston.createLogger({
 //     level: "debug",
@@ -47,12 +47,16 @@ winston.addColors(colors)
 //     ],
 // });
 
-const logger = winston.createLogger({
+const logger = createLogger({
+    format: format.combine(format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss.SSS' })),
     transports: [
-        new winston.transports.Console({
-            format: winston.format.combine(winston.format.colorize(), alignColorsAndTime),
-        })
+        new transports.Console({
+            format: format.combine(format.colorize(), alignColorsAndTime),
+        }),
+        new transports.File({ filename: 'error.log', level: 'error' }),
+        new transports.File({ filename: 'combined.log' }),
     ]
 });
+
 
 module.exports = logger;
