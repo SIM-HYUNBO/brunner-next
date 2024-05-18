@@ -6,17 +6,13 @@ import BodySection from '../components/body-section'
 import HomeContent from './mainPages/content/home-content'
 import React from 'react';
 import { useEffect } from 'react'
-import RequestServer from './../components/requestServer'
 
 // Home 페이지
 export default function Home() {
 
   useEffect(() => {
-    RequestServer('POST',
-      `{"commandName": "serviceSQL.loadAllSQL"}`).then((result) => {
-        alert(`${result.error_message}`);
-      }, []);
-  });
+
+  }, []);
 
   return (
     <Layout>

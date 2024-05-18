@@ -3,7 +3,6 @@
 import dotenv from 'dotenv'
 import logger from "../winston/logger"
 import * as database from './database/database'
-import { json } from 'express';
 
 export default function executeService(jRequest) {
   var jResponse = {};
@@ -11,8 +10,7 @@ export default function executeService(jRequest) {
   try {
     switch (jRequest.commandName) {
       case "serviceSQL.loadAllSQL":
-        loadAllSQL();
-        jResponse.error_message = `suceess loading serviceSQL`;
+        jResponse = loadAllSQL();
         break;
       default:
         break;
@@ -25,47 +23,42 @@ export default function executeService(jRequest) {
   }
 }
 
-/* 
-쿼리를 DB에서 모두 로딩함 
-처음 시작할 때 한번만 로딩함.
-
-*/
 async function loadAllSQL() {
+  var result = {};
   try {
+    result.error_code = 0;
+    result.error_message = '';
+
+    // 이미 로딩했으면 로딩 안하고 
+    if (process && process.serviceSQL && process.serviceSQL.size > 0) {  // 성공 리턴
+      return result;
+    }
+
     dotenv.config();
+    logger.info(`Start loading service queries.\n`)
 
-    if (!process.serviceSQL || process.serviceSQL.size === 0) {
-      logger.info(`Start loading service queries.\n`)
+    process.serviceSQL = new Map();
 
-      process.serviceSQL = new Map();
+    var sql = `
+    SELECT SYSTEM_CODE, SQL_NAME, SQL_SEQ, SQL_CONTENT
+      FROM BRUNNER.TB_COR_SQL_INFO
+      WHERE SYSTEM_CODE = $1
+      ;`;
 
-      var sql = `
-      SELECT SYSTEM_CODE, SQL_NAME, SQL_SEQ, SQL_CONTENT
-        FROM BRUNNER.TB_COR_SQL_INFO
-       WHERE SYSTEM_CODE = $1
-       ;`;
+    const sql_result = await database.getPool().query(sql, ["00"]);
 
-      const result = await database.getPool().query(sql, ["00"]);
+    sql_result.rows.forEach(row => {
+      process.serviceSQL.set(`${row.system_code}_${row.sql_name}_${row.sql_seq}`, row.sql_content);
+    });
 
-      result.rows.forEach(row => {
-        process.serviceSQL.set(`${row.system_code}_${row.sql_name}_${row.sql_seq}`, row.sql_content);
-      });
+    logger.info(`End loading service queries.\n`)
 
-      logger.info(`End loading service queries.\n`)
-
-      return 0; // 정상로딩
-    }
-    else {
-      return 1; // 이미 로딩되어 있어서 로딩 안했음 
-    }
+    return result; // 성공 리턴
   }
   catch (err) {
-    logger.info(`An exception occured while loading serviceSQL.\n`)
-
-    throw err; // 로딩 중 오류 발생
-  }
-  finally {
-    ;
+    result.error_code = -1;
+    result.error_message = 'An exception occured while loading serviceSQL.\n';
+    return result;
   }
 };
 
