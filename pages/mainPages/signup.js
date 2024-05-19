@@ -2,8 +2,8 @@
 
 import Layout from './../../components/layout'
 import Head from 'next/head'
-import BodySection from './../../components/body-section'
-import RequestServer from './../../components/requestServer'
+import BodySection from '../../components/bodySection'
+import requestServer from './../../components/requestServer'
 import { useRouter } from 'next/router'
 import { useState } from 'react'
 
@@ -57,7 +57,7 @@ export default function Signup() {
     reqData.password = registerNo;
     reqData.password = address;
 
-    RequestServer('POST', JSON.stringify(reqData)).then((result) => {
+    requestServer('POST', JSON.stringify(reqData)).then((result) => {
       if (result.error_code == 0) {
         process.env.userInfo = result.userInfo;
         alert(`successfully signed up. you will move to sign-in page.`);

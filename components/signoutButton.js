@@ -1,4 +1,4 @@
-import RequestServer from './requestServer'
+import requestServer from './requestServer'
 import { useRouter } from 'next/router'
 
 export default function SignoutButton() {
@@ -26,7 +26,7 @@ export default function SignoutButton() {
             reqData.commandName = "security.signout";
             reqData.userId = process.env.userInfo?.USER_ID;
 
-            RequestServer('POST', JSON.stringify(reqData)).then((result) => {
+            requestServer('POST', JSON.stringify(reqData)).then((result) => {
               if (result.error_code == 0) {
                 process.env.userInfo = result.userInfo;
                 localStorage.setItem('userInfo', JSON.stringify(process.env.userInfo));

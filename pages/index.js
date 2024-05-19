@@ -2,8 +2,8 @@
 
 import Layout from '../components/layout'
 import Head from 'next/head'
-import BodySection from '../components/body-section'
-import HomeContent from './mainPages/content/home-content'
+import BodySection from '../components/bodySection'
+import HomeContent from './mainPages/content/homeContent'
 import React from 'react';
 import { useEffect } from 'react'
 

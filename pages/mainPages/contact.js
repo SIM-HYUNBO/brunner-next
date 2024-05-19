@@ -2,8 +2,8 @@
 
 import Layout from '../../components/layout'
 import Head from 'next/head'
-import BodySection from '../../components/body-section'
-import ContactContent from './content/contact-content'
+import BodySection from '../../components/bodySection'
+import ContactContent from './content/contactContent'
 
 export default function Contact() {
   return (

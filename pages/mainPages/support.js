@@ -2,9 +2,9 @@
 
 import Layout from '../../components/layout'
 import Head from 'next/head'
-import BodySection from '../../components/body-section'
+import BodySection from '../../components/bodySection'
 
-import SupportContent from './content/support-content'
+import SupportContent from './content/supportCcontent'
 
 export default function Support() {
   return (

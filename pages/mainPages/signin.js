@@ -2,9 +2,9 @@
 
 import Layout from './../../components/layout'
 import Head from 'next/head'
-import BodySection from './../../components/body-section'
+import BodySection from '../../components/bodySection'
 
-import RequestServer from './../../components/requestServer'
+import requestServer from './../../components/requestServer'
 import { useRouter } from 'next/router'
 import { useState, useEffect, useRef } from 'react'
 
@@ -30,7 +30,7 @@ export default function Signin() {
     reqData.userId = userId;
     reqData.password = password;
 
-    RequestServer('POST', JSON.stringify(reqData)).then((result) => {
+    requestServer('POST', JSON.stringify(reqData)).then((result) => {
       if (result.error_code == 0) {
         process.env.userInfo = result.userInfo;
         localStorage.setItem('userInfo', JSON.stringify(process.env.userInfo));

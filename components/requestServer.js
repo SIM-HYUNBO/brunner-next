@@ -1,12 +1,12 @@
 'use strict'
 
-export default async function RequestServer(method, jRequest) {
+export default async function requestServer(method, jRequest) {
   let res = null;
   let jResponse = null;
-  const backendServerUrl = `/api/backendServer/`;
+  const serverUrl = `/api/backendServer/`;
 
   try {
-    res = await fetch(backendServerUrl, {
+    res = await fetch(serverUrl, {
       method: method,
       headers: {
         "Content-Type": "application/json",

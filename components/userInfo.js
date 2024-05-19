@@ -1,7 +1,7 @@
-import SignoutButton from "./signout-button";
-import DarkModeToggleButton from "./dark-mode-toggle-button";
+import SignoutButton from "./signoutButton";
+import DarkModeToggleButton from "./darkModeToggleButton";
 import { useState, useEffect } from 'react';
-import isJson from './../pages/util';
+import isJson from '../pages/util';
 
 export default function UserInfo() {
   return (

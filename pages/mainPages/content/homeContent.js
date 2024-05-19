@@ -1,6 +1,6 @@
 `use strict`
 
-import HomeContentAnimation from './content-animation/home-content-animation'
+import HomeContentAnimation from './content-animation/homeContentAnimation'
 import { useRouter } from 'next/router'
 
 export default function HomeContent() {

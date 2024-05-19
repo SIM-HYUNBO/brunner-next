@@ -1,9 +1,9 @@
 `use strict`
 
-import SupportContentAnimation from './content-animation/support-content-animation'
+import SupportContentAnimation from './content-animation/supportContentAnimation'
 import { useRouter } from 'next/router'
 
-export default function SupportIntro() {
+export default function SupportContent() {
   const router = useRouter()
 
   return (
