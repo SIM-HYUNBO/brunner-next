@@ -63,6 +63,7 @@ async function loadAllSQL() {
   catch (err) {
     result.error_code = -1;
     result.error_message = `An exception occured while loading serviceSQL.\nerror:${err}`;
+
     return result;
   }
 };
