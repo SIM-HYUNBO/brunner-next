@@ -29,8 +29,8 @@ async function loadAllSQL() {
     result.error_code = 0;
     result.error_message = '';
 
-    // 이미 로딩했으면 로딩 안하고 
-    if (process && process.serviceSQL && process.serviceSQL.size > 0) {  // 성공 리턴
+    // 이미 로딩했으면 로딩 안하고 성공 리턴
+    if (process && process.serviceSQL && process.serviceSQL.size > 0) {
       result.error_message = 'The ServiceSQLs already loaded';
       result.error_code = 1;
       return result;

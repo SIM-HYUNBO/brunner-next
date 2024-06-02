@@ -108,7 +108,7 @@ const signup = async (jRequest) => {
 
         if (select_TB_COR_USER_MST_01.rowCount > 0) {
             jResponse.error_code = -1;
-            jResponse.error_message = `The user id is already being used.`;
+            jResponse.error_message = `The user id is already used.`;
             return jResponse;
         }
 
