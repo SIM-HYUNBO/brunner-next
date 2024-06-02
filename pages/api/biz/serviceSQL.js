@@ -58,11 +58,11 @@ async function loadAllSQL() {
     result.error_message = 'The ServiceSQLs first loaded';
     result.error_code = 0;
 
-    return result; // 성공 리턴
+    return result;
   }
   catch (err) {
     result.error_code = -1;
-    result.error_message = 'An exception occured while loading serviceSQL.\n';
+    result.error_message = `An exception occured while loading serviceSQL.\nerror:${err}`;
     return result;
   }
 };
@@ -77,7 +77,7 @@ export function getSQL(systemCode, sqlName, sqlSeq) {
   }
 };
 
-export function getDefaultSystemSQL(sqlName, sqlSeq) {
+export function getSQL00(sqlName, sqlSeq) {
   try {
     var sql = getSQL(process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE, sqlName, sqlSeq);
     return sql;
