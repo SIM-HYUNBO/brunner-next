@@ -55,7 +55,7 @@ async function loadAllSQL() {
       process.serviceSQL.set(`${row.system_code}_${row.sql_name}_${row.sql_seq}`, row.sql_content);
     });
 
-    result.error_message = 'The ServiceSQLs first loaded';
+    result.error_message = `Totally [${sql_result.rows.length}] Service SQLs first loaded`;
     result.error_code = 0;
 
     return result;

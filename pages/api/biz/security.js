@@ -157,7 +157,6 @@ const signin = async (jRequest) => {
         var sql = null
 
         sql = serviceSQL.getSQL00('select_TB_COR_USER_MST', 1);
-
         var select_TB_COR_USER_MST_01 = await database.executeSQL(sql,
             [
                 jRequest.userId

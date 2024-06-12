@@ -7,7 +7,9 @@ import security from './biz/security'
 export default async (req, res) => {
     const response = {};
     var jResponse = null;
-    var txnTime = null;
+    var startTxnTime = null;
+    var endTxnTime = null;
+    var durationMs = null;
     var commandName = null;
     try {
         var jRequest = req.method === "GET" ? JSON.parse(req.params.requestJson) : req.method === "POST" ? req.body : null;
@@ -15,14 +17,19 @@ export default async (req, res) => {
         var remoteIp = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
         logger.warn(`START TXN ${commandName}\n`)
         logger.info(`method:${req.method} from ${remoteIp}\n data:${JSON.stringify(req.body)}\n`);
+        startTxnTime = new Date();
         jResponse = await executeService(req.method, req);
     }
     catch (e) {
         jResponse = `${e}`;
     }
     finally {
+        endTxnTime = new Date();
+        durationMs = endTxnTime - startTxnTime;
+        jResponse.durationMs = durationMs;      
         res.send(`${JSON.stringify(jResponse)}`);
-        logger.warn(`END TXN ${(!commandName) ? "" : commandName}\n`)
+        logger.info(`reply:\n${JSON.stringify(jResponse)}\n`);
+        logger.warn(`END TXN ${(!commandName) ? "" : commandName} in ${durationMs} milliseconds.\n`)
     }
 }
 
@@ -41,7 +48,5 @@ const executeService = async (method, req) => {
             error_message: `[${commandName}] not supported function`
         })
     }
-
-    logger.info(`reply:\n${JSON.stringify(jResponse)}\n`);
-    return jResponse;
+     return jResponse;
 }
