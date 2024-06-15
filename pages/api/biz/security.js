@@ -4,22 +4,22 @@ import logger from "./../winston/logger"
 import * as database from './database/database'
 import * as serviceSQL from './serviceSQL'
 
-export default function executeService(jRequest) {
+export default function executeService(txnId, jRequest) {
     var jResponse = {};
 
     try {
         switch (jRequest.commandName) {
             case "security.signup":
-                jResponse = signup(jRequest);
+                jResponse = signup(txnId, jRequest);
                 break;
             case "security.signin":
-                jResponse = signin(jRequest);
+                jResponse = signin(txnId, jRequest);
                 break;
             case "security.signout":
-                jResponse = signout(jRequest);
+                jResponse = signout(txnId, jRequest);
                 break;
             case "security.resetPassword":
-                jResponse = resetPassword(jRequest);
+                jResponse = resetPassword(txnId, jRequest);
                 break;
             default:
                 break;
@@ -31,7 +31,7 @@ export default function executeService(jRequest) {
     }
 }
 
-const signup = async (jRequest) => {
+const signup = async (txnId, jRequest) => {
     var jResponse = {};
 
     try {
@@ -146,7 +146,7 @@ const signup = async (jRequest) => {
     }
 };
 
-const signin = async (jRequest) => {
+const signin = async (txnId, jRequest) => {
     var jResponse = {};
 
     try {
@@ -185,7 +185,7 @@ const signin = async (jRequest) => {
     }
 };
 
-const resetPassword = async (jRequest) => {
+const resetPassword = async (txnId, jRequest) => {
     var jResponse = {};
 
     try {
@@ -278,7 +278,7 @@ const resetPassword = async (jRequest) => {
     }
 };
 
-const signout = (jRequest) => {
+const signout = (txnId, jRequest) => {
     var jResponse = {};
 
     try {

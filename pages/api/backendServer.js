@@ -6,6 +6,8 @@ import security from './biz/security'
 
 export default async (req, res) => {
     const response = {};
+    var remoteIp = null;
+    var jRequest = null;
     var jResponse = null;
     var commandName = null;
     var txnId = null;
@@ -14,24 +16,25 @@ export default async (req, res) => {
     var durationMs = null;
 
     try {
-        var jRequest = req.method === "GET" ? JSON.parse(req.params.requestJson) : req.method === "POST" ? req.body : null;
+        remoteIp = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
+        jRequest = req.method === "GET" ? JSON.parse(req.params.requestJson) : req.method === "POST" ? req.body : null;
+        txnId = await generateTxnId();
         commandName = jRequest.commandName;
-        var remoteIp = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
         logger.warn(`START TXN ${commandName}\n`);
-        txnId = await generateTxnid();
         req.body._txnId = txnId;
         logger.info(`method:${req.method} from ${remoteIp}\n requestBody:${JSON.stringify(req.body)}\n`);
-
         startTxnTime = new Date();
+
         jResponse = await executeService(req.method, req);
     }
     catch (e) {
         jResponse = `${e}`;
     }
     finally {
-        jResponse._txnId = txnId;
         endTxnTime = new Date();
-        durationMs = endTxnTime - startTxnTime;      
+
+        jResponse._txnId = txnId;
+        durationMs = endTxnTime - startTxnTime;
         jResponse._durationMs = durationMs;
         res.send(`${JSON.stringify(jResponse)}`);
         logger.info(`reply:\n${JSON.stringify(jResponse)}\n`);
@@ -45,19 +48,19 @@ const executeService = async (method, req) => {
     const commandName = jRequest.commandName;
 
     if (commandName.startsWith('security.')) {
-        jResponse = await new security(jRequest);
+        jResponse = await new security(req.body._txnId, jRequest);
     } else if (commandName.startsWith('serviceSQL.')) {
-        jResponse = await new serviceSQL(jRequest);
+        jResponse = await new serviceSQL(req.body._txnId, jRequest);
     } else {
         jResponse = JSON.stringify({
             error_code: -1,
             error_message: `[${commandName}] not supported function`
         })
     }
-     return jResponse;
+    return jResponse;
 }
 
-const generateTxnid = async () => {
+const generateTxnId = async () => {
 
     const now = new Date();
 
@@ -71,6 +74,6 @@ const generateTxnid = async () => {
     const currentDateTime = `${year}${month}${day}${hours}${minutes}${seconds}`;
 
     const hrtime = process.hrtime(); // 현재 시간을 나노초 단위로 가져옴
-    const txnid = `${currentDateTime}${hrtime[0]}${hrtime[1]}`; 
+    const txnid = `${currentDateTime}${hrtime[0]}${hrtime[1]}`;
     return txnid;
 }

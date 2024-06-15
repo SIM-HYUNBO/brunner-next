@@ -4,13 +4,13 @@ import dotenv from 'dotenv'
 import logger from "../winston/logger"
 import * as database from './database/database'
 
-export default function executeService(jRequest) {
+export default function executeService(txnId, jRequest) {
   var jResponse = {};
 
   try {
     switch (jRequest.commandName) {
       case "serviceSQL.loadAllSQL":
-        jResponse = loadAllSQL();
+        jResponse = loadAllSQL(txnId);
         break;
       default:
         break;
@@ -23,7 +23,7 @@ export default function executeService(jRequest) {
   }
 }
 
-async function loadAllSQL() {
+async function loadAllSQL(txnId) {
   var result = {};
   try {
     result.error_code = 0;
