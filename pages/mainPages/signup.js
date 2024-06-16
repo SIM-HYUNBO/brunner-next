@@ -48,14 +48,14 @@ export default function Signup() {
 
   var requestSignupResult = () => {
     var reqData = {};
-    reqData.commandName = "security.signin";
+    reqData.commandName = "security.signup";
     reqData.userId = userId;
     reqData.password = password;
-    reqData.password = userName;
-    reqData.password = phoneNumber;
-    reqData.password = email;
-    reqData.password = registerNo;
-    reqData.password = address;
+    reqData.userName = userName;
+    reqData.phoneNumber = phoneNumber;
+    reqData.email = email;
+    reqData.registerNo = registerNo;
+    reqData.address = address;
 
     requestServer('POST', JSON.stringify(reqData)).then((result) => {
       if (result.error_code == 0) {
