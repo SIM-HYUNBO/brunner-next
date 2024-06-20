@@ -24,23 +24,22 @@ export default function Signin() {
 
   const userIdRef = useRef();
 
-  var requestSigninResult = () => {
+  var requestSigninResult = async () => {
     var jRequest = {};
     jRequest.commandName = "security.signin";
     jRequest.systemCode = process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE;
     jRequest.userId = userId;
     jRequest.password = password;
 
-    requestServer('POST', JSON.stringify(jRequest)).then((result) => {
-      if (result.error_code == 0) {
-        process.env.userInfo = result.userInfo;
-        localStorage.setItem('userInfo', JSON.stringify(process.env.userInfo));
-        // console.log(`saved ${JSON.stringify(process.env.userInfo)}`);
-        router.push('/')
-      } else {
-        alert(JSON.stringify(result.error_message));
-      }
-    });
+    var jResponse = await requestServer('POST', JSON.stringify(jRequest));
+    if (jResponse.error_code == 0) {
+      process.env.userInfo = jResponse.userInfo;
+      localStorage.setItem('userInfo', JSON.stringify(process.env.userInfo));
+      // console.log(`saved ${JSON.stringify(process.env.userInfo)}`);
+      router.push('/')
+    } else {
+      alert(JSON.stringify(jResponse.error_message));
+    }
   };
 
   useEffect(() => {

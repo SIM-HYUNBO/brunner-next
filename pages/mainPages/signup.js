@@ -46,8 +46,9 @@ export default function Signup() {
   };
 
 
-  var requestSignupResult = () => {
+  var requestSignupResult = async () => {
     var jRequest = {};
+
     jRequest.commandName = "security.signup";
     jRequest.systemCode = process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE;
     jRequest.userId = userId;
@@ -58,14 +59,14 @@ export default function Signup() {
     jRequest.registerNo = registerNo;
     jRequest.address = address;
 
-    requestServer('POST', JSON.stringify(jRequest)).then((result) => {
-      if (result.error_code == 0) {
-        process.env.userInfo = result.userInfo;
-        alert(`successfully signed up. you will move to sign-in page.`);
-      } else {
-        alert(JSON.stringify(result.error_message));
-      }
-    });
+    var jResponse = await requestServer('POST', JSON.stringify(jRequest));
+    
+    if (jResponse.error_code == 0) {
+      process.env.userInfo = jResponse.userInfo;
+      alert(`successfully signed up. you will move to sign-in page.`);
+    } else {
+      alert(JSON.stringify(jResponse.error_message));
+    }
   };
 
   return (

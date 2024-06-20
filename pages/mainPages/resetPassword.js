@@ -36,7 +36,7 @@ export default function ResetPassword() {
     setConfirmPassword(e.target.value);
   };
 
-  var requestResetPasswordResult = () => {
+  var requestResetPasswordResult = async() => {
     var jRequest = {};
     jRequest.commandName = "security.resetPassword";
     reqDaata.systemCode = process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE;
@@ -46,9 +46,8 @@ export default function ResetPassword() {
     jRequest.newPassword = newPassword;
     jRequest.confirmPassword = confirmPassword;
 
-    requestServer('POST', JSON.stringify(jRequest)).then((result) => {
-      alert(result.error_message);
-    });
+    var jResponse = await requestServer('POST', JSON.stringify(jRequest));
+    alert(jResponse.error_message);
   };
 
   return (
