@@ -47,17 +47,18 @@ export default function Signup() {
 
 
   var requestSignupResult = () => {
-    var reqData = {};
-    reqData.commandName = "security.signup";
-    reqData.userId = userId;
-    reqData.password = password;
-    reqData.userName = userName;
-    reqData.phoneNumber = phoneNumber;
-    reqData.email = email;
-    reqData.registerNo = registerNo;
-    reqData.address = address;
+    var jRequest = {};
+    jRequest.commandName = "security.signup";
+    jRequest.systemCode = process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE;
+    jRequest.userId = userId;
+    jRequest.password = password;
+    jRequest.userName = userName;
+    jRequest.phoneNumber = phoneNumber;
+    jRequest.email = email;
+    jRequest.registerNo = registerNo;
+    jRequest.address = address;
 
-    requestServer('POST', JSON.stringify(reqData)).then((result) => {
+    requestServer('POST', JSON.stringify(jRequest)).then((result) => {
       if (result.error_code == 0) {
         process.env.userInfo = result.userInfo;
         alert(`successfully signed up. you will move to sign-in page.`);

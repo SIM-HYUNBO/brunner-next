@@ -22,11 +22,11 @@ export default function SignoutButton() {
           onClick={() => {
             // alert(`${JSON.stringify(process.env.userInfo.USER_ID)}`);
 
-            var reqData = {};
-            reqData.commandName = "security.signout";
-            reqData.userId = process.env.userInfo?.USER_ID;
+            var jRequest = {};
+            jRequest.commandName = "security.signout";
+            jRequest.userId = process.env.userInfo?.USER_ID;
 
-            requestServer('POST', JSON.stringify(reqData)).then((result) => {
+            requestServer('POST', JSON.stringify(jRequest)).then((result) => {
               if (result.error_code == 0) {
                 process.env.userInfo = result.userInfo;
                 localStorage.setItem('userInfo', JSON.stringify(process.env.userInfo));

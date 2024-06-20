@@ -37,15 +37,16 @@ export default function ResetPassword() {
   };
 
   var requestResetPasswordResult = () => {
-    var reqData = {};
-    reqData.commandName = "security.resetPassword";
-    reqData.userId = userId;
-    reqData.registerNo = registerNo;
-    reqData.phoneNumber = phoneNumber;
-    reqData.newPassword = newPassword;
-    reqData.confirmPassword = confirmPassword;
+    var jRequest = {};
+    jRequest.commandName = "security.resetPassword";
+    reqDaata.systemCode = process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE;
+    jRequest.userId = userId;
+    jRequest.registerNo = registerNo;
+    jRequest.phoneNumber = phoneNumber;
+    jRequest.newPassword = newPassword;
+    jRequest.confirmPassword = confirmPassword;
 
-    requestServer('POST', JSON.stringify(reqData)).then((result) => {
+    requestServer('POST', JSON.stringify(jRequest)).then((result) => {
       alert(result.error_message);
     });
   };

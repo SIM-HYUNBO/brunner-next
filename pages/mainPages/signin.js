@@ -25,12 +25,13 @@ export default function Signin() {
   const userIdRef = useRef();
 
   var requestSigninResult = () => {
-    var reqData = {};
-    reqData.commandName = "security.signin";
-    reqData.userId = userId;
-    reqData.password = password;
+    var jRequest = {};
+    jRequest.commandName = "security.signin";
+    jRequest.systemCode = process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE;
+    jRequest.userId = userId;
+    jRequest.password = password;
 
-    requestServer('POST', JSON.stringify(reqData)).then((result) => {
+    requestServer('POST', JSON.stringify(jRequest)).then((result) => {
       if (result.error_code == 0) {
         process.env.userInfo = result.userInfo;
         localStorage.setItem('userInfo', JSON.stringify(process.env.userInfo));

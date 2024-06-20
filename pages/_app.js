@@ -10,10 +10,10 @@ import { useEffect } from 'react'
 export default function App({ Component, pageProps }) {
   useEffect(() => {
 
-    var reqData = {};
-    reqData.commandName = "serviceSQL.loadAllSQL";
+    var jRequest = {};
+    jRequest.commandName = "serviceSQL.loadAllSQL";
 
-    requestServer('POST', JSON.stringify(reqData)).then((result) => {
+    requestServer('POST', JSON.stringify(jRequest)).then((result) => {
       if (result.error_code < 0) // 에러
         alert(`${result.error_message}`);
     });
