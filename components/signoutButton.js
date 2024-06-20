@@ -27,14 +27,14 @@ export default function SignoutButton() {
             jRequest.userId = process.env.userInfo?.USER_ID;
 
             var jResponse = await requestServer('POST', JSON.stringify(jRequest));
-              if (jResponse.error_code == 0) {
-                process.env.userInfo = jResponse.userInfo;
-                localStorage.setItem('userInfo', JSON.stringify(process.env.userInfo));
-                router.push('/')
-              } else {
-                alert(JSON.stringify(result.error_message));
-              }
-         }}>
+            if (jResponse.error_code == 0) {
+              process.env.userInfo = jResponse.userInfo;
+              localStorage.setItem('userInfo', JSON.stringify(process.env.userInfo));
+              router.push('/')
+            } else {
+              alert(JSON.stringify(result.error_message));
+            }
+          }}>
 
           <svg className="w-3 h-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12h15m0 0l-6.75-6.75M19.5 12l-6.75 6.75" />
