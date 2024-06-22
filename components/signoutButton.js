@@ -1,29 +1,36 @@
 import requestServer from './requestServer'
 import { useRouter } from 'next/router'
-
-const requestSignout = async () => {
-  var jRequest = {};
-  var jResponse = null;
-
-  jRequest.commandName = "security.signout";
-  jRequest.userId = process.env.userInfo?.USER_ID;
-
-  jResponse = await requestServer('POST', JSON.stringify(jRequest));
-
-  if (jResponse.error_code == 0) {
-    process.env.userInfo = jResponse.userInfo;
-    localStorage.setItem('userInfo', JSON.stringify(process.env.userInfo));
-    router.push('/')
-  } else {
-    alert(JSON.stringify(result.error_message));
-  }
-}
+import { useEffect } from 'react'
 
 export default function SignoutButton() {
+  useEffect(() => {
+
+  }, []);
+
   const router = useRouter();
+
+  const requestSignout = async () => {
+    var jRequest = {};
+    var jResponse = null;
+
+    jRequest.commandName = "security.signout";
+    var userInfo = localStorage.getItem('userInfo') ? JSON.parse(localStorage.getItem('userInfo')) : null;
+
+    jRequest.userId = userInfo?.USER_ID;
+
+    jResponse = await requestServer('POST', JSON.stringify(jRequest));
+
+    if (jResponse.error_code == 0) {
+      localStorage.setItem('userInfo', null);
+      router.push('/')
+    } else {
+      alert(JSON.stringify(result.error_message));
+    }
+  }
+
   return (
     <>
-      {process.env.userInfo && process.env.userInfo?.USER_NAME &&
+      {JSON.parse(localStorage.getItem('userInfo'))?.userId &&
         <button className="inline-flex items-center 
                                   boder-0 
                                   py-1 

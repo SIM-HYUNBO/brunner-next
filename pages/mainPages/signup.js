@@ -63,7 +63,6 @@ export default function Signup() {
     jResponse = await requestServer('POST', JSON.stringify(jRequest));
 
     if (jResponse.error_code == 0) {
-      process.env.userInfo = jResponse.userInfo;
       alert(`successfully signed up. you will move to sign-in page.`);
     } else {
       alert(JSON.stringify(jResponse.error_message));
