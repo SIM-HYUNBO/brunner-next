@@ -39,7 +39,7 @@ export default function ResetPassword() {
   var requestResetPasswordResult = async () => {
     var jRequest = {};
     jRequest.commandName = "security.resetPassword";
-    reqDaata.systemCode = "00";// process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE;
+    reqDaata.systemCode = process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE;
     jRequest.userId = userId;
     jRequest.registerNo = registerNo;
     jRequest.phoneNumber = phoneNumber;
