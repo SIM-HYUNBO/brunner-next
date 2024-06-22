@@ -80,7 +80,7 @@ export function getSQL(systemCode, sqlName, sqlSeq) {
 
 export function getSQL00(sqlName, sqlSeq) {
   try {
-    var sql = getSQL(process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE, sqlName, sqlSeq);
+    var sql = getSQL("00" /*process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE*/, sqlName, sqlSeq);
     return sql;
   }
   catch (err) {

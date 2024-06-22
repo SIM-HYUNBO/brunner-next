@@ -50,7 +50,7 @@ export default function Signup() {
     var jRequest = {};
 
     jRequest.commandName = "security.signup";
-    jRequest.systemCode = process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE;
+    jRequest.systemCode = "00"; //process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE;
     jRequest.userId = userId;
     jRequest.password = password;
     jRequest.userName = userName;
@@ -60,7 +60,7 @@ export default function Signup() {
     jRequest.address = address;
 
     var jResponse = await requestServer('POST', JSON.stringify(jRequest));
-    
+
     if (jResponse.error_code == 0) {
       process.env.userInfo = jResponse.userInfo;
       alert(`successfully signed up. you will move to sign-in page.`);

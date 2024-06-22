@@ -27,7 +27,7 @@ export default function Signin() {
   var requestSigninResult = async () => {
     var jRequest = {};
     jRequest.commandName = "security.signin";
-    jRequest.systemCode = process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE;
+    jRequest.systemCode = "00"; //process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE;
     jRequest.userId = userId;
     jRequest.password = password;
 
