@@ -2,7 +2,7 @@
 const nextConfig = {
   reactStrictMode: false,
   images: {
-    remotePatterns: [
+    domains: [
       {
         protocol: 'https',
         hostname: 'www.notion.so',
