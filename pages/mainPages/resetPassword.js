@@ -36,8 +36,10 @@ export default function ResetPassword() {
     setConfirmPassword(e.target.value);
   };
 
-  var requestResetPasswordResult = async () => {
+  const requestResetPassword = async () => {
     var jRequest = {};
+    var jResponse = null;
+
     jRequest.commandName = "security.resetPassword";
     reqDaata.systemCode = process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE;
     jRequest.userId = userId;
@@ -46,7 +48,8 @@ export default function ResetPassword() {
     jRequest.newPassword = newPassword;
     jRequest.confirmPassword = confirmPassword;
 
-    var jResponse = await requestServer('POST', JSON.stringify(jRequest));
+    jResponse = await requestServer('POST', JSON.stringify(jRequest));
+
     alert(jResponse.error_message);
   };
 
@@ -90,7 +93,7 @@ export default function ResetPassword() {
                 className="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"
                 onChange={(e) => changeConfirmPasswordValue(e)}></input>
             </div>
-            <button onClick={() => requestResetPasswordResult()} className="text-white bg-indigo-500 border-0 py-2 px-8 focus:outline-none hover:bg-indigo-600 rounded text-lg">Reset password</button>
+            <button onClick={() => requestResetPassword()} className="text-white bg-indigo-500 border-0 py-2 px-8 focus:outline-none hover:bg-indigo-600 rounded text-lg">Reset password</button>
             <p className="text-xs text-gray-500 mt-3">Protect your important information.</p>
           </div>
         </div>

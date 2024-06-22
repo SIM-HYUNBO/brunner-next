@@ -9,16 +9,19 @@ import { useEffect } from 'react'
 // Entry Point
 export default function App({ Component, pageProps }) {
   useEffect(() => {
-    loadAllSqls();
+    requestLoadAllSqls();
   }, []);
 
   dotenv.config();
 
-  async function loadAllSqls(){
+  async function requestLoadAllSqls() {
     var jRequest = {};
+    var jResponse = null;
+
     jRequest.commandName = "serviceSQL.loadAllSQL";
 
-    var jResponse = await requestServer('POST', JSON.stringify(jRequest));
+    jResponse = await requestServer('POST', JSON.stringify(jRequest));
+
     if (jResponse.error_code < 0) // 에러
       alert(`${jResponse.error_message}`);
   }

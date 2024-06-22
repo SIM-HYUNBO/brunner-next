@@ -24,14 +24,17 @@ export default function Signin() {
 
   const userIdRef = useRef();
 
-  var requestSigninResult = async () => {
+  const requestSignin = async () => {
     var jRequest = {};
+    var jResponse = null;
+
     jRequest.commandName = "security.signin";
     jRequest.systemCode = process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE;
     jRequest.userId = userId;
     jRequest.password = password;
 
-    var jResponse = await requestServer('POST', JSON.stringify(jRequest));
+    jResponse = await requestServer('POST', JSON.stringify(jRequest));
+
     if (jResponse.error_code == 0) {
       process.env.userInfo = jResponse.userInfo;
       localStorage.setItem('userInfo', JSON.stringify(process.env.userInfo));
@@ -89,7 +92,7 @@ export default function Signin() {
               ></input>
             </div>
             <button className="text-white bg-indigo-500 border-0 py-2 px-8 focus:outline-none hover:bg-indigo-600 rounded text-lg"
-              onClick={() => requestSigninResult()}
+              onClick={() => requestSignin()}
             >
               Signin
             </button>

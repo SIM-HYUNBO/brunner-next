@@ -46,8 +46,9 @@ export default function Signup() {
   };
 
 
-  var requestSignupResult = async () => {
+  const requestSignup = async () => {
     var jRequest = {};
+    var jResponse = null;
 
     jRequest.commandName = "security.signup";
     jRequest.systemCode = process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE;
@@ -59,7 +60,7 @@ export default function Signup() {
     jRequest.registerNo = registerNo;
     jRequest.address = address;
 
-    var jResponse = await requestServer('POST', JSON.stringify(jRequest));
+    jResponse = await requestServer('POST', JSON.stringify(jRequest));
 
     if (jResponse.error_code == 0) {
       process.env.userInfo = jResponse.userInfo;
@@ -160,7 +161,7 @@ export default function Signup() {
               </div>
             </div>
 
-            <button onClick={() => requestSignupResult()}
+            <button onClick={() => requestSignup()}
               className="text-white bg-indigo-500 max-w-max border-0 py-2 px-8 focus:outline-none hover:bg-indigo-600 rounded text-lg">
               Signup
             </button>
