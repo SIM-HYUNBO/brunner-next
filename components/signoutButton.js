@@ -25,7 +25,7 @@ export default function SignoutButton() {
 
   return (
     <>
-      {JSON.parse(typeof window !== 'undefined' ? localStorage.getItem('userInfo') : null)?.userId &&
+      {(window ? JSON.parse(localStorage.getItem('userInfo')) : null)?.userId &&
         <button className="inline-flex items-center 
                                   boder-0 
                                   py-1 
