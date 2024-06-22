@@ -1,12 +1,7 @@
 import requestServer from './requestServer'
 import { useRouter } from 'next/router'
-import { useEffect } from 'react'
 
 export default function SignoutButton() {
-  useEffect(() => {
-
-  }, []);
-
   const router = useRouter();
 
   const requestSignout = async () => {
@@ -30,7 +25,7 @@ export default function SignoutButton() {
 
   return (
     <>
-      {JSON.parse(localStorage.getItem('userInfo'))?.userId &&
+      {JSON.parse(typeof window !== 'undefined' ? localStorage.getItem('userInfo') : null)?.userId &&
         <button className="inline-flex items-center 
                                   boder-0 
                                   py-1 
