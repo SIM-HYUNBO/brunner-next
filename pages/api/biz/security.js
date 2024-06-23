@@ -152,11 +152,8 @@ const signin = async (txnId, jRequest) => {
 
     try {
         jResponse.commanaName = jRequest.commandName;
-        jResponse.userId = jRequest.userId;
-        jResponse.password = jRequest.password;
 
         var sql = null
-
         sql = serviceSQL.getSQL00('select_TB_COR_USER_MST', 1);
         var select_TB_COR_USER_MST_01 = await database.executeSQL(sql,
             [
@@ -170,6 +167,9 @@ const signin = async (txnId, jRequest) => {
             if (select_TB_COR_USER_MST_01.rows[0].password === jRequest.password) {
                 jResponse.error_code = 0;
                 jResponse.error_message = "";
+
+                jResponse.userId = select_TB_COR_USER_MST_01.rows[0].user_id;
+                jResponse.userName = select_TB_COR_USER_MST_01.rows[0].user_name;
             } else {
                 jResponse.error_code = -1;
                 jResponse.error_message = `incorrect password`;
