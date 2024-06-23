@@ -9,14 +9,14 @@ export default function SignoutButton() {
     var jResponse = null;
 
     jRequest.commandName = "security.signout";
-    var userInfo = localStorage.getItem('userInfo') ? JSON.parse(localStorage.getItem('userInfo')) : null;
+    var userInfo = process.env.userInfo ? process.env.userInfo : null;
 
     jRequest.userId = userInfo?.USER_ID;
 
     jResponse = await requestServer('POST', JSON.stringify(jRequest));
 
     if (jResponse.error_code == 0) {
-      localStorage.setItem('userInfo', null);
+      process.env.userInfo = null;
       router.push('/')
     } else {
       alert(JSON.stringify(result.error_message));
@@ -26,9 +26,8 @@ export default function SignoutButton() {
   const getLoginId = () => {
     var userInfo = null;
 
-    if (typeof window !== 'undefined' && localStorage.getItem('userInfo') !== 'undefined') {
-      if (JSON.parse(localStorage.getItem('userInfo')))
-        userInfo = JSON.parse(localStorage.getItem('userInfo'));
+    if (process.env.userInfo) {
+      userInfo = process.env.userInfo;
 
       return userInfo?.userId;
     }

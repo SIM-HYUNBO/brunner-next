@@ -36,7 +36,7 @@ export default function Signin() {
     jResponse = await requestServer('POST', JSON.stringify(jRequest));
 
     if (jResponse.error_code == 0) {
-      localStorage.setItem('userInfo', JSON.stringify(jResponse));
+      process.env.userInfo = jResponse;
       router.push('/')
     } else {
       alert(JSON.stringify(jResponse.error_message));

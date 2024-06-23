@@ -3,6 +3,7 @@ import logger from "./winston/logger"
 // server modules.
 import serviceSQL from './biz/serviceSQL'
 import security from './biz/security'
+import asset from './biz/asset'
 
 export default async (req, res) => {
     const response = {};
@@ -51,6 +52,8 @@ const executeService = async (method, req) => {
         jResponse = await new security(req.body._txnId, jRequest);
     } else if (commandName.startsWith('serviceSQL.')) {
         jResponse = await new serviceSQL(req.body._txnId, jRequest);
+    } else if (commandName.startsWith('asset.')) {
+        jResponse = await new asset(req.body._txnId, jRequest);
     } else {
         jResponse = JSON.stringify({
             error_code: -1,

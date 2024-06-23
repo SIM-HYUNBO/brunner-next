@@ -4,7 +4,7 @@ import Layout from '../../components/layout'
 import Head from 'next/head'
 import BodySection from '../../components/bodySection'
 
-import SupportContent from './content/supportCcntent'
+import AssetContent from './content/assetContent'
 
 export default function Support() {
   return (
@@ -17,7 +17,7 @@ export default function Support() {
       </Head>
       <BodySection>
         <div className="container mx-auto flex px-5 md:flex-row flex-col items-center">
-          <SupportContent></SupportContent>
+          <AssetContent></AssetContent>
         </div>
       </BodySection>
     </Layout>

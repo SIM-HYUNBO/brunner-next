@@ -36,6 +36,7 @@
     "react-draft-wysiwyg": "^1.15.0",
     "react-lottie-player": "^1.5.4",
     "react-modal": "^3.16.1",
+    "react-table": "^7.8.0",
     "sharp": "^0.33.3",
     "tls": "^0.0.1",
     "winston": "^3.13.0",

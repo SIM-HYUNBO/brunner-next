@@ -5,20 +5,16 @@ import isJson from '../pages/util';
 
 export default function UserInfo() {
   useEffect(() => {
-
+    getLoginName();
   }, []);
 
   const getLoginName = () => {
     var userInfo = null;
 
-    if (typeof window !== 'undefined' && localStorage.getItem('userInfo') !== 'undefined') {
-      if (JSON.parse(localStorage.getItem('userInfo')))
-        userInfo = JSON.parse(localStorage.getItem('userInfo'));
+    if (process.env.userInfo) {
+      userInfo = process.env.userInfo;
 
       return !userInfo?.userName ? '' : userInfo?.userName;
-    }
-    else {
-      return '';
     }
   }
 
