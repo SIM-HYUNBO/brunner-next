@@ -23,11 +23,21 @@ export default function SignoutButton() {
     }
   }
 
+  const getLoginId = () => {
+    var userInfo = null;
+
+    if (typeof window !== 'undefined' && localStorage.getItem('userInfo') !== 'undefined') {
+      if (JSON.parse(localStorage.getItem('userInfo')))
+        userInfo = JSON.parse(localStorage.getItem('userInfo'));
+
+      return userInfo?.userId;
+    }
+    return null;
+  }
+
   return (
     <>
-      {(typeof window !== 'undefined' && localStorage.getItem('userInfo') !== 'undefined' ?
-        JSON.parse(localStorage.getItem('userInfo')) :
-        null)?.userId &&
+      {getLoginId() &&
         <button className="inline-flex items-center 
                                   boder-0 
                                   py-1 
