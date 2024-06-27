@@ -20,3 +20,581 @@ index.js
    - router.push: /mainPages/signin
      -  router.push: /mainPages/resetPassword
    - router.push: /mainPages/signup
+
+
+
+====
+
+
+1. sqlserver_select_TB_RMS_EQP_REQ_PARAM_INFO_cust_01
+-----------------------------------------------------------------------
+"<![CDATA[
+
+      WITH TEMP_TB_MIX_MATERIAL AS
+       (SELECT EP.PARAMETER_ID,
+               PM.STEP_SEQ_NO,
+               PM.MATERIAL_SEQ_NO,
+               ISNULL(MM.MATERIAL_ID, '') AS MATERIAL_ID,
+               ISNULL(MC.MATERIAL_NAME, '') AS MATERIAL_NAME,
+               RMSPLUS.FN_GET_ALTERNATIVE_MTRL_NAME('ko-KR',
+                                                    MM.FACILITY_CODE,
+                                                    MM.EQUIPMENT_ID,
+                                                    MM.PRODUCT_SPECIFICATION_ID,
+                                                    MM.PRODUCT_SPECIFICATION_VERSION,
+                                                    MM.PARAMETER_ID,
+                                                    'MATERIAL_ID') AS REP_MTRL_ID,
+             RMSPLUS.FN_GET_ALTERNATIVE_MTRL_NAME('ko-KR',
+                                                  MM.FACILITY_CODE,
+                                                  MM.EQUIPMENT_ID,
+                                                  MM.PRODUCT_SPECIFICATION_ID,
+                                                  MM.PRODUCT_SPECIFICATION_VERSION,
+                                                  MM.PARAMETER_ID,
+                                                  'MATERIAL_NAME') AS REP_MTRL_NAME,
+             ROW_NUMBER() OVER (PARTITION BY PM.STEP_SEQ_NO, MM.MATERIAL_ID ORDER BY MATERIAL_SEQ_NO) AS STEP_MATERIAL_SEQ
+          FROM RMSPLUS.TB_RMS_PARAMETER_MST PM WITH (NOLOCK)
+         INNER JOIN RMSPLUS.VW_RMS_EQUIPMENT_PARAMETER EP WITH (NOLOCK)
+            ON (EP.FACILITY_CODE = PM.FACILITY_CODE
+           AND EP.EQUIPMENT_ID = #{equipmentId}
+           AND EP.PARAMETER_ID = PM.PARAMETER_ID)
+          LEFT OUTER JOIN RMSPLUS.TB_COM_MIX_MATERIAL_INFO MM WITH (NOLOCK)
+            ON (MM.FACILITY_CODE = EP.FACILITY_CODE
+           AND MM.EQUIPMENT_ID = #{equipmentId}
+           AND MM.PRODUCT_SPECIFICATION_ID = #{productSpecificationId}
+           AND MM.PRODUCT_SPECIFICATION_VERSION = #{insProductSpecificationVersion}
+           AND MM.PARAMETER_ID = EP.PARAMETER_ID
+           AND ISNULL(MM.MATERIAL_ID, '') != '')
+          LEFT OUTER JOIN RMSPLUS.TB_COM_MIX_MATERIAL_CODE_MST MC WITH (NOLOCK)
+            ON (MC.MATERIAL_ID = MM.MATERIAL_ID)
+         WHERE PM.FACILITY_CODE = #{facilityCode}
+           AND EP.EQUIPMENT_PARAMETER_ID IN (SELECT SUBSTRING(EP.EQUIPMENT_PARAMETER_ID, 1, LEN(EP.EQUIPMENT_PARAMETER_ID)-3)+'A'+RIGHT(EP.EQUIPMENT_PARAMETER_ID, 2)
+                                     FROM RMSPLUS.VW_RMS_EQUIPMENT_PARAMETER EP WITH (NOLOCK)
+                                      INNER JOIN RMSPLUS.TB_RMS_PARAMETER_MST PM  WITH (NOLOCK)
+                                       ON (PM.FACILITY_CODE = EP.FACILITY_CODE
+                                      AND PM.MGR_GROUP_ID = EP.MGR_GROUP_ID
+                                      AND PM.EQUIPMENT_GROUP_ID = EP.EQUIPMENT_GROUP_ID
+                                      AND PM.PARAMETER_ID = EP.PARAMETER_ID)
+                                      INNER JOIN RMSPLUS.TB_RMS_RECIPE_VERSION_INFO RV WITH (NOLOCK)
+                                       ON (RV.FACILITY_CODE = EP.FACILITY_CODE
+                                        AND RV.RECIPE_ID = EP.RECIPE_ID
+                                      AND RV.RECIPE_VERSION = EP.RECIPE_VERSION
+                                      AND RV.PARAMETER_ID = EP.PARAMETER_ID)
+                                      WHERE EP.FACILITY_CODE = #{facilityCode}
+                                        AND EP.EQUIPMENT_ID = #{equipmentId}
+                                      AND EP.PRODUCT_SPECIFICATION_ID = #{productSpecificationId}
+                                      AND EP.PRODUCT_SPECIFICATION_VERSION LIKE #{insProductSpecificationVersion} + '%'
+                                      AND ISNULL(PM.VALIDATION_VERSION_CHECK_FLAG,'N') ='Y'
+                                      AND (CASE WHEN ISNULL((EP.PRODUCT_SPECIFICATION_VERSION),'') != ''
+                                                THEN RV.TARGET_VALUE
+                                                ELSE 0
+                                                END) = #{firstValue})
+                                      AND PM.MATERIAL_NAME_FLAG = 'Y'
+                               ),
+      TEMP_TB_PARAMETER_LIST AS
+       (SELECT PL.EQUIPMENT_PARAMETER_ID,
+               PL.REQUEST_VALUE AS MATERIAL_ID,
+               SUBSTRING(RIGHT(PL.EQUIPMENT_PARAMETER_ID, 5), 1, 2) AS STEP_SEQ_NO,
+               ROW_NUMBER() OVER(PARTITION BY SUBSTRING(RIGHT(PL.EQUIPMENT_PARAMETER_ID, 5), 1, 2), PL.REQUEST_VALUE ORDER BY PL.EQUIPMENT_PARAMETER_ID) AS STEP_MATERIAL_SEQ
+         FROM RMSPLUS.TB_RMS_EQP_REQ_PARAM_INFO PL WITH (NOLOCK)
+        WHERE PL.FUNCTION_NAME=#{functionName}
+          AND PL.TRANSACTION_SERIAL_NO=#{transactionSerialNo}
+          AND PL.PARAMETER_FLAG = 'Y'
+          AND PL.EQUIPMENT_PARAMETER_ID = SUBSTRING(#{equipmentParameterId}, 1, LEN(#{equipmentParameterId})-3)+'A'+RIGHT(#{equipmentParameterId}, 2))
+      SELECT #{insProductSpecificationVersion} AS PRODUCT_SPECIFICATION_VERSION,
+             COUNT(*) AS CHECK_CNT
+        FROM TEMP_TB_PARAMETER_LIST PL WITH (NOLOCK)
+        LEFT OUTER JOIN TEMP_TB_MIX_MATERIAL MM WITH (NOLOCK)
+          ON (MM.STEP_SEQ_NO = PL.STEP_SEQ_NO
+         AND MM.STEP_MATERIAL_SEQ = PL.STEP_MATERIAL_SEQ)
+        WHERE RMSPLUS.FN_GET_STRCMP( REPLACE(REPLACE(REPLACE(PL.MATERIAL_ID, '_', ''), '-', ''), ' ', ''),
+            (CASE WHEN ISNULL(MM.REP_MTRL_ID,'') = ''
+                  THEN REPLACE(REPLACE(REPLACE(MM.MATERIAL_ID, '_', ''), '-', ''), ' ', '')
+                  ELSE REPLACE(REPLACE(REPLACE(MM.MATERIAL_ID, '_', ''), '-', ''), ' ', '')+','+REPLACE(REPLACE(REPLACE(MM.REP_MTRL_ID, '_', ''), '-', ''), ' ', '')
+                  END)) ='0' OR RMSPLUS.FN_GET_STRCMP(REPLACE(REPLACE(REPLACE(SUBSTRING(PL.MATERIAL_ID,1,10), '_', ''), '-', ''), ' ', ''),
+            (CASE WHEN ISNULL(MM.REP_MTRL_NAME,'') = ''
+                  THEN REPLACE(REPLACE(REPLACE(SUBSTRING(MM.MATERIAL_NAME,1,10), '_', ''), '-', ''), ' ', '')
+                  ELSE REPLACE(REPLACE(REPLACE(SUBSTRING(MM.MATERIAL_NAME,1,10), '_', ''), '-', ''), ' ', '') + ',' + REPLACE(REPLACE(REPLACE(SUBSTRING(MM.REP_MTRL_NAME,1,10), '_', ''), '-', ''), ' ', '')
+                  END)) = '0'
+
+]]>"
+
+2. sqlserver_update_TB_RMS_EQP_REQ_PARAM_DOWN_INFO_cust_02
+---------------------------------------------------------------------------------
+"<![CDATA[
+
+WITH SPEC_TARGET_VALUE AS
+(
+  /* ?댁쁺?곸슜 ?덉떆???뺣낫 */
+  SELECT ER.FACILITY_CODE,
+             MG.RECIPE_ID_PREFIX_VALUE,
+             ER.EQUIPMENT_ID,
+             CASE WHEN EM.FINAL_VALUE_SAVE_FLAG IS NULL THEN 'N' ELSE EM.FINAL_VALUE_SAVE_FLAG END AS FINAL_VALUE_SAVE_FLAG,
+             CASE WHEN EM.DOWNLOAD_CRITERION_CODE IS NULL THEN 'PARAMETER' ELSE EM.DOWNLOAD_CRITERION_CODE END AS DOWNLOAD_CRITERION_CODE,
+             EM.DOWNLOAD_TYPE_CODE AS EQUIPMENT_DOWNLOAD_TYPE_CODE,
+             ER.PRODUCT_SPECIFICATION_ID,
+             ER.PRODUCT_SPECIFICATION_VERSION,
+             ER.RECIPE_ID,
+             ER.RECIPE_VERSION,
+             RMV.RECIPE_MAP_VERSION,
+             RV.PARAMETER_ID,
+             CASE WHEN PM.SPEC_INPUT_CHECK_FLAG IS NULL THEN 'N' ELSE PM.SPEC_INPUT_CHECK_FLAG END SPEC_INPUT_CHECK_FLAG,
+             CASE WHEN RV.SPEC_TYPE_CODE IS NULL THEN 'N' ELSE RV.SPEC_TYPE_CODE END SPEC_TYPE_CODE,
+             RMV.RMS_USE_FLAG,
+             RMV.EQUIPMENT_PARAMETER_ID,
+             RMV.GRADE_CODE,
+             CASE WHEN EP.DOWNLOAD_TYPE_CODE IS NULL
+                  THEN 'SPEC'
+                  ELSE EP.DOWNLOAD_TYPE_CODE
+                  END AS PARAMETER_DOWNLOAD_TYPE_CODE,
+             (CASE WHEN CASE WHEN EM.PDS_APPLY_FLAG IS NULL
+                             THEN 'N'
+                             ELSE EM.PDS_APPLY_FLAG
+                             END <> 'Y'
+                        AND RMV.EQUIPMENT_PARAMETER_ID LIKE #{equipmentParameterId1}
+                   THEN (
+                             SELECT UPPER(CASE WHEN MIN(MC.MATERIAL_NAME) IS NULL THEN '' ELSE MIN(MC.MATERIAL_NAME) END)
+                                 FROM RMSPLUS.TB_COM_MIX_MATERIAL_INFO MM WITH(NOLOCK)
+                                INNER JOIN RMSPLUS.TB_COM_MIX_MATERIAL_CODE_MST MC WITH(NOLOCK)
+                                   ON (MC.MATERIAL_ID = MM.MATERIAL_ID)
+                                WHERE MM.FACILITY_CODE = #{facilityCode}
+                                  AND MM.EQUIPMENT_ID = #{equipmentId}
+                                  AND MM.PRODUCT_SPECIFICATION_ID = #{productSpecificationId}
+                                  AND MM.PRODUCT_SPECIFICATION_VERSION = #{productSpecificationVersion}
+                                  AND MM.PARAMETER_ID = RV.PARAMETER_ID)
+                     WHEN PM.SPEC_RATIO_USE_FLAG = 'Y'
+                     THEN CONVERT(NVARCHAR, ROUND(CONVERT(FLOAT, CASE WHEN RV.TARGET_VALUE IS NULL
+                                                                      THEN ''
+                                                                      ELSE RV.TARGET_VALUE
+                                                                      END)* #{batchSize} / 100, 2))
+                     ELSE RV.TARGET_VALUE
+                      END) AS SPEC_TARGET_VALUE
+    FROM RMSPLUS.TB_RMS_EQUIPMENT_RECIPE_INFO ER WITH(NOLOCK)
+   INNER JOIN RMSPLUS.TB_RMS_RECIPE_VERSION_INFO RV WITH(NOLOCK)
+      ON (RV.FACILITY_CODE = ER.FACILITY_CODE
+     AND RV.RECIPE_ID = ER.RECIPE_ID
+       AND RV.RECIPE_VERSION = ER.RECIPE_VERSION)
+   INNER JOIN RMSPLUS.TB_RMS_RECIPE_MAP_VERSION_INFO RMV WITH(NOLOCK)
+      ON (RMV.FACILITY_CODE = RV.FACILITY_CODE
+     AND RMV.RECIPE_ID = RV.RECIPE_ID
+     AND RMV.RECIPE_MAP_VERSION = ER.RECIPE_MAP_VERSION
+     AND RMV.PARAMETER_ID = RV.PARAMETER_ID)
+   INNER JOIN RMSPLUS.TB_RMS_EQUIPMENT_MST EM WITH(NOLOCK)
+      ON (EM.FACILITY_CODE = ER.FACILITY_CODE
+     AND EM.EQUIPMENT_ID = ER.EQUIPMENT_ID)
+   INNER JOIN RMSPLUS.TB_COM_EQUIP_GROUP_INFO EG WITH(NOLOCK)
+      ON (EG.FACILITY_CODE = EM.FACILITY_CODE
+     AND EG.EQUIPMENT_GROUP_ID = EM.EQUIPMENT_GROUP_ID)
+   INNER JOIN RMSPLUS.TB_RMS_MGR_GROUP_INFO MG WITH(NOLOCK)
+      ON (MG.FACILITY_CODE = EM.FACILITY_CODE
+       AND MG.MGR_GROUP_ID = EG.MGR_GROUP_ID)
+   INNER JOIN RMSPLUS.TB_RMS_EQUIPMENT_PARAM_INFO EP WITH(NOLOCK)
+      ON (EP.FACILITY_CODE = ER.FACILITY_CODE
+     AND EP.EQUIPMENT_ID = ER.EQUIPMENT_ID
+       AND EP.PARAMETER_ID = RV.PARAMETER_ID)
+   INNER JOIN RMSPLUS.TB_RMS_PARAMETER_MST PM WITH(NOLOCK)
+      ON (PM.FACILITY_CODE = ER.FACILITY_CODE
+     AND PM.EQUIPMENT_GROUP_ID = EM.EQUIPMENT_GROUP_ID
+     AND PM.PARAMETER_ID = RMV.PARAMETER_ID)
+   WHERE ER.FACILITY_CODE = #{facilityCode}
+     AND ER.EQUIPMENT_ID = #{equipmentId}
+     AND ER.PRODUCT_SPECIFICATION_ID = #{productSpecificationId}
+     AND ER.PRODUCT_SPECIFICATION_VERSION = #{productSpecificationVersion}
+     AND ER.USE_FLAG = 'Y'
+),
+EQUIPMENT_FINAL_VALUE AS (
+  /* ?ㅻ퉬 理쒖쥌媛??뺣낫 */
+  SELECT FH.TRANSACTION_SERIAL_NO,
+           FH.TRANSACTION_DATE,
+             UH.FACILITY_CODE,
+             UH.EQUIPMENT_ID,
+             FH.PRODUCT_SPECIFICATION_ID,
+             FH.PRODUCT_SPECIFICATION_VERSION,
+             UH.PARAMETER_ID,
+             UH.EQUIPMENT_PARAMETER_ID,
+             UH.UPLOAD_VALUE
+      FROM (
+              SELECT TOP 1
+                         FACILITY_CODE,
+                         EQUIPMENT_ID,
+                         PRODUCT_SPECIFICATION_ID,
+                         PRODUCT_SPECIFICATION_VERSION,
+                         TRANSACTION_SERIAL_NO,
+                         TRANSACTION_DATE
+                  FROM RMSPLUS.TB_RMS_RCP_UPLOAD_FINAL_HIST WITH(NOLOCK)
+             WHERE FACILITY_CODE = #{facilityCode}
+                   AND EQUIPMENT_ID = #{equipmentId}
+                   AND UPLOAD_TYPE_CODE = #{uploadTypeCode}
+                   AND EQP_PROD_SPEC_ID = #{productSpecificationId}
+                   AND PRODUCT_SPECIFICATION_VERSION = #{productSpecificationVersion}
+                   AND CASE WHEN COLLECTION_ATTRIBUTE1 IS NULL
+                            THEN ''
+                            ELSE COLLECTION_ATTRIBUTE1
+                            END = CASE WHEN #{collectionAttribute1} IS NULL
+                                       THEN ''
+                                       ELSE #{collectionAttribute1}
+                                       END
+                   AND VALIDATION_MODE_CODE = #{validationModeCode}
+               ORDER BY TRANSACTION_DATE DESC
+           ) FH /* FINAL HISTORY */
+   INNER JOIN RMSPLUS.TB_RMS_RCP_PARAM_UPLOAD_HIST UH WITH(NOLOCK) /* UPLOAD HISTORY */
+        ON (UH.FACILITY_CODE = FH.FACILITY_CODE
+       AND UH.EQUIPMENT_ID = FH.EQUIPMENT_ID
+       AND UH.TRANSACTION_SERIAL_NO = FH.TRANSACTION_SERIAL_NO)
+)
+UPDATE ECV2
+   SET ECV2.RMS_VALUE = ST_EF_DW.DOWNLOAD_VALUE,
+       ECV2.USE_FLAG = ( /* ?곸슜 ?щ? */
+            CASE WHEN ST_EF_DW.RMS_USE_FLAG = 'N'
+                   THEN 'N'
+                   WHEN ST_EF_DW.SPEC_TYPE_CODE <> 'F' AND ST_EF_DW.SPEC_TYPE_CODE <> 'R'
+                   THEN 'N'
+                   WHEN ( /* ?덉쇅 泥섎━???쒗뭹 ?뺤씤 */
+                           SELECT CASE WHEN MIN('Y') IS NULL THEN 'N' ELSE MIN('Y') END
+                           FROM RMSPLUS.TB_RMS_PROD_EXCEPT_PARAM_INFO XP WITH(NOLOCK)
+                          WHERE XP.EQUIPMENT_ID = #{equipmentId}
+                            AND XP.PRODUCT_SPECIFICATION_ID = #{productSpecificationId}
+                            AND XP.PARAMETER_ID = ST_EF_DW.PARAMETER_ID
+                            AND XP.EXCEPT_FLAG = 'Y') = 'Y'
+                   THEN 'N'
+                   WHEN CASE WHEN ST_EF_DW.DOWNLOAD_CRITERION_CODE IS NULL
+                             THEN 'PARAMETER'
+                             ELSE ST_EF_DW.DOWNLOAD_CRITERION_CODE
+                             END = 'EQUIPENT'
+                        AND ST_EF_DW.EQUIPMENT_DOWNLOAD_TYPE_CODE = 'LAST'
+                        AND CASE WHEN REPLACE(ST_EF_DW.EQUIPMENT_CURRENT_VALUE, ' ', '') IS NULL
+                                 THEN ''
+                                 ELSE REPLACE(ST_EF_DW.EQUIPMENT_CURRENT_VALUE, ' ', '')
+                                 END = ''
+                   THEN 'N'
+                   WHEN CASE WHEN ST_EF_DW.DOWNLOAD_CRITERION_CODE IS NULL
+                             THEN 'PARAMETER'
+                             ELSE ST_EF_DW.DOWNLOAD_CRITERION_CODE
+                             END = 'PARAMETER'
+                        AND ST_EF_DW.PARAMETER_DOWNLOAD_TYPE_CODE = 'LAST'
+                        AND CASE WHEN REPLACE(ST_EF_DW.EQUIPMENT_CURRENT_VALUE, ' ', '') IS NULL
+                                 THEN  ''
+                                 ELSE REPLACE(ST_EF_DW.EQUIPMENT_CURRENT_VALUE, ' ', '')
+                                 END = ''
+                   THEN 'N'
+                   WHEN ST_EF_DW.RECIPE_ID_PREFIX_VALUE <> 'MIX'
+                    AND ST_EF_DW.SPEC_INPUT_CHECK_FLAG <> 'Y'
+                    AND CASE WHEN REPLACE(DOWNLOAD_VALUE, ' ', '') IS NULL
+                             THEN ''
+                             ELSE REPLACE(DOWNLOAD_VALUE, ' ', '')
+                             END = ''
+                   THEN 'N'
+                   WHEN CASE WHEN ST_EF_DW.DOWNLOAD_CRITERION_CODE IS NULL
+                             THEN 'PARAMETER'
+                             ELSE ST_EF_DW.DOWNLOAD_CRITERION_CODE
+                             END = 'EQUIPMENT'
+                        AND ST_EF_DW.GRADE_CODE = '3'
+                        AND ST_EF_DW.EQUIPMENT_DOWNLOAD_TYPE_CODE = 'CURRENT'
+                        AND CASE WHEN ST_EF_DW.SPEC_TARGET_VALUE IS NULL
+                                 THEN ''
+                                 ELSE ST_EF_DW.SPEC_TARGET_VALUE
+                                 END <> ''
+                   THEN 'Y'
+                   WHEN CASE WHEN ST_EF_DW.DOWNLOAD_CRITERION_CODE IS NULL
+                             THEN 'PARAMETER'
+                             ELSE ST_EF_DW.DOWNLOAD_CRITERION_CODE
+                             END = 'PARAMETER'
+                        AND ST_EF_DW.GRADE_CODE = '3'
+                        AND ST_EF_DW.PARAMETER_DOWNLOAD_TYPE_CODE = 'CURRENT'
+                        AND CASE WHEN ST_EF_DW.SPEC_TARGET_VALUE IS NULL
+                                 THEN ''
+                                 ELSE ST_EF_DW.SPEC_TARGET_VALUE
+                                 END <> ''
+                   THEN 'Y'
+                   WHEN CASE WHEN ST_EF_DW.DOWNLOAD_CRITERION_CODE IS NULL
+                             THEN 'PARAMETER'
+                             ELSE ST_EF_DW.DOWNLOAD_CRITERION_CODE
+                             END = 'EQUIPMENT'
+                        AND (ST_EF_DW.GRADE_CODE = '1' OR ST_EF_DW.GRADE_CODE = '2')
+                        AND ST_EF_DW.EQUIPMENT_DOWNLOAD_TYPE_CODE = 'SPEC'
+                   THEN 'N'
+                   WHEN CASE WHEN ST_EF_DW.DOWNLOAD_CRITERION_CODE IS NULL
+                             THEN 'PARAMETER'
+                             ELSE ST_EF_DW.DOWNLOAD_CRITERION_CODE
+                             END = 'PARAMETER'
+                        AND (ST_EF_DW.GRADE_CODE = '1' OR ST_EF_DW.GRADE_CODE = '2')
+                        AND ST_EF_DW.PARAMETER_DOWNLOAD_TYPE_CODE = 'SPEC'
+                   THEN 'N'
+                   WHEN CASE WHEN ST_EF_DW.DOWNLOAD_CRITERION_CODE IS NULL
+                             THEN 'PARAMETER'
+                             ELSE ST_EF_DW.DOWNLOAD_CRITERION_CODE
+                             END = 'EQUIPMENT'
+                        AND ST_EF_DW.GRADE_CODE = '3'
+                        AND ST_EF_DW.EQUIPMENT_DOWNLOAD_TYPE_CODE = 'SPEC'
+                        AND CASE WHEN ST_EF_DW.SPEC_TARGET_VALUE IS NULL
+                                 THEN ''
+                                 ELSE ST_EF_DW.SPEC_TARGET_VALUE
+                                 END = ''
+                   THEN 'N'
+                   WHEN CASE WHEN ST_EF_DW.DOWNLOAD_CRITERION_CODE IS NULL
+                             THEN 'PARAMETER'
+                             ELSE ST_EF_DW.DOWNLOAD_CRITERION_CODE
+                             END = 'PARAMETER'
+                        AND ST_EF_DW.GRADE_CODE = '3'
+                        AND ST_EF_DW.PARAMETER_DOWNLOAD_TYPE_CODE = 'SPEC'
+                        AND CASE WHEN ST_EF_DW.SPEC_TARGET_VALUE IS NULL
+                                 THEN ''
+                                 ELSE ST_EF_DW.SPEC_TARGET_VALUE
+                                 END = ''
+                   THEN 'N'
+                   WHEN CASE WHEN ST_EF_DW.DOWNLOAD_CRITERION_CODE IS NULL
+                             THEN 'PARAMETER'
+                             ELSE ST_EF_DW.DOWNLOAD_CRITERION_CODE
+                             END = 'EQUIPMENT'
+                        AND (ST_EF_DW.GRADE_CODE = '1' OR ST_EF_DW.GRADE_CODE = '2')
+                        AND ST_EF_DW.EQUIPMENT_DOWNLOAD_TYPE_CODE = 'CURRENT'
+                   THEN 'N'
+                   WHEN CASE WHEN ST_EF_DW.DOWNLOAD_CRITERION_CODE IS NULL
+                             THEN 'PARAMETER'
+                             ELSE ST_EF_DW.DOWNLOAD_CRITERION_CODE
+                             END = 'PARAMETER'
+                        AND (ST_EF_DW.GRADE_CODE = '1' OR ST_EF_DW.GRADE_CODE = '2')
+                        AND ST_EF_DW.PARAMETER_DOWNLOAD_TYPE_CODE = 'CURRENT'
+                   THEN 'N'
+                   ELSE 'Y'
+                   END),
+       ECV2.DOWNLOAD_FLAG = ( /* ?ㅼ슫濡쒕뱶 ?щ? */
+            CASE WHEN ST_EF_DW.RMS_USE_FLAG = 'N'
+                   THEN 'N'
+                   WHEN ST_EF_DW.SPEC_TYPE_CODE <> 'F' AND ST_EF_DW.SPEC_TYPE_CODE <> 'R'
+                   THEN 'N'
+                   WHEN (
+                           SELECT CASE WHEN MIN('Y') IS NULL
+                                       THEN 'N'
+                                       ELSE MIN('Y')
+                                       END
+                           FROM RMSPLUS.TB_RMS_PROD_EXCEPT_PARAM_INFO XP WITH(NOLOCK)
+                          WHERE XP.EQUIPMENT_ID = #{equipmentId}
+                            AND XP.PRODUCT_SPECIFICATION_ID = #{productSpecificationId}
+                            AND XP.PARAMETER_ID = ST_EF_DW.PARAMETER_ID
+                            AND XP.EXCEPT_FLAG = 'Y') = 'Y'
+                   THEN 'N'
+                   WHEN CASE WHEN ST_EF_DW.DOWNLOAD_CRITERION_CODE IS NULL
+                             THEN 'PARAMETER'
+                             ELSE ST_EF_DW.DOWNLOAD_CRITERION_CODE
+                             END = 'EQUIPENT'
+                        AND ST_EF_DW.EQUIPMENT_DOWNLOAD_TYPE_CODE = 'LAST'
+                        AND CASE WHEN REPLACE(ST_EF_DW.EQUIPMENT_CURRENT_VALUE, ' ', '') IS NULL
+                                 THEN ''
+                                 ELSE REPLACE(ST_EF_DW.EQUIPMENT_CURRENT_VALUE, ' ', '')
+                                 END = ''
+                   THEN 'N'
+                   WHEN CASE WHEN ST_EF_DW.DOWNLOAD_CRITERION_CODE IS NULL
+                             THEN 'PARAMETER'
+                             ELSE ST_EF_DW.DOWNLOAD_CRITERION_CODE
+                             END = 'PARAMETER'
+                        AND ST_EF_DW.PARAMETER_DOWNLOAD_TYPE_CODE = 'LAST'
+                        AND CASE WHEN REPLACE(ST_EF_DW.EQUIPMENT_CURRENT_VALUE, ' ', '') IS NULL
+                                 THEN  ''
+                                 ELSE REPLACE(ST_EF_DW.EQUIPMENT_CURRENT_VALUE, ' ', '')
+                                 END = ''
+                   THEN 'N'
+                   WHEN ST_EF_DW.RECIPE_ID_PREFIX_VALUE <> 'MIX'
+                    AND ST_EF_DW.SPEC_INPUT_CHECK_FLAG <> 'Y'
+                    AND CASE WHEN REPLACE(DOWNLOAD_VALUE, ' ', '') IS NULL
+                             THEN ''
+                             ELSE REPLACE(DOWNLOAD_VALUE, ' ', '')
+                             END = ''
+                   THEN 'N'
+                   WHEN CASE WHEN ST_EF_DW.DOWNLOAD_CRITERION_CODE IS NULL
+                             THEN 'PARAMETER'
+                             ELSE ST_EF_DW.DOWNLOAD_CRITERION_CODE
+                             END = 'EQUIPMENT'
+                        AND ST_EF_DW.GRADE_CODE = '3'
+                        AND ST_EF_DW.EQUIPMENT_DOWNLOAD_TYPE_CODE = 'CURRENT'
+                        AND CASE WHEN ST_EF_DW.SPEC_TARGET_VALUE IS NULL
+                                 THEN ''
+                                 ELSE ST_EF_DW.SPEC_TARGET_VALUE
+                                 END <> ''
+                   THEN 'Y'
+                   WHEN CASE WHEN ST_EF_DW.DOWNLOAD_CRITERION_CODE IS NULL
+                             THEN 'PARAMETER'
+                             ELSE ST_EF_DW.DOWNLOAD_CRITERION_CODE
+                             END = 'PARAMETER'
+                        AND ST_EF_DW.GRADE_CODE = '3'
+                        AND ST_EF_DW.PARAMETER_DOWNLOAD_TYPE_CODE = 'CURRENT'
+                        AND CASE WHEN ST_EF_DW.SPEC_TARGET_VALUE IS NULL
+                                 THEN ''
+                                 ELSE ST_EF_DW.SPEC_TARGET_VALUE
+                                 END <> ''
+                   THEN 'Y'
+                   WHEN CASE WHEN ST_EF_DW.DOWNLOAD_CRITERION_CODE IS NULL
+                             THEN 'PARAMETER'
+                             ELSE ST_EF_DW.DOWNLOAD_CRITERION_CODE
+                             END = 'EQUIPMENT'
+                        AND (ST_EF_DW.GRADE_CODE = '1' OR ST_EF_DW.GRADE_CODE = '2')
+                        AND ST_EF_DW.EQUIPMENT_DOWNLOAD_TYPE_CODE = 'SPEC'
+                   THEN 'N'
+                   WHEN CASE WHEN ST_EF_DW.DOWNLOAD_CRITERION_CODE IS NULL
+                             THEN 'PARAMETER'
+                             ELSE ST_EF_DW.DOWNLOAD_CRITERION_CODE
+                             END = 'PARAMETER'
+                        AND (ST_EF_DW.GRADE_CODE = '1' OR ST_EF_DW.GRADE_CODE = '2')
+                        AND ST_EF_DW.PARAMETER_DOWNLOAD_TYPE_CODE = 'SPEC'
+                   THEN 'N'
+                   WHEN CASE WHEN ST_EF_DW.DOWNLOAD_CRITERION_CODE IS NULL
+                             THEN 'PARAMETER'
+                             ELSE ST_EF_DW.DOWNLOAD_CRITERION_CODE
+                             END = 'EQUIPMENT'
+                        AND ST_EF_DW.GRADE_CODE = '3'
+                        AND ST_EF_DW.EQUIPMENT_DOWNLOAD_TYPE_CODE = 'SPEC'
+                        AND CASE WHEN ST_EF_DW.SPEC_TARGET_VALUE IS NULL
+                                 THEN ''
+                                 ELSE ST_EF_DW.SPEC_TARGET_VALUE
+                                 END = ''
+                   THEN 'N'
+                   WHEN CASE WHEN ST_EF_DW.DOWNLOAD_CRITERION_CODE IS NULL
+                             THEN 'PARAMETER'
+                             ELSE ST_EF_DW.DOWNLOAD_CRITERION_CODE
+                             END = 'PARAMETER'
+                        AND ST_EF_DW.GRADE_CODE = '3'
+                        AND ST_EF_DW.PARAMETER_DOWNLOAD_TYPE_CODE = 'SPEC'
+                        AND CASE WHEN ST_EF_DW.SPEC_TARGET_VALUE IS NULL
+                                 THEN ''
+                                 ELSE ST_EF_DW.SPEC_TARGET_VALUE
+                                 END = ''
+                   THEN 'N'
+                   WHEN CASE WHEN ST_EF_DW.DOWNLOAD_CRITERION_CODE IS NULL
+                             THEN 'PARAMETER'
+                             ELSE ST_EF_DW.DOWNLOAD_CRITERION_CODE
+                             END = 'EQUIPMENT'
+                        AND (ST_EF_DW.GRADE_CODE = '1' OR ST_EF_DW.GRADE_CODE = '2')
+                        AND ST_EF_DW.EQUIPMENT_DOWNLOAD_TYPE_CODE = 'CURRENT'
+                   THEN 'N'
+                   WHEN CASE WHEN ST_EF_DW.DOWNLOAD_CRITERION_CODE IS NULL
+                             THEN 'PARAMETER'
+                             ELSE ST_EF_DW.DOWNLOAD_CRITERION_CODE
+                             END = 'PARAMETER'
+                        AND (ST_EF_DW.GRADE_CODE = '1' OR ST_EF_DW.GRADE_CODE = '2')
+                        AND ST_EF_DW.PARAMETER_DOWNLOAD_TYPE_CODE = 'CURRENT'
+                   THEN 'N'
+                   ELSE 'Y'
+                   END)
+   FROM (
+                  SELECT ST_EF.FACILITY_CODE,
+                  ST_EF.RECIPE_ID_PREFIX_VALUE,
+                  ST_EF.EQUIPMENT_ID,
+                  ST_EF.FINAL_VALUE_SAVE_FLAG,
+                  ST_EF.DOWNLOAD_CRITERION_CODE,
+                  ST_EF.EQUIPMENT_DOWNLOAD_TYPE_CODE,
+                  ST_EF.PRODUCT_SPECIFICATION_ID,
+                  ST_EF.PRODUCT_SPECIFICATION_VERSION,
+                  ST_EF.RECIPE_ID,
+                  ST_EF.RECIPE_VERSION,
+                  ST_EF.RECIPE_MAP_VERSION,
+                  ST_EF.PARAMETER_ID,
+                  ST_EF.SPEC_INPUT_CHECK_FLAG,
+                  ST_EF.RMS_USE_FLAG,
+                  ST_EF.SPEC_TYPE_CODE,
+                  ST_EF.EQUIPMENT_PARAMETER_ID,
+                  ST_EF.GRADE_CODE,
+                  ST_EF.PARAMETER_DOWNLOAD_TYPE_CODE,
+                  ST_EF.SPEC_TARGET_VALUE,
+                  ST_EF.EQUIPMENT_LAST_VALUE,
+                  ECV.EQUIPMENT_VALUE AS EQUIPMENT_CURRENT_VALUE,
+                  CASE WHEN ST_EF.DOWNLOAD_CRITERION_CODE = 'EQUIPMENT'
+                         THEN
+                               CASE WHEN ST_EF.GRADE_CODE = '1' OR ST_EF.GRADE_CODE = '2'
+                                      THEN
+                                             CASE WHEN ST_EF.FINAL_VALUE_SAVE_FLAG = 'Y'
+                                                   AND ST_EF.EQUIPMENT_DOWNLOAD_TYPE_CODE = 'LAST'
+                                                    THEN CASE WHEN ST_EF.EQUIPMENT_LAST_VALUE IS NULL
+                                                              THEN ECV.EQUIPMENT_VALUE
+                                                              ELSE ST_EF.EQUIPMENT_LAST_VALUE
+                                                              END
+                                                    ELSE ECV.EQUIPMENT_VALUE
+                                                    END
+                                      WHEN ST_EF.GRADE_CODE = '3'
+                                      THEN
+                                           CASE WHEN ST_EF.FINAL_VALUE_SAVE_FLAG = 'Y'
+                                                 AND ST_EF.EQUIPMENT_DOWNLOAD_TYPE_CODE = 'LAST'
+                                                THEN CASE WHEN ST_EF.EQUIPMENT_LAST_VALUE IS NULL
+                                                          THEN ST_EF.SPEC_TARGET_VALUE
+                                                          ELSE ST_EF.EQUIPMENT_LAST_VALUE
+                                                          END
+                                                   ELSE
+                                                        CASE WHEN CASE WHEN ST_EF.SPEC_TARGET_VALUE IS NULL
+                                                                       THEN ''
+                                                                       ELSE ST_EF.SPEC_TARGET_VALUE
+                                                                       END = ''
+                                                             THEN ECV.EQUIPMENT_VALUE /* (default) */
+                                                             ELSE ST_EF.SPEC_TARGET_VALUE
+                                                             END
+                                      END
+                                      ELSE NULL
+                                      END
+                         WHEN ST_EF.DOWNLOAD_CRITERION_CODE = 'PARAMETER'
+                         THEN
+                                CASE WHEN ST_EF.GRADE_CODE = '1' OR ST_EF.GRADE_CODE = '2'
+                                       THEN
+                                              CASE WHEN ST_EF.FINAL_VALUE_SAVE_FLAG = 'Y' AND ST_EF.PARAMETER_DOWNLOAD_TYPE_CODE = 'LAST'
+                                                 THEN CASE WHEN ST_EF.EQUIPMENT_LAST_VALUE IS NULL
+                                                           THEN ECV.EQUIPMENT_VALUE ELSE ST_EF.EQUIPMENT_LAST_VALUE
+                                                           END /* ?ㅻ퉬 理쒖쥌媛??놁쑝硫??꾩옱媛?*/
+                                                  ELSE ECV.EQUIPMENT_VALUE
+                                                  END
+                                       WHEN ST_EF.GRADE_CODE = '3'
+                                       THEN
+                                              CASE WHEN ST_EF.FINAL_VALUE_SAVE_FLAG = 'Y' AND ST_EF.PARAMETER_DOWNLOAD_TYPE_CODE = 'LAST'
+                                              THEN CASE WHEN ST_EF.EQUIPMENT_LAST_VALUE IS NULL
+                                                        THEN ST_EF.SPEC_TARGET_VALUE
+                                                        ELSE ST_EF.EQUIPMENT_LAST_VALUE
+                                                        END /* ?ㅻ퉬 理쒖쥌媛??놁쑝硫??꾩옱媛?*/
+                                              ELSE
+                                                 CASE WHEN CASE WHEN ST_EF.SPEC_TARGET_VALUE IS NULL
+                                                                THEN ''
+                                                                ELSE ST_EF.SPEC_TARGET_VALUE
+                                                                END = ''
+                                                      THEN ECV.EQUIPMENT_VALUE /* (default) */
+                                                      ELSE ST_EF.SPEC_TARGET_VALUE
+                                                      END
+                                              END
+                                       ELSE NULL /* ERROR (Invalid Grade Case) */
+                                       END
+                      ELSE NULL
+                      END AS DOWNLOAD_VALUE /* ?ㅼ슫濡쒕뱶 媛?*/
+                  FROM (
+                              SELECT STV.FACILITY_CODE,
+                                       STV.RECIPE_ID_PREFIX_VALUE,
+                                       STV.EQUIPMENT_ID,
+                                       STV.FINAL_VALUE_SAVE_FLAG,
+                                       STV.DOWNLOAD_CRITERION_CODE,
+                                       STV.EQUIPMENT_DOWNLOAD_TYPE_CODE,
+                                       STV.PRODUCT_SPECIFICATION_ID,
+                                       STV.PRODUCT_SPECIFICATION_VERSION,
+                                       STV.RECIPE_ID,
+                                       STV.RECIPE_VERSION,
+                                       STV.RECIPE_MAP_VERSION,
+                                       STV.PARAMETER_ID,
+                                     STV.SPEC_INPUT_CHECK_FLAG,
+                                       STV.RMS_USE_FLAG,
+                                       STV.SPEC_TYPE_CODE,
+                                       STV.EQUIPMENT_PARAMETER_ID,
+                                       STV.GRADE_CODE,
+                                       STV.PARAMETER_DOWNLOAD_TYPE_CODE,
+                                       STV.SPEC_TARGET_VALUE,
+                                       EFV.UPLOAD_VALUE AS EQUIPMENT_LAST_VALUE
+                                FROM SPEC_TARGET_VALUE STV
+                                LEFT JOIN EQUIPMENT_FINAL_VALUE EFV
+                                  ON (EFV.FACILITY_CODE = STV.FACILITY_CODE
+                                 AND EFV.EQUIPMENT_ID = STV.EQUIPMENT_ID
+                                 AND EFV.PRODUCT_SPECIFICATION_ID = STV.PRODUCT_SPECIFICATION_ID
+                                 AND EFV.PRODUCT_SPECIFICATION_VERSION = STV.PRODUCT_SPECIFICATION_VERSION
+                                 AND EFV.PARAMETER_ID = STV.PARAMETER_ID)
+                  ) ST_EF /* ?ㅽ럺媛?理쒖쥌媛?*/
+                  INNER JOIN RMSPLUS.TB_RMS_EQP_REQ_PARAM_DOWN_INFO ECV WITH(NOLOCK)
+                     ON ECV.EQUIPMENT_PARAMETER_ID = ST_EF.EQUIPMENT_PARAMETER_ID
+                  WHERE ECV.FUNCTION_NAME = #{functionName}
+                    AND ECV.TRANSACTION_SERIAL_NO = #{transactionSerialNo}
+                    AND ECV.PARAMETER_FLAG = #{parameterFlag}
+            ) ST_EF_DW /* ?ㅽ럺媛? 理쒖쥌媛? ?ㅼ슫濡쒕뱶 媛?*/
+  INNER JOIN RMSPLUS.TB_RMS_EQP_REQ_PARAM_DOWN_INFO ECV2 WITH(NOLOCK)
+     ON (ECV2.EQUIPMENT_PARAMETER_ID = ST_EF_DW.EQUIPMENT_PARAMETER_ID)
+  WHERE ECV2.FUNCTION_NAME = #{functionName}
+     AND ECV2.TRANSACTION_SERIAL_NO = #{transactionSerialNo}
+     AND ECV2.PARAMETER_FLAG = #{parameterFlag}
+
+]]>
