@@ -11,7 +11,8 @@ export default function AssetContent() {
 
   useEffect(() => {
     async function fetchData() {
-      const data = await requestGetIncomeHistory();
+      var data = [];
+      data = await requestGetIncomeHistory();
       setTableData(data);
     }
     fetchData();
@@ -20,7 +21,7 @@ export default function AssetContent() {
   const requestGetIncomeHistory = async () => {
     var userId = getLoginUserId();
     if (!userId)
-      return;
+      return [];
 
     const jRequest = {
       commandName: 'asset.getIncomeHistory',
