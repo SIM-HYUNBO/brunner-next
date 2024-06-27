@@ -18,10 +18,14 @@ export default function AssetContent() {
   }, []);
 
   const requestGetIncomeHistory = async () => {
+    var userId = getLoginUserId();
+    if (!userId)
+      return;
+
     const jRequest = {
       commandName: 'asset.getIncomeHistory',
       systemCode: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE,
-      userId: getLoginUserId(),
+      userId: userId,
     };
 
     const jResponse = await requestServer('POST', JSON.stringify(jRequest));
