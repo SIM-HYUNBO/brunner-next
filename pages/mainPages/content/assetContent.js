@@ -91,22 +91,32 @@ export default function AssetContent() {
 
   const handleEdit = (rowIndex, columnId, value) => {
     const newData = [...tableData];
-    const newValue = value.replace(/,/g, ''); // 콤마 제거
-    newData[rowIndex][columnId] = newValue;
+    let parsedValue = value.replace(/[^0-9.-]/g, '').replace(/,/g, ''); // 숫자로 변환하여 콤마 제거
+    newData[rowIndex][columnId] = parsedValue;
     setTableData(newData);
-    setEditedRows((prevEditedRows) => new Set([...prevEditedRows, rowIndex])); // Track edited row
+    setEditedRows((prevEditedRows) => new Set([...prevEditedRows, rowIndex]));
   };
 
   const handleSave = async (row) => {
     const userId = getLoginUserId();
     if (!userId) return;
 
+    let amount = row.values.amount;
+    // Remove commas from amount string before converting to number
+    amount = amount.replace(/,/g, '');
+
+    // Check if amount is a valid number
+    if (isNaN(Number(amount))) {
+      alert('유효하지 않은 금액 형식입니다.');
+      return;
+    }
+
     const jRequest = {
       commandName: 'asset.updateIncome',
       systemCode: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE,
       userId: userId,
       historyId: row.original.history_id,
-      amount: Number(row.values.amount.replace(/[^0-9.-]/g, '').replace(/,/g, '')), // 숫자로 변환하여 전송
+      amount: Number(amount), // Convert to number
       comments: row.values.comments,
     };
 
@@ -126,110 +136,100 @@ export default function AssetContent() {
     }
   };
 
-  const handleDelete = async (rowIndex) => {
-    const userId = getLoginUserId();
-    if (!userId) return;
-
-    const confirmed = window.confirm("정말로 이 항목을 삭제하시겠습니까?");
-    if (!confirmed) return;
-
-    const historyId = tableData[rowIndex].history_id;
-
-    const jRequest = {
-      commandName: 'asset.deleteIncome',
-      systemCode: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE,
-      userId: userId,
-      historyId: historyId,
-    };
-
-    const jResponse = await requestServer('POST', JSON.stringify(jRequest));
-
-    if (jResponse.error_code === 0) {
-      alert('수익 내역이 삭제되었습니다.');
-      const updatedData = tableData.filter((item, index) => index !== rowIndex);
-      setTableData(updatedData);
-    } else {
-      alert(JSON.stringify(jResponse.error_message));
-    }
-  };
-
   const handleRefresh = () => {
     fetchData(); // 데이터 새로고침
   };
 
-  const editColumn = {
-    Header: 'Edit',
-    accessor: 'edit',
-    Cell: ({ row }) => (
-      <button
-        onClick={() => setEditedRows((prev) => new Set([...prev, row.index]))}
-        className="mr-2 text-indigo-600 hover:text-indigo-900 bg-yellow-200 py-1 px-3 rounded"
-      >
-        편집
-      </button>
-    ),
-  };
-
-  const deleteColumn = {
-    Header: 'Delete',
-    accessor: 'delete',
-    Cell: ({ row }) => (
-      <button
-        onClick={() => handleDelete(row.index)}
-        className="text-red-600 hover:text-red-900"
-      >
-        삭제
-      </button>
-    ),
-  };
-
   const columns = React.useMemo(
     () => [
-      { Header: 'ID', accessor: 'history_id', colorClass: 'bg-blue-500 text-blue-100' },
+      {
+        Header: 'ID',
+        accessor: 'history_id',
+        colorClass: 'bg-blue-500 text-blue-100',
+        headerClassName: 'text-center',
+        Cell: ({ row }) => (
+          <div className="text-center w-full">
+            {row.values.history_id}
+          </div>
+        )
+      },
       {
         Header: 'Date&Time',
         accessor: 'create_time',
         colorClass: 'bg-orange-500 text-orange-100',
+        headerClassName: 'text-center',
         Cell: ({ row }) => (
-          <input
-            type="text"
-            ref={(el) => inputRefs.current[row.index] = el} // Ref 설정
-            className={`border-0 focus:ring-0 bg-transparent w-20 text-sm ${editedRows.has(row.index) ? 'text-gray-900 bg-yellow-200' : 'text-gray-500'}`} // 폭을 15 (숫자 15자리)으로 변경
-            value={row.values.create_time}
-            onChange={(e) => handleEdit(row.index, 'create_time', e.target.value)}
-          />
+          <div className="text-center w-full">
+            <input
+              type="text"
+              ref={(el) => inputRefs.current[row.index] = el} // Ref 설정
+              className={`border-0 focus:ring-0 bg-transparent w-20 text-sm ${editedRows.has(row.index) ? 'text-gray-900 bg-yellow-200' : 'text-gray-500'}`}
+              value={row.values.create_time}
+              onChange={(e) => handleEdit(row.index, 'create_time', e.target.value)}
+            />
+          </div>
         ),
       },
       {
         Header: 'Amount',
         accessor: 'amount',
         colorClass: 'bg-blue-500 text-blue-100',
+        headerClassName: 'text-right', // 우측 정렬 헤더
         Cell: ({ row }) => (
-          <input
-            type="text"
-            ref={(el) => inputRefs.current[row.index] = el} // Ref 설정
-            className={`border-0 focus:ring-0 bg-transparent w-20 text-sm ${editedRows.has(row.index) ? 'text-gray-900 bg-yellow-200' : 'text-gray-500'}`} // 폭을 20 (글자 7개 정도)으로 변경
-            value={row.values.amount}
-            onChange={(e) => handleEdit(row.index, 'amount', e.target.value)}
-          />
+          <div className="text-right w-full">
+            <input
+              type="text"
+              ref={(el) => inputRefs.current[row.index] = el} // Ref 설정
+              className={`border-0 focus:ring-0 bg-transparent w-20 text-sm ${editedRows.has(row.index) ? 'text-gray-900 bg-yellow-200' : 'text-gray-500'}`}
+              value={Number(row.values.amount).toLocaleString()} // Amount with comma separators
+              onChange={(e) => handleEdit(row.index, 'amount', e.target.value)}
+            />
+          </div>
         ),
       },
       {
         Header: 'Comment',
         accessor: 'comments',
         colorClass: 'bg-green-500 text-green-100',
+        headerClassName: 'text-center', // 가운데 정렬 헤더
         Cell: ({ row }) => (
-          <input
-            type="text"
-            ref={(el) => inputRefs.current[row.index] = el} // Ref 설정
-            className={`border-0 focus:ring-0 bg-transparent w-40 text-sm ${editedRows.has(row.index) ? 'text-gray-900 bg-yellow-200' : 'text-gray-500'}`} // 코멘트 입력란의 폭을 넓힘
-            value={row.values.comments}
-            onChange={(e) => handleEdit(row.index, 'comments', e.target.value)}
-          />
+          <div className="text-center w-full">
+            <input
+              type="text"
+              ref={(el) => inputRefs.current[row.index] = el} // Ref 설정
+              className={`border-0 focus:ring-0 bg-transparent w-40 text-sm ${editedRows.has(row.index) ? 'text-yellow-400 bg-yellow-200' : 'text-gray-500'}`}
+              value={row.values.comments}
+              onChange={(e) => handleEdit(row.index, 'comments', e.target.value)}
+            />
+          </div>
         ),
       },
-      editColumn,
-      deleteColumn,
+      {
+        Header: 'Save',
+        accessor: 'actions',
+        colorClass: 'bg-purple-500 text-green-100',
+        headerClassName: 'text-center', // 헤더 가운데 정렬
+        Cell: ({ row }) => (
+          <div className="flex justify-center w-full">
+            <button onClick={() => handleSave(row)} className="text-sm text-yellow-600 py-1 px-3 rounded">
+              저장
+            </button>
+          </div>
+        ),
+      },
+      {
+        Header: 'Delete',
+        accessor: 'deleteAction',
+        colorClass: 'bg-pink-500 text-green-100',
+        disableSortBy: true,
+        Cell: ({ row }) => (
+          <div className="flex justify-center w-full">
+            <button onClick={() => handleDelete(row.index)} className="text-sm text-red-600 py-1 px-3 rounded">
+              삭제
+            </button>
+          </div>
+        ),
+      },
     ],
     [editedRows]
   );
@@ -252,7 +252,7 @@ export default function AssetContent() {
       </h1>
       <div className="main-governing-text mt-5">
         내자산은 내가 지킨다. <br />
-        시야를 넓혀 최고 수익에 투자하세요.
+        시야를 넓혀 최고 수익에 도전하세요.
       </div>
       <div className="mb-5 flex items-center w-full">
         <input
@@ -262,7 +262,7 @@ export default function AssetContent() {
           value={amountInput}
           onChange={(e) => handleInputChange(e, 'amountInput')}
           placeholder="금액"
-          className="mr-3 p-2 border rounded dark:text-gray-300"
+          className="mr-3 p-2 border rounded dark:text-gray-300 text-right" // 우측 정렬
         />
         <div className="relative flex-grow">
           <input
@@ -296,7 +296,7 @@ export default function AssetContent() {
             {headerGroups.map((headerGroup) => (
               <tr {...headerGroup.getHeaderGroupProps()} className="bg-gray-100">
                 {headerGroup.headers.map((column) => (
-                  <th {...column.getHeaderProps()} className={`py-2 px-3 text-xs font-medium tracking-wider ${column.colorClass}`}>
+                  <th {...column.getHeaderProps()} className={`py-2 px-3 text-xs font-medium tracking-wider ${column.colorClass} text-center`}>
                     {column.render('Header')}
                   </th>
                 ))}
