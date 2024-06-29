@@ -157,10 +157,49 @@ export default function AssetContent() {
     fetchData(); // 데이터 새로고침
   };
 
+  const editColumn = {
+    Header: 'Edit',
+    accessor: 'edit',
+    Cell: ({ row }) => (
+      <button
+        onClick={() => setEditedRows((prev) => new Set([...prev, row.index]))}
+        className="mr-2 text-indigo-600 hover:text-indigo-900 bg-yellow-200 py-1 px-3 rounded"
+      >
+        편집
+      </button>
+    ),
+  };
+
+  const deleteColumn = {
+    Header: 'Delete',
+    accessor: 'delete',
+    Cell: ({ row }) => (
+      <button
+        onClick={() => handleDelete(row.index)}
+        className="text-red-600 hover:text-red-900"
+      >
+        삭제
+      </button>
+    ),
+  };
+
   const columns = React.useMemo(
     () => [
       { Header: 'ID', accessor: 'history_id', colorClass: 'bg-blue-500 text-blue-100' },
-      { Header: 'Date&Time', accessor: 'create_time', colorClass: 'bg-orange-500 text-orange-100' },
+      {
+        Header: 'Date&Time',
+        accessor: 'create_time',
+        colorClass: 'bg-orange-500 text-orange-100',
+        Cell: ({ row }) => (
+          <input
+            type="text"
+            ref={(el) => inputRefs.current[row.index] = el} // Ref 설정
+            className={`border-0 focus:ring-0 bg-transparent w-20 text-sm ${editedRows.has(row.index) ? 'text-gray-900 bg-yellow-200' : 'text-gray-500'}`} // 폭을 15 (숫자 15자리)으로 변경
+            value={row.values.create_time}
+            onChange={(e) => handleEdit(row.index, 'create_time', e.target.value)}
+          />
+        ),
+      },
       {
         Header: 'Amount',
         accessor: 'amount',
@@ -169,7 +208,7 @@ export default function AssetContent() {
           <input
             type="text"
             ref={(el) => inputRefs.current[row.index] = el} // Ref 설정
-            className={`border-0 focus:ring-0 bg-transparent w-full text-sm ${editedRows.has(row.index) ? 'text-gray-900 bg-yellow-200' : 'text-gray-500'}`}
+            className={`border-0 focus:ring-0 bg-transparent w-20 text-sm ${editedRows.has(row.index) ? 'text-gray-900 bg-yellow-200' : 'text-gray-500'}`} // 폭을 20 (글자 7개 정도)으로 변경
             value={row.values.amount}
             onChange={(e) => handleEdit(row.index, 'amount', e.target.value)}
           />
@@ -183,47 +222,25 @@ export default function AssetContent() {
           <input
             type="text"
             ref={(el) => inputRefs.current[row.index] = el} // Ref 설정
-            className={`border-0 focus:ring-0 bg-transparent w-full text-sm ${editedRows.has(row.index) ? 'text-gray-900 bg-yellow-200' : 'text-gray-500'}`}
+            className={`border-0 focus:ring-0 bg-transparent w-40 text-sm ${editedRows.has(row.index) ? 'text-gray-900 bg-yellow-200' : 'text-gray-500'}`} // 코멘트 입력란의 폭을 넓힘
             value={row.values.comments}
             onChange={(e) => handleEdit(row.index, 'comments', e.target.value)}
           />
         ),
       },
-      {
-        Header: 'Actions',
-        accessor: 'actions',
-        Cell: ({ row }) => (
-          <>
-            {editedRows.has(row.index) && (
-              <button
-                onClick={() => handleSave(row)}
-                className="mr-2 text-indigo-600 hover:text-indigo-900 bg-yellow-400 py-1 px-3 rounded"
-              >
-                저장
-              </button>
-            )}
-            {!editedRows.has(row.index) && (
-              <button
-                onClick={() => setEditedRows((prev) => new Set([...prev, row.index]))}
-                className="mr-2 text-indigo-600 hover:text-indigo-900 bg-yellow-200 py-1 px-3 rounded"
-              >
-                편집
-              </button>
-            )}
-            <button
-              onClick={() => handleDelete(row.index)}
-              className="text-red-600 hover:text-red-900"
-            >
-              삭제
-            </button>
-          </>
-        ),
-      },
+      editColumn,
+      deleteColumn,
     ],
     [editedRows]
   );
 
-  const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } = useTable({
+  const {
+    getTableProps,
+    getTableBodyProps,
+    headerGroups,
+    rows,
+    prepareRow
+  } = useTable({
     columns,
     data: tableData,
   });
@@ -237,7 +254,7 @@ export default function AssetContent() {
         내자산은 내가 지킨다. <br />
         시야를 넓혀 최고 수익에 투자하세요.
       </div>
-      <div className="mb-5 flex items-center">
+      <div className="mb-5 flex items-center w-full">
         <input
           type="text"
           ref={(el) => (inputRefs.current['amountInput'] = el)} // Ref 설정
@@ -247,7 +264,7 @@ export default function AssetContent() {
           placeholder="금액"
           className="mr-3 p-2 border rounded dark:text-gray-300"
         />
-        <div className="relative">
+        <div className="relative flex-grow">
           <input
             type="text"
             ref={(el) => (inputRefs.current['commentInput'] = el)} // Ref 설정
@@ -255,20 +272,21 @@ export default function AssetContent() {
             value={commentInput}
             onChange={(e) => handleInputChange(e, 'commentInput')}
             placeholder="코멘트"
-            className="p-2 border rounded dark:text-gray-300"
+            className="p-2 border rounded dark:text-gray-300 w-full" // 코멘트 입력란의 폭을 넓힘
             style={{ marginLeft: '-2px' }}
           />
-          <button
-            onClick={handleAddIncome}
-            className="absolute right-0 top-0 bottom-0 bg-green-500 text-white py-2 px-4 rounded-r hover:bg-green-600"
-          >
-            추가
-          </button>
         </div>
+        <button
+          onClick={handleAddIncome}
+          className="bg-green-500 text-white py-2 px-4 rounded hover:bg-green-600 ml-3"
+          style={{ alignSelf: 'flex-end' }} // 추가 버튼을 오른쪽으로 이동
+        >
+          추가
+        </button>
       </div>
       <button
         onClick={handleRefresh}
-        className="self-end text-white bg-indigo-500 border-0 py-2 px-6 focus:outline-none hover:bg-indigo-600 rounded text-lg mb-3"
+        className="text-white bg-indigo-500 border-0 py-2 px-6 focus:outline-none hover:bg-indigo-600 rounded text-lg mb-3"
       >
         새로고침
       </button>
