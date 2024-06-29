@@ -84,6 +84,10 @@ export default function AssetContent() {
         <h1 className="title-font sm:text-4xl text-3xl mb-10 font-medium text-green-900">
           내자산
         </h1>
+        <div className="main-governing-text mt-5">
+          내자산은 내가 지킨다. <br />
+          시야를 넓혀 최고 수익에 투자하세요.
+        </div>
         <div className="mb-5">
           <input
             type="number"
@@ -114,10 +118,6 @@ export default function AssetContent() {
         >
           새로고침
         </button>
-        <div className="main-governing-text mt-5">
-          내자산은 내가 지킨다. <br />
-          시야를 넓혀 최고 수익에 투자하세요.
-        </div>
         <Table data={tableData} />
       </div>
       <div className="lg:h-2/6 lg:w-2/6">
