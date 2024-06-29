@@ -228,26 +228,16 @@ export default function AssetContent() {
         colorClass: 'bg-purple-500 text-green-100',
         headerClassName: 'text-center', // 헤더 가운데 정렬
         Cell: ({ row }) => (
-          <div className="flex justify-center w-full">
+          <div className="flex justify-center">
             <button onClick={() => handleSave(row)} className="text-sm text-yellow-600 py-1 px-3 rounded">
               저장
             </button>
-          </div>
-        ),
-      },
-      {
-        Header: 'Delete',
-        accessor: 'deleteAction',
-        colorClass: 'bg-pink-500 text-green-100',
-        disableSortBy: true,
-        Cell: ({ row }) => (
-          <div className="flex justify-center w-full">
             <button onClick={() => handleDelete(row.index)} className="text-sm text-red-600 py-1 px-3 rounded">
               삭제
             </button>
           </div>
         ),
-      },
+      }
     ],
     [editedRows]
   );
@@ -334,7 +324,7 @@ export default function AssetContent() {
               return (
                 <tr {...row.getRowProps()} className="">
                   {row.cells.map((cell) => (
-                    <td {...cell.getCellProps()} className="py-2 px-3">
+                    <td {...cell.getCellProps()} className="py-1 px-0 w-0">
                       {cell.render('Cell')}
                     </td>
                   ))}
