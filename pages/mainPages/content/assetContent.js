@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useTable } from 'react-table';
+import { useTable, useSortBy } from 'react-table';
 import requestServer from './../../../components/requestServer';
 import { useRouter } from 'next/router';
 
@@ -140,6 +140,30 @@ export default function AssetContent() {
     fetchData(); // 데이터 새로고침
   };
 
+  const handleDelete = async (rowIndex) => {
+    const userId = getLoginUserId();
+    if (!userId) return;
+
+    const historyId = tableData[rowIndex].history_id;
+
+    const jRequest = {
+      commandName: 'asset.deleteIncome',
+      systemCode: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE,
+      userId: userId,
+      historyId: historyId,
+    };
+
+    const jResponse = await requestServer('POST', JSON.stringify(jRequest));
+
+    if (jResponse.error_code === 0) {
+      alert('수익 내역이 삭제되었습니다.');
+      fetchData(); // 데이터 다시 가져오기
+    } else {
+      alert(JSON.stringify(jResponse.error_message));
+      fetchData(); // 실패 시 데이터 다시 가져오기
+    }
+  };
+
   const columns = React.useMemo(
     () => [
       {
@@ -148,7 +172,7 @@ export default function AssetContent() {
         colorClass: 'bg-blue-500 text-blue-100',
         headerClassName: 'text-center',
         Cell: ({ row }) => (
-          <div className="text-center w-full">
+          <div className='text-center text-sm text-black dark:text-gray-300'>
             {row.values.history_id}
           </div>
         )
@@ -159,14 +183,8 @@ export default function AssetContent() {
         colorClass: 'bg-orange-500 text-orange-100',
         headerClassName: 'text-center',
         Cell: ({ row }) => (
-          <div className="text-center w-full">
-            <input
-              type="text"
-              ref={(el) => inputRefs.current[row.index] = el} // Ref 설정
-              className={`border-0 focus:ring-0 bg-transparent w-20 text-sm ${editedRows.has(row.index) ? 'text-gray-900 bg-yellow-200' : 'text-gray-500'}`}
-              value={row.values.create_time}
-              onChange={(e) => handleEdit(row.index, 'create_time', e.target.value)}
-            />
+          <div className='text-center text-sm text-black dark:text-gray-300'>
+            {row.values.create_time}
           </div>
         ),
       },
@@ -180,7 +198,7 @@ export default function AssetContent() {
             <input
               type="text"
               ref={(el) => inputRefs.current[row.index] = el} // Ref 설정
-              className={`border-0 focus:ring-0 bg-transparent w-20 text-sm ${editedRows.has(row.index) ? 'text-gray-900 bg-yellow-200' : 'text-gray-500'}`}
+              className={`border-0 focus:ring-0 bg-transparent w-20 text-sm text-gray-900 dark:text-gray-300`}
               value={Number(row.values.amount).toLocaleString()} // Amount with comma separators
               onChange={(e) => handleEdit(row.index, 'amount', e.target.value)}
             />
@@ -197,7 +215,7 @@ export default function AssetContent() {
             <input
               type="text"
               ref={(el) => inputRefs.current[row.index] = el} // Ref 설정
-              className={`border-0 focus:ring-0 bg-transparent w-40 text-sm ${editedRows.has(row.index) ? 'text-yellow-400 bg-yellow-200' : 'text-gray-500'}`}
+              className={`border-0 focus:ring-0 bg-transparent w-40 text-sm text-gray-900 dark:text-gray-300`}
               value={row.values.comments}
               onChange={(e) => handleEdit(row.index, 'comments', e.target.value)}
             />
@@ -243,7 +261,7 @@ export default function AssetContent() {
   } = useTable({
     columns,
     data: tableData,
-  });
+  }, useSortBy); // useSortBy 추가
 
   return (
     <div className="lg:flex-grow md:w-1/2 lg:pr-24 md:pr-16 flex flex-col md:items-start md:text-left md:mb-0 items-center text-center">
@@ -296,8 +314,15 @@ export default function AssetContent() {
             {headerGroups.map((headerGroup) => (
               <tr {...headerGroup.getHeaderGroupProps()} className="bg-gray-100">
                 {headerGroup.headers.map((column) => (
-                  <th {...column.getHeaderProps()} className={`py-2 px-3 text-xs font-medium tracking-wider ${column.colorClass} text-center`}>
+                  <th {...column.getHeaderProps(column.getSortByToggleProps())} className={`py-2 px-3 text-xs font-medium tracking-wider ${column.colorClass} text-center`}>
                     {column.render('Header')}
+                    <span>
+                      {column.isSorted
+                        ? column.isSortedDesc
+                          ? ' ▼'
+                          : ' ▲'
+                        : ''}
+                    </span>
                   </th>
                 ))}
               </tr>
@@ -307,7 +332,7 @@ export default function AssetContent() {
             {rows.map((row) => {
               prepareRow(row);
               return (
-                <tr {...row.getRowProps()} className="hover:bg-gray-100">
+                <tr {...row.getRowProps()} className="">
                   {row.cells.map((cell) => (
                     <td {...cell.getCellProps()} className="py-2 px-3">
                       {cell.render('Cell')}
