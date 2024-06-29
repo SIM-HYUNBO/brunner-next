@@ -12,6 +12,12 @@ export default function executeService(txnId, jRequest) {
             case "asset.getIncomeHistory":
                 jResponse = getIncomeHistory(txnId, jRequest);
                 break;
+            case "asset.updateIncome":
+                jResponse = updateIncome(txnId, jRequest);
+                break;
+            case "asset.deleteIncome":
+                jResponse = deleteIncome(txnId, jRequest);
+                break;
             case "asset.addIncome":
                 jResponse = addIncome(txnId, jRequest);
                 break;
@@ -43,14 +49,14 @@ const addIncome = async (txnId, jRequest) => {
 
         // logger.info(`RESULT:\n${JSON.stringify(select_TB_COR_USER_MST_01.rows[0])}\n`);
 
-        if(insert_TB_COR_INCOME_HIST_01.rowCount == 1){
+        if (insert_TB_COR_INCOME_HIST_01.rowCount == 1) {
             jResponse.error_code = 0;
-            jResponse.error_message = "success";    
+            jResponse.error_message = "success";
         }
         else {
             jResponse.error_code = -1;
-            jResponse.error_message = "fail";    
- 
+            jResponse.error_message = "fail";
+
         }
     } catch (e) {
         logger.error(`EXCEPTION:\n${e}`);
@@ -81,6 +87,75 @@ const getIncomeHistory = async (txnId, jRequest) => {
 
         jResponse.error_code = 0;
         jResponse.error_message = "";
+    } catch (e) {
+        logger.error(`EXCEPTION:\n${e}`);
+        jResponse.error_code = -3; // exception
+        jResponse.error_message = `EXCEPTION:\n${e}`;
+    } finally {
+        return jResponse;
+    }
+};
+
+const deleteIncome = async (txnId, jRequest) => {
+    var jResponse = {};
+
+    try {
+        jResponse.commanaName = jRequest.commandName;
+
+        var sql = null
+        sql = serviceSQL.getSQL00('delete_TB_COR_INCOME_HIST', 1);
+        var delete_TB_COR_INCOME_HIST_01 = await database.executeSQL(sql,
+            [
+                jRequest.historyId,
+                jRequest.systemCode,
+                jRequest.userId
+            ]);
+
+        // logger.info(`RESULT:\n${JSON.stringify(select_TB_COR_USER_MST_01.rows[0])}\n`);
+
+        if (delete_TB_COR_INCOME_HIST_01.rowCount === 1) {
+            jResponse.error_code = 0;
+            jResponse.error_message = "success";
+        }
+        else {
+            jResponse.error_code = -1;
+            jResponse.error_message = "fail";
+        }
+    } catch (e) {
+        logger.error(`EXCEPTION:\n${e}`);
+        jResponse.error_code = -3; // exception
+        jResponse.error_message = `EXCEPTION:\n${e}`;
+    } finally {
+        return jResponse;
+    }
+};
+
+const updateIncome = async (txnId, jRequest) => {
+    var jResponse = {};
+
+    try {
+        jResponse.commanaName = jRequest.commandName;
+
+        var sql = null
+        sql = serviceSQL.getSQL00('update_TB_COR_INCOME_HIST', 1);
+        var update_TB_COR_INCOME_HIST_01 = await database.executeSQL(sql,
+            [
+                jRequest.amount,
+                jRequest.comments,
+                jRequest.userId,
+                jRequest.historyId
+            ]);
+
+        // logger.info(`RESULT:\n${JSON.stringify(select_TB_COR_USER_MST_01.rows[0])}\n`);
+
+        if (update_TB_COR_INCOME_HIST_01.rowCount === 1) {
+            jResponse.error_code = 0;
+            jResponse.error_message = "success";
+        }
+        else {
+            jResponse.error_code = -1;
+            jResponse.error_message = "fail";
+        }
     } catch (e) {
         logger.error(`EXCEPTION:\n${e}`);
         jResponse.error_code = -3; // exception
