@@ -1,5 +1,3 @@
-'use strict';
-
 import React, { useState, useEffect } from 'react';
 import { useTable } from 'react-table';
 import requestServer from './../../../components/requestServer';
@@ -48,12 +46,20 @@ export default function AssetContent() {
   const handleAddIncome = async () => {
     const userId = getLoginUserId();
     if (!userId) return;
+    if (!amount) {
+      alert("금액을 입력해주세요.");
+      return;
+    }
+    if (!comment) {
+      alert("코멘트를 입력해주세요.");
+      return;
+    }
 
     const jRequest = {
       commandName: 'asset.addIncome',
       systemCode: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE,
       userId: userId,
-      amount: amount,
+      amount: Number(amount.replace(/[^0-9.-]/g, '').toLocaleString()), // 숫자로 변환하여 전송
       comments: comment,
     };
 
@@ -72,11 +78,31 @@ export default function AssetContent() {
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     if (name === 'amount') {
-      setAmount(value);
+      // 숫자 입력 시 콤마 추가
+      setAmount(value.replace(/[^0-9.-]/g, '').toLocaleString());
     } else if (name === 'comment') {
       setComment(value);
     }
   };
+
+  const columns = React.useMemo(
+    () => [
+      { Header: '순번', accessor: 'history_id', colorClass: 'bg-blue-500 text-blue-100' },
+      { Header: '날짜', accessor: 'create_time', colorClass: 'bg-orange-500 text-orange-100' },
+      { Header: '금액', accessor: 'amount', colorClass: 'bg-blue-500 text-blue-100' },
+      { Header: '코멘트', accessor: 'comments', colorClass: 'bg-green-500 text-green-100' },
+    ],
+    []
+  );
+
+  const formatNumber = (value) => {
+    return Number(value).toLocaleString();
+  };
+
+  const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } = useTable({
+    columns,
+    data: tableData,
+  });
 
   return (
     <>
@@ -90,7 +116,7 @@ export default function AssetContent() {
         </div>
         <div className="mb-5">
           <input
-            type="number"
+            type="text"
             name="amount"
             value={amount}
             onChange={handleInputChange}
@@ -103,7 +129,7 @@ export default function AssetContent() {
             value={comment}
             onChange={handleInputChange}
             placeholder="코멘트"
-            className="mr-3 p-2 border rounded dark:text-gray-300 w-full"
+            className="mr-3 p-2 border rounded dark:text-gray-300 w-full h-20 resize-none"
           />
           <button
             className="inline-flex text-white bg-indigo-500 border-0 py-2 px-6 focus:outline-none hover:bg-indigo-600 rounded text-lg"
@@ -118,72 +144,63 @@ export default function AssetContent() {
         >
           새로고침
         </button>
-        <Table data={tableData} />
+        <Table />
       </div>
       <div className="lg:h-2/6 lg:w-2/6">
         {/* <SupportContentAnimation /> */}
       </div>
     </>
   );
-}
 
-function Table({ data }) {
-  const columns = React.useMemo(
-    () => [
-      { Header: 'Date', accessor: 'create_time', colorClass: 'bg-orange-500 text-orange-100' },
-      { Header: 'Amount', accessor: 'amount', colorClass: 'bg-blue-500 text-blue-100' },
-      { Header: 'Comment', accessor: 'comments', colorClass: 'bg-green-500 text-green-100' },
-    ],
-    []
-  );
+  function Table() {
+    const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } = useTable({
+      columns,
+      data: tableData,
+    });
 
-  const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } = useTable({
-    columns,
-    data,
-  });
-
-  return (
-    <table
-      {...getTableProps()}
-      className="min-w-full divide-y divide-gray-200 dark:bg-gray-800 dark:border-gray-700 dark:text-white"
-    >
-      <thead className="bg-gray-800 dark:bg-gray-600">
-        {headerGroups.map((headerGroup) => (
-          <tr {...headerGroup.getHeaderGroupProps()}>
-            {headerGroup.headers.map((column) => (
-              <th
-                {...column.getHeaderProps()}
-                style={{
-                  textAlign: 'center',
-                }}
-                className={`px-6 py-3 text-left text-xs font-medium uppercase tracking-wider ${column.colorClass} dark:${column.colorClass}`}
-              >
-                {column.render('Header')}
-              </th>
-            ))}
-          </tr>
-        ))}
-      </thead>
-      <tbody {...getTableBodyProps()} className="bg-white divide-y divide-gray-200 dark:bg-gray-800 dark:divide-gray-700">
-        {rows.map((row, rowIndex) => {
-          prepareRow(row);
-          return (
-            <tr
-              {...row.getRowProps()}
-              className={rowIndex % 2 === 0 ? 'bg-gray-50 dark:bg-gray-700' : 'bg-white dark:bg-gray-800'}
-            >
-              {row.cells.map((cell, cellIndex) => (
-                <td
-                  {...cell.getCellProps()}
-                  className={`px-6 py-4 whitespace-nowrap text-sm text-center ${cellIndex === 0 ? 'font-medium' : ''} text-gray-900 dark:text-gray-300`}
+    return (
+      <table
+        {...getTableProps()}
+        className="min-w-full divide-y divide-gray-200 dark:bg-gray-800 dark:border-gray-700 dark:text-white"
+      >
+        <thead className="bg-gray-800 dark:bg-gray-600">
+          {headerGroups.map((headerGroup) => (
+            <tr {...headerGroup.getHeaderGroupProps()}>
+              {headerGroup.headers.map((column) => (
+                <th
+                  {...column.getHeaderProps()}
+                  style={{
+                    textAlign: 'center',
+                  }}
+                  className={`px-6 py-3 text-left text-xs font-medium uppercase tracking-wider ${column.colorClass} dark:${column.colorClass}`}
                 >
-                  {cell.render('Cell')}
-                </td>
+                  {column.render('Header')}
+                </th>
               ))}
             </tr>
-          );
-        })}
-      </tbody>
-    </table>
-  );
+          ))}
+        </thead>
+        <tbody {...getTableBodyProps()} className="bg-white divide-y divide-gray-200 dark:bg-gray-800 dark:divide-gray-700">
+          {rows.map((row, rowIndex) => {
+            prepareRow(row);
+            return (
+              <tr
+                {...row.getRowProps()}
+                className={rowIndex % 2 === 0 ? 'bg-gray-50 dark:bg-gray-700' : 'bg-white dark:bg-gray-800'}
+              >
+                {row.cells.map((cell, cellIndex) => (
+                  <td
+                    {...cell.getCellProps()}
+                    className={`px-6 py-4 whitespace-nowrap text-sm text-center ${cellIndex === 0 ? 'font-medium' : ''} text-gray-900 dark:text-gray-300`}
+                  >
+                    {cell.column.id === 'amount' ? formatNumber(cell.value) : cell.render('Cell')}
+                  </td>
+                ))}
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
+    );
+  }
 }
