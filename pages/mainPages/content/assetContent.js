@@ -137,7 +137,7 @@ export default function AssetContent() {
     const userId = getLoginUserId();
     if (!userId) return;
 
-    const deleteConfirm = confirm("Delete this time?");
+    const deleteConfirm = confirm("Delete this item?");
     if (!deleteConfirm)
       return;
 
