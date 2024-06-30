@@ -3,9 +3,12 @@
 import Layout from '../components/layout'
 import Head from 'next/head'
 import BodySection from '../components/bodySection'
-import HomeContent from './mainPages/content/homeContent'
 import React from 'react';
 import { useEffect } from 'react'
+
+import * as userInfo from './../components/userInfo'
+import HomeContent from './mainPages/content/homeContent'
+import AssetContent from './mainPages/content/assetContent'
 
 // Home 페이지
 export default function Home() {
@@ -26,6 +29,11 @@ export default function Home() {
         <div className="container mx-auto flex px-5 md:flex-row flex-col items-center">
           <HomeContent></HomeContent>
         </div>
+        {(userInfo.isLogin()) &&
+          <div className="container mx-auto flex px-5 md:flex-row flex-col items-center">
+            <AssetContent></AssetContent>
+          </div>
+        }
       </BodySection>
     </Layout>
   )
