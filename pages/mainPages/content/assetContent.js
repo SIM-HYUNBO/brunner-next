@@ -260,7 +260,7 @@ export default function AssetContent() {
         내자산
       </h1>
       <div className="main-governing-text mt-5">
-        내자산은 내가 지킨다. <br />
+        은퇴전 백억 자산가... <br />
         시야를 넓혀 최고 수익에 도전하세요.
       </div>
       <div className="mb-5 flex items-center w-full">
