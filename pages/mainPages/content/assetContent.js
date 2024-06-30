@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useTable, useSortBy } from 'react-table';
 import requestServer from './../../../components/requestServer';
 import { useRouter } from 'next/router';
+import moment from 'moment';
+
 
 export default function AssetContent() {
   const router = useRouter();
@@ -176,12 +178,12 @@ export default function AssetContent() {
         )
       },
       {
-        Header: 'Date&Time(UTC)',
+        Header: 'Date&Time',
         accessor: 'create_time',
         headerClassName: 'text-center bg-orange-500 text-orange-100',
         Cell: ({ row }) => (
           <div className='text-center text-sm text-black dark:text-gray-300'>
-            {row.values.create_time}
+            {getLocalTime(row.values.create_time)}
           </div>
         ),
       },
@@ -246,6 +248,10 @@ export default function AssetContent() {
     data: tableData,
     initialState: { hiddenColumns: ['history_id'] }
   }, useSortBy); // useSortBy 추가
+
+  const getLocalTime = (utcTime) => {
+    return  moment.utc(utcTime).local().format('YY-MM-DD HH:mm:ss') ;
+  }
 
   return (
     <div className="lg:flex-grow md:w-1/2 lg:pr-24 md:pr-16 flex flex-col md:items-start md:text-left md:mb-0 items-center text-center">
