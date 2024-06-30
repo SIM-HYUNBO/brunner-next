@@ -14,7 +14,7 @@ export default function HomeContent() {
           자산 관리
         </h1>
         <div className="main-governing-text">
-          관리만 잘 해도 쉽게 돈 벌수 있습니다.<br />
+          관리만 잘 해도 쉽게 부자될 수 있습니다.<br />
           많은 사람들과 소통으로 삶을 더 행복하게 합니다.<br />
         </div>
         <div className="flex flex-col">
