@@ -26,11 +26,11 @@ export default function Home() {
         <link></link>
       </Head>
       <BodySection>
-        <div className="container mx-auto flex px-5 md:flex-row flex-col items-center mb-20">
+        <div className="container mx-auto flex px-5 md:flex-row flex-col items-center">
           <HomeContent></HomeContent>
         </div>
         {(userInfo.isLogin()) &&
-          <div className="container mx-auto flex px-5 md:flex-row flex-col items-center mt-20">
+          <div className="container mx-auto flex px-5 md:flex-row flex-col items-center">
             <AssetContent></AssetContent>
           </div>
         }
