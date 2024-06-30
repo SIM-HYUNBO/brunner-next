@@ -176,7 +176,7 @@ export default function AssetContent() {
         )
       },
       {
-        Header: 'Date&Time',
+        Header: 'Date&Time(UTC)',
         accessor: 'create_time',
         headerClassName: 'text-center bg-orange-500 text-orange-100',
         Cell: ({ row }) => (
