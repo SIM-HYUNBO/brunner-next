@@ -27,3 +27,7 @@ export const getLoginName = () => {
     return !userInfo?.userName ? '' : userInfo?.userName;
   }
 }
+
+export const isLogin = () => {
+  return getLoginName() ? true: false;
+}
