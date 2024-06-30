@@ -137,6 +137,10 @@ export default function AssetContent() {
     const userId = getLoginUserId();
     if (!userId) return;
 
+    const deleteConfirm = confirm("Delete this time?");
+    if (!deleteConfirm)
+      return;
+
     const historyId = tableData[rowIndex].history_id;
 
     const jRequest = {
