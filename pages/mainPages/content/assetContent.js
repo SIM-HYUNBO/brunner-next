@@ -159,6 +159,7 @@ export default function AssetContent() {
 
   // 수정 처리
   const handleEdit = (rowIdx, comment) => {
+    if(tableData.length === 0) return;
     const updatedData = [...tableData];
     updatedData[rowIdx].comment = comment;
     setTableData(updatedData);
