@@ -19,9 +19,6 @@ export default function Header() {
                     </Link>
                     <span className="ml-3 text-xl"></span>
                     <nav className="md:ml-auto flex flex-wrap items-center text-base justify-center">
-                        <Link className="mr-5 text-gray-600 dark:text-gray-100 hover:text-gray-400" href="/mainPages/asset">
-                            Assets
-                        </Link>
                         <Link className="mr-5 text-gray-600 dark:text-gray-100 hover:text-gray-400" href="/mainPages/support">
                             Support
                         </Link>
