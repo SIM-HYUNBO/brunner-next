@@ -94,9 +94,10 @@ export default function AssetContent() {
   };
 
   // 저장 처리
-  const handleSave = async (row) => {
+  const handleSave = async (tableData, row) => {
     const userId = getLoginUserId();
     if (!userId) return;
+    if (tableData.length === 0) return;
 
     let amount = row.values.amount;
     // Ensure amount is always formatted as a string before replacing commas
@@ -133,7 +134,7 @@ export default function AssetContent() {
   };
 
   // 삭제 처리
-  const handleDelete = async (rowIndex) => {
+  const handleDelete = async (tableData, rowIndex) => {
     const userId = getLoginUserId();
     if (!userId) return;
     if (tableData.length === 0) return;
@@ -163,7 +164,7 @@ export default function AssetContent() {
   };
 
   // 수정 처리
-  const handleEdit = (rowIdx, comment) => {
+  const handleEdit = (tableData, rowIdx, comment) => {
     if (tableData.length === 0) return;
     const updatedData = [...tableData];
     updatedData[rowIdx].comment = comment;
@@ -218,8 +219,8 @@ export default function AssetContent() {
               type="text"
               className={`border-0 focus:ring-0 bg-transparent w-40 text-sm text-gray-900 dark:text-gray-300`}
               value={row.values.comment || ''} // 코멘트 값이 undefined가 되지 않도록
-              onChange={(e) => handleEdit(row.index, e.target.value)}
-              onBlur={() => handleSave(row)} // 입력란을 벗어날 때 저장
+              onChange={(e) => handleEdit(tableData, row.index, e.target.value)}
+              onBlur={() => handleSave(tableData, row)} // 입력란을 벗어날 때 저장
             />
           </div>
         ),
@@ -230,10 +231,10 @@ export default function AssetContent() {
         headerClassName: 'text-center bg-purple-500 text-green-100',
         Cell: ({ row }) => (
           <div className="flex justify-center">
-            <button onClick={() => handleSave(row)} className="text-sm text-yellow-600 py-1 px-3 rounded">
+            <button onClick={() => handleSave(tableData, row)} className="text-sm text-yellow-600 py-1 px-3 rounded">
               저장
             </button>
-            <button onClick={() => handleDelete(row.index)} className="text-sm text-red-600 py-1 px-3 rounded">
+            <button onClick={() => handleDelete(tableData, row.index)} className="text-sm text-red-600 py-1 px-3 rounded">
               삭제
             </button>
           </div>
