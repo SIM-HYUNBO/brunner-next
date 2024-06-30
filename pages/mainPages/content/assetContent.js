@@ -53,11 +53,11 @@ export default function AssetContent() {
     const userId = getLoginUserId();
     if (!userId) return;
     if (!amountInput) {
-      alert("금액을 입력해주세요.");
+      alert("Input amount.");
       return;
     }
     if (!commentInput) {
-      alert("코멘트를 입력해주세요.");
+      alert("Input comment.");
       return;
     }
 
@@ -72,7 +72,7 @@ export default function AssetContent() {
     const jResponse = await requestServer('POST', JSON.stringify(jRequest));
 
     if (jResponse.error_code === 0) {
-      alert('신규 수익 내역이 추가되었습니다.');
+      alert('Successfully added.');
       fetchData(); // 데이터 다시 가져오기
       setAmountInput('');
       setCommentInput('');
@@ -104,7 +104,7 @@ export default function AssetContent() {
     amount = String(amount).replace(/,/g, '');
 
     if (isNaN(Number(amount))) {
-      alert('유효하지 않은 금액 형식입니다.');
+      alert('Invalid number of amount.');
       return;
     }
 
@@ -120,7 +120,7 @@ export default function AssetContent() {
     const jResponse = await requestServer('POST', JSON.stringify(jRequest));
 
     if (jResponse.error_code === 0) {
-      alert('수익 내역이 수정되었습니다.');
+      alert('Successfully updated.');
       fetchData(); // 데이터 다시 가져오기
     } else {
       alert(JSON.stringify(jResponse.error_message));
@@ -155,7 +155,7 @@ export default function AssetContent() {
     const jResponse = await requestServer('POST', JSON.stringify(jRequest));
 
     if (jResponse.error_code === 0) {
-      alert('수익 내역이 삭제되었습니다.');
+      alert('Successfully deleted.');
       fetchData(); // 데이터 다시 가져오기
     } else {
       alert(JSON.stringify(jResponse.error_message));
