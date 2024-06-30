@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useTable, useSortBy } from 'react-table';
 import requestServer from './../../../components/requestServer';
 import { useRouter } from 'next/router';
@@ -8,19 +8,18 @@ export default function AssetContent() {
   const [tableData, setTableData] = useState([]);
   const [amountInput, setAmountInput] = useState('');
   const [commentInput, setCommentInput] = useState('');
-  const [editedRows, setEditedRows] = useState(new Set()); // Set to track edited rows
-  const inputRefs = useRef({}); // Ref for input elements
 
   useEffect(() => {
-    fetchData();
+    fetchData(); // 페이지 로드 시 데이터 가져오기
   }, []);
 
+  // 수익 내역 데이터 가져오기
   const fetchData = async () => {
     const data = await requestGetIncomeHistory();
     setTableData(data);
-    setEditedRows(new Set()); // Reset edited rows on data fetch
   };
 
+  // 수익 내역 요청
   const requestGetIncomeHistory = async () => {
     const userId = getLoginUserId();
     if (!userId) return [];
@@ -41,11 +40,13 @@ export default function AssetContent() {
     }
   };
 
+  // 로그인 사용자 ID 가져오기
   const getLoginUserId = () => {
     const userInfo = process.env.userInfo;
     return userInfo ? userInfo.userId : null;
   };
 
+  // 수익 내역 추가 처리
   const handleAddIncome = async () => {
     const userId = getLoginUserId();
     if (!userId) return;
@@ -78,6 +79,7 @@ export default function AssetContent() {
     }
   };
 
+  // 입력값 변경 처리
   const handleInputChange = (e, inputName) => {
     const { value } = e.target;
     if (inputName === 'amountInput') {
@@ -89,23 +91,15 @@ export default function AssetContent() {
     }
   };
 
-  const handleEdit = (rowIndex, columnId, value) => {
-    const newData = [...tableData];
-    let parsedValue = value.replace(/[^0-9.-]/g, '').replace(/,/g, ''); // 숫자로 변환하여 콤마 제거
-    newData[rowIndex][columnId] = parsedValue;
-    setTableData(newData);
-    setEditedRows((prevEditedRows) => new Set([...prevEditedRows, rowIndex]));
-  };
-
+  // 저장 처리
   const handleSave = async (row) => {
     const userId = getLoginUserId();
     if (!userId) return;
 
     let amount = row.values.amount;
-    // Remove commas from amount string before converting to number
-    amount = amount.replace(/,/g, '');
+    // Ensure amount is always formatted as a string before replacing commas
+    amount = String(amount).replace(/,/g, '');
 
-    // Check if amount is a valid number
     if (isNaN(Number(amount))) {
       alert('유효하지 않은 금액 형식입니다.');
       return;
@@ -116,7 +110,7 @@ export default function AssetContent() {
       systemCode: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE,
       userId: userId,
       historyId: row.original.history_id,
-      amount: Number(amount), // Convert to number
+      amount: Number(amount), // 숫자로 변환
       comment: row.values.comment,
     };
 
@@ -125,21 +119,18 @@ export default function AssetContent() {
     if (jResponse.error_code === 0) {
       alert('수익 내역이 수정되었습니다.');
       fetchData(); // 데이터 다시 가져오기
-      setEditedRows((prevEditedRows) => {
-        const updatedRows = new Set(prevEditedRows);
-        updatedRows.delete(row.index); // 편집 상태 제거
-        return updatedRows;
-      });
     } else {
       alert(JSON.stringify(jResponse.error_message));
       fetchData(); // 실패 시 데이터 다시 가져오기
     }
   };
 
+  // 새로고침 처리
   const handleRefresh = () => {
     fetchData(); // 데이터 새로고침
   };
 
+  // 삭제 처리
   const handleDelete = async (rowIndex) => {
     const userId = getLoginUserId();
     if (!userId) return;
@@ -164,13 +155,20 @@ export default function AssetContent() {
     }
   };
 
+  // 수정 처리
+  const handleEdit = (rowIdx, comment) => {
+    const updatedData = [...tableData];
+    updatedData[rowIdx].comment = comment;
+    setTableData(updatedData);
+  };
+
+  // 테이블 컬럼 정의
   const columns = React.useMemo(
     () => [
       {
         Header: 'ID',
         accessor: 'history_id',
-        colorClass: 'bg-blue-500 text-blue-100',
-        headerClassName: 'text-center',
+        headerClassName: 'text-center bg-blue-500 text-blue-100',
         Cell: ({ row }) => (
           <div className='text-center text-sm text-black dark:text-gray-300'>
             {row.values.history_id}
@@ -180,8 +178,7 @@ export default function AssetContent() {
       {
         Header: 'Date&Time',
         accessor: 'create_time',
-        colorClass: 'bg-orange-500 text-orange-100',
-        headerClassName: 'text-center',
+        headerClassName: 'text-center bg-orange-500 text-orange-100',
         Cell: ({ row }) => (
           <div className='text-center text-sm text-black dark:text-gray-300'>
             {row.values.create_time}
@@ -191,16 +188,14 @@ export default function AssetContent() {
       {
         Header: 'Amount',
         accessor: 'amount',
-        colorClass: 'bg-blue-500 text-blue-100',
-        headerClassName: 'text-right', // 우측 정렬 헤더
+        headerClassName: 'text-right bg-blue-500 text-blue-100',
         Cell: ({ row }) => (
           <div className="text-right w-full">
             <input
               type="text"
-              ref={(el) => inputRefs.current[row.index] = el} // Ref 설정
               className={`border-0 focus:ring-0 bg-transparent w-20 text-sm text-gray-900 dark:text-gray-300`}
-              value={Number(row.values.amount).toLocaleString()} // Amount with comma separators
-              onChange={(e) => handleEdit(row.index, 'amount', e.target.value)}
+              value={Number(row.values.amount).toLocaleString()} // 콤마 포함된 금액
+              readOnly // Amount는 읽기 전용
             />
           </div>
         ),
@@ -208,16 +203,15 @@ export default function AssetContent() {
       {
         Header: 'Comment',
         accessor: 'comment',
-        colorClass: 'bg-green-500 text-green-100',
-        headerClassName: 'text-center', // 가운데 정렬 헤더
+        headerClassName: 'text-center bg-green-500 text-green-100',
         Cell: ({ row }) => (
           <div className="text-center w-full">
             <input
               type="text"
-              ref={(el) => inputRefs.current[row.index] = el} // Ref 설정
               className={`border-0 focus:ring-0 bg-transparent w-40 text-sm text-gray-900 dark:text-gray-300`}
-              value={row.values.comment}
-              onChange={(e) => handleEdit(row.index, 'comment', e.target.value)}
+              value={row.values.comment || ''} // 코멘트 값이 undefined가 되지 않도록
+              onChange={(e) => handleEdit(row.index, e.target.value)}
+              onBlur={() => handleSave(row)} // 입력란을 벗어날 때 저장
             />
           </div>
         ),
@@ -225,8 +219,7 @@ export default function AssetContent() {
       {
         Header: 'Save',
         accessor: 'actions',
-        colorClass: 'bg-purple-500 text-green-100',
-        headerClassName: 'text-center', // 헤더 가운데 정렬
+        headerClassName: 'text-center bg-purple-500 text-green-100',
         Cell: ({ row }) => (
           <div className="flex justify-center">
             <button onClick={() => handleSave(row)} className="text-sm text-yellow-600 py-1 px-3 rounded">
@@ -239,7 +232,7 @@ export default function AssetContent() {
         ),
       }
     ],
-    [editedRows]
+    []
   );
 
   const {
@@ -266,29 +259,27 @@ export default function AssetContent() {
       <div className="mb-5 flex items-center w-full">
         <input
           type="text"
-          ref={(el) => (inputRefs.current['amountInput'] = el)} // Ref 설정
           name="amountInput"
           value={amountInput}
           onChange={(e) => handleInputChange(e, 'amountInput')}
           placeholder="금액"
-          className="mr-3 p-2 border rounded dark:text-gray-300 text-right" // 우측 정렬
+          className="mr-3 p-2 border rounded dark:text-gray-300 text-right"
         />
         <div className="relative flex-grow">
           <input
             type="text"
-            ref={(el) => (inputRefs.current['commentInput'] = el)} // Ref 설정
             name="commentInput"
             value={commentInput}
             onChange={(e) => handleInputChange(e, 'commentInput')}
             placeholder="코멘트"
-            className="p-2 border rounded dark:text-gray-300 w-full" // 코멘트 입력란의 폭을 넓힘
+            className="p-2 border rounded dark:text-gray-300 w-full"
             style={{ marginLeft: '-2px' }}
           />
         </div>
         <button
           onClick={handleAddIncome}
           className="bg-green-500 text-white py-2 px-4 rounded hover:bg-green-600 ml-3"
-          style={{ alignSelf: 'flex-end' }} // 추가 버튼을 오른쪽으로 이동
+          style={{ alignSelf: 'flex-end' }}
         >
           추가
         </button>
@@ -305,7 +296,7 @@ export default function AssetContent() {
             {headerGroups.map((headerGroup) => (
               <tr {...headerGroup.getHeaderGroupProps()} className="bg-gray-100">
                 {headerGroup.headers.map((column) => (
-                  <th {...column.getHeaderProps(column.getSortByToggleProps())} className={`py-2 px-3 text-xs font-medium tracking-wider ${column.colorClass} text-center`}>
+                  <th {...column.getHeaderProps(column.getSortByToggleProps())} className={`py-2 px-3 text-xs font-medium tracking-wider ${column.headerClassName}`}>
                     {column.render('Header')}
                     <span>
                       {column.isSorted
