@@ -136,6 +136,7 @@ export default function AssetContent() {
   const handleDelete = async (rowIndex) => {
     const userId = getLoginUserId();
     if (!userId) return;
+    if (tableData.length === 0) return;
 
     const deleteConfirm = confirm("Delete this item?");
     if (!deleteConfirm)
