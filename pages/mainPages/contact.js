@@ -11,7 +11,7 @@ export default function Contact() {
       <Head>
         <title>Brunner Home</title>
         <meta name="description" content="ContactUs"></meta>
-        <meta rel="icon" href="brunnerLogo.png"></meta>
+        <meta rel="icon" href="/brunnerLogo.png"></meta>
         <link></link>
       </Head>
       <BodySection>

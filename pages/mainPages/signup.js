@@ -74,7 +74,7 @@ export default function Signup() {
       <Head>
         <title>Brunner Home</title>
         <meta name="description" content="서비스플랫폼"></meta>
-        <meta rel="icon" href="brunnerLogo.png"></meta>
+        <meta rel="icon" href="/brunnerLogo.png"></meta>
         <link></link>
       </Head>
       <BodySection>

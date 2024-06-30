@@ -58,7 +58,7 @@ export default function Signin() {
       <Head>
         <title>IT 기술 연구소 - Brunner</title>
         <meta name="description" content="IT 기술 연구소" />
-        <link rel="icon" href="brunnerLogo.png" />
+        <link rel="icon" href="/brunnerLogo.png" />
       </Head>
       <BodySection className="text-gray-600 body-font">
         <div className="container px-5 mx-auto flex flex-wrap items-center">

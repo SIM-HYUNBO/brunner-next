@@ -12,7 +12,7 @@ export default function Support() {
       <Head>
         <title>IT 기술 연구소 - Brunner</title>
         <meta name="description" content="IT 기술 연구소"></meta>
-        <meta rel="icon" href="brunnerLogo.png"></meta>
+        <meta rel="icon" href="/brunnerLogo.png"></meta>
         <link></link>
       </Head>
       <BodySection>
