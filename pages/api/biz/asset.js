@@ -44,7 +44,7 @@ const addIncome = async (txnId, jRequest) => {
                 jRequest.systemCode,
                 jRequest.userId,
                 jRequest.amount,
-                jRequest.comments
+                jRequest.comment
             ]);
 
         // logger.info(`RESULT:\n${JSON.stringify(select_TB_COR_USER_MST_01.rows[0])}\n`);
@@ -141,7 +141,7 @@ const updateIncome = async (txnId, jRequest) => {
         var update_TB_COR_INCOME_HIST_01 = await database.executeSQL(sql,
             [
                 jRequest.amount,
-                jRequest.comments,
+                jRequest.comment,
                 jRequest.userId,
                 jRequest.historyId
             ]);

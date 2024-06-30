@@ -63,7 +63,7 @@ export default function AssetContent() {
       systemCode: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE,
       userId: userId,
       amount: Number(amountInput.replace(/[^0-9.-]/g, '').replace(/,/g, '')), // 숫자로 변환하여 전송
-      comments: commentInput,
+      comment: commentInput,
     };
 
     const jResponse = await requestServer('POST', JSON.stringify(jRequest));
@@ -117,7 +117,7 @@ export default function AssetContent() {
       userId: userId,
       historyId: row.original.history_id,
       amount: Number(amount), // Convert to number
-      comments: row.values.comments,
+      comment: row.values.comment,
     };
 
     const jResponse = await requestServer('POST', JSON.stringify(jRequest));
@@ -207,7 +207,7 @@ export default function AssetContent() {
       },
       {
         Header: 'Comment',
-        accessor: 'comments',
+        accessor: 'comment',
         colorClass: 'bg-green-500 text-green-100',
         headerClassName: 'text-center', // 가운데 정렬 헤더
         Cell: ({ row }) => (
@@ -216,8 +216,8 @@ export default function AssetContent() {
               type="text"
               ref={(el) => inputRefs.current[row.index] = el} // Ref 설정
               className={`border-0 focus:ring-0 bg-transparent w-40 text-sm text-gray-900 dark:text-gray-300`}
-              value={row.values.comments}
-              onChange={(e) => handleEdit(row.index, 'comments', e.target.value)}
+              value={row.values.comment}
+              onChange={(e) => handleEdit(row.index, 'comment', e.target.value)}
             />
           </div>
         ),
@@ -251,6 +251,7 @@ export default function AssetContent() {
   } = useTable({
     columns,
     data: tableData,
+    initialState: { hiddenColumns: ['history_id'] }
   }, useSortBy); // useSortBy 추가
 
   return (
