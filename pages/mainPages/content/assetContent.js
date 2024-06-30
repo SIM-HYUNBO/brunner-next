@@ -159,7 +159,7 @@ export default function AssetContent() {
 
   // 수정 처리
   const handleEdit = (rowIdx, comment) => {
-    if(tableData.length === 0) return;
+    if (tableData.length === 0) return;
     const updatedData = [...tableData];
     updatedData[rowIdx].comment = comment;
     setTableData(updatedData);
@@ -251,7 +251,7 @@ export default function AssetContent() {
   }, useSortBy); // useSortBy 추가
 
   const getLocalTime = (utcTime) => {
-    return  moment.utc(utcTime).local().format('YY-MM-DD HH:mm:ss') ;
+    return moment.utc(utcTime).local().format('YY-MM-DD HH:mm:ss');
   }
 
   return (
@@ -260,8 +260,9 @@ export default function AssetContent() {
         내자산
       </h1>
       <div className="main-governing-text mt-5">
-        은퇴전 백억 자산가... <br />
-        시야를 넓혀 최고 수익에 도전하세요.
+        시야를 넓혀 최고 수익에 도전하고 <br />
+        은퇴전 백억 자산가가 되세요.
+
       </div>
       <div className="mb-5 flex items-center w-full">
         <input
