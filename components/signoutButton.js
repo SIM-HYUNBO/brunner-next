@@ -1,7 +1,39 @@
 import requestServer from './requestServer'
+import { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
+import BrunnerMessageBox from './BrunnerMessageBox';
 
 export default function SignoutButton() {
+
+  const [modalContent, setModalContent] = useState({
+    isOpen: false,
+    message: '',
+    onConfirm: () => { },
+    onClose: () => { }
+  });
+
+  // 모달 열기 함수
+  const openModal = (message) => {
+    return new Promise((resolve, reject) => {
+      setModalContent({
+        isOpen: true,
+        message: message,
+        onConfirm: (result) => resolve(result),
+        onCancel: () => reject(false)
+      });
+    });
+  };
+
+  // 모달 닫기 함수
+  const closeModal = () => {
+    setModalContent({
+      isOpen: false,
+      message: '',
+      onConfirm: () => { },
+      onCancel: () => { }
+    });
+  };
+
   const router = useRouter();
 
   const requestSignout = async () => {
@@ -19,7 +51,7 @@ export default function SignoutButton() {
       process.env.userInfo = null;
       router.push('/')
     } else {
-      alert(JSON.stringify(result.error_message));
+      openModal(JSON.stringify(result.error_message), null);
     }
   }
 
@@ -36,6 +68,13 @@ export default function SignoutButton() {
 
   return (
     <>
+      <BrunnerMessageBox
+        isOpen={modalContent.isOpen}
+        message={modalContent.message}
+        onConfirm={modalContent.onConfirm}
+        onClose={modalContent.onClose}
+      />
+
       {getLoginId() &&
         <button className="inline-flex items-center 
                                   boder-0 

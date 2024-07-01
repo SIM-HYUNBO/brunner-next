@@ -6,9 +6,39 @@ import BodySection from '../../components/bodySection'
 import requestServer from './../../components/requestServer'
 import { useRouter } from 'next/router'
 import { useState } from 'react'
+import BrunnerMessageBox from '@/components/BrunnerMessageBox'
 
 export default function Signup() {
   const router = useRouter();
+
+  const [modalContent, setModalContent] = useState({
+    isOpen: false,
+    message: '',
+    onConfirm: () => { },
+    onClose: () => { }
+  });
+
+  // 모달 열기 함수
+  const openModal = (message) => {
+    return new Promise((resolve, reject) => {
+      setModalContent({
+        isOpen: true,
+        message: message,
+        onConfirm: (result) => { resolve(result); closeModal(); },
+        onClose: () => { reject(false); closeModal(); }
+      });
+    });
+  };
+
+  // 모달 닫기 함수
+  const closeModal = () => {
+    setModalContent({
+      isOpen: false,
+      message: '',
+      onConfirm: () => { },
+      onClose: () => { }
+    });
+  };
 
   const [userId, setUserId] = useState('');
   const changeUserIdValue = (e) => {
@@ -63,9 +93,9 @@ export default function Signup() {
     jResponse = await requestServer('POST', JSON.stringify(jRequest));
 
     if (jResponse.error_code == 0) {
-      alert(`successfully signed up. you will move to sign-in page.`);
+      openModal(`successfully signed up. you will move to sign-in page.`);
     } else {
-      alert(JSON.stringify(jResponse.error_message));
+      openModal(JSON.stringify(jResponse.error_message));
     }
   };
 
@@ -78,6 +108,12 @@ export default function Signup() {
         <link></link>
       </Head>
       <BodySection>
+        <BrunnerMessageBox
+          isOpen={modalContent.isOpen}
+          message={modalContent.message}
+          onConfirm={modalContent.onConfirm}
+          onClose={modalContent.onClose}
+        />
         <div className="container px-5 py-10 mx-auto flex flex-wrap">
           <div className="lg:flex-grow md:w-1/2 lg:pr-24 md:pr-16 flex flex-col md:items-start md:text-left mb-16 md:mb-0 text-center">
             <h2 className="title-font sm:text-4xl text-3xl mb-10 font-medium text-green-900">
