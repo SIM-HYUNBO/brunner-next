@@ -162,19 +162,17 @@ export default function AssetContent() {
   };
 
   // 수정 처리
-  const handleEditAmount = (rowIdx, amount) => {
-    // if (tableData.length === 0) return;
-    const updatedData = [...tableData];
-    updatedData[rowIdx].amount = amount;
-    setTableData(updatedData);
-  };
+const handleEditAmount = (rowIdx, amount) => {
+  const updatedData = [...tableData];
+  updatedData[rowIdx].amount = amount;
+  setTableData(updatedData);
+};
 
-  const handleEditComment = (rowIdx, comment) => {
-    // if (tableData.length === 0) return;
-    const updatedData = [...tableData];
-    updatedData[rowIdx].comment = comment;
-    setTableData(updatedData);
-  };
+const handleEditComment = (rowIdx, comment) => {
+  const updatedData = [...tableData];
+  updatedData[rowIdx].comment = comment;
+  setTableData(updatedData);
+};
 
   // 테이블 컬럼 정의
   const columns = React.useMemo(
@@ -207,9 +205,10 @@ export default function AssetContent() {
           <div className="text-right w-full">
             <input
               type="text"
-              className={`border-0 focus:ring-0 bg-transparent w-20 text-sm text-gray-900 dark:text-gray-300`}
-              value={Number(row.values.amount)} // 콤마 포함된 금액
+              className="border-0 focus:ring-0 bg-transparent w-20 text-sm text-gray-900 dark:text-gray-300"
+              value={Number(row.values.amount)}
               onChange={(e) => handleEditAmount(row.index, e.target.value)}
+              onBlur={() => handleSave(row)} // 입력란을 벗어날 때 저장
             />
           </div>
         ),
@@ -222,8 +221,8 @@ export default function AssetContent() {
           <div className="text-center w-full">
             <input
               type="text"
-              className={`border-0 focus:ring-0 bg-transparent w-40 text-sm text-gray-900 dark:text-gray-300`}
-              value={row.values.comment || ''} // 코멘트 값이 undefined가 되지 않도록
+              className="border-0 focus:ring-0 bg-transparent w-40 text-sm text-gray-900 dark:text-gray-300"
+              value={row.values.comment || ''}
               onChange={(e) => handleEditComment(row.index, e.target.value)}
               onBlur={() => handleSave(row)} // 입력란을 벗어날 때 저장
             />
