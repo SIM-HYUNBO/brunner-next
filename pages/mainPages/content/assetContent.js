@@ -86,7 +86,7 @@ export default function AssetContent() {
     const { value } = e.target;
     if (inputName === 'amountInput') {
       // 숫자만 입력되도록 처리 (콤마 자동 추가)
-      const formattedValue = value.replace(/[^0-9.-]/g, '').replace(/,/g, '');
+      const formattedValue = value.replace(/[^0-9.-]/g, '').replace(/,/g, ''); 
       setAmountInput(formattedValue);
     } else if (inputName === 'commentInput') {
       setCommentInput(value);
