@@ -18,6 +18,15 @@ export default function UserInfo() {
   );
 }
 
+export const getLoginUserId = () => {
+  var userInfo = null;
+
+  if (process.env.userInfo) {
+    userInfo = process.env.userInfo;
+  }
+  return userInfo?.userId;
+}
+
 export const getLoginName = () => {
   var userInfo = null;
 
@@ -29,5 +38,5 @@ export const getLoginName = () => {
 }
 
 export const isLogin = () => {
-  return getLoginName() ? true: false;
+  return getLoginName() ? true : false;
 }
