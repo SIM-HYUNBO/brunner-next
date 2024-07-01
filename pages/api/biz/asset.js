@@ -55,7 +55,7 @@ const addIncome = async (txnId, jRequest) => {
         }
         else {
             jResponse.error_code = -1;
-            jResponse.error_message = "fail";
+            jResponse.error_message = "Database fail";
 
         }
     } catch (e) {
@@ -119,7 +119,7 @@ const deleteIncome = async (txnId, jRequest) => {
         }
         else {
             jResponse.error_code = -1;
-            jResponse.error_message = "fail";
+            jResponse.error_message = "Database fail";
         }
     } catch (e) {
         logger.error(`EXCEPTION:\n${e}`);
@@ -154,7 +154,7 @@ const updateIncome = async (txnId, jRequest) => {
         }
         else {
             jResponse.error_code = -1;
-            jResponse.error_message = "fail";
+            jResponse.error_message = "Database fail";
         }
     } catch (e) {
         logger.error(`EXCEPTION:\n${e}`);
