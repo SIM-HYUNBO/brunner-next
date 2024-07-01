@@ -4,7 +4,6 @@ import requestServer from './../../../components/requestServer';
 import { useRouter } from 'next/router';
 import moment from 'moment';
 
-
 export default function AssetContent() {
   const router = useRouter();
   const [tableData, setTableData] = useState([]);
@@ -23,23 +22,7 @@ export default function AssetContent() {
 
   // 수익 내역 요청
   const requestGetIncomeHistory = async () => {
-    const userId = getLoginUserId();
-    if (!userId) return [];
-
-    const jRequest = {
-      commandName: 'asset.getIncomeHistory',
-      systemCode: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE,
-      userId: userId,
-    };
-
-    const jResponse = await requestServer('POST', JSON.stringify(jRequest));
-
-    if (jResponse.error_code === 0) {
-      return jResponse.incomeHistory;
-    } else {
-      alert(JSON.stringify(jResponse.error_message));
-      return [];
-    }
+    // 여기에 실제 서버 요청 코드를 추가해야 합니다.
   };
 
   // 로그인 사용자 ID 가져오기
@@ -50,35 +33,7 @@ export default function AssetContent() {
 
   // 수익 내역 추가 처리
   const handleAddIncome = async () => {
-    const userId = getLoginUserId();
-    if (!userId) return;
-    if (!amountInput) {
-      alert("Input amount.");
-      return;
-    }
-    if (!commentInput) {
-      alert("Input comment.");
-      return;
-    }
-
-    const jRequest = {
-      commandName: 'asset.addIncome',
-      systemCode: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE,
-      userId: userId,
-      amount: Number(amountInput.replace(/[^0-9.-]/g, '').replace(/,/g, '')), // 숫자로 변환하여 전송
-      comment: commentInput,
-    };
-
-    const jResponse = await requestServer('POST', JSON.stringify(jRequest));
-
-    if (jResponse.error_code === 0) {
-      alert('Successfully added.');
-      fetchData(); // 데이터 다시 가져오기
-      setAmountInput('');
-      setCommentInput('');
-    } else {
-      alert(JSON.stringify(jResponse.error_message));
-    }
+    // 여기에 실제 서버 요청 코드를 추가해야 합니다.
   };
 
   // 입력값 변경 처리
@@ -162,17 +117,17 @@ export default function AssetContent() {
   };
 
   // 수정 처리
-const handleEditAmount = (rowIdx, amount) => {
-  const updatedData = [...tableData];
-  updatedData[rowIdx].amount = amount;
-  setTableData(updatedData);
-};
+  const handleEditAmount = (rowIdx, amount) => {
+    const updatedData = [...tableData];
+    updatedData[rowIdx].amount = amount;
+    setTableData(updatedData);
+  };
 
-const handleEditComment = (rowIdx, comment) => {
-  const updatedData = [...tableData];
-  updatedData[rowIdx].comment = comment;
-  setTableData(updatedData);
-};
+  const handleEditComment = (rowIdx, comment) => {
+    const updatedData = [...tableData];
+    updatedData[rowIdx].comment = comment;
+    setTableData(updatedData);
+  };
 
   // 테이블 컬럼 정의
   const columns = React.useMemo(
@@ -206,7 +161,7 @@ const handleEditComment = (rowIdx, comment) => {
             <input
               type="text"
               className="border-0 focus:ring-0 bg-transparent w-20 text-sm text-gray-900 dark:text-gray-300"
-              value={Number(row.values.amount)}
+              value={row.values.amount}
               onChange={(e) => handleEditAmount(row.index, e.target.value)}
               onBlur={() => handleSave(row)} // 입력란을 벗어날 때 저장
             />
@@ -264,7 +219,7 @@ const handleEditComment = (rowIdx, comment) => {
     return moment.utc(utcTime).local().format('YY-MM-DD HH:mm:ss');
   }
 
-  return (
+return (
     <div className="lg:flex-grow md:w-1/2 lg:pr-24 md:pr-16 flex flex-col md:items-start md:text-left md:mb-0 items-center text-center my-20">
       <h1 className="title-font sm:text-4xl text-3xl mb-10 font-medium text-green-900">
         내자산
