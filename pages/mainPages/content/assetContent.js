@@ -9,6 +9,7 @@ export default function AssetContent() {
   const [tableData, setTableData] = useState([]);
   const [amountInput, setAmountInput] = useState('');
   const [commentInput, setCommentInput] = useState('');
+  const [loading, setLoading] = useState(true); // 로딩 상태 추가
 
   useEffect(() => {
     fetchData(); // 페이지 로드 시 데이터 가져오기
@@ -22,10 +23,25 @@ export default function AssetContent() {
 
   // 수익 내역 요청
   const requestGetIncomeHistory = async () => {
-    // 여기에 실제 서버 요청 코드를 추가해야 합니다.
-    // 예시:
-    const response = await requestServer('GET', '/api/incomeHistory');
-    return response.data;
+    const userId = getLoginUserId();
+    if (!userId) return [];
+
+    const jRequest = {
+      commandName: 'asset.getIncomeHistory',
+      systemCode: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE,
+      userId: userId,
+    };
+
+    setLoading(true); // 데이터 로딩 시작
+    const jResponse = await requestServer('POST', JSON.stringify(jRequest));
+    setLoading(false); // 데이터 로딩 시작
+
+    if (jResponse.error_code === 0) {
+      return jResponse.incomeHistory;
+    } else {
+      alert(JSON.stringify(jResponse.error_message));
+      return [];
+    }
   };
 
   // 로그인 사용자 ID 가져오기
@@ -38,21 +54,32 @@ export default function AssetContent() {
   const handleAddIncome = async () => {
     const userId = getLoginUserId();
     if (!userId) return;
+    if (!amountInput) {
+      alert("Input amount.");
+      return;
+    }
+    if (!commentInput) {
+      alert("Input comment.");
+      return;
+    }
+
+    setLoading(true);
 
     const jRequest = {
       commandName: 'asset.addIncome',
       systemCode: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE,
       userId: userId,
-      amount: Number(amountInput.replace(/,/g, '')),
+      amount: Number(amountInput.replace(/[^0-9.-]/g, '').replace(/,/g, '')), // 숫자로 변환하여 전송
       comment: commentInput,
-      createTime: moment().format('YYYY-MM-DD HH:mm:ss'),
     };
 
     const jResponse = await requestServer('POST', JSON.stringify(jRequest));
 
+    setLoading(false);
+
     if (jResponse.error_code === 0) {
       alert('Successfully added.');
-      fetchData();
+      fetchData(); // 데이터 다시 가져오기
       setAmountInput('');
       setCommentInput('');
     } else {
@@ -64,7 +91,8 @@ export default function AssetContent() {
   const handleInputChange = (e, inputName) => {
     const { value } = e.target;
     if (inputName === 'amountInput') {
-      const formattedValue = value.replace(/[^0-9.-]/g, '').replace(/,/g, '');
+      // 숫자만 입력되도록 처리 (콤마 자동 추가)
+      const formattedValue = value.replace(/[^0-9.-]/g, '').replace(/,/g, '').toLocaleString();
       setAmountInput(formattedValue);
     } else if (inputName === 'commentInput') {
       setCommentInput(value);
@@ -77,6 +105,7 @@ export default function AssetContent() {
     if (!userId) return;
 
     let amount = row.values.amount;
+    // Ensure amount is always formatted as a string before replacing commas
     amount = String(amount).replace(/,/g, '');
 
     if (isNaN(Number(amount))) {
@@ -89,24 +118,26 @@ export default function AssetContent() {
       systemCode: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE,
       userId: userId,
       historyId: row.original.history_id,
-      amount: Number(amount),
+      amount: Number(amount), // 숫자로 변환
       comment: row.values.comment,
     };
 
+    setLoading(true); // 데이터 로딩 시작
     const jResponse = await requestServer('POST', JSON.stringify(jRequest));
+    setLoading(false); // 데이터 로딩 시작
+    alert('Successfully updated.');
 
     if (jResponse.error_code === 0) {
-      alert('Successfully updated.');
-      fetchData();
+      fetchData(); // 데이터 다시 가져오기
     } else {
       alert(JSON.stringify(jResponse.error_message));
-      fetchData();
+      fetchData(); // 실패 시 데이터 다시 가져오기
     }
   };
 
   // 새로고침 처리
   const handleRefresh = () => {
-    fetchData();
+    fetchData(); // 데이터 새로고침
   };
 
   // 삭제 처리
@@ -115,9 +146,12 @@ export default function AssetContent() {
     if (!userId) return;
 
     const deleteConfirm = confirm("Delete this item?");
-    if (!deleteConfirm) return;
+    if (!deleteConfirm)
+      return;
 
     const historyId = tableData[rowIndex].history_id;
+
+    setLoading(true); // 데이터 로딩 시작
 
     const jRequest = {
       commandName: 'asset.deleteIncome',
@@ -128,39 +162,37 @@ export default function AssetContent() {
 
     const jResponse = await requestServer('POST', JSON.stringify(jRequest));
 
+    setLoading(false); // 데이터 로딩 시작
+
     if (jResponse.error_code === 0) {
       alert('Successfully deleted.');
-      fetchData();
+      fetchData(); // 데이터 다시 가져오기
     } else {
       alert(JSON.stringify(jResponse.error_message));
-      fetchData();
+      fetchData(); // 실패 시 데이터 다시 가져오기
     }
   };
 
-  // Amount 컬럼 수정 처리
-  const handleAmountChange = (e, rowIdx) => {
-    const { value } = e.target;
+  // 수정 처리
+  const handleEditAmount = (rowIdx, amount) => {
+    if (tableData.length === 0) {
+      fetchData();
+      return;
+    }
     const updatedData = [...tableData];
-    updatedData[rowIdx].amount = value;
+    updatedData[rowIdx].amount = amount;
     setTableData(updatedData);
   };
 
-  // Comment 컬럼 수정 처리
-  const handleCommentChange = (e, rowIdx) => {
-    const { value } = e.target;
+  const handleEditComment = (rowIdx, comment) => {
+    if (tableData.length === 0) {
+      fetchData();
+      return;
+    }
+
     const updatedData = [...tableData];
-    updatedData[rowIdx].comment = value;
+    updatedData[rowIdx].comment = comment;
     setTableData(updatedData);
-  };
-
-  // Amount input 요소 onBlur 이벤트 핸들러
-  const handleAmountBlur = async (row) => {
-    await handleSave(row);
-  };
-
-  // Comment input 요소 onBlur 이벤트 핸들러
-  const handleCommentBlur = async (row) => {
-    await handleSave(row);
   };
 
   // 테이블 컬럼 정의
@@ -174,7 +206,7 @@ export default function AssetContent() {
           <div className='text-center text-sm text-black dark:text-gray-300'>
             {row.values.history_id}
           </div>
-        ),
+        )
       },
       {
         Header: 'Date&Time',
@@ -194,10 +226,9 @@ export default function AssetContent() {
           <div className="text-right w-full">
             <input
               type="text"
-              className="border-0 focus:ring-0 bg-transparent w-20 text-sm text-gray-900 dark:text-gray-300"
-              value={row.values.amount}
-              onChange={(e) => handleAmountChange(e, row.index)}
-              onBlur={() => handleAmountBlur(row)}
+              className={`border-0 focus:ring-0 bg-transparent w-20 text-sm text-gray-900 dark:text-gray-300`}
+              value={Number(row.values.amount)} // 콤마 포함된 금액
+              onChange={(e) => handleEditAmount(row.index, e.target.value)}
             />
           </div>
         ),
@@ -210,10 +241,9 @@ export default function AssetContent() {
           <div className="text-center w-full">
             <input
               type="text"
-              className="border-0 focus:ring-0 bg-transparent w-40 text-sm text-gray-900 dark:text-gray-300"
-              value={row.values.comment || ''}
-              onChange={(e) => handleCommentChange(e, row.index)}
-              onBlur={() => handleCommentBlur(row)}
+              className={`border-0 focus:ring-0 bg-transparent w-40 text-sm text-gray-900 dark:text-gray-300`}
+              value={row.values.comment || ''} // 코멘트 값이 undefined가 되지 않도록
+              onChange={(e) => handleEditComment(row.index, e.target.value)}
             />
           </div>
         ),
@@ -232,9 +262,9 @@ export default function AssetContent() {
             </button>
           </div>
         ),
-      },
+      }
     ],
-    [tableData]
+    []
   );
 
   const {
@@ -242,19 +272,16 @@ export default function AssetContent() {
     getTableBodyProps,
     headerGroups,
     rows,
-    prepareRow,
-  } = useTable(
-    {
-      columns,
-      data: tableData,
-      initialState: { hiddenColumns: ['history_id'] },
-    },
-    useSortBy
-  );
+    prepareRow
+  } = useTable({
+    columns,
+    data: tableData,
+    initialState: { hiddenColumns: ['history_id'] }
+  }, useSortBy); // useSortBy 추가
 
   const getLocalTime = (utcTime) => {
     return moment.utc(utcTime).local().format('YY-MM-DD HH:mm:ss');
-  };
+  }
 
   return (
     <div className="lg:flex-grow md:w-1/2 lg:pr-24 md:pr-16 flex flex-col md:items-start md:text-left md:mb-0 items-center text-center my-20">
@@ -264,6 +291,7 @@ export default function AssetContent() {
       <div className="main-governing-text mt-5">
         시야를 넓혀 최고 수익에 도전하고 <br />
         은퇴전 백억 자산가가 되세요.
+
       </div>
       <div className="mb-5 flex items-center w-full">
         <input
@@ -300,18 +328,24 @@ export default function AssetContent() {
         새로고침
       </button>
       <div className="overflow-x-auto w-full">
+        {loading && (
+          <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-gray-500 bg-opacity-75 z-50">
+            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-gray-900"></div>
+          </div>
+        )}
         <table {...getTableProps()} className="border-collapse w-full">
           <thead>
             {headerGroups.map((headerGroup) => (
               <tr {...headerGroup.getHeaderGroupProps()} className="bg-gray-100">
                 {headerGroup.headers.map((column) => (
-                  <th
-                    {...column.getHeaderProps(column.getSortByToggleProps())}
-                    className={`py-2 px-3 text-xs font-medium tracking-wider ${column.headerClassName}`}
-                  >
+                  <th {...column.getHeaderProps(column.getSortByToggleProps())} className={`py-2 px-3 text-xs font-medium tracking-wider ${column.headerClassName}`}>
                     {column.render('Header')}
                     <span>
-                      {column.isSorted ? (column.isSortedDesc ? ' ▼' : ' ▲') : ''}
+                      {column.isSorted
+                        ? column.isSortedDesc
+                          ? ' ▼'
+                          : ' ▲'
+                        : ''}
                     </span>
                   </th>
                 ))}
@@ -336,4 +370,4 @@ export default function AssetContent() {
       </div>
     </div>
   );
-}  
+}
