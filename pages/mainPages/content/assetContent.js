@@ -3,6 +3,9 @@ import { useTable, useSortBy } from 'react-table';
 import requestServer from './../../../components/requestServer';
 import { useRouter } from 'next/router';
 import moment from 'moment';
+import BrunnerMessageBox from '@/components/BrunnerMessageBox'
+import { log } from 'winston';
+import { Console } from 'winston/lib/winston/transports';
 
 export default function AssetContent() {
   const router = useRouter();
@@ -15,10 +18,40 @@ export default function AssetContent() {
     fetchData(); // 페이지 로드 시 데이터 가져오기
   }, []);
 
+  const [modalContent, setModalContent] = useState({
+    isOpen: false,
+    message: '',
+    onConfirm: () => { },
+    onClose: () => { }
+  });
+
+  // 모달 열기 함수
+  const openModal = (message) => {
+    return new Promise((resolve, reject) => {
+      setModalContent({
+        isOpen: true,
+        message: message,
+        onConfirm: (result) => { resolve(result); closeModal(); },
+        onClose: () => { reject(false); closeModal(); }
+      });
+    });
+  };
+
+  // 모달 닫기 함수
+  const closeModal = () => {
+    setModalContent({
+      isOpen: false,
+      message: '',
+      onConfirm: () => { },
+      onClose: () => { }
+    });
+  };
+
   // 수익 내역 데이터 가져오기
   const fetchData = async () => {
     const data = await requestGetIncomeHistory();
     setTableData(data);
+    console.log(`tableData set:${tableData}`);
   };
 
   // 수익 내역 요청
@@ -39,7 +72,7 @@ export default function AssetContent() {
     if (jResponse.error_code === 0) {
       return jResponse.incomeHistory;
     } else {
-      alert(JSON.stringify(jResponse.error_message));
+      openModal(JSON.stringify(jResponse.error_message));
       return [];
     }
   };
@@ -55,11 +88,11 @@ export default function AssetContent() {
     const userId = getLoginUserId();
     if (!userId) return;
     if (!amountInput) {
-      alert("Input amount.");
+      openModal("Input amount.");
       return;
     }
     if (!commentInput) {
-      alert("Input comment.");
+      openModal("Input comment.");
       return;
     }
 
@@ -78,12 +111,12 @@ export default function AssetContent() {
     setLoading(false);
 
     if (jResponse.error_code === 0) {
-      alert('Successfully added.');
+      openModal('Successfully added.');
       fetchData(); // 데이터 다시 가져오기
       setAmountInput('');
       setCommentInput('');
     } else {
-      alert(JSON.stringify(jResponse.error_message));
+      openModal(JSON.stringify(jResponse.error_message));
     }
   };
 
@@ -109,7 +142,7 @@ export default function AssetContent() {
     amount = String(amount).replace(/,/g, '');
 
     if (isNaN(Number(amount))) {
-      alert('Invalid number of amount.');
+      openModal('Invalid number of amount.');
       return;
     }
 
@@ -125,12 +158,12 @@ export default function AssetContent() {
     setLoading(true); // 데이터 로딩 시작
     const jResponse = await requestServer('POST', JSON.stringify(jRequest));
     setLoading(false); // 데이터 로딩 시작
-    alert('Successfully updated.');
+    openModal('Successfully updated.');
 
     if (jResponse.error_code === 0) {
       fetchData(); // 데이터 다시 가져오기
     } else {
-      alert(JSON.stringify(jResponse.error_message));
+      openModal(JSON.stringify(jResponse.error_message));
       fetchData(); // 실패 시 데이터 다시 가져오기
     }
   };
@@ -145,7 +178,11 @@ export default function AssetContent() {
     const userId = getLoginUserId();
     if (!userId) return;
 
-    const deleteConfirm = confirm("Delete this item?");
+    if (tableData.length === 0) {
+      fetchData();
+    }
+
+    const deleteConfirm = await openModal("Delete this item?");
     if (!deleteConfirm)
       return;
 
@@ -165,10 +202,10 @@ export default function AssetContent() {
     setLoading(false); // 데이터 로딩 시작
 
     if (jResponse.error_code === 0) {
-      alert('Successfully deleted.');
+      openModal('Successfully deleted.');
       fetchData(); // 데이터 다시 가져오기
     } else {
-      alert(JSON.stringify(jResponse.error_message));
+      openModal(JSON.stringify(jResponse.error_message));
       fetchData(); // 실패 시 데이터 다시 가져오기
     }
   };
@@ -327,6 +364,12 @@ export default function AssetContent() {
       >
         새로고침
       </button>
+      <BrunnerMessageBox
+        isOpen={modalContent.isOpen}
+        message={modalContent.message}
+        onConfirm={modalContent.onConfirm}
+        onClose={modalContent.onClose}
+      />
       <div className="overflow-x-auto w-full">
         {loading && (
           <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-gray-500 bg-opacity-75 z-50">

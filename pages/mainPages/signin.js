@@ -4,10 +4,10 @@ import BodySection from '../../components/bodySection'
 import { useRouter } from 'next/router'
 import { useState, useEffect, useRef } from 'react'
 import requestServer from './../../components/requestServer'
+import BrunnerMessageBox from '@/components/BrunnerMessageBox'
 
 export default function Signin() {
   const router = useRouter();
-
   const [userId, setUserId] = useState('');
   const [password, setPassword] = useState('');
   const userIdRef = useRef();
@@ -15,6 +15,35 @@ export default function Signin() {
   useEffect(() => {
     userIdRef.current.focus();
   }, []);
+
+  const [modalContent, setModalContent] = useState({
+    isOpen: false,
+    message: '',
+    onConfirm: () => { },
+    onClose: () => { }
+  });
+
+  // 모달 열기 함수
+  const openModal = (message) => {
+    return new Promise((resolve, reject) => {
+      setModalContent({
+        isOpen: true,
+        message: message,
+        onConfirm: (result) => { resolve(result); closeModal(); },
+        onClose: () => { reject(false); closeModal(); }
+      });
+    });
+  };
+
+  // 모달 닫기 함수
+  const closeModal = () => {
+    setModalContent({
+      isOpen: false,
+      message: '',
+      onConfirm: () => { },
+      onClose: () => { }
+    });
+  };
 
   const changeUserIdValue = (e) => {
     setUserId(e.target.value);
@@ -39,11 +68,11 @@ export default function Signin() {
         process.env.userInfo = jResponse;
         router.push('/');
       } else {
-        alert(JSON.stringify(jResponse.error_message));
+        openModal(JSON.stringify(jResponse.error_message));
       }
     } catch (error) {
       console.error('로그인 중 에러 발생:', error);
-      alert('로그인에 실패했습니다. 나중에 다시 시도해 주세요.');
+      openModal('로그인에 실패했습니다. 나중에 다시 시도해 주세요.');
     }
   };
 
@@ -61,6 +90,12 @@ export default function Signin() {
         <link rel="icon" href="/brunnerLogo.png" />
       </Head>
       <BodySection className="text-gray-600 body-font">
+        <BrunnerMessageBox
+          isOpen={modalContent.isOpen}
+          message={modalContent.message}
+          onConfirm={modalContent.onConfirm}
+          onClose={modalContent.onClose}
+        />
         <div className="container px-5 mx-auto flex flex-wrap items-center">
           <div className="lg:flex-grow md:w-1/2 lg:pr-24 md:pr-16 flex flex-col md:items-start md:text-left mb-16 md:mb-0 items-center text-center">
             <h1 className="title-font sm:text-4xl text-3xl mb-10 font-medium text-green-900">

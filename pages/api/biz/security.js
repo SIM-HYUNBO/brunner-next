@@ -307,7 +307,6 @@ const verifyTelNo = (args) => {
     if (/^[0-9]{2,3}-[0-9]{3,4}-[0-9]{4}/.test(args)) {
         return true;
     }
-    // alert(msg);
     return false;
 }
 

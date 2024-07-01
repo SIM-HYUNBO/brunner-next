@@ -7,9 +7,39 @@ import BodySection from '../../components/bodySection'
 import requestServer from '../../components/requestServer'
 import { useRouter } from 'next/router'
 import { useState } from 'react'
+import BrunnerMessageBox from '@/components/BrunnerMessageBox'
 
 export default function ResetPassword() {
   const router = useRouter();
+
+  const [modalContent, setModalContent] = useState({
+    isOpen: false,
+    message: '',
+    onConfirm: () => { },
+    onClose: () => { }
+  });
+
+  // 모달 열기 함수
+  const openModal = (message) => {
+    return new Promise((resolve, reject) => {
+      setModalContent({
+        isOpen: true,
+        message: message,
+        onConfirm: (result) => { resolve(result); closeModal(); },
+        onClose: () => { reject(false); closeModal(); }
+      });
+    });
+  };
+
+  // 모달 닫기 함수
+  const closeModal = () => {
+    setModalContent({
+      isOpen: false,
+      message: '',
+      onConfirm: () => { },
+      onClose: () => { }
+    });
+  };
 
   const [userId, setUserId] = useState('');
   const changeUserIdValue = (e) => {
@@ -50,7 +80,7 @@ export default function ResetPassword() {
 
     jResponse = await requestServer('POST', JSON.stringify(jRequest));
 
-    alert(jResponse.error_message);
+    openModal(jResponse.error_message);
   };
 
   return (
@@ -62,6 +92,12 @@ export default function ResetPassword() {
         <link></link>
       </Head>
       <BodySection className="text-gray-600 body-font">
+        <BrunnerMessageBox
+          isOpen={modalContent.isOpen}
+          message={modalContent.message}
+          onConfirm={modalContent.onConfirm}
+          onClose={modalContent.onClose}
+        />
         <div className="container px-5 py-14 mx-auto flex flex-wrap items-center">
           <div className="lg:w-3/5 md:w-1/2 md:pr-16 lg:pr-0 pr-0">
             <h1 className="title-font font-medium text-3xl text-gray-900">Did you forget your password? </h1>
