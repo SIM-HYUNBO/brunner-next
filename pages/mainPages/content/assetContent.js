@@ -276,7 +276,7 @@ export default function AssetContent() {
         />
         <div className="relative flex-grow">
           <input
-            type="text
+            type="text"
             name="commentInput"
             value={commentInput}
             onChange={(e) => handleInputChange(e, 'commentInput')}
