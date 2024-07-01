@@ -221,7 +221,7 @@ export default function AssetContent() {
       {
         Header: 'Amount',
         accessor: 'amount',
-        headerClassName: 'text-right bg-blue-500 text-blue-100',
+        headerClassName: 'text-center bg-blue-500 text-blue-100',
         Cell: ({ row }) => (
           <div className="text-right w-full">
             <input
