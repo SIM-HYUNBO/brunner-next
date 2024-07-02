@@ -87,11 +87,11 @@ export default function AssetContent() {
     const userId = getLoginUserId();
     if (!userId) return;
     if (!amountInput) {
-      openModal("Input amount.");
+      openModal(`Input amount.`);
       return;
     }
     if (!commentInput) {
-      openModal("Input comment.");
+      openModal(`Input comment.`);
       return;
     }
 
@@ -115,7 +115,7 @@ export default function AssetContent() {
       setAmountInput('');
       setCommentInput('');
     } else {
-      openModal(JSON.stringify(jResponse.error_message));
+      openModal(jResponse.error_message);
     }
   };
 
@@ -162,7 +162,7 @@ export default function AssetContent() {
     if (jResponse.error_code === 0) {
       fetchData(); // 데이터 다시 가져오기
     } else {
-      openModal(JSON.stringify(jResponse.error_message));
+      openModal(jResponse.error_message);
       fetchData(); // 실패 시 데이터 다시 가져오기
     }
   };
@@ -181,7 +181,7 @@ export default function AssetContent() {
       fetchData();
     }
 
-    const deleteConfirm = await openModal("Delete this item?");
+    const deleteConfirm = await openModal(`Delete this item?`);
     if (!deleteConfirm)
       return;
 
@@ -204,7 +204,7 @@ export default function AssetContent() {
       openModal('Successfully deleted.');
       fetchData(); // 데이터 다시 가져오기
     } else {
-      openModal(JSON.stringify(jResponse.error_message));
+      openModal(jResponse.error_message);
       fetchData(); // 실패 시 데이터 다시 가져오기
     }
   };
@@ -316,6 +316,12 @@ export default function AssetContent() {
 
   return (
     <div className="lg:flex-grow md:w-1/2 lg:pr-24 md:pr-16 flex flex-col md:items-start md:text-left md:mb-0 items-center text-center my-20">
+      <BrunnerMessageBox
+        isOpen={modalContent.isOpen}
+        message={modalContent.message}
+        onConfirm={modalContent.onConfirm}
+        onClose={modalContent.onClose}
+      />
       <h1 className="title-font sm:text-4xl text-3xl mb-10 font-medium text-green-900">
         내자산
       </h1>
@@ -358,12 +364,6 @@ export default function AssetContent() {
       >
         내역보기
       </button>
-      <BrunnerMessageBox
-        isOpen={modalContent.isOpen}
-        message={modalContent.message}
-        onConfirm={modalContent.onConfirm}
-        onClose={modalContent.onClose}
-      />
       <div className="overflow-x-auto w-full">
         {loading && (
           <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-gray-500 bg-opacity-75 z-50">

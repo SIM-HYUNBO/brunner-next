@@ -68,11 +68,10 @@ export default function Signin() {
         process.env.userInfo = jResponse;
         router.push('/');
       } else {
-        openModal(JSON.stringify(jResponse.error_message));
+        openModal(jResponse.error_message);
       }
     } catch (error) {
-      console.error('로그인 중 에러 발생:', error);
-      openModal('로그인에 실패했습니다. 나중에 다시 시도해 주세요.');
+      openModal(error);
     }
   };
 
@@ -84,18 +83,18 @@ export default function Signin() {
 
   return (
     <Layout>
+      <BrunnerMessageBox
+        isOpen={modalContent.isOpen}
+        message={modalContent.message}
+        onConfirm={modalContent.onConfirm}
+        onClose={modalContent.onClose}
+      />
       <Head>
         <title>IT 기술 연구소 - Brunner</title>
         <meta name="description" content="IT 기술 연구소" />
         <link rel="icon" href="/brunnerLogo.png" />
       </Head>
       <BodySection className="text-gray-600 body-font">
-        <BrunnerMessageBox
-          isOpen={modalContent.isOpen}
-          message={modalContent.message}
-          onConfirm={modalContent.onConfirm}
-          onClose={modalContent.onClose}
-        />
         <div className="container px-5 mx-auto flex flex-wrap items-center">
           <div className="lg:flex-grow md:w-1/2 lg:pr-24 md:pr-16 flex flex-col md:items-start md:text-left mb-16 md:mb-0 items-center text-center">
             <h1 className="title-font sm:text-4xl text-3xl mb-10 font-medium text-green-900">

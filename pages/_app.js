@@ -53,7 +53,7 @@ export default function App({ Component, pageProps }) {
     jResponse = await requestServer('POST', JSON.stringify(jRequest));
 
     if (jResponse.error_code < 0) // 에러
-      openModal(`${jResponse.error_message}`);
+      openModal(jResponse.error_message);
   }
 
   return (

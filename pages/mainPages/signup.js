@@ -101,6 +101,12 @@ export default function Signup() {
 
   return (
     <Layout>
+      <BrunnerMessageBox
+        isOpen={modalContent.isOpen}
+        message={modalContent.message}
+        onConfirm={modalContent.onConfirm}
+        onClose={modalContent.onClose}
+      />
       <Head>
         <title>Brunner Home</title>
         <meta name="description" content="서비스플랫폼"></meta>
@@ -108,12 +114,6 @@ export default function Signup() {
         <link></link>
       </Head>
       <BodySection>
-        <BrunnerMessageBox
-          isOpen={modalContent.isOpen}
-          message={modalContent.message}
-          onConfirm={modalContent.onConfirm}
-          onClose={modalContent.onClose}
-        />
         <div className="container px-5 py-10 mx-auto flex flex-wrap">
           <div className="lg:flex-grow md:w-1/2 lg:pr-24 md:pr-16 flex flex-col md:items-start md:text-left mb-16 md:mb-0 text-center">
             <h2 className="title-font sm:text-4xl text-3xl mb-10 font-medium text-green-900">

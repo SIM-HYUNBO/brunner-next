@@ -51,7 +51,7 @@ export default function SignoutButton() {
       process.env.userInfo = null;
       router.push('/')
     } else {
-      openModal(JSON.stringify(result.error_message), null);
+      openModal(result.error_message);
     }
   }
 

@@ -85,6 +85,12 @@ export default function ResetPassword() {
 
   return (
     <Layout>
+      <BrunnerMessageBox
+        isOpen={modalContent.isOpen}
+        message={modalContent.message}
+        onConfirm={modalContent.onConfirm}
+        onClose={modalContent.onClose}
+      />
       <Head>
         <title>Brunner Home</title>
         <meta name="description" content="서비스플랫폼"></meta>
@@ -92,12 +98,6 @@ export default function ResetPassword() {
         <link></link>
       </Head>
       <BodySection className="text-gray-600 body-font">
-        <BrunnerMessageBox
-          isOpen={modalContent.isOpen}
-          message={modalContent.message}
-          onConfirm={modalContent.onConfirm}
-          onClose={modalContent.onClose}
-        />
         <div className="container px-5 py-14 mx-auto flex flex-wrap items-center">
           <div className="lg:w-3/5 md:w-1/2 md:pr-16 lg:pr-0 pr-0">
             <h1 className="title-font font-medium text-3xl text-gray-900">Did you forget your password? </h1>
