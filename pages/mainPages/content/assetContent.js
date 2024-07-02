@@ -85,11 +85,14 @@ export default function AssetContent() {
   // 수익 내역 추가 처리
   const handleAddIncome = async () => {
     const userId = getLoginUserId();
+
     if (!userId) return;
+
     if (!amountInput) {
       openModal("Input amount.");
       return;
     }
+
     if (!commentInput) {
       openModal("Input comment.");
       return;
@@ -177,10 +180,6 @@ export default function AssetContent() {
     const userId = getLoginUserId();
     if (!userId) return;
 
-    if (tableData.length === 0) {
-      fetchData();
-    }
-
     const deleteConfirm = await openModal("Delete this item?");
     if (!deleteConfirm)
       return;
@@ -211,21 +210,12 @@ export default function AssetContent() {
 
   // 수정 처리
   const handleEditAmount = (rowIdx, amount) => {
-    if (tableData.length === 0) {
-      // fetchData();
-      return;
-    }
     const updatedData = [...tableData];
     updatedData[rowIdx].amount = amount;
     setTableData(updatedData);
   };
 
   const handleEditComment = (rowIdx, comment) => {
-    if (tableData.length === 0) {
-      fetchData();
-      return;
-    }
-
     const updatedData = [...tableData];
     updatedData[rowIdx].comment = comment;
     setTableData(updatedData);
