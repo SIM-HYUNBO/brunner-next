@@ -12,10 +12,10 @@ export default function AssetContent() {
   const [tableData, setTableData] = useState([]);
   const [amountInput, setAmountInput] = useState('');
   const [commentInput, setCommentInput] = useState('');
-  const [loading, setLoading] = useState(true); // 로딩 상태 추가
+  const [loading, setLoading] = useState(false); // 로딩 상태 추가
 
   useEffect(() => {
-    fetchData(); // 페이지 로드 시 데이터 가져오기
+
   }, []);
 
   const [modalContent, setModalContent] = useState({
@@ -49,8 +49,8 @@ export default function AssetContent() {
 
   // 수익 내역 데이터 가져오기
   const fetchData = async () => {
-    const data = await requestGetIncomeHistory();
-    setTableData(data);
+    const tableData = await requestGetIncomeHistory();
+    setTableData(tableData);
     console.log(`tableData set:${tableData}`);
   };
 
@@ -72,7 +72,6 @@ export default function AssetContent() {
     if (jResponse.error_code === 0) {
       return jResponse.incomeHistory;
     } else {
-      openModal(JSON.stringify(jResponse.error_message));
       return [];
     }
   };
@@ -213,7 +212,7 @@ export default function AssetContent() {
   // 수정 처리
   const handleEditAmount = (rowIdx, amount) => {
     if (tableData.length === 0) {
-      fetchData();
+      // fetchData();
       return;
     }
     const updatedData = [...tableData];
@@ -362,7 +361,7 @@ export default function AssetContent() {
         onClick={handleRefresh}
         className="text-white bg-indigo-500 border-0 py-2 px-6 focus:outline-none hover:bg-indigo-600 rounded text-lg mb-3"
       >
-        새로고침
+        내역보기
       </button>
       <BrunnerMessageBox
         isOpen={modalContent.isOpen}
