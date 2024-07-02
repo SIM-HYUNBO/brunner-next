@@ -315,96 +315,98 @@ export default function AssetContent() {
   }
 
   return (
-    <div className="lg:flex-grow md:w-1/2 lg:pr-24 md:pr-16 flex flex-col md:items-start md:text-left md:mb-0 items-center text-center my-20">
+    <>
       <BrunnerMessageBox
         isOpen={modalContent.isOpen}
         message={modalContent.message}
         onConfirm={modalContent.onConfirm}
         onClose={modalContent.onClose}
       />
-      <h1 className="title-font sm:text-4xl text-3xl mb-10 font-medium text-green-900">
-        내자산
-      </h1>
-      <div className="main-governing-text mt-5">
-        시야를 넓혀 최고 수익에 도전하고 <br />
-        은퇴전 백억 자산가가 되세요.
+      <div className="lg:flex-grow md:w-1/2 lg:pr-24 md:pr-16 flex flex-col md:items-start md:text-left md:mb-0 items-center text-center my-20">
+        <h1 className="title-font sm:text-4xl text-3xl mb-10 font-medium text-green-900">
+          내자산
+        </h1>
+        <div className="main-governing-text mt-5">
+          시야를 넓혀 최고 수익에 도전하고 <br />
+          은퇴전 백억 자산가가 되세요.
 
-      </div>
-      <div className="mb-5 flex items-center w-full">
-        <input
-          type="text"
-          name="amountInput"
-          value={amountInput}
-          onChange={(e) => handleInputChange(e, 'amountInput')}
-          placeholder="금액"
-          className="mr-3 p-2 border rounded dark:text-gray-300 text-right"
-        />
-        <div className="relative flex-grow">
+        </div>
+        <div className="mb-5 flex items-center w-full">
           <input
             type="text"
-            name="commentInput"
-            value={commentInput}
-            onChange={(e) => handleInputChange(e, 'commentInput')}
-            placeholder="코멘트"
-            className="p-2 border rounded dark:text-gray-300 w-full"
-            style={{ marginLeft: '-2px' }}
+            name="amountInput"
+            value={amountInput}
+            onChange={(e) => handleInputChange(e, 'amountInput')}
+            placeholder="금액"
+            className="mr-3 p-2 border rounded dark:text-gray-300 text-right"
           />
+          <div className="relative flex-grow">
+            <input
+              type="text"
+              name="commentInput"
+              value={commentInput}
+              onChange={(e) => handleInputChange(e, 'commentInput')}
+              placeholder="코멘트"
+              className="p-2 border rounded dark:text-gray-300 w-full"
+              style={{ marginLeft: '-2px' }}
+            />
+          </div>
+          <button
+            onClick={handleAddIncome}
+            className="bg-green-500 text-white py-2 px-4 rounded hover:bg-green-600 ml-3"
+            style={{ alignSelf: 'flex-end' }}
+          >
+            추가
+          </button>
         </div>
         <button
-          onClick={handleAddIncome}
-          className="bg-green-500 text-white py-2 px-4 rounded hover:bg-green-600 ml-3"
-          style={{ alignSelf: 'flex-end' }}
+          onClick={handleRefresh}
+          className="text-white bg-indigo-500 border-0 py-2 px-6 focus:outline-none hover:bg-indigo-600 rounded text-lg mb-3"
         >
-          추가
+          내역보기
         </button>
-      </div>
-      <button
-        onClick={handleRefresh}
-        className="text-white bg-indigo-500 border-0 py-2 px-6 focus:outline-none hover:bg-indigo-600 rounded text-lg mb-3"
-      >
-        내역보기
-      </button>
-      <div className="overflow-x-auto w-full">
-        {loading && (
-          <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-gray-500 bg-opacity-75 z-50">
-            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-gray-900"></div>
-          </div>
-        )}
-        <table {...getTableProps()} className="border-collapse w-full">
-          <thead>
-            {headerGroups.map((headerGroup) => (
-              <tr {...headerGroup.getHeaderGroupProps()} className="bg-gray-100">
-                {headerGroup.headers.map((column) => (
-                  <th {...column.getHeaderProps(column.getSortByToggleProps())} className={`py-2 px-3 text-xs font-medium tracking-wider ${column.headerClassName}`}>
-                    {column.render('Header')}
-                    <span>
-                      {column.isSorted
-                        ? column.isSortedDesc
-                          ? ' ▼'
-                          : ' ▲'
-                        : ''}
-                    </span>
-                  </th>
-                ))}
-              </tr>
-            ))}
-          </thead>
-          <tbody {...getTableBodyProps()} className="divide-y divide-gray-200">
-            {rows.map((row) => {
-              prepareRow(row);
-              return (
-                <tr {...row.getRowProps()} className="">
-                  {row.cells.map((cell) => (
-                    <td {...cell.getCellProps()} className="py-1 px-0 w-0">
-                      {cell.render('Cell')}
-                    </td>
+        <div className="overflow-x-auto w-full">
+          {loading && (
+            <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-gray-500 bg-opacity-75 z-50">
+              <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-gray-900"></div>
+            </div>
+          )}
+          <table {...getTableProps()} className="border-collapse w-full">
+            <thead>
+              {headerGroups.map((headerGroup) => (
+                <tr {...headerGroup.getHeaderGroupProps()} className="bg-gray-100">
+                  {headerGroup.headers.map((column) => (
+                    <th {...column.getHeaderProps(column.getSortByToggleProps())} className={`py-2 px-3 text-xs font-medium tracking-wider ${column.headerClassName}`}>
+                      {column.render('Header')}
+                      <span>
+                        {column.isSorted
+                          ? column.isSortedDesc
+                            ? ' ▼'
+                            : ' ▲'
+                          : ''}
+                      </span>
+                    </th>
                   ))}
                 </tr>
-              );
-            })}
-          </tbody>
-        </table>
+              ))}
+            </thead>
+            <tbody {...getTableBodyProps()} className="divide-y divide-gray-200">
+              {rows.map((row) => {
+                prepareRow(row);
+                return (
+                  <tr {...row.getRowProps()} className="">
+                    {row.cells.map((cell) => (
+                      <td {...cell.getCellProps()} className="py-1 px-0 w-0">
+                        {cell.render('Cell')}
+                      </td>
+                    ))}
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
       </div>
-    </div>
+    </>
   );
 }
