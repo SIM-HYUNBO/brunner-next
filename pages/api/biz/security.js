@@ -196,34 +196,34 @@ const resetPassword = async (txnId, jRequest) => {
 
         if (jRequest.userId === '') {
             jResponse.error_code = -2;
-            jResponse.error_message = `the userId field value is missing.`;
+            jResponse.error_message = `The userId field value is missing.`;
             return jResponse;
         }
         if (jRequest.registerNo === '') {
             jResponse.error_code = -2;
-            jResponse.error_message = `the registerNo field value is missing.`;
+            jResponse.error_message = `The registerNo field value is missing.`;
             return jResponse;
         }
         if (jRequest.phoneNumber === '') {
             jResponse.error_code = -2;
-            jResponse.error_message = `the phoneNumber field value is missing.`;
+            jResponse.error_message = `The phoneNumber field value is missing.`;
             return jResponse;
 
         }
         if (jRequest.newPassword === '') {
             jResponse.error_code = -2;
-            jResponse.error_message = `the newPassword field value is missing.`;
+            jResponse.error_message = `The newPassword field value is missing.`;
             return jResponse;
         }
         if (jRequest.confirmPassword === '') {
             jResponse.error_code = -2;
-            jResponse.error_message = `the confirmPassword field value is missing.`;
+            jResponse.error_message = `The confirmPassword field value is missing.`;
             return jResponse;
 
         }
         if (jRequest.newPassword !== jRequest.confirmPassword) {
             jResponse.error_code = -2;
-            jResponse.error_message = `the newPassword and confirmPassword fields value are not same.`;
+            jResponse.error_message = `The newPassword and confirmPassword fields value are not same.`;
             return jResponse;
         }
 
