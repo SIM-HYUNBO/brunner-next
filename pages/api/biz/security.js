@@ -172,11 +172,11 @@ const signin = async (txnId, jRequest) => {
                 jResponse.userName = select_TB_COR_USER_MST_01.rows[0].user_name;
             } else {
                 jResponse.error_code = -1;
-                jResponse.error_message = `incorrect password`;
+                jResponse.error_message = `Incorrect password`;
             }
         } else {
             jResponse.error_code = -2;
-            jResponse.error_message = `incorrect user info`;
+            jResponse.error_message = `Incorrect user info`;
         }
     } catch (e) {
         logger.error(`EXCEPTION:\n${e}`);
