@@ -18,8 +18,8 @@ export default function SignoutButton() {
       setModalContent({
         isOpen: true,
         message: message,
-        onConfirm: (result) => resolve(result),
-        onCancel: () => reject(false)
+        onConfirm: (result) => { resolve(result); closeModal(); },
+        onClose: () => { reject(false); closeModal(); }
       });
     });
   };
@@ -30,7 +30,7 @@ export default function SignoutButton() {
       isOpen: false,
       message: '',
       onConfirm: () => { },
-      onCancel: () => { }
+      onClose: () => { }
     });
   };
 
@@ -90,7 +90,9 @@ export default function SignoutButton() {
                                 rounded text-base mt-4 md:mt-0"
           type="button"
           onClick={async () => {
-            requestSignout();
+            var result = await openModal("Do you want to logout now?")
+            if (result)
+              requestSignout();
           }}>
 
           <svg className="w-3 h-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1" stroke="currentColor">
