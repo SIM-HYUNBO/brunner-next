@@ -15,7 +15,7 @@ const BrunnerMessageBox = ({ isOpen, message, onConfirm, onClose }) => {
         <>
             <div className="fixed inset-0 flex items-center justify-center z-50">
                 <div className="fixed inset-0 bg-gray-900 opacity-75"></div>
-                <div className="dark:bg-slate-900 rounded-lg p-8 max-w-md w-full z-50">
+                <div className="dark:bg-slate-600 rounded-lg p-8 max-w-md w-full z-50">
                     <p className="text-lg text-center mb-4">{message}</p>
                     <div className="flex justify-center">
                         <button
