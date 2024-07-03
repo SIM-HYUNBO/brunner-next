@@ -51,7 +51,7 @@ export default function AssetContent() {
   const fetchData = async () => {
     const tableData = await requestGetIncomeHistory();
     setTableData(tableData);
-    console.log(`tableData set:${tableData}`);
+    console.log(`fetchData: tableData set as ${JSON.stringify(tableData)}`);
   };
 
   // 수익 내역 요청
@@ -211,16 +211,16 @@ export default function AssetContent() {
 
   // 수정 처리
   const handleEditAmount = (rowIdx, amount) => {
-    if (tableData.length === 0) {
-      fetchData();
-      return;
-    }
+    console.log(`handleEditAmount: tableData set as ${JSON.stringify(tableData)}`);
+
     const updatedData = [...tableData];
     updatedData[rowIdx].amount = amount;
     setTableData(updatedData);
   };
 
   const handleEditComment = (rowIdx, comment) => {
+    console.log(`handleEditComment: tableData set as ${JSON.stringify(tableData)}`);
+
     const updatedData = [...tableData];
     updatedData[rowIdx].comment = comment;
     setTableData(updatedData);
