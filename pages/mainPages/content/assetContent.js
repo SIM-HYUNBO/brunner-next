@@ -10,9 +10,19 @@ import { Console } from 'winston/lib/winston/transports';
 export default function AssetContent() {
   const router = useRouter();
 
-// 일반 var 변수: 일반 변수 값을 바꾸면 값이 바뀌지만 렌더링 하지 않음, 렌더링되면 값이 초기화 됨
-// state 변수를 바꾸면 렌더링 됨
-// ref 변수를 바꾸면 값이 바뀌지만 렌더링하지 않음, 렌더링해도 값이 유지됨
+/*
+일반 var 변수: 일반 변수 값을 바꾸면 값이 바뀌지만 렌더링 하지 않음, 렌더링되면 값이 초기화 됨
+state 변수를 바꾸면 렌더링 되므로 초기화 됨
+ref 변수를 바꾸면 값이 바뀌지만 렌더링하지 않음, 렌더링해도 값이 유지됨
+
+따라서
+  const [state, setState] = useState([]); // state를 변경하면 렌더링 되면서 값이 초기화 됨
+  const stateRef = useRef(state);        // state변수에 대한 참조
+  const setStateRef = (data) => {      // state를 변경하기 위해 setState를 호출하지 말고 setStateRef()를 호출하도록 함
+    stateRef.current = data;
+    setState(data);
+  };
+*/
   
   const [tableData, setTableData] = useState([]); // tableData를 변경하면 렌더링 되면서 값이 초기화 됨
   const tableDataRef = useRef(tableData);         // state변수에 대한 참조
