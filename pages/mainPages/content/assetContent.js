@@ -18,8 +18,8 @@ ref 변수를 바꾸면 값이 바뀌지만 렌더링하지 않음, 렌더링해
 따라서
   const [state, setState] = useState([]); // state를 변경하면 렌더링 되면서 값이 초기화 됨
   const stateRef = useRef(state);         // state변수에 대한 참조
-  const setStateRef = (data) => {         // state를 변경하기 위해서 setState를 직접 호출하지 말고 setStateRef()를 호출해서 setState를 간접 하도록 함
-    stateRef.current = data;
+  const setStateRef = (data) => {         // state값을 변경하기 위해서 setState를 직접 호출하지 말고 setStateRef()를 호출해서 setState를 간접적으로 호출하고
+    stateRef.current = data;              // state값을 확인하기 위해서 stateRef.current 값을 확인함
     setState(data);
   };
 */
