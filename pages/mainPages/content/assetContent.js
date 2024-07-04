@@ -55,8 +55,8 @@ export default function AssetContent() {
 
   // 수익 내역 데이터 가져오기
   const fetchData = async () => {
-    const tableData = await requestGetIncomeHistory();
-    setTableDataRef(tableData);
+    const result = await requestGetIncomeHistory();
+    setTableDataRef(result);
     console.log(`fetchData: tableData set as ${JSON.stringify(tableDataRef.current)}`);
   };
 
