@@ -15,12 +15,12 @@ export default function AssetContent() {
 // ref 변수를 바꾸면 값이 바뀌지만 렌더링하지 않음, 렌더링해도 값이 유지됨
   
   const [tableData, setTableData] = useState([]); // tableData를 변경하면 렌더링 되면서 값이 초기화 됨
-  const tableDataRef = useRef(tableData); 
-  
+  const tableDataRef = useRef(tableData);         // state변수에 대한 참조
   const setTableDataRef = (data) => {
     tableDataRef.current = data;
     setTableData(data);
   };
+  
   const [amountInput, setAmountInput] = useState('');
   const [commentInput, setCommentInput] = useState('');
   const [loading, setLoading] = useState(false); // 로딩 상태 추가
