@@ -18,11 +18,6 @@ export default function AssetContent() {
   const [amountInput, setAmountInput] = useState('');
   const [commentInput, setCommentInput] = useState('');
   const [loading, setLoading] = useState(false); // 로딩 상태 추가
-
-  useEffect(() => {
-
-  }, [tableData]);
-
   const [modalContent, setModalContent] = useState({
     isOpen: false,
     message: '',
@@ -56,7 +51,7 @@ export default function AssetContent() {
   const fetchData = async () => {
     const tableData = await requestGetIncomeHistory();
     setTableData(tableData);
-    console.log(`fetchData: tableData set as ${JSON.stringify(tableData)}`);
+    console.log(`fetchData: tableData set as ${JSON.stringify(tableDataRef.current)}`);
   };
 
   // 수익 내역 요청
@@ -182,15 +177,11 @@ export default function AssetContent() {
     const userId = getLoginUserId();
     if (!userId) return;
 
-    if (tableData.length === 0) {
-      fetchData();
-    }
-
     const deleteConfirm = await openModal(`Delete this item?`);
     if (!deleteConfirm)
       return;
 
-    const historyId = tableData[rowIndex].history_id;
+    const historyId = tableDataRef.current[rowIndex].history_id;
 
     setLoading(true); // 데이터 로딩 시작
 
@@ -216,7 +207,7 @@ export default function AssetContent() {
 
   // 수정 처리
   const handleEditAmount = (rowIdx, amount) => {
-    console.log(`handleEditAmount: tableData set as ${JSON.stringify(tableData)}`);
+    console.log(`handleEditAmount: tableData set as ${JSON.stringify(tableDataRef.current)}`);
 
     const updatedData = [...tableDataRef.current];
     updatedData[rowIdx].amount = amount;
@@ -224,7 +215,7 @@ export default function AssetContent() {
   };
 
   const handleEditComment = (rowIdx, comment) => {
-    console.log(`handleEditComment: tableData set as ${JSON.stringify(tableData)}`);
+    console.log(`handleEditComment: tableData set as ${JSON.stringify(tableDataRef.current)}`);
 
     const updatedData = [...tableDataRef.current];
     updatedData[rowIdx].comment = comment;
