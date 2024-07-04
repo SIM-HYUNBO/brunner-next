@@ -9,7 +9,12 @@ import { Console } from 'winston/lib/winston/transports';
 
 export default function AssetContent() {
   const router = useRouter();
-  const [tableData, setTableData] = useState([]);
+  const [tableData, _setTableData] = useState([]);
+  const tableDataRef = useRef(tableData);
+  const setTableData = (data) => {
+    tableDataRef.current = data;
+    _setTableData(data);
+  };
   const [amountInput, setAmountInput] = useState('');
   const [commentInput, setCommentInput] = useState('');
   const [loading, setLoading] = useState(false); // 로딩 상태 추가
