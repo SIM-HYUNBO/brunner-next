@@ -16,7 +16,7 @@ export default function AssetContent() {
 
   useEffect(() => {
 
-  }, []);
+  }, [tableData]);
 
   const [modalContent, setModalContent] = useState({
     isOpen: false,
