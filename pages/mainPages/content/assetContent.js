@@ -218,7 +218,7 @@ export default function AssetContent() {
   const handleEditAmount = (rowIdx, amount) => {
     console.log(`handleEditAmount: tableData set as ${JSON.stringify(tableData)}`);
 
-    const updatedData = [...tableData];
+    const updatedData = [...tableDataRef.current];
     updatedData[rowIdx].amount = amount;
     setTableData(updatedData);
   };
@@ -226,7 +226,7 @@ export default function AssetContent() {
   const handleEditComment = (rowIdx, comment) => {
     console.log(`handleEditComment: tableData set as ${JSON.stringify(tableData)}`);
 
-    const updatedData = [...tableData];
+    const updatedData = [...tableDataRef.current];
     updatedData[rowIdx].comment = comment;
     setTableData(updatedData);
   };
