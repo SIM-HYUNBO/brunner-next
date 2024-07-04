@@ -9,13 +9,15 @@ import { Console } from 'winston/lib/winston/transports';
 
 export default function AssetContent() {
   const router = useRouter();
+
+// 일반 var 변수: 일반 변수 값을 바꾸면 값이 바뀌지만 렌더링 하지 않음, 렌더링되면 값이 초기화 됨
+// state 변수를 바꾸면 렌더링 됨
+// ref 변수를 바꾸면 값이 바뀌지만 렌더링하지 않음, 렌더링해도 값이 유지됨
   
-  const [tableData, setTableData] = useState([]); // tableData가 변경되는 것을 감지
-  
-  // tableData값을 변경해도 페이지를 다시 그리지 않으면 값이 변경되지 않으므로 페이지를 다시 그리기전에 값을 확인하기 위해서는 tableDataRef가 필요함
+  const [tableData, setTableData] = useState([]); // tableData를 변경하면 렌더링 되면서 값이 초기화 됨
   const tableDataRef = useRef(tableData); 
   
-  const _setTableData = (data) => {
+  const setTableDataRef = (data) => {
     tableDataRef.current = data;
     setTableData(data);
   };
@@ -54,7 +56,7 @@ export default function AssetContent() {
   // 수익 내역 데이터 가져오기
   const fetchData = async () => {
     const tableData = await requestGetIncomeHistory();
-    _setTableData(tableData);
+    setTableDataRef(tableData);
     console.log(`fetchData: tableData set as ${JSON.stringify(tableDataRef.current)}`);
   };
 
@@ -215,7 +217,7 @@ export default function AssetContent() {
 
     const updatedData = [...tableDataRef.current];
     updatedData[rowIdx].amount = amount;
-    _setTableData(updatedData);
+    setTableDataRef(updatedData);
   };
 
   const handleEditComment = (rowIdx, comment) => {
@@ -223,7 +225,7 @@ export default function AssetContent() {
 
     const updatedData = [...tableDataRef.current];
     updatedData[rowIdx].comment = comment;
-    _setTableData(updatedData);
+    setTableDataRef(updatedData);
   };
 
   // 테이블 컬럼 정의
