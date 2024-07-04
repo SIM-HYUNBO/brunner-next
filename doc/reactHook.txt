@@ -1,0 +1,23 @@
+
+  일반 var 변수: 일반 변수는 변수값을 바꾸면 값이 바뀌지만 컴포넌트를 렌더링 하지 않으며 컴포넌트가 렌더링되면 값이 초기화 됨
+  state 변수(useState):  state를 바꾸면 (setState) 컴포넌트는 렌더링 되고 컴포넌트 내 모든 변수들은 초기화 됨
+  ref 변수(useRef): ref변수를 바꾸면 값이 바뀌지만 컴포넌트를 렌더링하지 않음, 렌더링해도 이 값은 유지됨
+  
+  따라서 컴포넌트내에서 변수 선언 및 사용법은 
+  
+  1. state 선언  
+    const [state, setState] = useState([]); 
+
+  2. state변수에 대한 참조 선언 
+    const stateRef = useRef(state);         
+
+  3. state값을 변경하기 위해서 setState()를 직접 호출하지 않음 
+     state변수에 대한 참조값을 변경하는 함수 setStateRef() 작성하고 해당 함수에서 setState를 호출해서 state에 대한 참조값과 state를 같이 변경
+
+     const setStateRef = (newValue) => {      
+      stateRef.current = newValue;          
+      setState(newValue);
+     };
+     
+  4. setStateRef()를 호출해서 state 변수값 변경
+  5. state값을 확인하기 위해서 stateRef.current 값을 읽음
