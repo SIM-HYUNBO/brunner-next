@@ -49,8 +49,17 @@ export default function AssetContent() {
     });
   };
 
+  useEffect(() => {
+    const fetchData = async () => {
+      await fetchIncomeHistory();
+    };
+
+    fetchData();
+
+  }, []);
+
   // 수익 내역 데이터 가져오기
-  const fetchData = async () => {
+  const fetchIncomeHistory = async () => {
     const result = await requestGetIncomeHistory();
     setTableDataRef(result);
     console.log(`fetchData: tableData set as ${JSON.stringify(tableDataRef.current)}`);
@@ -113,7 +122,7 @@ export default function AssetContent() {
 
     if (jResponse.error_code === 0) {
       openModal('Successfully added.');
-      fetchData(); // 데이터 다시 가져오기
+      fetchIncomeHistory(); // 데이터 다시 가져오기
       setAmountInput('');
       setCommentInput('');
     } else {
@@ -162,16 +171,16 @@ export default function AssetContent() {
     openModal('Successfully updated.');
 
     if (jResponse.error_code === 0) {
-      fetchData(); // 데이터 다시 가져오기
+      fetchIncomeHistory(); // 데이터 다시 가져오기
     } else {
       openModal(jResponse.error_message);
-      fetchData(); // 실패 시 데이터 다시 가져오기
+      fetchIncomeHistory(); // 실패 시 데이터 다시 가져오기
     }
   };
 
   // 새로고침 처리
   const handleRefresh = () => {
-    fetchData(); // 데이터 새로고침
+    fetchIncomeHistory(); // 데이터 새로고침
   };
 
   // 삭제 처리
@@ -200,10 +209,10 @@ export default function AssetContent() {
 
     if (jResponse.error_code === 0) {
       openModal('Successfully deleted.');
-      fetchData(); // 데이터 다시 가져오기
+      fetchIncomeHistory(); // 데이터 다시 가져오기
     } else {
       openModal(jResponse.error_message);
-      fetchData(); // 실패 시 데이터 다시 가져오기
+      fetchIncomeHistory(); // 실패 시 데이터 다시 가져오기
     }
   };
 
@@ -361,7 +370,7 @@ export default function AssetContent() {
           onClick={handleRefresh}
           className="text-white bg-indigo-500 border-0 py-2 px-6 focus:outline-none hover:bg-indigo-600 rounded text-lg mb-3"
         >
-          내역보기
+          새로고침
         </button>
         <div className="overflow-x-auto w-full">
           {loading && (
