@@ -106,7 +106,7 @@ export default function Signin() {
                 Sign in
               </h1>
               <div className="lg:w-3/5 md:w-1/2 md:pr-16 lg:pr-0 pr-0">
-                <p className="leading-relaxed mt-4 mb-5">아이디와 비밀번호를 입력하세요.</p>
+                <p className="leading-relaxed mt-4 mb-5">Inut ID and Password.</p>
               </div>
               <div className="relative mb-4">
                 <label htmlFor="id" className="leading-7 text-sm text-gray-400">
