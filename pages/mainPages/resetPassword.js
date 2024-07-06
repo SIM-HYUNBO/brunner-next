@@ -12,7 +12,7 @@ import BrunnerMessageBox from '@/components/BrunnerMessageBox'
 export default function ResetPassword() {
   const router = useRouter();
   const [loading, setLoading] = useState(false); // 로딩 상태 추가
-  
+
   const [modalContent, setModalContent] = useState({
     isOpen: false,
     message: '',
@@ -104,7 +104,7 @@ export default function ResetPassword() {
         <BodySection className="text-gray-600 body-font">
           <div className="container px-5 py-14 mx-auto flex flex-wrap items-center">
             <div className="lg:w-3/5 md:w-1/2 md:pr-16 lg:pr-0 pr-0">
-              <h1 className="title-font font-medium text-3xl text-gray-900">Did you forget your password? </h1>
+              <h1 className="title-font font-medium text-3xl text-gray-900">Forgot your password? </h1>
               <p className="leading-relaxed mt-4">Enter your ID, phone number, and register number to reset password.</p>
             </div>
             <div className="lg:flex-grow md:w-1/2 lg:pr-24 md:pr-16 flex flex-col md:items-start md:text-left mb-16 md:mb-0 items-center text-center">
