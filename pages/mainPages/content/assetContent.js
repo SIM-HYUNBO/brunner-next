@@ -116,8 +116,8 @@ export default function AssetContent() {
       comment: commentInput,
     };
 
+    setLoading(true); // 데이터 로딩 시작    
     const jResponse = await requestServer('POST', JSON.stringify(jRequest));
-
     setLoading(false);
 
     if (jResponse.error_code === 0) {
@@ -168,6 +168,7 @@ export default function AssetContent() {
     setLoading(true); // 데이터 로딩 시작
     const jResponse = await requestServer('POST', JSON.stringify(jRequest));
     setLoading(false); // 데이터 로딩 시작
+
     openModal('Successfully updated.');
 
     if (jResponse.error_code === 0) {
@@ -194,8 +195,6 @@ export default function AssetContent() {
 
     const historyId = tableDataRef.current[rowIndex].history_id;
 
-    setLoading(true); // 데이터 로딩 시작
-
     const jRequest = {
       commandName: 'asset.deleteIncome',
       systemCode: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE,
@@ -203,8 +202,8 @@ export default function AssetContent() {
       historyId: historyId,
     };
 
+    setLoading(true); // 데이터 로딩 시작
     const jResponse = await requestServer('POST', JSON.stringify(jRequest));
-
     setLoading(false); // 데이터 로딩 시작
 
     if (jResponse.error_code === 0) {

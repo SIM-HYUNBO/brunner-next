@@ -11,7 +11,8 @@ import BrunnerMessageBox from '@/components/BrunnerMessageBox'
 
 export default function ResetPassword() {
   const router = useRouter();
-
+  const [loading, setLoading] = useState(false); // 로딩 상태 추가
+  
   const [modalContent, setModalContent] = useState({
     isOpen: false,
     message: '',
@@ -78,7 +79,9 @@ export default function ResetPassword() {
     jRequest.newPassword = newPassword;
     jRequest.confirmPassword = confirmPassword;
 
+    setLoading(true); // 데이터 로딩 시작
     jResponse = await requestServer('POST', JSON.stringify(jRequest));
+    setLoading(false); // 데이터 로딩 시작
 
     openModal(jResponse.error_message);
   };
