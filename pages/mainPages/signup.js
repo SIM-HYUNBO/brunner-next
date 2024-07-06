@@ -10,6 +10,7 @@ import BrunnerMessageBox from '@/components/BrunnerMessageBox'
 
 export default function Signup() {
   const router = useRouter();
+  const [loading, setLoading] = useState(false); // 로딩 상태 추가
 
   const [modalContent, setModalContent] = useState({
     isOpen: false,
@@ -90,12 +91,14 @@ export default function Signup() {
     jRequest.registerNo = registerNo;
     jRequest.address = address;
 
+    setLoading(true); // 데이터 로딩 시작
     jResponse = await requestServer('POST', JSON.stringify(jRequest));
+    setLoading(false); // 데이터 로딩 시작
 
     if (jResponse.error_code == 0) {
       openModal(`successfully signed up. you will move to sign-in page.`);
     } else {
-      openModal(JSON.stringify(jResponse.error_message));
+      openModal(jResponse.error_message);
     }
   };
 

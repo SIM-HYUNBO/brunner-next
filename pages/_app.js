@@ -15,6 +15,8 @@ export default function App({ Component, pageProps }) {
 
   dotenv.config();
 
+  const [loading, setLoading] = useState(false); // 로딩 상태 추가
+  
   const [modalContent, setModalContent] = useState({
     isOpen: false,
     message: '',
@@ -50,7 +52,9 @@ export default function App({ Component, pageProps }) {
 
     jRequest.commandName = "serviceSQL.loadAllSQL";
 
+    setLoading(true); // 데이터 로딩 시작
     jResponse = await requestServer('POST', JSON.stringify(jRequest));
+    setLoading(false); // 데이터 로딩 시작
 
     if (jResponse.error_code < 0) // 에러
       openModal(jResponse.error_message);

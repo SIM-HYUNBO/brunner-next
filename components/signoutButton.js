@@ -11,6 +11,7 @@ export default function SignoutButton() {
     onConfirm: () => { },
     onClose: () => { }
   });
+  const [loading, setLoading] = useState(false); // 로딩 상태 추가
 
   // 모달 열기 함수
   const openModal = (message) => {
@@ -45,7 +46,9 @@ export default function SignoutButton() {
 
     jRequest.userId = userInfo?.USER_ID;
 
+    setLoading(true); // 데이터 로딩 시작
     jResponse = await requestServer('POST', JSON.stringify(jRequest));
+    setLoading(false); // 데이터 로딩 시작
 
     if (jResponse.error_code == 0) {
       process.env.userInfo = null;

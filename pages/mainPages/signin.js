@@ -8,10 +8,12 @@ import BrunnerMessageBox from '@/components/BrunnerMessageBox'
 
 export default function Signin() {
   const router = useRouter();
+  const [loading, setLoading] = useState(false); // 로딩 상태 추가
+  
   const [userId, setUserId] = useState('');
   const [password, setPassword] = useState('');
   const userIdRef = useRef();
-
+  
   useEffect(() => {
     userIdRef.current.focus();
   }, []);
@@ -62,7 +64,9 @@ export default function Signin() {
         password: password
       };
 
+      setLoading(true); // 데이터 로딩 시작
       const jResponse = await requestServer('POST', JSON.stringify(jRequest));
+      setLoading(false); // 데이터 로딩 시작
 
       if (jResponse.error_code === 0) {
         process.env.userInfo = jResponse;
