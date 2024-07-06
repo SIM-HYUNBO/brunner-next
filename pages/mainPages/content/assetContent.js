@@ -362,7 +362,7 @@ export default function AssetContent() {
             className="bg-green-500 text-white py-2 px-4 rounded hover:bg-green-600 ml-3"
             style={{ alignSelf: 'flex-end' }}
           >
-            추가
+            Add
           </button>
         </div>
         <button
