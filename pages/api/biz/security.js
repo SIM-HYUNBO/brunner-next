@@ -41,68 +41,68 @@ const signup = async (txnId, jRequest) => {
 
         if (!jRequest.userId) {
             jResponse.error_code = -2;
-            jResponse.error_message = `[userId] is a required field. 
+            jResponse.error_message = `The [userId] is a required field. 
             Please enter a value.`;
             return jResponse;
         }
         if (jRequest.userId.length < 5 || jRequest.userId.length > 10) {
             jResponse.error_code = -2;
-            jResponse.error_message = `[userId] length should be from 5 to 10.`;
+            jResponse.error_message = `The [userId] length should be from 5 to 10.`;
             return jResponse;
         }
         if (!jRequest.password) {
             jResponse.error_code = -2;
-            jResponse.error_message = `[password] is a required field. 
+            jResponse.error_message = `The [password] is a required field. 
             Please enter a value.`;
             return jResponse;
         }
         if (jRequest.password.length < 5) {
             jResponse.error_code = -2;
-            jResponse.error_message = `[password] length should be more than 5.`;
+            jResponse.error_message = `The [password] length should be more than 5.`;
             return jResponse;
         }
         if (!jRequest.userName) {
             jResponse.error_code = -2;
-            jResponse.error_message = `[userName] is a required field. 
+            jResponse.error_message = `The [userName] is a required field. 
             Please enter a value.`;
             return jResponse;
         }
         if (jRequest.userName.length < 2 || jRequest.userName.length > 10) {
             jResponse.error_code = -2;
-            jResponse.error_message = `[password] length should be from 2 to 10.`;
+            jResponse.error_message = `The [password] length should be from 2 to 10.`;
             return jResponse;
         }
         if (!jRequest.phoneNumber) {
             jResponse.error_code = -2;
-            jResponse.error_message = `[phoneNumber] is a required field. 
+            jResponse.error_message = `The [phoneNumber] is a required field. 
             Please enter a value.`;
             return jResponse;
         }
         if (verifyTelNo(jRequest.phoneNumber) == false) {
             jResponse.error_code = -2;
-            jResponse.error_message = `[phoneNumber] is not valid.`;
+            jResponse.error_message = `The [phoneNumber] is not valid.`;
             return jResponse;
         }
         if (!jRequest.email) {
             jResponse.error_code = -2;
-            jResponse.error_message = `[email] is a required field. 
+            jResponse.error_message = `The [email] is a required field. 
             Please enter a value.`;
             return jResponse;
         }
         if (verifyEMail(jRequest.email) == false) {
             jResponse.error_code = -2;
-            jResponse.error_message = `[email] is not valid.`;
+            jResponse.error_message = `The [email] is not valid.`;
             return jResponse;
         }
         if (!jRequest.registerNo) {
             jResponse.error_code = -2;
-            jResponse.error_message = `[registerNo] is a required field. 
+            jResponse.error_message = `The [registerNo] is a required field. 
             Please enter a value.`;
             return jResponse;
         }
         if (!jRequest.address) {
             jResponse.error_code = -2;
-            jResponse.error_message = `[address] is a required field. 
+            jResponse.error_message = `The [address] is a required field. 
             Please enter a value.`;
             return jResponse;
         }
@@ -203,39 +203,39 @@ const resetPassword = async (txnId, jRequest) => {
 
         if (jRequest.userId === '') {
             jResponse.error_code = -2;
-            jResponse.error_message = `The userId field is a required field. 
+            jResponse.error_message = `The [userId] field is a required field. 
             Please enter a value.`;
             return jResponse;
         }
         if (jRequest.registerNo === '') {
             jResponse.error_code = -2;
-            jResponse.error_message = `The registerNo field is a required field. 
+            jResponse.error_message = `The [registerNo] field is a required field. 
             Please enter a value.`;
             return jResponse;
         }
         if (jRequest.phoneNumber === '') {
             jResponse.error_code = -2;
-            jResponse.error_message = `The phoneNumber field is a required field. 
+            jResponse.error_message = `The [phoneNumber] field is a required field. 
             Please enter a value.`;
             return jResponse;
 
         }
         if (jRequest.newPassword === '') {
             jResponse.error_code = -2;
-            jResponse.error_message = `The newPassword field is a required field. 
+            jResponse.error_message = `The [newPassword] field is a required field. 
             Please enter a value.`;
             return jResponse;
         }
         if (jRequest.confirmPassword === '') {
             jResponse.error_code = -2;
-            jResponse.error_message = `The confirmPassword field is a required field. 
+            jResponse.error_message = `The [confirmPassword] field is a required field. 
             Please enter a value.`;
             return jResponse;
 
         }
         if (jRequest.newPassword !== jRequest.confirmPassword) {
             jResponse.error_code = -2;
-            jResponse.error_message = `The newPassword and confirmPassword fields value are not same.`;
+            jResponse.error_message = `The [newPassword] and [confirmPassword] field values are not same.`;
             return jResponse;
         }
 
