@@ -1,8 +1,8 @@
 `use strict`
 
 import logger from "./../winston/logger"
-import * as database from './database/database'
-import * as serviceSQL from './serviceSQL'
+import * as database from `./database/database`
+import * as serviceSQL from `./serviceSQL`
 
 export default function executeService(txnId, jRequest) {
     var jResponse = {};
@@ -107,7 +107,7 @@ const signup = async (txnId, jRequest) => {
             return jResponse;
         }
 
-        var sql = serviceSQL.getSQL00('select_TB_COR_USER_MST', 1);
+        var sql = serviceSQL.getSQL00(`select_TB_COR_USER_MST`, 1);
         var select_TB_COR_USER_MST_01 = await database.executeSQL(sql,
             [
                 jRequest.systemCode,
@@ -120,7 +120,7 @@ const signup = async (txnId, jRequest) => {
             return jResponse;
         }
 
-        sql = serviceSQL.getSQL00('insert_TB_COR_USER_MST', 1);
+        sql = serviceSQL.getSQL00(`insert_TB_COR_USER_MST`, 1);
         var insert_TB_COR_USER_MST_01 = await database.executeSQL(sql,
             [
                 jRequest.systemCode,
@@ -130,7 +130,7 @@ const signup = async (txnId, jRequest) => {
                 jRequest.address,
                 jRequest.phoneNumber,
                 jRequest.email,
-                'Y',
+                `Y`,
                 jRequest.userId,
                 jRequest.registerNo,
             ]);
@@ -161,7 +161,7 @@ const signin = async (txnId, jRequest) => {
         jResponse.commanaName = jRequest.commandName;
 
         var sql = null
-        sql = serviceSQL.getSQL00('select_TB_COR_USER_MST', 1);
+        sql = serviceSQL.getSQL00(`select_TB_COR_USER_MST`, 1);
         var select_TB_COR_USER_MST_01 = await database.executeSQL(sql,
             [
                 jRequest.systemCode,
@@ -201,32 +201,32 @@ const resetPassword = async (txnId, jRequest) => {
         jResponse.commanaName = jRequest.commandName;
         jResponse.userId = jRequest.userId;
 
-        if (jRequest.userId === '') {
+        if (jRequest.userId === ``) {
             jResponse.error_code = -2;
             jResponse.error_message = `The [userId] field is a required field. 
             Please enter a value.`;
             return jResponse;
         }
-        if (jRequest.registerNo === '') {
+        if (jRequest.registerNo === ``) {
             jResponse.error_code = -2;
             jResponse.error_message = `The [registerNo] field is a required field. 
             Please enter a value.`;
             return jResponse;
         }
-        if (jRequest.phoneNumber === '') {
+        if (jRequest.phoneNumber === ``) {
             jResponse.error_code = -2;
             jResponse.error_message = `The [phoneNumber] field is a required field. 
             Please enter a value.`;
             return jResponse;
 
         }
-        if (jRequest.newPassword === '') {
+        if (jRequest.newPassword === ``) {
             jResponse.error_code = -2;
             jResponse.error_message = `The [newPassword] field is a required field. 
             Please enter a value.`;
             return jResponse;
         }
-        if (jRequest.confirmPassword === '') {
+        if (jRequest.confirmPassword === ``) {
             jResponse.error_code = -2;
             jResponse.error_message = `The [confirmPassword] field is a required field. 
             Please enter a value.`;
@@ -239,7 +239,7 @@ const resetPassword = async (txnId, jRequest) => {
             return jResponse;
         }
 
-        var sql = serviceSQL.getSQL00(promisePool, 'select_TB_COR_USER_MST', 1);
+        var sql = serviceSQL.getSQL00(promisePool, `select_TB_COR_USER_MST`, 1);
         var select_TB_COR_USER_MST_01 = await database.executeSQL(sql,
             [
                 jRequest.systemCode,
@@ -264,7 +264,7 @@ const resetPassword = async (txnId, jRequest) => {
             return jResponse;
         }
         else {
-            var sql = serviceSQL.getSQL00(promisePool, 'update_TB_COR_USER_MST', 1);
+            var sql = serviceSQL.getSQL00(promisePool, `update_TB_COR_USER_MST`, 1);
             var update_TB_COR_USER_MST_01 = await database.executeSQL(sql,
                 [
                     jRequest.newPassword,
@@ -314,7 +314,7 @@ const signout = (txnId, jRequest) => {
 };
 
 const verifyTelNo = (args) => {
-    const msg = '유효하지 않는 전화번호입니다.';
+    const msg = `유효하지 않는 전화번호입니다.`;
     // IE 브라우저에서는 당연히 var msg로 변경
 
     if (/^[0-9]{2,3}-[0-9]{3,4}-[0-9]{4}/.test(args)) {
