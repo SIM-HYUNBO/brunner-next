@@ -24,12 +24,12 @@ export default function HomeContent() {
           {(!userInfo.isLogin()) && <div>
             <button className="inline-flex text-white bg-indigo-500 border-0 py-2 px-6 focus:outline-none hover:bg-indigo-600 rounded text-lg mr-2"
               onClick={() => router.push('/mainPages/signin')} >
-              로그인
+              Sign in
             </button>
             <button
               className="inline-flex text-white bg-indigo-500 border-0 py-2 px-6 focus:outline-none hover:bg-indigo-600 rounded text-lg"
               onClick={() => router.push('/mainPages/signup')} >
-              회원가입
+              Sign up
             </button>
           </div>}
         </div>
