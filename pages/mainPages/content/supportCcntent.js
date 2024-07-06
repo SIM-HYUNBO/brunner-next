@@ -37,6 +37,6 @@ export default function SupportContent() {
 
 export function GetCallCenter() {
   return (
-    <a className="text-white-900" href={`tel:01075448698`}>콜센터 연결하기</a>
+    <a className="text-white-900" href={`tel:01075448698`}>Call</a>
   )
 }
