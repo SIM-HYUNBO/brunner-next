@@ -9,11 +9,11 @@ import BrunnerMessageBox from '@/components/BrunnerMessageBox'
 export default function Signin() {
   const router = useRouter();
   const [loading, setLoading] = useState(false); // 로딩 상태 추가
-  
+
   const [userId, setUserId] = useState('');
   const [password, setPassword] = useState('');
   const userIdRef = useRef();
-  
+
   useEffect(() => {
     userIdRef.current.focus();
   }, []);
@@ -103,14 +103,14 @@ export default function Signin() {
           <div className="container px-5 mx-auto flex flex-wrap items-center">
             <div className="lg:flex-grow md:w-1/2 lg:pr-24 md:pr-16 flex flex-col md:items-start md:text-left mb-16 md:mb-0 items-center text-center">
               <h1 className="title-font sm:text-4xl text-3xl mb-10 font-medium text-green-900">
-                로그인
+                Sign in
               </h1>
               <div className="lg:w-3/5 md:w-1/2 md:pr-16 lg:pr-0 pr-0">
                 <p className="leading-relaxed mt-4 mb-5">아이디와 비밀번호를 입력하세요.</p>
               </div>
               <div className="relative mb-4">
                 <label htmlFor="id" className="leading-7 text-sm text-gray-400">
-                  아이디
+                  ID
                 </label>
                 <input
                   type="text"
@@ -123,7 +123,7 @@ export default function Signin() {
               </div>
               <div className="relative mb-4">
                 <label className="leading-7 text-sm text-gray-400" htmlFor="password">
-                  비밀번호
+                  Password
                 </label>
                 <input
                   className="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"
@@ -138,16 +138,16 @@ export default function Signin() {
                 className="text-white bg-indigo-500 border-0 py-2 px-8 focus:outline-none hover:bg-indigo-600 rounded text-lg"
                 onClick={requestSignin}
               >
-                로그인
+                Sign in
               </button>
               <p className="text-xs text-gray-500 mt-10">
-                비밀번호를 잊으셨나요? 지금 초기화하세요.
+                Forgot your password? Reset now.
               </p>
               <button
                 className="text-white bg-indigo-500 border-0 py-2 px-8 focus:outline-none hover:bg-indigo-600 rounded text-lg mt-5"
                 onClick={() => router.push('/mainPages/resetPassword')}
               >
-                비밀번호 초기화
+                Reset password
               </button>
             </div>
           </div>

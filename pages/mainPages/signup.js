@@ -121,7 +121,7 @@ export default function Signup() {
           <div className="container px-5 py-10 mx-auto flex flex-wrap">
             <div className="lg:flex-grow md:w-1/2 lg:pr-24 md:pr-16 flex flex-col md:items-start md:text-left mb-16 md:mb-0 text-center">
               <h2 className="title-font sm:text-4xl text-3xl mb-10 font-medium text-green-900">
-                가입하기
+                Create account
               </h2>
               <div className="md:pr-16 lg:pr-0 pr-0">
                 <p className="leading-relaxed mt-4  mb-5">Enter your Information.</p>
