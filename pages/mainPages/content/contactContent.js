@@ -53,12 +53,12 @@ export default function ContactContent() {
 
 export function GetQuestion() {
   return (
-    <a className="text-white-900" href={`mailto:kkhw1202@gmail.com`}>메일로 문의하기</a>
+    <a className="text-white-900" href={`mailto:kkhw1202@gmail.com`}>By E-Mail</a>
   )
 }
 
 export function GetCallCenter() {
   return (
-    <a className="text-white-900" href={`tel:01075448698`}>전화로 문의하기</a>
+    <a className="text-white-900" href={`tel:01075448698`}>By Phone</a>
   )
 }
