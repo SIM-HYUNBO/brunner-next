@@ -9,6 +9,7 @@ import { useEffect } from 'react'
 import * as userInfo from './../components/userInfo'
 import HomeContent from './mainPages/content/homeContent'
 import AssetContent from './mainPages/content/assetContent'
+import StockContent from './mainPages/content/stockContent'
 
 // Home 페이지
 export default function Home() {
@@ -30,8 +31,13 @@ export default function Home() {
           <HomeContent></HomeContent>
         </div>
         {(userInfo.isLogin()) &&
-          <div className="container mx-auto flex px-5 md:flex-row flex-col items-center">
-            <AssetContent></AssetContent>
+          <div className="container mx-auto flex px-5 md:flex-row flex-col items-left ">
+            <div className="container mx-auto flex px-5 md:flex-row flex-col items-center">
+              <AssetContent></AssetContent>
+            </div>
+            <div className="container mx-auto flex px-5 md:flex-row flex-col items-center">
+              <StockContent></StockContent>
+            </div>
           </div>
         }
       </BodySection>
