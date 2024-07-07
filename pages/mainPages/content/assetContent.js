@@ -1,9 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { useRouter } from 'next/router';
 import { useTable, useSortBy } from 'react-table';
 import requestServer from './../../../components/requestServer';
-import { useRouter } from 'next/router';
+import * as userInfo from './../../../components/userInfo';
 import moment from 'moment';
-import BrunnerMessageBox from '@/components/BrunnerMessageBox'
+import BrunnerMessageBox from '@/components/BrunnerMessageBox';
 import { log } from 'winston';
 import { Console } from 'winston/lib/winston/transports';
 
@@ -67,7 +68,7 @@ export default function AssetContent() {
 
   // 수익 내역 요청
   const requestGetIncomeHistory = async () => {
-    const userId = getLoginUserId();
+    const userId = userInfo.getLoginUserId();
     if (!userId) return [];
 
     const jRequest = {
@@ -87,15 +88,9 @@ export default function AssetContent() {
     }
   };
 
-  // 로그인 사용자 ID 가져오기
-  const getLoginUserId = () => {
-    const userInfo = process.env.userInfo;
-    return userInfo ? userInfo.userId : null;
-  };
-
   // 수익 내역 추가 처리
   const handleAddIncome = async () => {
-    const userId = getLoginUserId();
+    const userId = usserInfo.getLoginUserId();
     if (!userId) return;
     if (!amountInput) {
       openModal(`Input amount.`);
@@ -144,7 +139,7 @@ export default function AssetContent() {
 
   // 저장 처리
   const handleSave = async (row) => {
-    const userId = getLoginUserId();
+    const userId = userInfo.getLoginUserId();
     if (!userId) return;
 
     let amount = row.values.amount;
@@ -186,7 +181,7 @@ export default function AssetContent() {
 
   // 삭제 처리
   const handleDelete = async (rowIndex) => {
-    const userId = getLoginUserId();
+    const userId = userInfo.getLoginUserId();
     if (!userId) return;
 
     const deleteConfirm = await openModal(`Delete this item?`);
@@ -337,14 +332,14 @@ export default function AssetContent() {
           은퇴전 백억 자산가가 되세요.
 
         </div>
-        <div className="mb-5 flex items-center w-full">
+        <div className="mb-5 table w-full">
           <input
             type="text"
             name="amountInput"
             value={amountInput}
             onChange={(e) => handleInputChange(e, 'amountInput')}
             placeholder="금액"
-            className="mr-3 p-2 border rounded dark:text-gray-300 text-right"
+            className="mr-3 p-2 border rounded dark:text-gray-300 text-right table-column"
           />
           <div className="relative flex-grow">
             <input
@@ -353,13 +348,13 @@ export default function AssetContent() {
               value={commentInput}
               onChange={(e) => handleInputChange(e, 'commentInput')}
               placeholder="코멘트"
-              className="p-2 border rounded dark:text-gray-300 w-full"
+              className="p-2 border rounded dark:text-gray-300 w-full table-column"
               style={{ marginLeft: '-2px' }}
             />
           </div>
           <button
             onClick={handleAddIncome}
-            className="bg-green-500 text-white py-2 px-4 rounded hover:bg-green-600 ml-3"
+            className="bg-green-500 text-white py-2 px-4 rounded hover:bg-green-600"
             style={{ alignSelf: 'flex-end' }}
           >
             Add

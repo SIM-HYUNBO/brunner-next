@@ -4,6 +4,7 @@ import logger from "./winston/logger"
 import serviceSQL from './biz/serviceSQL'
 import security from './biz/security'
 import asset from './biz/asset'
+import stock from './biz/stock'
 
 export default async (req, res) => {
     const response = {};
@@ -54,6 +55,8 @@ const executeService = async (method, req) => {
         jResponse = await new serviceSQL(req.body._txnId, jRequest);
     } else if (commandName.startsWith('asset.')) {
         jResponse = await new asset(req.body._txnId, jRequest);
+    } else if (commandName.startsWith('stock.')) {
+        jResponse = await new stock(req.body._txnId, jRequest);
     } else {
         jResponse = JSON.stringify({
             error_code: -1,
