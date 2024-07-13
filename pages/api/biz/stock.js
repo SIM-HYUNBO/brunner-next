@@ -36,6 +36,62 @@ const getStockInfo = async (txnId, jRequest) => {
             return jResponse;
         }
 
+        if (!jRequest.stocksTicker) {
+            jResponse.error_code = -2;
+            jResponse.error_message = `The [stocksTicker] is a required field. 
+            Please set a value.`;
+            return jResponse;
+        }
+
+        if (!jRequest.multiplier) {
+            jResponse.error_code = -2;
+            jResponse.error_message = `The [multiplier] is a required field. 
+            Please set a value.`;
+            return jResponse;
+        }
+
+        if (!jRequest.timespan) {
+            jResponse.error_code = -2;
+            jResponse.error_message = `The [timespan] is a required field. 
+            Please set a value.`;
+            return jResponse;
+        }
+
+        if (!jRequest.from) {
+            jResponse.error_code = -2;
+            jResponse.error_message = `The [from] is a required field. 
+            Please set a value.`;
+            return jResponse;
+        }
+
+        if (!jRequest.to) {
+            jResponse.error_code = -2;
+            jResponse.error_message = `The [to] is a required field. 
+            Please set a value.`;
+            return jResponse;
+        }
+
+        if (!jRequest.adjust) {
+            jResponse.error_code = -2;
+            jResponse.error_message = `The [adjust] is a required field. 
+            Please set a value.`;
+            return jResponse;
+        }
+
+        if (!jRequest.sort) {
+            jResponse.error_code = -2;
+            jResponse.error_message = `The [sort] is a required field. 
+            Please set a value.`;
+            return jResponse;
+        }
+
+        // if (!jRequest.limit) {
+        //     jResponse.error_code = -2;
+        //     jResponse.error_message = `The [limit] is a required field. 
+        //     Please set a value.`;
+        //     return jResponse;
+        // }
+
         var sql = serviceSQL.getSQL00(`select_TB_COR_USER_MST`, 1);
         var select_TB_COR_USER_MST_01 = await database.executeSQL(sql,
             [
@@ -49,30 +105,21 @@ const getStockInfo = async (txnId, jRequest) => {
             return jResponse;
         }
 
-        const stockSymbol = jRequest.stockSymbol;
-        const apiKey = 'UP317KBI7Z7WQOZD'; // 무료 api key는 제약사항이 많음. 1일 25번만 요청 가능 등
-        const apiUrl = `https://www.alphavantage.co/query?function=TIME_SERIES_INTRADAY&symbol=${stockSymbol}&apikey=${apiKey}`
+        const apiKey = 'oTwT_PvBEuiPDqCkdKsPf66VQdNSKLGR'; // 무료 api key는 제약사항이 많음. 1일 25번만 요청 가능 등
+
+        //  범위로 요청
+        // https://api.polygon.io/v2/aggs/ticker/SCHD/range/1/day/2023-01-09/2023-02-10?adjusted=true&sort=asc&apiKey=oTwT_PvBEuiPDqCkdKsPf66VQdNSKLGR
+        const apiUrl = `https://api.polygon.io/v2/aggs/ticker/${jRequest.stocksTicker}/range/${jRequest.multiplier}/${jRequest.timespan}/${jRequest.from}/${jRequest.to}?adjusted=${jRequest.adjust}&sort=${jRequest.sort}&apiKey=${apiKey}`
 
         const response = await fetch(apiUrl);
         if (!response.ok) {
-            throw new Error('Failed to fetch stock info');
+            throw Error(response.statusText)
         }
+
         const data = await response.json();
-        if (data["Error Message"]) {
-            jResponse.error_code = -1; // exception
-            jResponse.error_message = data["Error Message"];
-        }
-        else if (data["Information"]) {
-            jResponse.error_code = -1; // exception
-            jResponse.error_message = data["Information"];
-        }
-        else {
-            jResponse.stockInfo = data;
-            jResponse.error_code = 0; // exception
-            jResponse.error_message = "";
-        }
-
-
+        jResponse.stockInfo = data.results;
+        jResponse.error_code = 0; // exception
+        jResponse.error_message = data.status;
     }
     catch (e) {
         logger.error(`EXCEPTION:\n${e}`);
