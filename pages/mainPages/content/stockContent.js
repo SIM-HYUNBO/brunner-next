@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import moment from 'moment';
 import * as userInfo from './../../../components/userInfo';
 import requestServer from './../../../components/requestServer';
 import BrunnerMessageBox from '@/components/BrunnerMessageBox'
@@ -34,14 +35,14 @@ const StockContent = () => {
         });
     };
 
-    const [stockSymbol, setSymbol] = useState('');
+    const [stocksTicker, setStocksTicker] = useState('');
     const [stockData, setStockData] = useState(null);
     const [error, setError] = useState(null);
 
     const handleSubmit = async (event) => {
         event.preventDefault();
-        if (!stockSymbol) {
-            setError('Please enter a stock symbol.');
+        if (!stocksTicker) {
+            setError('Please enter a stock ticker.');
             return;
         }
 
@@ -54,7 +55,14 @@ const StockContent = () => {
             commandName: 'stock.getStockInfo',
             systemCode: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE,
             userId: userId,
-            stockSymbol: stockSymbol
+            stocksTicker: stocksTicker,
+            multiplier: 1,
+            timespan: "day",
+            from: moment().clone().startOf('isoWeek').clone().subtract(7, 'days').format("YYYY-MM-DD"), // 지난주 월요일 
+            to: moment().clone().endOf('week').format('YYYY-MM-DD'), //   이번주 토요일
+            adjust: true,
+            sort: "desc",
+            limit: ""
         };
 
         setLoading(true); // 데이터 로딩 시작
@@ -89,8 +97,8 @@ const StockContent = () => {
                 <div className={`border-0 focus:ring-0 bg-transparent w-full text-sm text-gray-900 dark:text-gray-300`}>
                     <input className="p-2 border rounded dark:text-gray-300 w-full table-column"
                         type="text"
-                        value={stockSymbol}
-                        onChange={(e) => setSymbol(e.target.value.toUpperCase())}
+                        value={stocksTicker}
+                        onChange={(e) => setStocksTicker(e.target.value.toUpperCase())}
                         placeholder="Enter stock symbol (e.g., AAPL)"
                         required
                     />
@@ -105,15 +113,17 @@ const StockContent = () => {
                     {loading && <p>Loading...</p>}
                     {error && <p>{error}</p>}
 
-                    {stockData && (
+                    {stockData && stockData.map((stockDataItem) => (
                         <div>
-                            <h2>Stock Information for {stockSymbol}</h2>
-                            <p>Open: {stockData['Time Series (5min)'][Object.keys(stockData['Time Series (5min)'])[0]]['1. open']}</p>
-                            <p>High: {stockData['Time Series (5min)'][Object.keys(stockData['Time Series (5min)'])[0]]['2. high']}</p>
-                            <p>Low: {stockData['Time Series (5min)'][Object.keys(stockData['Time Series (5min)'])[0]]['3. low']}</p>
-                            <p>Close: {stockData['Time Series (5min)'][Object.keys(stockData['Time Series (5min)'])[0]]['4. close']}</p>
+                            <h2>Stock Information</h2>
+                            <p>Open: {stockDataItem.o}$</p>
+                            <p>High: {stockDataItem.h}$</p>
+                            <p>Low: {stockDataItem.l}$</p>
+                            <p>Close: {stockDataItem.c}$</p>
+                            <p>Number of Trades: {stockDataItem.c}$</p>
+                            <p>Volume Weighted Average Price: {stockDataItem.vw}$</p>
                         </div>
-                    )}
+                    ))}
                 </div>
             </div>
         </>
