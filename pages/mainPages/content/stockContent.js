@@ -87,7 +87,7 @@ const StockContent = () => {
             />
             <div className="lg:flex-grow md:w-1/2 lg:pr-24 md:pr-16 flex flex-col md:items-start md:text-left md:mb-0 items-center text-center my-20">
                 <h1 className="title-font sm:text-4xl text-3xl mb-10 font-medium text-green-900">
-                    종목코드 검색
+                    주간 종목 검색
                 </h1>
                 <div className="main-governing-text mt-5">
                     시야를 넓혀 최고 수익에 도전하고 <br />
