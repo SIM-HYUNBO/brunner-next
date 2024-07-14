@@ -29,12 +29,12 @@ const getStockInfo = async (txnId, jRequest) => {
         jResponse.commanaName = jRequest.commandName;
         jResponse.userId = jRequest.userId;
 
-        if (!jRequest.userId) {
-            jResponse.error_code = -2;
-            jResponse.error_message = `The [userId] is a required field. 
-            Please enter a value.`;
-            return jResponse;
-        }
+        // if (!jRequest.userId) {
+        //     jResponse.error_code = -2;
+        //     jResponse.error_message = `The [userId] is a required field. 
+        //     Please enter a value.`;
+        //     return jResponse;
+        // }
 
         if (!jRequest.stocksTicker) {
             jResponse.error_code = -2;
@@ -92,18 +92,18 @@ const getStockInfo = async (txnId, jRequest) => {
         //     return jResponse;
         // }
 
-        var sql = serviceSQL.getSQL00(`select_TB_COR_USER_MST`, 1);
-        var select_TB_COR_USER_MST_01 = await database.executeSQL(sql,
-            [
-                jRequest.systemCode,
-                jRequest.userId
-            ]);
+        // var sql = serviceSQL.getSQL00(`select_TB_COR_USER_MST`, 1);
+        // var select_TB_COR_USER_MST_01 = await database.executeSQL(sql,
+        //     [
+        //         jRequest.systemCode,
+        //         jRequest.userId
+        //     ]);
 
-        if (select_TB_COR_USER_MST_01.rowCount == 0) {
-            jResponse.error_code = -1;
-            jResponse.error_message = `Invalid user id.`;
-            return jResponse;
-        }
+        // if (select_TB_COR_USER_MST_01.rowCount == 0) {
+        //     jResponse.error_code = -1;
+        //     jResponse.error_message = `Invalid user id.`;
+        //     return jResponse;
+        // }
 
         const apiKey = 'oTwT_PvBEuiPDqCkdKsPf66VQdNSKLGR'; // 무료 api key는 제약사항이 많음. 1일 25번만 요청 가능 등
 

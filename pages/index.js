@@ -35,11 +35,11 @@ export default function Home() {
             <div className="container mx-auto flex px-5 md:flex-row flex-col items-center">
               <AssetContent></AssetContent>
             </div>
-            <div className="container mx-auto flex px-5 md:flex-row flex-col items-center">
-              <StockContent></StockContent>
-            </div>
           </div>
         }
+        <div className="container mx-auto flex px-5 md:flex-row flex-col items-center">
+          <StockContent></StockContent>
+        </div>
       </BodySection>
     </Layout>
   )
