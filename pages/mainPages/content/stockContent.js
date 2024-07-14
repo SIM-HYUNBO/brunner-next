@@ -48,13 +48,13 @@ const StockContent = () => {
 
         setLoading(true);
 
-        const userId = userInfo.getLoginUserId();
-        if (!userId) return [];
+        // const userId = userInfo.getLoginUserId();
+        // if (!userId) return [];
 
         const jRequest = {
             commandName: 'stock.getStockInfo',
             systemCode: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE,
-            userId: userId,
+            // userId: userId,
             stocksTicker: stocksTicker,
             multiplier: 1,
             timespan: "day",
