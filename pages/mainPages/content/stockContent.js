@@ -77,6 +77,11 @@ const StockContent = () => {
         }
     };
 
+    const getDateTimeFromUnixTimestamp = (timestamp) => {
+        return new Date(timestamp).toLocaleString();
+    }
+
+
     return (
         <>
             <BrunnerMessageBox
@@ -115,12 +120,13 @@ const StockContent = () => {
 
                     {stockData && stockData.map((stockDataItem) => (
                         <div>
-                            <h2>Stock Information</h2>
+                            <h2>{getDateTimeFromUnixTimestamp(stockDataItem.t)}</h2>
                             <p>Open: {stockDataItem.o}$</p>
                             <p>High: {stockDataItem.h}$</p>
                             <p>Low: {stockDataItem.l}$</p>
                             <p>Close: {stockDataItem.c}$</p>
-                            <p>Number of Trades: {stockDataItem.c}$</p>
+                            <p>Start of the aggregate window: {getDateTimeFromUnixTimestamp(stockDataItem.t)}</p>
+                            <p>Number of Trades: {stockDataItem.v}</p>
                             <p>Volume Weighted Average Price: {stockDataItem.vw}$</p>
                         </div>
                     ))}
