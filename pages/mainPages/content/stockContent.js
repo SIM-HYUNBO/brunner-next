@@ -56,7 +56,7 @@ const StockContent = () => {
                 stocksTicker: trimmedTicker,
                 multiplier: 1,
                 timespan: "day",
-                from: moment().startOf('isoWeek').subtract(365, 'days').format("YYYY-MM-DD"),
+                from: moment().startOf('isoWeek').subtract(30, 'days').format("YYYY-MM-DD"),
                 to: moment().endOf('week').format('YYYY-MM-DD'),
                 adjust: true,
                 sort: "desc",
