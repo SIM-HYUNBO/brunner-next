@@ -85,30 +85,7 @@ const getStockInfo = async (txnId, jRequest) => {
             return jResponse;
         }
 
-        // if (!jRequest.limit) {
-        //     jResponse.error_code = -2;
-        //     jResponse.error_message = `The [limit] is a required field. 
-        //     Please set a value.`;
-        //     return jResponse;
-        // }
-
-        // var sql = serviceSQL.getSQL00(`select_TB_COR_USER_MST`, 1);
-        // var select_TB_COR_USER_MST_01 = await database.executeSQL(sql,
-        //     [
-        //         jRequest.systemCode,
-        //         jRequest.userId
-        //     ]);
-
-        // if (select_TB_COR_USER_MST_01.rowCount == 0) {
-        //     jResponse.error_code = -1;
-        //     jResponse.error_message = `Invalid user id.`;
-        //     return jResponse;
-        // }
-
         const apiKey = 'oTwT_PvBEuiPDqCkdKsPf66VQdNSKLGR'; // 무료 api key는 제약사항이 많음. 1일 25번만 요청 가능 등
-
-        //  범위로 요청
-        // https://api.polygon.io/v2/aggs/ticker/SCHD/range/1/day/2023-01-09/2023-02-10?adjusted=true&sort=asc&apiKey=oTwT_PvBEuiPDqCkdKsPf66VQdNSKLGR
         const apiUrl = `https://api.polygon.io/v2/aggs/ticker/${jRequest.stocksTicker}/range/${jRequest.multiplier}/${jRequest.timespan}/${jRequest.from}/${jRequest.to}?adjusted=${jRequest.adjust}&sort=${jRequest.sort}&apiKey=${apiKey}`
 
         const response = await fetch(apiUrl);
