@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import moment from 'moment';
-import * as userInfo from './../../../components/userInfo';
 import requestServer from './../../../components/requestServer';
 import BrunnerMessageBox from '@/components/BrunnerMessageBox';
 import { Line } from 'react-chartjs-2';
@@ -13,12 +12,15 @@ const StockContent = () => {
     const [modalContent, setModalContent] = useState({
         isOpen: false,
         message: '',
-        onConfirm: () => {},
-        onClose: () => {}
+        onConfirm: () => { },
+        onClose: () => { }
     });
     const [stocksTicker, setStocksTicker] = useState('');
     const [stockData, setStockData] = useState(null);
     const [error, setError] = useState(null);
+    const [timespan, setTimespan] = useState('month');
+    const [duration, setDuration] = useState(10);
+    const [durationUnit, setDurationUnit] = useState('months');
 
     const openModal = (message) => {
         return new Promise((resolve, reject) => {
@@ -35,8 +37,8 @@ const StockContent = () => {
         setModalContent({
             isOpen: false,
             message: '',
-            onConfirm: () => {},
-            onClose: () => {}
+            onConfirm: () => { },
+            onClose: () => { }
         });
     };
 
@@ -50,14 +52,17 @@ const StockContent = () => {
 
         setLoading(true);
         try {
+            const timefrom = moment().subtract(duration, durationUnit).format("YYYY-MM-DD");
+            const timeto = moment().format('YYYY-MM-DD');
+
             const jRequest = {
                 commandName: 'stock.getStockInfo',
                 systemCode: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE,
                 stocksTicker: trimmedTicker,
                 multiplier: 1,
-                timespan: "day",
-                from: moment().startOf('isoWeek').subtract(30, 'days').format("YYYY-MM-DD"),
-                to: moment().endOf('week').format('YYYY-MM-DD'),
+                timespan: timespan,
+                from: timefrom,
+                to: timeto,
                 adjust: true,
                 sort: "desc",
                 limit: ""
@@ -84,7 +89,7 @@ const StockContent = () => {
 
     const prepareChartData = () => {
         if (!stockData) return { labels: [], datasets: [] };
-        
+
         const labels = stockData.map(item => getDateTimeFromUnixTimestamp(item.t));
         const prices = stockData.map(item => item.c); // 종가
 
@@ -132,7 +137,7 @@ const StockContent = () => {
             />
             <div className="lg:flex-grow md:w-1/2 lg:pr-24 md:pr-16 flex flex-col md:items-start md:text-left md:mb-0 items-center text-center my-20">
                 <h1 className="title-font sm:text-4xl text-3xl mb-10 font-medium text-green-900">
-                    주간 종목 검색
+                    차트 보기
                 </h1>
                 <div className="main-governing-text mt-5">
                     시야를 넓혀 최고 수익에 도전하고 <br />
@@ -147,9 +152,66 @@ const StockContent = () => {
                         placeholder="주식 심볼 입력 (예: AAPL)"
                         required
                     />
+                    <div className="flex items-center mt-2">
+                        <label className="mr-4">
+                            <input
+                                type="radio"
+                                value="minute"
+                                checked={timespan === 'minute'}
+                                onChange={() => setTimespan('minute')}
+                            />
+                            분단위
+                        </label>
+                        <label className="mr-4">
+                            <input
+                                type="radio"
+                                value="hour"
+                                checked={timespan === 'hour'}
+                                onChange={() => setTimespan('hour')}
+                            />
+                            시간단위
+                        </label>
+                        <label className="mr-4">
+                            <input
+                                type="radio"
+                                value="day"
+                                checked={timespan === 'day'}
+                                onChange={() => setTimespan('day')}
+                            />
+                            일단위
+                        </label>
+                        <label className="mr-4">
+                            <input
+                                type="radio"
+                                value="month"
+                                checked={timespan === 'month'}
+                                onChange={() => setTimespan('month')}
+                            />
+                            월단위
+                        </label>
+                        <input
+                            className="p-2 border rounded dark:text-gray-300 w-24 ml-4"
+                            type="number"
+                            value={duration}
+                            onChange={(e) => setDuration(parseInt(e.target.value))}
+                            placeholder="기간"
+                            required
+                        />
+                        <select
+                            className="p-2 border rounded dark:text-gray-300 ml-2"
+                            value={durationUnit}
+                            onChange={(e) => setDurationUnit(e.target.value)}
+                        >
+                            <option value="minutes">분</option>
+                            <option value="hours">시간</option>
+                            <option value="days">일</option>
+                            <option value="months">월</option>
+                            <option value="years">년</option>
+                        </select>
+                    </div>
                     <button
                         onClick={handleSubmit}
-                        className="bg-green-500 text-white py-2 px-4 rounded hover:bg-green-600"
+                        className="bg-green-500 text-white py-2 px-4 rounded hover:bg-green-600 mt-2"
                         style={{ alignSelf: 'flex-end' }}
                         disabled={loading}
                     >
