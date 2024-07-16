@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import moment from 'moment';
 import requestServer from './../../../components/requestServer';
 import BrunnerMessageBox from '@/components/BrunnerMessageBox';
@@ -21,6 +21,20 @@ const StockContent = () => {
     const [timespan, setTimespan] = useState('month');
     const [duration, setDuration] = useState(10);
     const [durationUnit, setDurationUnit] = useState('months');
+    const [recentSearches, setRecentSearches] = useState([]);
+
+    // useEffect를 사용하여 최근 검색한 종목 코드 로드
+    useEffect(() => {
+        const recentSearchesString = localStorage.getItem('recentSearches');
+        if (recentSearchesString) {
+            setRecentSearches(JSON.parse(recentSearchesString));
+        }
+    }, []);
+
+    // useEffect를 사용하여 최근 검색한 종목 코드 저장
+    useEffect(() => {
+        localStorage.setItem('recentSearches', JSON.stringify(recentSearches));
+    }, [recentSearches]);
 
     const openModal = (message) => {
         return new Promise((resolve, reject) => {
@@ -46,7 +60,7 @@ const StockContent = () => {
         event.preventDefault();
         const trimmedTicker = stocksTicker.trim();
         if (!trimmedTicker) {
-            setError('주식 심볼을 입력해주세요.');
+            setError('주식 심볼을 선택해주세요.');
             return;
         }
 
@@ -72,6 +86,9 @@ const StockContent = () => {
 
             if (jResponse.error_code === 0) {
                 setStockData(jResponse.stockInfo);
+                // 최근 검색한 종목 코드 관리
+                const updatedRecentSearches = [trimmedTicker, ...recentSearches.filter(item => item !== trimmedTicker)].slice(0, 10);
+                setRecentSearches(updatedRecentSearches);
             } else {
                 openModal(jResponse.error_message);
             }
@@ -127,6 +144,10 @@ const StockContent = () => {
         }
     };
 
+    const handleRecentSearchSelect = (selectedTicker) => {
+        setStocksTicker(selectedTicker);
+    };
+
     return (
         <>
             <BrunnerMessageBox
@@ -144,14 +165,16 @@ const StockContent = () => {
                     은퇴 전 백억 자산가가 되세요.
                 </div>
                 <div className="border-0 focus:ring-0 bg-transparent w-full text-sm text-gray-900 dark:text-gray-300">
-                    <input
-                        className="p-2 border rounded dark:text-gray-300 w-full table-column"
-                        type="text"
+                    <select
+                        className="p-2 border rounded dark:text-gray-300 w-full"
                         value={stocksTicker}
                         onChange={(e) => setStocksTicker(e.target.value.toUpperCase())}
-                        placeholder="주식 심볼 입력 (예: AAPL)"
-                        required
-                    />
+                    >
+                        <option value="">주식 심볼 선택</option>
+                        {recentSearches.map((ticker, index) => (
+                            <option key={index} value={ticker}>{ticker}</option>
+                        ))}
+                    </select>
                     <div className="flex items-center mt-2">
                         <label className="mr-4">
                             <input
@@ -160,7 +183,7 @@ const StockContent = () => {
                                 checked={timespan === 'minute'}
                                 onChange={() => setTimespan('minute')}
                             />
-                            분단위
+                            분
                         </label>
                         <label className="mr-4">
                             <input
@@ -169,7 +192,7 @@ const StockContent = () => {
                                 checked={timespan === 'hour'}
                                 onChange={() => setTimespan('hour')}
                             />
-                            시간단위
+                            시간
                         </label>
                         <label className="mr-4">
                             <input
@@ -178,7 +201,7 @@ const StockContent = () => {
                                 checked={timespan === 'day'}
                                 onChange={() => setTimespan('day')}
                             />
-                            일단위
+                            일
                         </label>
                         <label className="mr-4">
                             <input
@@ -187,14 +210,14 @@ const StockContent = () => {
                                 checked={timespan === 'month'}
                                 onChange={() => setTimespan('month')}
                             />
-                            월단위
+                            월
                         </label>
                         <input
                             className="p-2 border rounded dark:text-gray-300 w-24 ml-4"
                             type="number"
                             value={duration}
                             onChange={(e) => setDuration(parseInt(e.target.value))}
-                            placeholder="기간"
+                            placeholder="시간"
                             required
                         />
                         <select
@@ -218,7 +241,7 @@ const StockContent = () => {
                         검색
                     </button>
 
-                    {loading && <p>로딩 중...</p>}
+                    {loading && <p>Loading...</p>}
                     {error && <p>{error}</p>}
 
                     {stockData && (
