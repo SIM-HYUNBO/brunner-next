@@ -165,16 +165,25 @@ const StockContent = () => {
                     은퇴 전 백억 자산가가 되세요.
                 </div>
                 <div className="border-0 focus:ring-0 bg-transparent w-full text-sm text-gray-900 dark:text-gray-300">
-                    <select
-                        className="p-2 border rounded dark:text-gray-300 w-full"
-                        value={stocksTicker}
-                        onChange={(e) => setStocksTicker(e.target.value.toUpperCase())}
-                    >
-                        <option value="">주식 심볼 선택</option>
-                        {recentSearches.map((ticker, index) => (
-                            <option key={index} value={ticker}>{ticker}</option>
-                        ))}
-                    </select>
+                    <div className="flex items-center mt-2">
+                        <select
+                            className="p-2 border rounded dark:text-gray-300 w-1/2"
+                            value={stocksTicker}
+                            onChange={(e) => setStocksTicker(e.target.value.toUpperCase())}
+                        >
+                            <option value="">최근 종목 코드 선택</option>
+                            {recentSearches.map((ticker, index) => (
+                                <option key={index} value={ticker}>{ticker}</option>
+                            ))}
+                        </select>
+                        <input
+                            className="p-2 border rounded dark:text-gray-300 w-1/2 ml-2"
+                            type="text"
+                            value={stocksTicker}
+                            onChange={(e) => setStocksTicker(e.target.value.toUpperCase())}
+                            placeholder="또는 종목 심볼 입력"
+                        />
+                    </div>
                     <div className="flex items-center mt-2">
                         <label className="mr-4">
                             <input
