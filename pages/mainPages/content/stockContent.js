@@ -1,19 +1,25 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import moment from 'moment';
 import * as userInfo from './../../../components/userInfo';
 import requestServer from './../../../components/requestServer';
-import BrunnerMessageBox from '@/components/BrunnerMessageBox'
+import BrunnerMessageBox from '@/components/BrunnerMessageBox';
+import { Line } from 'react-chartjs-2';
+import { Chart as ChartJS, LineElement, PointElement, LinearScale, CategoryScale, Tooltip, Legend } from 'chart.js';
+
+ChartJS.register(LineElement, PointElement, LinearScale, CategoryScale, Tooltip, Legend);
 
 const StockContent = () => {
-    const [loading, setLoading] = useState(false); // 로딩 상태 추가
+    const [loading, setLoading] = useState(false);
     const [modalContent, setModalContent] = useState({
         isOpen: false,
         message: '',
-        onConfirm: () => { },
-        onClose: () => { }
+        onConfirm: () => {},
+        onClose: () => {}
     });
+    const [stocksTicker, setStocksTicker] = useState('');
+    const [stockData, setStockData] = useState(null);
+    const [error, setError] = useState(null);
 
-    // 모달 열기 함수
     const openModal = (message) => {
         return new Promise((resolve, reject) => {
             setModalContent({
@@ -25,62 +31,96 @@ const StockContent = () => {
         });
     };
 
-    // 모달 닫기 함수
     const closeModal = () => {
         setModalContent({
             isOpen: false,
             message: '',
-            onConfirm: () => { },
-            onClose: () => { }
+            onConfirm: () => {},
+            onClose: () => {}
         });
     };
 
-    const [stocksTicker, setStocksTicker] = useState('');
-    const [stockData, setStockData] = useState(null);
-    const [error, setError] = useState(null);
-
     const handleSubmit = async (event) => {
         event.preventDefault();
-        if (!stocksTicker) {
-            setError('Please enter a stock ticker.');
+        const trimmedTicker = stocksTicker.trim();
+        if (!trimmedTicker) {
+            setError('주식 심볼을 입력해주세요.');
             return;
         }
 
         setLoading(true);
+        try {
+            const jRequest = {
+                commandName: 'stock.getStockInfo',
+                systemCode: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE,
+                stocksTicker: trimmedTicker,
+                multiplier: 1,
+                timespan: "day",
+                from: moment().startOf('isoWeek').subtract(365, 'days').format("YYYY-MM-DD"),
+                to: moment().endOf('week').format('YYYY-MM-DD'),
+                adjust: true,
+                sort: "desc",
+                limit: ""
+            };
 
-        // const userId = userInfo.getLoginUserId();
-        // if (!userId) return [];
+            const jResponse = await requestServer('POST', JSON.stringify(jRequest));
 
-        const jRequest = {
-            commandName: 'stock.getStockInfo',
-            systemCode: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE,
-            // userId: userId,
-            stocksTicker: stocksTicker,
-            multiplier: 1,
-            timespan: "day",
-            from: moment().clone().startOf('isoWeek').clone().subtract(7, 'days').format("YYYY-MM-DD"), // 지난주 월요일 
-            to: moment().clone().endOf('week').format('YYYY-MM-DD'), //   이번주 토요일
-            adjust: true,
-            sort: "desc",
-            limit: ""
-        };
-
-        setLoading(true); // 데이터 로딩 시작
-
-        const jResponse = await requestServer('POST', JSON.stringify(jRequest));
-        setLoading(false); // 데이터 로딩 시작
-
-        if (jResponse.error_code === 0) {
-            setStockData(jResponse.stockInfo);
-        } else {
-            openModal(jResponse.error_message);
+            if (jResponse.error_code === 0) {
+                setStockData(jResponse.stockInfo);
+            } else {
+                openModal(jResponse.error_message);
+            }
+        } catch (error) {
+            console.error('예상치 못한 오류:', error);
+            openModal('예상치 못한 오류가 발생했습니다. 다시 시도해주세요.');
+        } finally {
+            setLoading(false);
         }
     };
 
     const getDateTimeFromUnixTimestamp = (timestamp) => {
-        return new Date(timestamp).toLocaleString();
-    }
+        return new Date(timestamp).toLocaleDateString(); // 날짜만 반환
+    };
 
+    const prepareChartData = () => {
+        if (!stockData) return { labels: [], datasets: [] };
+        
+        const labels = stockData.map(item => getDateTimeFromUnixTimestamp(item.t));
+        const prices = stockData.map(item => item.c); // 종가
+
+        return {
+            labels: labels,
+            datasets: [
+                {
+                    label: '종가',
+                    data: prices,
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                    fill: true,
+                }
+            ]
+        };
+    };
+
+    const chartOptions = {
+        responsive: true,
+        scales: {
+            x: {
+                type: 'category',
+                reverse: true,  // X축을 반전시켜 오른쪽이 나중에 나오도록 설정
+                title: {
+                    display: true,
+                    text: '날짜'
+                }
+            },
+            y: {
+                title: {
+                    display: true,
+                    text: '종가'
+                }
+            }
+        }
+    };
 
     return (
         <>
@@ -97,39 +137,33 @@ const StockContent = () => {
                 <div className="main-governing-text mt-5">
                     시야를 넓혀 최고 수익에 도전하고 <br />
                     은퇴 전 백억 자산가가 되세요.
-
                 </div>
-                <div className={`border-0 focus:ring-0 bg-transparent w-full text-sm text-gray-900 dark:text-gray-300`}>
-                    <input className="p-2 border rounded dark:text-gray-300 w-full table-column"
+                <div className="border-0 focus:ring-0 bg-transparent w-full text-sm text-gray-900 dark:text-gray-300">
+                    <input
+                        className="p-2 border rounded dark:text-gray-300 w-full table-column"
                         type="text"
                         value={stocksTicker}
                         onChange={(e) => setStocksTicker(e.target.value.toUpperCase())}
-                        placeholder="Enter stock symbol (e.g., AAPL)"
+                        placeholder="주식 심볼 입력 (예: AAPL)"
                         required
                     />
                     <button
                         onClick={handleSubmit}
                         className="bg-green-500 text-white py-2 px-4 rounded hover:bg-green-600"
                         style={{ alignSelf: 'flex-end' }}
+                        disabled={loading}
                     >
-                        Search
+                        검색
                     </button>
 
-                    {loading && <p>Loading...</p>}
+                    {loading && <p>로딩 중...</p>}
                     {error && <p>{error}</p>}
 
-                    {stockData && stockData.map((stockDataItem) => (
-                        <div>
-                            <h2>{getDateTimeFromUnixTimestamp(stockDataItem.t)}</h2>
-                            <p>Open: {stockDataItem.o}$</p>
-                            <p>High: {stockDataItem.h}$</p>
-                            <p>Low: {stockDataItem.l}$</p>
-                            <p>Close: {stockDataItem.c}$</p>
-                            <p>Start of the aggregate window: {getDateTimeFromUnixTimestamp(stockDataItem.t)}</p>
-                            <p>Number of Trades: {stockDataItem.v}</p>
-                            <p>Volume Weighted Average Price: {stockDataItem.vw}$</p>
+                    {stockData && (
+                        <div className="mt-5">
+                            <Line data={prepareChartData()} options={chartOptions} />
                         </div>
-                    ))}
+                    )}
                 </div>
             </div>
         </>
