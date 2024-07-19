@@ -163,7 +163,14 @@ const StockContent = () => {
                         은퇴 전 백억 자산가가 되세요.
                     </div>
                     <div className="border-0 focus:ring-0 bg-transparent w-full text-sm text-gray-900 dark:text-gray-300">
-                        <div className="flex items-center mt-2">
+                        <input
+                            className="p-2 border rounded dark:text-gray-300 w-1/2"
+                            type="text"
+                            value={stocksTicker}
+                            onChange={(e) => setStocksTicker(e.target.value.toUpperCase())}
+                            placeholder="또는 종목 심볼 입력"
+                        />
+                        <div className="flex items-center mt-2 justify-start">
                             <select
                                 className="p-2 border rounded dark:text-gray-300 w-1/2"
                                 value={stocksTicker}
@@ -176,13 +183,6 @@ const StockContent = () => {
                                     </option>
                                 ))}
                             </select>
-                            <input
-                                className="p-2 border rounded dark:text-gray-300 w-1/2 ml-2"
-                                type="text"
-                                value={stocksTicker}
-                                onChange={(e) => setStocksTicker(e.target.value.toUpperCase())}
-                                placeholder="또는 종목 심볼 입력"
-                            />
                         </div>
                         <div className="flex items-center mt-2">
                             <label className="mr-4">

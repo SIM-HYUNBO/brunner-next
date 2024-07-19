@@ -327,11 +327,6 @@ export default function AssetContent() {
         <h1 className="title-font sm:text-4xl text-3xl mb-10 font-medium text-green-900">
           내자산
         </h1>
-        <div className="main-governing-text mt-5">
-          시야를 넓혀 최고 수익에 도전하고 <br />
-          은퇴전 백억 자산가가 되세요.
-
-        </div>
         <div className="mb-5 table w-full">
           <input
             type="text"
