@@ -55,6 +55,10 @@ p {
     @apply leading-relaxed text-slate-900 mb-10 dark:text-slate-400
 }
 
+.content-governing-text {
+    @apply leading-relaxed text-slate-900 mb-1 dark:text-slate-400
+}
+
 .category-item {
     font-size: 14px;
 }
