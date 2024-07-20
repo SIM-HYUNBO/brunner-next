@@ -334,12 +334,12 @@ const StockContent = () => {
             ...provided,
             width: '100%',
             border: '1px solid #d1d5db',
-            backgroundColor: process.env.isDarkMode ? '#1f2937' : '#f3f4f6', // 다크모드와 라이트모드에 따라 배경색 설정
-            color: process.env.isDarkMode ? '#ffffff' : '#333333', // 다크모드와 라이트모드에 따라 텍스트 색상 설정
+            backgroundColor: process.env.isDarkMode == true ? 'black' : 'white', // 다크모드와 라이트모드에 따라 배경색 설정
+            color: process.env.isDarkMode == true ? '#ffffff' : '#333333', // 다크모드와 라이트모드에 따라 텍스트 색상 설정
         }),
         option: (provided, state) => ({
             ...provided,
-            color: process.env.isDarkMode ? '#ffffff' : '#333333', // 다크모드와 라이트모드에 따라 텍스트 색상 설정
+            color: process.env.isDarkMode == true ? '#ffffff' : '#333333', // 다크모드와 라이트모드에 따라 텍스트 색상 설정
         }),
     };
 
@@ -482,7 +482,7 @@ const StockContent = () => {
                     {stockData && (
                         <div className="mt-5 w-full h-full">
                             <ApexCharts
-                                options={process.env.isDarkMode ? chartOptionsDark : chartOptionsLight} // 테마에 따라 차트 옵션 변경
+                                options={process.env.isDarkMode == true ? chartOptionsDark : chartOptionsLight} // 테마에 따라 차트 옵션 변경
                                 series={prepareChartData()}
                                 type="line"
                                 height={'300px'}
