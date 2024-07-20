@@ -413,7 +413,7 @@ const StockContent = () => {
                 </h1>
                 <div className="main-governing-text mt-5">
                     시야를 넓혀 최고 수익에 도전하고 <br />
-                    은퇴 전 백억 자산가가 되세요.
+                    백억 자산가가 되세요.
                 </div>
                 <div className="border-0 focus:ring-0 bg-transparent w-full h-full text-sm">
                     <Select
