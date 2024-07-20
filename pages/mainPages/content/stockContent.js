@@ -245,20 +245,20 @@ const StockContent = () => {
         chart: {
             height: '100%',
             type: 'line',
-            foreColor: '#ffffff', // 다크모드에서 텍스트 색상을 밝게 설정
+            foreColor: '#94A3B8', // 다크모드에서 텍스트 색상을 밝게 설정
         },
         title: {
             text: stocksTicker,
             align: 'left',
             style: {
-                color: '#ffffff', // 다크모드에서 텍스트 색상을 밝게 설정
+                color: '#94A3B8', // 다크모드에서 텍스트 색상을 밝게 설정
             },
         },
         xaxis: {
             type: 'datetime',
             labels: {
                 style: {
-                    colors: '#ffffff', // 다크모드에서 텍스트 색상을 밝게 설정
+                    colors: '#94A3B8', // 다크모드에서 텍스트 색상을 밝게 설정
                 },
             },
         },
@@ -268,7 +268,7 @@ const StockContent = () => {
             },
             labels: {
                 style: {
-                    colors: '#ffffff', // 다크모드에서 텍스트 색상을 밝게 설정
+                    colors: '#94A3B8', // 다크모드에서 텍스트 색상을 밝게 설정
                 },
             },
         },
@@ -280,7 +280,7 @@ const StockContent = () => {
         legend: {
             position: 'top',
             labels: {
-                colors: '#ffffff', // 다크모드에서 텍스트 색상을 밝게 설정
+                colors: '#94A3B8', // 다크모드에서 텍스트 색상을 밝게 설정
             },
         },
     };
@@ -289,20 +289,20 @@ const StockContent = () => {
         chart: {
             height: '100%',
             type: 'line',
-            foreColor: '#333333', // 라이트모드에서 텍스트 색상을 어둡게 설정
+            foreColor: '#94A3B8', // 라이트모드에서 텍스트 색상을 어둡게 설정
         },
         title: {
             text: stocksTicker,
             align: 'left',
             style: {
-                color: '#333333', // 라이트모드에서 텍스트 색상을 어둡게 설정
+                color: '#94A3B8', // 라이트모드에서 텍스트 색상을 어둡게 설정
             },
         },
         xaxis: {
             type: 'datetime',
             labels: {
                 style: {
-                    colors: '#333333', // 라이트모드에서 텍스트 색상을 어둡게 설정
+                    colors: '#94A3B8', // 라이트모드에서 텍스트 색상을 어둡게 설정
                 },
             },
         },
@@ -312,7 +312,7 @@ const StockContent = () => {
             },
             labels: {
                 style: {
-                    colors: '#333333', // 라이트모드에서 텍스트 색상을 어둡게 설정
+                    colors: '#94A3B8', // 라이트모드에서 텍스트 색상을 어둡게 설정
                 },
             },
         },
@@ -333,13 +333,16 @@ const StockContent = () => {
         control: (provided, state) => ({
             ...provided,
             width: '100%',
-            border: '1px solid #d1d5db',
-            backgroundColor: process.env.isDarkMode == true ? 'black' : 'white', // 다크모드와 라이트모드에 따라 배경색 설정
-            color: process.env.isDarkMode == true ? '#ffffff' : '#333333', // 다크모드와 라이트모드에 따라 텍스트 색상 설정
+            border: '1px solid #94A3B8',
+            backgroundColor: process.env.isDarkMode ? 'black' : 'white', // 다크모드와 라이트모드에 따라 배경색 설정
+            color: '#94A3B8', // 다크모드와 라이트모드에 따라 텍스트 색상 설정
+            foreColor: process.env.isDarkMode ? 'white' : 'black',
         }),
         option: (provided, state) => ({
             ...provided,
-            color: process.env.isDarkMode == true ? '#ffffff' : '#333333', // 다크모드와 라이트모드에 따라 텍스트 색상 설정
+            color: '#94A3B8', // 다크모드와 라이트모드에 따라 텍스트 색상 설정
+            backgroundColor: process.env.isDarkMode ? 'black' : 'white',
+            foreColor: process.env.isDarkMode ? 'white' : 'black'
         }),
     };
 
@@ -351,7 +354,7 @@ const StockContent = () => {
     };
 
     return (
-        <div className="w-full  h-full">
+        <div className="w-full  h-full mt-20">
             <BrunnerMessageBox
                 isOpen={modalContent.isOpen}
                 message={modalContent.message}
@@ -366,7 +369,7 @@ const StockContent = () => {
                     시야를 넓혀 최고 수익에 도전하고 <br />
                     은퇴 전 백억 자산가가 되세요.
                 </div>
-                <div className="border-0 focus:ring-0 bg-transparent w-full h-full text-sm text-gray-900 dark:text-gray-300">
+                <div className="border-0 focus:ring-0 bg-transparent w-full h-full text-sm">
                     <Select
                         options={recentSearches.map((ticker) => ({
                             value: ticker,
@@ -378,7 +381,7 @@ const StockContent = () => {
                     />
                     <div className="flex items-center mt-2 justify-start">
                         <input
-                            className="p-2 border rounded dark:text-gray-300 w-full"
+                            className="p-2 border rounded text-gray-400 w-full"
                             type="text"
                             value={stocksTicker}
                             onChange={(e) => setStocksTicker(e.target.value.toUpperCase())}
@@ -386,7 +389,7 @@ const StockContent = () => {
                         />
                     </div>
                     <div className="flex items-center mt-2">
-                        <label className="mr-4">
+                        <label className="mr-4 text-gray-400">
                             <input
                                 type="radio"
                                 value="minute"
@@ -395,7 +398,7 @@ const StockContent = () => {
                             />
                             분
                         </label>
-                        <label className="mr-4">
+                        <label className="mr-4 text-gray-400">
                             <input
                                 type="radio"
                                 value="hour"
@@ -404,7 +407,7 @@ const StockContent = () => {
                             />
                             시간
                         </label>
-                        <label className="mr-4">
+                        <label className="mr-4 text-gray-400">
                             <input
                                 type="radio"
                                 value="day"
@@ -413,7 +416,7 @@ const StockContent = () => {
                             />
                             일
                         </label>
-                        <label className="mr-4">
+                        <label className="mr-4 text-gray-400">
                             <input
                                 type="radio"
                                 value="month"
@@ -482,10 +485,10 @@ const StockContent = () => {
                     {stockData && (
                         <div className="mt-5 w-full h-full">
                             <ApexCharts
-                                options={process.env.isDarkMode == true ? chartOptionsDark : chartOptionsLight} // 테마에 따라 차트 옵션 변경
+                                options={process.env.isDarkMode ? chartOptionsDark : chartOptionsLight} // 테마에 따라 차트 옵션 변경
                                 series={prepareChartData()}
                                 type="line"
-                                height={'300px'}
+                                height={'800px'}
                                 width={'100%'}
                             />
                         </div>
