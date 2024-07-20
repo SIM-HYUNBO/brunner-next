@@ -70,12 +70,17 @@ const StockContent = () => {
 
     const handleSubmit = async (event) => {
         event.preventDefault();
+
         const trimmedTicker = stocksTicker.trim();
         if (!trimmedTicker) {
             setError('주식 심볼을 선택해주세요.');
             return;
         }
 
+        loadStockData(trimmedTicker);
+    };
+
+    const loadStockData = async (ticker) => {
         setLoading(true);
         try {
             const timefrom = moment().subtract(duration, durationUnit).format('YYYY-MM-DD');
@@ -84,7 +89,7 @@ const StockContent = () => {
             const jRequest = {
                 commandName: 'stock.getStockInfo',
                 systemCode: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE,
-                stocksTicker: trimmedTicker,
+                stocksTicker: ticker,
                 multiplier: 1,
                 timespan: timespan,
                 from: timefrom,
@@ -99,8 +104,8 @@ const StockContent = () => {
             if (jResponse.error_code === 0) {
                 setStockData(jResponse.stockInfo);
                 const updatedRecentSearches = [
-                    trimmedTicker,
-                    ...recentSearches.filter((item) => item !== trimmedTicker),
+                    ticker,
+                    ...recentSearches.filter((item) => item !== ticker),
                 ].slice(0, 10);
                 setRecentSearches(updatedRecentSearches);
             } else {
@@ -145,10 +150,23 @@ const StockContent = () => {
     };
 
     const calculateEMA = (data, period, prevEMA = null) => {
+        if (data.length < period) {
+            return 'NaN';
+        }
+
         const smoothingFactor = 2 / (period + 1);
-        let ema = prevEMA
-            ? data[data.length - 1].c * smoothingFactor + prevEMA * (1 - smoothingFactor)
-            : data.slice(0, period).reduce((a, b) => a + b) / period;
+        let prevEMAValue = prevEMA && prevEMA[0] && Array.isArray(prevEMA[0]) ? prevEMA[0][0] : null; // 이전 EMA 값을 배열의 첫 번째 원소로 설정
+
+        let ema;
+        if (prevEMAValue !== null) {
+            ema = data[data.length - 1].c * smoothingFactor + prevEMAValue * (1 - smoothingFactor);
+        } else {
+            const sum = data.slice(0, period).reduce((total, currentValue) => {
+                return total + currentValue.c;
+            }, 0);
+            ema = sum / period;
+        }
+
         return ema;
     };
 
@@ -161,16 +179,36 @@ const StockContent = () => {
     };
 
     const calculateSMA = (data, period) => {
-        const sum = data.slice(0, period).reduce((a, b) => a + b) / period;
-        return sum;
+        if (data.length < period) {
+            return 'NaN';
+        }
+
+        // Calculate the sum of the first 'period' data points
+        const sum = data.slice(0, period).reduce((total, currentValue) => total + currentValue.c, 0);
+
+        // Calculate SMA (Simple Moving Average)
+        const sma = sum / period;
+
+        return sma;
     };
 
     const calculateStandardDeviation = (data, period) => {
+        if (data.length < period) {
+            return 'NaN';
+        }
+
+        // Calculate the mean (Simple Moving Average)
         const mean = calculateSMA(data, period);
-        const sumOfSquares = data
-            .slice(0, period)
-            .reduce((a, b) => a + Math.pow(b - mean, 2), 0);
+
+        // Calculate the sum of squares of differences from the mean
+        const sumOfSquares = data.slice(0, period).reduce((total, currentValue) => {
+            const deviation = currentValue.c - mean; // Assuming each data point has a property 'c'
+            return total + Math.pow(deviation, 2);
+        }, 0);
+
+        // Calculate standard deviation
         const stdDev = Math.sqrt(sumOfSquares / period);
+
         return stdDev;
     };
 
@@ -344,14 +382,22 @@ const StockContent = () => {
             backgroundColor: process.env.isDarkMode ? 'black' : 'white',
             foreColor: process.env.isDarkMode ? 'white' : 'black'
         }),
+        singleValue: (provided, state) => ({
+            ...provided,
+            color: state.isSelected ? 'red' : '#94A3B8', // 선택된 값의 글자 색상
+        }),
     };
 
     const handleSelectChange = (selectedOption) => {
         setSelectedOption(selectedOption);
         if (selectedOption) {
-            setStocksTicker(selectedOption.value);
+            setStocksTicker(selectedOption.value); // 선택된 종목 코드 업데이트
+
+            // 선택된 종목으로 데이터 로드
+            loadStockData(selectedOption.value);
         }
     };
+
 
     return (
         <div className="w-full  h-full mt-20">
@@ -381,7 +427,7 @@ const StockContent = () => {
                     />
                     <div className="flex items-center mt-2 justify-start">
                         <input
-                            className="p-2 border rounded text-gray-400 w-full"
+                            className="p-2 border rounded text-gray-400 w-full border-slate-400"
                             type="text"
                             value={stocksTicker}
                             onChange={(e) => setStocksTicker(e.target.value.toUpperCase())}
@@ -445,6 +491,14 @@ const StockContent = () => {
                             <option value="years">년</option>
                         </select>
                     </div>
+
+                    {loading && (
+                        <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-gray-500 bg-opacity-75 z-50">
+                            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-gray-900"></div>
+                        </div>
+                    )}
+                    {error && <p>{error}</p>}
+
                     <button
                         onClick={handleSubmit}
                         className="bg-green-500 text-white py-2 px-4 rounded hover:bg-green-600 mt-2 mb-5"
@@ -453,34 +507,6 @@ const StockContent = () => {
                     >
                         검색
                     </button>
-
-                    {loading && (
-                        <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-gray-500 bg-opacity-75 z-50">
-                            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-gray-900"></div>
-                        </div>
-                    )}
-                    {error && <p>{error}</p>}
-                    <div className="content-governing-text">
-                        <h2>MACD(Moving Average Convergence Divergence)</h2>두 개의 이동평균선 (단기와 장기 이동평균) 사이의 차이를 나타내는 지표입니다.<br />
-                        MACD 선과 신호선(9일 이동평균선)의 교차점을 분석하여 추세의 전환점을 예측할 수 있습니다.
-                    </div>
-                    <div className="content-governing-text">
-                        <h2>Bollinger Bands(볼린저 밴드):</h2>이동평균선을 중심으로 주가의 변동 가능성을 나타내는 지표입니다.<br />
-                        상한선과 하한선이 포함된 밴드로 주가가 이들 밴드 내에 있을 때는 일반적으로 안정적인 시장 상태로 판단되고, 밴드 밖으로 나갈 때는 가격의 변동 가능성이 높아진다고 해석됩니다.
-                    </div>
-                    <div className="content-governing-text">
-                        <h2>RSI(Relative Strength Index, 상대 강도 지수)</h2> 일정기간 동안 주식의 가격 상승압력과 하락압력을 측정하는 지표입니다.<br />
-                        RSI는 0에서 100 사이의 값을 가지며, 70 이상일 때는 과매수 상태로 판단되고, 30 이하일 때는 과매도 상태로 판단됩니다.
-                    </div>
-                    <div className="content-governing-text">
-                        <h2>EMA(지수이동평균, Exponential Moving Average)</h2> 최근 가격 데이터에 더 큰 가중치를 주어 계산하는 이동평균의 한 유형입니다.<br />
-                    </div>
-                    <div className="content-governing-text">
-                        <h2>Stochastic Oscillator(스토캐스틱 오실레이터)</h2> 주식 시장에서 가격이 일정 기간 내에서 상대적으로 어디에 위치하는지를 나타내는 기술적 지표입니다.<br />
-                        이 지표는 가격이 상승하는지 하락하는지를 판단하고 과매수 및 과매도 상태를 식별하는 데 사용됩니다. <br />
-                        주식의 최근 가격이 주어진 기간 동안의 최고가와 최저가 사이에서 어느 정도 위치하고 있는지를 측정합니다. <br />
-                        시장의 상대적인 강도와 약점을 파악하는 데 유용하며, 주가 움직임의 반전점을 찾거나 트렌드의 지속 여부를 확인하기 위해 이 지표를 사용합니다.<br />
-                    </div>
 
                     {stockData && (
                         <div className="mt-5 w-full h-full">
@@ -494,6 +520,33 @@ const StockContent = () => {
                         </div>
                     )}
                 </div>
+
+                <h1 className="title-font sm:text-4xl text-3xl font-medium text-green-900  my-10">
+                    보조 지표
+                </h1>
+
+                <div className="content-governing-text">
+                    <h2>MACD(Moving Average Convergence Divergence)</h2>두 개의 이동평균선 (단기와 장기 이동평균) 사이의 차이를 나타내는 지표입니다.<br />
+                    MACD 선과 신호선(9일 이동평균선)의 교차점을 분석하여 추세의 전환점을 예측할 수 있습니다.
+                </div>
+                <div className="content-governing-text">
+                    <h2>Bollinger Bands(볼린저 밴드):</h2>이동평균선을 중심으로 주가의 변동 가능성을 나타내는 지표입니다.<br />
+                    상한선과 하한선이 포함된 밴드로 주가가 이들 밴드 내에 있을 때는 일반적으로 안정적인 시장 상태로 판단되고, 밴드 밖으로 나갈 때는 가격의 변동 가능성이 높아진다고 해석됩니다.
+                </div>
+                <div className="content-governing-text">
+                    <h2>RSI(Relative Strength Index, 상대 강도 지수)</h2> 일정기간 동안 주식의 가격 상승압력과 하락압력을 측정하는 지표입니다.<br />
+                    RSI는 0에서 100 사이의 값을 가지며, 70 이상일 때는 과매수 상태로 판단되고, 30 이하일 때는 과매도 상태로 판단됩니다.
+                </div>
+                <div className="content-governing-text">
+                    <h2>EMA(지수이동평균, Exponential Moving Average)</h2> 최근 가격 데이터에 더 큰 가중치를 주어 계산하는 이동평균의 한 유형입니다.<br />
+                </div>
+                <div className="content-governing-text">
+                    <h2>Stochastic Oscillator(스토캐스틱 오실레이터)</h2> 주식 시장에서 가격이 일정 기간 내에서 상대적으로 어디에 위치하는지를 나타내는 기술적 지표입니다.<br />
+                    이 지표는 가격이 상승하는지 하락하는지를 판단하고 과매수 및 과매도 상태를 식별하는 데 사용됩니다. <br />
+                    주식의 최근 가격이 주어진 기간 동안의 최고가와 최저가 사이에서 어느 정도 위치하고 있는지를 측정합니다. <br />
+                    시장의 상대적인 강도와 약점을 파악하는 데 유용하며, 주가 움직임의 반전점을 찾거나 트렌드의 지속 여부를 확인하기 위해 이 지표를 사용합니다.<br />
+                </div>
+
             </div>
         </div>
     );
