@@ -4,7 +4,7 @@ import dotenv from 'dotenv'
 import logger from "../winston/logger"
 import * as database from './database/database'
 
-export default function executeService(txnId, jRequest) {
+const executeService = async (txnId, jRequest) => {
   var jResponse = {};
 
   try {
@@ -68,7 +68,7 @@ async function loadAllSQL(txnId) {
   }
 };
 
-export function getSQL(systemCode, sqlName, sqlSeq) {
+const getSQL = (systemCode, sqlName, sqlSeq) => {
   try {
     var sql = process.serviceSQL.get(`${systemCode}_${sqlName}_${sqlSeq}`);
     return sql;
@@ -78,7 +78,7 @@ export function getSQL(systemCode, sqlName, sqlSeq) {
   }
 };
 
-export function getSQL00(sqlName, sqlSeq) {
+const getSQL00 = (sqlName, sqlSeq) => {
   try {
     var sql = getSQL(process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE, sqlName, sqlSeq);
     return sql;
@@ -87,3 +87,5 @@ export function getSQL00(sqlName, sqlSeq) {
     throw err;
   }
 };
+
+export {executeService, getSQL, getSQL00};
