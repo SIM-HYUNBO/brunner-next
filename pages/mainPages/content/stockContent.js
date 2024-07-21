@@ -433,7 +433,7 @@ const StockContent = () => {
                             type="text"
                             value={stocksTicker}
                             onChange={(e) => setStocksTicker(e.target.value.toUpperCase())}
-                            placeholder="또는 종목 심볼 입력"
+                            placeholder="종목 심볼 입력"
                         />
                     </div>
                     <div className="flex items-center mt-2">
