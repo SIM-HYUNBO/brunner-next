@@ -4,7 +4,7 @@ import logger from "../winston/logger"
 import * as database from './database/database'
 import * as serviceSQL from './serviceSQL'
 
-export default function executeService(txnId, jRequest) {
+const executeService = (txnId, jRequest) => {
     var jResponse = {};
 
     try {
@@ -164,3 +164,5 @@ const updateIncome = async (txnId, jRequest) => {
         return jResponse;
     }
 };
+
+export {executeService};

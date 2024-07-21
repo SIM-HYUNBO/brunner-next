@@ -4,7 +4,7 @@ import logger from "./../winston/logger"
 import * as database from "./database/database"
 import * as serviceSQL from "./serviceSQL"
 
-export default function executeService(txnId, jRequest) {
+const executeService = (txnId, jRequest) => {
     var jResponse = {};
 
     try {
@@ -327,3 +327,5 @@ const verifyEMail = (email) => {
     const re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
     return re.test(String(email).toLowerCase());
 }
+
+export {executeService};
