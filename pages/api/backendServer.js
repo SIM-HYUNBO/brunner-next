@@ -95,8 +95,8 @@ const saveTxnHistory = async (remoteIp, txnId, jRequest, jResponse) => {
         [
             txnId,
             remoteIp,
-            jRequest,
-            jResponse
+            JSON.stringify(JSON.parse(jRequest), null, 2),
+            JSON.stringify(JSON.parse(jResponse), null, 2),
         ]);
 
 
