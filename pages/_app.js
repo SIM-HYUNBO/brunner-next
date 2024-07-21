@@ -16,7 +16,7 @@ export default function App({ Component, pageProps }) {
   dotenv.config();
 
   const [loading, setLoading] = useState(false); // 로딩 상태 추가
-  
+
   const [modalContent, setModalContent] = useState({
     isOpen: false,
     message: '',
