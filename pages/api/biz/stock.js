@@ -101,4 +101,4 @@ const getStockInfo = async (txnId, jRequest) => {
     }
 };
 
-export {executeService}
+export {executeService};

@@ -328,4 +328,4 @@ const verifyEMail = (email) => {
     return re.test(String(email).toLowerCase());
 }
 
-export {executeService}
+export {executeService};
