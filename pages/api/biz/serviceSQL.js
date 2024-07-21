@@ -1,6 +1,5 @@
 `use strict`
 
-import dotenv from 'dotenv'
 import logger from "../winston/logger"
 import * as database from './database/database'
 
@@ -36,7 +35,6 @@ async function loadAllSQL(txnId) {
       return result;
     }
 
-    dotenv.config();
     logger.info(`Start loading service queries.\n`)
 
     process.serviceSQL = new Map();
@@ -88,4 +86,4 @@ const getSQL00 = (sqlName, sqlSeq) => {
   }
 };
 
-export {executeService, getSQL, getSQL00};
+export { executeService, getSQL, getSQL00 };

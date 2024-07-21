@@ -1,3 +1,4 @@
+import dotenv from 'dotenv';
 import { useState, useEffect } from 'react';
 import moment from 'moment';
 import requestServer from './../../../components/requestServer';
@@ -27,6 +28,7 @@ const StockContent = () => {
 
     // useEffect를 사용하여 최근 검색한 종목 코드 로드
     useEffect(() => {
+        dotenv.config();
         const recentSearchesString = localStorage.getItem('recentSearches');
         if (recentSearchesString) {
             const searches = JSON.parse(recentSearchesString);
@@ -374,15 +376,15 @@ const StockContent = () => {
             ...provided,
             width: '100%',
             border: '1px solid #94A3B8',
-            backgroundColor: process.env.isDarkMode === true ? 'black' : 'white', // 다크모드와 라이트모드에 따라 배경색 설정
+            backgroundColor: process.env.isDarkMode ? 'black' : 'white', // 다크모드와 라이트모드에 따라 배경색 설정
             color: '#94A3B8', // 다크모드와 라이트모드에 따라 텍스트 색상 설정
             foreColor: process.env.isDarkMode ? 'white' : 'black',
         }),
         option: (provided, state) => ({
             ...provided,
             color: '#94A3B8', // 다크모드와 라이트모드에 따라 텍스트 색상 설정
-            backgroundColor: process.env.isDarkMode === true  ? 'black' : 'white',
-            foreColor: process.env.isDarkMode === true  ? 'white' : 'black'
+            backgroundColor: process.env.isDarkMode ? 'black' : 'white',
+            foreColor: process.env.isDarkMode ? 'white' : 'black'
         }),
         singleValue: (provided, state) => ({
             ...provided,

@@ -1,11 +1,9 @@
 `use strict`
-import dotenv from 'dotenv'
+
 import logger from "./../../winston/logger"
 import { Pool } from "pg";
 
-
-const getPool = async() => {
-  dotenv.config();
+const getPool = async () => {
 
   logger.info(`Getting database connection pool from ...
   DB_HOST:${process.env.DB_HOST}
@@ -36,4 +34,4 @@ const executeSQL = async (sql, params) => {
   }
 };
 
-export {executeSQL};
+export { executeSQL };

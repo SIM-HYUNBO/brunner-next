@@ -1,11 +1,23 @@
 
+import { useState, useRef, useEffect } from 'react';
 import { useTheme } from 'next-themes'
 
 export default function DarkModeToggleButton() {
 
+    useEffect(() => {
+        setThemeRef('light');
+    }, []);
+
     // theme : 현재값 가져오기 getter
     // setTheme : 현재값 바꾸기 setter
     const { theme, setTheme } = useTheme()
+    const themeRef = useRef(theme);
+
+    const setThemeRef = (newValue) => {
+        themeRef.current = newValue;
+        setTheme(newValue);
+        process.env.isDarkMode = theme === 'dark' ? false : true;
+    };
 
     return (
         <>
@@ -24,8 +36,7 @@ export default function DarkModeToggleButton() {
                                rounded text-base mt-4 md:mt-0"
                 type="button"
                 onClick={() => {
-                    setTheme(theme === 'dark' ? 'light' : 'dark');
-                    process.env.isDarkMode = theme === 'dark' ? false : true
+                    setThemeRef(theme === 'dark' ? 'light' : 'dark');
                 }}>
                 {/* 구글에서 heroicon 검색해서 svg Copy   */}
                 {/* 라이트 모드 이미지*/}
