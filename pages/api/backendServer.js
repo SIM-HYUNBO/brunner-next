@@ -39,8 +39,9 @@ export default async (req, res) => {
         durationMs = endTxnTime - startTxnTime;
         jResponse._durationMs = durationMs;
         res.send(`${JSON.stringify(jResponse)}`);
-        logger.info(`reply:\n${JSON.stringify(jResponse)}\n`);
         logger.warn(`END TXN ${(!commandName) ? "" : commandName} in ${durationMs} milliseconds.\n`)
+
+        await saveTxnHistory(remoteIp, txnId, jRequest, jResponse);
     }
 }
 
@@ -82,4 +83,25 @@ const generateTxnId = async () => {
     const hrtime = process.hrtime(); // 현재 시간을 나노초 단위로 가져옴
     const txnid = `${currentDateTime}${hrtime[0]}${hrtime[1]}`;
     return txnid;
+}
+
+const saveTxnHistory = async (remoteIp, txnId, jRequest, jResponse) => {
+    // jRequest
+    // jResponse
+
+    var sql = null
+    sql = serviceSQL.getSQL00('insert_TB_COR_TXN_HIST', 1);
+    var insert_TB_COR_TXN_HIST_01 = await database.executeSQL(sql,
+        [
+            txnId,
+            remoteIp,
+            jRequest,
+            jResponse
+        ]);
+
+
+
+    if (insert_TB_COR_TXN_HIST_01.rowCount !== 1) {
+        logger.info(`Failed to execute insert_TB_COR_TXN_HIST_01\n`);
+    }
 }

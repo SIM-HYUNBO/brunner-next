@@ -29,13 +29,6 @@ const getStockInfo = async (txnId, jRequest) => {
         jResponse.commanaName = jRequest.commandName;
         jResponse.userId = jRequest.userId;
 
-        // if (!jRequest.userId) {
-        //     jResponse.error_code = -2;
-        //     jResponse.error_message = `The [userId] is a required field. 
-        //     Please enter a value.`;
-        //     return jResponse;
-        // }
-
         if (!jRequest.stocksTicker) {
             jResponse.error_code = -2;
             jResponse.error_message = `The [stocksTicker] is a required field. 
