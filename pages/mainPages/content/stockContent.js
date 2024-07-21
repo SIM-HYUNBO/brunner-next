@@ -308,6 +308,7 @@ const StockContent = () => {
                 style: {
                     colors: '#94A3B8', // 다크모드에서 텍스트 색상을 밝게 설정
                 },
+                formatter: (value) => Math.round(value).toFixed(0), // 소수점 제거
             },
         },
         tooltip: {
@@ -352,6 +353,7 @@ const StockContent = () => {
                 style: {
                     colors: '#94A3B8', // 라이트모드에서 텍스트 색상을 어둡게 설정
                 },
+                formatter: (value) => Math.round(value).toFixed(0), // 소수점 제거
             },
         },
         tooltip: {
