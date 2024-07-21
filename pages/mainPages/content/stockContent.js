@@ -511,12 +511,12 @@ const StockContent = () => {
                     </button>
 
                     {stockData && (
-                        <div className="mt-5 w-full h-full">
+                        <div className="mt-5 w-full h-screen max-h-[50vh]">
                             <ApexCharts
                                 options={process.env.isDarkMode ? chartOptionsDark : chartOptionsLight} // 테마에 따라 차트 옵션 변경
                                 series={prepareChartData()}
                                 type="line"
-                                height={'800px'}
+                                height={'100%'}
                                 width={'100%'}
                             />
                         </div>
