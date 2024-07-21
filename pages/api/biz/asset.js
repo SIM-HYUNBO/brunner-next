@@ -165,4 +165,4 @@ const updateIncome = async (txnId, jRequest) => {
     }
 };
 
-export {executeService}
+export {executeService};

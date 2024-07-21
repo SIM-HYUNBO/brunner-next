@@ -88,4 +88,4 @@ const getSQL00 = (sqlName, sqlSeq) => {
   }
 };
 
-export {executeService, getSQL, getSQL00}
+export {executeService, getSQL, getSQL00};
