@@ -90,7 +90,7 @@ export default function AssetContent() {
 
   // 수익 내역 추가 처리
   const handleAddIncome = async () => {
-    const userId = usserInfo.getLoginUserId();
+    const userId = userInfo.getLoginUserId();
     if (!userId) return;
     if (!amountInput) {
       openModal(`Input amount.`);
