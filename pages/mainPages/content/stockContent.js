@@ -382,13 +382,13 @@ const StockContent = () => {
         }),
         option: (provided, state) => ({
             ...provided,
-            color: '#94A3B8', // 다크모드와 라이트모드에 따라 텍스트 색상 설정
-            backgroundColor: process.env.isDarkMode ? 'black' : 'white',
-            foreColor: process.env.isDarkMode ? 'white' : 'black'
+            color: process.env.isDarkMode ? '#94A3B8' : '#94A3B8', // 콤보박스 리스트 글씨색
+            backgroundColor: process.env.isDarkMode ? 'black' : 'white', // 콤보박스 리스트 배경색
+            foreColor: process.env.isDarkMode ? 'yellow' : 'red' // 이건 뭔지 모름
         }),
         singleValue: (provided, state) => ({
             ...provided,
-            color: state.isSelected ? 'red' : '#94A3B8', // 선택된 값의 글자 색상
+            color: state.isSelected ? '#94A3B8' : '#94A3B8', // 선택된 값의 글자 색상
         }),
     };
 
