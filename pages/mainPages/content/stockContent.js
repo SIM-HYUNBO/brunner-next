@@ -286,6 +286,26 @@ const StockContent = () => {
             height: '100%',
             type: 'line',
             foreColor: '#94A3B8', // 다크모드에서 텍스트 색상을 밝게 설정
+            events: {
+                mounted: function (chartContext, config) {
+                    // 차트가 렌더링된 후 호출되는 이벤트
+                    console.log("Chart mounted");
+
+                    // 특정 인덱스의 legendItem 비활성화
+                    chartContext.hideSeries(chartContext.w.globals.seriesNames[1]);
+                    chartContext.hideSeries(chartContext.w.globals.seriesNames[2]);
+                    chartContext.hideSeries(chartContext.w.globals.seriesNames[3]);
+                    chartContext.hideSeries(chartContext.w.globals.seriesNames[4]);
+                    chartContext.hideSeries(chartContext.w.globals.seriesNames[5]);
+                },
+                updated: function (chartContext, config) {
+                    console.log("Chart updated");
+                },
+                animationEnd: function (chartContext, config) {
+                    console.log("Animation ended");
+                }
+            }
+
         },
         title: {
             text: stocksTicker,
@@ -331,6 +351,25 @@ const StockContent = () => {
             height: '100%',
             type: 'line',
             foreColor: '#94A3B8', // 라이트모드에서 텍스트 색상을 어둡게 설정
+            events: {
+                mounted: function (chartContext, config) {
+                    // 차트가 렌더링된 후 호출되는 이벤트
+                    console.log("Chart mounted");
+
+                    // 특정 인덱스의 legendItem 비활성화
+                    chartContext.hideSeries(chartContext.w.globals.seriesNames[1]);
+                    chartContext.hideSeries(chartContext.w.globals.seriesNames[2]);
+                    chartContext.hideSeries(chartContext.w.globals.seriesNames[3]);
+                    chartContext.hideSeries(chartContext.w.globals.seriesNames[4]);
+                    chartContext.hideSeries(chartContext.w.globals.seriesNames[5]);
+                },
+                updated: function (chartContext, config) {
+                    console.log("Chart updated");
+                },
+                animationEnd: function (chartContext, config) {
+                    console.log("Animation ended");
+                }
+            }
         },
         title: {
             text: stocksTicker,
@@ -369,6 +408,7 @@ const StockContent = () => {
                 colors: '#333333', // 라이트모드에서 텍스트 색상을 어둡게 설정
             },
         },
+
     };
 
     const customStyles = {
