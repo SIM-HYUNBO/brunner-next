@@ -525,33 +525,33 @@ const StockContent = () => {
                     )}
                 </div>
 
-                <div className='items-start'>
-                    <h1 className="title-font sm:text-4xl text-3xl font-medium text-green-900  my-10">
-                        보조 지표
-                    </h1>
+                <div></div>
+                <h1 className="title-font sm:text-4xl text-3xl font-medium text-green-900  my-10">
+                    보조 지표
+                </h1>
 
-                    <div className="content-governing-text">
-                        <h2>MACD(Moving Average Convergence Divergence)</h2>두 개의 이동평균선 (단기와 장기 이동평균) 사이의 차이를 나타내는 지표입니다.<br />
-                        MACD 선과 신호선(9일 이동평균선)의 교차점을 분석하여 추세의 전환점을 예측할 수 있습니다.
-                    </div>
-                    <div className="content-governing-text">
-                        <h2>Bollinger Bands(볼린저 밴드):</h2>이동평균선을 중심으로 주가의 변동 가능성을 나타내는 지표입니다.<br />
-                        상한선과 하한선이 포함된 밴드로 주가가 이들 밴드 내에 있을 때는 일반적으로 안정적인 시장 상태로 판단되고, 밴드 밖으로 나갈 때는 가격의 변동 가능성이 높아진다고 해석됩니다.
-                    </div>
-                    <div className="content-governing-text">
-                        <h2>RSI(Relative Strength Index, 상대 강도 지수)</h2> 일정기간 동안 주식의 가격 상승압력과 하락압력을 측정하는 지표입니다.<br />
-                        RSI는 0에서 100 사이의 값을 가지며, 70 이상일 때는 과매수 상태로 판단되고, 30 이하일 때는 과매도 상태로 판단됩니다.
-                    </div>
-                    <div className="content-governing-text">
-                        <h2>EMA(지수이동평균, Exponential Moving Average)</h2> 최근 가격 데이터에 더 큰 가중치를 주어 계산하는 이동평균의 한 유형입니다.<br />
-                    </div>
-                    <div className="content-governing-text">
-                        <h2>Stochastic Oscillator(스토캐스틱 오실레이터)</h2> 주식 시장에서 가격이 일정 기간 내에서 상대적으로 어디에 위치하는지를 나타내는 기술적 지표입니다.<br />
-                        이 지표는 가격이 상승하는지 하락하는지를 판단하고 과매수 및 과매도 상태를 식별하는 데 사용됩니다. <br />
-                        주식의 최근 가격이 주어진 기간 동안의 최고가와 최저가 사이에서 어느 정도 위치하고 있는지를 측정합니다. <br />
-                        시장의 상대적인 강도와 약점을 파악하는 데 유용하며, 주가 움직임의 반전점을 찾거나 트렌드의 지속 여부를 확인하기 위해 이 지표를 사용합니다.<br />
-                    </div>
+                <div className="content-governing-text">
+                    <h2>MACD(Moving Average Convergence Divergence)</h2>두 개의 이동평균선 (단기와 장기 이동평균) 사이의 차이를 나타내는 지표입니다.<br />
+                    MACD 선과 신호선(9일 이동평균선)의 교차점을 분석하여 추세의 전환점을 예측할 수 있습니다.
                 </div>
+                <div className="content-governing-text">
+                    <h2>Bollinger Bands(볼린저 밴드):</h2>이동평균선을 중심으로 주가의 변동 가능성을 나타내는 지표입니다.<br />
+                    상한선과 하한선이 포함된 밴드로 주가가 이들 밴드 내에 있을 때는 일반적으로 안정적인 시장 상태로 판단되고, 밴드 밖으로 나갈 때는 가격의 변동 가능성이 높아진다고 해석됩니다.
+                </div>
+                <div className="content-governing-text">
+                    <h2>RSI(Relative Strength Index, 상대 강도 지수)</h2> 일정기간 동안 주식의 가격 상승압력과 하락압력을 측정하는 지표입니다.<br />
+                    RSI는 0에서 100 사이의 값을 가지며, 70 이상일 때는 과매수 상태로 판단되고, 30 이하일 때는 과매도 상태로 판단됩니다.
+                </div>
+                <div className="content-governing-text">
+                    <h2>EMA(지수이동평균, Exponential Moving Average)</h2> 최근 가격 데이터에 더 큰 가중치를 주어 계산하는 이동평균의 한 유형입니다.<br />
+                </div>
+                <div className="content-governing-text">
+                    <h2>Stochastic Oscillator(스토캐스틱 오실레이터)</h2> 주식 시장에서 가격이 일정 기간 내에서 상대적으로 어디에 위치하는지를 나타내는 기술적 지표입니다.<br />
+                    이 지표는 가격이 상승하는지 하락하는지를 판단하고 과매수 및 과매도 상태를 식별하는 데 사용됩니다. <br />
+                    주식의 최근 가격이 주어진 기간 동안의 최고가와 최저가 사이에서 어느 정도 위치하고 있는지를 측정합니다. <br />
+                    시장의 상대적인 강도와 약점을 파악하는 데 유용하며, 주가 움직임의 반전점을 찾거나 트렌드의 지속 여부를 확인하기 위해 이 지표를 사용합니다.<br />
+                </div>
+
             </div>
         </div>
     );
