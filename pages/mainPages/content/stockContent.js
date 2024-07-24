@@ -19,9 +19,9 @@ const StockContent = () => {
     const [stocksTicker, setStocksTicker] = useState('');
     const [stockData, setStockData] = useState(null);
     const [error, setError] = useState(null);
-    const [timespan, setTimespan] = useState('month');
-    const [duration, setDuration] = useState(10);
-    const [durationUnit, setDurationUnit] = useState('months');
+    const [timespan, setTimespan] = useState('hour');
+    const [duration, setDuration] = useState(15);
+    const [durationUnit, setDurationUnit] = useState('days');
     const [recentSearches, setRecentSearches] = useState([]);
     const [defaultTicker, setDefaultTicker] = useState('');
     const [selectedOption, setSelectedOption] = useState(null);
