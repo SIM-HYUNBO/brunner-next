@@ -525,7 +525,7 @@ const StockContent = () => {
                     )}
                 </div>
 
-                <div >
+                <div className="table">
                     <h1 className="title-font sm:text-4xl text-3xl font-medium text-green-900  my-10">
                         보조 지표
                     </h1>
