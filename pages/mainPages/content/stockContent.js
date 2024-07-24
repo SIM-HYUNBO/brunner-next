@@ -7,7 +7,6 @@ import dynamic from 'next/dynamic';
 import Select from 'react-select';
 
 const ApexCharts = dynamic(() => import('react-apexcharts'), { ssr: false });
-
 const StockContent = () => {
     const [loading, setLoading] = useState(false);
     const [modalContent, setModalContent] = useState({
@@ -100,6 +99,8 @@ const StockContent = () => {
                 sort: 'desc',
                 limit: '',
             };
+
+            setStockData(null);
 
             const jResponse = await requestServer('POST', JSON.stringify(jRequest));
 
