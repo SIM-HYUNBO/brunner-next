@@ -71,7 +71,6 @@ const StockContent = () => {
 
     // 주식 데이터를 가져오는 함수
     const fetchStockData = async () => {
-        setLoading(true);
         try {
             const timefrom = moment().subtract(duration, durationUnit).format('YYYY-MM-DD');
             const timeto = moment().format('YYYY-MM-DD');
@@ -89,9 +88,8 @@ const StockContent = () => {
                 limit: '',
             };
 
+            setLoading(true);
             const jResponse = await requestServer('POST', JSON.stringify(jRequest));
-
-
 
             if (jResponse.error_code === 0) {
                 setStockData(jResponse.stockInfo);
@@ -116,7 +114,9 @@ const StockContent = () => {
         } catch (err) {
             openModal(err instanceof Error ? err.message : 'Unknown error occurred');
         }
-        setLoading(false);
+        finally {
+            setLoading(false);
+        }
     };
 
     // 주식 데이터 요청 처리
@@ -539,32 +539,11 @@ const StockContent = () => {
 
     return (
         <div className='w-full'>
-            <input className='item-start text-center bg-slate-50 dark:bg-slate-400'
-                type="text"
-                value={stocksTickerRef.current}
-                onChange={(e) => {
-                    setStocksTickerRef(e.target.value);
-                    setSelectedOption("");
-                }}
-            />
-            <button className='text-slate-400 ml-2' type="submit" onClick={handleStockRequest}>Refresh</button>
-
-            <Select className='items-start'
-                value={selectedOption}
-                onChange={handleTickerChange}
-                options={recentSearches}
-                placeholder="Select Symbol ..."
-                isClearable
-                noOptionsMessage={() => "최근 검색 기록이 없습니다."}
-                styles={{
-                    container: (provided) => ({
-                        ...provided,
-                        marginTop: '1em',
-                        marginBottom: '1em',
-                    }),
-                }}
-            />
-
+            {loading && (
+                <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-gray-500 bg-opacity-75 z-50">
+                    <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-gray-900"></div>
+                </div>
+            )}
             <div>
                 <div className='items-start mt-2 text-slate-400'>
                     <label>
@@ -596,9 +575,34 @@ const StockContent = () => {
                     <option value="months">월</option>
                     <option value="years">년</option>
                 </select>
+                <div>
+                    <Select className='items-start'
+                        value={selectedOption}
+                        onChange={handleTickerChange}
+                        options={recentSearches}
+                        placeholder="Select Symbol ..."
+                        isClearable
+                        noOptionsMessage={() => "최근 검색 기록이 없습니다."}
+                        styles={{
+                            container: (provided) => ({
+                                ...provided,
+                                marginTop: '1em',
+                                marginBottom: '1em',
+                            }),
+                        }}
+                    />
+                    <input className='item-start text-center bg-slate-50 dark:bg-slate-400'
+                        type="text"
+                        value={stocksTickerRef.current}
+                        onChange={(e) => {
+                            setStocksTickerRef(e.target.value);
+                            setSelectedOption("");
+                        }}
+                    />
+                    <button className='text-slate-400 ml-2' type="submit" onClick={handleStockRequest}>Refresh</button>
+                </div>
             </div>
 
-            {loading && <p>데이터 로딩 중...</p>}
             <BrunnerMessageBox
                 isOpen={modalContent.isOpen}
                 message={modalContent.message}
