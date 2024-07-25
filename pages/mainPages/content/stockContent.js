@@ -5,83 +5,54 @@ import requestServer from './../../../components/requestServer';
 import BrunnerMessageBox from '@/components/BrunnerMessageBox';
 import dynamic from 'next/dynamic';
 import Select from 'react-select';
+import { format } from 'winston';
 
+// ApexCharts를 동적으로 import
 const ApexCharts = dynamic(() => import('react-apexcharts'), { ssr: false });
+
 const StockContent = () => {
-    const [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useState(false); // 로딩 상태 관리
     const [modalContent, setModalContent] = useState({
         isOpen: false,
         message: '',
         onConfirm: () => { },
         onClose: () => { },
     });
-    const [stocksTicker, setStocksTicker] = useState('');
-    const [stockData, setStockData] = useState(null);
-    const [error, setError] = useState(null);
-    const [timespan, setTimespan] = useState('hour');
-    const [duration, setDuration] = useState(15);
-    const [durationUnit, setDurationUnit] = useState('days');
-    const [recentSearches, setRecentSearches] = useState([]);
-    const [defaultTicker, setDefaultTicker] = useState('');
-    const [selectedOption, setSelectedOption] = useState(null);
+    const [stocksTicker, setStocksTicker] = useState(''); // 주식 심볼
+    const [stockData, setStockData] = useState(null); // 주식 데이터
+    const [error, setError] = useState(null); // 에러 메시지
+    const [timespan, setTimespan] = useState('hour'); // 데이터의 시간 범위
+    const [duration, setDuration] = useState(15); // 기간
+    const [durationUnit, setDurationUnit] = useState('days'); // 기간 단위
+    const [recentSearches, setRecentSearches] = useState([]); // 최근 검색 기록
+    const [defaultTicker, setDefaultTicker] = useState(''); // 기본 심볼
+    const [selectedOption, setSelectedOption] = useState(null); // 선택된 옵션
 
     // useEffect를 사용하여 최근 검색한 종목 코드 로드
     useEffect(() => {
-        dotenv.config();
-        const recentSearchesString = localStorage.getItem('recentSearches');
-        if (recentSearchesString) {
-            const searches = JSON.parse(recentSearchesString);
-            setRecentSearches(searches);
-            if (searches.length > 0) {
-                setDefaultTicker(searches[0]);
-            }
+        const storedSearches = localStorage.getItem('recentSearches');
+        if (storedSearches) {
+            setRecentSearches(JSON.parse(storedSearches));
+        }
+
+        const defaultTicker = localStorage.getItem('defaultTicker');
+        if (defaultTicker) {
+            setDefaultTicker(defaultTicker);
+            setStocksTicker(defaultTicker);
         }
     }, []);
 
-    // useEffect를 사용하여 최근 검색한 종목 코드 저장
-    useEffect(() => {
-        localStorage.setItem('recentSearches', JSON.stringify(recentSearches));
-    }, [recentSearches]);
+    // 주식 심볼 옵션
+    const stockOptions = [
+        { value: 'AAPL', label: 'Apple' },
+        { value: 'GOOGL', label: 'Google' },
+        { value: 'AMZN', label: 'Amazon' },
+        { value: 'MSFT', label: 'Microsoft' },
+        { value: 'TSLA', label: 'Tesla' },
+    ];
 
-    const openModal = (message) => {
-        return new Promise((resolve, reject) => {
-            setModalContent({
-                isOpen: true,
-                message: message,
-                onConfirm: (result) => {
-                    resolve(result);
-                    closeModal();
-                },
-                onClose: () => {
-                    reject(false);
-                    closeModal();
-                },
-            });
-        });
-    };
-
-    const closeModal = () => {
-        setModalContent({
-            isOpen: false,
-            message: '',
-            onConfirm: () => { },
-            onClose: () => { },
-        });
-    };
-
-    const handleSubmit = async (event) => {
-        event.preventDefault();
-
-        const trimmedTicker = stocksTicker.trim();
-        if (!trimmedTicker) {
-            setError('주식 심볼을 선택해주세요.');
-            return;
-        }
-
-        loadStockData(trimmedTicker);
-    };
-
-    const loadStockData = async (ticker) => {
+    // 주식 데이터를 가져오는 함수
+    const fetchStockData = async () => {
         setLoading(true);
         try {
             const timefrom = moment().subtract(duration, durationUnit).format('YYYY-MM-DD');
@@ -90,7 +61,7 @@ const StockContent = () => {
             const jRequest = {
                 commandName: 'stock.getStockInfo',
                 systemCode: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE,
-                stocksTicker: ticker,
+                stocksTicker: stocksTicker,
                 multiplier: 1,
                 timespan: timespan,
                 from: timefrom,
@@ -100,516 +71,461 @@ const StockContent = () => {
                 limit: '',
             };
 
-            setStockData(null);
-
             const jResponse = await requestServer('POST', JSON.stringify(jRequest));
+
+
 
             if (jResponse.error_code === 0) {
                 setStockData(jResponse.stockInfo);
-                const updatedRecentSearches = [
-                    ticker,
-                    ...recentSearches.filter((item) => item !== ticker),
-                ].slice(0, 10);
-                setRecentSearches(updatedRecentSearches);
+                setError(null);
+
+                // 최근 검색 기록 업데이트
+                const newSearch = { value: stocksTicker, label: stocksTicker };
+                const updatedSearches = [
+                    newSearch,
+                    ...recentSearches.filter((s) => s.value !== stocksTicker),
+                ].slice(0, 5); // 최대 5개까지 저장
+                setRecentSearches(updatedSearches);
+                localStorage.setItem('recentSearches', JSON.stringify(updatedSearches));
             } else {
-                openModal(jResponse.error_message);
+                setError(res.message || '데이터를 불러오는 중 오류가 발생했습니다.');
             }
-        } catch (error) {
-            console.error('예상치 못한 오류:', error);
-            openModal('예상치 못한 오류가 발생했습니다. 다시 시도해주세요.');
-        } finally {
-            setLoading(false);
+        } catch (err) {
+            setError('데이터를 불러오는 중 오류가 발생했습니다.');
         }
+        setLoading(false);
     };
 
-    const calculateRSI = (data, period) => {
-        let rs = 0;
-        let gains = 0;
-        let losses = 0;
+    // 주식 데이터 요청 처리
+    const handleStockRequest = (event) => {
+        event.preventDefault();
+        if (!stocksTicker) {
+            setModalContent({
+                isOpen: true,
+                message: '주식 심볼을 입력해 주세요.',
+                onConfirm: () => setModalContent({ ...modalContent, isOpen: false }),
+                onClose: () => setModalContent({ ...modalContent, isOpen: false }),
+            });
+            return;
+        }
+        fetchStockData();
+    };
+
+    // 지표 계산 함수들
+    const calculateSMA = (data, period = 14) => {
+        const sma = [];
+        let sum = 0;
+
+        for (let i = 0; i < data.length; i++) {
+            sum += data[i].y;
+            if (i >= period - 1) {
+                sma.push({ x: data[i].x, y: sum / period });
+                sum -= data[i - period + 1].y;
+            }
+        }
+
+        return sma;
+    };
+
+    const calculateEMA = (data, period = 14) => {
+        const ema = [];
+        const k = 2 / (period + 1);
+        let emaPrev = data[0].y; // 첫 번째 EMA 값은 첫 번째 가격
+
+        ema.push({ x: data[0].x, y: emaPrev });
 
         for (let i = 1; i < data.length; i++) {
-            const diff = data[i].c - data[i - 1].c;
-            if (diff > 0) {
-                gains += diff;
-            } else {
-                losses += Math.abs(diff);
-            }
-        }
-
-        const avgGain = gains / period;
-        const avgLoss = losses / period;
-        rs = avgGain / avgLoss;
-
-        const rsi = 100 - (100 / (1 + rs));
-        return rsi.toFixed(2);
-    };
-
-    const calculateMACD = (data) => {
-        const shortEMA = calculateEMA(data, 12);
-        const longEMA = calculateEMA(data, 26);
-        const macdLine = shortEMA - longEMA;
-        const signalLine = calculateEMA(data, 9, macdLine);
-        return { macdLine, signalLine };
-    };
-
-    const calculateEMA = (data, period, prevEMA = null) => {
-        if (data.length < period) {
-            return 'NaN';
-        }
-
-        const smoothingFactor = 2 / (period + 1);
-        let prevEMAValue = prevEMA && prevEMA[0] && Array.isArray(prevEMA[0]) ? prevEMA[0][0] : null; // 이전 EMA 값을 배열의 첫 번째 원소로 설정
-
-        let ema;
-        if (prevEMAValue !== null) {
-            ema = data[data.length - 1].c * smoothingFactor + prevEMAValue * (1 - smoothingFactor);
-        } else {
-            const sum = data.slice(0, period).reduce((total, currentValue) => {
-                return total + currentValue.c;
-            }, 0);
-            ema = sum / period;
+            const emaCurrent = data[i].y * k + emaPrev * (1 - k);
+            ema.push({ x: data[i].x, y: emaCurrent });
+            emaPrev = emaCurrent;
         }
 
         return ema;
     };
 
-    const calculateBollingerBands = (data, period) => {
-        const middleBand = calculateSMA(data, period);
-        const stdDev = calculateStandardDeviation(data, period);
-        const upperBand = middleBand + 2 * stdDev;
-        const lowerBand = middleBand - 2 * stdDev;
-        return { upperBand, middleBand, lowerBand };
-    };
+    const calculateRSI = (data, period = 14) => {
+        const rsi = [];
+        let gains = 0;
+        let losses = 0;
 
-    const calculateSMA = (data, period) => {
-        if (data.length < period) {
-            return 'NaN';
+        for (let i = 1; i < data.length; i++) {
+            const change = data[i].y - data[i - 1].y;
+            if (change > 0) {
+                gains += change;
+            } else {
+                losses -= change;
+            }
+
+            if (i >= period) {
+                const averageGain = gains / period;
+                const averageLoss = losses / period;
+                const rs = averageGain / averageLoss;
+                const rsiValue = 100 - 100 / (1 + rs);
+                rsi.push({ x: data[i].x, y: rsiValue });
+
+                const prevChange = data[i - period + 1].y - data[i - period].y;
+                if (prevChange > 0) {
+                    gains -= prevChange;
+                } else {
+                    losses += prevChange;
+                }
+            }
         }
 
-        // Calculate the sum of the first 'period' data points
-        const sum = data.slice(0, period).reduce((total, currentValue) => total + currentValue.c, 0);
-
-        // Calculate SMA (Simple Moving Average)
-        const sma = sum / period;
-
-        return sma;
+        return rsi;
     };
 
-    const calculateStandardDeviation = (data, period) => {
-        if (data.length < period) {
-            return 'NaN';
+    const calculateMACD = (data, shortPeriod = 12, longPeriod = 26, signalPeriod = 9) => {
+        const shortEMA = calculateEMA(data, shortPeriod);
+        const longEMA = calculateEMA(data, longPeriod);
+        const macd = [];
+
+        // MACD 라인 계산
+        for (let i = 0; i < data.length; i++) {
+            if (i >= longPeriod - 1 && shortEMA[i] && longEMA[i]) { // shortEMA[i]와 longEMA[i] 체크
+                const macdValue = shortEMA[i].y - longEMA[i].y;
+                macd.push({ x: data[i].x, y: macdValue });
+            } else {
+                macd.push({ x: data[i].x, y: 0 });
+            }
         }
 
-        // Calculate the mean (Simple Moving Average)
-        const mean = calculateSMA(data, period);
+        // 시그널 라인 계산
+        const signalLine = calculateEMA(macd, signalPeriod);
 
-        // Calculate the sum of squares of differences from the mean
-        const sumOfSquares = data.slice(0, period).reduce((total, currentValue) => {
-            const deviation = currentValue.c - mean; // Assuming each data point has a property 'c'
-            return total + Math.pow(deviation, 2);
-        }, 0);
+        // 히스토그램 계산
+        const histogram = macd.map((m, index) => {
+            if (signalLine[index]) { // 시그널 라인 존재 여부 체크
+                return { x: m.x, y: m.y - signalLine[index].y };
+            } else {
+                return { x: m.x, y: 0 };
+            }
+        });
 
-        // Calculate standard deviation
-        const stdDev = Math.sqrt(sumOfSquares / period);
-
-        return stdDev;
+        return { macd, signalLine, histogram };
     };
 
-    const calculateStochasticOscillator = (data, period) => {
-        const highValues = data.slice(0, period).map(item => item.h);
-        const lowValues = data.slice(0, period).map(item => item.l);
-        const closeValues = data.slice(0, period).map(item => item.c);
+    const calculateBollingerBands = (data, period = 20, multiplier = 2) => {
+        const sma = calculateSMA(data, period);
+        const bollingerBands = data.map((d, index) => {
+            if (index >= period - 1) {
+                const window = data.slice(index - period + 1, index + 1);
+                const squaredDiffs = window.map(w => Math.pow(w.y - sma[index - period + 1].y, 2));
+                const variance = squaredDiffs.reduce((sum, diff) => sum + diff, 0) / period;
+                const stdDev = Math.sqrt(variance);
+                const middleBand = sma[index - period + 1].y;
+                const upperBand = middleBand + multiplier * stdDev;
+                const lowerBand = middleBand - multiplier * stdDev;
 
-        const high = Math.max(...highValues);
-        const low = Math.min(...lowValues);
-        const close = closeValues[closeValues.length - 1];
+                return {
+                    x: d.x,
+                    upperBand,
+                    middleBand,
+                    lowerBand
+                };
+            } else {
+                return { x: d.x, upperBand: null, middleBand: null, lowerBand: null };
+            }
+        });
 
-        const stochasticOscillator = ((close - low) / (high - low)) * 100;
-        return stochasticOscillator.toFixed(2);
+        return bollingerBands;
     };
 
-    const prepareChartData = () => {
-        if (!stockData) return [];
+    // 데이터 가져오기 버튼 클릭 핸들러
+    const handleFetchClick = async () => {
+        setLoading(true);
+        try {
+            const result = await requestServer('/api/stocks', 'GET', {
+                ticker: stocksTicker,
+                timespan,
+                duration,
+                durationUnit,
+            });
 
-        const candlestickData = stockData.map((item) => ({
-            x: new Date(item.t),
-            y: [item.o, item.h, item.l, item.c],
+            if (result.success) {
+                setStockData(result.data);
+                setError(null);
+
+                // 최근 검색 기록 업데이트
+                const updatedSearches = [...recentSearches];
+                const existingIndex = updatedSearches.findIndex(
+                    (item) => item.value === stocksTicker
+                );
+                if (existingIndex !== -1) {
+                    updatedSearches.splice(existingIndex, 1);
+                }
+                updatedSearches.unshift({ value: stocksTicker, label: stocksTicker });
+                if (updatedSearches.length > 5) {
+                    updatedSearches.pop();
+                }
+                setRecentSearches(updatedSearches);
+                localStorage.setItem('recentSearches', JSON.stringify(updatedSearches));
+            } else {
+                setError(result.message || '데이터를 불러오는 중 오류가 발생했습니다.');
+            }
+        } catch (err) {
+            setError('데이터를 불러오는 중 오류가 발생했습니다.');
+        }
+        setLoading(false);
+    };
+
+    // 기본 티커 설정
+    useEffect(() => {
+        const storedTicker = localStorage.getItem('defaultTicker');
+        if (storedTicker) {
+            setDefaultTicker(storedTicker);
+            setStocksTicker(storedTicker);
+        }
+    }, []);
+
+    // 티커 선택 시 기본 티커 업데이트
+    const handleTickerChange = (selectedOption) => {
+        setSelectedOption(selectedOption);
+        setStocksTicker(selectedOption ? selectedOption.value : '');
+    };
+
+    // 차트 렌더링을 위한 준비
+    const renderChart = () => {
+        if (!stockData) return null;
+
+        const priceData = stockData.map((d) => ({
+            x: new Date(d.t).getTime(),
+            y: d.c,
         }));
 
-        const { macdLine, signalLine } = calculateMACD(stockData);
-        const rsiData = calculateRSI(stockData, 14);
-        const { upperBand, middleBand, lowerBand } = calculateBollingerBands(stockData, 20);
-        const stochasticOscillatorData = calculateStochasticOscillator(stockData, 14);
+        const sma = calculateSMA(priceData);
+        const ema = calculateEMA(priceData);
+        const rsi = calculateRSI(priceData);
+        const macdData = calculateMACD(priceData);
+        const bollingerBands = calculateBollingerBands(priceData);
 
-        return [
-            {
-                name: '캔들스틱',
-                type: 'candlestick',
-                data: candlestickData,
-            },
-            {
-                name: 'MACD',
+        const chartOptions = {
+            chart: {
                 type: 'line',
-                data: [
-                    { x: new Date(stockData[0].t), y: macdLine },
-                    { x: new Date(stockData[0].t), y: signalLine },
-                ],
-            },
-            {
-                name: 'Bollinger Bands',
-                type: 'line',
-                data: [
-                    { x: new Date(stockData[0].t), y: upperBand },
-                    { x: new Date(stockData[0].t), y: middleBand },
-                    { x: new Date(stockData[0].t), y: lowerBand },
-                ],
-            },
-            {
-                name: 'RSI',
-                type: 'line',
-                data: [{ x: new Date(stockData[0].t), y: rsiData }],
-            },
-            {
-                name: 'EMA',
-                type: 'line',
-                data: [{ x: new Date(stockData[0].t), y: calculateEMA(stockData, 12) }],
-            },
-            {
-                name: 'Stochastic Oscillator',
-                type: 'line',
-                data: [{ x: new Date(stockData[0].t), y: stochasticOscillatorData }],
-            },
-        ];
-    };
-
-    const chartOptionsDark = {
-        chart: {
-            height: '100%',
-            type: 'line',
-            foreColor: '#94A3B8', // 다크모드에서 텍스트 색상을 밝게 설정
-            events: {
-                mounted: function (chartContext, config) {
-                    // 차트가 렌더링된 후 호출되는 이벤트
-                    console.log("Chart mounted");
-
-                    // 특정 인덱스의 legendItem 비활성화
-                    chartContext.hideSeries(chartContext.w.globals.seriesNames[1]);
-                    chartContext.hideSeries(chartContext.w.globals.seriesNames[2]);
-                    chartContext.hideSeries(chartContext.w.globals.seriesNames[3]);
-                    chartContext.hideSeries(chartContext.w.globals.seriesNames[4]);
-                    chartContext.hideSeries(chartContext.w.globals.seriesNames[5]);
+                height: 350,
+                zoom: {
+                    enabled: true,
                 },
-                updated: function (chartContext, config) {
-                    console.log("Chart updated");
-                },
-                animationEnd: function (chartContext, config) {
-                    console.log("Animation ended");
+            },
+            title: {
+                text: `${stocksTicker} 주식 차트`,
+                align: 'left',
+            },
+            xaxis: {
+                type: 'datetime',
+            },
+            yaxis:{
+                labels:{
+                    formatter: function(val){
+                        return val.toFixed();
+                    }
                 }
-            }
+            },
+            series: [
+                {
+                    name: '가격',
+                    data: priceData,
+                },
+                {
+                    name: 'SMA',
+                    data: sma,
+                },
+                {
+                    name: 'EMA',
+                    data: ema,
+                },
+            ],
+        };
 
-        },
-        title: {
-            text: stocksTicker,
-            align: 'left',
-            style: {
-                color: '#94A3B8', // 다크모드에서 텍스트 색상을 밝게 설정
-            },
-        },
-        xaxis: {
-            type: 'datetime',
-            labels: {
-                style: {
-                    colors: '#94A3B8', // 다크모드에서 텍스트 색상을 밝게 설정
+        const rsiOptions = {
+            chart: {
+                type: 'line',
+                height: 150,
+                zoom: {
+                    enabled: false,
                 },
             },
-        },
-        yaxis: {
-            tooltip: {
-                enabled: true,
+            title: {
+                text: 'RSI',
+                align: 'left',
             },
-            labels: {
-                style: {
-                    colors: '#94A3B8', // 다크모드에서 텍스트 색상을 밝게 설정
-                },
-                formatter: (value) => Math.round(value).toFixed(0), // 소수점 제거
+            xaxis: {
+                type: 'datetime',
             },
-        },
-        tooltip: {
-            x: {
-                format: 'dd MMM yyyy',
-            },
-        },
-        legend: {
-            position: 'top',
-            labels: {
-                colors: '#94A3B8', // 다크모드에서 텍스트 색상을 밝게 설정
-            },
-        },
-    };
-
-    const chartOptionsLight = {
-        chart: {
-            height: '100%',
-            type: 'line',
-            foreColor: '#94A3B8', // 라이트모드에서 텍스트 색상을 어둡게 설정
-            events: {
-                mounted: function (chartContext, config) {
-                    // 차트가 렌더링된 후 호출되는 이벤트
-                    console.log("Chart mounted");
-
-                    // 특정 인덱스의 legendItem 비활성화
-                    chartContext.hideSeries(chartContext.w.globals.seriesNames[1]);
-                    chartContext.hideSeries(chartContext.w.globals.seriesNames[2]);
-                    chartContext.hideSeries(chartContext.w.globals.seriesNames[3]);
-                    chartContext.hideSeries(chartContext.w.globals.seriesNames[4]);
-                    chartContext.hideSeries(chartContext.w.globals.seriesNames[5]);
-                },
-                updated: function (chartContext, config) {
-                    console.log("Chart updated");
-                },
-                animationEnd: function (chartContext, config) {
-                    console.log("Animation ended");
+            yaxis:{
+                labels:{
+                    formatter: function(val){
+                        return val.toFixed();
+                    }
                 }
-            }
-        },
-        title: {
-            text: stocksTicker,
-            align: 'left',
-            style: {
-                color: '#94A3B8', // 라이트모드에서 텍스트 색상을 어둡게 설정
             },
-        },
-        xaxis: {
-            type: 'datetime',
-            labels: {
-                style: {
-                    colors: '#94A3B8', // 라이트모드에서 텍스트 색상을 어둡게 설정
+            series: [
+                {
+                    name: 'RSI',
+                    data: rsi,
+                },
+            ],
+        };
+
+        const macdOptions = {
+            chart: {
+                type: 'line',
+                height: 150,
+                zoom: {
+                    enabled: false,
                 },
             },
-        },
-        yaxis: {
-            tooltip: {
-                enabled: true,
+            title: {
+                text: 'MACD',
+                align: 'left',
             },
-            labels: {
-                style: {
-                    colors: '#94A3B8', // 라이트모드에서 텍스트 색상을 어둡게 설정
+            xaxis: {
+                type: 'datetime',
+            },
+            yaxis:{
+                labels:{
+                    formatter: function(val){
+                        return val.toFixed();
+                    }
+                }
+            },
+            series: [
+                {
+                    name: 'MACD',
+                    data: macdData.macd,
                 },
-                formatter: (value) => Math.round(value).toFixed(0), // 소수점 제거
+                {
+                    name: 'Signal Line',
+                    data: macdData.signalLine,
+                },
+                {
+                    name: 'Histogram',
+                    type: 'bar',
+                    data: macdData.histogram,
+                },
+            ],
+        };
+
+        const bollingerOptions = {
+            chart: {
+                type: 'line',
+                height: 350,
+                zoom: {
+                    enabled: true,
+                },
             },
-        },
-        tooltip: {
-            x: {
-                format: 'dd MMM yyyy',
+            title: {
+                text: 'Bollinger Bands',
+                align: 'left',
             },
-        },
-        legend: {
-            position: 'top',
-            labels: {
-                colors: '#333333', // 라이트모드에서 텍스트 색상을 어둡게 설정
+            xaxis: {
+                type: 'datetime',
             },
-        },
+            yaxis:{
+                labels:{
+                    formatter: function(val){
+                        return val.toFixed();
+                    }
+                }
+            },
+            series: [
+                {
+                    name: '가격',
+                    data: priceData,
+                },
+                {
+                    name: 'Upper Band',
+                    data: bollingerBands.map((b) => ({ x: b.x, y: b.upperBand })),
+                },
+                {
+                    name: 'Middle Band',
+                    data: bollingerBands.map((b) => ({ x: b.x, y: b.middleBand })),
+                },
+                {
+                    name: 'Lower Band',
+                    data: bollingerBands.map((b) => ({ x: b.x, y: b.lowerBand })),
+                },
+            ],
+        };
 
+        return (
+            <div>
+                <ApexCharts options={chartOptions} series={chartOptions.series} type="line" height={350} />
+                <ApexCharts options={rsiOptions} series={rsiOptions.series} type="line" height={150} />
+                <ApexCharts options={macdOptions} series={macdOptions.series} type="line" height={150} />
+                <ApexCharts options={bollingerOptions} series={bollingerOptions.series} type="line" height={350} />
+            </div>
+        );
     };
-
-    const customStyles = {
-        control: (provided, state) => ({
-            ...provided,
-            width: '100%',
-            border: '1px solid #94A3B8',
-            backgroundColor: process.env.isDarkMode ? 'black' : 'white', // 다크모드와 라이트모드에 따라 배경색 설정
-            color: '#94A3B8', // 다크모드와 라이트모드에 따라 텍스트 색상 설정
-            foreColor: process.env.isDarkMode ? 'white' : 'black',
-        }),
-        option: (provided, state) => ({
-            ...provided,
-            color: process.env.isDarkMode ? '#94A3B8' : '#94A3B8', // 콤보박스 리스트 글씨색
-            backgroundColor: process.env.isDarkMode ? 'black' : 'white', // 콤보박스 리스트 배경색
-            foreColor: process.env.isDarkMode ? 'yellow' : 'red' // 이건 뭔지 모름
-        }),
-        singleValue: (provided, state) => ({
-            ...provided,
-            color: state.isSelected ? '#94A3B8' : '#94A3B8', // 선택된 값의 글자 색상
-        }),
-    };
-
-    const handleSelectChange = (selectedOption) => {
-        setSelectedOption(selectedOption);
-        if (selectedOption) {
-            setStocksTicker(selectedOption.value); // 선택된 종목 코드 업데이트
-
-            // 선택된 종목으로 데이터 로드
-            loadStockData(selectedOption.value);
-        }
-    };
-
 
     return (
-        <div className="w-full  h-full mt-20">
+        <div>
+            <form onSubmit={handleStockRequest}>
+                <label>
+                    주식 심볼:
+                    <input
+                        type="text"
+                        value={stocksTicker}
+                        onChange={(e) => setStocksTicker(e.target.value)}
+                    />
+                </label>
+                <button type="submit">데이터 가져오기</button>
+            </form>
+
+            <Select
+                value={selectedOption}
+                onChange={handleTickerChange}
+                options={stockOptions}
+                placeholder="주식 심볼 선택"
+                isClearable
+                styles={{
+                    container: (provided) => ({
+                        ...provided,
+                        marginTop: '1em',
+                        marginBottom: '1em',
+                    }),
+                }}
+            />
+
+            <div>
+                <label>
+                    시간 범위:
+                    <select value={timespan} onChange={(e) => setTimespan(e.target.value)}>
+                        <option value="minute">분</option>
+                        <option value="hour">시간</option>
+                        <option value="day">일</option>
+                    </select>
+                </label>
+                <label>
+                    기간:
+                    <input
+                        type="number"
+                        value={duration}
+                        onChange={(e) => setDuration(e.target.value)}
+                        min="1"
+                    />
+                </label>
+                <label>
+                    기간 단위:
+                    <select value={durationUnit} onChange={(e) => setDurationUnit(e.target.value)}>
+                        <option value="days">일</option>
+                        <option value="weeks">주</option>
+                        <option value="months">월</option>
+                    </select>
+                </label>
+            </div>
+
+            {loading && <p>데이터 로딩 중...</p>}
+            {error && <p style={{ color: 'red' }}>{error}</p>}
+            {stockData && renderChart()}
+
             <BrunnerMessageBox
                 isOpen={modalContent.isOpen}
                 message={modalContent.message}
                 onConfirm={modalContent.onConfirm}
                 onClose={modalContent.onClose}
             />
-            <div className="lg:flex-grow flex flex-col md:items-start md:text-left items-center text-center w-full h-full">
-                <h1 className="title-font sm:text-4xl text-3xl font-medium text-green-900">
-                    차트 보기
-                </h1>
-                <div className="main-governing-text mt-5">
-                    시야를 넓혀 최고 수익에 도전하고 <br />
-                    백억 자산가가 되세요.
-                </div>
-                <div className="border-0 focus:ring-0 bg-transparent w-full h-full text-sm">
-                    <Select
-                        options={recentSearches.map((ticker) => ({
-                            value: ticker,
-                            label: ticker,
-                        }))}
-                        value={selectedOption}
-                        onChange={handleSelectChange}
-                        styles={customStyles}
-                    />
-                    <div className="flex items-center mt-2 justify-start">
-                        <input
-                            className="p-2 border rounded text-gray-400 w-full border-slate-400"
-                            type="text"
-                            value={stocksTicker}
-                            onChange={(e) => setStocksTicker(e.target.value.toUpperCase())}
-                            placeholder="종목 심볼 입력"
-                        />
-                    </div>
-                    <div className="flex items-center mt-2">
-                        <label className="mr-4 text-gray-400">
-                            <input
-                                type="radio"
-                                value="minute"
-                                checked={timespan === 'minute'}
-                                onChange={() => setTimespan('minute')}
-                            />
-                            분
-                        </label>
-                        <label className="mr-4 text-gray-400">
-                            <input
-                                type="radio"
-                                value="hour"
-                                checked={timespan === 'hour'}
-                                onChange={() => setTimespan('hour')}
-                            />
-                            시간
-                        </label>
-                        <label className="mr-4 text-gray-400">
-                            <input
-                                type="radio"
-                                value="day"
-                                checked={timespan === 'day'}
-                                onChange={() => setTimespan('day')}
-                            />
-                            일
-                        </label>
-                        <label className="mr-4 text-gray-400">
-                            <input
-                                type="radio"
-                                value="month"
-                                checked={timespan === 'month'}
-                                onChange={() => setTimespan('month')}
-                            />
-                            월
-                        </label>
-                        <input
-                            className="p-2 border rounded dark:text-gray-300 w-24 ml-4"
-                            type="number"
-                            value={duration}
-                            onChange={(e) => setDuration(parseInt(e.target.value))}
-                            placeholder="시간"
-                            required
-                        />
-                        <select
-                            className="p-2 border rounded dark:text-gray-300 ml-2"
-                            value={durationUnit}
-                            onChange={(e) => setDurationUnit(e.target.value)}
-                        >
-                            <option value="minutes">분</option>
-                            <option value="hours">시간</option>
-                            <option value="days">일</option>
-                            <option value="months">월</option>
-                            <option value="years">년</option>
-                        </select>
-                    </div>
-
-                    {loading && (
-                        <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-gray-500 bg-opacity-75 z-50">
-                            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-gray-900"></div>
-                        </div>
-                    )}
-                    {error && <p>{error}</p>}
-
-                    <button
-                        onClick={handleSubmit}
-                        className="bg-green-500 text-white py-2 px-4 rounded hover:bg-green-600 mt-2 mb-5"
-                        style={{ alignSelf: 'flex-end' }}
-                        disabled={loading}
-                    >
-                        검색
-                    </button>
-
-                    {stockData && (
-                        <div className="mt-5 w-full h-screen max-h-[50vh]">
-                            <ApexCharts
-                                options={process.env.isDarkMode ? chartOptionsDark : chartOptionsLight} // 테마에 따라 차트 옵션 변경
-                                series={prepareChartData()}
-                                type="line"
-                                height={'100%'}
-                                width={'100%'}
-                            />
-                        </div>
-                    )}
-                </div>
-
-                <div className="table">
-                    <h1 className="title-font sm:text-4xl text-3xl font-medium text-green-900  my-10">
-                        보조 지표
-                    </h1>
-
-                    <div className="content-governing-text">
-                        <h2>MACD(Moving Average Convergence Divergence)</h2>
-                        <p className="items-start">
-                            두 개의 이동평균선(단기와 장기 이동평균) 사이의 차이를 나타내는 지표<br />
-                            MACD 선과 신호선(9일 이동평균선)의 교차점을 분석하여 추세의 전환점을 예측할 수 있습니다.
-                        </p>
-                    </div>
-                    <div className="content-governing-text">
-                        <h2>Bollinger Bands(볼린저 밴드)</h2>
-                        <p className="items-start">
-                            이동평균선을 중심으로 주가의 변동 가능성을 나타내는 지표<br />
-                            상한선과 하한선이 포함된 밴드로 주가가 이들 밴드 내에 있을 때는 일반적으로 안정적인 시장 상태로 판단되고, 밴드 밖으로 나갈 때는 가격의 변동 가능성이 높아진다고 해석됩니다.
-                        </p>
-                    </div>
-                    <div className="content-governing-text">
-                        <h2>RSI(Relative Strength Index, 상대 강도 지수)</h2>
-                        <p className="items-start">
-                            일정기간 동안 주식의 가격 상승압력과 하락압력을 측정하는 지표<br />
-                            0에서 100 사이의 값을 가지며, 70 이상일 때 과매수, 30 이하일 때는 과매도 상태로 판단합니다.
-                        </p>
-                    </div>
-                    <div className="content-governing-text">
-                        <h2>EMA(지수이동평균, Exponential Moving Average)</h2>
-                        <p className="items-start">
-                            최근 가격 데이터에 더 큰 가중치를 주어 계산하는 이동평균의 한 유형
-                        </p>
-                    </div>
-                    <div className="content-governing-text">
-                        <h2>Stochastic Oscillator(스토캐스틱 오실레이터)</h2>
-                        <p className="items-start">
-                            주식 시장에서 가격이 일정 기간 내에서 상대적으로 어디에 위치하는지를 나타내는 지표<br />
-                            가격이 상승하는지 하락하는지 판단하고 과매수 및 과매도 상태를 식별하는 데 사용됩니다. <br />
-                            가격이 주어진 기간 동안의 최고가와 최저가 사이에서 어느 정도 위치하고 있는지 측정합니다. <br />
-                            시장의 상대적인 강도와 약점을 파악하는 데 유용하며, 주가 움직임의 반전점을 찾거나 트렌드의 지속 여부를 확인하기 위해 사용합니다.<br />
-                        </p>
-                    </div>
-                </div>
-            </div>
-        </div >
+        </div>
     );
 };
 
