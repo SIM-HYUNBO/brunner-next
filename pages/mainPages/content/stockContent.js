@@ -1,5 +1,5 @@
 import dotenv from 'dotenv';
-import { useState, useEffect } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import moment from 'moment';
 import requestServer from './../../../components/requestServer';
 import BrunnerMessageBox from '@/components/BrunnerMessageBox';
@@ -19,13 +19,19 @@ const StockContent = () => {
         onClose: () => { },
     });
     const [stocksTicker, setStocksTicker] = useState(''); // 주식 심볼
+    const stocksTickerRef = useRef(stocksTicker);
+
+    const setStocksTickerRef = (newVal) => {
+        setStocksTicker(newVal);
+        stocksTickerRef.current = newVal;
+    }
+
     const [stockData, setStockData] = useState(null); // 주식 데이터
     const [error, setError] = useState(null); // 에러 메시지
     const [timespan, setTimespan] = useState('hour'); // 데이터의 시간 범위
     const [duration, setDuration] = useState(15); // 기간
     const [durationUnit, setDurationUnit] = useState('days'); // 기간 단위
     const [recentSearches, setRecentSearches] = useState([]); // 최근 검색 기록
-    const [defaultTicker, setDefaultTicker] = useState(''); // 기본 심볼
     const [selectedOption, setSelectedOption] = useState(null); // 선택된 옵션
 
     // useEffect를 사용하여 최근 검색한 종목 코드 로드
@@ -38,7 +44,7 @@ const StockContent = () => {
         const defaultTicker = localStorage.getItem('defaultTicker');
         if (defaultTicker) {
             setDefaultTicker(defaultTicker);
-            setStocksTicker(defaultTicker);
+            setStocksTickerRef(defaultTicker);
         }
     }, []);
 
@@ -61,7 +67,7 @@ const StockContent = () => {
             const jRequest = {
                 commandName: 'stock.getStockInfo',
                 systemCode: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE,
-                stocksTicker: stocksTicker,
+                stocksTicker: stocksTickerRef.current,
                 multiplier: 1,
                 timespan: timespan,
                 from: timefrom,
@@ -80,10 +86,10 @@ const StockContent = () => {
                 setError(null);
 
                 // 최근 검색 기록 업데이트
-                const newSearch = { value: stocksTicker, label: stocksTicker };
+                const newSearch = { value: stocksTickerRef.curent, label: stocksTickerRef.curent };
                 const updatedSearches = [
                     newSearch,
-                    ...recentSearches.filter((s) => s.value !== stocksTicker),
+                    ...recentSearches.filter((s) => s.value !== stocksTickerRef.curent),
                 ].slice(0, 5); // 최대 5개까지 저장
                 setRecentSearches(updatedSearches);
                 localStorage.setItem('recentSearches', JSON.stringify(updatedSearches));
@@ -98,10 +104,10 @@ const StockContent = () => {
 
     // 주식 데이터 요청 처리
     const handleStockRequest = (event) => {
-        if(event)
+        if (event)
             event.preventDefault();
 
-        if (!stocksTicker) {
+        if (!stocksTickerRef.current) {
             setModalContent({
                 isOpen: true,
                 message: '주식 심볼을 입력해 주세요.',
@@ -238,14 +244,14 @@ const StockContent = () => {
         const storedTicker = localStorage.getItem('defaultTicker');
         if (storedTicker) {
             setDefaultTicker(storedTicker);
-            setStocksTicker(storedTicker);
+            setStocksTickerRef(storedTicker);
         }
     }, []);
 
     // 티커 선택 시 기본 티커 업데이트
     const handleTickerChange = (selectedOption) => {
         setSelectedOption(selectedOption);
-        setStocksTicker(selectedOption ? selectedOption.value : '');
+        setStocksTickerRef(selectedOption ? selectedOption.value : '');
 
         handleStockRequest();
     };
@@ -274,16 +280,27 @@ const StockContent = () => {
                 },
             },
             title: {
-                text: `${stocksTicker} 주식 차트`,
+                text: `${stocksTickerRef.current} 차트`,
                 align: 'left',
+                style: {
+                    color: '#94a3b8' // slate-400 색상 설정
+                }
             },
             xaxis: {
                 type: 'datetime',
+                labels: {
+                    style: {
+                        colors: '#94a3b8'
+                    }
+                }
             },
-            yaxis:{
-                labels:{
-                    formatter: function(val){
-                        return val ? val.toFixed(): 'NaN';
+            yaxis: {
+                labels: {
+                    formatter: function (val) {
+                        return val ? val.toFixed() : 'NaN';
+                    },
+                    style: {
+                        colors: '#94a3b8' // slate-400 색상 설정
                     }
                 }
             },
@@ -301,6 +318,11 @@ const StockContent = () => {
                     data: ema,
                 },
             ],
+            legend: {
+                labels: {
+                    colors: ['#94a3b8', '#94a3b8', '#94a3b8']
+                }
+            }
         };
 
         const rsiOptions = {
@@ -314,14 +336,25 @@ const StockContent = () => {
             title: {
                 text: 'RSI',
                 align: 'left',
+                style: {
+                    color: '#94a3b8' // slate-400 색상 설정
+                }
             },
             xaxis: {
                 type: 'datetime',
+                labels: {
+                    style: {
+                        colors: '#94a3b8'
+                    }
+                }
             },
-            yaxis:{
-                labels:{
-                    formatter: function(val){
-                        return val.toFixed();
+            yaxis: {
+                labels: {
+                    formatter: function (val) {
+                        return val ? val.toFixed() : 'NaN';
+                    },
+                    style: {
+                        colors: '#94a3b8' // slate-400 색상 설정
                     }
                 }
             },
@@ -331,6 +364,11 @@ const StockContent = () => {
                     data: rsi,
                 },
             ],
+            legend: {
+                labels: {
+                    colors: ['#94a3b8']
+                }
+            }
         };
 
         const macdOptions = {
@@ -344,14 +382,25 @@ const StockContent = () => {
             title: {
                 text: 'MACD',
                 align: 'left',
+                style: {
+                    color: '#94a3b8' // slate-400 색상 설정
+                }
             },
             xaxis: {
                 type: 'datetime',
+                labels: {
+                    style: {
+                        colors: '#94a3b8'
+                    }
+                }
             },
-            yaxis:{
-                labels:{
-                    formatter: function(val){
-                        return val.toFixed();
+            yaxis: {
+                labels: {
+                    formatter: function (val) {
+                        return val ? val.toFixed() : 'NaN';
+                    },
+                    style: {
+                        colors: '#94a3b8' // slate-400 색상 설정
                     }
                 }
             },
@@ -370,6 +419,11 @@ const StockContent = () => {
                     data: macdData.histogram,
                 },
             ],
+            legend: {
+                labels: {
+                    colors: ['#94a3b8', '#94a3b8', '#94a3b8']
+                }
+            }
         };
 
         const bollingerOptions = {
@@ -383,14 +437,35 @@ const StockContent = () => {
             title: {
                 text: 'Bollinger Bands',
                 align: 'left',
+                style: {
+                    color: '#94a3b8' // slate-400 색상 설정
+                }
             },
             xaxis: {
                 type: 'datetime',
+                title: {
+                    style: {
+                        color: '#94a3b8' // slate-400 색상 설정
+                    }
+                },
+                labels: {
+                    style: {
+                        colors: '#94a3b8'
+                    }
+                }
             },
-            yaxis:{
-                labels:{
-                    formatter: function(val){
-                        return val.toFixed();
+            yaxis: {
+                labels: {
+                    formatter: function (val) {
+                        return val ? val.toFixed() : 'NaN';
+                    },
+                    style: {
+                        colors: '#94a3b8' // slate-400 색상 설정
+                    }
+                },
+                title: {
+                    style: {
+                        color: '#94a3b8' // slate-400 색상 설정
                     }
                 }
             },
@@ -412,10 +487,15 @@ const StockContent = () => {
                     data: bollingerBands.map((b) => ({ x: b.x, y: b.lowerBand })),
                 },
             ],
+            legend: {
+                labels: {
+                    colors: ['#94a3b8', '#94a3b8', '#94a3b8', '#94a3b8']
+                }
+            }
         };
 
         return (
-            <div className="w-full">
+            <div className="w-full mt-5">
                 <ApexCharts options={chartOptions} series={chartOptions.series} type="line" height={350} width={'100%'} />
                 <ApexCharts options={rsiOptions} series={rsiOptions.series} type="line" height={350} width={'100%'} />
                 <ApexCharts options={macdOptions} series={macdOptions.series} type="line" height={350} width={'100%'} />
@@ -426,23 +506,21 @@ const StockContent = () => {
 
     return (
         <div className='w-full'>
-            <form onSubmit={handleStockRequest}>
-                <label>
-                    주식 심볼:
-                    <input
-                        type="text"
-                        value={stocksTicker}
-                        onChange={(e) => {setStocksTicker(e.target.value)}}
-                    />
-                </label>
-                <button type="submit">Refresh</button>
-            </form>
+            <input className='item-start text-center bg-slate-50 dark:bg-slate-400'
+                type="text"
+                value={stocksTickerRef.current}
+                onChange={(e) => {
+                    setStocksTickerRef(e.target.value);
+                    setSelectedOption("");
+                }}
+            />
+            <button className='text-slate-400 ml-2' type="submit" onClick={handleStockRequest}>Refresh</button>
 
-            <Select
+            <Select className='items-start'
                 value={selectedOption}
                 onChange={handleTickerChange}
                 options={stockOptions}
-                placeholder="주식 심볼 선택"
+                placeholder="Select Symbol ..."
                 isClearable
                 styles={{
                     container: (provided) => ({
@@ -454,31 +532,36 @@ const StockContent = () => {
             />
 
             <div>
-                <label>
-                    시간 범위:
-                    <select value={timespan} onChange={(e) => setTimespan(e.target.value)}>
+                <div className='items-start mt-2 text-slate-400'>
+                    <label>
+                        단위:
+                    </label>
+                    <select className='text-slate-600 ml-2 bg-slate-50 dark:bg-slate-400' value={timespan} onChange={(e) => setTimespan(e.target.value)}>
                         <option value="minute">분</option>
                         <option value="hour">시간</option>
                         <option value="day">일</option>
+                        <option value="week">주</option>
+                        <option value="month">월</option>
+                        <option value="year">년</option>
                     </select>
-                </label>
-                <label>
+                </div>
+                <label className='text-slate-400'>
                     기간:
-                    <input
+                    <input className='text-slate-600 ml-2 text-center bg-slate-50 dark:bg-slate-400'
                         type="number"
                         value={duration}
                         onChange={(e) => setDuration(e.target.value)}
                         min="1"
                     />
                 </label>
-                <label>
-                    기간 단위:
-                    <select value={durationUnit} onChange={(e) => setDurationUnit(e.target.value)}>
-                        <option value="days">일</option>
-                        <option value="weeks">주</option>
-                        <option value="months">월</option>
-                    </select>
-                </label>
+                <select className='ml-2 text-center bg-slate-50 dark:bg-slate-400' value={durationUnit} onChange={(e) => setDurationUnit(e.target.value)}>
+                    <option value="minutes">분</option>
+                    <option value="hours">시간</option>
+                    <option value="days">일</option>
+                    <option value="weeks">주</option>
+                    <option value="months">월</option>
+                    <option value="years">년</option>
+                </select>
             </div>
 
             {loading && <p>데이터 로딩 중...</p>}
