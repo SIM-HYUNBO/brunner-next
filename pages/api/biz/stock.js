@@ -92,13 +92,13 @@ const getStockInfo = async (txnId, jRequest) => {
         jResponse.error_message = data.status;
     }
     catch (e) {
-        logger.error(`EXCEPTION:\n${e}`);
+        logger.error(e);
         jResponse.error_code = -3; // exception
-        jResponse.error_message = `EXCEPTION:\n${e}`;
+        jResponse.error_message = e.message
     }
     finally {
         return jResponse;
     }
 };
 
-export {executeService};
+export { executeService };

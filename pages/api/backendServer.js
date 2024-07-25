@@ -32,7 +32,7 @@ export default async (req, res) => {
         jResponse = await executeService(req.method, req);
     }
     catch (e) {
-        jResponse = `${e}`;
+        jResponse = e;
     }
     finally {
         endTxnTime = new Date();

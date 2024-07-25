@@ -59,9 +59,9 @@ const addIncome = async (txnId, jRequest) => {
 
         }
     } catch (e) {
-        logger.error(`EXCEPTION:\n${e}`);
+        logger.error(e);
         jResponse.error_code = -3; // exception
-        jResponse.error_message = `EXCEPTION:\n${e}`;
+        jResponse.error_message = e.message
     } finally {
         return jResponse;
     }
@@ -88,9 +88,9 @@ const getIncomeHistory = async (txnId, jRequest) => {
         jResponse.error_code = 0;
         jResponse.error_message = "";
     } catch (e) {
-        logger.error(`EXCEPTION:\n${e}`);
+        logger.error(e);
         jResponse.error_code = -3; // exception
-        jResponse.error_message = `EXCEPTION:\n${e}`;
+        jResponse.error_message = e.message
     } finally {
         return jResponse;
     }
@@ -122,9 +122,9 @@ const deleteIncome = async (txnId, jRequest) => {
             jResponse.error_message = "Database fail";
         }
     } catch (e) {
-        logger.error(`EXCEPTION:\n${e}`);
+        logger.error(e);
         jResponse.error_code = -3; // exception
-        jResponse.error_message = `EXCEPTION:\n${e}`;
+        jResponse.error_message = e.message
     } finally {
         return jResponse;
     }
@@ -157,12 +157,12 @@ const updateIncome = async (txnId, jRequest) => {
             jResponse.error_message = "Database fail";
         }
     } catch (e) {
-        logger.error(`EXCEPTION:\n${e}`);
+        logger.error(e);
         jResponse.error_code = -3; // exception
-        jResponse.error_message = `EXCEPTION:\n${e}`;
+        jResponse.error_message = e.message
     } finally {
         return jResponse;
     }
 };
 
-export {executeService};
+export { executeService };
