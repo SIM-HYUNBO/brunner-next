@@ -146,9 +146,9 @@ const signup = async (txnId, jRequest) => {
             jResponse.error_message = `Failed to create new user.\n`
         }
     } catch (e) {
-        logger.error(`EXCEPTION:\n${e}`);
+        logger.error(e);
         jResponse.error_code = -3; // exception
-        jResponse.error_message = `EXCEPTION:\n${e}`;
+        jResponse.error_message = e.message
     } finally {
         return jResponse;
     }
@@ -186,9 +186,9 @@ const signin = async (txnId, jRequest) => {
             jResponse.error_message = `Incorrect user info`;
         }
     } catch (e) {
-        logger.error(`EXCEPTION:\n${e}`);
+        logger.error(e);
         jResponse.error_code = -3; // exception
-        jResponse.error_message = `EXCEPTION:\n${e}`;
+        jResponse.error_message = e.message
     } finally {
         return jResponse;
     }
@@ -287,9 +287,9 @@ const resetPassword = async (txnId, jRequest) => {
             }
         }
     } catch (e) {
-        logger.error(`EXCEPTION:\n${e}`);
+        logger.error(e);
         jResponse.error_code = -3; // exception
-        jResponse.error_message = `EXCEPTION:\n${e}`;
+        jResponse.error_message = e.message
     } finally {
         return jResponse;
     }
@@ -305,9 +305,9 @@ const signout = (txnId, jRequest) => {
         jResponse.error_code = 0;
         jResponse.error_message = "";
     } catch (e) {
-        logger.error(`EXCEPTION:\n${e}`);
+        logger.error(e);
         jResponse.error_code = -3; // exception
-        jResponse.error_message = `EXCEPTION:\n${e}`;
+        jResponse.error_message = e.message
     } finally {
         return jResponse;
     }
@@ -328,4 +328,4 @@ const verifyEMail = (email) => {
     return re.test(String(email).toLowerCase());
 }
 
-export {executeService};
+export { executeService };

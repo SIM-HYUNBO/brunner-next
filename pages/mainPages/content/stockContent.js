@@ -19,6 +19,7 @@ const StockContent = () => {
         onClose: () => { },
     });
     const [stocksTicker, setStocksTicker] = useState(''); // 주식 심볼
+    const [defaultTicker, setDefaultTicker] = useState(''); // 주식 심볼
     const stocksTickerRef = useRef(stocksTicker);
 
     const setStocksTickerRef = (newVal) => {
@@ -27,7 +28,6 @@ const StockContent = () => {
     }
 
     const [stockData, setStockData] = useState(null); // 주식 데이터
-    const [error, setError] = useState(null); // 에러 메시지
     const [timespan, setTimespan] = useState('hour'); // 데이터의 시간 범위
     const [duration, setDuration] = useState(15); // 기간
     const [durationUnit, setDurationUnit] = useState('days'); // 기간 단위
@@ -43,19 +43,31 @@ const StockContent = () => {
 
         const defaultTicker = localStorage.getItem('defaultTicker');
         if (defaultTicker) {
-            setDefaultTicker(defaultTicker);
             setStocksTickerRef(defaultTicker);
         }
     }, []);
 
-    // 주식 심볼 옵션
-    const stockOptions = [
-        { value: 'AAPL', label: 'Apple' },
-        { value: 'GOOGL', label: 'Google' },
-        { value: 'AMZN', label: 'Amazon' },
-        { value: 'MSFT', label: 'Microsoft' },
-        { value: 'TSLA', label: 'Tesla' },
-    ];
+    // 모달 열기 함수
+    const openModal = (message) => {
+        return new Promise((resolve, reject) => {
+            setModalContent({
+                isOpen: true,
+                message: message,
+                onConfirm: (result) => { resolve(result); closeModal(); },
+                onClose: () => { reject(false); closeModal(); }
+            });
+        });
+    };
+
+    // 모달 닫기 함수
+    const closeModal = () => {
+        setModalContent({
+            isOpen: false,
+            message: '',
+            onConfirm: () => { },
+            onClose: () => { }
+        });
+    };
 
     // 주식 데이터를 가져오는 함수
     const fetchStockData = async () => {
@@ -83,21 +95,26 @@ const StockContent = () => {
 
             if (jResponse.error_code === 0) {
                 setStockData(jResponse.stockInfo);
-                setError(null);
 
-                // 최근 검색 기록 업데이트
-                const newSearch = { value: stocksTickerRef.curent, label: stocksTickerRef.curent };
-                const updatedSearches = [
-                    newSearch,
-                    ...recentSearches.filter((s) => s.value !== stocksTickerRef.curent),
-                ].slice(0, 5); // 최대 5개까지 저장
-                setRecentSearches(updatedSearches);
-                localStorage.setItem('recentSearches', JSON.stringify(updatedSearches));
+
+                // 최근 검색 기록 업데이트 (정상 조회된 종목만)
+                if (jResponse.stockInfo) {
+                    const newSearch = {
+                        value: stocksTickerRef.current,
+                        label: stocksTickerRef.current,
+                    };
+                    const updatedSearches = [
+                        newSearch,
+                        ...recentSearches.filter((s) => s.value !== stocksTickerRef.current),
+                    ].slice(0, 10); // 최대 10개까지 저장
+                    setRecentSearches(updatedSearches);
+                    localStorage.setItem('recentSearches', JSON.stringify(updatedSearches));
+                }
             } else {
-                setError(res.message || '데이터를 불러오는 중 오류가 발생했습니다.');
+                openModal(JSON.stringify(jResponse.error_message));
             }
         } catch (err) {
-            setError('데이터를 불러오는 중 오류가 발생했습니다.');
+            openModal(err instanceof Error ? err.message : 'Unknown error occurred');
         }
         setLoading(false);
     };
@@ -279,6 +296,10 @@ const StockContent = () => {
                     enabled: true,
                 },
             },
+            stroke: {
+                width: [1, 1, 1], // 각 선의 두께 설정
+                curve: 'smooth', // 부드러운 곡선
+            },
             title: {
                 text: `${stocksTickerRef.current} 차트`,
                 align: 'left',
@@ -322,7 +343,7 @@ const StockContent = () => {
                 labels: {
                     colors: ['#94a3b8', '#94a3b8', '#94a3b8']
                 }
-            }
+            },
         };
 
         const rsiOptions = {
@@ -332,6 +353,10 @@ const StockContent = () => {
                 zoom: {
                     enabled: false,
                 },
+            },
+            stroke: {
+                width: [1], // 각 선의 두께 설정
+                curve: 'smooth', // 부드러운 곡선
             },
             title: {
                 text: 'RSI',
@@ -378,6 +403,10 @@ const StockContent = () => {
                 zoom: {
                     enabled: false,
                 },
+            },
+            stroke: {
+                width: [1, 1, 1], // 각 선의 두께 설정
+                curve: 'smooth', // 부드러운 곡선
             },
             title: {
                 text: 'MACD',
@@ -433,6 +462,10 @@ const StockContent = () => {
                 zoom: {
                     enabled: true,
                 },
+            },
+            stroke: {
+                width: [1, 1, 1, 1], // 각 선의 두께 설정
+                curve: 'smooth', // 부드러운 곡선
             },
             title: {
                 text: 'Bollinger Bands',
@@ -519,9 +552,10 @@ const StockContent = () => {
             <Select className='items-start'
                 value={selectedOption}
                 onChange={handleTickerChange}
-                options={stockOptions}
+                options={recentSearches}
                 placeholder="Select Symbol ..."
                 isClearable
+                noOptionsMessage={() => "최근 검색 기록이 없습니다."}
                 styles={{
                     container: (provided) => ({
                         ...provided,
@@ -565,15 +599,13 @@ const StockContent = () => {
             </div>
 
             {loading && <p>데이터 로딩 중...</p>}
-            {error && <p style={{ color: 'red' }}>{error}</p>}
-            {stockData && renderChart()}
-
             <BrunnerMessageBox
                 isOpen={modalContent.isOpen}
                 message={modalContent.message}
                 onConfirm={modalContent.onConfirm}
                 onClose={modalContent.onClose}
             />
+            {stockData && renderChart()}
         </div>
     );
 };
