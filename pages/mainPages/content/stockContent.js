@@ -98,7 +98,9 @@ const StockContent = () => {
 
     // 주식 데이터 요청 처리
     const handleStockRequest = (event) => {
-        event.preventDefault();
+        if(event)
+            event.preventDefault();
+
         if (!stocksTicker) {
             setModalContent({
                 isOpen: true,
@@ -231,44 +233,6 @@ const StockContent = () => {
         return bollingerBands;
     };
 
-    // 데이터 가져오기 버튼 클릭 핸들러
-    const handleFetchClick = async () => {
-        setLoading(true);
-        try {
-            const result = await requestServer('/api/stocks', 'GET', {
-                ticker: stocksTicker,
-                timespan,
-                duration,
-                durationUnit,
-            });
-
-            if (result.success) {
-                setStockData(result.data);
-                setError(null);
-
-                // 최근 검색 기록 업데이트
-                const updatedSearches = [...recentSearches];
-                const existingIndex = updatedSearches.findIndex(
-                    (item) => item.value === stocksTicker
-                );
-                if (existingIndex !== -1) {
-                    updatedSearches.splice(existingIndex, 1);
-                }
-                updatedSearches.unshift({ value: stocksTicker, label: stocksTicker });
-                if (updatedSearches.length > 5) {
-                    updatedSearches.pop();
-                }
-                setRecentSearches(updatedSearches);
-                localStorage.setItem('recentSearches', JSON.stringify(updatedSearches));
-            } else {
-                setError(result.message || '데이터를 불러오는 중 오류가 발생했습니다.');
-            }
-        } catch (err) {
-            setError('데이터를 불러오는 중 오류가 발생했습니다.');
-        }
-        setLoading(false);
-    };
-
     // 기본 티커 설정
     useEffect(() => {
         const storedTicker = localStorage.getItem('defaultTicker');
@@ -282,6 +246,8 @@ const StockContent = () => {
     const handleTickerChange = (selectedOption) => {
         setSelectedOption(selectedOption);
         setStocksTicker(selectedOption ? selectedOption.value : '');
+
+        handleStockRequest();
     };
 
     // 차트 렌더링을 위한 준비
@@ -317,7 +283,7 @@ const StockContent = () => {
             yaxis:{
                 labels:{
                     formatter: function(val){
-                        return val.toFixed();
+                        return val ? val.toFixed(): 'NaN';
                     }
                 }
             },
@@ -449,27 +415,27 @@ const StockContent = () => {
         };
 
         return (
-            <div>
-                <ApexCharts options={chartOptions} series={chartOptions.series} type="line" height={350} />
-                <ApexCharts options={rsiOptions} series={rsiOptions.series} type="line" height={150} />
-                <ApexCharts options={macdOptions} series={macdOptions.series} type="line" height={150} />
-                <ApexCharts options={bollingerOptions} series={bollingerOptions.series} type="line" height={350} />
+            <div className="w-full">
+                <ApexCharts options={chartOptions} series={chartOptions.series} type="line" height={350} width={'100%'} />
+                <ApexCharts options={rsiOptions} series={rsiOptions.series} type="line" height={350} width={'100%'} />
+                <ApexCharts options={macdOptions} series={macdOptions.series} type="line" height={350} width={'100%'} />
+                <ApexCharts options={bollingerOptions} series={bollingerOptions.series} type="line" height={350} width={'100%'} />
             </div>
         );
     };
 
     return (
-        <div>
+        <div className='w-full'>
             <form onSubmit={handleStockRequest}>
                 <label>
                     주식 심볼:
                     <input
                         type="text"
                         value={stocksTicker}
-                        onChange={(e) => setStocksTicker(e.target.value)}
+                        onChange={(e) => {setStocksTicker(e.target.value)}}
                     />
                 </label>
-                <button type="submit">데이터 가져오기</button>
+                <button type="submit">Refresh</button>
             </form>
 
             <Select
