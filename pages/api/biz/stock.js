@@ -78,8 +78,7 @@ const getStockInfo = async (txnId, jRequest) => {
             return jResponse;
         }
 
-        const apiKey = 'oTwT_PvBEuiPDqCkdKsPf66VQdNSKLGR'; // 무료 api key는 제약사항이 많음. 1일 25번만 요청 가능 등
-        const apiUrl = `https://api.polygon.io/v2/aggs/ticker/${jRequest.stocksTicker}/range/${jRequest.multiplier}/${jRequest.timespan}/${jRequest.from}/${jRequest.to}?adjusted=${jRequest.adjust}&sort=${jRequest.sort}&apiKey=${apiKey}`
+        const apiUrl = `https://api.polygon.io/v2/aggs/ticker/${jRequest.stocksTicker}/range/${jRequest.multiplier}/${jRequest.timespan}/${jRequest.from}/${jRequest.to}?adjusted=${jRequest.adjust}&sort=${jRequest.sort}&apiKey=${process.env.POLYGON_API_KEY}`
 
         const response = await fetch(apiUrl);
         if (!response.ok) {
