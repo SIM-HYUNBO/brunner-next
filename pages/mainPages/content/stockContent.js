@@ -34,6 +34,10 @@ const StockContent = () => {
     const [recentSearches, setRecentSearches] = useState([]); // 최근 검색 기록
     const [selectedOption, setSelectedOption] = useState(null); // 선택된 옵션
 
+    var wsClient = null; // Web Socket 클라이언트
+    const [wsConnected, setWsConnected] = useState(false); //실시간 Web Socket 채널 연결상태
+    const [wsStockData, setWsStockData] = useState(null); // 실시간 Web Socket 주식 데이터
+
     // useEffect를 사용하여 최근 검색한 종목 코드 로드
     useEffect(() => {
         const storedSearches = localStorage.getItem('recentSearches');
@@ -536,6 +540,33 @@ const StockContent = () => {
             </div>
         );
     };
+
+    // 실시간 데이터 수신 처리 ( Web Socket )
+    const connectToWSServer = () => {
+        wsClient = new EventSource('/api/biz/stockServer');
+
+        wsClient.onopen = () => {
+            console.log('Web Socket  서버에 연결되었습니다.');
+            setWsConnected(true);
+        };
+
+        wsClient.onmessage = (event) => {
+            const data = JSON.parse(event.data);
+            console.log('주식 데이터 수신:', data);
+            setWsStockData(data);
+        };
+
+        wsClient.onerror = (error) => {
+            console.error('서버 연결 에러:', error);
+            setWsConnected(false);
+            wsClient.close(); // 에러 발생 시 연결 종료
+        };
+
+        return () => {
+            wsClient.close(); // 컴포넌트 언마운트 시 연결 종료
+        };
+    }
+
 
     return (
         <div className='w-full'>
