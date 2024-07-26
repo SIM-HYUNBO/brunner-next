@@ -318,7 +318,7 @@ const StockContent = () => {
             yaxis: {
                 labels: {
                     formatter: function (val) {
-                        return val ? val.toFixed() : 'NaN';
+                        return val;
                     },
                     style: {
                         colors: '#94a3b8' // slate-400 색상 설정
@@ -376,7 +376,7 @@ const StockContent = () => {
             yaxis: {
                 labels: {
                     formatter: function (val) {
-                        return val ? val.toFixed() : 'NaN';
+                        return val;
                     },
                     style: {
                         colors: '#94a3b8' // slate-400 색상 설정
@@ -426,7 +426,7 @@ const StockContent = () => {
             yaxis: {
                 labels: {
                     formatter: function (val) {
-                        return val ? val.toFixed() : 'NaN';
+                        return val;
                     },
                     style: {
                         colors: '#94a3b8' // slate-400 색상 설정
@@ -490,7 +490,7 @@ const StockContent = () => {
             yaxis: {
                 labels: {
                     formatter: function (val) {
-                        return val ? val.toFixed() : 'NaN';
+                        return val;
                     },
                     style: {
                         colors: '#94a3b8' // slate-400 색상 설정
