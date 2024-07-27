@@ -6,13 +6,11 @@ import { ThemeProvider } from 'next-themes'
 import requestServer from './../components/requestServer'
 import { useEffect, useState } from 'react'
 import BrunnerMessageBox from '@/components/BrunnerMessageBox'
-// import * as stockServer from './api/biz/stockServer'
 
 // Entry Point
 export default function App({ Component, pageProps }) {
   useEffect(() => {
     requestLoadAllSqls();
-    // stockServer.startRealtimeStockServer(3000);
   }, []);
 
   dotenv.config();

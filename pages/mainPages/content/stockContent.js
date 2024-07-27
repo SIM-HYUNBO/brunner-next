@@ -5,7 +5,6 @@ import requestServer from './../../../components/requestServer';
 import BrunnerMessageBox from '@/components/BrunnerMessageBox';
 import dynamic from 'next/dynamic';
 import Select from 'react-select';
-import * as stockServer from './../../api/biz/stockServer'
 
 // ApexCharts를 동적으로 import
 const ApexCharts = dynamic(() => import('react-apexcharts'), { ssr: false });
@@ -269,7 +268,7 @@ const StockContent = () => {
             setStocksTickerRef(storedTicker);
         }
 
-        wsClient = new EventSource('/api/biz/stockServer');
+        wsClient = new EventSource('/api/biz/websocketServer');
         onConnect(wsClient);
 
         return () => {
@@ -578,7 +577,7 @@ const StockContent = () => {
     }
 
     const subscribe = async (clientId, stocksTicker) => {
-        const res = await fetch('/api/biz/stockServer', {
+        const res = await fetch('/api/biz/websocketServer', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
