@@ -5,7 +5,7 @@ import requestServer from './../../../components/requestServer';
 import BrunnerMessageBox from '@/components/BrunnerMessageBox';
 import dynamic from 'next/dynamic';
 import Select from 'react-select';
-import { format } from 'winston';
+import * as stockServer from './../../api/biz/stockServer'
 
 // ApexCharts를 동적으로 import
 const ApexCharts = dynamic(() => import('react-apexcharts'), { ssr: false });
@@ -37,6 +37,7 @@ const StockContent = () => {
     var wsClient = null; // Web Socket 클라이언트
     const [wsConnected, setWsConnected] = useState(false); //실시간 Web Socket 채널 연결상태
     const [wsStockData, setWsStockData] = useState(null); // 실시간 Web Socket 주식 데이터
+    const [wsClientId, setWsClientId] = useState(null);
 
     // useEffect를 사용하여 최근 검색한 종목 코드 로드
     useEffect(() => {
@@ -267,6 +268,13 @@ const StockContent = () => {
             setDefaultTicker(storedTicker);
             setStocksTickerRef(storedTicker);
         }
+
+        wsClient = new EventSource('/api/biz/stockServer');
+        onConnect(wsClient);
+
+        return () => {
+            wsClient.close(); // 컴포넌트 언마운트 시 연결 종료
+        };
     }, []);
 
     // 티커 선택 시 기본 티커 업데이트
@@ -275,6 +283,9 @@ const StockContent = () => {
         setStocksTickerRef(selectedOption ? selectedOption.value : '');
 
         handleStockRequest();
+
+        if (wsClientId)
+            subscribe(wsClientId, stocksTickerRef.current);
     };
 
     // 차트 렌더링을 위한 준비
@@ -542,9 +553,7 @@ const StockContent = () => {
     };
 
     // 실시간 데이터 수신 처리 ( Web Socket )
-    const connectToWSServer = () => {
-        wsClient = new EventSource('/api/biz/stockServer');
-
+    const onConnect = (wsClient) => {
         wsClient.onopen = () => {
             console.log('Web Socket  서버에 연결되었습니다.');
             setWsConnected(true);
@@ -552,7 +561,11 @@ const StockContent = () => {
 
         wsClient.onmessage = (event) => {
             const data = JSON.parse(event.data);
-            console.log('주식 데이터 수신:', data);
+            console.log(`${data.type} 수신: ${event.data}`);
+
+            if (data.type === 'sessionInfo') {
+                setWsClientId(data.clientId);
+            }
             setWsStockData(data);
         };
 
@@ -560,13 +573,28 @@ const StockContent = () => {
             console.error('서버 연결 에러:', error);
             setWsConnected(false);
             wsClient.close(); // 에러 발생 시 연결 종료
-        };
-
-        return () => {
-            wsClient.close(); // 컴포넌트 언마운트 시 연결 종료
+            setWsClientId(null);
         };
     }
 
+    const subscribe = async (clientId, stocksTicker) => {
+        const res = await fetch('/api/biz/stockServer', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(
+                {
+                    'type': 'subscribe',
+                    'clientId': clientId,
+                    'ticker': stocksTicker
+                }),
+        });
+
+        if (!res.ok) {
+            openModal(`Stock subscribe errror! Status: ${res.status}`)
+        }
+    }
 
     return (
         <div className='w-full'>
