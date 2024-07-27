@@ -4,7 +4,7 @@ let clients = []; // 연결된 클라이언트 목록
 const interval = 5000; // 5초마다 데이터 전송
 
 // WebSocket 신규 세션 연결
-const handleSocketConnection = async (req, res) => {
+const connect = async (req, res) => {
     if (req.method === 'GET') {
         // 응답 헤더 설정
         res.setHeader('Content-Type', 'text/event-stream');
@@ -136,4 +136,4 @@ const fetchRealTimeStockData = async (ticker) => {
     }
 };
 
-export default handleSocketConnection;
+export default connect;
