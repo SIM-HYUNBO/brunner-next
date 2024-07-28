@@ -1,3 +1,6 @@
+`use strict`
+
+import logger from "./../winston/logger"
 import { v4 as uuidv4 } from 'uuid';
 
 let clients = []; // 연결된 클라이언트 목록
@@ -15,11 +18,13 @@ const connect = async (req, res) => {
         const clientId = uuidv4(); // 고유한 클라이언트 ID 생성
 
         // 클라이언트 목록에 추가
-        clients.push({
+        const client = {
             id: clientId,
             subscriptions: [],
             res: res
-        });
+        };
+        clients.push(client);
+        logger.info(`A New Client added:  \n${JSON.stringify(client)}\n`);
 
         await replySessionInfo(clientId, res);
 
@@ -29,13 +34,13 @@ const connect = async (req, res) => {
         // 클라이언트가 연결을 끊었을 때 인터벌 정리
         req.on('close', () => {
             clearInterval(intervalId);
-            console.log('Client connection closed');
+            logger.info(`Client connection closed`);
         });
 
         // 클라이언트가 연결을 끊었을 때
         req.on('close', () => {
             clients = clients.filter((client) => client.id !== clientId);
-            console.log(`클라이언트 연결이 끊어졌습니다. ID: ${clientId}`);
+            logger.info(`클라이언트 연결이 끊어졌습니다. id: ${clientId}`);
         });
     } else if (req.method === 'POST') {
         if (req.body.type === 'subscribe') {
@@ -72,6 +77,8 @@ const subscribe = async (clientId, ticker) => {
                 if (!client.subscriptions.includes(ticker)) {
                     client.subscriptions.length = 0;
                     client.subscriptions.push(ticker);
+
+                    logger.info(`Client add new subscription: id:${clientId}, ticker:${ticker}`);
                 }
             }
         })
@@ -85,6 +92,7 @@ const unsubscribe = async (clientId, ticker) => {
             if (client.id === clientId) {
                 if (client.subscriptions.includes(ticker)) {
                     client.subscriptions.pop(ticker);
+                    logger.info(`Client remove subscription: id:${clientId}, ticker:${ticker}`);
                 }
             }
         })
@@ -93,15 +101,14 @@ const unsubscribe = async (clientId, ticker) => {
 
 //  구독 모두 제거
 const unsubscribeAllStockTickers = async (clientId) => {
-    if (ticker) {
-        clients.forEach((client) => {
-            if (client.id === clientId) {
-                if (client.subscriptions.includes(ticker)) {
-                    client.subscriptions.length = 0;
-                }
+    clients.forEach((client) => {
+        if (client.id === clientId) {
+            if (client.subscriptions.includes(ticker)) {
+                client.subscriptions.length = 0;
+                logger.info(`Client clear subscription: id:${clientId}`);
             }
-        })
-    };
+        }
+    });
 }
 
 // 주식 데이터 전송
@@ -111,6 +118,7 @@ const sendStockData = () => {
             const data = await fetchRealTimeStockData(ticker);
 
             // 모든 연결된 클라이언트에게 데이터 전송
+            data.clientId = client.id;  // 전송할 clientId를 추가해서 전송
             client.res.write(`data: ${JSON.stringify(data)}\n\n`);
             if (client.res.flush) {
                 client.res.flush();
