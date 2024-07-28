@@ -24,7 +24,7 @@ const connect = async (req, res) => {
             res: res
         };
         clients.push(client);
-        logger.info(`A New Client added:  \n${JSON.stringify(client)}\n`);
+        logger.info(`A New Client added:  \n${JSON.stringify(client.id)}\n`);
 
         await replySessionInfo(clientId, res);
 
