@@ -650,9 +650,10 @@ const StockContent = () => {
                             }),
                         }}
                     />
-                    <input className='item-start text-center bg-slate-50 dark:bg-slate-400'
+                    <input className='item-start text-left bg-slate-50 dark:bg-slate-400 uppercase w-1/2'
                         type="text"
                         value={stocksTickerRef.current}
+                        placeholder="종목코드를 입력하세요. ex) AAPL, GOOGL, TSLA ..."
                         onChange={(e) => {
                             setStocksTickerRef(e.target.value);
                             setSelectedOption("");

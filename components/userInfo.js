@@ -3,6 +3,8 @@ import DarkModeToggleButton from "./darkModeToggleButton";
 import { useState, useEffect } from 'react';
 
 export default function UserInfo() {
+
+
   useEffect(() => {
     getLoginName();
   }, []);
@@ -38,5 +40,5 @@ export const getLoginName = () => {
 }
 
 export const isLogin = () => {
-  return getLoginName() ? true : false;
+  return process.env.userInfo?.userId ? true : false;
 }
