@@ -81,8 +81,6 @@ const getIncomeHistory = async (txnId, jRequest) => {
                 jRequest.userId
             ]);
 
-        // logger.info(`RESULT:\n${JSON.stringify(select_TB_COR_USER_MST_01.rows[0])}\n`);
-
         jResponse.incomeHistory = select_TB_COR_INCOME_HIST_01.rows;
 
         jResponse.error_code = 0;
