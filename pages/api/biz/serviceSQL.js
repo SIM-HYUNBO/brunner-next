@@ -68,9 +68,7 @@ async function loadAllSQL(txnId) {
 
 const getSQL = (systemCode, sqlName, sqlSeq) => {
   try {
-    logger.warn(`serviceSQL.getSQL systemCode: ${systemCode}, sqlName: ${sqlName} sqlSeq: ${sqlSeq}\n`);
     var sql = process.serviceSQL.get(`${systemCode}_${sqlName}_${sqlSeq}`);
-    logger.warn(`sql: ${sql}\n`);
     return sql;
   }
   catch (err) {
