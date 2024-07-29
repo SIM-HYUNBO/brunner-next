@@ -103,4 +103,5 @@ const saveTxnHistory = async (remoteIp, txnId, jRequest, jResponse) => {
     if (insert_TB_COR_TXN_HIST_01.rowCount !== 1) {
         logger.info(`Failed to execute insert_TB_COR_TXN_HIST_01\n`);
     }
+    logger.warn(`end saveTxnHistory REQ: ${jRequest} RES: ${jResponse}\n`);    
 }
