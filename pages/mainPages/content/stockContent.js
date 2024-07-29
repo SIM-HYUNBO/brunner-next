@@ -572,8 +572,8 @@ const StockContent = () => {
         wsClient.onerror = (error) => {
             console.error('서버 연결 에러:', error);
             setWsConnected(false);
-            wsClient.close(); // 에러 발생 시 연결 종료
-            setWsClientId(null);
+//            wsClient.close(); // 에러 발생 시 연결 종료
+//            setWsClientId(null);
         };
     }
 
