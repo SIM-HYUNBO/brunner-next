@@ -27,9 +27,25 @@ const StockContent = () => {
     }
 
     const [stockData, setStockData] = useState(null); // 주식 데이터
-    const [timespan, setTimespan] = useState('hour'); // 데이터의 시간 범위
+    const stockDataRef = useRef(stockData);
+    const setStockDataRef = (newVal) => {
+        setStockData(newVal);
+        stockDataRef.current = newVal;
+    }
+
+    const [timeUnit, setTimeUnit] = useState('hour'); // 데이터의 기간 범위
+    const timeUnitRef = useRef(timeUnit);
+    const setTimeUnitRef = (newVal) => {
+        setTimeUnit(newVal);
+        timeUnitRef.current = newVal;
+    }
     const [duration, setDuration] = useState(15); // 기간
     const [durationUnit, setDurationUnit] = useState('days'); // 기간 단위
+    const durationUnitRef = useRef(durationUnit);
+    const setDurationUnitRef = (newVal) => {
+        setDurationUnit(newVal);
+        durationUnitRef.current = newVal;
+    }
     const [recentSearches, setRecentSearches] = useState([]); // 최근 검색 기록
     const [selectedOption, setSelectedOption] = useState(null); // 선택된 옵션
 
@@ -76,7 +92,7 @@ const StockContent = () => {
     // 주식 데이터를 가져오는 함수
     const fetchStockData = async () => {
         try {
-            const timefrom = moment().subtract(duration, durationUnit).format('YYYY-MM-DD');
+            const timefrom = moment().subtract(duration, durationUnitRef.current).format('YYYY-MM-DD');
             const timeto = moment().format('YYYY-MM-DD');
 
             const jRequest = {
@@ -84,7 +100,7 @@ const StockContent = () => {
                 systemCode: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE,
                 stocksTicker: stocksTickerRef.current,
                 multiplier: 1,
-                timespan: timespan,
+                timespan: timeUnitRef.current,
                 from: timefrom,
                 to: timeto,
                 adjust: true,
@@ -93,10 +109,11 @@ const StockContent = () => {
             };
 
             setLoading(true);
+            setStockDataRef(null);
             const jResponse = await requestServer('POST', JSON.stringify(jRequest));
 
             if (jResponse.error_code === 0) {
-                setStockData(jResponse.stockInfo);
+                setStockDataRef(jResponse.stockInfo);
 
 
                 // 최근 검색 기록 업데이트 (정상 조회된 종목만)
@@ -290,9 +307,9 @@ const StockContent = () => {
 
     // 차트 렌더링을 위한 준비
     const renderChart = () => {
-        if (!stockData) return null;
+        if (!stockDataRef.current) return null;
 
-        const priceData = stockData.map((d) => ({
+        const priceData = stockDataRef.current.map((d) => ({
             x: new Date(d.t).getTime(),
             y: d.c,
         }));
@@ -608,7 +625,7 @@ const StockContent = () => {
                     <label>
                         단위:
                     </label>
-                    <select className='text-slate-600 ml-2 bg-slate-50 dark:bg-slate-400' value={timespan} onChange={(e) => setTimespan(e.target.value)}>
+                    <select className='text-slate-600 ml-2 bg-slate-50 dark:bg-slate-400' value={timeUnitRef.current} onChange={(e) => setTimeUnitRef(e.target.value)}>
                         <option value="minute">분</option>
                         <option value="hour">시간</option>
                         <option value="day">일</option>
@@ -626,7 +643,7 @@ const StockContent = () => {
                         min="1"
                     />
                 </label>
-                <select className='ml-2 text-center bg-slate-50 dark:bg-slate-400' value={durationUnit} onChange={(e) => setDurationUnit(e.target.value)}>
+                <select className='ml-2 text-center bg-slate-50 dark:bg-slate-400' value={durationUnitRef.current} onChange={(e) => setDurationUnitRef(e.target.value)}>
                     <option value="minutes">분</option>
                     <option value="hours">시간</option>
                     <option value="days">일</option>
@@ -669,7 +686,7 @@ const StockContent = () => {
                 onConfirm={modalContent.onConfirm}
                 onClose={modalContent.onClose}
             />
-            {stockData && renderChart()}
+            {stockDataRef.current && renderChart()}
         </div>
     );
 };
