@@ -613,6 +613,58 @@ const StockContent = () => {
         }
     }
 
+    const darkSelectionStyle = {
+        container: (provided) => ({
+            ...provided,
+            marginTop: '1em',
+            marginBottom: '1em',
+        }),
+        control: (provided) => ({
+            ...provided,
+            backgroundColor: 'rgb(30, 41, 59)', // bg-slate-800 color
+        }),
+        option: (provided, state) => ({
+            ...provided,
+            backgroundColor: state.isFocused ? 'rgb(51, 65, 85)' : 'rgb(30, 41, 59)', // bg-slate-700 on focus
+            '&:active': { // 목록에서 선택한 항목색깔
+                backgroundColor: 'rgb(100, 116, 139)', // bg-slate-600 when active
+                color: 'rgb(156, 163, 175)',        // text-slate-400  => 목록 글씨색
+            },
+        }),
+        menu: (provided) => ({
+            ...provided,
+            backgroundColor: 'rgb(30, 41, 59)', // bg-slate-800
+            color: 'rgb(156, 163, 175)',        // text-slate-400  => 목록 글씨색
+            borderRadius: '0.375rem',
+        }),
+    };
+
+    const lightSelectionStyle = {
+        container: (provided) => ({
+            ...provided,
+            marginTop: '1em',
+            marginBottom: '1em',
+        }),
+        control: (provided) => ({
+            ...provided,
+            backgroundColor: 'white', // bg-slate-800 color
+        }),
+        option: (provided, state) => ({
+            ...provided,
+            backgroundColor: 'white', // bg-slate-700 on focus
+            '&:active': { // 목록에서 선택한 항목색깔
+                backgroundColor: 'white', // bg-slate-600 when active
+                color: 'rgb(156, 163, 175)',        // text-slate-400  => 목록 글씨색
+            },
+        }),
+        menu: (provided) => ({ // 목록
+            ...provided,
+            backgroundColor: 'white', // bg-slate-800
+            color: 'rgb(156, 163, 175)',        // text-slate-400  => 목록 글씨색
+            borderRadius: '0.375rem',
+        }),
+    };
+
     return (
         <div className='w-full'>
             {loading && (
@@ -621,11 +673,11 @@ const StockContent = () => {
                 </div>
             )}
             <div>
-                <div className='items-start mt-2 text-slate-400'>
+                <div className='items-start mt-2 dark:text-slate-400'>
                     <label>
-                        단위:
+                        Span
                     </label>
-                    <select className='text-slate-600 ml-2 bg-slate-50 dark:bg-slate-400' value={dataIntervalUnitRef.current} onChange={(e) => setDataIntervalUnitRef(e.target.value)}>
+                    <select className='dark:text-slate-400 ml-2 bg-slate-50 dark:bg-slate-800' value={dataIntervalUnitRef.current} onChange={(e) => setDataIntervalUnitRef(e.target.value)}>
                         <option value="minute">분</option>
                         <option value="hour">시간</option>
                         <option value="day">일</option>
@@ -634,23 +686,25 @@ const StockContent = () => {
                         <option value="year">년</option>
                     </select>
                 </div>
-                <label className='text-slate-400'>
-                    기간:
-                    <input className='text-slate-600 ml-2 text-center bg-slate-50 dark:bg-slate-400'
-                        type="number"
-                        value={period}
-                        onChange={(e) => setPeriod(e.target.value)}
-                        min="1"
-                    />
-                </label>
-                <select className='ml-2 text-center bg-slate-50 dark:bg-slate-400' value={periodUnitRef.current} onChange={(e) => setPeriodUnitRef(e.target.value)}>
-                    <option value="minutes">분</option>
-                    <option value="hours">시간</option>
-                    <option value="days">일</option>
-                    <option value="weeks">주</option>
-                    <option value="months">월</option>
-                    <option value="years">년</option>
-                </select>
+                <div className='items-start mt-2 dark:text-slate-400 '>
+                    <label className='dark:text-slate-400 dark:bg-slate-800'>
+                        Period
+                        <input className='dark:text-slate-400 ml-2 text-center bg-slate-50 dark:bg-slate-800'
+                            type="number"
+                            value={period}
+                            onChange={(e) => setPeriod(e.target.value)}
+                            min="1"
+                        />
+                    </label>
+                    <select className='ml-2 text-center dark:text-slate-400 bg-slate-50 dark:bg-slate-800' value={periodUnitRef.current} onChange={(e) => setPeriodUnitRef(e.target.value)}>
+                        <option value="minutes">분</option>
+                        <option value="hours">시간</option>
+                        <option value="days">일</option>
+                        <option value="weeks">주</option>
+                        <option value="months">월</option>
+                        <option value="years">년</option>
+                    </select>
+                </div>
                 <div>
                     <Select className='items-start'
                         value={selectedOption}
@@ -659,15 +713,9 @@ const StockContent = () => {
                         placeholder="Select Symbol ..."
                         isClearable
                         noOptionsMessage={() => "최근 검색 기록이 없습니다."}
-                        styles={{
-                            container: (provided) => ({
-                                ...provided,
-                                marginTop: '1em',
-                                marginBottom: '1em',
-                            }),
-                        }}
+                        styles={process.env.isDarkMode ? darkSelectionStyle : lightSelectionStyle}
                     />
-                    <input className='item-start text-left bg-slate-50 dark:bg-slate-400 uppercase w-1/2'
+                    <input className='item-start text-left text-slate-400 bg-slate-50 dark:bg-slate-800 uppercase w-1/2'
                         type="text"
                         value={stocksTickerRef.current}
                         placeholder="종목코드를 입력하세요. ex) AAPL, GOOGL, TSLA ..."
@@ -676,7 +724,7 @@ const StockContent = () => {
                             setSelectedOption("");
                         }}
                     />
-                    <button className='text-slate-400 ml-2' type="submit" onClick={handleStockRequest}>Refresh</button>
+                    <button className='bg-indigo-500 text-white ml-2 p-2' type="submit" onClick={handleStockRequest}>Refresh</button>
                 </div>
             </div>
 
@@ -687,7 +735,7 @@ const StockContent = () => {
                 onClose={modalContent.onClose}
             />
             {stockDataRef.current && renderChart()}
-        </div>
+        </div >
     );
 };
 
