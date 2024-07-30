@@ -4,8 +4,8 @@ import moment from 'moment';
 import requestServer from './../../../components/requestServer';
 import BrunnerMessageBox from '@/components/BrunnerMessageBox';
 import dynamic from 'next/dynamic';
-import Select from 'react-select';
 
+const Select = dynamic(() => import('react-select'), { ssr: false });
 // ApexCharts를 동적으로 import
 const ApexCharts = dynamic(() => import('react-apexcharts'), { ssr: false });
 
@@ -33,7 +33,7 @@ const StockContent = () => {
         stockDataRef.current = newVal;
     }
 
-    const [dataIntervalUnit, setDataIntervalUnit] = useState('hour'); // 데이터 간격의  시간 단위
+    const [dataIntervalUnit, setDataIntervalUnit] = useState("hour"); // 데이터 간격의  시간 단위
     const dataIntervalUnitRef = useRef(dataIntervalUnit);
     const setDataIntervalUnitRef = (newVal) => {
         setDataIntervalUnit(newVal);
