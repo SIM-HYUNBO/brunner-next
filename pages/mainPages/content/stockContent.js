@@ -33,18 +33,18 @@ const StockContent = () => {
         stockDataRef.current = newVal;
     }
 
-    const [timeUnit, setTimeUnit] = useState('hour'); // 데이터의 기간 범위
-    const timeUnitRef = useRef(timeUnit);
-    const setTimeUnitRef = (newVal) => {
-        setTimeUnit(newVal);
-        timeUnitRef.current = newVal;
+    const [dataIntervalUnit, setDataIntervalUnit] = useState('hour'); // 데이터 간격의  시간 단위
+    const dataIntervalUnitRef = useRef(dataIntervalUnit);
+    const setDataIntervalUnitRef = (newVal) => {
+        setDataIntervalUnit(newVal);
+        dataIntervalUnitRef.current = newVal;
     }
-    const [duration, setDuration] = useState(15); // 기간
-    const [durationUnit, setDurationUnit] = useState('days'); // 기간 단위
-    const durationUnitRef = useRef(durationUnit);
-    const setDurationUnitRef = (newVal) => {
-        setDurationUnit(newVal);
-        durationUnitRef.current = newVal;
+    const [period, setPeriod] = useState(15); // 기간
+    const [periodUnit, setPeriodUnit] = useState('days'); // 기간 단위
+    const periodUnitRef = useRef(periodUnit);
+    const setPeriodUnitRef = (newVal) => {
+        setPeriodUnit(newVal);
+        periodUnitRef.current = newVal;
     }
     const [recentSearches, setRecentSearches] = useState([]); // 최근 검색 기록
     const [selectedOption, setSelectedOption] = useState(null); // 선택된 옵션
@@ -92,7 +92,7 @@ const StockContent = () => {
     // 주식 데이터를 가져오는 함수
     const fetchStockData = async () => {
         try {
-            const timefrom = moment().subtract(duration, durationUnitRef.current).format('YYYY-MM-DD');
+            const timefrom = moment().subtract(period, periodUnitRef.current).format('YYYY-MM-DD');
             const timeto = moment().format('YYYY-MM-DD');
 
             const jRequest = {
@@ -100,7 +100,7 @@ const StockContent = () => {
                 systemCode: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE,
                 stocksTicker: stocksTickerRef.current,
                 multiplier: 1,
-                timespan: timeUnitRef.current,
+                timespan: dataIntervalUnitRef.current,
                 from: timefrom,
                 to: timeto,
                 adjust: true,
@@ -625,7 +625,7 @@ const StockContent = () => {
                     <label>
                         단위:
                     </label>
-                    <select className='text-slate-600 ml-2 bg-slate-50 dark:bg-slate-400' value={timeUnitRef.current} onChange={(e) => setTimeUnitRef(e.target.value)}>
+                    <select className='text-slate-600 ml-2 bg-slate-50 dark:bg-slate-400' value={dataIntervalUnitRef.current} onChange={(e) => setDataIntervalUnitRef(e.target.value)}>
                         <option value="minute">분</option>
                         <option value="hour">시간</option>
                         <option value="day">일</option>
@@ -638,12 +638,12 @@ const StockContent = () => {
                     기간:
                     <input className='text-slate-600 ml-2 text-center bg-slate-50 dark:bg-slate-400'
                         type="number"
-                        value={duration}
-                        onChange={(e) => setDuration(e.target.value)}
+                        value={period}
+                        onChange={(e) => setPeriod(e.target.value)}
                         min="1"
                     />
                 </label>
-                <select className='ml-2 text-center bg-slate-50 dark:bg-slate-400' value={durationUnitRef.current} onChange={(e) => setDurationUnitRef(e.target.value)}>
+                <select className='ml-2 text-center bg-slate-50 dark:bg-slate-400' value={periodUnitRef.current} onChange={(e) => setPeriodUnitRef(e.target.value)}>
                     <option value="minutes">분</option>
                     <option value="hours">시간</option>
                     <option value="days">일</option>
