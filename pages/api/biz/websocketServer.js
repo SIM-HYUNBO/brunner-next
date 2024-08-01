@@ -131,9 +131,6 @@ const sendStockData = () => {
 // 실시간 주식 데이터 가져오기 함수
 const fetchRealTimeStockData = async (ticker) => {
     try {
-        // polygon.io사이트는 무료 사용이 아님, 에러 메시지 확인
-        // const POLYGON_REALTIME_URL = `https://api.polygon.io/v3/quotes/${ticker}?limit=1&apiKey=${process.env.POLYGON_API_KEY}`;
-        
         process.env.FINNHUB_API_KEY = 'cqlk3cpr01qo3h6tj30gcqlk3cpr01qo3h6tj310';
         const FINNHUB_REALTIME_URL = `https://finnhub.io/api/v1/quote?symbol=${ticker}&token=${process.env.FINNHUB_API_KEY}
 
