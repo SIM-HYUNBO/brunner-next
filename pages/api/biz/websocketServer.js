@@ -139,7 +139,7 @@ const fetchRealTimeStockData = async (ticker) => {
         // {"c":82.58,"d":-0.22,"dp":-0.2657,"h":83.19,"l":82.43,"o":82.95,"pc":82.8,"t":1722456000}
         //  c: current price, d: change, dp:change percent, h: high, l: low, o: open price, pc: previous close, t: unix timestamp
         
-        return { type: 'stockInfo', data: response, time: new Date().toISOString() };
+        return { type: 'stockInfo', data: response.data, time: new Date().toISOString() };
     } catch (error) {
         console.error('주식 데이터 가져오기 에러:', error);
         return null;
