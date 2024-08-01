@@ -131,13 +131,14 @@ const sendStockData = () => {
 // 실시간 주식 데이터 가져오기 함수
 const fetchRealTimeStockData = async (ticker) => {
     try {
-        // 이 API는 무료사용이 아님, 에러 메시지 확인
-
+        // polygon.io사이트는 무료 사용이 아님, 에러 메시지 확인
         // const POLYGON_REALTIME_URL = `https://api.polygon.io/v3/quotes/${ticker}?limit=1&apiKey=${process.env.POLYGON_API_KEY}`;
-        // const response = await axios.get(POLYGON_REALTIME_URL);
-        // return response.data;
+        
+        process.env.FINNHUB_API_KEY = 'cqlk3cpr01qo3h6tj30gcqlk3cpr01qo3h6tj310';
+        const FINNHUB_REALTIME_URL = `https://finnhub.io/api/v1/quote?symbol=${ticker}&token=${process.env.FINNHUB_API_KEY}
 
-        return { type: 'stockInfo', data: ticker, time: new Date().toISOString() };
+        const response = await axios.get(FINNHUB_REALTIME_URL); // {"c":82.58,"d":-0.22,"dp":-0.2657,"h":83.19,"l":82.43,"o":82.95,"pc":82.8,"t":1722456000}
+        return { type: 'stockInfo', data: response, time: new Date().toISOString() };
     } catch (error) {
         console.error('주식 데이터 가져오기 에러:', error);
         return null;
