@@ -134,7 +134,11 @@ const fetchRealTimeStockData = async (ticker) => {
         process.env.FINNHUB_API_KEY = 'cqlk3cpr01qo3h6tj30gcqlk3cpr01qo3h6tj310';
         const FINNHUB_REALTIME_URL = `https://finnhub.io/api/v1/quote?symbol=${ticker}&token=${process.env.FINNHUB_API_KEY}
 
-        const response = await axios.get(FINNHUB_REALTIME_URL); // {"c":82.58,"d":-0.22,"dp":-0.2657,"h":83.19,"l":82.43,"o":82.95,"pc":82.8,"t":1722456000}
+        const response = await axios.get(FINNHUB_REALTIME_URL); 
+        
+        // {"c":82.58,"d":-0.22,"dp":-0.2657,"h":83.19,"l":82.43,"o":82.95,"pc":82.8,"t":1722456000}
+        //  c: current price, d: change, dp:change percent, h: high, l: low, o: open price, pc: previous close, t: unix timestamp
+        
         return { type: 'stockInfo', data: response, time: new Date().toISOString() };
     } catch (error) {
         console.error('주식 데이터 가져오기 에러:', error);
