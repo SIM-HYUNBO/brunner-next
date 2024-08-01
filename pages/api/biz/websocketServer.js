@@ -2,6 +2,7 @@
 
 import logger from "./../winston/logger"
 import { v4 as uuidv4 } from 'uuid';
+import axios from "axios";
 
 let clients = []; // 연결된 클라이언트 목록
 const interval = 5000; // 5초마다 데이터 전송
@@ -116,12 +117,13 @@ const sendStockData = () => {
     clients.forEach((client) => {
         client.subscriptions.forEach(async (ticker) => {
             const data = await fetchRealTimeStockData(ticker);
-
-            // 모든 연결된 클라이언트에게 데이터 전송
-            data.clientId = client.id;  // 전송할 clientId를 추가해서 전송
-            client.res.write(`data: ${JSON.stringify(data)}\n\n`);
-            if (client.res.flush) {
-                client.res.flush();
+            if (data) {
+                // 모든 연결된 클라이언트에게 데이터 전송
+                data.clientId = client.id;  // 전송할 clientId를 추가해서 전송
+                client.res.write(`data: ${JSON.stringify(data)}\n\n`);
+                if (client.res.flush) {
+                    client.res.flush();
+                }
             }
         })
     });
@@ -131,15 +133,16 @@ const sendStockData = () => {
 // 실시간 주식 데이터 가져오기 함수
 const fetchRealTimeStockData = async (ticker) => {
     try {
-        process.env.FINNHUB_API_KEY = 'cqlk3cpr01qo3h6tj30gcqlk3cpr01qo3h6tj310';
-        const FINNHUB_REALTIME_URL = `https://finnhub.io/api/v1/quote?symbol=${ticker}&token=${process.env.FINNHUB_API_KEY}
+        // FINNHUB 실시간 데이터는 무료이나 POLYGON 데이터와는 구성이 다름
 
-        const response = await axios.get(FINNHUB_REALTIME_URL); 
-        
-        // {"c":82.58,"d":-0.22,"dp":-0.2657,"h":83.19,"l":82.43,"o":82.95,"pc":82.8,"t":1722456000}
         //  c: current price, d: change, dp:change percent, h: high, l: low, o: open price, pc: previous close, t: unix timestamp
-        
-        return { type: 'stockInfo', data: response, time: new Date().toISOString() };
+        // {"c":82.58,"d":-0.22,"dp":-0.2657,"h":83.19,"l":82.43,"o":82.95,"pc":82.8,"t":1722456000}
+
+        process.env.FINNHUB_API_KEY = 'cqlk3cpr01qo3h6tj30gcqlk3cpr01qo3h6tj310';
+        const FINNHUB_REALTIME_URL = `https://finnhub.io/api/v1/quote?symbol=${ticker}&token=${process.env.FINNHUB_API_KEY}`
+        const response = await axios.get(FINNHUB_REALTIME_URL);
+
+        return { type: 'stockInfo', data: response.data, time: new Date(response.data.t * 1000).toISOString() };
     } catch (error) {
         console.error('주식 데이터 가져오기 에러:', error);
         return null;

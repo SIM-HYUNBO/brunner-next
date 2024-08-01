@@ -584,7 +584,7 @@ const StockContent = () => {
                 setWsClientId(data.clientId);
             }
             else if (data.type === 'stockInfo') {
-                handleNewData(newData.data);                
+                handleNewData(data.data);
             }
             setWsStockData(data);
         };
@@ -618,7 +618,7 @@ const StockContent = () => {
 
     const handleNewData = (data) => {
         const newPoint = {
-            x: new Date(data.t),
+            x: new Date(data.t * 1000),
             y: data.c,
         };
 
