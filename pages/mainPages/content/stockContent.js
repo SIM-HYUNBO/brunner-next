@@ -583,6 +583,9 @@ const StockContent = () => {
             if (data.type === 'sessionInfo') {
                 setWsClientId(data.clientId);
             }
+            else if (data.type === 'stockInfo') {
+                handleNewData(newData);                
+            }
             setWsStockData(data);
         };
 
@@ -612,6 +615,22 @@ const StockContent = () => {
             openModal(`Stock subscribe errror! Status: ${res.status}`)
         }
     }
+
+    const handleNewData = (data) => {
+        const newPoint = {
+            x: new Date(data.t),
+            y: data.c,
+        };
+
+        setStockData((prevData) => {
+            const updatedData = [...prevData, newPoint];
+            // Maintain a maximum of 100 data points
+            if (updatedData.length > 100) {
+                updatedData.shift(); // Remove the oldest point
+            }
+            return updatedData;
+        });
+    };
 
     const darkSelectionStyle = {
         container: (provided) => ({
