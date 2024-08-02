@@ -33,6 +33,13 @@ const StockContent = () => {
         stockDataRef.current = newVal;
     }
 
+    const [realtimeStockData, setRealtimeStockData] = useState([]); // 주식 데이터
+    const realtimeStockDataRef = useRef(realtimeStockData);
+    const setRealtimeStockDataRef = (newVal) => {
+        setRealtimeStockData(newVal);
+        realtimeStockDataRef.current = newVal;
+    }
+
     const [dataIntervalUnit, setDataIntervalUnit] = useState("hour"); // 데이터 간격의  시간 단위
     const dataIntervalUnitRef = useRef(dataIntervalUnit);
     const setDataIntervalUnitRef = (newVal) => {
@@ -51,7 +58,6 @@ const StockContent = () => {
 
     var wsClient = null; // Web Socket 클라이언트
     const [wsConnected, setWsConnected] = useState(false); //실시간 Web Socket 채널 연결상태
-    const [wsStockData, setWsStockData] = useState(null); // 실시간 Web Socket 주식 데이터
     const [wsClientId, setWsClientId] = useState(null);
 
     // useEffect를 사용하여 최근 검색한 종목 코드 로드
@@ -320,6 +326,11 @@ const StockContent = () => {
         const macdData = calculateMACD(priceData);
         const bollingerBands = calculateBollingerBands(priceData);
 
+        const realtimePriceData = realtimeStockDataRef.current.map((d) => ({
+            x: new Date(d.t).getTime(),
+            y: d.c,
+        }));
+
         const chartOptions = {
             chart: {
                 type: 'line',
@@ -559,8 +570,69 @@ const StockContent = () => {
             }
         };
 
+        const realtimeOptions = {
+            chart: {
+                type: 'line',
+                height: 350,
+                zoom: {
+                    enabled: true,
+                },
+            },
+            stroke: {
+                width: [1], // 각 선의 두께 설정
+                curve: 'smooth', // 부드러운 곡선
+            },
+            title: {
+                text: 'Realtime Price',
+                align: 'left',
+                style: {
+                    color: '#94a3b8' // slate-400 색상 설정
+                }
+            },
+            xaxis: {
+                type: 'datetime',
+                title: {
+                    style: {
+                        color: '#94a3b8' // slate-400 색상 설정
+                    }
+                },
+                labels: {
+                    style: {
+                        colors: '#94a3b8'
+                    }
+                }
+            },
+            yaxis: {
+                labels: {
+                    formatter: function (val) {
+                        return val;
+                    },
+                    style: {
+                        colors: '#94a3b8' // slate-400 색상 설정
+                    }
+                },
+                title: {
+                    style: {
+                        color: '#94a3b8' // slate-400 색상 설정
+                    }
+                }
+            },
+            series: [
+                {
+                    name: '가격',
+                    data: realtimePriceData,
+                },
+            ],
+            legend: {
+                labels: {
+                    colors: ['#94a3b8']
+                }
+            }
+        };
+
         return (
             <div className="w-full mt-5">
+                <ApexCharts options={realtimeOptions} series={realtimeOptions.series} type="line" height={350} width={'100%'} />
                 <ApexCharts options={chartOptions} series={chartOptions.series} type="line" height={350} width={'100%'} />
                 <ApexCharts options={rsiOptions} series={rsiOptions.series} type="line" height={350} width={'100%'} />
                 <ApexCharts options={macdOptions} series={macdOptions.series} type="line" height={350} width={'100%'} />
@@ -586,7 +658,6 @@ const StockContent = () => {
             else if (data.type === 'stockInfo') {
                 handleNewData(data.data);
             }
-            setWsStockData(data);
         };
 
         wsClient.onerror = (error) => {
@@ -616,20 +687,24 @@ const StockContent = () => {
         }
     }
 
-    const handleNewData = (data) => {
-        const newPoint = {
-            x: new Date(data.t * 1000),
-            y: data.c,
-        };
+    const handleNewData = (newData) => {
+        if (!Array.isArray(newData)) {
+            newData = [newData]; // 단일 객체를 배열로 변환
+        }
 
-        setStockData((prevData) => {
-            const updatedData = [...prevData, newPoint];
-            // Maintain a maximum of 100 data points
-            if (updatedData.length > 100) {
-                updatedData.shift(); // Remove the oldest point
-            }
-            return updatedData;
-        });
+        const formattedData = newData.map((item) => ({
+            x: new Date(item.timestamp),
+            y: item.price,
+        }));
+
+        const updatedData = [...realtimeStockDataRef.current, ...formattedData];
+
+        // 최대 데이터 크기 제한 (예: 1000개)
+        if (updatedData.length > 1000) {
+            return updatedData.slice(updatedData.length - 1000);
+        }
+
+        setRealtimeStockDataRef(updatedData);
     };
 
     const darkSelectionStyle = {
