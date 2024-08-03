@@ -44,6 +44,7 @@ const connect = async (req, res) => {
         res.setHeader('Cache-Control', 'no-cache');
         res.setHeader('Connection', 'keep-alive');
         res.setHeader('Access-Control-Allow-Origin', '*'); // 모든 도메인 허용
+        res.setHeader('X-Accel-Buffering', 'no'); // Nginx 등의 프록시가 있을 경우 버퍼링 방지
         res.flushHeaders();
 
         const clientId = uuidv4(); // 고유한 클라이언트 ID 생성
@@ -70,6 +71,7 @@ const connect = async (req, res) => {
         res.setHeader('Cache-Control', 'no-cache');
         res.setHeader('Connection', 'keep-alive');
         res.setHeader('Access-Control-Allow-Origin', '*'); // 모든 도메인 허용
+        res.setHeader('X-Accel-Buffering', 'no'); // Nginx 등의 프록시가 있을 경우 버퍼링 방지
         res.flushHeaders();
 
         if (req.body.type === 'subscribe') {
