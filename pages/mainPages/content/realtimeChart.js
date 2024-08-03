@@ -148,10 +148,6 @@ const RealtimeChart = () => {
 
         wsClient.onerror = (error) => {
             console.error('서버 연결 에러:', error);
-            console.error(
-                `오류 메시지:${error.message},
-오류 코드:${error.code}
-오류 원인:${error.reason}`);
 
             setWsConnected(false);
             wsClient.close(); // 에러 발생 시 연결 종료
