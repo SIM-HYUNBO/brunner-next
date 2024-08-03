@@ -17,8 +17,7 @@ const setupInterval = (intervalDuration) => {
 
     // 새로운 타이머 설정
     intervalId = setInterval(() => {
-        // console.log('타이머 호출!');
-        // 여기에 타이머가 호출될 때 실행할 작업을 추가
+        // 여기에 타이머가 호출될 때 실행할 작업
         sendStockData();
     }, intervalDuration);
 };
@@ -26,11 +25,11 @@ const setupInterval = (intervalDuration) => {
 // 타이머 간격 변경
 const changeInterval = (additionalInterval) => {
     if (additionalInterval <= 0) {
-        console.error('Interval increment must be positive');
+        logger.error('Interval increment must be positive');
         return;
     }
     currentInterval += additionalInterval;
-    console.log(`타이머 인터벌 변경: ${currentInterval}`);
+    logger.info(`타이머 인터벌 변경: ${currentInterval}`);
     setupInterval(currentInterval); // 타이머 재설정
 };
 
@@ -157,7 +156,7 @@ const fetchRealTimeStockData = async (ticker) => {
         const response = await axios.get(FINNHUB_REALTIME_URL);
         return { type: 'stockInfo', data: response.data, time: new Date(response.data.t * 1000).toISOString() };
     } catch (error) {
-        console.error('주식 데이터 가져오기 에러:', error);
+        logger.error('주식 데이터 가져오기 에러:', error);
         changeInterval(1000); // 예외 발생 시 타이머 간격을 1초 늘입니다.
         return null;
     }
