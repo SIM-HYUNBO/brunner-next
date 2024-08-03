@@ -1,3 +1,5 @@
+`use strict`
+
 import React, { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/router';
 import { useTable, useSortBy } from 'react-table';

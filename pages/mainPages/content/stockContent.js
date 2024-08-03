@@ -1,3 +1,5 @@
+`use strict`
+
 import dotenv from 'dotenv';
 import { useState, useRef, useEffect } from 'react';
 import moment from 'moment';
@@ -387,10 +389,14 @@ const StockContent = () => {
             xaxis: {
                 type: 'datetime',
                 labels: {
+                    datetimeUTC: false, // UTC가 아닌 로컬 시간대로 표시합니다.
+                    //format: 'dd MMM HH:mm', // 'dd MMM'은 날짜와 시간을 모두 보여줍니다. (예: 03 Aug 13:00)
                     style: {
-                        colors: '#94a3b8'
+                        colors: '#9e9e9e', // x축 레이블 색상
+                        //fontSize: '12px',  // x축 레이블 폰트 크기
+                        fontFamily: 'Arial, sans-serif', // x축 레이블 폰트 패밀리
                     }
-                }
+                },
             },
             yaxis: {
                 labels: {
@@ -437,10 +443,14 @@ const StockContent = () => {
             xaxis: {
                 type: 'datetime',
                 labels: {
+                    datetimeUTC: false, // UTC가 아닌 로컬 시간대로 표시합니다.
+                    //format: 'dd MMM HH:mm', // 'dd MMM'은 날짜와 시간을 모두 보여줍니다. (예: 03 Aug 13:00)
                     style: {
-                        colors: '#94a3b8'
+                        colors: '#9e9e9e', // x축 레이블 색상
+                        //fontSize: '12px',  // x축 레이블 폰트 크기
+                        fontFamily: 'Arial, sans-serif', // x축 레이블 폰트 패밀리
                     }
-                }
+                },
             },
             yaxis: {
                 labels: {
@@ -501,10 +511,14 @@ const StockContent = () => {
                     }
                 },
                 labels: {
+                    datetimeUTC: false, // UTC가 아닌 로컬 시간대로 표시합니다.
+                    //format: 'dd MMM HH:mm', // 'dd MMM'은 날짜와 시간을 모두 보여줍니다. (예: 03 Aug 13:00)
                     style: {
-                        colors: '#94a3b8'
+                        colors: '#9e9e9e', // x축 레이블 색상
+                        //fontSize: '12px',  // x축 레이블 폰트 크기
+                        fontFamily: 'Arial, sans-serif', // x축 레이블 폰트 패밀리
                     }
-                }
+                },
             },
             yaxis: {
                 labels: {

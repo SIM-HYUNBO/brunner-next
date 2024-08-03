@@ -1,3 +1,5 @@
+`use strict`
+
 import dotenv from 'dotenv';
 import { useState, useRef, useEffect } from 'react';
 import moment from 'moment';
@@ -65,7 +67,15 @@ const RealtimeChart = () => {
         },
         xaxis: {
             type: 'datetime',
-            range: 10000, // 마지막 10초만 표시
+            labels: {
+                datetimeUTC: false, // UTC가 아닌 로컬 시간대로 표시합니다.
+                //format: 'dd MMM HH:mm', // 'dd MMM'은 날짜와 시간을 모두 보여줍니다. (예: 03 Aug 13:00)
+                style: {
+                    colors: '#9e9e9e', // x축 레이블 색상
+                    //fontSize: '12px',  // x축 레이블 폰트 크기
+                    fontFamily: 'Arial, sans-serif', // x축 레이블 폰트 패밀리
+                }
+            },
         },
         yaxis: {
             max: 100,
@@ -214,12 +224,20 @@ const RealtimeChart = () => {
             x: new Date(newData.t * 1000).toISOString(),
             y: newData.c
         };
+        const newChartDataNow = {
+            x: new Date().toISOString(),
+            y: newData.c
+        };
 
         // 상태 업데이트 함수 호출 수정
         setSeries((prevSeries) => [
             {
                 ...prevSeries[0],
                 data: [...prevSeries[0].data, newChartData].slice(-10), // 마지막 10개의 데이터만 유지
+            },
+            {
+                ...prevSeries[0],
+                data: [...prevSeries[0].data, newChartDataNow].slice(-10), // 마지막 10개의 데이터만 유지
             },
         ]);
     };
