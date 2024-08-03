@@ -50,6 +50,13 @@ const connect = async (req, res) => {
                 res.status(200).end();
             }
         }
+        else if (req.body.type === 'unsubscribe') {
+            if (req.body.clientId && req.body.ticker) {
+                await unsubscribe(req.body.clientId, req.body.ticker);
+                res.status(200).end();
+            }
+        }
+
     } else {
         res.status(405).end(); // 다른 요청 메소드는 허용하지 않음
     }
@@ -120,6 +127,7 @@ const sendStockData = () => {
             if (data) {
                 // 모든 연결된 클라이언트에게 데이터 전송
                 data.clientId = client.id;  // 전송할 clientId를 추가해서 전송
+                data.ticker = ticker;
                 client.res.write(`data: ${JSON.stringify(data)}\n\n`);
                 if (client.res.flush) {
                     client.res.flush();

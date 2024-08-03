@@ -4,6 +4,7 @@ import moment from 'moment';
 import requestServer from './../../../components/requestServer';
 import BrunnerMessageBox from '@/components/BrunnerMessageBox';
 import dynamic from 'next/dynamic';
+import RealtimeChart from './realtimeChart';
 
 const Select = dynamic(() => import('react-select'), { ssr: false });
 // ApexCharts를 동적으로 import
@@ -17,10 +18,11 @@ const StockContent = () => {
         onConfirm: () => { },
         onClose: () => { },
     });
-    const [stocksTicker, setStocksTicker] = useState(''); // 주식 심볼
-    const [defaultTicker, setDefaultTicker] = useState(''); // 주식 심볼
-    const stocksTickerRef = useRef(stocksTicker);
 
+    const [defaultTicker, setDefaultTicker] = useState(''); // 주식 심볼
+
+    const [stocksTicker, setStocksTicker] = useState(''); // 주식 심볼
+    const stocksTickerRef = useRef(stocksTicker);
     const setStocksTickerRef = (newVal) => {
         setStocksTicker(newVal);
         stocksTickerRef.current = newVal;
@@ -56,10 +58,6 @@ const StockContent = () => {
     const [recentSearches, setRecentSearches] = useState([]); // 최근 검색 기록
     const [selectedOption, setSelectedOption] = useState(null); // 선택된 옵션
 
-    var wsClient = null; // Web Socket 클라이언트
-    const [wsConnected, setWsConnected] = useState(false); //실시간 Web Socket 채널 연결상태
-    const [wsClientId, setWsClientId] = useState(null);
-
     // useEffect를 사용하여 최근 검색한 종목 코드 로드
     useEffect(() => {
         const storedSearches = localStorage.getItem('recentSearches');
@@ -69,6 +67,7 @@ const StockContent = () => {
 
         const defaultTicker = localStorage.getItem('defaultTicker');
         if (defaultTicker) {
+            setDefaultTicker(defaultTicker);
             setStocksTickerRef(defaultTicker);
         }
     }, []);
@@ -283,23 +282,6 @@ const StockContent = () => {
         return bollingerBands;
     };
 
-    // 기본 티커 설정
-    useEffect(() => {
-        const storedTicker = localStorage.getItem('defaultTicker');
-        if (storedTicker) {
-            setDefaultTicker(storedTicker);
-            setStocksTickerRef(storedTicker);
-        }
-
-        wsClient = new EventSource('/api/biz/websocketServer');
-        onConnect(wsClient);
-
-        return () => {
-            wsClient.close(); // 컴포넌트 언마운트 시 연결 종료
-            wsClient = null;
-        };
-    }, []);
-
     // 티커 선택 시 기본 티커 업데이트
     const handleTickerChange = (selectedOption) => {
         setSelectedOption(selectedOption);
@@ -307,8 +289,7 @@ const StockContent = () => {
 
         handleStockRequest();
 
-        if (wsClientId)
-            subscribe(wsClientId, stocksTickerRef.current);
+        process.currentTicker = selectedOption.value;
     };
 
     // 차트 렌더링을 위한 준비
@@ -325,11 +306,6 @@ const StockContent = () => {
         const rsi = calculateRSI(priceData);
         const macdData = calculateMACD(priceData);
         const bollingerBands = calculateBollingerBands(priceData);
-
-        const realtimePriceData = realtimeStockDataRef.current.map((d) => ({
-            x: new Date(d.t).getTime(),
-            y: d.c,
-        }));
 
         const chartOptions = {
             chart: {
@@ -570,141 +546,16 @@ const StockContent = () => {
             }
         };
 
-        const realtimeOptions = {
-            chart: {
-                type: 'line',
-                height: 350,
-                zoom: {
-                    enabled: true,
-                },
-            },
-            stroke: {
-                width: [1], // 각 선의 두께 설정
-                curve: 'smooth', // 부드러운 곡선
-            },
-            title: {
-                text: 'Realtime Price',
-                align: 'left',
-                style: {
-                    color: '#94a3b8' // slate-400 색상 설정
-                }
-            },
-            xaxis: {
-                type: 'datetime',
-                title: {
-                    style: {
-                        color: '#94a3b8' // slate-400 색상 설정
-                    }
-                },
-                labels: {
-                    style: {
-                        colors: '#94a3b8'
-                    }
-                }
-            },
-            yaxis: {
-                labels: {
-                    formatter: function (val) {
-                        return val;
-                    },
-                    style: {
-                        colors: '#94a3b8' // slate-400 색상 설정
-                    }
-                },
-                title: {
-                    style: {
-                        color: '#94a3b8' // slate-400 색상 설정
-                    }
-                }
-            },
-            series: [
-                {
-                    name: '가격',
-                    data: realtimePriceData,
-                },
-            ],
-            legend: {
-                labels: {
-                    colors: ['#94a3b8']
-                }
-            }
-        };
 
         return (
             <div className="w-full mt-5">
-                <ApexCharts options={realtimeOptions} series={realtimeOptions.series} type="line" height={350} width={'100%'} />
+                <RealtimeChart></RealtimeChart>
                 <ApexCharts options={chartOptions} series={chartOptions.series} type="line" height={350} width={'100%'} />
                 <ApexCharts options={rsiOptions} series={rsiOptions.series} type="line" height={350} width={'100%'} />
                 <ApexCharts options={macdOptions} series={macdOptions.series} type="line" height={350} width={'100%'} />
                 <ApexCharts options={bollingerOptions} series={bollingerOptions.series} type="line" height={350} width={'100%'} />
             </div>
         );
-    };
-
-    // 실시간 데이터 수신 처리 ( Web Socket )
-    const onConnect = (wsClient) => {
-        wsClient.onopen = () => {
-            console.log('Web Socket  서버에 연결되었습니다.');
-            setWsConnected(true);
-        };
-
-        wsClient.onmessage = (event) => {
-            const data = JSON.parse(event.data);
-            console.log(`${data.type} 수신: ${event.data}`);
-
-            if (data.type === 'sessionInfo') {
-                setWsClientId(data.clientId);
-            }
-            else if (data.type === 'stockInfo') {
-                handleNewData(data.data);
-            }
-        };
-
-        wsClient.onerror = (error) => {
-            console.error('서버 연결 에러:', error);
-            setWsConnected(false);
-            wsClient.close(); // 에러 발생 시 연결 종료
-            setWsClientId(null);
-        };
-    }
-
-    const subscribe = async (clientId, stocksTicker) => {
-        const res = await fetch('/api/biz/websocketServer', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(
-                {
-                    'type': 'subscribe',
-                    'clientId': clientId,
-                    'ticker': stocksTicker
-                }),
-        });
-
-        if (!res.ok) {
-            openModal(`Stock subscribe errror! Status: ${res.status}`)
-        }
-    }
-
-    const handleNewData = (newData) => {
-        if (!Array.isArray(newData)) {
-            newData = [newData]; // 단일 객체를 배열로 변환
-        }
-
-        const formattedData = newData.map((item) => ({
-            x: new Date(item.timestamp),
-            y: item.price,
-        }));
-
-        const updatedData = [...realtimeStockDataRef.current, ...formattedData];
-
-        // 최대 데이터 크기 제한 (예: 1000개)
-        if (updatedData.length > 1000) {
-            return updatedData.slice(updatedData.length - 1000);
-        }
-
-        setRealtimeStockDataRef(updatedData);
     };
 
     const darkSelectionStyle = {
