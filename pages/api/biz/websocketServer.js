@@ -1,11 +1,41 @@
-`use strict`
+'use strict';
 
-import logger from "./../winston/logger"
 import { v4 as uuidv4 } from 'uuid';
-import axios from "axios";
+import axios from 'axios';
+import logger from "./../winston/logger";
 
-let clients = []; // 연결된 클라이언트 목록
-const interval = 10000; // 5초마다 데이터 전송
+var clients = []; // 연결된 클라이언트 목록
+var intervalId = null; // 타이머 ID를 저장할 변수
+var currentInterval = 1000; // 초기 간격 설정 (1초)
+
+// 타이머를 설정하는 함수
+const setupInterval = (intervalDuration) => {
+    // 기존 타이머를 정리
+    if (intervalId) {
+        clearInterval(intervalId);
+    }
+
+    // 새로운 타이머 설정
+    intervalId = setInterval(() => {
+        // console.log('타이머 호출!');
+        // 여기에 타이머가 호출될 때 실행할 작업을 추가
+        sendStockData();
+    }, intervalDuration);
+};
+
+// 타이머 간격 변경
+const changeInterval = (additionalInterval) => {
+    if (additionalInterval <= 0) {
+        console.error('Interval increment must be positive');
+        return;
+    }
+    currentInterval += additionalInterval;
+    console.log(`타이머 인터벌 변경: ${currentInterval}`);
+    setupInterval(currentInterval); // 타이머 재설정
+};
+
+// 서버 시작 시 타이머를 설정합니다.
+setupInterval(currentInterval);
 
 // WebSocket 신규 세션 연결
 const connect = async (req, res) => {
@@ -29,34 +59,24 @@ const connect = async (req, res) => {
 
         await replySessionInfo(clientId, res);
 
-        // interval미다 데이터 전송 등록
-        const intervalId = setInterval(sendStockData, interval);
-
-        // 클라이언트가 연결을 끊었을 때 인터벌 정리
-        req.on('close', () => {
-            clearInterval(intervalId);
-            logger.info(`Client connection closed`);
-        });
-
         // 클라이언트가 연결을 끊었을 때
         req.on('close', () => {
             clients = clients.filter((client) => client.id !== clientId);
             logger.info(`클라이언트 연결이 끊어졌습니다. id: ${clientId}`);
         });
+
     } else if (req.method === 'POST') {
         if (req.body.type === 'subscribe') {
             if (req.body.clientId && req.body.ticker) {
                 await subscribe(req.body.clientId, req.body.ticker);
                 res.status(200).end();
             }
-        }
-        else if (req.body.type === 'unsubscribe') {
+        } else if (req.body.type === 'unsubscribe') {
             if (req.body.clientId && req.body.ticker) {
                 await unsubscribe(req.body.clientId, req.body.ticker);
                 res.status(200).end();
             }
         }
-
     } else {
         res.status(405).end(); // 다른 요청 메소드는 허용하지 않음
     }
@@ -83,13 +103,11 @@ const subscribe = async (clientId, ticker) => {
         clients.forEach((client) => {
             if (client.id === clientId) {
                 if (!client.subscriptions.includes(ticker)) {
-                    client.subscriptions.length = 0;
                     client.subscriptions.push(ticker);
-
                     logger.info(`Client add new subscription: id:${clientId}, ticker:${ticker}`);
                 }
             }
-        })
+        });
     }
 }
 
@@ -99,30 +117,18 @@ const unsubscribe = async (clientId, ticker) => {
         clients.forEach((client) => {
             if (client.id === clientId) {
                 if (client.subscriptions.includes(ticker)) {
-                    client.subscriptions.pop(ticker);
+                    client.subscriptions = client.subscriptions.filter(t => t !== ticker);
                     logger.info(`Client remove subscription: id:${clientId}, ticker:${ticker}`);
                 }
             }
-        })
+        });
     }
 }
 
-//  구독 모두 제거
-const unsubscribeAllStockTickers = async (clientId) => {
-    clients.forEach((client) => {
-        if (client.id === clientId) {
-            if (client.subscriptions.includes(ticker)) {
-                client.subscriptions.length = 0;
-                logger.info(`Client clear subscription: id:${clientId}`);
-            }
-        }
-    });
-}
-
 // 주식 데이터 전송
-const sendStockData = () => {
-    clients.forEach((client) => {
-        client.subscriptions.forEach(async (ticker) => {
+const sendStockData = async () => {
+    clients.forEach(async (client) => {
+        for (const ticker of client.subscriptions) {
             const data = await fetchRealTimeStockData(ticker);
             if (data) {
                 // 모든 연결된 클라이언트에게 데이터 전송
@@ -133,25 +139,19 @@ const sendStockData = () => {
                     client.res.flush();
                 }
             }
-        })
+        }
     });
 }
-
 
 // 실시간 주식 데이터 가져오기 함수
 const fetchRealTimeStockData = async (ticker) => {
     try {
-        // FINNHUB 실시간 데이터는 무료이나 POLYGON 데이터와는 구성이 다름
-
-        //  c: current price, d: change, dp:change percent, h: high, l: low, o: open price, pc: previous close, t: unix timestamp
-        // {"c":82.58,"d":-0.22,"dp":-0.2657,"h":83.19,"l":82.43,"o":82.95,"pc":82.8,"t":1722456000}
-
-        const FINNHUB_REALTIME_URL = `https://finnhub.io/api/v1/quote?symbol=${ticker}&token=${process.env.FINNHUB_API_KEY}`
+        const FINNHUB_REALTIME_URL = `https://finnhub.io/api/v1/quote?symbol=${ticker}&token=${process.env.FINNHUB_API_KEY}`;
         const response = await axios.get(FINNHUB_REALTIME_URL);
-
         return { type: 'stockInfo', data: response.data, time: new Date(response.data.t * 1000).toISOString() };
     } catch (error) {
         console.error('주식 데이터 가져오기 에러:', error);
+        changeInterval(1000); // 예외 발생 시 타이머 간격을 1초 늘입니다.
         return null;
     }
 };
