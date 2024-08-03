@@ -67,6 +67,12 @@ const connect = async (req, res) => {
         });
 
     } else if (req.method === 'POST') {
+        res.setHeader('Content-Type', 'text/event-stream');
+        res.setHeader('Cache-Control', 'no-cache');
+        res.setHeader('Connection', 'keep-alive');
+        res.setHeader('Access-Control-Allow-Origin', '*'); // 모든 도메인 허용
+        res.flushHeaders();
+
         if (req.body.type === 'subscribe') {
             if (req.body.clientId && req.body.ticker) {
                 await subscribe(req.body.clientId, req.body.ticker);
