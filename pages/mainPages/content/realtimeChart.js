@@ -24,14 +24,27 @@ const RealtimeChart = () => {
     const setCurrentTickerRef = (newVal) => {
         setCurrentTicker(newVal);
         currentTickerRef.current = newVal;
+
+        setSeriesRef([
+            {
+                name: `${currentTickerRef.current}의 현재 가격`,
+                data: [],
+            },
+        ])
     }
 
     const [series, setSeries] = useState([
         {
-            name: `${currentTickerRef.current} 현재 가격`,
+            name: `${currentTickerRef.current}의 현재 가격`,
             data: [],
         },
     ]);
+
+    const seriesRef = useRef(series);
+    const setSeriesRef = (newVal) => {
+        seriesRef.current = newVal;
+        setSeries(newVal);
+    }
 
     const [options, setOptions] = useState({
         chart: {

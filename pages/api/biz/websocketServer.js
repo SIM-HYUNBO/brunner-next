@@ -5,7 +5,7 @@ import { v4 as uuidv4 } from 'uuid';
 import axios from "axios";
 
 let clients = []; // 연결된 클라이언트 목록
-const interval = 5000; // 5초마다 데이터 전송
+const interval = 10000; // 5초마다 데이터 전송
 
 // WebSocket 신규 세션 연결
 const connect = async (req, res) => {
