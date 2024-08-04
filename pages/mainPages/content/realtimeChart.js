@@ -1,48 +1,19 @@
-`use strict`
-
-import dotenv from 'dotenv';
-import { useState, useRef, useEffect } from 'react';
-import moment from 'moment';
-import requestServer from '../../../components/requestServer';
-import BrunnerMessageBox from '../../../components/BrunnerMessageBox';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import dynamic from 'next/dynamic';
-import { Logger } from 'winston';
+import requestServer from '../../../components/requestServer';
 
-const [intervalTime, setIntervalTime] = useState(1000); // 인터벌 시간 상태 (밀리초)
-const [intervalId, setIntervalId] = useState(null); // 인터벌 ID 상태
-
+// dynamic import로 ApexCharts를 사용합니다.
 const ApexCharts = dynamic(() => import('react-apexcharts'), { ssr: false });
 
 const RealtimeChart = () => {
-
-    const [loading, setLoading] = useState(false); // 로딩 상태 관리
     const [currentTicker, setCurrentTicker] = useState(process.currentTicker);
     const currentTickerRef = useRef(currentTicker);
-    const setCurrentTickerRef = (newVal) => {
-        setCurrentTicker(newVal);
-        currentTickerRef.current = newVal;
-
-        setSeriesRef([
-            {
-                name: `${currentTickerRef.current}의 현재 가격`,
-                data: [],
-            },
-        ])
-    }
-
-    const [series, setSeries] = useState([
-        {
-            name: `${currentTickerRef.current}의 현재 가격`,
-            data: [],
-        },
-    ]);
-
-    const seriesRef = useRef(series);
-    const setSeriesRef = (newVal) => {
-        seriesRef.current = newVal;
-        setSeries(newVal);
-    }
-
+    const [series, setSeries] = useState([{
+        name: `${currentTicker}의 현재 가격`,
+        data: [],
+    }]);
+    const [intervalTime, setIntervalTime] = useState(5000); // 인터벌 시간 상태 (밀리초)
+    const [intervalId, setIntervalId] = useState(null);
     const [options, setOptions] = useState({
         chart: {
             id: 'realtime-chart',
@@ -50,7 +21,7 @@ const RealtimeChart = () => {
                 enabled: true,
                 easing: 'linear',
                 dynamicAnimation: {
-                    speed: 1000,
+                    speed: 500, // 애니메이션 속도 조절
                 },
             },
             toolbar: {
@@ -63,75 +34,34 @@ const RealtimeChart = () => {
         xaxis: {
             type: 'datetime',
             labels: {
-                datetimeUTC: false, // UTC가 아닌 로컬 시간대로 표시합니다.
-                format: 'MM/dd HH:mm', // 'dd MMM'은 날짜와 시간을 모두 보여줍니다. (예: 03 Aug 13:00)
-                style: {
-                    colors: '#9e9e9e', // x축 레이블 색상
-                    //fontSize: '12px',  // x축 레이블 폰트 크기
-                    fontFamily: 'Arial, sans-serif', // x축 레이블 폰트 패밀리
-                }
+                datetimeUTC: false,
+                format: 'MM/dd HH:mm',
             },
         },
         yaxis: {
-            // min/max 자동 설정
+            labels: {
+                formatter: (value) => value.toFixed(2),
+            },
         },
         stroke: {
-            curve: 'smooth', // 선의 곡선 스타일 (선택 사항)
-            width: 1, // 선의 두께를 설정 (2는 예시값입니다. 원하는 두께로 변경하세요)
+            curve: 'smooth',
+            width: 1,
         },
     });
 
-    // useEffect를 사용하여 최근 검색한 종목 코드 로드
-    useEffect(() => {
-        if (intervalId) {
-            clearInterval(intervalId); // 기존 인터벌 제거
-        }
-
-        const id = setInterval(() => {
-            fetchRealtimeStockData();
-        }, intervalTime);
-
-        setIntervalId(id); // 새로운 인터벌 ID 저장
-
-        return () => clearInterval(id);
-    }, [intervalTime]);
-
-    const [modalContent, setModalContent] = useState({
-        isOpen: false,
-        message: '',
-        onConfirm: () => { },
-        onClose: () => { },
-    });
-
-    // 모달 열기 함수
-    const openModal = (message) => {
-        return new Promise((resolve, reject) => {
-            setModalContent({
-                isOpen: true,
-                message: message,
-                onConfirm: (result) => { resolve(result); closeModal(); },
-                onClose: () => { reject(false); closeModal(); }
-            });
-        });
-    };
-
-    // 모달 닫기 함수
-    const closeModal = () => {
-        setModalContent({
-            isOpen: false,
-            message: '',
-            onConfirm: () => { },
-            onClose: () => { }
-        });
-    };
-
-    const fetchRealtimeStockData = async () => {
+    const fetchRealtimeStockData = useCallback(async () => {
         try {
-            if (currentTickerRef.current !== process.currentTicker)
-                setCurrentTickerRef(process.currentTicker);
+            if (currentTickerRef.current !== process.currentTicker) {
+                setCurrentTicker(process.currentTicker);
+                currentTickerRef.current = process.currentTicker;
+                // 데이터가 변경되면 시리즈도 초기화합니다.
+                setSeries([{
+                    name: `${currentTickerRef.current}의 현재 가격`,
+                    data: [],
+                }]);
+            }
 
-            if (!currentTickerRef.current || currentTickerRef.current === '')
-                return;
+            if (!currentTickerRef.current) return;
 
             const jRequest = {
                 commandName: 'stock.getRealtimeStockInfo',
@@ -143,46 +73,63 @@ const RealtimeChart = () => {
             if (jResponse.error_code === 0) {
                 handleNewData(jResponse.stockInfo.data);
             } else {
-                Logger.error(JSON.stringify(jResponse.error_message));
-                setIntervalTime(intervalTime + 1000);
-                Logger.error(`타이머 인터벌 변경: ${intervalTime}`);
+                console.error(JSON.stringify(jResponse.error_message));
+                setIntervalTime(prevTime => prevTime + 1000);
+                console.error(`타이머 인터벌 변경: ${intervalTime}`);
             }
         } catch (err) {
-            openModal(err instanceof Error ? err.message : 'Unknown error occurred');
+            console.error(err instanceof Error ? err.message : 'Unknown error occurred');
         }
-        finally {
-        }
-    };
+    }, [intervalTime]);
 
     const handleNewData = (newData) => {
         const now = new Date().getTime();
         const givenTime = new Date(newData.t * 1000).getTime();
-        const diffMinutes = (now - givenTime) / 1000 / 60;
+
+        const diff = now - givenTime;
 
         const newChartData = {
-            x: diffMinutes > 1 ? now : givenTime, // 밀리초로 변환
-            y: newData.c
+            x: diff > intervalTime ? now : givenTime,
+            y: newData.c,
         };
 
-        // 상태 업데이트 함수 호출 수정
-        setSeries((prevSeries) => {
-            const updatedData = [...prevSeries[0].data, newChartData].slice(-100);
-            console.log('Updated Series Data:', updatedData); // 데이터 업데이트 확인
-            return [
-                {
-                    ...prevSeries[0],
-                    data: updatedData,
-                }
-            ];
+        setSeries(prevSeries => {
+            const existingData = prevSeries[0].data;
+            const updatedData = [...existingData, newChartData].slice(-100);
+            return [{
+                ...prevSeries[0],
+                data: updatedData,
+            }];
         });
     };
 
+    useEffect(() => {
+        // 인터벌 설정
+        if (intervalId) {
+            clearInterval(intervalId); // 이전 인터벌 제거
+        }
+
+        const id = setInterval(() => {
+            fetchRealtimeStockData();
+        }, intervalTime);
+
+        setIntervalId(id); // 새로운 인터벌 ID 저장
+
+        // 컴포넌트 언마운트 시 인터벌 클리어
+        return () => clearInterval(id);
+    }, [fetchRealtimeStockData, intervalTime]);
+
     return (
         <div className="w-full mt-5">
-            <ApexCharts options={options} series={series} type="line" height={350} width={'100%'} />
+            <ApexCharts
+                options={options}
+                series={series}
+                type="line"
+                height={350}
+                width={'100%'}
+            />
         </div>
     );
-}
-
+};
 
 export default RealtimeChart;
