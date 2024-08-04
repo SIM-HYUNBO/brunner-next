@@ -225,8 +225,12 @@ const RealtimeChart = () => {
 
     const handleNewData = (newData) => {
 
+        const currentTime = new Date().getTime();
+        const givenTime = new Date(newData.t).getTime();
+        const diffMin = (currentTime - givenTime) / 1000 /60;
+
         const newChartData = {
-            x: new Date(newData.t * 1000).getTime(), // 밀리초로 변환
+            x: diffMin > 1 ? new Date().getTime(): new Date(newData.t * 10008).getTime(), // 밀리초로 변환
             y: newData.c
         };
  
