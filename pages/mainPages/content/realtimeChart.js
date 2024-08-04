@@ -226,17 +226,13 @@ const RealtimeChart = () => {
     const handleNewData = (newData) => {
 
         const newChartData = {
-            x: new Date(newData.t * 1000).getTime(), // 밀리초로 변환
-            y: newData.c
-        };
-        const newChartDataNow = {
             x: new Date().getTime(), // 밀리초로 변환
             y: newData.c
         };
 
         // 상태 업데이트 함수 호출 수정
         setSeries((prevSeries) => {
-            const updatedData = [...prevSeries[0].data, newChartData, newChartDataNow].slice(-100);
+            const updatedData = [...prevSeries[0].data, newChartData].slice(-100);
             console.log('Updated Series Data:', updatedData); // 데이터 업데이트 확인
             return [
                 {
