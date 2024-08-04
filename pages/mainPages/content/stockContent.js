@@ -28,6 +28,7 @@ const StockContent = () => {
     const setStocksTickerRef = (newVal) => {
         setStocksTicker(newVal);
         stocksTickerRef.current = newVal;
+        process.currentTicker = newVal;
     }
 
     const [stockData, setStockData] = useState(null); // 주식 데이터
@@ -290,8 +291,6 @@ const StockContent = () => {
         setStocksTickerRef(selectedOption ? selectedOption.value : '');
 
         handleStockRequest();
-
-        process.currentTicker = selectedOption.value;
     };
 
     // 차트 렌더링을 위한 준비
