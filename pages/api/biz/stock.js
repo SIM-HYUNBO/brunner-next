@@ -123,7 +123,7 @@ const getRealtimeStockInfo = async (txnId, jRequest) => {
 
         jResponse.stockInfo = { type: 'stockInfo', data: response.data, time: new Date(response.data.t * 1000).toISOString() }
         jResponse.error_code = 0;
-        jResponse.error_message = data.status;
+        jResponse.error_message = '';
     }
     catch (e) {
         logger.error(e);
