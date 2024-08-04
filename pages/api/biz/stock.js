@@ -114,24 +114,20 @@ const getRealtimeStockInfo = async (txnId, jRequest) => {
             jResponse.error_code = -2;
             jResponse.error_message = `The [stocksTicker] is a required field. 
             Please set a value.`;
+
             return jResponse;
         }
 
         const FINNHUB_REALTIME_URL = `https://finnhub.io/api/v1/quote?symbol=${jRequest.stocksTicker}&token=${process.env.FINNHUB_API_KEY}`;
+        const response = await axios.get(FINNHUB_REALTIME_URL);
 
-        try {
-            const response = await axios.get(FINNHUB_REALTIME_URL);
-
-            jResponse.stockInfo = { type: 'stockInfo', data: response.data, time: new Date(response.data.t * 1000).toISOString() }
-            jResponse.error_code = 0; // exception
-            jResponse.error_message = data.status;
-        } catch (error) {
-            throw (error);
-        }
+        jResponse.stockInfo = { type: 'stockInfo', data: response.data, time: new Date(response.data.t * 1000).toISOString() }
+        jResponse.error_code = 0;
+        jResponse.error_message = data.status;
     }
     catch (e) {
         logger.error(e);
-        jResponse.error_code = -3; // exception
+        jResponse.error_code = -1; // exception
         jResponse.error_message = e.message
     }
     finally {
