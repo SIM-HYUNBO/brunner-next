@@ -226,10 +226,10 @@ const RealtimeChart = () => {
     const handleNewData = (newData) => {
 
         const newChartData = {
-            x: new Date().getTime(), // 밀리초로 변환
+            x: new Date(newData.t * 1000).getTime(), // 밀리초로 변환
             y: newData.c
         };
-
+ 
         // 상태 업데이트 함수 호출 수정
         setSeries((prevSeries) => {
             const updatedData = [...prevSeries[0].data, newChartData].slice(-100);
