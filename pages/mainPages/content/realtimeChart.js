@@ -69,7 +69,7 @@ const RealtimeChart = () => {
             type: 'datetime',
             labels: {
                 datetimeUTC: false, // UTC가 아닌 로컬 시간대로 표시합니다.
-                //format: 'dd MMM HH:mm', // 'dd MMM'은 날짜와 시간을 모두 보여줍니다. (예: 03 Aug 13:00)
+                format: 'MM/dd HH:mm', // 'dd MMM'은 날짜와 시간을 모두 보여줍니다. (예: 03 Aug 13:00)
                 style: {
                     colors: '#9e9e9e', // x축 레이블 색상
                     //fontSize: '12px',  // x축 레이블 폰트 크기
@@ -78,7 +78,7 @@ const RealtimeChart = () => {
             },
         },
         yaxis: {
-            max: 100,
+            // min/max 자동 설정
         },
     });
 
@@ -234,11 +234,11 @@ const RealtimeChart = () => {
         setSeries((prevSeries) => [
             {
                 ...prevSeries[0],
-                data: [...prevSeries[0].data, newChartData].slice(-10), // 마지막 10개의 데이터만 유지
+                data: [...prevSeries[0].data, newChartData].slice(-100), // 마지막 100개의 데이터만 유지
             },
             {
                 ...prevSeries[0],
-                data: [...prevSeries[0].data, newChartDataNow].slice(-10), // 마지막 10개의 데이터만 유지
+                data: [...prevSeries[0].data, newChartDataNow].slice(-100), // 마지막 100개의 데이터만 유지
             },
         ]);
     };
