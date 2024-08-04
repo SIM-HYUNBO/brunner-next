@@ -80,6 +80,10 @@ const RealtimeChart = () => {
         yaxis: {
             // min/max 자동 설정
         },
+        stroke: {
+            curve: 'smooth', // 선의 곡선 스타일 (선택 사항)
+            width: 1, // 선의 두께를 설정 (2는 예시값입니다. 원하는 두께로 변경하세요)
+        },
     });
 
     // useEffect를 사용하여 최근 검색한 종목 코드 로드
@@ -222,21 +226,25 @@ const RealtimeChart = () => {
     const handleNewData = (newData) => {
 
         const newChartData = {
-            x: new Date(newData.t * 1000).toISOString(),
+            x: new Date(newData.t * 1000).getTime(), // 밀리초로 변환
             y: newData.c
         };
         const newChartDataNow = {
-            x: new Date().toISOString(),
+            x: new Date().getTime(), // 밀리초로 변환
             y: newData.c
         };
 
         // 상태 업데이트 함수 호출 수정
-        setSeries((prevSeries) => [
-            {
-                ...prevSeries[0],
-                data: [...prevSeries[0].data, ...[newChartData, newChartDataNow]].slice(-100), // 마지막 100개의 데이터만 유지
-            }
-        ]);
+        setSeries((prevSeries) => {
+            const updatedData = [...prevSeries[0].data, newChartData, newChartDataNow].slice(-100);
+            console.log('Updated Series Data:', updatedData); // 데이터 업데이트 확인
+            return [
+                {
+                    ...prevSeries[0],
+                    data: updatedData,
+                }
+            ];
+        });
     };
 
     return (
