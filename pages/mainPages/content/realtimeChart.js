@@ -6,21 +6,16 @@ import moment from 'moment';
 import requestServer from '../../../components/requestServer';
 import BrunnerMessageBox from '../../../components/BrunnerMessageBox';
 import dynamic from 'next/dynamic';
+import { Logger } from 'winston';
+
+const [intervalTime, setIntervalTime] = useState(1000); // 인터벌 시간 상태 (밀리초)
+const [intervalId, setIntervalId] = useState(null); // 인터벌 ID 상태
 
 const ApexCharts = dynamic(() => import('react-apexcharts'), { ssr: false });
 
 const RealtimeChart = () => {
 
     const [loading, setLoading] = useState(false); // 로딩 상태 관리
-
-    // var wsClient; // Web Socket 클라이언트
-    // const [wsConnected, setWsConnected] = useState(false); //실시간 Web Socket 채널 연결상태
-    // const [wsClientId, setWsClientId] = useState(null);
-    // const wsClientIdRef = useRef(wsClientId);
-    // const setWsClientIdRef = (newVal) => {
-    //     setWsClientId(newVal);
-    //     wsClientIdRef.current = newVal;
-    // }
     const [currentTicker, setCurrentTicker] = useState(process.currentTicker);
     const currentTickerRef = useRef(currentTicker);
     const setCurrentTickerRef = (newVal) => {
@@ -88,11 +83,18 @@ const RealtimeChart = () => {
 
     // useEffect를 사용하여 최근 검색한 종목 코드 로드
     useEffect(() => {
-        const interval = setInterval(() => {
-            fetchRealtimeStockData();
-        }, 5000);
+        if (intervalId) {
+            clearInterval(intervalId); // 기존 인터벌 제거
+        }
 
-    }, []);
+        const id = setInterval(() => {
+            fetchRealtimeStockData();
+        }, intervalTime);
+
+        setIntervalId(id); // 새로운 인터벌 ID 저장
+
+        return () => clearInterval(id);
+    }, [intervalTime]);
 
     const [modalContent, setModalContent] = useState({
         isOpen: false,
@@ -141,7 +143,9 @@ const RealtimeChart = () => {
             if (jResponse.error_code === 0) {
                 handleNewData(jResponse.stockInfo.data);
             } else {
-                openModal(JSON.stringify(jResponse.error_message));
+                Logger.error(JSON.stringify(jResponse.error_message));
+                setIntervalTime(intervalTime + 1000);
+                Logger.error(`타이머 인터벌 변경: ${intervalTime}`);
             }
         } catch (err) {
             openModal(err instanceof Error ? err.message : 'Unknown error occurred');
