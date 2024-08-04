@@ -117,11 +117,17 @@ const getRealtimeStockInfo = async (txnId, jRequest) => {
             return jResponse;
         }
 
-        const data = await fetchRealTimeStockData(jRequest.stocksTicker);
+        const FINNHUB_REALTIME_URL = `https://finnhub.io/api/v1/quote?symbol=${jRequest.stocksTicker}&token=${process.env.FINNHUB_API_KEY}`;
 
-        jResponse.stockInfo = data;
-        jResponse.error_code = 0; // exception
-        jResponse.error_message = data.status;
+        try {
+            const response = await axios.get(FINNHUB_REALTIME_URL);
+
+            jResponse.stockInfo = { type: 'stockInfo', data: response.data, time: new Date(response.data.t * 1000).toISOString() }
+            jResponse.error_code = 0; // exception
+            jResponse.error_message = data.status;
+        } catch (error) {
+            throw (error);
+        }
     }
     catch (e) {
         logger.error(e);
@@ -130,18 +136,6 @@ const getRealtimeStockInfo = async (txnId, jRequest) => {
     }
     finally {
         return jResponse;
-    }
-};
-
-const fetchRealTimeStockData = async (ticker) => {
-    try {
-        const FINNHUB_REALTIME_URL = `https://finnhub.io/api/v1/quote?symbol=${ticker}&token=${process.env.FINNHUB_API_KEY}`;
-        const response = await axios.get(FINNHUB_REALTIME_URL);
-        return { type: 'stockInfo', data: response.data, time: new Date(response.data.t * 1000).toISOString() };
-    } catch (error) {
-        logger.error('주식 데이터 가져오기 에러:', error);
-        changeInterval(1000); // 예외 발생 시 타이머 간격을 1초 늘입니다.
-        return null;
     }
 };
 
