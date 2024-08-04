@@ -3,6 +3,7 @@
 import logger from "./../winston/logger"
 import * as database from "./database/database"
 import * as serviceSQL from './serviceSQL'
+import axios from 'axios';
 
 const executeService = (txnId, jRequest) => {
     var jResponse = {};
@@ -11,6 +12,9 @@ const executeService = (txnId, jRequest) => {
         switch (jRequest.commandName) {
             case "stock.getStockInfo":
                 jResponse = getStockInfo(txnId, jRequest);
+                break;
+            case "stock.getRealtimeStockInfo":
+                jResponse = getRealtimeStockInfo(txnId, jRequest);
                 break;
             default:
                 break;
@@ -97,6 +101,47 @@ const getStockInfo = async (txnId, jRequest) => {
     }
     finally {
         return jResponse;
+    }
+};
+
+const getRealtimeStockInfo = async (txnId, jRequest) => {
+    var jResponse = {};
+
+    try {
+        jResponse.commanaName = jRequest.commandName;
+
+        if (!jRequest.stocksTicker) {
+            jResponse.error_code = -2;
+            jResponse.error_message = `The [stocksTicker] is a required field. 
+            Please set a value.`;
+            return jResponse;
+        }
+
+        const data = await fetchRealTimeStockData(jRequest.stocksTicker);
+
+        jResponse.stockInfo = data;
+        jResponse.error_code = 0; // exception
+        jResponse.error_message = data.status;
+    }
+    catch (e) {
+        logger.error(e);
+        jResponse.error_code = -3; // exception
+        jResponse.error_message = e.message
+    }
+    finally {
+        return jResponse;
+    }
+};
+
+const fetchRealTimeStockData = async (ticker) => {
+    try {
+        const FINNHUB_REALTIME_URL = `https://finnhub.io/api/v1/quote?symbol=${ticker}&token=${process.env.FINNHUB_API_KEY}`;
+        const response = await axios.get(FINNHUB_REALTIME_URL);
+        return { type: 'stockInfo', data: response.data, time: new Date(response.data.t * 1000).toISOString() };
+    } catch (error) {
+        logger.error('주식 데이터 가져오기 에러:', error);
+        changeInterval(1000); // 예외 발생 시 타이머 간격을 1초 늘입니다.
+        return null;
     }
 };
 

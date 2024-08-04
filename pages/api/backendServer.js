@@ -89,12 +89,9 @@ const generateTxnId = async () => {
 }
 
 const saveTxnHistory = async (remoteIp, txnId, jRequest, jResponse) => {
-    logger.warn(`saveTxnHistory REQ: ${jRequest} RES: ${jResponse}\n`);
+    // logger.info(`saveTxnHistory REQ: ${JSON.stringify(jRequest)} RES: ${JSON.stringify(jResponse)}\n`);
 
-    var sql = null;
-    logger.warn(`serviceSQL: ${serviceSQL}\n`);
-    sql = serviceSQL.getSQL00('insert_TB_COR_TXN_HIST', 1);
-    logger.warn(`sql: ${sql}\ndatabase: ${database} `);
+    var sql = serviceSQL.getSQL00('insert_TB_COR_TXN_HIST', 1);
     var insert_TB_COR_TXN_HIST_01 = await database.executeSQL(sql,
         [
             txnId,
@@ -102,10 +99,8 @@ const saveTxnHistory = async (remoteIp, txnId, jRequest, jResponse) => {
             JSON.stringify(jRequest, null, 2),
             JSON.stringify(jResponse, null, 2),
         ]);
-    logger.warn(`insert_TB_COR_TXN_HIST_01: ${insert_TB_COR_TXN_HIST_01}\n`);
 
     if (insert_TB_COR_TXN_HIST_01.rowCount !== 1) {
-        logger.info(`Failed to execute insert_TB_COR_TXN_HIST_01\n`);
+        logger.error(`Failed to execute insert_TB_COR_TXN_HIST_01\n`);
     }
-    logger.warn(`end saveTxnHistory REQ: ${jRequest} RES: ${jResponse}\n`);
 }
