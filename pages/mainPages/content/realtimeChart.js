@@ -13,15 +13,15 @@ const RealtimeChart = () => {
 
     const [loading, setLoading] = useState(false); // 로딩 상태 관리
 
-    var wsClient; // Web Socket 클라이언트
-    const [wsConnected, setWsConnected] = useState(false); //실시간 Web Socket 채널 연결상태
-    const [wsClientId, setWsClientId] = useState(null);
-    const wsClientIdRef = useRef(wsClientId);
-    const setWsClientIdRef = (newVal) => {
-        setWsClientId(newVal);
-        wsClientIdRef.current = newVal;
-    }
-    const [currentTicker, setCurrentTicker] = useState('');
+    // var wsClient; // Web Socket 클라이언트
+    // const [wsConnected, setWsConnected] = useState(false); //실시간 Web Socket 채널 연결상태
+    // const [wsClientId, setWsClientId] = useState(null);
+    // const wsClientIdRef = useRef(wsClientId);
+    // const setWsClientIdRef = (newVal) => {
+    //     setWsClientId(newVal);
+    //     wsClientIdRef.current = newVal;
+    // }
+    const [currentTicker, setCurrentTicker] = useState(process.currentTicker);
     const currentTickerRef = useRef(currentTicker);
     const setCurrentTickerRef = (newVal) => {
         setCurrentTicker(newVal);
@@ -88,14 +88,10 @@ const RealtimeChart = () => {
 
     // useEffect를 사용하여 최근 검색한 종목 코드 로드
     useEffect(() => {
+        const interval = setInterval(() => {
+            fetchRealtimeStockData();
+        }, 5000);
 
-        wsClient = new EventSource('/api/biz/websocketServer');
-        onConnect(wsClient);
-
-        return () => {
-            wsClient.close(); // 컴포넌트 언마운트 시 연결 종료
-            wsClient = null;
-        };
     }, []);
 
     const [modalContent, setModalContent] = useState({
@@ -127,116 +123,45 @@ const RealtimeChart = () => {
         });
     };
 
-    // 실시간 데이터 수신 처리 ( Web Socket )
-    const onConnect = (wsClient) => {
-        wsClient.onopen = () => {
-            console.log('Web Socket  서버에 연결되었습니다.');
-            setWsConnected(true);
-        };
-
-        wsClient.onmessage = (event) => {
-            const data = JSON.parse(event.data);
-            console.log(`${new Date().toISOString()}: ${data.type} 수신: ${event.data}`);
-
-            if (data.type === 'sessionInfo') {
-                setWsClientIdRef(data.clientId);
-
-                const interval = setInterval(() => {
-                    checkSubscription();
-                }, 5000);
-            }
-            else if (data.type === 'stockInfo') {
-                handleNewData(data.data);
-            }
-        };
-
-        wsClient.onerror = (error) => {
-            console.error('서버 연결 에러:', error);
-
-            setWsConnected(false);
-            wsClient.close(); // 에러 발생 시 연결 종료
-            setWsClientId(null);
-        };
-    }
-
-    const checkSubscription = () => {
-        console.log(`선택한 종목: ${process.currentTicker} 현재 종목: ${currentTickerRef.current}`);
-
-        if (process.currentTicker !== currentTickerRef.current) {
-            if (process.currentTicker && process.currentTicker !== '' && currentTickerRef.current && currentTickerRef.current !== '') {
-                unsubscribe(wsClientIdRef.current, process.currentTicker);
+    const fetchRealtimeStockData = async () => {
+        try {
+            if (currentTickerRef.current !== process.currentTicker)
                 setCurrentTickerRef(process.currentTicker);
-                subscribe(wsClientIdRef.current, currentTickerRef.current);
+
+            if (!currentTickerRef.current || currentTickerRef.current === '')
+                return;
+
+            const jRequest = {
+                commandName: 'stock.getRealtimeStockInfo',
+                stocksTicker: currentTickerRef.current,
+            };
+
+            const jResponse = await requestServer('POST', JSON.stringify(jRequest));
+
+            if (jResponse.error_code === 0) {
+                handleNewData(jResponse.stockInfo.data);
+            } else {
+                openModal(JSON.stringify(jResponse.error_message));
             }
-            else if (process.currentTicker) {
-                subscribe(wsClientIdRef.current, process.currentTicker);
-                setCurrentTickerRef(process.currentTicker);
-            }
-            else if (currentTickerRef.current) {
-                subscribe(wsClientIdRef.current, currentTickerRef.current);
-                process.currentTicker = currentTickerRef.current;
-            }
+        } catch (err) {
+            openModal(err instanceof Error ? err.message : 'Unknown error occurred');
         }
-    }
-
-    const subscribe = async (clientId, stocksTicker) => {
-        const res = await fetch('/api/biz/websocketServer', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(
-                {
-                    'type': 'subscribe',
-                    'clientId': clientId,
-                    'ticker': stocksTicker
-                }),
-        });
-
-        if (!res.ok) {
-            openModal(`Stock subscribe errror! Status: ${res.status}`)
+        finally {
         }
-        else {
-            console.log(`구독한 종목: ${stocksTicker}`);
-        }
-    }
-
-    const unsubscribe = async (clientId, stocksTicker) => {
-        const res = await fetch('/api/biz/websocketServer', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(
-                {
-                    'type': 'unsubscribe',
-                    'clientId': clientId,
-                    'ticker': stocksTicker
-                }),
-        });
-
-        if (!res.ok) {
-            openModal(`Stock subscribe errror! Status: ${res.status}`)
-        }
-        else {
-            console.log(`구독 삭제한 종목: ${stocksTicker}`);
-        }
-    }
+    };
 
     const handleNewData = (newData) => {
+        const now = new Date().getTime();
+        const diffMinutes = (now - new Date(newData.t * 1000).getTime()) / 1000 / 60;
 
         const newChartData = {
-            x: new Date(newData.t * 1000).getTime(), // 밀리초로 변환
-            y: newData.c
-        };
-        const newChartDataNow = {
-            x: new Date().getTime(), // 밀리초로 변환
+            x: diffMinutes > 1 ? now : new Date(newData.t * 1000).getTime(), // 밀리초로 변환
             y: newData.c
         };
 
         // 상태 업데이트 함수 호출 수정
         setSeries((prevSeries) => {
-            const updatedData = [...prevSeries[0].data, newChartData, newChartDataNow].slice(-100);
+            const updatedData = [...prevSeries[0].data, newChartData].slice(-100);
             console.log('Updated Series Data:', updatedData); // 데이터 업데이트 확인
             return [
                 {
