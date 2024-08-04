@@ -7,8 +7,6 @@ import requestServer from './../../../components/requestServer';
 import * as userInfo from './../../../components/userInfo';
 import moment from 'moment';
 import BrunnerMessageBox from '@/components/BrunnerMessageBox';
-import { log } from 'winston';
-import { Console } from 'winston/lib/winston/transports';
 
 export default function AssetContent() {
   const router = useRouter();
