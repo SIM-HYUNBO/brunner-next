@@ -234,12 +234,8 @@ const RealtimeChart = () => {
         setSeries((prevSeries) => [
             {
                 ...prevSeries[0],
-                data: [...prevSeries[0].data, newChartData].slice(-100), // 마지막 100개의 데이터만 유지
-            },
-            {
-                ...prevSeries[0],
-                data: [...prevSeries[0].data, newChartDataNow].slice(-100), // 마지막 100개의 데이터만 유지
-            },
+                data: [...prevSeries[0].data, ...[newChartData, newChartDataNow]].slice(-100), // 마지막 100개의 데이터만 유지
+            }
         ]);
     };
 
