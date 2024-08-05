@@ -10,6 +10,9 @@ const executeService = (txnId, jRequest) => {
 
     try {
         switch (jRequest.commandName) {
+            case "stock.getTickerList":
+                jResponse = getTickerList(txnId, jRequest);
+                break;
             case "stock.getStockInfo":
                 jResponse = getStockInfo(txnId, jRequest);
                 break;
@@ -100,6 +103,32 @@ const getStockInfo = async (txnId, jRequest) => {
         jResponse.error_message = e.message
     }
     finally {
+        return jResponse;
+    }
+};
+
+const getTickerList = async (txnId, jRequest) => {
+    var jResponse = {};
+
+    try {
+        jResponse.commanaName = jRequest.commandName;
+
+        var sql = null
+        sql = serviceSQL.getSQL00('select_TB_COR_TICKER_INFO', 1);
+        var select_TB_COR_TICKER_INFO_01 = await database.executeSQL(sql,
+            [
+                jRequest.systemCode
+            ]);
+
+        jResponse.tickerList = select_TB_COR_TICKER_INFO_01.rows;
+
+        jResponse.error_code = 0;
+        jResponse.error_message = "";
+    } catch (e) {
+        logger.error(e);
+        jResponse.error_code = -1; // exception
+        jResponse.error_message = e.message
+    } finally {
         return jResponse;
     }
 };
