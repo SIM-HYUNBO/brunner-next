@@ -118,7 +118,7 @@ const RealtimeChart = () => {
 
         setSeries(prevSeries => {
             const existingData = prevSeries[0].data;
-            const updatedData = [...existingData, newChartData].slice(-17280); // 인터벌이 5초라고 했을떄 하루치
+            const updatedData = [...existingData, newChartData].slice(-5040); // 인터벌이 5초라고 했을떄 하루 7시간치
             return [{
                 ...prevSeries[0],
                 data: updatedData,
