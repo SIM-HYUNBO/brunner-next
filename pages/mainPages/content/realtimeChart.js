@@ -36,16 +36,39 @@ const RealtimeChart = () => {
             labels: {
                 datetimeUTC: false,
                 format: 'MM/dd HH:mm',
+                style: {
+                    colors: '#9e9e9e', // x축 레이블 색상
+                    //fontSize: '12px',  // x축 레이블 폰트 크기
+                    fontFamily: 'Arial, sans-serif', // x축 레이블 폰트 패밀리
+                }
             },
+            style: {
+                colors: '#94a3b8' // slate-400 색상 설정
+            }
         },
         yaxis: {
             labels: {
                 formatter: (value) => value.toFixed(2),
+                style: {
+                    colors: '#9e9e9e', // x축 레이블 색상
+                    //fontSize: '12px',  // x축 레이블 폰트 크기
+                    fontFamily: 'Arial, sans-serif', // x축 레이블 폰트 패밀리
+                }
             },
+            style: {
+                colors: '#94a3b8' // slate-400 색상 설정
+            }
         },
         stroke: {
             curve: 'smooth',
             width: 1,
+        },
+        title: {
+            text: `${currentTickerRef.current} Realtimme`,
+            align: 'left',
+            style: {
+                color: '#94a3b8' // slate-400 색상 설정
+            }
         },
     });
 

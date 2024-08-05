@@ -29,6 +29,8 @@ const StockContent = () => {
         setStocksTicker(newVal);
         stocksTickerRef.current = newVal;
         process.currentTicker = newVal;
+
+        handleStockRequest();
     }
 
     const [stockData, setStockData] = useState(null); // 주식 데이터
@@ -61,6 +63,10 @@ const StockContent = () => {
     const [recentSearches, setRecentSearches] = useState([]); // 최근 검색 기록
     const [selectedOption, setSelectedOption] = useState(null); // 선택된 옵션
 
+    // 종목 목록을 저장하기 위한 상태 추가
+    const [tickerOptions, setTickerOptions] = useState([]);
+
+
     // useEffect를 사용하여 최근 검색한 종목 코드 로드
     useEffect(() => {
         const storedSearches = localStorage.getItem('recentSearches');
@@ -73,6 +79,9 @@ const StockContent = () => {
             setDefaultTicker(defaultTicker);
             setStocksTickerRef(defaultTicker);
         }
+
+        // 컴포넌트가 마운트될 때 티커 목록 가져오기
+        fetchTickerList();
     }, []);
 
     // 모달 열기 함수
@@ -95,6 +104,35 @@ const StockContent = () => {
             onConfirm: () => { },
             onClose: () => { }
         });
+    };
+
+    const fetchTickerList = async () => {
+        try {
+            const jRequest = {
+                commandName: 'stock.getTickerList',
+                systemCode: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE
+            };
+
+            setLoading(true);
+            setStockDataRef(null);
+            const jResponse = await requestServer('POST', JSON.stringify(jRequest));
+
+            if (jResponse.error_code === 0) {
+                // 여기서 조회한 종목 목록을 콤보박스에 표시
+                const options = jResponse.tickerList.map(ticker => ({
+                    value: ticker.ticker_code, // ticker_code 사용
+                    label: `${ticker.ticker_code} - ${ticker.ticker_desc}` // ticker_desc 사용
+                }));
+                setTickerOptions(options);
+            } else {
+                openModal(JSON.stringify(jResponse.error_message));
+            }
+        } catch (err) {
+            openModal(err instanceof Error ? err.message : 'Unknown error occurred');
+        }
+        finally {
+            setLoading(false);
+        }
     };
 
     // 주식 데이터를 가져오는 함수
@@ -289,8 +327,6 @@ const StockContent = () => {
     const handleTickerChange = (selectedOption) => {
         setSelectedOption(selectedOption);
         setStocksTickerRef(selectedOption ? selectedOption.value : '');
-
-        handleStockRequest();
     };
 
     // 차트 렌더링을 위한 준비
@@ -321,7 +357,7 @@ const StockContent = () => {
                 curve: 'smooth', // 부드러운 곡선
             },
             title: {
-                text: `${stocksTickerRef.current} 차트`,
+                text: `${stocksTickerRef.current} History`,
                 align: 'left',
                 style: {
                     color: '#94a3b8' // slate-400 색상 설정
@@ -669,9 +705,21 @@ const StockContent = () => {
                         value={selectedOption}
                         onChange={handleTickerChange}
                         options={recentSearches}
-                        placeholder="Select Symbol ..."
+                        placeholder="Recent Symbols ..."
                         isClearable
-                        noOptionsMessage={() => "최근 검색 기록이 없습니다."}
+                        noOptionsMessage={() => "No recent symbols."}
+                        styles={process.env.isDarkMode ? darkSelectionStyle : lightSelectionStyle}
+                    />
+                    <Select
+                        id="stock-select"
+                        options={tickerOptions} // 옵션 목록
+                        value={selectedOption} // 현재 선택된 옵션
+                        onChange={(option) => {
+                            setSelectedOption(option);
+                            setStocksTickerRef(option.value); // 선택한 종목의 티커 코드 저장
+                        }}
+                        placeholder="Symbols ..."
+                        isLoading={loading} // 로딩 상태 표시
                         styles={process.env.isDarkMode ? darkSelectionStyle : lightSelectionStyle}
                     />
                     <input className='item-start text-left text-slate-400 bg-slate-50 dark:bg-slate-800 uppercase w-1/2'
