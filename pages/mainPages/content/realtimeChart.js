@@ -64,7 +64,7 @@ const RealtimeChart = () => {
             width: 1,
         },
         title: {
-            text: `${currentTickerRef.current} Realtimme`,
+            text: `${currentTickerRef.current} Realtime`,
             align: 'left',
             style: {
                 color: '#94a3b8' // slate-400 색상 설정
