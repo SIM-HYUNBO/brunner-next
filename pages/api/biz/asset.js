@@ -38,7 +38,7 @@ const addIncome = async (txnId, jRequest) => {
         jResponse.commanaName = jRequest.commandName;
 
         var sql = null
-        sql = serviceSQL.getSQL00('insert_TB_COR_INCOME_HIST', 1);
+        sql = await serviceSQL.getSQL00('insert_TB_COR_INCOME_HIST', 1);
         var insert_TB_COR_INCOME_HIST_01 = await database.executeSQL(sql,
             [
                 jRequest.systemCode,
@@ -74,7 +74,7 @@ const getIncomeHistory = async (txnId, jRequest) => {
         jResponse.commanaName = jRequest.commandName;
 
         var sql = null
-        sql = serviceSQL.getSQL00('select_TB_COR_INCOME_HIST', 1);
+        sql = await serviceSQL.getSQL00('select_TB_COR_INCOME_HIST', 1);
         var select_TB_COR_INCOME_HIST_01 = await database.executeSQL(sql,
             [
                 jRequest.systemCode,
@@ -101,7 +101,7 @@ const deleteIncome = async (txnId, jRequest) => {
         jResponse.commanaName = jRequest.commandName;
 
         var sql = null
-        sql = serviceSQL.getSQL00('delete_TB_COR_INCOME_HIST', 1);
+        sql = await serviceSQL.getSQL00('delete_TB_COR_INCOME_HIST', 1);
         var delete_TB_COR_INCOME_HIST_01 = await database.executeSQL(sql,
             [
                 jRequest.historyId,
@@ -135,7 +135,7 @@ const updateIncome = async (txnId, jRequest) => {
         jResponse.commanaName = jRequest.commandName;
 
         var sql = null
-        sql = serviceSQL.getSQL00('update_TB_COR_INCOME_HIST', 1);
+        sql = await serviceSQL.getSQL00('update_TB_COR_INCOME_HIST', 1);
         var update_TB_COR_INCOME_HIST_01 = await database.executeSQL(sql,
             [
                 jRequest.amount,

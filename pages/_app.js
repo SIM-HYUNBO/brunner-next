@@ -9,8 +9,8 @@ import BrunnerMessageBox from '@/components/BrunnerMessageBox'
 
 // Entry Point
 export default function App({ Component, pageProps }) {
-  useEffect(() => {
-    requestLoadAllSqls();
+  useEffect(async () => {
+    // await requestLoadAllSqls();
   }, []);
 
   dotenv.config();

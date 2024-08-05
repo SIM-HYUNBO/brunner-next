@@ -132,6 +132,7 @@ const RealtimeChart = () => {
             clearInterval(intervalId); // 이전 인터벌 제거
         }
 
+        fetchRealtimeStockData(); // 처음에 실행하고 타이머 반복
         const id = setInterval(() => {
             fetchRealtimeStockData();
         }, intervalTime);
