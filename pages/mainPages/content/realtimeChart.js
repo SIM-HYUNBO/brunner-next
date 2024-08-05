@@ -12,7 +12,7 @@ const RealtimeChart = () => {
         name: `${currentTicker}의 현재 가격`,
         data: [],
     }]);
-    const [intervalTime, setIntervalTime] = useState(10000); // 인터벌 시간 상태 (밀리초)
+    const [intervalTime, setIntervalTime] = useState(5000); // 인터벌 시간 상태 (밀리초)
     const [intervalId, setIntervalId] = useState(null);
     const [options, setOptions] = useState({
         chart: {
@@ -118,7 +118,7 @@ const RealtimeChart = () => {
 
         setSeries(prevSeries => {
             const existingData = prevSeries[0].data;
-            const updatedData = [...existingData, newChartData].slice(-100);
+            const updatedData = [...existingData, newChartData].slice(-17280); // 인터벌이 5초라고 했을떄 하루치
             return [{
                 ...prevSeries[0],
                 data: updatedData,
