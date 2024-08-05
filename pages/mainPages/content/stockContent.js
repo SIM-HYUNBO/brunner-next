@@ -25,13 +25,10 @@ const StockContent = () => {
 
     const [stocksTicker, setStocksTicker] = useState(''); // 주식 심볼
     const stocksTickerRef = useRef(stocksTicker);
-    const setStocksTickerRef = (newVal, commit) => {
+    const setStocksTickerRef = (newVal) => {
         setStocksTicker(newVal);
         stocksTickerRef.current = newVal;
         process.currentTicker = newVal;
-
-        if (commit)
-            handleStockRequest();
     }
 
     const [stockData, setStockData] = useState(null); // 주식 데이터
@@ -78,7 +75,8 @@ const StockContent = () => {
         const defaultTicker = localStorage.getItem('defaultTicker');
         if (defaultTicker) {
             setDefaultTicker(defaultTicker);
-            setStocksTickerRef(defaultTicker, true);
+            setStocksTickerRef(defaultTicker);
+            handleStockRequest();
         }
 
         // 컴포넌트가 마운트될 때 티커 목록 가져오기
@@ -327,7 +325,8 @@ const StockContent = () => {
     // 티커 선택 시 기본 티커 업데이트
     const handleTickerChange = (selectedOption) => {
         setSelectedOption(selectedOption);
-        setStocksTickerRef(selectedOption ? selectedOption.value : '', true);
+        setStocksTickerRef(selectedOption ? selectedOption.value : '');
+        handleStockRequest();
     };
 
     // 차트 렌더링을 위한 준비
@@ -717,7 +716,8 @@ const StockContent = () => {
                         value={selectedOption} // 현재 선택된 옵션
                         onChange={(option) => {
                             setSelectedOption(option);
-                            setStocksTickerRef(option.value, true); // 선택한 종목의 티커 코드 저장
+                            setStocksTickerRef(option.value); // 선택한 종목의 티커 코드 저장
+                            handleStockRequest();
                         }}
                         placeholder="Symbols ..."
                         isLoading={loading} // 로딩 상태 표시
@@ -728,11 +728,11 @@ const StockContent = () => {
                         value={stocksTickerRef.current}
                         placeholder="종목코드를 입력하세요. ex) AAPL, GOOGL, TSLA ..."
                         onChange={(e) => {
-                            setStocksTickerRef(e.target.value.toUpperCase(), false); // 현재 값을 입력중이므로 false
+                            setStocksTickerRef(e.target.value.toUpperCase()); // 현재 값을 입력중이므로 false
                             setSelectedOption("");
                         }}
                     />
-                    <button className='bg-indigo-500 text-white ml-2 p-2' type="submit" onClick={setStocksTickerRef(stocksTickerRef.current, true)}>Refresh</button>
+                    <button className='bg-indigo-500 text-white ml-2 p-2' type="submit" onClick={handleStockRequest}>Refresh</button>
                 </div>
             </div>
 
