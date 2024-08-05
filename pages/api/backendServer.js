@@ -9,7 +9,16 @@ import * as security from './biz/security'
 import * as asset from './biz/asset'
 import * as stock from './biz/stock'
 
+async function initialize() {
+    var serviceSql = null;
+    if (!process.serviceSQL)
+        serviceSql = await serviceSQL.loadAllSQL();
+}
+
+
 export default async (req, res) => {
+    await initialize();
+
     const response = {};
     var remoteIp = null;
     var jRequest = null;
@@ -91,7 +100,7 @@ const generateTxnId = async () => {
 const saveTxnHistory = async (remoteIp, txnId, jRequest, jResponse) => {
     // logger.info(`saveTxnHistory REQ: ${JSON.stringify(jRequest)} RES: ${JSON.stringify(jResponse)}\n`);
 
-    var sql = serviceSQL.getSQL00('insert_TB_COR_TXN_HIST', 1);
+    var sql = await serviceSQL.getSQL00('insert_TB_COR_TXN_HIST', 1);
     var insert_TB_COR_TXN_HIST_01 = await database.executeSQL(sql,
         [
             txnId,

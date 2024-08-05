@@ -25,6 +25,9 @@ const getPool = async () => {
 
 const executeSQL = async (sql, params) => {
   try {
+    if (!sql) {
+      throw new Exception("SQL not loaded.")
+    }
     logger.info(`SQL:\n${sql}\nPARAMS:${JSON.stringify(params)}\n`);
     return await (await getPool()).query(sql, params);
   }

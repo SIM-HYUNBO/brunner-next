@@ -23,16 +23,11 @@ const executeService = async (txnId, jRequest) => {
 }
 
 async function loadAllSQL(txnId) {
-  var result = {};
   try {
-    result.error_code = 0;
-    result.error_message = '';
 
     // 이미 로딩했으면 로딩 안하고 성공 리턴
     if (process && process.serviceSQL && process.serviceSQL.size > 0) {
-      result.error_message = 'The ServiceSQLs already loaded';
-      result.error_code = 1;
-      return result;
+      return process.serviceSQL;
     }
 
     logger.info(`Start loading service queries.\n`)
@@ -53,10 +48,7 @@ async function loadAllSQL(txnId) {
       process.serviceSQL.set(`${row.system_code}_${row.sql_name}_${row.sql_seq}`, row.sql_content);
     });
 
-    result.error_message = `Totally [${sql_result.rows.length}] Service SQLs first loaded`;
-    result.error_code = 0;
-
-    return result;
+    return process.serviceSQL;
   }
   catch (err) {
     result.error_code = -1;
@@ -66,8 +58,9 @@ async function loadAllSQL(txnId) {
   }
 };
 
-const getSQL = (systemCode, sqlName, sqlSeq) => {
+const getSQL = async (systemCode, sqlName, sqlSeq) => {
   try {
+
     var sql = process.serviceSQL.get(`${systemCode}_${sqlName}_${sqlSeq}`);
     return sql;
   }
@@ -76,9 +69,9 @@ const getSQL = (systemCode, sqlName, sqlSeq) => {
   }
 };
 
-const getSQL00 = (sqlName, sqlSeq) => {
+const getSQL00 = async (sqlName, sqlSeq) => {
   try {
-    var sql = getSQL(process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE, sqlName, sqlSeq);
+    var sql = await getSQL(process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE, sqlName, sqlSeq);
     return sql;
   }
   catch (err) {
@@ -86,4 +79,4 @@ const getSQL00 = (sqlName, sqlSeq) => {
   }
 };
 
-export { executeService, getSQL, getSQL00 };
+export { executeService, getSQL, getSQL00, loadAllSQL };
