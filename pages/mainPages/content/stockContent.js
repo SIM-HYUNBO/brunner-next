@@ -416,7 +416,7 @@ const StockContent = () => {
                 curve: 'smooth', // 부드러운 곡선
             },
             title: {
-                text: 'RSI',
+                text: `${stocksTickerRef.current} RSI`,
                 align: 'left',
                 style: {
                     color: '#94a3b8' // slate-400 색상 설정
@@ -470,7 +470,7 @@ const StockContent = () => {
                 curve: 'smooth', // 부드러운 곡선
             },
             title: {
-                text: 'MACD',
+                text: `${stocksTickerRef.current} MACD`,
                 align: 'left',
                 style: {
                     color: '#94a3b8' // slate-400 색상 설정
@@ -533,7 +533,7 @@ const StockContent = () => {
                 curve: 'smooth', // 부드러운 곡선
             },
             title: {
-                text: 'Bollinger Bands',
+                text: `${stocksTickerRef.current} Bollinger Bands`,
                 align: 'left',
                 style: {
                     color: '#94a3b8' // slate-400 색상 설정
