@@ -727,7 +727,7 @@ const StockContent = () => {
                         value={stocksTickerRef.current}
                         placeholder="종목코드를 입력하세요. ex) AAPL, GOOGL, TSLA ..."
                         onChange={(e) => {
-                            setStocksTickerRef(e.target.value);
+                            setStocksTickerRef(e.target.value.toUpperCase());
                             setSelectedOption("");
                         }}
                     />
