@@ -66,8 +66,20 @@ const StockContent = () => {
     const [currentPrice, setCurrentPrice] = useState(); // 기간 단위
     const currentPriceRef = useRef(currentPrice);
     const updateCurrentPrice = (newValue) => {
+        const textColor = currentPriceRef.current < newValue ? 'red-600' :
+            currentPriceRef.current == newValue ? 'slate-400' : // slate-400 색상 설정 
+                'blue-600'
         currentPriceRef.current = newValue;
         setCurrentPrice(newValue);
+        setCurrentPriceTextColorRef(textColor);
+    };
+
+    const [currentPriceTextColor, setCurrentPriceTextColor] = useState(); // 기간 단위
+    const currentPriceTextColorRef = useRef(currentPriceTextColor);
+    const setCurrentPriceTextColorRef = (newValue) => {
+        currentPriceTextColorRef.current = newValue;
+        setCurrentPriceTextColor(newValue);
+
     };
 
     // useEffect를 사용하여 최근 검색한 종목 코드 로드
@@ -748,7 +760,7 @@ const StockContent = () => {
                             setSelectedOption("");
                         }}
                     />
-                    <input className='item-start text-center text-slate-400 bg-slate-50 dark:bg-slate-800 border border-gray-300 h-10 w-1/2'
+                    <input className={`item-start text-center text-${currentPriceTextColorRef.current} bg-slate-50 dark:bg-slate-800 border border-gray-300 h-10 w-1/2`}
                         type="text"
                         value={currentPriceRef.current}
                         placeholder="Current Price ..."
