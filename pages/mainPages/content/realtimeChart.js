@@ -109,7 +109,45 @@ const RealtimeChart = ({ updateCurrentPrice }) => {
                 strokeColors: [chartColor == 'gray' ? '#808080' : chartColor == 'red' ? '#FF0000' : chartColor == 'blue' ? '#0000FF' : '#808080'], // 점 테두리 색상
                 strokeWidth: 1 // 점 테두리 두께
             },
-            colors: [chartColor == 'gray' ? '#808080' : chartColor == 'red' ? '#FF0000' : chartColor == 'blue' ? '#0000FF' : '#808080']
+            colors: [chartColor == 'gray' ? '#808080' : chartColor == 'red' ? '#FF0000' : chartColor == 'blue' ? '#0000FF' : '#808080'],
+            tooltip: {
+                enabled: true,
+                // theme: isDarkMode 'dark', // dark, light, custom
+                style: {
+                    fontSize: '12px',
+                    fontFamily: 'Arial',
+                    colors: [chartColor == 'gray' ? '#808080' : chartColor == 'red' ? '#FF0000' : chartColor == 'blue' ? '#0000FF' : '#808080'] // 텍스트 색상
+                },
+                onDatasetHover: {
+                    highlightDataSeries: true,
+                },
+                fillSeriesColor: false, // 시리즈의 색상을 툴팁 배경에 적용할지 여부
+                marker: {
+                    show: true, // 마커 표시 여부
+                },
+                x: {
+                    show: true, // x축 값을 툴팁에 표시할지 여부
+                    format: 'yy MMM dd HH:mm', // 포맷 설정
+                    formatter: undefined // 커스텀 포맷터 함수
+                },
+                y: {
+                    formatter: function (value) {
+                        return "$" + value.toFixed(2); // 값에 포맷 적용
+                    }
+                },
+                z: {
+                    title: 'Size: ', // 버블 차트에서 z값에 대한 제목 설정
+                    formatter: function (value) {
+                        return value + ' cm'; // z값 포맷
+                    }
+                },
+                fixed: {
+                    enabled: false,
+                    position: 'topLeft', // topLeft, topRight, bottomLeft, bottomRight
+                    offsetX: 0,
+                    offsetY: 0,
+                }
+            }
         }
     }
 
