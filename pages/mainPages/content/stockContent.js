@@ -7,12 +7,14 @@ import requestServer from './../../../components/requestServer';
 import BrunnerMessageBox from '@/components/BrunnerMessageBox';
 import dynamic from 'next/dynamic';
 import RealtimeChart from './realtimeChart';
+import { useTheme } from 'next-themes'
 
 const Select = dynamic(() => import('react-select'), { ssr: false });
 // ApexCharts를 동적으로 import
 const ApexCharts = dynamic(() => import('react-apexcharts'), { ssr: false });
 
 const StockContent = () => {
+
     const [loading, setLoading] = useState(false); // 로딩 상태 관리
     const [modalContent, setModalContent] = useState({
         isOpen: false,
@@ -20,6 +22,10 @@ const StockContent = () => {
         onConfirm: () => { },
         onClose: () => { },
     });
+
+    const isDarkMode = () => {
+        return useTheme().theme === "dark";
+    }
 
     const [defaultTicker, setDefaultTicker] = useState(''); // 주식 심볼
 
@@ -708,7 +714,7 @@ const StockContent = () => {
                         placeholder="Recent Symbols ..."
                         isClearable
                         noOptionsMessage={() => "No recent symbols."}
-                        styles={process.env.isDarkMode ? darkSelectionStyle : lightSelectionStyle}
+                        styles={isDarkMode() ? darkSelectionStyle : lightSelectionStyle}
                     />
                     <Select
                         id="stock-select"
@@ -719,14 +725,14 @@ const StockContent = () => {
                             setStocksTickerRef(option.value); // 선택한 종목의 티커 코드 저장
                             handleStockRequest();
                         }}
-                        placeholder="Symbols ..."
+                        placeholder="Select Symbols ..."
                         isLoading={loading} // 로딩 상태 표시
-                        styles={process.env.isDarkMode ? darkSelectionStyle : lightSelectionStyle}
+                        styles={isDarkMode() ? darkSelectionStyle : lightSelectionStyle}
                     />
-                    <input className='item-start text-left text-slate-400 bg-slate-50 dark:bg-slate-800 uppercase w-1/2'
+                    <input className='item-start text-left text-slate-400 bg-slate-50 dark:bg-slate-800 w-1/2'
                         type="text"
                         value={stocksTickerRef.current}
-                        placeholder="종목코드를 입력하세요. ex) AAPL, GOOGL, TSLA ..."
+                        placeholder="Manual input. ex) AAPL, GOOGL, TSLA ..."
                         onChange={(e) => {
                             setStocksTickerRef(e.target.value.toUpperCase()); // 현재 값을 입력중이므로 false
                             setSelectedOption("");
