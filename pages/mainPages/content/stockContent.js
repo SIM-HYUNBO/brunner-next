@@ -83,11 +83,15 @@ const StockContent = () => {
         setCurrentPriceTextColorRef(textColor);
     };
 
+    const getCurrentPriceTextColor = () => {
+        return currentPriceTextColorRef.current;
+    }
+
     const [currentPriceTextColor, setCurrentPriceTextColor] = useState(); // 기간 단위
     const currentPriceTextColorRef = useRef(currentPriceTextColor);
     const setCurrentPriceTextColorRef = (newValue) => {
-        currentPriceTextColorRef.current = newValue;
         setCurrentPriceTextColor(newValue);
+        currentPriceTextColorRef.current = newValue;
 
     };
 
@@ -643,7 +647,7 @@ const StockContent = () => {
         control: (provided) => ({
             ...provided,
             backgroundColor: 'rgb(30, 41, 59)', // bg-slate-800 color
-            width: '50%',
+            width: '100%',
 
         }),
         singleValue: (provided) => ({
@@ -673,7 +677,7 @@ const StockContent = () => {
         control: (provided) => ({
             ...provided,
             backgroundColor: 'white', // bg-slate-800 color
-            width: '50%'
+            width: '100%'
         }),
         singleValue: (provided) => ({
             ...provided,
@@ -755,7 +759,7 @@ const StockContent = () => {
                         isLoading={loading} // 로딩 상태 표시
                         styles={isDarkMode() ? darkSelectionStyle : lightSelectionStyle}
                     />
-                    <input className='item-start text-center text-slate-400 bg-slate-50 dark:bg-slate-800 border border-gray-300 h-10 w-1/2'
+                    <input className='item-start text-center text-slate-400 bg-slate-50 dark:bg-slate-800 border border-slate-400  h-10 w-1/2'
                         type="text"
                         value={stocksTickerRef.current}
                         placeholder="Manual input. ex) AAPL, GOOGL, TSLA ..."
@@ -764,7 +768,7 @@ const StockContent = () => {
                             setSelectedOption("");
                         }}
                     />
-                    <input className={`item-start text-center text-${currentPriceTextColorRef.current} bg-slate-200 dark:bg-slate-800 border border-${currentPriceTextColorRef.current} h-10 w-1/2`}
+                    <input className={`item-start text-center text-${getCurrentPriceTextColor()} bg-slate-50 dark:bg-slate-800 border border-slate-400 h-10 w-1/2`}
                         type="text"
                         value={currentPriceRef.current}
                         placeholder="Current Price ..."

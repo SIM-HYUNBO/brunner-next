@@ -114,7 +114,7 @@ const RealtimeChart = ({ updateCurrentPrice }) => {
 
         const newChartData = {
             x: diff > intervalTime ? now : givenTime,
-            y: newData.c  /*Math.floor(Math.random() * (100 - 0 + 1)) + 0*/,
+            y: newData.c /* Math.floor(Math.random() * (100 - 0 + 1)) + 0*/,
         };
         updateCurrentPrice(newChartData.y);
 
