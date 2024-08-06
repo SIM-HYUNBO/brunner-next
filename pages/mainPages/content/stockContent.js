@@ -70,7 +70,7 @@ const StockContent = () => {
         var textColor = '';
 
         if (currentPriceRef.current == newValue)
-            textColor = 'black';
+            textColor = isDarkMode() ? 'white' : 'black';
         else if (currentPriceRef.current > newValue)
             textColor = 'blue-600';
         else
