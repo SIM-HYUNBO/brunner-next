@@ -44,13 +44,6 @@ const StockContent = () => {
         stockDataRef.current = newVal;
     }
 
-    const [realtimeStockData, setRealtimeStockData] = useState([]); // 주식 데이터
-    const realtimeStockDataRef = useRef(realtimeStockData);
-    const setRealtimeStockDataRef = (newVal) => {
-        setRealtimeStockData(newVal);
-        realtimeStockDataRef.current = newVal;
-    }
-
     const [dataIntervalUnit, setDataIntervalUnit] = useState("hour"); // 데이터 간격의  시간 단위
     const dataIntervalUnitRef = useRef(dataIntervalUnit);
     const setDataIntervalUnitRef = (newVal) => {
@@ -70,6 +63,12 @@ const StockContent = () => {
     // 종목 목록을 저장하기 위한 상태 추가
     const [tickerOptions, setTickerOptions] = useState([]);
 
+    const [currentPrice, setCurrentPrice] = useState(); // 기간 단위
+    const currentPriceRef = useRef(currentPrice);
+    const updateCurrentPrice = (newValue) => {
+        currentPriceRef.current = newValue;
+        setCurrentPrice(newValue);
+    };
 
     // useEffect를 사용하여 최근 검색한 종목 코드 로드
     useEffect(() => {
@@ -605,7 +604,7 @@ const StockContent = () => {
 
         return (
             <div className="w-full mt-5">
-                <RealtimeChart></RealtimeChart>
+                <RealtimeChart updateCurrentPrice={updateCurrentPrice} ></RealtimeChart>
                 <ApexCharts options={chartOptions} series={chartOptions.series} type="line" height={350} width={'100%'} />
                 <ApexCharts options={rsiOptions} series={rsiOptions.series} type="line" height={350} width={'100%'} />
                 <ApexCharts options={macdOptions} series={macdOptions.series} type="line" height={350} width={'100%'} />
@@ -623,6 +622,12 @@ const StockContent = () => {
         control: (provided) => ({
             ...provided,
             backgroundColor: 'rgb(30, 41, 59)', // bg-slate-800 color
+            width: '50%',
+
+        }),
+        singleValue: (provided) => ({
+            ...provided,
+            color: 'rgb(156, 163, 175)', // 선택된 값의 글자 색상
         }),
         option: (provided, state) => ({
             ...provided,
@@ -649,6 +654,11 @@ const StockContent = () => {
         control: (provided) => ({
             ...provided,
             backgroundColor: 'white', // bg-slate-800 color
+            width: '50%'
+        }),
+        singleValue: (provided) => ({
+            ...provided,
+            color: 'rgb(156, 163, 175)', // 선택된 값의 글자 색상
         }),
         option: (provided, state) => ({
             ...provided,
@@ -729,7 +739,7 @@ const StockContent = () => {
                         isLoading={loading} // 로딩 상태 표시
                         styles={isDarkMode() ? darkSelectionStyle : lightSelectionStyle}
                     />
-                    <input className='item-start text-left text-slate-400 bg-slate-50 dark:bg-slate-800 w-1/2'
+                    <input className='item-start text-center text-slate-400 bg-slate-50 dark:bg-slate-800 border border-gray-300 h-10 w-1/2'
                         type="text"
                         value={stocksTickerRef.current}
                         placeholder="Manual input. ex) AAPL, GOOGL, TSLA ..."
@@ -738,7 +748,12 @@ const StockContent = () => {
                             setSelectedOption("");
                         }}
                     />
-                    <button className='bg-indigo-500 text-white ml-2 p-2' type="submit" onClick={handleStockRequest}>Refresh</button>
+                    <input className='item-start text-center text-slate-400 bg-slate-50 dark:bg-slate-800 border border-gray-300 h-10 w-1/2'
+                        type="text"
+                        value={currentPriceRef.current}
+                        placeholder="Current Price ..."
+                    />
+                    <button className='bg-indigo-500 text-white my-2 p-2' type="submit" onClick={handleStockRequest}>Refresh</button>
                 </div>
             </div>
 
