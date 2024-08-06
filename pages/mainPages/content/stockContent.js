@@ -35,6 +35,7 @@ const StockContent = () => {
         setStocksTicker(newVal);
         stocksTickerRef.current = newVal;
         process.currentTicker = newVal;
+        updateCurrentPrice(0);
     }
 
     const [stockData, setStockData] = useState(null); // 주식 데이터
@@ -67,7 +68,7 @@ const StockContent = () => {
     const currentPriceRef = useRef(currentPrice);
     const updateCurrentPrice = (newValue) => {
         const textColor = currentPriceRef.current < newValue ? 'red-600' :
-            currentPriceRef.current == newValue ? 'slate-400' : // slate-400 색상 설정 
+            currentPriceRef.current == newValue ? 'slate-600' : // slate-400 색상 설정 
                 'blue-600'
         currentPriceRef.current = newValue;
         setCurrentPrice(newValue);
