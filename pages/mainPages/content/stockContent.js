@@ -83,10 +83,6 @@ const StockContent = () => {
         setCurrentPriceTextColorRef(textColor);
     };
 
-    const getCurrentPriceTextColor = () => {
-        return currentPriceTextColorRef.current;
-    }
-
     const [currentPriceTextColor, setCurrentPriceTextColor] = useState(); // 기간 단위
     const currentPriceTextColorRef = useRef(currentPriceTextColor);
     const setCurrentPriceTextColorRef = (newValue) => {
@@ -768,7 +764,7 @@ const StockContent = () => {
                             setSelectedOption("");
                         }}
                     />
-                    <input className={`item-start text-center text-${getCurrentPriceTextColor()} bg-slate-50 dark:bg-slate-800 border border-slate-400 h-10 w-1/2`}
+                    <input className={`item-start text-center text-${currentPriceTextColorRef.current} bg-slate-50 dark:bg-slate-800 border border-slate-400 h-10 w-1/2`}
                         type="text"
                         value={currentPriceRef.current}
                         placeholder="Current Price ..."
