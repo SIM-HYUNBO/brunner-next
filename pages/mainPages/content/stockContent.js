@@ -700,17 +700,20 @@ const StockContent = () => {
                 </div>
             )}
             <div>
+                <h1 className="title-font sm:text-4xl text-3xl mb-10 font-medium text-green-900">
+                    Stock search
+                </h1>
                 <div className='items-start mt-2 dark:text-slate-400'>
                     <label>
                         Span
                     </label>
                     <select className='dark:text-slate-400 ml-2 bg-slate-50 dark:bg-slate-800' value={dataIntervalUnitRef.current} onChange={(e) => setDataIntervalUnitRef(e.target.value)}>
-                        <option value="minute">분</option>
-                        <option value="hour">시간</option>
-                        <option value="day">일</option>
-                        <option value="week">주</option>
-                        <option value="month">월</option>
-                        <option value="year">년</option>
+                        <option value="minute">minute</option>
+                        <option value="hour">hour</option>
+                        <option value="day">day</option>
+                        <option value="week">week</option>
+                        <option value="month">month</option>
+                        <option value="year">year</option>
                     </select>
                 </div>
                 <div className='items-start mt-2 dark:text-slate-400 '>
@@ -724,12 +727,12 @@ const StockContent = () => {
                         />
                     </label>
                     <select className='ml-2 text-center dark:text-slate-400 bg-slate-50 dark:bg-slate-800' value={periodUnitRef.current} onChange={(e) => setPeriodUnitRef(e.target.value)}>
-                        <option value="minutes">분</option>
-                        <option value="hours">시간</option>
-                        <option value="days">일</option>
-                        <option value="weeks">주</option>
-                        <option value="months">월</option>
-                        <option value="years">년</option>
+                        <option value="minutes">minute</option>
+                        <option value="hours">hour</option>
+                        <option value="days">day</option>
+                        <option value="weeks">week</option>
+                        <option value="months">month</option>
+                        <option value="years">year</option>
                     </select>
                 </div>
                 <div>
