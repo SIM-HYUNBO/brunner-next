@@ -645,10 +645,8 @@ const StockContent = () => {
         option: (provided, state) => ({
             ...provided,
             backgroundColor: state.isFocused ? 'rgb(51, 65, 85)' : 'rgb(30, 41, 59)', // bg-slate-700 on focus
-            '&:active': { // 목록에서 선택한 항목색깔
-                backgroundColor: 'rgb(100, 116, 139)', // bg-slate-600 when active
-                color: 'rgb(156, 163, 175)',        // text-slate-400  => 목록 글씨색
-            },
+            color: state.isSelected ? 'white' : 'rgb(156, 163, 175)',
+
         }),
         menu: (provided) => ({
             ...provided,
@@ -676,10 +674,7 @@ const StockContent = () => {
         option: (provided, state) => ({
             ...provided,
             backgroundColor: 'white', // bg-slate-700 on focus
-            '&:active': { // 목록에서 선택한 항목색깔
-                backgroundColor: 'white', // bg-slate-600 when active
-                color: 'rgb(156, 163, 175)',        // text-slate-400  => 목록 글씨색
-            },
+            color: state.isSelected ? 'black' : 'rgb(156, 163, 175)',
         }),
         menu: (provided) => ({ // 목록
             ...provided,
