@@ -16,77 +16,104 @@ const RealtimeChart = ({ updateCurrentPrice }) => {
     const [intervalTime, setIntervalTime] = useState(5000); // 인터벌 시간 상태 (밀리초)
     const [intervalId, setIntervalId] = useState(null);
 
-    function getChartColors() {
-        var chartColors = [series[0].data.length < 2 ? '#808080' : series[0].data.y > series[0].data[series[0].data.length - 1].y ? '#0000FF' : series[0].data[0].y === series[0].data[series[0].data.length - 1].y ? '#808080' : '#FF0000'];
-        return chartColors;
+    function setChartColor(newSeries) {
+        var color = 'gray';
+        var colorName = 'gray';
 
+        var firstValue = null;
+        var lastValue = null;
+
+        if (newSeries[0].data.length >= 2) {
+            firstValue = newSeries[0].data[0].y;
+            lastValue = newSeries[0].data[newSeries[0].data.length - 1].y;
+
+            if (firstValue < lastValue) {
+                color = `red`; // red
+                colorName = 'red';
+                setOptions(getChartOptions('red'));
+            }
+            else if (firstValue > lastValue) {
+                color = `blue`; // blue
+                colorName = 'blue';
+                setOptions(getChartOptions('blue'));
+            }
+            else
+                setOptions(getChartOptions('gray'));
+        }
+        else
+            setOptions(getChartOptions('gray'));
     }
 
-    const [options, setOptions] = useState({
-        chart: {
-            id: 'realtime-chart',
-            animations: {
-                enabled: true,
-                easing: 'linear',
-                dynamicAnimation: {
-                    speed: 500, // 애니메이션 속도 조절
+    const getChartOptions = (chartColor) => {
+        return {
+            chart: {
+                id: 'realtime-chart',
+                animations: {
+                    enabled: true,
+                    easing: 'linear',
+                    dynamicAnimation: {
+                        speed: 500, // 애니메이션 속도 조절
+                    },
                 },
+                toolbar: {
+                    show: false,
+                },
+                zoom: {
+                    enabled: false,
+                },
+
             },
-            toolbar: {
-                show: false,
-            },
-            zoom: {
-                enabled: false,
-            },
-        },
-        xaxis: {
-            type: 'datetime',
-            labels: {
-                datetimeUTC: false,
-                format: 'MM/dd HH:mm',
+            xaxis: {
+                type: 'datetime',
+                labels: {
+                    datetimeUTC: false,
+                    format: 'MM/dd HH:mm',
+                    style: {
+                        colors: '#9e9e9e', // x축 레이블 색상
+                        //fontSize: '12px',  // x축 레이블 폰트 크기
+                        fontFamily: 'Arial, sans-serif', // x축 레이블 폰트 패밀리
+                    }
+                },
                 style: {
-                    colors: '#9e9e9e', // x축 레이블 색상
-                    //fontSize: '12px',  // x축 레이블 폰트 크기
-                    fontFamily: 'Arial, sans-serif', // x축 레이블 폰트 패밀리
+                    colors: '#94a3b8' // slate-400 색상 설정
                 }
             },
-            style: {
-                colors: '#94a3b8' // slate-400 색상 설정
-            }
-        },
-        yaxis: {
-            labels: {
-                formatter: (value) => value.toFixed(2),
+            yaxis: {
+                labels: {
+                    formatter: (value) => value.toFixed(2),
+                    style: {
+                        colors: '#9e9e9e', // x축 레이블 색상
+                        //fontSize: '12px',  // x축 레이블 폰트 크기
+                        fontFamily: 'Arial, sans-serif', // x축 레이블 폰트 패밀리
+                    }
+                },
                 style: {
-                    colors: '#9e9e9e', // x축 레이블 색상
-                    //fontSize: '12px',  // x축 레이블 폰트 크기
-                    fontFamily: 'Arial, sans-serif', // x축 레이블 폰트 패밀리
+                    colors: '#94a3b8' // slate-400 색상 설정
                 }
             },
-            style: {
-                colors: '#94a3b8' // slate-400 색상 설정
-            }
-        },
-        stroke: {
-            curve: 'smooth',
-            width: 1,
-            colors: getChartColors()
-        },
-        title: {
-            text: `${currentTickerRef.current} Realtime`,
-            align: 'left',
-            style: {
-                color: '#94a3b8' // slate-400 색상 설정
-            }
-        },
-        markers: {
-            size: 2, // 점 크기
-            colors: getChartColors(), // 점 색상
-            strokeColors: getChartColors(), // 점 테두리 색상
-            strokeWidth: 1 // 점 테두리 두께
-        },
-        colors: getChartColors()
-    });
+            stroke: {
+                curve: 'smooth',
+                width: 1,
+                colors: [chartColor == 'gray' ? '#808080' : chartColor == 'red' ? '#FF0000' : chartColor == 'blue' ? '#0000FF' : '#808080']
+            },
+            title: {
+                text: `${currentTickerRef.current} Realtime`,
+                align: 'left',
+                style: {
+                    color: '#94a3b8' // slate-400 색상 설정
+                }
+            },
+            markers: {
+                size: 2, // 점 크기
+                colors: [chartColor == 'gray' ? '#808080' : chartColor == 'red' ? '#FF0000' : chartColor == 'blue' ? '#0000FF' : '#808080'], // 점 색상
+                strokeColors: [chartColor == 'gray' ? '#808080' : chartColor == 'red' ? '#FF0000' : chartColor == 'blue' ? '#0000FF' : '#808080'], // 점 테두리 색상
+                strokeWidth: 1 // 점 테두리 두께
+            },
+            colors: [chartColor == 'gray' ? '#808080' : chartColor == 'red' ? '#FF0000' : chartColor == 'blue' ? '#0000FF' : '#808080']
+        }
+    }
+
+    const [options, setOptions] = useState(getChartOptions('gray'));
 
     const fetchRealtimeStockData = useCallback(async () => {
         try {
@@ -129,18 +156,21 @@ const RealtimeChart = ({ updateCurrentPrice }) => {
 
         const newChartData = {
             x: diff > intervalTime ? now : givenTime,
-            y: newData.c /* Math.floor(Math.random() * (100 - 0 + 1)) + 0*/,
+            y: newData.c  /*Math.floor(Math.random() * (100 - 0 + 1)) + 0,*/
         };
         updateCurrentPrice(newChartData.y);
 
         setSeries(prevSeries => {
             const existingData = prevSeries[0].data;
             const updatedData = [...existingData, newChartData].slice(-5040); // 인터벌이 5초라고 했을떄 하루 7시간치
-
-            return [{
+            const newSeries = [{
                 ...prevSeries[0],
                 data: updatedData,
             }];
+
+            setChartColor(newSeries);
+
+            return newSeries;
         });
     };
 
