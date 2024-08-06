@@ -16,7 +16,6 @@ export default function DarkModeToggleButton() {
     const setThemeRef = (newValue) => {
         themeRef.current = newValue;
         setTheme(newValue);
-        process.env.isDarkMode = theme === 'dark' ? false : true;
     };
 
     return (
