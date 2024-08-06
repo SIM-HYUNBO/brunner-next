@@ -67,9 +67,15 @@ const StockContent = () => {
     const [currentPrice, setCurrentPrice] = useState(); // 기간 단위
     const currentPriceRef = useRef(currentPrice);
     const updateCurrentPrice = (newValue) => {
-        const textColor = currentPriceRef.current < newValue ? 'red-600' :
-            currentPriceRef.current == newValue ? 'slate-600' : // slate-400 색상 설정 
-                'blue-600'
+        var textColor = '';
+
+        if (currentPriceRef.current == newValue)
+            textColor = 'black';
+        else if (currentPriceRef.current > newValue)
+            textColor = 'blue-600';
+        else
+            textColor = 'red-600';
+
         currentPriceRef.current = newValue;
         setCurrentPrice(newValue);
         setCurrentPriceTextColorRef(textColor);
@@ -756,7 +762,7 @@ const StockContent = () => {
                             setSelectedOption("");
                         }}
                     />
-                    <input className={`item-start text-center text-${currentPriceTextColorRef.current} bg-slate-50 dark:bg-slate-800 border border-gray-300 h-10 w-1/2`}
+                    <input className={`item-start text-center text-${currentPriceTextColorRef.current} bg-slate-200 dark:bg-slate-800 border border-${currentPriceTextColorRef.current} h-10 w-1/2`}
                         type="text"
                         value={currentPriceRef.current}
                         placeholder="Current Price ..."
