@@ -80,10 +80,10 @@ const RealtimeChart = ({ updateCurrentPrice }) => {
             }
         },
         markers: {
-            size: 5, // 점 크기
+            size: 2, // 점 크기
             colors: getChartColors(), // 점 색상
             strokeColors: getChartColors(), // 점 테두리 색상
-            strokeWidth: 2 // 점 테두리 두께
+            strokeWidth: 1 // 점 테두리 두께
         },
         colors: getChartColors()
     });
