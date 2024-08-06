@@ -15,6 +15,13 @@ const RealtimeChart = ({ updateCurrentPrice }) => {
 
     const [intervalTime, setIntervalTime] = useState(5000); // 인터벌 시간 상태 (밀리초)
     const [intervalId, setIntervalId] = useState(null);
+
+    function getChartColors() {
+        var chartColors = [series[0].data.length < 2 ? '#808080' : series[0].data.y > series[0].data[series[0].data.length - 1].y ? '#0000FF' : series[0].data[0].y === series[0].data[series[0].data.length - 1].y ? '#808080' : '#FF0000'];
+        return chartColors;
+
+    }
+
     const [options, setOptions] = useState({
         chart: {
             id: 'realtime-chart',
@@ -63,6 +70,7 @@ const RealtimeChart = ({ updateCurrentPrice }) => {
         stroke: {
             curve: 'smooth',
             width: 1,
+            colors: getChartColors()
         },
         title: {
             text: `${currentTickerRef.current} Realtime`,
@@ -71,6 +79,13 @@ const RealtimeChart = ({ updateCurrentPrice }) => {
                 color: '#94a3b8' // slate-400 색상 설정
             }
         },
+        markers: {
+            size: 5, // 점 크기
+            colors: getChartColors(), // 점 색상
+            strokeColors: getChartColors(), // 점 테두리 색상
+            strokeWidth: 2 // 점 테두리 두께
+        },
+        colors: getChartColors()
     });
 
     const fetchRealtimeStockData = useCallback(async () => {
@@ -121,6 +136,7 @@ const RealtimeChart = ({ updateCurrentPrice }) => {
         setSeries(prevSeries => {
             const existingData = prevSeries[0].data;
             const updatedData = [...existingData, newChartData].slice(-5040); // 인터벌이 5초라고 했을떄 하루 7시간치
+
             return [{
                 ...prevSeries[0],
                 data: updatedData,
