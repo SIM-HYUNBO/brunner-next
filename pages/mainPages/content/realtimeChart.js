@@ -5,13 +5,14 @@ import requestServer from '../../../components/requestServer';
 // dynamic import로 ApexCharts를 사용합니다.
 const ApexCharts = dynamic(() => import('react-apexcharts'), { ssr: false });
 
-const RealtimeChart = () => {
+const RealtimeChart = ({ updateCurrentPrice }) => {
     const [currentTicker, setCurrentTicker] = useState(process.currentTicker);
     const currentTickerRef = useRef(currentTicker);
     const [series, setSeries] = useState([{
         name: `${currentTicker}의 현재 가격`,
         data: [],
     }]);
+
     const [intervalTime, setIntervalTime] = useState(5000); // 인터벌 시간 상태 (밀리초)
     const [intervalId, setIntervalId] = useState(null);
     const [options, setOptions] = useState({
@@ -115,6 +116,7 @@ const RealtimeChart = () => {
             x: diff > intervalTime ? now : givenTime,
             y: newData.c,
         };
+        updateCurrentPrice(newData.c);
 
         setSeries(prevSeries => {
             const existingData = prevSeries[0].data;
