@@ -9,7 +9,7 @@ const RealtimeChart = ({ updateCurrentPrice }) => {
     const [currentTicker, setCurrentTicker] = useState(process.currentTicker);
     const currentTickerRef = useRef(currentTicker);
     const [series, setSeries] = useState([{
-        name: `${currentTicker}의 현재 가격`,
+        name: `${currentTicker}`,
         data: [],
     }]);
 
@@ -122,7 +122,7 @@ const RealtimeChart = ({ updateCurrentPrice }) => {
                 currentTickerRef.current = process.currentTicker;
                 // 데이터가 변경되면 시리즈도 초기화합니다.
                 setSeries([{
-                    name: `${currentTickerRef.current}의 현재 가격`,
+                    name: `${currentTickerRef.current}`,
                     data: [],
                 }]);
             }
