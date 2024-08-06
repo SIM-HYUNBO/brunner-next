@@ -23,8 +23,10 @@ const StockContent = () => {
         onClose: () => { },
     });
 
+    const theme = useTheme();
+
     const isDarkMode = () => {
-        return useTheme().theme === "dark";
+        return theme.theme === "dark";
     }
 
     const [defaultTicker, setDefaultTicker] = useState(''); // 주식 심볼
