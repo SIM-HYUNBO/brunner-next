@@ -703,11 +703,13 @@ const StockContent = () => {
                 <h1 className="title-font sm:text-4xl text-3xl my-10 font-medium text-green-900">
                     Stock search
                 </h1>
-                <div className='items-start mt-2 dark:text-slate-400'>
-                    <label>
-                        Span
-                    </label>
-                    <select className='dark:text-slate-400 ml-2 bg-slate-50 dark:bg-slate-800' value={dataIntervalUnitRef.current} onChange={(e) => setDataIntervalUnitRef(e.target.value)}>
+                <div className="items-start mt-2 dark:text-slate-400">
+                    <label>Span</label>
+                    <select
+                        className="dark:text-slate-400 ml-2 bg-slate-50 dark:bg-slate-800"
+                        value={dataIntervalUnitRef.current}
+                        onChange={(e) => setDataIntervalUnitRef(e.target.value)}
+                    >
                         <option value="minute">minute</option>
                         <option value="hour">hour</option>
                         <option value="day">day</option>
@@ -716,17 +718,22 @@ const StockContent = () => {
                         <option value="year">year</option>
                     </select>
                 </div>
-                <div className='items-start mt-2 dark:text-slate-400 '>
-                    <label className='dark:text-slate-400 dark:bg-slate-800'>
+                <div className="items-start mt-2 dark:text-slate-400">
+                    <label className="dark:text-slate-400 dark:bg-slate-800">
                         Period
-                        <input className='dark:text-slate-400 ml-2 text-center bg-slate-50 dark:bg-slate-800'
+                        <input
+                            className="dark:text-slate-400 ml-2 text-center bg-slate-50 dark:bg-slate-800"
                             type="number"
                             value={period}
                             onChange={(e) => setPeriod(e.target.value)}
                             min="1"
                         />
                     </label>
-                    <select className='ml-2 text-center dark:text-slate-400 bg-slate-50 dark:bg-slate-800' value={periodUnitRef.current} onChange={(e) => setPeriodUnitRef(e.target.value)}>
+                    <select
+                        className="ml-2 text-center dark:text-slate-400 bg-slate-50 dark:bg-slate-800"
+                        value={periodUnitRef.current}
+                        onChange={(e) => setPeriodUnitRef(e.target.value)}
+                    >
                         <option value="minutes">minute</option>
                         <option value="hours">hour</option>
                         <option value="days">day</option>
@@ -735,44 +742,88 @@ const StockContent = () => {
                         <option value="years">year</option>
                     </select>
                 </div>
-                <div>
-                    <Select className='items-start'
-                        value={selectedOption}
-                        onChange={handleTickerChange}
-                        options={recentSearches}
-                        placeholder="Recent Symbols ..."
-                        isClearable
-                        noOptionsMessage={() => "No recent symbols."}
-                        styles={isDarkMode() ? darkSelectionStyle : lightSelectionStyle}
-                    />
-                    <Select
-                        id="stock-select"
-                        options={tickerOptions} // 옵션 목록
-                        value={selectedOption} // 현재 선택된 옵션
-                        onChange={(option) => {
-                            setSelectedOption(option);
-                            setStocksTickerRef(option.value); // 선택한 종목의 티커 코드 저장
-                            handleStockRequest();
-                        }}
-                        placeholder="Select Symbols ..."
-                        isLoading={loading} // 로딩 상태 표시
-                        styles={isDarkMode() ? darkSelectionStyle : lightSelectionStyle}
-                    />
-                    <input className='item-start text-center text-slate-400 bg-slate-50 dark:bg-slate-800 border border-slate-400  h-10 w-1/2'
+
+                {/* Flex container for horizontal layout */}
+                <div className="flex mb-4">
+                    {/* Recent Symbols List */}
+                    <div className="w-[30%] h-72 py-10">
+                        <h3 className="font-bold text-lg mb-2">Recent Searches ...</h3>
+                        <ul
+                            className={`items-start ${isDarkMode() ? "bg-slate-800 text-white" : "bg-slate-50 text-black"
+                                } border border-slate-400 h-full overflow-y-auto`}
+                        >
+                            {recentSearches.length > 0 ? (
+                                recentSearches.map((searchItem) => (
+                                    <li
+                                        key={searchItem.value}
+                                        onClick={() => {
+                                            handleTickerChange({ key: searchItem.value, value: searchItem.value });
+                                        }}
+                                        className={`cursor-pointer p-2 hover:bg-indigo-500 hover:text-white ${selectedOption?.value === searchItem.value
+                                            ? "bg-indigo-500 text-white"
+                                            : ""
+                                            }`}
+                                    >
+                                        {searchItem.label}
+                                    </li>
+                                ))
+                            ) : (
+                                <li className="text-gray-500">No recent symbols.</li>
+                            )}
+                        </ul>
+                    </div>
+
+                    {/* Select Symbols List */}
+                    <div className="w-[70%] h-72 py-10">
+                        <h3 className="font-bold text-lg mb-2">Select Symbol ...</h3>
+                        <ul
+                            className={`items-start ${isDarkMode() ? "bg-slate-800 text-white" : "bg-slate-50 text-black"
+                                } border border-slate-400 h-full overflow-y-auto`}
+                        >
+                            {tickerOptions.map((option) => (
+                                <li
+                                    key={option.value}
+                                    onClick={() => {
+                                        handleTickerChange(option);
+                                    }}
+                                    className={`cursor-pointer p-2 hover:bg-indigo-500 hover:text-white ${selectedOption?.value === option.value
+                                        ? "bg-indigo-500 text-white"
+                                        : ""
+                                        }`}
+                                >
+                                    {option.label}
+                                </li>
+                            ))
+                            }
+                        </ul>
+                    </div>
+                </div>
+
+                {/* Input Fields and Refresh Button */}
+                <div className="flex mt-4" > {/* Centered inputs */}
+                    <input
+                        className="text-center text-slate-400 bg-slate-50 dark:bg-slate-800 border border-slate-400 h-10 w-[30%]"
                         type="text"
                         value={stocksTickerRef.current}
                         placeholder="Manual input. ex) AAPL, GOOGL, TSLA ..."
                         onChange={(e) => {
-                            setStocksTickerRef(e.target.value.toUpperCase()); // 현재 값을 입력중이므로 false
+                            setStocksTickerRef(e.target.value.toUpperCase());
                             setSelectedOption("");
                         }}
                     />
-                    <input className={`item-start text-center text-${currentPriceTextColorRef.current} bg-slate-50 dark:bg-slate-800 border border-slate-400 h-10 w-1/2`}
+                    <input
+                        className={`text-center text-${currentPriceTextColorRef.current} bg-slate-50 dark:bg-slate-800 border border-slate-400 h-10 w-[30%]`}
                         type="text"
                         value={currentPriceRef.current}
                         placeholder="Current Price ..."
                     />
-                    <button className='bg-indigo-500 text-white my-2 p-2' type="submit" onClick={handleStockRequest}>Refresh</button>
+                    <button
+                        className="bg-indigo-500 text-white p-2 ml-1 h-10"
+                        type="submit"
+                        onClick={handleStockRequest}
+                    >
+                        Refresh
+                    </button>
                 </div>
             </div>
 
