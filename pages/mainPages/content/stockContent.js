@@ -708,12 +708,12 @@ const StockContent = () => {
                         Span
                     </label>
                     <select className='dark:text-slate-400 ml-2 bg-slate-50 dark:bg-slate-800' value={dataIntervalUnitRef.current} onChange={(e) => setDataIntervalUnitRef(e.target.value)}>
-                        <option value="minute">minute</option>
-                        <option value="hour">hour</option>
-                        <option value="day">day</option>
-                        <option value="week">week</option>
-                        <option value="month">month</option>
-                        <option value="year">year</option>
+                        <option value="minute">min.</option>
+                        <option value="hour">hr</option>
+                        <option value="day">d</option>
+                        <option value="week">w</option>
+                        <option value="month">mon.</option>
+                        <option value="year">yr</option>
                     </select>
                 </div>
                 <div className='items-start mt-2 dark:text-slate-400 '>
@@ -727,12 +727,12 @@ const StockContent = () => {
                         />
                     </label>
                     <select className='ml-2 text-center dark:text-slate-400 bg-slate-50 dark:bg-slate-800' value={periodUnitRef.current} onChange={(e) => setPeriodUnitRef(e.target.value)}>
-                        <option value="minutes">minute</option>
-                        <option value="hours">hour</option>
-                        <option value="days">day</option>
-                        <option value="weeks">week</option>
-                        <option value="months">month</option>
-                        <option value="years">year</option>
+                        <option value="minutes">min.</option>
+                        <option value="hours">hr</option>
+                        <option value="days">d</option>
+                        <option value="weeks">w</option>
+                        <option value="months">mon.</option>
+                        <option value="years">yr</option>
                     </select>
                 </div>
                 <div>
@@ -740,7 +740,7 @@ const StockContent = () => {
                         value={selectedOption}
                         onChange={handleTickerChange}
                         options={recentSearches}
-                        placeholder="Recent Symbols ..."
+                        placeholder="Recent Searches ..."
                         isClearable
                         noOptionsMessage={() => "No recent symbols."}
                         styles={isDarkMode() ? darkSelectionStyle : lightSelectionStyle}
@@ -754,7 +754,7 @@ const StockContent = () => {
                             setStocksTickerRef(option.value); // 선택한 종목의 티커 코드 저장
                             handleStockRequest();
                         }}
-                        placeholder="Select Symbols ..."
+                        placeholder="Select Symbol ..."
                         isLoading={loading} // 로딩 상태 표시
                         styles={isDarkMode() ? darkSelectionStyle : lightSelectionStyle}
                     />
