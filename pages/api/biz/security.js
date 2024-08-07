@@ -255,11 +255,11 @@ const resetPassword = async (txnId, jRequest) => {
             return jResponse;
         }
 
-        // logger.info(`OLD PASSWORD:${select_TB_COR_USER_MST_01.rows[0].password} NEW PASSWORD: ${jRequest.newPassword}\n`);
+        logger.info(`OLD PASSWORD:${select_TB_COR_USER_MST_01.rows[0].password} NEW PASSWORD: ${jRequest.newPassword}\n`);
 
         if (select_TB_COR_USER_MST_01.rows[0].password === jRequest.newPassword) {
             jResponse.error_code = -1;
-            jResponse.error_message = `The new password is same with current one.`;
+            jResponse.error_message = `The new password is same with current password.`;
             jResponse.rowCount = 0;
             return jResponse;
         }
@@ -314,7 +314,7 @@ const signout = (txnId, jRequest) => {
 };
 
 const verifyTelNo = (args) => {
-    const msg = `유효하지 않는 전화번호입니다.`;
+    const msg = `invalid phone number.`;
     // IE 브라우저에서는 당연히 var msg로 변경
 
     if (/^[0-9]{2,3}-[0-9]{3,4}-[0-9]{4}/.test(args)) {

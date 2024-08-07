@@ -52,7 +52,8 @@ async function loadAllSQL(txnId) {
   }
   catch (err) {
     result.error_code = -1;
-    result.error_message = `An exception occured while loading serviceSQL.\nerror:${err}`;
+    result.error_message = `An exception occured while loading serviceSQL.
+    error:${err}`;
 
     return result;
   }
