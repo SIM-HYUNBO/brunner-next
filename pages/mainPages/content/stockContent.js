@@ -410,7 +410,7 @@ const StockContent = () => {
             },
             series: [
                 {
-                    name: '가격',
+                    name: 'Price (USD)',
                     data: priceData,
                 },
                 {
@@ -599,7 +599,7 @@ const StockContent = () => {
             },
             series: [
                 {
-                    name: '가격',
+                    name: 'Price (USD)',
                     data: priceData,
                 },
                 {
@@ -700,7 +700,7 @@ const StockContent = () => {
                 </div>
             )}
             <div>
-                <h1 className="title-font sm:text-4xl text-3xl mb-10 font-medium text-green-900">
+                <h1 className="title-font sm:text-4xl text-3xl my-10 font-medium text-green-900">
                     Stock search
                 </h1>
                 <div className='items-start mt-2 dark:text-slate-400'>
