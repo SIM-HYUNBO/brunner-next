@@ -1,9 +1,8 @@
-// vercel.json
 {
   "functions": {
-    "api/**/*.js": {    // 모든 API 라우트에 대해 설정
-      "maxDuration": 60, // 최대 실행 시간을 60초로 설정
-      "memory": 1024     // 메모리를 1024MB로 설정
+    "api/**/*.js": {    
+      "maxDuration": 60, 
+      "memory": 1024     
     }
   }
 }

@@ -98,8 +98,6 @@ const generateTxnId = async () => {
 }
 
 const saveTxnHistory = async (remoteIp, txnId, jRequest, jResponse) => {
-    // logger.info(`saveTxnHistory REQ: ${JSON.stringify(jRequest)} RES: ${JSON.stringify(jResponse)}\n`);
-
     var sql = await serviceSQL.getSQL00('insert_TB_COR_TXN_HIST', 1);
     var insert_TB_COR_TXN_HIST_01 = await database.executeSQL(sql,
         [
