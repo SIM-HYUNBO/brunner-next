@@ -10,7 +10,7 @@ export default function Support() {
   return (
     <Layout>
       <Head>
-        <title>IT 기술 연구소 - Brunner</title>
+        <title>증시/자산관리 연구소 - Brunner</title>
         <meta name="description" content="IT 기술 연구소"></meta>
         <meta rel="icon" href="/brunnerLogo.png"></meta>
         <link></link>
