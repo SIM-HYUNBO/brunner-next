@@ -11,7 +11,7 @@ export default function Support() {
     <Layout>
       <Head>
         <title>Breakfast, Lunch and Dinner - Brunner</title>
-        <meta name="description" content="IT 기술 연구소"></meta>
+        <meta name="description" content="Breakfast, Lunch and Dinner"></meta>
         <meta rel="icon" href="/brunnerLogo.png"></meta>
         <link></link>
       </Head>
