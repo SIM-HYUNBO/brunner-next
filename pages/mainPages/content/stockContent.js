@@ -747,7 +747,7 @@ const StockContent = () => {
                 <div className="flex mb-4">
                     {/* Recent Symbols List */}
                     <div className="w-[30%] h-72 py-10">
-                        <h3 className="font-bold text-lg mb-2">Recent Searches ...</h3>
+                        <h3 className="font-bold text-lg mb-2">Recent...</h3>
                         <ul
                             className={`items-start ${isDarkMode() ? "bg-slate-800 text-white" : "bg-slate-50 text-black"
                                 } border border-slate-400 h-full overflow-y-auto`}
@@ -775,7 +775,7 @@ const StockContent = () => {
 
                     {/* Select Symbols List */}
                     <div className="w-[70%] h-72 py-10">
-                        <h3 className="font-bold text-lg mb-2">Select Symbol ...</h3>
+                        <h3 className="font-bold text-lg mb-2">Select...</h3>
                         <ul
                             className={`items-start ${isDarkMode() ? "bg-slate-800 text-white" : "bg-slate-50 text-black"
                                 } border border-slate-400 h-full overflow-y-auto`}
