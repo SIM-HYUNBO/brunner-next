@@ -4,9 +4,9 @@ import Layout from '../../components/layout'
 import Head from 'next/head'
 import BodySection from '../../components/bodySection'
 
-import SupportContent from './content/supportCcntent'
+import ContactContent from './content/contactCcntent'
 
-export default function Support() {
+export default function Contact() {
   return (
     <Layout>
       <Head>
@@ -17,7 +17,7 @@ export default function Support() {
       </Head>
       <BodySection>
         <div className="container mx-auto flex px-5 md:flex-row flex-col items-center">
-          <SupportContent></SupportContent>
+          <ContactContent></ContactContent>
         </div>
       </BodySection>
     </Layout>

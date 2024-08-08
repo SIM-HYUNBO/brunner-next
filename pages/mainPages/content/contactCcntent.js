@@ -3,7 +3,7 @@
 import SupportContentAnimation from './content-animation/supportContentAnimation'
 import { useRouter } from 'next/router'
 
-export default function SupportContent() {
+export default function ContactContent() {
   const router = useRouter()
 
   return (
@@ -15,17 +15,14 @@ export default function SupportContent() {
                        mb-10 
                        font-medium 
                        text-green-900">
-          항상 곁에 있습니다.
+          Here for you always.
         </h1>
         <div className="main-governing-text">
-          고객을 성공으로 리딩합니다. <br />
-          Brunner의 콜센터는 언제나 고객과 함께합니다. <br />
-          바로 연락하십시요.
+          Brunner's call center is always available to assist investors.
+          Contact us immediately
         </div>
         <div className="flex justify-center">
-          <button className="inline-flex text-white bg-indigo-500 border-0 py-2 px-6 focus:outline-none hover:bg-indigo-600 rounded text-lg">
-            <GetCallCenter />
-          </button>
+          <GetContact />
         </div>
       </div>
       <div className="lg:h-2/6 lg:w-2/6">
@@ -35,8 +32,17 @@ export default function SupportContent() {
   );
 }
 
-export function GetCallCenter() {
+export function GetContact() {
   return (
-    <a className="text-white-900" href={`tel:01075448698`}>Call</a>
+    <>
+      <div className="px-5 py-2 mr-2 bg-indigo-500">
+        <a href={`tel:82-10-7544-8698`}>Mobile</a>
+      </div>
+      <br />
+      <div className="px-5 py-2 mr-2 bg-indigo-500">
+        <a href="mailto:hbsim0605@gmail.com">Mail</a>
+      </div>
+
+    </>
   )
 }
