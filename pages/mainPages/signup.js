@@ -201,7 +201,7 @@ export default function Signup() {
               </div>
 
               <button onClick={() => requestSignup()}
-                className="text-white bg-indigo-500 max-w-max border-0 py-2 px-8 focus:outline-none hover:bg-indigo-600 rounded text-lg">
+                className="text-white bg-indigo-500 max-w-max border-0 py-2 px-4 focus:outline-none hover:bg-indigo-600 rounded text-lg">
                 Signup
               </button>
 

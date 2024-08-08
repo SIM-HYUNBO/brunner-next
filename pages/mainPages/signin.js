@@ -135,7 +135,7 @@ export default function Signin() {
                 />
               </div>
               <button
-                className="text-white bg-indigo-500 border-0 py-2 px-8 focus:outline-none hover:bg-indigo-600 rounded text-lg"
+                className="text-white bg-indigo-500 border-0 py-2 px-4 focus:outline-none hover:bg-indigo-600 rounded text-lg"
                 onClick={requestSignin}
               >
                 Sign in
@@ -144,7 +144,7 @@ export default function Signin() {
                 Forgot your password? Reset now.
               </p>
               <button
-                className="text-white bg-indigo-500 border-0 py-2 px-8 focus:outline-none hover:bg-indigo-600 rounded text-lg mt-5"
+                className="text-white bg-indigo-500 border-0 py-2 px-4 focus:outline-none hover:bg-indigo-600 rounded text-lg mt-5"
                 onClick={() => router.push('/mainPages/resetPassword')}
               >
                 Reset password
