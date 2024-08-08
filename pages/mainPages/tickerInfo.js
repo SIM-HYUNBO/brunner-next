@@ -3,21 +3,20 @@
 import Layout from '../../components/layout'
 import Head from 'next/head'
 import BodySection from '../../components/bodySection'
+import TickerInfoContent from './content/tickerInfoContent'
 
-import SupportContent from './content/supportCcntent'
-
-export default function Support() {
+export default function Contact() {
   return (
     <Layout>
       <Head>
-        <title>Breakfast, Lunch and Dinner - Brunner</title>
-        <meta name="description" content="Breakfast, Lunch and Dinner"></meta>
+        <title>Brunner Home</title>
+        <meta name="description" content="ContactUs"></meta>
         <meta rel="icon" href="/brunnerLogo.png"></meta>
         <link></link>
       </Head>
       <BodySection>
         <div className="container mx-auto flex px-5 md:flex-row flex-col items-center">
-          <SupportContent></SupportContent>
+          <TickerInfoContent></TickerInfoContent>
         </div>
       </BodySection>
     </Layout>
