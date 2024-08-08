@@ -3,9 +3,13 @@
 import Layout from '../../components/layout'
 import Head from 'next/head'
 import BodySection from '../../components/bodySection'
-import ContactContent from './content/contactContent'
+import TickerInfoContent from './content/tickerInfoContent'
+import { useRouter } from 'next/router';
 
-export default function Contact() {
+export default function TickerInfo() {
+  const router = useRouter();
+  const { currentStockTicker } = router.query;
+
   return (
     <Layout>
       <Head>
@@ -16,7 +20,7 @@ export default function Contact() {
       </Head>
       <BodySection>
         <div className="container mx-auto flex px-5 md:flex-row flex-col items-center">
-          <ContactContent></ContactContent>
+          <TickerInfoContent currentStockTicker={currentStockTicker}></TickerInfoContent>
         </div>
       </BodySection>
     </Layout>
