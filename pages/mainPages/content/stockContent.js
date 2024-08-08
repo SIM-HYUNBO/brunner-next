@@ -8,6 +8,7 @@ import BrunnerMessageBox from '@/components/BrunnerMessageBox';
 import dynamic from 'next/dynamic';
 import RealtimeChart from './realtimeChart';
 import { useTheme } from 'next-themes'
+import Link from "next/link";
 
 const Select = dynamic(() => import('react-select'), { ssr: false });
 // ApexCharts를 동적으로 import
@@ -802,7 +803,7 @@ const StockContent = () => {
                 {/* Input Fields and Refresh Button */}
                 <div className="flex mt-4" > {/* Centered inputs */}
                     <input
-                        className="text-center text-slate-400 bg-slate-50 dark:bg-slate-800 border border-slate-400 h-10 w-[30%]"
+                        className="text-center bg-indigo-500 text-white p-2 ml-1 h-10 w-[30%]"
                         type="text"
                         value={stocksTickerRef.current}
                         placeholder="Manual input. ex) AAPL, GOOGL, TSLA ..."
@@ -824,6 +825,12 @@ const StockContent = () => {
                     >
                         Refresh
                     </button>
+                    <Link
+                        className="bg-indigo-500 text-white p-2 ml-1 h-10"
+                        href="/mainPages/tickerInfo"
+                    >
+                        Info
+                    </Link>
                 </div>
             </div>
 
