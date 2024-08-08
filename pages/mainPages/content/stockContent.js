@@ -819,16 +819,16 @@ const StockContent = () => {
                         placeholder="Current Price ..."
                     />
                     <button
-                        className="bg-indigo-500 text-white p-2 ml-1 h-10"
+                        className="bg-indigo-500 text-white py-2 px-8 ml-1 h-10"
                         type="submit"
                         onClick={handleStockRequest}
                     >
                         Refresh
                     </button>
                     <Link
-                        className="bg-indigo-500 text-white p-2 ml-1 h-10"
+                        className="bg-indigo-500 text-white py-2 px-8 ml-1 h-10"
                         href={{ pathname: '/mainPages/tickerInfo', query: `currentStockTicker=${stocksTickerRef.current}` }}>
-                        Company profile
+                        Profile
                     </Link>
                 </div>
             </div>
