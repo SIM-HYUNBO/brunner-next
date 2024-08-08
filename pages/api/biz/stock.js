@@ -13,6 +13,9 @@ const executeService = (txnId, jRequest) => {
             case "stock.getTickerList":
                 jResponse = getTickerList(txnId, jRequest);
                 break;
+            case "stock.getTickerInfo":
+                jResponse = getTickerInfo(txnId, jRequest);
+                break;
             case "stock.getStockInfo":
                 jResponse = getStockInfo(txnId, jRequest);
                 break;
@@ -121,6 +124,44 @@ const getTickerList = async (txnId, jRequest) => {
             ]);
 
         jResponse.tickerList = select_TB_COR_TICKER_INFO_01.rows;
+
+        jResponse.error_code = 0;
+        jResponse.error_message = "";
+    } catch (e) {
+        logger.error(e);
+        jResponse.error_code = -1; // exception
+        jResponse.error_message = e.message
+    } finally {
+        return jResponse;
+    }
+};
+
+const getTickerInfo = async (txnId, jRequest) => {
+    var jResponse = {};
+
+    try {
+        jResponse.commanaName = jRequest.commandName;
+
+        var sql = null
+        sql = await serviceSQL.getSQL00('select_TB_COR_TICKER_INFO', 2);
+        var select_TB_COR_TICKER_INFO_02 = await database.executeSQL(sql,
+            [
+                jRequest.systemCode,
+                jRequest.tickerCode,
+            ]);
+
+        if (select_TB_COR_TICKER_INFO_02.rowCount === 1) {
+            logger.info(`RESULT:\n${JSON.stringify(select_TB_COR_TICKER_INFO_02.rows[0])}\n`);
+
+            jResponse.tickerInfo = {};
+            jResponse.tickerInfo.tickerDesc = select_TB_COR_TICKER_INFO_02.rows[0].ticker_desc;
+            jResponse.tickerInfo.tickerInfoContent = select_TB_COR_TICKER_INFO_02.rows[0].ticker_info_content;
+        }
+        else if (select_TB_COR_TICKER_INFO_02.rowCount <= 0) {
+            jResponse.error_code = -1;
+            jResponse.error_message = `The ticker info not exist.`;
+            return jResponse;
+        }
 
         jResponse.error_code = 0;
         jResponse.error_message = "";

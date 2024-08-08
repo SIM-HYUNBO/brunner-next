@@ -827,8 +827,8 @@ const StockContent = () => {
                     </button>
                     <Link
                         className="bg-indigo-500 text-white p-2 ml-1 h-10"
-                        href={{ pathname: '/mainPages/tickerInfo', query: `currentStockTicker=${stocksTickerRef.current }` }}>
-                        Info
+                        href={{ pathname: '/mainPages/tickerInfo', query: `currentStockTicker=${stocksTickerRef.current}` }}>
+                        Company profile
                     </Link>
                 </div>
             </div>
