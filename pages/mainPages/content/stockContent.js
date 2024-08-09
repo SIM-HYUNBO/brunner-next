@@ -115,13 +115,18 @@ const StockContent = () => {
             handleStockRequest();
         }
 
+        displayTickerListSync();
+    }, []);
+
+    const displayTickerListSync = async () => {
         // 컴포넌트가 마운트될 때 티커 목록 가져오기
         setTickerListRef(process.tickerList);
-        displayTickerList();
+        await displayTickerList();
 
-        if (!tickerListRef.current)
-            fetchTickerList();
-    }, []);
+        if (!tickerListRef.current){
+            await fetchTickerList();
+        }
+    }
 
     // 모달 열기 함수
     const openModal = (message) => {
@@ -157,8 +162,8 @@ const StockContent = () => {
             const jResponse = await requestServer('POST', JSON.stringify(jRequest));
 
             if (jResponse.error_code === 0) {
-                setTickerListRef(jResponse.tickerList);
-                displayTickerList();
+                await setTickerListRef(jResponse.tickerList);
+                await displayTickerList();
             } else {
                 openModal(JSON.stringify(jResponse.error_message));
             }
