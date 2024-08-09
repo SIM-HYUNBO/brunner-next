@@ -92,6 +92,15 @@ const StockContent = () => {
 
     };
 
+    const [tickerList, setTickerList] = useState(); // 기간 단위
+    const tickerListRef = useRef(tickerList);
+    const setTickerListRef = (newValue) => {
+        setTickerList(newValue);
+        tickerListRef.current = newValue;
+        process.tickerList = newValue;
+
+    };
+
     // useEffect를 사용하여 최근 검색한 종목 코드 로드
     useEffect(() => {
         const storedSearches = localStorage.getItem('recentSearches');
@@ -107,7 +116,11 @@ const StockContent = () => {
         }
 
         // 컴포넌트가 마운트될 때 티커 목록 가져오기
-        fetchTickerList();
+        setTickerListRef(process.tickerList);
+        displayTickerList();
+
+        if (!tickerListRef.current)
+            fetchTickerList();
     }, []);
 
     // 모달 열기 함수
@@ -144,12 +157,8 @@ const StockContent = () => {
             const jResponse = await requestServer('POST', JSON.stringify(jRequest));
 
             if (jResponse.error_code === 0) {
-                // 여기서 조회한 종목 목록을 콤보박스에 표시
-                const options = jResponse.tickerList.map(ticker => ({
-                    value: ticker.ticker_code, // ticker_code 사용
-                    label: `${ticker.ticker_code} - ${ticker.ticker_desc}` // ticker_desc 사용
-                }));
-                setTickerOptions(options);
+                setTickerListRef(jResponse.tickerList);
+                displayTickerList();
             } else {
                 openModal(JSON.stringify(jResponse.error_message));
             }
@@ -160,6 +169,15 @@ const StockContent = () => {
             setLoading(false);
         }
     };
+
+    const displayTickerList = () => {
+        // 여기서 조회한 종목 목록을 콤보박스에 표시
+        const options = ticerListRef.current.map(ticker => ({
+            value: ticker.ticker_code, // ticker_code 사용
+            label: `${ticker.ticker_code} - ${ticker.ticker_desc}` // ticker_desc 사용
+        }));
+        setTickerOptions(options);
+    }
 
     // 주식 데이터를 가져오는 함수
     const fetchStockData = async () => {
