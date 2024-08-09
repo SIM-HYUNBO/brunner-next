@@ -19,7 +19,7 @@ export default function Home() {
 
   }, []);
 
-  const googleScript = () => {
+  const GoogleScript = () => {
     return (
       <>
         <h1>Hello World</h1>
@@ -38,7 +38,7 @@ export default function Home() {
         <meta name="description" content="서비스플랫폼"></meta>
         <meta rel="icon" href="/brunnerLogo.png"></meta>
         <meta name="google-adsense-account" content="ca-pub-3879149687745447"></meta>
-        <googleScript />
+        <GoogleScript />
       </Head>
       <BodySection>
         <div className="container mx-auto flex px-5 md:flex-row flex-col items-center">
