@@ -1,6 +1,6 @@
 `use strict`
 
-import SupportContentAnimation from './content-animation/supportContentAnimation'
+import ContactContentAnimation from './content-animation/supportContentAnimation'
 import { useRouter } from 'next/router'
 
 export default function ContactContent() {
@@ -26,7 +26,7 @@ export default function ContactContent() {
         </div>
       </div>
       <div className="lg:h-2/6 lg:w-2/6">
-        {/* <SupportContentAnimation /> */}
+        {<ContactContentAnimation />}
       </div>
     </>
   );
