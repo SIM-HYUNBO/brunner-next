@@ -156,6 +156,7 @@ const getTickerInfo = async (txnId, jRequest) => {
             jResponse.tickerInfo = {};
             jResponse.tickerInfo.tickerDesc = select_TB_COR_TICKER_INFO_02.rows[0].ticker_desc;
             jResponse.tickerInfo.tickerInfoContent = select_TB_COR_TICKER_INFO_02.rows[0].ticker_info_content;
+            jResponse.tickerInfo.tickerNewsContent = select_TB_COR_TICKER_INFO_02.rows[0].ticker_news_content;
         }
         else if (select_TB_COR_TICKER_INFO_02.rowCount <= 0) {
             jResponse.error_code = -1;
