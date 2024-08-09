@@ -3,13 +3,13 @@
 import React, { Component } from 'react'
 import Lottie from 'react-lottie-player'
 
-import SupportContentAnimationJson from '/public/support-content-animation.json'
+import ContactContentAnimationJson from '/public/contact-content-animation.json'
 
-export default function SupportContentAnimation() {
+export default function ContactContentAnimation() {
   return (
     <Lottie
       loop
-      animationData={SupportContentAnimationJson}
+      animationData={ContactContentAnimationJson}
       play
     />
   )
