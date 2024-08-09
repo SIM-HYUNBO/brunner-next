@@ -22,7 +22,6 @@ export default function Home() {
   const GoogleScript = () => {
     return (
       <>
-        <h1>Hello World</h1>
         <Script
           src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3879149687745447"
           crossorigin="anonymous"
