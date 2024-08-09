@@ -799,7 +799,7 @@ const StockContent = () => {
                             className={`items-start ${isDarkMode() ? "bg-slate-800 text-white" : "bg-slate-50 text-black"
                                 } border border-slate-400 h-full overflow-y-auto`}
                         >
-                            {tickerOptions.map((option) => (
+                            {tickerOptions?.map((option) => (
                                 <li
                                     key={option.value}
                                     onClick={() => {
