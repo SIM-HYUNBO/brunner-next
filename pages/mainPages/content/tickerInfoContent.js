@@ -1,6 +1,6 @@
 `use strict`
 
-// import TickerInfoContentAnimation from './content-animation/TickerInfoContentAnimation'
+import TickerInfoAnimation from './content-animation/tickerInfoAnimation'
 import { useState, useRef, useEffect } from 'react'
 import { useRouter } from 'next/router'
 import requestServer from '@/components/requestServer'
@@ -101,15 +101,15 @@ export default function TickerInfoContent({ currentStockTicker: tickerCode }) {
         <div className="main-governing-text">
           <p>{tickerDescRef.current}</p>
         </div>
-        <div className="flex space-x-4 border w-full h-1/2">
-          <pre>{tickerInfoContentRef.current ? tickerInfoContentRef.current: 'Ticker info here.'}</pre>
+        <div className="flex space-x-4 border w-full h-full text-align-left mt-10 readonly">
+          <pre>{tickerInfoContentRef.current ? tickerInfoContentRef.current : 'Ticker info here.'}</pre>
         </div>
-        <div className="flex space-x-4 border w-full h-full text-align-left mt-10 h-1/2">
-          <pre>{tickerNewsContentRef.current ? tickerNewsContentRef.current: 'Ticker news here.'}</pre>
+        <div className="flex space-x-4 border w-full h-full text-align-left mt-10 readonly">
+          <pre>{tickerNewsContentRef.current ? tickerNewsContentRef.current : 'Ticker news here.'}</pre>
         </div>
       </div>
       <div className="lg:h-2/6 lg:w-2/6">
-        <p>Ticker Image hear</p>
+        {TickerInfoAnimation}
       </div>
     </>
   );
