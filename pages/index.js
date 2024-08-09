@@ -24,6 +24,7 @@ export default function Home() {
         <title>Brunner Home</title>
         <meta name="description" content="서비스플랫폼"></meta>
         <meta rel="icon" href="/brunnerLogo.png"></meta>
+        <meta name="google-adsense-account" content="ca-pub-3879149687745447"></meta>
         <link></link>
       </Head>
       <BodySection>
