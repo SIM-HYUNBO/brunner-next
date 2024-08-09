@@ -25,6 +25,9 @@ export default function Home() {
         <meta name="description" content="서비스플랫폼"></meta>
         <meta rel="icon" href="/brunnerLogo.png"></meta>
         <meta name="google-adsense-account" content="ca-pub-3879149687745447"></meta>
+        <script async
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3879149687745447"
+          crossorigin="anonymous"></script>
         <link></link>
       </Head>
       <BodySection>
