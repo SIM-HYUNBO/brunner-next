@@ -51,6 +51,13 @@ export default function TickerInfoContent({ currentStockTicker: tickerCode }) {
     tickerInfoContentRef.current = newValue;
   }
 
+  const [tickerNewsContent, setTickerNewsContent] = useState('');
+  const tickerNewsContentRef = useRef(tickerNewsContent);
+  const setTickerNewsContentRef = (newValue) => {
+    setTickerNewsContent(newValue);
+    tickerNewsContentRef.current = newValue;
+  }
+
   useEffect(() => {
     getTickerInfo();
   }, []);
@@ -72,6 +79,7 @@ export default function TickerInfoContent({ currentStockTicker: tickerCode }) {
         if (jResponse.tickerInfo) {
           setTickerDescRef(jResponse.tickerInfo.tickerDesc);
           setTickerInfoContentRef(jResponse.tickerInfo.tickerInfoContent);
+          setTickerNewsContentRef(jResponse.tickerInfo.tickerNewsContent);
         }
       } else {
         openModal(JSON.stringify(jResponse.error_message));
@@ -93,8 +101,11 @@ export default function TickerInfoContent({ currentStockTicker: tickerCode }) {
         <div className="main-governing-text">
           <p>{tickerDescRef.current}</p>
         </div>
-        <div className="flex justify-center space-x-4">
-          <pre>{tickerInfoContentRef.current}</pre>
+        <div className="flex justify-center space-x-4 border w-full h-1/2">
+          <p>{tickerInfoContentRef.current ? tickerInfoContentRef.current: 'Ticker info here.'}</p>
+        </div>
+        <div className="flex justify-center space-x-4 border w-full h-full text-align-left mt-10 h-1/2">
+          <p>{tickerNewsContentRef.current ? tickerNewsContentRef.current: 'Ticker news here.'}</p>
         </div>
       </div>
       <div className="lg:h-2/6 lg:w-2/6">
