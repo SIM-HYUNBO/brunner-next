@@ -172,7 +172,7 @@ const StockContent = () => {
 
     const displayTickerList = () => {
         // 여기서 조회한 종목 목록을 콤보박스에 표시
-        const options = ticerListRef.current.map(ticker => ({
+        const options = tickerListRef.current.map(ticker => ({
             value: ticker.ticker_code, // ticker_code 사용
             label: `${ticker.ticker_code} - ${ticker.ticker_desc}` // ticker_desc 사용
         }));
