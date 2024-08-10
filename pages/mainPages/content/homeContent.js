@@ -18,7 +18,7 @@ export default function HomeContent() {
           Achieve Wealth Through Smart Management and Market Engagement
           Unlock Wealth: Manage Well, Stay Engaged, and Use Brunner Safely
           Master Management for Wealth: Stay Engaged in the Stock Market
-          Stay in the Market, Communicate, and Get Wealthy with Brunner
+          Stay in the Market, Communicate, and Get Wealthy with Brunner-Next
         </div>
         <div className="flex flex-col">
           <div className="dark:text-slate-400 mb-2">
