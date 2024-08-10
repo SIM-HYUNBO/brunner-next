@@ -1,0 +1,9 @@
+# *
+User-agent: *
+Allow: /
+
+# Host
+Host: https://brunner-next.vercel.app/
+
+# Sitemaps
+Sitemap: https://brunner-next.vercel.app/sitemap.xml
