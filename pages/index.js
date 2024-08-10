@@ -34,7 +34,8 @@ export default function Home() {
     <Layout>
       <Head>
         <title>Brunner Home</title>
-        <meta name="description" content="서비스플랫폼"></meta>
+        <meta name="description" content="Stock Charts and Market Analysis, Asset Management"></meta>
+        <meta name="keywords" content="Stock, Chart, Asset, Invertment" />
         <meta rel="icon" href="/brunnerLogo.png"></meta>
         <meta name="google-adsense-account" content="ca-pub-3879149687745447"></meta>
         <GoogleScript />
