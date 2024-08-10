@@ -326,7 +326,7 @@ export default function AssetContent() {
       />
       <div className="lg:flex-grow md:w-1/2 lg:pr-24 md:pr-16 flex flex-col md:items-start md:text-left md:mb-0 items-center text-center my-10">
         <h1 className="title-font sm:text-4xl text-3xl mb-10 font-medium text-green-900">
-          내자산
+          My Asset History
         </h1>
         <div className="mb-5 table w-full">
           <input
@@ -334,7 +334,7 @@ export default function AssetContent() {
             name="amountInput"
             value={amountInput}
             onChange={(e) => handleInputChange(e, 'amountInput')}
-            placeholder="금액"
+            placeholder="Amount"
             className="mr-3 p-2 border rounded dark:text-gray-300 text-right table-column"
           />
           <div className="relative flex-grow">
@@ -343,7 +343,7 @@ export default function AssetContent() {
               name="commentInput"
               value={commentInput}
               onChange={(e) => handleInputChange(e, 'commentInput')}
-              placeholder="코멘트"
+              placeholder="Comment"
               className="p-2 border rounded dark:text-gray-300 w-full table-column"
               style={{ marginLeft: '-2px' }}
             />
