@@ -123,7 +123,7 @@ const StockContent = () => {
         setTickerListRef(process.tickerList);
         await displayTickerList();
 
-        if (!tickerListRef.current){
+        if (!tickerListRef.current) {
             await fetchTickerList();
         }
     }
@@ -850,7 +850,7 @@ const StockContent = () => {
                     </button>
                     <Link
                         className="bg-indigo-500 text-white py-2 px-4 ml-1 h-10"
-                        href={{ pathname: '/mainPages/tickerInfo', query: `currentStockTicker=${stocksTickerRef.current}` }}>
+                        href={{ pathname: '/mainPages/tickerInfo', query: `tickerCode=${stocksTickerRef.current}` }}>
                         News...
                     </Link>
                 </div>

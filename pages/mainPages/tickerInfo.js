@@ -8,7 +8,7 @@ import { useRouter } from 'next/router';
 
 export default function TickerInfo() {
   const router = useRouter();
-  const { currentStockTicker } = router.query;
+  const { tickerCode } = router.query;
 
   return (
     <Layout>
@@ -20,7 +20,7 @@ export default function TickerInfo() {
       </Head>
       <BodySection>
         <div className="container mx-auto flex px-5 md:flex-row flex-col items-center">
-          <TickerInfoContent currentStockTicker={currentStockTicker}></TickerInfoContent>
+          <TickerInfoContent tickerCode={tickerCode}></TickerInfoContent>
         </div>
       </BodySection>
     </Layout>

@@ -50,10 +50,11 @@ export default function AssetContent() {
     });
   };
 
+  const fetchData = async function () {
+    await fetchIncomeHistory();
+  };
+
   useEffect(() => {
-    const fetchData = async () => {
-      await fetchIncomeHistory();
-    };
 
     fetchData();
 

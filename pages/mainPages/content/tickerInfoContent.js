@@ -5,7 +5,7 @@ import { useState, useRef, useEffect } from 'react'
 import { useRouter } from 'next/router'
 import requestServer from '@/components/requestServer'
 
-export default function TickerInfoContent({ currentStockTicker: tickerCode }) {
+export default function TickerInfoContent({ tickerCode: tickerCode }) {
   const [loading, setLoading] = useState(false); // 로딩 상태 추가
   const [modalContent, setModalContent] = useState({
     isOpen: false,
