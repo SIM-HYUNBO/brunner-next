@@ -99,13 +99,13 @@ export default function TickerInfoContent({ tickerCode: tickerCode }) {
           {`${tickerCode}`}
         </h1>
         <div className="main-governing-text">
-          <h2>{tickerDescRef.current}</h2>
+          <p>{tickerDescRef.current}</p>
         </div>
         <div className="flex space-x-4 border w-full h-full text-align-left mt-10 readonly">
           <pre>{tickerInfoContentRef.current ? tickerInfoContentRef.current : 'Ticker info here.'}</pre>
         </div>
         <div className="flex space-x-4 border w-full h-full text-align-left mt-10 readonly">
-          <p>{tickerNewsContentRef.current ? tickerNewsContentRef.current : 'Ticker news here.'}</p>
+          <pre>{tickerNewsContentRef.current ? tickerNewsContentRef.current : 'Ticker news here.'}</pre>
         </div>
       </div>
       <div className="lg:h-2/6 lg:w-2/6 border w-100 h-100" >
