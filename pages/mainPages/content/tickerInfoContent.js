@@ -96,10 +96,10 @@ export default function TickerInfoContent({ tickerCode: tickerCode }) {
     <>
       <div className="lg:flex-grow md:w-1/2 lg:pr-24 md:pr-16 flex flex-col md:items-start md:text-left md:mb-0 items-center text-center">
         <h1 className="title-font sm:text-4xl text-3xl mb-10 font-medium text-green-900">
-          <p>{tickerCode}</p>
+          {`${tickerCode}`}
         </h1>
         <div className="main-governing-text">
-          <p>{tickerDescRef.current}</p>
+          <h2>{tickerDescRef.current}</h2>
         </div>
         <div className="flex space-x-4 border w-full h-full text-align-left mt-10 readonly">
           <pre>{tickerInfoContentRef.current ? tickerInfoContentRef.current : 'Ticker info here.'}</pre>
