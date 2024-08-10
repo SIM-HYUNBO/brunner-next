@@ -105,7 +105,7 @@ export default function TickerInfoContent({ tickerCode: tickerCode }) {
           <pre>{tickerInfoContentRef.current ? tickerInfoContentRef.current : 'Ticker info here.'}</pre>
         </div>
         <div className="flex space-x-4 border w-full h-full text-align-left mt-10 readonly">
-          <pre>{tickerNewsContentRef.current ? tickerNewsContentRef.current : 'Ticker news here.'}</pre>
+          <p>{tickerNewsContentRef.current ? tickerNewsContentRef.current : 'Ticker news here.'}</p>
         </div>
       </div>
       <div className="lg:h-2/6 lg:w-2/6 border w-100 h-100" >
