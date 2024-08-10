@@ -108,8 +108,8 @@ export default function TickerInfoContent({ tickerCode: tickerCode }) {
           <pre>{tickerNewsContentRef.current ? tickerNewsContentRef.current : 'Ticker news here.'}</pre>
         </div>
       </div>
-      <div className="lg:h-2/6 lg:w-2/6">
-        {TickerInfoAnimation}
+      <div className="lg:h-2/6 lg:w-2/6 border w-100 h-100" >
+        <TickerInfoAnimation />
       </div>
     </>
   );
