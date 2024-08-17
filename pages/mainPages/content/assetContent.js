@@ -3,8 +3,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/router';
 import { useTable, useSortBy } from 'react-table';
-import requestServer from './../../../components/requestServer';
-import * as userInfo from './../../../components/userInfo';
+import requestServer from '@/components/requestServer';
+import * as userInfo from '@/components/userInfo';
 import moment from 'moment';
 import BrunnerMessageBox from '@/components/BrunnerMessageBox';
 
