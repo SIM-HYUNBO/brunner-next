@@ -8,6 +8,7 @@ import * as serviceSQL from './biz/serviceSQL'
 import * as security from './biz/security'
 import * as asset from './biz/asset'
 import * as stock from './biz/stock'
+import * as post from './biz/post'
 
 async function initialize() {
     var serviceSql = null;
@@ -70,6 +71,8 @@ const executeService = async (method, req) => {
         jResponse = await asset.executeService(req.body._txnId, jRequest);
     } else if (commandName.startsWith('stock.')) {
         jResponse = await stock.executeService(req.body._txnId, jRequest);
+    } else if (commandName.startsWith('post.')) {
+        jResponse = await post.executeService(req.body._txnId, jRequest);
     } else {
         jResponse = JSON.stringify({
             error_code: -1,

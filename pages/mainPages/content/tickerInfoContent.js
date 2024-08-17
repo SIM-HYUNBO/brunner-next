@@ -4,7 +4,7 @@ import TickerInfoAnimation from './content-animation/tickerInfoAnimation'
 import { useState, useRef, useEffect } from 'react'
 import { useRouter } from 'next/router'
 import requestServer from '@/components/requestServer'
-import Board from '@/components/board'
+import Board from '@/pages/mainPages/content/board'
 
 export default function TickerInfoContent({ tickerCode: tickerCode }) {
   const [loading, setLoading] = useState(false); // 로딩 상태 추가
@@ -109,7 +109,7 @@ export default function TickerInfoContent({ tickerCode: tickerCode }) {
           <p>{tickerNewsContentRef.current ? tickerNewsContentRef.current : 'Ticker news here.'}</p>
         </div>
         <div className="flex space-x-4 border w-full h-full text-align-left mt-10 readonly">
-          <Board boardInfo={{ tickerCode: tickerCode }} />
+          <Board boardType={tickerCode} />
         </div>
 
       </div>
