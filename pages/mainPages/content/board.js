@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import requestServer from '@/components/requestServer';
 import * as userInfo from '@/components/userInfo';
+import BrunnerMessageBox from '@/components/BrunnerMessageBox';
 
 // 게시글 컴포넌트
 function Post({ post, onAddComment, onEditPost, onDeletePost, onEditComment, onDeleteComment }) {
     const [commentText, setCommentText] = useState('');
     const [isEditingPost, setIsEditingPost] = useState(false);
-    const [editedPostText, setEditedPostText] = useState(post.content);
+    const [editedPostText, setEditedPostText] = useState(post.post_content);
     const [editingCommentId, setEditingCommentId] = useState(null);
     const [editedCommentText, setEditedCommentText] = useState('');
 
@@ -16,7 +17,7 @@ function Post({ post, onAddComment, onEditPost, onDeletePost, onEditComment, onD
 
     const handleAddComment = () => {
         if (commentText.trim()) {
-            onAddComment(post.id, commentText);
+            onAddComment(post.post_id, commentText);
             setCommentText('');
         }
     };
@@ -26,12 +27,12 @@ function Post({ post, onAddComment, onEditPost, onDeletePost, onEditComment, onD
     };
 
     const handleEditPost = () => {
-        onEditPost(post.id, editedPostText);
+        onEditPost(post.post_id, editedPostText);
         setIsEditingPost(false);
     };
 
     const handleDeletePost = () => {
-        onDeletePost(post.id);
+        onDeletePost(post.post_id);
     };
 
     const handleEditCommentChange = (e) => {
@@ -39,12 +40,12 @@ function Post({ post, onAddComment, onEditPost, onDeletePost, onEditComment, onD
     };
 
     const handleEditComment = (commentId) => {
-        onEditComment(post.id, commentId, editedCommentText);
+        onEditComment(post.post_id, commentId, editedCommentText);
         setEditingCommentId(null);
     };
 
     const handleDeleteComment = (commentId) => {
-        onDeleteComment(post.id, commentId);
+        onDeleteComment(post.post_id, commentId);
     };
 
     return (
@@ -65,9 +66,9 @@ function Post({ post, onAddComment, onEditPost, onDeletePost, onEditComment, onD
                 </div>
             ) : (
                 <p>
-                    <strong>{post.authorId}</strong>
-                    <span className="text-gray-500 text-sm ml-2">{new Date(post.timestamp).toLocaleString()}</span>
-                    : {post.content}
+                    <strong>{post.create_user_id}</strong>
+                    <span className="text-gray-500 text-sm ml-2">{new Date(post.create_time).toLocaleString()}</span>
+                    : <p className='w-full'>{post.post_content}</p>
                 </p>
             )}
             <div className="flex mt-2">
@@ -83,9 +84,9 @@ function Post({ post, onAddComment, onEditPost, onDeletePost, onEditComment, onD
                 )}
             </div>
             <div className="ml-5 mt-2">
-                {post.comments.map((comment, index) => (
+                {post.comments?.map((comment, index) => (
                     <div key={index} className="ml-4 mb-2">
-                        {editingCommentId === index ? (
+                        {editingCommentId === comment.comment_id ? (
                             <div>
                                 <input
                                     type="text"
@@ -93,7 +94,7 @@ function Post({ post, onAddComment, onEditPost, onDeletePost, onEditComment, onD
                                     onChange={handleEditCommentChange}
                                     className="w-full p-2 border border-gray-300 rounded-md"
                                 />
-                                <button onClick={() => handleEditComment(index)} className="mt-2 px-4 py-2 bg-blue-500 text-white rounded-md">
+                                <button onClick={() => handleEditComment(comment.comment_id)} className="mt-2 px-4 py-2 bg-blue-500 text-white rounded-md">
                                     Save
                                 </button>
                                 <button onClick={() => setEditingCommentId(null)} className="mt-2 ml-2 px-4 py-2 bg-gray-500 text-white rounded-md">
@@ -102,18 +103,18 @@ function Post({ post, onAddComment, onEditPost, onDeletePost, onEditComment, onD
                             </div>
                         ) : (
                             <p>
-                                <strong>{comment.authorId}</strong>
-                                <span className="text-gray-500 text-sm ml-2">{new Date(comment.timestamp).toLocaleString()}</span>
-                                : {comment.content}
+                                <strong>{comment.create_user_id}</strong>
+                                <span className="text-gray-500 text-sm ml-2">{new Date(comment.create_time).toLocaleString()}</span>
+                                : <p>{comment.comment_content}</p>
                             </p>
                         )}
                         <div className="flex mt-1">
-                            {editingCommentId !== index && (
+                            {editingCommentId !== comment.comment_id && (
                                 <>
-                                    <button onClick={() => { setEditingCommentId(index); setEditedCommentText(comment.content); }} className="mr-2 px-3 py-1 bg-yellow-500 text-white rounded-md">
+                                    <button onClick={() => { setEditingCommentId(comment.comment_id); setEditedCommentText(comment.comment_content); }} className="mr-2 px-3 py-1 bg-yellow-500 text-white rounded-md">
                                         Edit
                                     </button>
-                                    <button onClick={() => handleDeleteComment(index)} className="px-3 py-1 bg-red-500 text-white rounded-md">
+                                    <button onClick={() => handleDeleteComment(comment.comment_id)} className="px-3 py-1 bg-red-500 text-white rounded-md">
                                         Delete
                                     </button>
                                 </>
@@ -127,7 +128,7 @@ function Post({ post, onAddComment, onEditPost, onDeletePost, onEditComment, onD
                     type="text"
                     value={commentText}
                     onChange={handleCommentChange}
-                    placeholder="댓글을 입력하세요"
+                    placeholder="Input Comment."
                     className="flex-1 p-2 border border-gray-300 rounded-md"
                 />
                 <button onClick={handleAddComment} className="ml-2 px-4 py-2 bg-blue-500 text-white rounded-md">
@@ -140,16 +141,16 @@ function Post({ post, onAddComment, onEditPost, onDeletePost, onEditComment, onD
 
 /* 데이터 모델의 구조
 
-post.id : String (일련번호)
-post.authorId : String
-post.content : String
-post.timestamp : Date
+post.post_id : String (일련번호)
+post.create_user_id : String
+post.post_content : String
+post.create_time : Date
 post.comments : JsonArray of JsonObject 
 
-comment.id:  : String (일련번호)
-comment.authorId
-comment.content
-comment.timestamp
+comment.comment_id:  : String (일련번호)
+comment.create_user_id
+comment.comment_content
+comment.create_time
 
 */
 
@@ -161,33 +162,33 @@ function Board(boardInfo) {
         message: '',
         onConfirm: () => { },
         onClose: () => { }
-      });
-    
-      // 모달 열기 함수
+    });
+
+    // 모달 열기 함수
     const openModal = (message) => {
         return new Promise((resolve, reject) => {
-          setModalContent({
-            isOpen: true,
-            message: message,
-            onConfirm: (result) => { resolve(result); closeModal(); },
-            onClose: () => { reject(false); closeModal(); }
-          });
+            setModalContent({
+                isOpen: true,
+                message: message,
+                onConfirm: (result) => { resolve(result); closeModal(); },
+                onClose: () => { reject(false); closeModal(); }
+            });
         });
     };
-    
-      // 모달 닫기 함수
+
+    // 모달 닫기 함수
     const closeModal = () => {
         setModalContent({
-          isOpen: false,
-          message: '',
-          onConfirm: () => { },
-          onClose: () => { }
+            isOpen: false,
+            message: '',
+            onConfirm: () => { },
+            onClose: () => { }
         });
     };
 
     const [posts, setPosts] = useState([]);
     const [postText, setPostText] = useState('');
-    const tickerCode = boardInfo.tickerCode;
+    const [boardType, setTickerCode] = useState(boardInfo.boardType);
 
 
     useEffect(() => {
@@ -199,18 +200,33 @@ function Board(boardInfo) {
 
         var jRequest = {};
         var jResponse = null;
-    
+
         try {
             jRequest.commandName = "post.getPostList";
-            jRequest.postInfo = {postType:`TICKER_INFO-${tickerCode}`}; // 게시판 유형을 TICKER_INFO-{종모코드}로 함
-    
+            jRequest.systemCode = process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE;
+            jRequest.postInfo = { postType: `TICKER_INFO-${boardType}` }; // 게시판 유형을 TICKER_INFO-{종모코드}로 함
+
             setLoading(true); // 데이터 로딩 시작
             jResponse = await requestServer('POST', JSON.stringify(jRequest));
             setLoading(false); // 데이터 로딩 시작
 
             if (jResponse.error_code === 0) {
-                const data = jResponse.postList;
-                setPosts(data);
+
+                /*
+                {
+                    system_code
+                    post_id
+                    post_type
+                    post_content
+                    create_user_id
+                    create_time
+                    update_user_id
+                    update_time
+                    comments[] => 댓글의 배열을 시간의 역순 조회해서 저장
+                }
+                */
+
+                setPosts(jResponse.postList);
             } else {
                 openModal(jResponse.error_message);
             }
@@ -225,66 +241,76 @@ function Board(boardInfo) {
 
     // 2. 게시글 작성 */
     const handleAddPost = async () => {
-        if (postText.trim()) {
-            const userId = userInfo.getLoginUserId();
-            const postType = `TICKER_INFO-${tickerCode}`;
-            
-            const newPost = {
-                id: Date.now(),
-                postType: postType,
-                content: postText,
-                authorId: userId ? userId: 'anonymous user',
-                timestamp: new Date().toISOString(),
-                comments: []
-            };
+        try {
+            if (postText.trim()) {
+                var jRequest = {};
+                var jResponse = null;
 
-            var jRequest = {};
-            var jResponse = null;
-        
-            try {
+                const userId = userInfo.getLoginUserId();
+                const postType = `TICKER_INFO-${boardType}`;
+
+                const newPost = {
+                    postType: postType,
+                    content: postText,
+                    userId: userId ? userId : 'anonymous user',
+                };
+
                 jRequest.commandName = "post.addPost";
-                jRequest.postInfo = newPost;        
+                jRequest.systemCode = process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE;
+                jRequest.postInfo = newPost;
 
-                setLoading(true); 
+                setLoading(true);
                 jResponse = await requestServer('POST', JSON.stringify(jRequest));
                 setLoading(false);
 
                 if (jResponse.error_code === 0) {
-                    setPosts([newPost, ...posts]);
-                    setPostText('');    
+
+                    setPosts([jResponse.postInfo, ...posts]);
+                    setPostText('');
                 } else {
                     openModal(jResponse.error_message);
                 }
-            } catch (error) {
-                openModal(jResponse.error_message);
-                setLoading(false); 
             }
+        } catch (error) {
+            openModal(jResponse.error_message);
+            setLoading(false);
         }
     };
 
     // 3. 게시글 편집 후 저장 */
     const handleEditPost = async (postId, newContent) => {
         try {
+            var jRequest = {};
+            var jResponse = null;
+
             const userId = userInfo.getLoginUserId();
+            if (!userId) {
+                openModal('You do not have permission');
+                return;
+            }
 
             jRequest.commandName = "post.editPost";
+            jRequest.systemCode = process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE;
             jRequest.postInfo = {
-                postId:postId, 
-                content:newContent,
-                authorId: userId ? userId: 'anonymous user',
-            };        
+                postId: postId,
+                content: newContent,
+                userId: userId ? userId : 'anonymous user',
+            };
 
+            setLoading(true);
             jResponse = await requestServer('POST', JSON.stringify(jRequest));
+            setLoading(false);
 
             if (jResponse.error_code === 0) {
                 const updatedPosts = posts.map((post) =>
-                    post.id === postId ? { ...post, content: newContent, authorId: userId ? userId: 'anonymous user' } : post
+                    post.post_id === postId ? { ...post, post_content: newContent, update_user_id: userId ? userId : 'anonymous user' } : post
                 );
                 setPosts(updatedPosts);
             } else {
                 openModal(jResponse.error_message);
             }
         } catch (error) {
+            setLoading(false);
             openModal(jResponse.error_message);
         }
     };
@@ -292,23 +318,36 @@ function Board(boardInfo) {
     // 4. 게시글 삭제 */
     const handleDeletePost = async (postId) => {
         try {
+            var jRequest = {};
+            var jResponse = null;
+
             const userId = userInfo.getLoginUserId();
 
-            jRequest.commandName = "post.deletePost";
-            jRequest.postInfo = {
-                postId: postId, 
-                authorId: userId ? userId: 'anonymous user'
-            };        
+            if (!userId) {
+                openModal('You do not have permission');
+                return;
+            }
 
+            jRequest.commandName = "post.deletePost";
+            jRequest.systemCode = process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE;
+
+            jRequest.postInfo = {
+                postId: postId,
+                userId: userId ? userId : 'anonymous user'
+            };
+
+            setLoading(true);
             jResponse = await requestServer('POST', JSON.stringify(jRequest));
+            setLoading(false);
 
             if (jResponse.error_code === 0) {
-                const updatedPosts = posts.filter((post) => post.id !== postId);
+                const updatedPosts = posts.filter((post) => post.post_id !== postId);
                 setPosts(updatedPosts);
             } else {
                 openModal(jResponse.error_message);
             }
         } catch (error) {
+            setLoading(false);
             openModal(jResponse.error_message);
         }
     };
@@ -316,35 +355,36 @@ function Board(boardInfo) {
     // 5. 댓글 저장 */
     const handleAddComment = async (postId, commentText) => {
         try {
+            var jRequest = {};
+            var jResponse = null;
+
             const userId = userInfo.getLoginUserId();
-            
+
             jRequest.commandName = "post.addPostComment";
-            jRequest.postInfo = {
-                authorId: userId ? userId: 'anonymous user',
+            jRequest.systemCode = process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE;
+
+            jRequest.commentInfo = {
+                postId: postId,
                 content: commentText,
-                timestamp: new Date().toISOString(),
-            };        
+                userId: userId ? userId : 'anonymous user',
+            };
 
             jResponse = await requestServer('POST', JSON.stringify(jRequest));
 
             if (jResponse.error_code === 0) {
                 const updatedPosts = posts.map((post) => {
-                    if (post.id === postId) {
+                    if (post.post_id === postId) {
                         return {
                             ...post,
                             comments: [
                                 ...post.comments,
-                                {
-                                    authorId: 'UserID',
-                                    content: commentText,
-                                    timestamp: new Date().toISOString(),
-                                },
+                                jResponse.commentInfo,
                             ],
                         };
                     }
                     return post;
-                    });
-                    setPosts(updatedPosts);
+                });
+                setPosts(updatedPosts);
             } else {
                 openModal(jResponse.error_message);
             }
@@ -354,54 +394,94 @@ function Board(boardInfo) {
     };
 
     // 6. 댓글 편집 후 저장
-    const handleEditComment = async (postId, commentIndex, newContent) => {
+    const handleEditComment = async (postId, commentId, newContent) => {
         try {
-            // 서버에서 댓글 업데이트하는 로직
-            const post = posts.find(post => post.id === postId);
-            const commentId = post.comments[commentIndex].id;
+            var jRequest = {};
+            var jResponse = null;
 
-            await fetch(`/api/posts/${postId}/comments/${commentId}`, {
-                method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ content: newContent }),
-            });
+            const userId = userInfo.getLoginUserId();
 
-            const updatedPosts = posts.map((post) => {
-                if (post.id === postId) {
-                    const updatedComments = post.comments.map((comment, index) =>
-                        index === commentIndex ? { ...comment, content: newContent } : comment
-                    );
-                    return { ...post, comments: updatedComments };
-                }
-                return post;
-            });
-            setPosts(updatedPosts);
+            if (!userId) {
+                openModal('You do not have permission');
+                return;
+            }
+
+            const post = posts.find(post => post.post_id === postId);
+
+            jRequest.commandName = "post.editPostComment";
+            jRequest.systemCode = process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE;
+            jRequest.commentInfo = {
+                postId: postId,
+                commentId: commentId,
+                content: newContent,
+                userId: userId ? userId : 'anonymous user',
+            };
+
+            jResponse = await requestServer('POST', JSON.stringify(jRequest));
+
+            if (jResponse.error_code === 0) {
+                const updatedPosts = posts.map((post) => {
+                    if (post.post_id === postId) {
+                        const updatedComments = post.comments?.map((comment, index) =>
+                            comment.comment_id === commentId ? { ...comment, comment_content: newContent } : comment
+                        );
+                        return { ...post, comments: updatedComments };
+                    }
+                    return post;
+                });
+                setPosts(updatedPosts);
+            }
+            else {
+                openModal(jResponse.error_message);
+            }
         } catch (error) {
-            console.error('Error editing comment:', error);
+            openModal(error);
         }
     };
 
     // 7. 댓글 삭제
-    const handleDeleteComment = async (postId, commentIndex) => {
+    const handleDeleteComment = async (postId, commentId) => {
         try {
-            // 서버에서 댓글 삭제하는 로직
-            const post = posts.find(post => post.id === postId);
-            const commentId = post.comments[commentIndex].id;
+            var jRequest = {};
+            var jResponse = null;
 
-            await fetch(`/api/posts/${postId}/comments/${commentId}`, { method: 'DELETE' });
+            const userId = userInfo.getLoginUserId();
 
-            const updatedPosts = posts.map((post) => {
-                if (post.id === postId) {
-                    const updatedComments = post.comments.filter((_, index) => index !== commentIndex);
-                    return { ...post, comments: updatedComments };
-                }
-                return post;
-            });
-            setPosts(updatedPosts);
+            if (!userId) {
+                openModal('You do not have permission');
+                return;
+            }
+
+            jRequest.commandName = "post.deletePostComment";
+            jRequest.systemCode = process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE;
+
+            jRequest.commentInfo = {
+                postId: postId,
+                commentId: commentId,
+                userId: userId ? userId : 'anonymous user',
+            };
+
+            jResponse = await requestServer('POST', JSON.stringify(jRequest));
+
+            if (jResponse.error_code === 0) {
+                const updatedPosts = posts.map((post) => {
+                    if (post.post_id === postId) {
+                        const updatedComments = post.comments.filter((_, index) => index !== commentId);
+                        return { ...post, comments: updatedComments };
+                    }
+                    return post;
+                });
+                setPosts(updatedPosts);
+            }
+            else {
+                openModal(jResponse.error_message);
+            }
         } catch (error) {
             console.error('Error deleting comment:', error);
         }
     };
+
+
 
     return (
         <div className="w-full max-w-4xl mx-auto">
@@ -409,12 +489,18 @@ function Board(boardInfo) {
                 <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-gray-500 bg-opacity-75 z-50">
                     <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-gray-900"></div>
                 </div>
-            )}            
+            )}
+            <BrunnerMessageBox
+                isOpen={modalContent.isOpen}
+                message={modalContent.message}
+                onConfirm={modalContent.onConfirm}
+                onClose={modalContent.onClose}
+            />
             <div className="mb-6">
                 <textarea
                     value={postText}
                     onChange={handlePostChange}
-                    placeholder="새 게시글 작성..."
+                    placeholder="Input new post content..."
                     maxLength="1000"
                     className="w-full p-2 border border-gray-300 rounded-md"
                 />
@@ -425,7 +511,7 @@ function Board(boardInfo) {
             <div className="post-list">
                 {posts.map((post) => (
                     <Post
-                        key={post.id}
+                        key={post.post_id}
                         post={post}
                         onAddComment={handleAddComment}
                         onEditPost={handleEditPost}
