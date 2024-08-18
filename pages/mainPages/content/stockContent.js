@@ -153,6 +153,8 @@ const StockContent = () => {
                 index = index;
                 item.classList.add('selected'); // 선택 표시를 위해 클래스 추가
                 item.scrollIntoView({ behavior: 'smooth', block: 'center' }); // 해당 항목으로 스크롤 이동
+                setSelectedOption({ key: ticker, value: ticker });
+                return;
             } else {
                 item.classList.remove('selected'); // 다른 항목에서 선택 표시 제거
             }
@@ -887,9 +889,9 @@ const StockContent = () => {
                         className="bg-indigo-500 text-white py-2 px-4 ml-1 h-10"
                         type="submit"
                         onClick={() => {
-                            scrollToTicker(currentTickerRef.current);
-                            setSelectedTicker({ key: currentTickerRef.current, value: currentTickerRef.current })
+                            scrollToTicker(stocksTickerRef.current);
                             handleStockRequest();
+                            scrollToTicker(stocksTickerRef.current);
                         }}
                     >
                         Refresh
