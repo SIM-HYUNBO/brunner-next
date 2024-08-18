@@ -101,6 +101,42 @@ const StockContent = () => {
 
     };
 
+    const [selectedTicker, setSelectedTicker] = useState("");
+
+    // 리스트 항목들을 참조할 ref 추가
+    const listRef = useRef(null);
+
+    // 특정 티커로 스크롤 이동하는 함수
+    const scrollToTicker = (ticker) => {
+        const stockItems = listRef.current.querySelectorAll('li');
+
+        let index = -1;
+
+        stockItems.forEach((item, index) => {
+            if (item.textContent.slice(0, item.textContent.indexOf(' -')) === ticker) {
+                index = index;
+                item.classList.add('selected'); // 선택 표시를 위해 클래스 추가
+                item.scrollIntoView({ behavior: 'smooth', block: 'center' }); // 해당 항목으로 스크롤 이동
+            } else {
+                item.classList.remove('selected'); // 다른 항목에서 선택 표시 제거
+            }
+        });
+
+        if (index !== -1 && listRef.current) {
+            const listItem = listRef.current.children[index];
+            listItem.scrollIntoView({ behavior: "smooth", block: "center" });
+        }
+    };
+
+    // 최근 검색 기록에서 종목을 선택했을 때 실행되는 함수
+    const handleRecentSearchClick = (ticker) => {
+        setSelectedTicker(ticker);
+        fetchStockData(ticker);
+
+        // 선택한 티커가 목록에 있는지 확인하고 스크롤 이동
+        scrollToTicker(ticker);
+    };
+
     // useEffect를 사용하여 최근 검색한 종목 코드 로드
     useEffect(() => {
         const storedSearches = localStorage.getItem('recentSearches');
@@ -782,6 +818,7 @@ const StockContent = () => {
                                         key={searchItem.value}
                                         onClick={() => {
                                             handleTickerChange({ key: searchItem.value, value: searchItem.value });
+                                            handleRecentSearchClick(searchItem.value)
                                         }}
                                         className={`cursor-pointer p-2 hover:bg-indigo-500 hover:text-white ${selectedOption?.value === searchItem.value
                                             ? "bg-indigo-500 text-white"
@@ -800,7 +837,7 @@ const StockContent = () => {
                     {/* Select Symbols List */}
                     <div className="w-[70%] h-72 py-10">
                         <h3 className="font-bold text-lg mb-2">Select...</h3>
-                        <ul
+                        <ul ref={listRef}
                             className={`items-start ${isDarkMode() ? "bg-slate-800 text-white" : "bg-slate-50 text-black"
                                 } border border-slate-400 h-full overflow-y-auto`}
                         >
@@ -844,7 +881,10 @@ const StockContent = () => {
                     <button
                         className="bg-indigo-500 text-white py-2 px-4 ml-1 h-10"
                         type="submit"
-                        onClick={handleStockRequest}
+                        onClick={() => {
+                            scrollToTicker(stocksTickerRef.current);
+                            handleStockRequest();
+                        }}
                     >
                         Refresh
                     </button>
