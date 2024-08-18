@@ -882,8 +882,8 @@ const StockContent = () => {
                         className="bg-indigo-500 text-white py-2 px-4 ml-1 h-10"
                         type="submit"
                         onClick={() => {
-                            scrollToTicker(stocksTickerRef.current);
                             handleStockRequest();
+                            scrollToTicker(stocksTickerRef.current);
                         }}
                     >
                         Refresh
