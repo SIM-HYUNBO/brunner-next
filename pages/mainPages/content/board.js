@@ -159,7 +159,7 @@ function Post({ post, onAddComment, onEditPost, onDeletePost, onEditComment, onD
                             <p>
                                 <strong>{comment.create_user_id}</strong>
                                 <span className="text-gray-500 text-sm ml-2">{new Date(comment.create_time).toLocaleString()}</span>
-                                <br /> <p className="w-full text-left">{comment.comment_content}</pw-full>
+                                <br /> <p className="w-full text-left">{comment.comment_content}</p>
                             </p>
                         )}
                         <div className="flex mt-1">
