@@ -5,6 +5,35 @@ import BrunnerMessageBox from '@/components/BrunnerMessageBox';
 
 // 게시글 컴포넌트
 function Post({ post, onAddComment, onEditPost, onDeletePost, onEditComment, onDeleteComment }) {
+    const [loading, setLoading] = useState(false); // 로딩 상태 추가
+    const [modalContent, setModalContent] = useState({
+        isOpen: false,
+        message: '',
+        onConfirm: () => { },
+        onClose: () => { }
+    });
+
+    // 모달 열기 함수
+    const openModal = (message) => {
+        return new Promise((resolve, reject) => {
+            setModalContent({
+                isOpen: true,
+                message: message,
+                onConfirm: (result) => { resolve(result); closeModal(); },
+                onClose: () => { reject(false); closeModal(); }
+            });
+        });
+    };
+
+    // 모달 닫기 함수
+    const closeModal = () => {
+        setModalContent({
+            isOpen: false,
+            message: '',
+            onConfirm: () => { },
+            onClose: () => { }
+        });
+    };
     const [commentText, setCommentText] = useState('');
     const [isEditingPost, setIsEditingPost] = useState(false);
     const [editedPostText, setEditedPostText] = useState(post.post_content);
@@ -27,19 +56,11 @@ function Post({ post, onAddComment, onEditPost, onDeletePost, onEditComment, onD
     };
 
     const handleEditPost = () => {
-        if (!userId) {
-            openModal('You do not have permission');
-            return;
-        }
         onEditPost(post.post_id, editedPostText);
         setIsEditingPost(false);
     };
 
     const handleDeletePost = () => {
-        if (!userId) {
-            openModal('You do not have permission');
-            return;
-        }
         onDeletePost(post.post_id);
     };
 
@@ -48,24 +69,27 @@ function Post({ post, onAddComment, onEditPost, onDeletePost, onEditComment, onD
     };
 
     const handleEditComment = (commentId) => {
-        if (!userId) {
-            openModal('You do not have permission');
-            return;
-        }
         onEditComment(post.post_id, commentId, editedCommentText);
         setEditingCommentId(null);
     };
 
     const handleDeleteComment = (commentId) => {
-        if (!userId) {
-            openModal('You do not have permission');
-            return;
-        }
         onDeleteComment(post.post_id, commentId);
     };
 
     return (
         <div className="border-b border-gray-300 py-4">
+            {loading && (
+                <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-gray-500 bg-opacity-75 z-50">
+                    <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-gray-900"></div>
+                </div>
+            )}
+            <BrunnerMessageBox
+                isOpen={modalContent.isOpen}
+                message={modalContent.message}
+                onConfirm={modalContent.onConfirm}
+                onClose={modalContent.onClose}
+            />
             {isEditingPost ? (
                 <div>
                     <textarea
@@ -90,10 +114,24 @@ function Post({ post, onAddComment, onEditPost, onDeletePost, onEditComment, onD
             <div className="flex mt-2">
                 {!isEditingPost && (
                     <>
-                        <button onClick={() => setIsEditingPost(true)} className="mr-2 px-4 py-2 bg-yellow-500 text-white rounded-md">
+                        <button onClick={() => {
+                            const userId = userInfo.getLoginUserId();
+                            if (!userId) {
+                                openModal('You do not have permission');
+                                return;
+                            }
+                            setIsEditingPost(true)
+                        }} className="mr-2 px-4 py-2 bg-yellow-500 text-white rounded-md">
                             Edit
                         </button>
-                        <button onClick={handleDeletePost} className="px-4 py-2 bg-red-500 text-white rounded-md">
+                        <button onClick={() => {
+                            const userId = userInfo.getLoginUserId();
+                            if (!userId) {
+                                openModal('You do not have permission');
+                                return;
+                            }
+                            handleDeletePost()
+                        }} className="px-4 py-2 bg-red-500 text-white rounded-md">
                             Delete
                         </button>
                     </>
@@ -127,10 +165,25 @@ function Post({ post, onAddComment, onEditPost, onDeletePost, onEditComment, onD
                         <div className="flex mt-1">
                             {editingCommentId !== comment.comment_id && (
                                 <>
-                                    <button onClick={() => { setEditingCommentId(comment.comment_id); setEditedCommentText(comment.comment_content); }} className="mr-2 px-3 py-1 bg-yellow-500 text-white rounded-md">
+                                    <button onClick={() => {
+                                        const userId = userInfo.getLoginUserId();
+                                        if (!userId) {
+                                            openModal('You do not have permission');
+                                            return;
+                                        }
+                                        setEditingCommentId(comment.comment_id);
+                                        setEditedCommentText(comment.comment_content);
+                                    }} className="mr-2 px-3 py-1 bg-yellow-500 text-white rounded-md">
                                         Edit
                                     </button>
-                                    <button onClick={() => handleDeleteComment(comment.comment_id)} className="px-3 py-1 bg-red-500 text-white rounded-md">
+                                    <button onClick={() => {
+                                        const userId = userInfo.getLoginUserId();
+                                        if (!userId) {
+                                            openModal('You do not have permission');
+                                            return;
+                                        }
+                                        handleDeleteComment(comment.comment_id)
+                                    }} className="px-3 py-1 bg-red-500 text-white rounded-md">
                                         Delete
                                     </button>
                                 </>
@@ -338,7 +391,6 @@ function Board(boardInfo) {
             var jResponse = null;
 
             const userId = userInfo.getLoginUserId();
-
             if (!userId) {
                 openModal('You do not have permission');
                 return;
@@ -416,7 +468,6 @@ function Board(boardInfo) {
             var jResponse = null;
 
             const userId = userInfo.getLoginUserId();
-
             if (!userId) {
                 openModal('You do not have permission');
                 return;
@@ -462,7 +513,6 @@ function Board(boardInfo) {
             var jResponse = null;
 
             const userId = userInfo.getLoginUserId();
-
             if (!userId) {
                 openModal('You do not have permission');
                 return;
