@@ -2,19 +2,26 @@
 
 import dotenv from 'dotenv';
 import { useState, useRef, useEffect } from 'react';
-import moment from 'moment';
-import requestServer from './../../../components/requestServer';
-import BrunnerMessageBox from '@/components/BrunnerMessageBox';
-import dynamic from 'next/dynamic';
-import RealtimeChart from './realtimeChart';
 import { useTheme } from 'next-themes'
 import Link from "next/link";
+import moment from 'moment';
+import dynamic from 'next/dynamic';
 
-const Select = dynamic(() => import('react-select'), { ssr: false });
-// ApexCharts를 동적으로 import
-const ApexCharts = dynamic(() => import('react-apexcharts'), { ssr: false });
+import requestServer from './../../../components/requestServer';
+import BrunnerMessageBox from '@/components/BrunnerMessageBox';
+import RealtimeChart from './realtimeChart';
 
 const StockContent = () => {
+    const theme = useTheme();
+    const isDarkMode = () => {
+        return theme.theme === "dark";
+    }
+
+    // react-select
+    const Select = dynamic(() => import('react-select'), { ssr: false });
+
+    // ApexCharts dynamic import
+    const ApexCharts = dynamic(() => import('react-apexcharts'), { ssr: false });
 
     const [loading, setLoading] = useState(false); // 로딩 상태 관리
     const [modalContent, setModalContent] = useState({
@@ -23,146 +30,6 @@ const StockContent = () => {
         onConfirm: () => { },
         onClose: () => { },
     });
-
-    const theme = useTheme();
-
-    const isDarkMode = () => {
-        return theme.theme === "dark";
-    }
-
-    const [defaultTicker, setDefaultTicker] = useState(''); // 주식 심볼
-
-    const [stocksTicker, setStocksTicker] = useState(''); // 주식 심볼
-    const stocksTickerRef = useRef(stocksTicker);
-    const setStocksTickerRef = (newVal) => {
-        setStocksTicker(newVal);
-        stocksTickerRef.current = newVal;
-        process.currentTicker = newVal;
-        updateCurrentPrice(0);
-    }
-
-    const [stockData, setStockData] = useState(null); // 주식 데이터
-    const stockDataRef = useRef(stockData);
-    const setStockDataRef = (newVal) => {
-        setStockData(newVal);
-        stockDataRef.current = newVal;
-    }
-
-    const [dataIntervalUnit, setDataIntervalUnit] = useState("hour"); // 데이터 간격의  시간 단위
-    const dataIntervalUnitRef = useRef(dataIntervalUnit);
-    const setDataIntervalUnitRef = (newVal) => {
-        setDataIntervalUnit(newVal);
-        dataIntervalUnitRef.current = newVal;
-    }
-    const [period, setPeriod] = useState(15); // 기간
-    const [periodUnit, setPeriodUnit] = useState('days'); // 기간 단위
-    const periodUnitRef = useRef(periodUnit);
-    const setPeriodUnitRef = (newVal) => {
-        setPeriodUnit(newVal);
-        periodUnitRef.current = newVal;
-    }
-    const [recentSearches, setRecentSearches] = useState([]); // 최근 검색 기록
-    const [selectedOption, setSelectedOption] = useState(null); // 선택된 옵션
-
-    // 종목 목록을 저장하기 위한 상태 추가
-    const [tickerOptions, setTickerOptions] = useState([]);
-
-    const [currentPrice, setCurrentPrice] = useState(); // 기간 단위
-    const currentPriceRef = useRef(currentPrice);
-    const updateCurrentPrice = (newValue) => {
-        var textColor = '';
-
-        if (currentPriceRef.current == newValue)
-            textColor = 'slate-400';
-        else if (currentPriceRef.current > newValue)
-            textColor = 'blue-600';
-        else
-            textColor = 'red-600';
-
-        currentPriceRef.current = newValue;
-        setCurrentPrice(newValue);
-        setCurrentPriceTextColorRef(textColor);
-    };
-
-    const [currentPriceTextColor, setCurrentPriceTextColor] = useState(); // 기간 단위
-    const currentPriceTextColorRef = useRef(currentPriceTextColor);
-    const setCurrentPriceTextColorRef = (newValue) => {
-        setCurrentPriceTextColor(newValue);
-        currentPriceTextColorRef.current = newValue;
-
-    };
-
-    const [tickerList, setTickerList] = useState(); // 기간 단위
-    const tickerListRef = useRef(tickerList);
-    const setTickerListRef = (newValue) => {
-        setTickerList(newValue);
-        tickerListRef.current = newValue;
-        process.tickerList = newValue;
-
-    };
-
-    const [selectedTicker, setSelectedTicker] = useState("");
-
-    // 리스트 항목들을 참조할 ref 추가
-    const listRef = useRef(null);
-
-    // 특정 티커로 스크롤 이동하는 함수
-    const scrollToTicker = (ticker) => {
-        const stockItems = listRef.current.querySelectorAll('li');
-
-        let index = -1;
-
-        stockItems.forEach((item, index) => {
-            if (item.textContent.slice(0, item.textContent.indexOf(' -')) === ticker) {
-                index = index;
-                item.classList.add('selected'); // 선택 표시를 위해 클래스 추가
-                item.scrollIntoView({ behavior: 'smooth', block: 'center' }); // 해당 항목으로 스크롤 이동
-            } else {
-                item.classList.remove('selected'); // 다른 항목에서 선택 표시 제거
-            }
-        });
-
-        if (index !== -1 && listRef.current) {
-            const listItem = listRef.current.children[index];
-            listItem.scrollIntoView({ behavior: "smooth", block: "center" });
-        }
-    };
-
-    // 최근 검색 기록에서 종목을 선택했을 때 실행되는 함수
-    const handleRecentSearchClick = (ticker) => {
-        setSelectedTicker(ticker);
-        fetchStockData(ticker);
-
-        // 선택한 티커가 목록에 있는지 확인하고 스크롤 이동
-        scrollToTicker(ticker);
-    };
-
-    // useEffect를 사용하여 최근 검색한 종목 코드 로드
-    useEffect(() => {
-        const storedSearches = localStorage.getItem('recentSearches');
-        if (storedSearches) {
-            setRecentSearches(JSON.parse(storedSearches));
-        }
-
-        const defaultTicker = localStorage.getItem('defaultTicker');
-        if (defaultTicker) {
-            setDefaultTicker(defaultTicker);
-            setStocksTickerRef(defaultTicker);
-            handleStockRequest();
-        }
-
-        displayTickerListSync();
-    }, []);
-
-    const displayTickerListSync = async () => {
-        // 컴포넌트가 마운트될 때 티커 목록 가져오기
-        setTickerListRef(process.tickerList);
-        await displayTickerList();
-
-        if (!tickerListRef.current) {
-            await fetchTickerList();
-        }
-    }
 
     // 모달 열기 함수
     const openModal = (message) => {
@@ -186,6 +53,153 @@ const StockContent = () => {
         });
     };
 
+    // 현재 선택한 주식 심볼
+    const [currentTicker, setCurrentTicker] = useState('');
+    const currentTickerRef = useRef(currentTicker);
+    const setCurrentTickerRef = (newVal) => {
+        setCurrentTicker(newVal);
+        currentTickerRef.current = newVal;
+        process.currentTicker = newVal;
+        updateCurrentPrice(0);
+    }
+
+    // 현재 선택한 주식 종목의 데이터
+    const [currentTickerStockData, setCurrentTickerStockData] = useState(null);
+    const currentTickerStockDataRef = useRef(currentTickerStockData);
+    const setCurrentTickerStockDataRef = (newVal) => {
+        setCurrentTickerStockData(newVal);
+        currentTickerStockDataRef.current = newVal;
+    }
+
+    // 차트 데이터 간격의 시간 단위
+    const [dataIntervalUnit, setDataIntervalUnit] = useState("hour");
+    const dataIntervalUnitRef = useRef(dataIntervalUnit);
+    const setDataIntervalUnitRef = (newVal) => {
+        setDataIntervalUnit(newVal);
+        dataIntervalUnitRef.current = newVal;
+    }
+
+    // 기간
+    const [period, setPeriod] = useState(15);
+
+    // 기간의 시간 단위
+    const [periodUnit, setPeriodUnit] = useState('days');
+    const periodUnitRef = useRef(periodUnit);
+    const setPeriodUnitRef = (newVal) => {
+        setPeriodUnit(newVal);
+        periodUnitRef.current = newVal;
+    }
+
+    // 최근 검색한 기록 
+    // localStorage에 저장했다가 콤보박스에 표시
+    const [recentSearches, setRecentSearches] = useState([]);
+
+    // 주식 종목 목록에서 현재 선택한 종목
+    const [selectedTicker, setSelectedTicker] = useState(null); // 선택된 옵션
+
+    // 현재 가격
+    const [currentPrice, setCurrentPrice] = useState();
+    const currentPriceRef = useRef(currentPrice);
+    const updateCurrentPrice = (newValue) => {
+        var textColor = '';
+
+        if (currentPriceRef.current == newValue)
+            textColor = 'slate-400';
+        else if (currentPriceRef.current > newValue)
+            textColor = 'blue-600';
+        else
+            textColor = 'red-600';
+
+        currentPriceRef.current = newValue;
+        setCurrentPrice(newValue);
+        setCurrentPriceTextColorRef(textColor);
+    };
+
+    // 현재가격 표시 색깔
+    const [currentPriceTextColor, setCurrentPriceTextColor] = useState();
+    const currentPriceTextColorRef = useRef(currentPriceTextColor);
+    const setCurrentPriceTextColorRef = (newValue) => {
+        setCurrentPriceTextColor(newValue);
+        currentPriceTextColorRef.current = newValue;
+
+    };
+
+    // 모든 종목 목록
+    const [tickerList, setTickerList] = useState([]);
+    const tickerListRef = useRef(tickerList);
+    const setTickerListRef = (newValue) => {
+        setTickerList(newValue);
+
+        const options = newValue?.map(ticker => ({
+            value: ticker.ticker_code, // ticker_code 사용
+            label: `${ticker.ticker_code} - ${ticker.ticker_desc}` // ticker_desc 사용
+        }));
+
+        tickerListRef.current = options;
+        process.tickerList = newValue;
+    };
+
+    // 리스트 항목들을 참조할 ref 추가
+    const tickerListDOMRef = useRef(null);
+
+    // 특정 티커로 스크롤 이동하는 함수
+    const scrollToTicker = (ticker) => {
+        const stockItems = tickerListDOMRef.current.querySelectorAll('li');
+
+        let index = -1;
+
+        stockItems.forEach((item, index) => {
+            if (item.textContent.slice(0, item.textContent.indexOf(' -')) === ticker) {
+                index = index;
+                item.classList.add('selected'); // 선택 표시를 위해 클래스 추가
+                item.scrollIntoView({ behavior: 'smooth', block: 'center' }); // 해당 항목으로 스크롤 이동
+            } else {
+                item.classList.remove('selected'); // 다른 항목에서 선택 표시 제거
+            }
+        });
+
+        if (index !== -1 && tickerListDOMRef.current) {
+            const listItem = tickerListDOMRef.current.children[index];
+            listItem.scrollIntoView({ behavior: "smooth", block: "center" });
+        }
+    };
+
+    // 최근 검색 콤보박스에서 종목을 선택했을 때 처리
+    const handleRecentSearchClick = (ticker) => {
+        fetchStockData(ticker);
+
+        // 선택한 티커가 목록에 있는지 확인하고 스크롤 이동
+        scrollToTicker(ticker);
+    };
+
+    // useEffect를 사용하여 최근 검색한 종목 코드 로드
+    useEffect(() => {
+        const storedSearches = localStorage.getItem('recentSearches');
+        if (storedSearches) {
+            setRecentSearches(JSON.parse(storedSearches));
+        }
+
+        const defaultTicker = localStorage.getItem('defaultTicker');
+        if (defaultTicker) {
+            // setDefaultTicker(defaultTicker);
+            setCurrentTickerRef(defaultTicker);
+            handleStockRequest();
+        }
+
+        displayInitialTickerList();
+    }, []);
+
+    // useEffect 내에서 동기호출을 해야 하므로 함수 분리
+    const displayInitialTickerList = async () => {
+        // 컴포넌트가 마운트될 때 티커 목록 가져오기
+        setTickerListRef(process.tickerList);
+
+        if (!tickerListRef.current) {
+            await fetchTickerList();
+        }
+    }
+
+    // 모든 종목 목록을 서버에서 조회
     const fetchTickerList = async () => {
         try {
             const jRequest = {
@@ -194,12 +208,11 @@ const StockContent = () => {
             };
 
             setLoading(true);
-            setStockDataRef(null);
+            setCurrentTickerStockDataRef(null);
             const jResponse = await requestServer('POST', JSON.stringify(jRequest));
 
             if (jResponse.error_code === 0) {
                 await setTickerListRef(jResponse.tickerList);
-                await displayTickerList();
             } else {
                 openModal(JSON.stringify(jResponse.error_message));
             }
@@ -211,16 +224,25 @@ const StockContent = () => {
         }
     };
 
-    const displayTickerList = () => {
-        // 여기서 조회한 종목 목록을 콤보박스에 표시
-        const options = tickerListRef?.current?.map(ticker => ({
-            value: ticker.ticker_code, // ticker_code 사용
-            label: `${ticker.ticker_code} - ${ticker.ticker_desc}` // ticker_desc 사용
-        }));
-        setTickerOptions(options);
-    }
 
-    // 주식 데이터를 가져오는 함수
+    // 주식 데이터 요청 처리
+    const handleStockRequest = (event) => {
+        if (event)
+            event.preventDefault();
+
+        if (!currentTickerRef.current) {
+            setModalContent({
+                isOpen: true,
+                message: '주식 심볼을 입력해 주세요.',
+                onConfirm: () => setModalContent({ ...modalContent, isOpen: false }),
+                onClose: () => setModalContent({ ...modalContent, isOpen: false }),
+            });
+            return;
+        }
+        fetchStockData();
+    };
+
+    // 선택한 종목의 주식 데이터를 서버에서 조회
     const fetchStockData = async () => {
         try {
             const timefrom = moment().subtract(period, periodUnitRef.current).format('YYYY-MM-DD');
@@ -229,7 +251,7 @@ const StockContent = () => {
             const jRequest = {
                 commandName: 'stock.getStockInfo',
                 systemCode: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE,
-                stocksTicker: stocksTickerRef.current,
+                stocksTicker: currentTickerRef.current,
                 multiplier: 1,
                 timespan: dataIntervalUnitRef.current,
                 from: timefrom,
@@ -240,22 +262,22 @@ const StockContent = () => {
             };
 
             setLoading(true);
-            setStockDataRef(null);
+            setCurrentTickerStockDataRef(null);
             const jResponse = await requestServer('POST', JSON.stringify(jRequest));
 
             if (jResponse.error_code === 0) {
-                setStockDataRef(jResponse.stockInfo);
+                setCurrentTickerStockDataRef(jResponse.stockInfo);
 
 
                 // 최근 검색 기록 업데이트 (정상 조회된 종목만)
                 if (jResponse.stockInfo) {
                     const newSearch = {
-                        value: stocksTickerRef.current,
-                        label: stocksTickerRef.current,
+                        value: currentTickerRef.current,
+                        label: currentTickerRef.current,
                     };
                     const updatedSearches = [
                         newSearch,
-                        ...recentSearches.filter((s) => s.value !== stocksTickerRef.current),
+                        ...recentSearches.filter((s) => s.value !== currentTickerRef.current),
                     ].slice(0, 10); // 최대 10개까지 저장
                     setRecentSearches(updatedSearches);
                     localStorage.setItem('recentSearches', JSON.stringify(updatedSearches));
@@ -269,23 +291,6 @@ const StockContent = () => {
         finally {
             setLoading(false);
         }
-    };
-
-    // 주식 데이터 요청 처리
-    const handleStockRequest = (event) => {
-        if (event)
-            event.preventDefault();
-
-        if (!stocksTickerRef.current) {
-            setModalContent({
-                isOpen: true,
-                message: '주식 심볼을 입력해 주세요.',
-                onConfirm: () => setModalContent({ ...modalContent, isOpen: false }),
-                onClose: () => setModalContent({ ...modalContent, isOpen: false }),
-            });
-            return;
-        }
-        fetchStockData();
     };
 
     // 지표 계산 함수들
@@ -408,18 +413,18 @@ const StockContent = () => {
         return bollingerBands;
     };
 
-    // 티커 선택 시 기본 티커 업데이트
+    // 티커 선택 시 처리
     const handleTickerChange = (selectedOption) => {
-        setSelectedOption(selectedOption);
-        setStocksTickerRef(selectedOption ? selectedOption.value : '');
+        setSelectedTicker(selectedOption);
+        setCurrentTickerRef(selectedOption ? selectedOption.value : '');
         handleStockRequest();
     };
 
     // 차트 렌더링을 위한 준비
     const renderChart = () => {
-        if (!stockDataRef.current) return null;
+        if (!currentTickerStockDataRef.current) return null;
 
-        const priceData = stockDataRef.current.map((d) => ({
+        const priceData = currentTickerStockDataRef.current.map((d) => ({
             x: new Date(d.t).getTime(),
             y: d.c,
         }));
@@ -443,7 +448,7 @@ const StockContent = () => {
                 curve: 'smooth', // 부드러운 곡선
             },
             title: {
-                text: `${stocksTickerRef.current} History`,
+                text: `${currentTickerRef.current} History`,
                 align: 'left',
                 style: {
                     color: '#94a3b8' // slate-400 색상 설정
@@ -502,7 +507,7 @@ const StockContent = () => {
                 curve: 'smooth', // 부드러운 곡선
             },
             title: {
-                text: `${stocksTickerRef.current} RSI`,
+                text: `${currentTickerRef.current} RSI`,
                 align: 'left',
                 style: {
                     color: '#94a3b8' // slate-400 색상 설정
@@ -556,7 +561,7 @@ const StockContent = () => {
                 curve: 'smooth', // 부드러운 곡선
             },
             title: {
-                text: `${stocksTickerRef.current} MACD`,
+                text: `${currentTickerRef.current} MACD`,
                 align: 'left',
                 style: {
                     color: '#94a3b8' // slate-400 색상 설정
@@ -619,7 +624,7 @@ const StockContent = () => {
                 curve: 'smooth', // 부드러운 곡선
             },
             title: {
-                text: `${stocksTickerRef.current} Bollinger Bands`,
+                text: `${currentTickerRef.current} Bollinger Bands`,
                 align: 'left',
                 style: {
                     color: '#94a3b8' // slate-400 색상 설정
@@ -694,63 +699,63 @@ const StockContent = () => {
         );
     };
 
-    const darkSelectionStyle = {
-        container: (provided) => ({
-            ...provided,
-            marginTop: '1em',
-            marginBottom: '1em',
-        }),
-        control: (provided) => ({
-            ...provided,
-            backgroundColor: 'rgb(30, 41, 59)', // bg-slate-800 color
-            width: '100%',
+    // const darkSelectionStyle = {
+    //     container: (provided) => ({
+    //         ...provided,
+    //         marginTop: '1em',
+    //         marginBottom: '1em',
+    //     }),
+    //     control: (provided) => ({
+    //         ...provided,
+    //         backgroundColor: 'rgb(30, 41, 59)', // bg-slate-800 color
+    //         width: '100%',
 
-        }),
-        singleValue: (provided) => ({
-            ...provided,
-            color: 'rgb(156, 163, 175)', // 선택된 값의 글자 색상
-        }),
-        option: (provided, state) => ({
-            ...provided,
-            backgroundColor: state.isFocused ? 'rgb(51, 65, 85)' : 'rgb(30, 41, 59)', // bg-slate-700 on focus
-            color: state.isSelected ? 'white' : 'rgb(156, 163, 175)',
+    //     }),
+    //     singleValue: (provided) => ({
+    //         ...provided,
+    //         color: 'rgb(156, 163, 175)', // 선택된 값의 글자 색상
+    //     }),
+    //     option: (provided, state) => ({
+    //         ...provided,
+    //         backgroundColor: state.isFocused ? 'rgb(51, 65, 85)' : 'rgb(30, 41, 59)', // bg-slate-700 on focus
+    //         color: state.isSelected ? 'white' : 'rgb(156, 163, 175)',
 
-        }),
-        menu: (provided) => ({
-            ...provided,
-            backgroundColor: 'rgb(30, 41, 59)', // bg-slate-800
-            color: 'rgb(156, 163, 175)',        // text-slate-400  => 목록 글씨색
-            borderRadius: '0.375rem',
-        }),
-    };
+    //     }),
+    //     menu: (provided) => ({
+    //         ...provided,
+    //         backgroundColor: 'rgb(30, 41, 59)', // bg-slate-800
+    //         color: 'rgb(156, 163, 175)',        // text-slate-400  => 목록 글씨색
+    //         borderRadius: '0.375rem',
+    //     }),
+    // };
 
-    const lightSelectionStyle = {
-        container: (provided) => ({
-            ...provided,
-            marginTop: '1em',
-            marginBottom: '1em',
-        }),
-        control: (provided) => ({
-            ...provided,
-            backgroundColor: 'white', // bg-slate-800 color
-            width: '100%'
-        }),
-        singleValue: (provided) => ({
-            ...provided,
-            color: 'rgb(156, 163, 175)', // 선택된 값의 글자 색상
-        }),
-        option: (provided, state) => ({
-            ...provided,
-            backgroundColor: 'white', // bg-slate-700 on focus
-            color: state.isSelected ? 'black' : 'rgb(156, 163, 175)',
-        }),
-        menu: (provided) => ({ // 목록
-            ...provided,
-            backgroundColor: 'white', // bg-slate-800
-            color: 'rgb(156, 163, 175)',        // text-slate-400  => 목록 글씨색
-            borderRadius: '0.375rem',
-        }),
-    };
+    // const lightSelectionStyle = {
+    //     container: (provided) => ({
+    //         ...provided,
+    //         marginTop: '1em',
+    //         marginBottom: '1em',
+    //     }),
+    //     control: (provided) => ({
+    //         ...provided,
+    //         backgroundColor: 'white', // bg-slate-800 color
+    //         width: '100%'
+    //     }),
+    //     singleValue: (provided) => ({
+    //         ...provided,
+    //         color: 'rgb(156, 163, 175)', // 선택된 값의 글자 색상
+    //     }),
+    //     option: (provided, state) => ({
+    //         ...provided,
+    //         backgroundColor: 'white', // bg-slate-700 on focus
+    //         color: state.isSelected ? 'black' : 'rgb(156, 163, 175)',
+    //     }),
+    //     menu: (provided) => ({ // 목록
+    //         ...provided,
+    //         backgroundColor: 'white', // bg-slate-800
+    //         color: 'rgb(156, 163, 175)',        // text-slate-400  => 목록 글씨색
+    //         borderRadius: '0.375rem',
+    //     }),
+    // };
 
     return (
         <div className='w-full'>
@@ -820,7 +825,7 @@ const StockContent = () => {
                                             handleTickerChange({ key: searchItem.value, value: searchItem.value });
                                             handleRecentSearchClick(searchItem.value)
                                         }}
-                                        className={`cursor-pointer p-2 hover:bg-indigo-500 hover:text-white ${selectedOption?.value === searchItem.value
+                                        className={`cursor-pointer p-2 hover:bg-indigo-500 hover:text-white ${selectedTicker?.value === searchItem.value
                                             ? "bg-indigo-500 text-white"
                                             : ""
                                             }`}
@@ -837,17 +842,17 @@ const StockContent = () => {
                     {/* Select Symbols List */}
                     <div className="w-[70%] h-72 py-10">
                         <h3 className="font-bold text-lg mb-2">Select...</h3>
-                        <ul ref={listRef}
+                        <ul ref={tickerListDOMRef}
                             className={`items-start ${isDarkMode() ? "bg-slate-800 text-white" : "bg-slate-50 text-black"
                                 } border border-slate-400 h-full overflow-y-auto`}
                         >
-                            {tickerOptions?.map((option) => (
+                            {tickerListRef.current?.map((option) => (
                                 <li
                                     key={option.value}
                                     onClick={() => {
                                         handleTickerChange(option);
                                     }}
-                                    className={`cursor-pointer p-2 hover:bg-indigo-500 hover:text-white ${selectedOption?.value === option.value
+                                    className={`cursor-pointer p-2 hover:bg-indigo-500 hover:text-white ${selectedTicker?.value === option.value
                                         ? "bg-indigo-500 text-white"
                                         : ""
                                         }`}
@@ -865,11 +870,11 @@ const StockContent = () => {
                     <input
                         className="text-center bg-indigo-500 text-white p-2 ml-1 h-10 w-[30%]"
                         type="text"
-                        value={stocksTickerRef.current}
+                        value={currentTickerRef.current}
                         placeholder="Manual input. ex) AAPL, GOOGL, TSLA ..."
                         onChange={(e) => {
-                            setStocksTickerRef(e.target.value.toUpperCase());
-                            setSelectedOption("");
+                            setCurrentTickerRef(e.target.value.toUpperCase());
+                            setSelectedTicker("");
                         }}
                     />
                     <input
@@ -882,7 +887,8 @@ const StockContent = () => {
                         className="bg-indigo-500 text-white py-2 px-4 ml-1 h-10"
                         type="submit"
                         onClick={() => {
-                            scrollToTicker(stocksTickerRef.current);
+                            scrollToTicker(currentTickerRef.current);
+                            setSelectedTicker({ key: currentTickerRef.current, value: currentTickerRef.current })
                             handleStockRequest();
                         }}
                     >
@@ -890,7 +896,7 @@ const StockContent = () => {
                     </button>
                     <Link
                         className="bg-indigo-500 text-white py-2 px-4 ml-1 h-10"
-                        href={{ pathname: '/mainPages/tickerInfo', query: `tickerCode=${stocksTickerRef.current}` }}>
+                        href={{ pathname: '/mainPages/tickerInfo', query: `tickerCode=${currentTickerRef.current}` }}>
                         News...
                     </Link>
                 </div>
@@ -902,7 +908,7 @@ const StockContent = () => {
                 onConfirm={modalContent.onConfirm}
                 onClose={modalContent.onClose}
             />
-            {stockDataRef.current && renderChart()}
+            {currentTickerStockDataRef.current && renderChart()}
         </div >
     );
 };
