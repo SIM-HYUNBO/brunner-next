@@ -4,7 +4,7 @@ import * as userInfo from '@/components/userInfo';
 import BrunnerMessageBox from '@/components/BrunnerMessageBox';
 
 // 게시글 컴포넌트
-function Post({ post, onAddComment, onEditPost, onDeletePost, onEditComment, onDeleteComment }) {
+function BoardContent({ post, onAddComment, onEditPost, onDeletePost, onEditComment, onDeleteComment }) {
     const [loading, setLoading] = useState(false); // 로딩 상태 추가
     const [modalContent, setModalContent] = useState({
         isOpen: false,
@@ -107,8 +107,10 @@ function Post({ post, onAddComment, onEditPost, onDeletePost, onEditComment, onD
             ) : (
                 <p>
                     <strong className="text-left">{post.create_user_id}</strong>
-                    <span className="text-gray-500 text-sm ml-2">{new Date(post.create_time).toLocaleString()}</span>
-                    <br /> <p className='w-full text-left'>{post.post_content}</p>
+                    <br />
+                    <span className="text-gray-500 text-sm">{new Date(post.create_time).toLocaleString()}</span>
+                    <br />
+                    <p className='w-full text-left'>{post.post_content}</p>
                 </p>
             )}
             <div className="flex mt-2">
@@ -139,7 +141,7 @@ function Post({ post, onAddComment, onEditPost, onDeletePost, onEditComment, onD
             </div>
             <div className="ml-5 mt-2">
                 {post.comments?.map((comment, index) => (
-                    <div key={index} className="ml-4 mb-2">
+                    <div key={index} className="ml-1 mb-2">
                         {editingCommentId === comment.comment_id ? (
                             <div>
                                 <input
@@ -158,8 +160,10 @@ function Post({ post, onAddComment, onEditPost, onDeletePost, onEditComment, onD
                         ) : (
                             <p>
                                 <strong className="text-left">{comment.create_user_id}</strong>
-                                <span className="text-gray-500 text-sm ml-2 text-left">{new Date(comment.create_time).toLocaleString()}</span>
-                                <br /> <p className="w-full text-left">{comment.comment_content}</p>
+                                <br />
+                                <span className="text-gray-500 text-sm text-left">{new Date(comment.create_time).toLocaleString()}</span>
+                                <br />
+                                <p className="w-full text-left">{comment.comment_content}</p>
                             </p>
                         )}
                         <div className="flex mt-1">
@@ -576,7 +580,7 @@ function Board(boardInfo) {
             </div>
             <div className="post-list">
                 {posts.map((post) => (
-                    <Post
+                    <BoardContent
                         key={post.post_id}
                         post={post}
                         onAddComment={handleAddComment}
