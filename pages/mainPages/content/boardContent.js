@@ -275,7 +275,7 @@ function Board(boardInfo) {
         var jResponse = null;
 
         try {
-            jRequest.commandName = "post.getPostList";
+            jRequest.commandName = "board.getPostList";
             jRequest.systemCode = process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE;
             jRequest.postInfo = { postType: `TICKER_INFO-${boardType}` }; // 게시판 유형을 TICKER_INFO-{종모코드}로 함
 
@@ -304,7 +304,7 @@ function Board(boardInfo) {
                 openModal(jResponse.error_message);
             }
         } catch (error) {
-            openModal(jResponse.error_message);
+            openModal(error);
         }
     };
 
@@ -328,7 +328,7 @@ function Board(boardInfo) {
                     userId: userId ? userId : 'anonymous user',
                 };
 
-                jRequest.commandName = "post.addPost";
+                jRequest.commandName = "board.addPost";
                 jRequest.systemCode = process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE;
                 jRequest.postInfo = newPost;
 
@@ -345,7 +345,7 @@ function Board(boardInfo) {
                 }
             }
         } catch (error) {
-            openModal(jResponse.error_message);
+            openModal(error);
             setLoading(false);
         }
     };
@@ -362,7 +362,7 @@ function Board(boardInfo) {
                 return;
             }
 
-            jRequest.commandName = "post.editPost";
+            jRequest.commandName = "board.editPost";
             jRequest.systemCode = process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE;
             jRequest.postInfo = {
                 postId: postId,
@@ -384,7 +384,7 @@ function Board(boardInfo) {
             }
         } catch (error) {
             setLoading(false);
-            openModal(jResponse.error_message);
+            openModal(error);
         }
     };
 
@@ -400,7 +400,7 @@ function Board(boardInfo) {
                 return;
             }
 
-            jRequest.commandName = "post.deletePost";
+            jRequest.commandName = "board.deletePost";
             jRequest.systemCode = process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE;
 
             jRequest.postInfo = {
@@ -420,7 +420,7 @@ function Board(boardInfo) {
             }
         } catch (error) {
             setLoading(false);
-            openModal(jResponse.error_message);
+            openModal(error);
         }
     };
 
@@ -432,7 +432,7 @@ function Board(boardInfo) {
 
             const userId = userInfo.getLoginUserId();
 
-            jRequest.commandName = "post.addPostComment";
+            jRequest.commandName = "board.addPostComment";
             jRequest.systemCode = process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE;
 
             jRequest.commentInfo = {
@@ -461,7 +461,7 @@ function Board(boardInfo) {
                 openModal(jResponse.error_message);
             }
         } catch (error) {
-            openModal(jResponse.error_message);
+            openModal(error);
         }
     };
 
@@ -479,7 +479,7 @@ function Board(boardInfo) {
 
             const post = posts.find(post => post.post_id === postId);
 
-            jRequest.commandName = "post.editPostComment";
+            jRequest.commandName = "board.editPostComment";
             jRequest.systemCode = process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE;
             jRequest.commentInfo = {
                 postId: postId,
@@ -522,7 +522,7 @@ function Board(boardInfo) {
                 return;
             }
 
-            jRequest.commandName = "post.deletePostComment";
+            jRequest.commandName = "board.deletePostComment";
             jRequest.systemCode = process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE;
 
             jRequest.commentInfo = {
