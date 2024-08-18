@@ -117,6 +117,8 @@ const StockContent = () => {
                 index = index;
                 item.classList.add('selected'); // 선택 표시를 위해 클래스 추가
                 item.scrollIntoView({ behavior: 'smooth', block: 'center' }); // 해당 항목으로 스크롤 이동
+                setSelectedOption({ key: ticker, value: ticker });
+                return;
             } else {
                 item.classList.remove('selected'); // 다른 항목에서 선택 표시 제거
             }
@@ -869,7 +871,7 @@ const StockContent = () => {
                         placeholder="Manual input. ex) AAPL, GOOGL, TSLA ..."
                         onChange={(e) => {
                             setStocksTickerRef(e.target.value.toUpperCase());
-                            setSelectedOption("");
+                            // setSelectedOption("");
                         }}
                     />
                     <input
