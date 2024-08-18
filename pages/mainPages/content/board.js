@@ -108,7 +108,7 @@ function Post({ post, onAddComment, onEditPost, onDeletePost, onEditComment, onD
                 <p>
                     <strong>{post.create_user_id}</strong>
                     <span className="text-gray-500 text-sm ml-2">{new Date(post.create_time).toLocaleString()}</span>
-                    : <p className='w-full'>{post.post_content}</p>
+                    <br /> <p className='w-full text-left'>{post.post_content}</p>
                 </p>
             )}
             <div className="flex mt-2">
@@ -159,7 +159,7 @@ function Post({ post, onAddComment, onEditPost, onDeletePost, onEditComment, onD
                             <p>
                                 <strong>{comment.create_user_id}</strong>
                                 <span className="text-gray-500 text-sm ml-2">{new Date(comment.create_time).toLocaleString()}</span>
-                                : <p>{comment.comment_content}</p>
+                                <br /> <p className="w-full text-left">{comment.comment_content}</pw-full>
                             </p>
                         )}
                         <div className="flex mt-1">
