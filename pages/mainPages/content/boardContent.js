@@ -105,7 +105,7 @@ function BoardContent({ post, onAddComment, onEditPost, onDeletePost, onEditComm
                     </button>
                 </div>
             ) : (
-                <p>
+                <p className='w-full text-left'>
                     <strong className="text-left">{post.create_user_id}</strong>
                     <br />
                     <span className="text-gray-500 text-sm">{new Date(post.create_time).toLocaleString()}</span>
@@ -158,7 +158,7 @@ function BoardContent({ post, onAddComment, onEditPost, onDeletePost, onEditComm
                                 </button>
                             </div>
                         ) : (
-                            <p>
+                            <p className='w-full text-left'>
                                 <strong className="text-left">{comment.create_user_id}</strong>
                                 <br />
                                 <span className="text-gray-500 text-sm text-left">{new Date(comment.create_time).toLocaleString()}</span>
