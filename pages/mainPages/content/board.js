@@ -27,11 +27,19 @@ function Post({ post, onAddComment, onEditPost, onDeletePost, onEditComment, onD
     };
 
     const handleEditPost = () => {
+        if (!userId) {
+            openModal('You do not have permission');
+            return;
+        }
         onEditPost(post.post_id, editedPostText);
         setIsEditingPost(false);
     };
 
     const handleDeletePost = () => {
+        if (!userId) {
+            openModal('You do not have permission');
+            return;
+        }
         onDeletePost(post.post_id);
     };
 
@@ -40,11 +48,19 @@ function Post({ post, onAddComment, onEditPost, onDeletePost, onEditComment, onD
     };
 
     const handleEditComment = (commentId) => {
+        if (!userId) {
+            openModal('You do not have permission');
+            return;
+        }
         onEditComment(post.post_id, commentId, editedCommentText);
         setEditingCommentId(null);
     };
 
     const handleDeleteComment = (commentId) => {
+        if (!userId) {
+            openModal('You do not have permission');
+            return;
+        }
         onDeleteComment(post.post_id, commentId);
     };
 
