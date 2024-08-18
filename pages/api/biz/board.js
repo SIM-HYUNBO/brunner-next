@@ -10,25 +10,25 @@ const executeService = (txnId, jRequest) => {
 
     try {
         switch (jRequest.commandName) {
-            case "post.getPostList":
+            case "board.getPostList":
                 jResponse = getPostList(txnId, jRequest);
                 break;
-            case "post.addPost":
+            case "board.addPost":
                 jResponse = addPost(txnId, jRequest);
                 break;
-            case "post.editPost":
+            case "board.editPost":
                 jResponse = editPost(txnId, jRequest);
                 break;
-            case "post.deletePost":
+            case "board.deletePost":
                 jResponse = deletePost(txnId, jRequest);
                 break;
-            case "post.addPostComment":
+            case "board.addPostComment":
                 jResponse = addPostComment(txnId, jRequest);
                 break;
-            case "post.editPostComment":
+            case "board.editPostComment":
                 jResponse = editPostComment(txnId, jRequest);
                 break;
-            case "post.deletePostComment":
+            case "board.deletePostComment":
                 jResponse = deletePostComment(txnId, jRequest);
                 break;
             default:
