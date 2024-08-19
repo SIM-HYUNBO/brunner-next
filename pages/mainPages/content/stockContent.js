@@ -878,6 +878,13 @@ const StockContent = () => {
                             setCurrentTickerRef(e.target.value.toUpperCase());
                             scrollToTicker(e.target.value.toUpperCase());
                         }}
+                        onKeyUp={(e) => {
+                            if (e.key === 'Enter') {
+                                setSelectedTicker(currentTickerRef.current);
+                                scrollToTicker(currentTickerRef.current);
+                                handleStockRequest();
+                            }
+                        }}
                     />
                     <input
                         className={`text-center text-${currentPriceTextColorRef.current} bg-slate-50 dark:bg-slate-800 border border-slate-400 h-10 w-[30%]`}
