@@ -153,7 +153,7 @@ const StockContent = () => {
                 index = index;
                 item.classList.add('selected'); // 선택 표시를 위해 클래스 추가
                 item.scrollIntoView({ behavior: 'smooth', block: 'center' }); // 해당 항목으로 스크롤 이동
-                setSelectedOption({ key: ticker, value: ticker });
+                setSelectedTicker({ key: ticker, value: ticker });
                 return;
             } else {
                 item.classList.remove('selected'); // 다른 항목에서 선택 표시 제거
@@ -870,13 +870,13 @@ const StockContent = () => {
                 {/* Input Fields and Refresh Button */}
                 <div className="flex mt-4" > {/* Centered inputs */}
                     <input
-                        className="text-center bg-indigo-500 text-white p-2 ml-1 h-10 w-[30%]"
+                        className="text-center bg-slate-50 text-slate-600 dark-text-slate-400 dark:bg-slate-800 border p-2 ml-1 h-10 w-[30%]"
                         type="text"
                         value={currentTickerRef.current}
                         placeholder="Manual input. ex) AAPL, GOOGL, TSLA ..."
                         onChange={(e) => {
                             setCurrentTickerRef(e.target.value.toUpperCase());
-                            setSelectedTicker("");
+                            scrollToTicker(e.target.value.toUpperCase());
                         }}
                     />
                     <input
@@ -889,9 +889,9 @@ const StockContent = () => {
                         className="bg-indigo-500 text-white py-2 px-4 ml-1 h-10"
                         type="submit"
                         onClick={() => {
-                            scrollToTicker(stocksTickerRef.current);
+                            setSelectedTicker(currentTickerRef.current);
+                            scrollToTicker(currentTickerRef.current);
                             handleStockRequest();
-                            scrollToTicker(stocksTickerRef.current);
                         }}
                     >
                         Refresh
