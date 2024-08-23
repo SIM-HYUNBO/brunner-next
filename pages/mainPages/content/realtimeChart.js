@@ -247,12 +247,16 @@ const RealtimeChart = ({ updateCurrentPrice }) => {
     }
 
     useEffect(() => {
+        async function fetchInitialData() {
+            await fetchTodayStockData();
+        }
+
+        fetchInitialData();
+
         // 인터벌 설정
         if (intervalId) {
             clearInterval(intervalId); // 이전 인터벌 제거
         }
-
-        fetchTodayStockData();
 
         fetchRealtimeStockData(); // 처음에 실행하고 타이머 반복
         const id = setInterval(() => {
