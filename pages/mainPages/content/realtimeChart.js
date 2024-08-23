@@ -263,7 +263,6 @@ const RealtimeChart = ({ updateCurrentPrice }) => {
 
         const timerId = fetchTodayStockData();
 
-
         // 컴포넌트 언마운트 시 인터벌 클리어
         return () => clearInterval(timerId);
     }, [fetchRealtimeStockData, intervalTime]);
