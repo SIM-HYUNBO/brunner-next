@@ -205,6 +205,15 @@ const RealtimeChart = ({ updateCurrentPrice }) => {
         } catch (err) {
             ;
         }
+        finally {
+            fetchRealtimeStockData(); // 처음에 실행하고 타이머 반복
+            const id = setInterval(() => {
+                fetchRealtimeStockData();
+            }, intervalTime);
+
+            setIntervalId(id); // 새로운 인터벌 ID 저장
+            return id;
+        }
     }
 
     const handleNewData = (newData) => {
@@ -247,23 +256,13 @@ const RealtimeChart = ({ updateCurrentPrice }) => {
     }
 
     useEffect(() => {
-        async function fetchInitialData() {
-            await fetchTodayStockData();
-        }
-
-        fetchInitialData();
-
         // 인터벌 설정
         if (intervalId) {
             clearInterval(intervalId); // 이전 인터벌 제거
         }
 
-        fetchRealtimeStockData(); // 처음에 실행하고 타이머 반복
-        const timerId = setInterval(() => {
-            fetchRealtimeStockData();
-        }, intervalTime);
+        const timerId = fetchTodayStockData();
 
-        setIntervalId(timerId); // 새로운 인터벌 ID 저장
 
         // 컴포넌트 언마운트 시 인터벌 클리어
         return () => clearInterval(timerId);
