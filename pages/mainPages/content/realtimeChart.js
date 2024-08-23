@@ -259,14 +259,14 @@ const RealtimeChart = ({ updateCurrentPrice }) => {
         }
 
         fetchRealtimeStockData(); // 처음에 실행하고 타이머 반복
-        const id = setInterval(() => {
+        const timerId = setInterval(() => {
             fetchRealtimeStockData();
         }, intervalTime);
 
-        setIntervalId(id); // 새로운 인터벌 ID 저장
+        setIntervalId(timerId); // 새로운 인터벌 ID 저장
 
         // 컴포넌트 언마운트 시 인터벌 클리어
-        return () => clearInterval(id);
+        return () => clearInterval(timerId);
     }, [fetchRealtimeStockData, intervalTime]);
 
     return (
