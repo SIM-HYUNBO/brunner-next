@@ -186,14 +186,48 @@ const RealtimeChart = ({ updateCurrentPrice }) => {
         }
     }, [intervalTime]);
 
+    const fetchTodayStockData = async () => {
+        try {
+
+            const jRequest = {
+                commandName: 'stock.getTodayStockInfo',
+                stocksTicker: currentTickerRef.current,
+            };
+
+            const jResponse = await requestServer('POST', JSON.stringify(jRequest));
+
+            if (jResponse.error_code === 0) {
+                handleNewData(jResponse.stockInfo);
+            } else {
+                // 금일 데이터 못 가져옴
+                // 그냥 SKIP
+            }
+        } catch (err) {
+            ;
+        }
+    }
+
     const handleNewData = (newData) => {
+        if (Array.isArray(newData)) {
+            for (let i = 0; i < newData.length; i++) {
+                newData[i].t = newData[i].t / 1000;
+                handleSingleData(newData[i]);
+            }
+        }
+        else {
+            handleSingleData(newData);
+        }
+
+    };
+
+    const handleSingleData = (newData) => {
         const now = new Date().getTime();
         const givenTime = new Date(newData.t * 1000).getTime();
 
         const diff = now - givenTime;
 
         const newChartData = {
-            x: diff > intervalTime ? now : givenTime,
+            x: givenTime,
             y: newData.c  /*Math.floor(Math.random() * (100 - 0 + 1)) + 0,*/
         };
         updateCurrentPrice(newChartData.y);
@@ -210,13 +244,15 @@ const RealtimeChart = ({ updateCurrentPrice }) => {
 
             return newSeries;
         });
-    };
+    }
 
     useEffect(() => {
         // 인터벌 설정
         if (intervalId) {
             clearInterval(intervalId); // 이전 인터벌 제거
         }
+
+        fetchTodayStockData();
 
         fetchRealtimeStockData(); // 처음에 실행하고 타이머 반복
         const id = setInterval(() => {
