@@ -30,21 +30,7 @@ a {
 }
 
 p {
-    @apply text-slate-900 dark:text-slate-400
-}
-
-.board-item {
-    @apply flex 
-           flex-col 
-           m-0 
-           rounded-xl 
-           transition 
-           duration-300 
-           transform 
-           border 
-           hover:scale-105 
-           hover:shadow-lg 
-           dark:border-gray-200/50
+    @apply text-slate-900 dark:text-white
 }
 
 .container {
@@ -55,13 +41,4 @@ p {
     @apply leading-relaxed text-slate-900 mb-10 dark:text-slate-400
 }
 
-.content-governing-text {
-    @apply leading-relaxed text-slate-900 mb-1 dark:text-slate-400
-}
 
-.category-item {
-    font-size: 14px;
-}
-.category-item {
-    @apply text-black dark:text-white bg-white dark:bg-slate-800
-}
