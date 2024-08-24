@@ -728,64 +728,6 @@ const StockContent = () => {
         );
     };
 
-    // const darkSelectionStyle = {
-    //     container: (provided) => ({
-    //         ...provided,
-    //         marginTop: '1em',
-    //         marginBottom: '1em',
-    //     }),
-    //     control: (provided) => ({
-    //         ...provided,
-    //         backgroundColor: 'rgb(30, 41, 59)', // bg-slate-800 color
-    //         width: '100%',
-
-    //     }),
-    //     singleValue: (provided) => ({
-    //         ...provided,
-    //         color: 'rgb(156, 163, 175)', // 선택된 값의 글자 색상
-    //     }),
-    //     option: (provided, state) => ({
-    //         ...provided,
-    //         backgroundColor: state.isFocused ? 'rgb(51, 65, 85)' : 'rgb(30, 41, 59)', // bg-slate-700 on focus
-    //         color: state.isSelected ? 'white' : 'rgb(156, 163, 175)',
-
-    //     }),
-    //     menu: (provided) => ({
-    //         ...provided,
-    //         backgroundColor: 'rgb(30, 41, 59)', // bg-slate-800
-    //         color: 'rgb(156, 163, 175)',        // text-slate-400  => 목록 글씨색
-    //         borderRadius: '0.375rem',
-    //     }),
-    // };
-
-    // const lightSelectionStyle = {
-    //     container: (provided) => ({
-    //         ...provided,
-    //         marginTop: '1em',
-    //         marginBottom: '1em',
-    //     }),
-    //     control: (provided) => ({
-    //         ...provided,
-    //         backgroundColor: 'white', // bg-slate-800 color
-    //         width: '100%'
-    //     }),
-    //     singleValue: (provided) => ({
-    //         ...provided,
-    //         color: 'rgb(156, 163, 175)', // 선택된 값의 글자 색상
-    //     }),
-    //     option: (provided, state) => ({
-    //         ...provided,
-    //         backgroundColor: 'white', // bg-slate-700 on focus
-    //         color: state.isSelected ? 'black' : 'rgb(156, 163, 175)',
-    //     }),
-    //     menu: (provided) => ({ // 목록
-    //         ...provided,
-    //         backgroundColor: 'white', // bg-slate-800
-    //         color: 'rgb(156, 163, 175)',        // text-slate-400  => 목록 글씨색
-    //         borderRadius: '0.375rem',
-    //     }),
-    // };
-
     return (
         <div className='w-full'>
             {loading && (
