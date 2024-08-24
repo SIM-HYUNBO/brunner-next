@@ -5,6 +5,7 @@ import { useState, useRef, useEffect } from 'react'
 import { useRouter } from 'next/router'
 import requestServer from '@/components/requestServer'
 import Board from '@/pages/mainPages/content/boardContent'
+import RealtimeChart from './realtimeChart';
 
 export default function TickerInfoContent({ tickerCode: tickerCode }) {
   const [loading, setLoading] = useState(false); // 로딩 상태 추가
@@ -93,6 +94,34 @@ export default function TickerInfoContent({ tickerCode: tickerCode }) {
     }
   };
 
+  // 현재 가격
+  const [currentPrice, setCurrentPrice] = useState();
+  const currentPriceRef = useRef(currentPrice);
+
+  const updateCurrentPrice = (newValue) => {
+    var textColor = '';
+
+    if (currentPriceRef.current == newValue)
+      textColor = 'slate-400';
+    else if (currentPriceRef.current > newValue)
+      textColor = 'blue-600';
+    else
+      textColor = 'red-600';
+
+    currentPriceRef.current = newValue;
+    setCurrentPrice(newValue);
+    setCurrentPriceTextColorRef(textColor);
+  };
+
+  // 현재가격 표시 색깔
+  const [currentPriceTextColor, setCurrentPriceTextColor] = useState();
+  const currentPriceTextColorRef = useRef(currentPriceTextColor);
+  const setCurrentPriceTextColorRef = (newValue) => {
+    setCurrentPriceTextColor(newValue);
+    currentPriceTextColorRef.current = newValue;
+
+  };
+
   return (
     <>
       <div className="lg:flex-grow md:w-1/2 lg:pr-24 md:pr-16 flex flex-col md:items-start md:text-left md:mb-0 items-center text-center">
@@ -105,6 +134,18 @@ export default function TickerInfoContent({ tickerCode: tickerCode }) {
         <div className="flex space-x-4 border w-full h-full text-align-left mt-10 readonly">
           <pre>{tickerInfoContentRef.current ? tickerInfoContentRef.current : 'Ticker info here.'}</pre>
         </div>
+        <div>
+          <label className={`text-center text-xl bg-white dark:bg-slate-800 mt-10 h-10 w-[30%]`}>
+            Current Price (USD)
+          </label>
+          <input
+            className={`text-center text-5xl text-${currentPriceTextColorRef.current} bg-slate-50 dark:bg-slate-800 border border-slate-400 my-10 ml-10 h-100 w-[30%] px-5 py-3`}
+            type="text"
+            value={currentPriceRef.current}
+            placeholder="Current Price ..."
+          />
+        </div>
+        <RealtimeChart updateCurrentPrice={updateCurrentPrice} ></RealtimeChart>
         <div className="flex space-x-4 border w-full h-full text-align-left mt-10 readonly">
           <p>{tickerNewsContentRef.current ? tickerNewsContentRef.current : 'Ticker news here.'}</p>
         </div>
