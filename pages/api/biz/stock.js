@@ -20,8 +20,8 @@ const executeService = (txnId, jRequest) => {
             case "stock.getStockInfo":
                 jResponse = getStockInfo(txnId, jRequest);
                 break;
-            case "stock.getTodayStockInfo":
-                jResponse = getTodayStockInfo(txnId, jRequest);
+            case "stock.getLatestStockInfo":
+                jResponse = getLatestStockInfo(txnId, jRequest);
                 break;
             case "stock.getRealtimeStockInfo":
                 jResponse = getRealtimeStockInfo(txnId, jRequest);
@@ -114,7 +114,7 @@ const getStockInfo = async (txnId, jRequest) => {
     }
 };
 
-const getTodayStockInfo = async (txnId, jRequest) => {
+const getLatestStockInfo = async (txnId, jRequest) => {
     var jResponse = {};
 
     try {
@@ -127,8 +127,14 @@ const getTodayStockInfo = async (txnId, jRequest) => {
             Please set a value.`;
             return jResponse;
         }
+        if (!jRequest.dataCount) {
+            jResponse.error_code = -2;
+            jResponse.error_message = `The [dataCount] is a required field. 
+            Please set a value.`;
+            return jResponse;
+        }
 
-        const from = moment().subtract(1, "day").format('YYYY-MM-DD')
+        const from = moment().subtract(5, "day").format('YYYY-MM-DD')
         const to = moment().format('YYYY-MM-DD');
         const apiUrl = `https://api.polygon.io/v2/aggs/ticker/${jRequest.stocksTicker}/range/1/minute/${from}/${to}?adjusted=true&sort=asc&apiKey=${process.env.POLYGON_API_KEY}`
 
@@ -138,7 +144,7 @@ const getTodayStockInfo = async (txnId, jRequest) => {
         }
 
         const data = await response.json();
-        jResponse.stockInfo = data.results;
+        jResponse.stockInfo = data.results.slice(jRequest.dataCount);
         jResponse.error_code = 0; // exception
         jResponse.error_message = data.status;
     }

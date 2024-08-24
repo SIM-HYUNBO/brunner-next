@@ -186,12 +186,14 @@ const RealtimeChart = ({ updateCurrentPrice }) => {
         }
     }, [intervalTime]);
 
-    const fetchTodayStockData = async () => {
+    const fetchLatestStockInfo = async () => {
         try {
 
+            /* 최근 데이터 100개 요청 */
             const jRequest = {
-                commandName: 'stock.getTodayStockInfo',
+                commandName: 'stock.getLatestStockInfo',
                 stocksTicker: currentTickerRef.current,
+                dataCount: -100 
             };
 
             const jResponse = await requestServer('POST', JSON.stringify(jRequest));
@@ -261,7 +263,7 @@ const RealtimeChart = ({ updateCurrentPrice }) => {
             clearInterval(intervalId); // 이전 인터벌 제거
         }
 
-        const timerId = fetchTodayStockData();
+        const timerId = fetchLatestStockInfo();
 
         // 컴포넌트 언마운트 시 인터벌 클리어
         return () => clearInterval(timerId);
