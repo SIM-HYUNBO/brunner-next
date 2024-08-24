@@ -43,6 +43,11 @@ const RealtimeChart = ({ updateCurrentPrice }) => {
         name: `${currentTicker}`,
         data: [],
     }]);
+    const seriesRef = useRef(series);
+    const setSeriesRef = (newVal) => {
+        seriesRef.current - newVal;
+        setSeries(newVal);
+    }
 
     const [intervalTime, setIntervalTime] = useState(5000); // 인터벌 시간 상태 (밀리초)
     const [intervalId, setIntervalId] = useState(null);
@@ -203,16 +208,12 @@ const RealtimeChart = ({ updateCurrentPrice }) => {
 
     const [options, setOptions] = useState(getChartOptions('gray'));
 
+    var lastChartData = null;
     const fetchRealtimeStockData = useCallback(async () => {
         try {
             if (currentTickerRef.current !== process.currentTicker) {
                 setCurrentTicker(process.currentTicker);
                 currentTickerRef.current = process.currentTicker;
-                // 데이터가 변경되면 시리즈도 초기화합니다.
-                setSeries([{
-                    name: `${currentTickerRef.current}`,
-                    data: [],
-                }]);
             }
 
             if (!currentTickerRef.current) return;
@@ -225,19 +226,10 @@ const RealtimeChart = ({ updateCurrentPrice }) => {
             const jResponse = await requestServer('POST', JSON.stringify(jRequest));
 
             if (jResponse.error_code === 0) {
-
-                if (latestData.length > 0) {
-                    var validLatestSize = 0;
-
-                    for (var i = 0; i < latestData.length; i++) {
-                        if (latestData[i].t > jResponse.stockInfo.data.t) {
-                            handleNewData(latestData.slice(0, i - 1));
-                            latestData = [];
-                            break;
-                        }
-                    }
-                }
-                handleNewData(jResponse.stockInfo.data);
+                if (jResponse.stockInfo.data.t > lastChartData?.t) /*차트에 있는 마지막데이터의 시간값과 비교*/
+                    handleNewData(jResponse.stockInfo.data);
+                else
+                    ; // 과거 데이터는 낮시간에 발생 하므로 표시하지 않음
             } else {
                 console.error(JSON.stringify(jResponse.error_message));
                 setIntervalTime(prevTime => prevTime + 1000);
@@ -247,8 +239,6 @@ const RealtimeChart = ({ updateCurrentPrice }) => {
             console.error(err instanceof Error ? err.message : 'Unknown error occurred');
         }
     }, [intervalTime]);
-
-    var latestData = [];
 
     const fetchLatestStockInfo = async () => {
         try {
@@ -263,7 +253,7 @@ const RealtimeChart = ({ updateCurrentPrice }) => {
             const jResponse = await requestServer('POST', JSON.stringify(jRequest));
 
             if (jResponse.error_code === 0) {
-                latestData = jResponse.stockInfo;
+                handleNewData(jResponse.stockInfo);
             } else {
                 openModal(jResponse.error_message);
             }
@@ -285,10 +275,12 @@ const RealtimeChart = ({ updateCurrentPrice }) => {
         if (Array.isArray(newData)) {
             for (let i = 0; i < newData.length; i++) {
                 handleSingleData(newData[i]);
+                lastChartData = newData[i];
             }
         }
         else {
             handleSingleData(newData);
+            lastChartData = newData;
         }
 
     };
@@ -305,7 +297,7 @@ const RealtimeChart = ({ updateCurrentPrice }) => {
         };
         updateCurrentPrice(newChartData.y);
 
-        setSeries(prevSeries => {
+        setSeriesRef(prevSeries => {
             const existingData = prevSeries[0].data;
             const updatedData = [...existingData, newChartData].slice(-5040); // 인터벌이 5초라고 했을떄 하루 7시간치
             const newSeries = [{
