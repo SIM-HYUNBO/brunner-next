@@ -209,7 +209,9 @@ const getLatestStockInfo = async (txnId, jRequest) => {
 
         const response = await fetch(apiUrl);
         if (!response.ok) {
-            throw Error(response.statusText)
+            jResponse.error_code = response.status;
+            jResponse.error_message = response.statusText;
+            return jResponse;
         }
 
         const data = await response.json();
@@ -232,7 +234,7 @@ const getLatestStockInfo = async (txnId, jRequest) => {
 
 const getRealtimeStockInfo = async (txnId, jRequest) => {
     var jResponse = {};
-
+    var response = null;
     try {
         jResponse.commanaName = jRequest.commandName;
 
@@ -245,16 +247,18 @@ const getRealtimeStockInfo = async (txnId, jRequest) => {
         }
 
         const FINNHUB_REALTIME_URL = `https://finnhub.io/api/v1/quote?symbol=${jRequest.stocksTicker}&token=${process.env.FINNHUB_API_KEY}`;
-        const response = await axios.get(FINNHUB_REALTIME_URL);
-
+        response = await axios.get(FINNHUB_REALTIME_URL);
+        if (response.status !== 200) {
+            throw Error(response.statusText)
+        }
         jResponse.stockInfo = { type: 'stockInfo', data: response.data, time: new Date(response.data.t * 1000).toISOString() }
         jResponse.error_code = 0;
         jResponse.error_message = '';
     }
     catch (e) {
         logger.error(e);
-        jResponse.error_code = -1; // exception
-        jResponse.error_message = e.message
+        jResponse.error_code = e.response.status;
+        jResponse.error_message = e.response.statusText;
     }
     finally {
         return jResponse;
