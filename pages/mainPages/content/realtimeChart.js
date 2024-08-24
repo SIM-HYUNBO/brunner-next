@@ -225,6 +225,18 @@ const RealtimeChart = ({ updateCurrentPrice }) => {
             const jResponse = await requestServer('POST', JSON.stringify(jRequest));
 
             if (jResponse.error_code === 0) {
+
+                if (latestData.length > 0) {
+                    var validLatestSize = 0;
+
+                    for (var i = 0; i < latestData.length; i++) {
+                        if (latestData[i].t > jResponse.stockInfo.data.t) {
+                            handleNewData(latestData.slice(0, i - 1));
+                            latestData = [];
+                            break;
+                        }
+                    }
+                }
                 handleNewData(jResponse.stockInfo.data);
             } else {
                 console.error(JSON.stringify(jResponse.error_message));
@@ -235,6 +247,8 @@ const RealtimeChart = ({ updateCurrentPrice }) => {
             console.error(err instanceof Error ? err.message : 'Unknown error occurred');
         }
     }, [intervalTime]);
+
+    var latestData = [];
 
     const fetchLatestStockInfo = async () => {
         try {
@@ -249,7 +263,7 @@ const RealtimeChart = ({ updateCurrentPrice }) => {
             const jResponse = await requestServer('POST', JSON.stringify(jRequest));
 
             if (jResponse.error_code === 0) {
-                handleNewData(jResponse.stockInfo);
+                latestData = jResponse.stockInfo;
             } else {
                 openModal(jResponse.error_message);
             }
@@ -270,7 +284,6 @@ const RealtimeChart = ({ updateCurrentPrice }) => {
     const handleNewData = (newData) => {
         if (Array.isArray(newData)) {
             for (let i = 0; i < newData.length; i++) {
-                newData[i].t = newData[i].t / 1000;
                 handleSingleData(newData[i]);
             }
         }
@@ -316,7 +329,7 @@ const RealtimeChart = ({ updateCurrentPrice }) => {
 
         // 컴포넌트 언마운트 시 인터벌 클리어
         return () => clearInterval(timerId);
-    }, [fetchRealtimeStockData, intervalTime]);
+    }, []);
 
     return (
         <div className="w-full mt-5">
