@@ -134,17 +134,11 @@ export default function TickerInfoContent({ tickerCode: tickerCode }) {
         <div className="flex space-x-4 border w-full h-full text-align-left mt-10 readonly">
           <pre>{tickerInfoContentRef.current ? tickerInfoContentRef.current : 'Ticker info here.'}</pre>
         </div>
-        <div>
-          <label className={`text-center  text-slate-600 dark:text-white text-xl bg-white dark:bg-slate-800 mt-10 h-10 w-[30%]`}>
-            Current Price (USD)
-          </label>
-          <input
-            className={`text-center text-5xl text-${currentPriceTextColorRef.current} bg-slate-50 dark:bg-slate-800 border border-slate-400 my-10 ml-10 h-100 w-[30%] px-5 py-3`}
-            type="text"
-            value={currentPriceRef.current}
-            placeholder="Current Price ..."
-          />
-        </div>
+        <input className={`text-center text-5xl text-${currentPriceTextColorRef.current} bg-slate-50 dark:bg-slate-800 border border-slate-400 my-10 h-100 w-[100%] px-5 py-3`}
+          type="text"
+          value={currentPriceRef.current}
+          placeholder="Current Price ..."
+        />
         <RealtimeChart updateCurrentPrice={updateCurrentPrice} ></RealtimeChart>
         <div className="flex space-x-4 border w-full h-full text-align-left mt-10 readonly">
           <p>{tickerNewsContentRef.current ? tickerNewsContentRef.current : 'Ticker news here.'}</p>
