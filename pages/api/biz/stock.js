@@ -101,6 +101,9 @@ const getStockInfo = async (txnId, jRequest) => {
 
         const data = await response.json();
         jResponse.stockInfo = data.results;
+        data.results.map((d) => {
+            d.t = d.t / 1000;
+        });
         jResponse.error_code = 0; // exception
         jResponse.error_message = data.status;
     }
@@ -114,49 +117,6 @@ const getStockInfo = async (txnId, jRequest) => {
     }
 };
 
-const getLatestStockInfo = async (txnId, jRequest) => {
-    var jResponse = {};
-
-    try {
-        jResponse.commanaName = jRequest.commandName;
-        jResponse.userId = jRequest.userId;
-
-        if (!jRequest.stocksTicker) {
-            jResponse.error_code = -2;
-            jResponse.error_message = `The [stocksTicker] is a required field. 
-            Please set a value.`;
-            return jResponse;
-        }
-        if (!jRequest.dataCount) {
-            jResponse.error_code = -2;
-            jResponse.error_message = `The [dataCount] is a required field. 
-            Please set a value.`;
-            return jResponse;
-        }
-
-        const from = moment().subtract(5, "day").format('YYYY-MM-DD')
-        const to = moment().format('YYYY-MM-DD');
-        const apiUrl = `https://api.polygon.io/v2/aggs/ticker/${jRequest.stocksTicker}/range/1/minute/${from}/${to}?adjusted=true&sort=asc&apiKey=${process.env.POLYGON_API_KEY}`
-
-        const response = await fetch(apiUrl);
-        if (!response.ok) {
-            throw Error(response.statusText)
-        }
-
-        const data = await response.json();
-        jResponse.stockInfo = data.results.slice(jRequest.dataCount);
-        jResponse.error_code = 0; // exception
-        jResponse.error_message = data.status;
-    }
-    catch (e) {
-        logger.error(e);
-        jResponse.error_code = -3; // exception
-        jResponse.error_message = e.message
-    }
-    finally {
-        return jResponse;
-    }
-};
 
 const getTickerList = async (txnId, jRequest) => {
     var jResponse = {};
@@ -219,6 +179,53 @@ const getTickerInfo = async (txnId, jRequest) => {
         jResponse.error_code = -1; // exception
         jResponse.error_message = e.message
     } finally {
+        return jResponse;
+    }
+};
+
+const getLatestStockInfo = async (txnId, jRequest) => {
+    var jResponse = {};
+
+    try {
+        jResponse.commanaName = jRequest.commandName;
+        jResponse.userId = jRequest.userId;
+
+        if (!jRequest.stocksTicker) {
+            jResponse.error_code = -2;
+            jResponse.error_message = `The [stocksTicker] is a required field. 
+            Please set a value.`;
+            return jResponse;
+        }
+        if (!jRequest.dataCount) {
+            jResponse.error_code = -2;
+            jResponse.error_message = `The [dataCount] is a required field. 
+            Please set a value.`;
+            return jResponse;
+        }
+
+        const from = moment().subtract(5, "day").format('YYYY-MM-DD')
+        const to = moment().format('YYYY-MM-DD');
+        const apiUrl = `https://api.polygon.io/v2/aggs/ticker/${jRequest.stocksTicker}/range/1/minute/${from}/${to}?adjusted=true&sort=asc&apiKey=${process.env.POLYGON_API_KEY}`
+
+        const response = await fetch(apiUrl);
+        if (!response.ok) {
+            throw Error(response.statusText)
+        }
+
+        const data = await response.json();
+        jResponse.stockInfo = data.results.slice(jRequest.dataCount);
+        jResponse.stockInfo.map((d) => {
+            d.t = d.t / 1000; // 시간의 단위는 초로
+        });
+        jResponse.error_code = 0; // exception
+        jResponse.error_message = data.status;
+    }
+    catch (e) {
+        logger.error(e);
+        jResponse.error_code = -3; // exception
+        jResponse.error_message = e.message
+    }
+    finally {
         return jResponse;
     }
 };
