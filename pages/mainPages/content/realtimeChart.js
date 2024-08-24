@@ -12,29 +12,29 @@ const RealtimeChart = ({ updateCurrentPrice }) => {
         message: '',
         onConfirm: () => { },
         onClose: () => { }
-      });
+    });
 
     // 모달 열기 함수
-  const openModal = (message) => {
-    return new Promise((resolve, reject) => {
-      setModalContent({
-        isOpen: true,
-        message: message,
-        onConfirm: (result) => { resolve(result); closeModal(); },
-        onClose: () => { reject(false); closeModal(); }
-      });
-    });
-  };
+    const openModal = (message) => {
+        return new Promise((resolve, reject) => {
+            setModalContent({
+                isOpen: true,
+                message: message,
+                onConfirm: (result) => { resolve(result); closeModal(); },
+                onClose: () => { reject(false); closeModal(); }
+            });
+        });
+    };
 
-  // 모달 닫기 함수
-  const closeModal = () => {
-    setModalContent({
-      isOpen: false,
-      message: '',
-      onConfirm: () => { },
-      onClose: () => { }
-    });
-  };
+    // 모달 닫기 함수
+    const closeModal = () => {
+        setModalContent({
+            isOpen: false,
+            message: '',
+            onConfirm: () => { },
+            onClose: () => { }
+        });
+    };
 
 
     const [currentTicker, setCurrentTicker] = useState(process.currentTicker);
@@ -76,14 +76,15 @@ const RealtimeChart = ({ updateCurrentPrice }) => {
     }
 
     const formatter = new Intl.DateTimeFormat([], {
-        year: 'numeric',
+        // year: 'numeric',
         month: '2-digit',
         day: '2-digit',
         hour: '2-digit',
         minute: '2-digit',
-        second: '2-digit',
-        timeZoneName: 'short'
-      });
+        // second: '2-digit',
+        timeZoneName: 'short',
+        hourCycle: 'h23'
+    });
 
     const getChartOptions = (chartColor) => {
         return {
@@ -108,7 +109,11 @@ const RealtimeChart = ({ updateCurrentPrice }) => {
                 type: 'datetime',
                 labels: {
                     datetimeUTC: false,
-                    format: 'MM/dd HH:mm',
+                    formatter: function (value) {
+                        // Date 객체를 사용하여 포맷팅
+                        const date = new Date(value);
+                        return formatter.format(date);
+                    },
                     style: {
                         colors: '#9e9e9e', // x축 레이블 색상
                         //fontSize: '12px',  // x축 레이블 폰트 크기
@@ -169,11 +174,11 @@ const RealtimeChart = ({ updateCurrentPrice }) => {
                 x: {
                     show: true, // x축 값을 툴팁에 표시할지 여부
                     format: 'yy MMM dd HH:mm', // 포맷 설정
-                    formatter: function(value) {
+                    formatter: function (value) {
                         // Date 객체를 사용하여 포맷팅
                         const date = new Date(value);
                         return formatter.format(date);
-                      }
+                    }
                 },
                 y: {
                     formatter: function (value) {
@@ -238,7 +243,7 @@ const RealtimeChart = ({ updateCurrentPrice }) => {
             const jRequest = {
                 commandName: 'stock.getLatestStockInfo',
                 stocksTicker: currentTickerRef.current,
-                dataCount: -100 
+                dataCount: -100
             };
 
             const jResponse = await requestServer('POST', JSON.stringify(jRequest));
@@ -320,7 +325,7 @@ const RealtimeChart = ({ updateCurrentPrice }) => {
                 message={modalContent.message}
                 onConfirm={modalContent.onConfirm}
                 onClose={modalContent.onClose}
-            />    
+            />
             <ApexCharts
                 options={options}
                 series={series}
