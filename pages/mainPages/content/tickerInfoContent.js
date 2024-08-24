@@ -135,7 +135,7 @@ export default function TickerInfoContent({ tickerCode: tickerCode }) {
           <pre>{tickerInfoContentRef.current ? tickerInfoContentRef.current : 'Ticker info here.'}</pre>
         </div>
         <div>
-          <label className={`text-center text-xl bg-white dark:bg-slate-800 mt-10 h-10 w-[30%]`}>
+          <label className={`text-center  text-slate-600 dark:text-white text-xl bg-white dark:bg-slate-800 mt-10 h-10 w-[30%]`}>
             Current Price (USD)
           </label>
           <input
