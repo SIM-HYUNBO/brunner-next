@@ -98,27 +98,29 @@ export default function TickerInfoContent({ tickerCode: tickerCode }) {
   const [currentPrice, setCurrentPrice] = useState();
   const currentPriceRef = useRef(currentPrice);
 
-  const updateCurrentPrice = (newValue) => {
+  const updateCurrentPrice = (firstData, lastData, newData) => {
     var textColor = '';
 
-    if (currentPriceRef.current == newValue)
-      textColor = 'slate-400';
-    else if (currentPriceRef.current > newValue)
-      textColor = 'blue-600';
+    if (firstData?.y == newData?.y)
+      textColor = 'text-gray-500';
+    else if (firstData?.y > newData?.y)
+      textColor = 'text-blue-500';
     else
-      textColor = 'red-600';
+      textColor = 'text-red-500';
 
-    currentPriceRef.current = newValue;
-    setCurrentPrice(newValue);
+    currentPriceRef.current = newData?.y;
+    setCurrentPrice(newData?.y);
     setCurrentPriceTextColorRef(textColor);
   };
 
   // 현재가격 표시 색깔
-  const [currentPriceTextColor, setCurrentPriceTextColor] = useState();
-  const currentPriceTextColorRef = useRef(currentPriceTextColor);
+  const currentPriceTextColorRef = useRef(null);
   const setCurrentPriceTextColorRef = (newValue) => {
-    setCurrentPriceTextColor(newValue);
-    currentPriceTextColorRef.current = newValue;
+    currentPriceTextColorRef.current.classList.remove('text-gray-500');
+    currentPriceTextColorRef.current.classList.remove('text-red-500');
+    currentPriceTextColorRef.current.classList.remove('text-blue-500');
+
+    currentPriceTextColorRef.current.classList.add(newValue);
 
   };
 
@@ -134,7 +136,7 @@ export default function TickerInfoContent({ tickerCode: tickerCode }) {
         <div className="flex space-x-4 border w-full h-full text-align-left mt-10 readonly">
           <pre>{tickerInfoContentRef.current ? tickerInfoContentRef.current : 'Ticker info here.'}</pre>
         </div>
-        <input className={`text-center text-5xl text-${currentPriceTextColorRef.current} bg-slate-50 dark:bg-slate-800 border border-slate-400 mt-10 mb-2 h-100 w-[100%] px-5 py-3`}
+        <input ref={currentPriceTextColorRef} className={`text-center text-5xl text-gray bg-slate-50 dark:bg-slate-800 border border-slate-400 mt-10 mb-2 h-100 w-[100%] px-5 py-3`}
           type="text"
           value={currentPriceRef.current}
           placeholder="Current Price ..."

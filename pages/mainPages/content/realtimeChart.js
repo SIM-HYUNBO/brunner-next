@@ -49,9 +49,14 @@ const RealtimeChart = ({ updateCurrentPrice }) => {
         setSeries(newVal);
     }
 
-    const [intervalTime, setIntervalTime] = useState(5000); // 인터벌 시간 상태 (밀리초)
+    const [intervalTime, setIntervalTime] = useState(10000); // 인터벌 시간 상태 (밀리초)
     const [intervalId, setIntervalId] = useState(null);
 
+    /* 차트 색깔 결정 
+        처음값 대비 올랐으면 빨간색
+        내렸으면 파란색
+        같으면 회색
+    */
     function setChartColor(newSeries) {
         var color = 'gray';
         var colorName = 'gray';
@@ -209,6 +214,8 @@ const RealtimeChart = ({ updateCurrentPrice }) => {
     const [options, setOptions] = useState(getChartOptions('gray'));
 
     var lastChartData = null;
+    var firstChartData = null;
+
     const fetchRealtimeStockData = useCallback(async () => {
         try {
             if (currentTickerRef.current !== process.currentTicker) {
@@ -272,6 +279,9 @@ const RealtimeChart = ({ updateCurrentPrice }) => {
     const handleNewData = (newData) => {
         if (Array.isArray(newData)) {
             for (let i = 0; i < newData.length; i++) {
+                if (i == 0)
+                    firstChartData = newData[i];
+
                 handleSingleData(newData[i]);
                 lastChartData = newData[i];
             }
@@ -283,21 +293,41 @@ const RealtimeChart = ({ updateCurrentPrice }) => {
 
     };
 
-    const handleSingleData = (newData) => {
+    const handleSingleData = (newValue) => {
         const now = new Date().getTime();
-        const givenTime = new Date(newData.t * 1000).getTime();
+        const givenTime = new Date(newValue.t * 1000).getTime();
 
         const diff = now - givenTime;
 
-        const newChartData = {
-            x: givenTime,
-            y: newData.c  /*Math.floor(Math.random() * (100 - 0 + 1)) + 0,*/
+        const firstData = firstChartData ? {
+            x: new Date(firstChartData?.t * 1000).getTime(),
+            y: firstChartData?.c
+        } : {
+            x: null,
+            y: null
         };
-        updateCurrentPrice(newChartData.y);
+
+        const lastData = lastChartData ? {
+            x: new Date(lastChartData?.t * 1000).getTime(),
+            y: lastChartData?.c
+        } : {
+            x: null,
+            y: null
+        };
+
+        const newData = newValue ? {
+            x: new Date(newValue?.t * 1000).getTime(),
+            y: newValue?.c
+        } : {
+            x: null,
+            y: null
+        };
+
+        updateCurrentPrice(firstData, lastData, newData);
 
         setSeriesRef(prevSeries => {
             const existingData = prevSeries[0].data;
-            const updatedData = [...existingData, newChartData].slice(-5040); // 인터벌이 5초라고 했을떄 하루 7시간치
+            const updatedData = [...existingData, newData].slice(-5040); // 인터벌이 5초라고 했을떄 하루 7시간치
             const newSeries = [{
                 ...prevSeries[0],
                 data: updatedData,
