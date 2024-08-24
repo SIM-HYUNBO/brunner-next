@@ -231,12 +231,10 @@ const RealtimeChart = ({ updateCurrentPrice }) => {
                 else
                     ; // 과거 데이터는 낮시간에 발생 하므로 표시하지 않음
             } else {
-                console.error(JSON.stringify(jResponse.error_message));
-                setIntervalTime(prevTime => prevTime + 1000);
-                console.error(`타이머 인터벌 변경: ${intervalTime}`);
+                openModal(JSON.stringify(jResponse.error_message));
             }
         } catch (err) {
-            console.error(err instanceof Error ? err.message : 'Unknown error occurred');
+            openModal(err instanceof Error ? err.message : 'Unknown error occurred');
         }
     }, [intervalTime]);
 
