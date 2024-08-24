@@ -1,11 +1,42 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
 import dynamic from 'next/dynamic';
 import requestServer from '../../../components/requestServer';
+import BrunnerMessageBox from '@/components/BrunnerMessageBox'
 
 // dynamic import로 ApexCharts를 사용합니다.
 const ApexCharts = dynamic(() => import('react-apexcharts'), { ssr: false });
 
 const RealtimeChart = ({ updateCurrentPrice }) => {
+    const [modalContent, setModalContent] = useState({
+        isOpen: false,
+        message: '',
+        onConfirm: () => { },
+        onClose: () => { }
+      });
+
+    // 모달 열기 함수
+  const openModal = (message) => {
+    return new Promise((resolve, reject) => {
+      setModalContent({
+        isOpen: true,
+        message: message,
+        onConfirm: (result) => { resolve(result); closeModal(); },
+        onClose: () => { reject(false); closeModal(); }
+      });
+    });
+  };
+
+  // 모달 닫기 함수
+  const closeModal = () => {
+    setModalContent({
+      isOpen: false,
+      message: '',
+      onConfirm: () => { },
+      onClose: () => { }
+    });
+  };
+
+
     const [currentTicker, setCurrentTicker] = useState(process.currentTicker);
     const currentTickerRef = useRef(currentTicker);
     const [series, setSeries] = useState([{
@@ -43,6 +74,16 @@ const RealtimeChart = ({ updateCurrentPrice }) => {
         else
             setOptions(getChartOptions('gray'));
     }
+
+    const formatter = new Intl.DateTimeFormat([], {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        timeZoneName: 'short'
+      });
 
     const getChartOptions = (chartColor) => {
         return {
@@ -128,7 +169,11 @@ const RealtimeChart = ({ updateCurrentPrice }) => {
                 x: {
                     show: true, // x축 값을 툴팁에 표시할지 여부
                     format: 'yy MMM dd HH:mm', // 포맷 설정
-                    formatter: undefined // 커스텀 포맷터 함수
+                    formatter: function(value) {
+                        // Date 객체를 사용하여 포맷팅
+                        const date = new Date(value);
+                        return formatter.format(date);
+                      }
                 },
                 y: {
                     formatter: function (value) {
@@ -201,11 +246,10 @@ const RealtimeChart = ({ updateCurrentPrice }) => {
             if (jResponse.error_code === 0) {
                 handleNewData(jResponse.stockInfo);
             } else {
-                // 금일 데이터 못 가져옴
-                // 그냥 SKIP
+                openModal(jResponse.error_message);
             }
         } catch (err) {
-            ;
+            openModal(err);
         }
         finally {
             fetchRealtimeStockData(); // 처음에 실행하고 타이머 반복
@@ -271,6 +315,12 @@ const RealtimeChart = ({ updateCurrentPrice }) => {
 
     return (
         <div className="w-full mt-5">
+            <BrunnerMessageBox
+                isOpen={modalContent.isOpen}
+                message={modalContent.message}
+                onConfirm={modalContent.onConfirm}
+                onClose={modalContent.onClose}
+            />    
             <ApexCharts
                 options={options}
                 series={series}
