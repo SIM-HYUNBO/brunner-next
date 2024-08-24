@@ -437,6 +437,17 @@ const StockContent = () => {
         const macdData = calculateMACD(priceData);
         const bollingerBands = calculateBollingerBands(priceData);
 
+        const formatter = new Intl.DateTimeFormat([], {
+            // year: 'numeric',
+            month: '2-digit',
+            day: '2-digit',
+            hour: '2-digit',
+            minute: '2-digit',
+            // second: '2-digit',
+            timeZoneName: 'short',
+            hourCycle: 'h23'
+        });
+
         const chartOptions = {
             chart: {
                 type: 'line',
@@ -462,7 +473,11 @@ const StockContent = () => {
                     style: {
                         colors: '#94a3b8'
                     },
-                    format: 'MM/dd HH:mm',
+                    formatter: function (value) {
+                        // Date 객체를 사용하여 포맷팅
+                        const date = new Date(value);
+                        return formatter.format(date);
+                    },
                 }
             },
             yaxis: {
@@ -519,7 +534,11 @@ const StockContent = () => {
                 type: 'datetime',
                 labels: {
                     datetimeUTC: false, // UTC가 아닌 로컬 시간대로 표시합니다.
-                    format: 'MM/dd HH:mm', // 'dd MMM'은 날짜와 시간을 모두 보여줍니다. (예: 03 Aug 13:00)
+                    formatter: function (value) {
+                        // Date 객체를 사용하여 포맷팅
+                        const date = new Date(value);
+                        return formatter.format(date);
+                    },
                     style: {
                         colors: '#9e9e9e', // x축 레이블 색상
                         //fontSize: '12px',  // x축 레이블 폰트 크기
@@ -573,7 +592,11 @@ const StockContent = () => {
                 type: 'datetime',
                 labels: {
                     datetimeUTC: false, // UTC가 아닌 로컬 시간대로 표시합니다.
-                    format: 'MM/dd HH:mm', // 'dd MMM'은 날짜와 시간을 모두 보여줍니다. (예: 03 Aug 13:00)
+                    formatter: function (value) {
+                        // Date 객체를 사용하여 포맷팅
+                        const date = new Date(value);
+                        return formatter.format(date);
+                    },
                     style: {
                         colors: '#9e9e9e', // x축 레이블 색상
                         //fontSize: '12px',  // x축 레이블 폰트 크기
@@ -641,7 +664,11 @@ const StockContent = () => {
                 },
                 labels: {
                     datetimeUTC: false, // UTC가 아닌 로컬 시간대로 표시합니다.
-                    format: 'MM/dd HH:mm', // 'dd MMM'은 날짜와 시간을 모두 보여줍니다. (예: 03 Aug 13:00)
+                    formatter: function (value) {
+                        // Date 객체를 사용하여 포맷팅
+                        const date = new Date(value);
+                        return formatter.format(date);
+                    },
                     style: {
                         colors: '#9e9e9e', // x축 레이블 색상
                         //fontSize: '12px',  // x축 레이블 폰트 크기
