@@ -3,6 +3,12 @@
     "pages/api/*.js": {    
       "maxDuration": 60,
       "memory": 1024
+    }  
+  },
+  "rewrites": [
+    {
+      "source": "/ads.txt",
+      "destination": "/ads.txt"
     }
-  }
+  ]  
 }
