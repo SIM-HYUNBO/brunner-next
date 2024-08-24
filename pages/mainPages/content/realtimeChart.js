@@ -238,7 +238,10 @@ const RealtimeChart = ({ updateCurrentPrice }) => {
                 else
                     ; // 과거 데이터는 낮시간에 발생 하므로 표시하지 않음
             } else {
-                openModal(JSON.stringify(jResponse.error_message));
+                if (jResponse.error_code === 429) { // Too Many Request error 처리
+                    setIntervalTime(prevTime => prevTime + 1000);
+                    openModal(JSON.stringify(jResponse.error_message));
+                }
             }
         } catch (err) {
             openModal(err instanceof Error ? err.message : 'Unknown error occurred');
