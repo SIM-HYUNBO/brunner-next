@@ -475,7 +475,7 @@ const StockContent = () => {
                     },
                     formatter: function (value) {
                         // Date 객체를 사용하여 포맷팅
-                        const date = new Date(value);
+                        const date = new Date(value * 1000);
                         return formatter.format(date);
                     },
                 }
@@ -536,7 +536,7 @@ const StockContent = () => {
                     datetimeUTC: false, // UTC가 아닌 로컬 시간대로 표시합니다.
                     formatter: function (value) {
                         // Date 객체를 사용하여 포맷팅
-                        const date = new Date(value);
+                        const date = new Date(value * 1000);
                         return formatter.format(date);
                     },
                     style: {
@@ -594,7 +594,7 @@ const StockContent = () => {
                     datetimeUTC: false, // UTC가 아닌 로컬 시간대로 표시합니다.
                     formatter: function (value) {
                         // Date 객체를 사용하여 포맷팅
-                        const date = new Date(value);
+                        const date = new Date(value * 1000);
                         return formatter.format(date);
                     },
                     style: {
@@ -666,7 +666,7 @@ const StockContent = () => {
                     datetimeUTC: false, // UTC가 아닌 로컬 시간대로 표시합니다.
                     formatter: function (value) {
                         // Date 객체를 사용하여 포맷팅
-                        const date = new Date(value);
+                        const date = new Date(value * 1000);
                         return formatter.format(date);
                     },
                     style: {
