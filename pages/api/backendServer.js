@@ -129,4 +129,12 @@ const saveTxnHistory = async (remoteIp, txnId, jRequest, jResponse) => {
     if (insert_TB_COR_TXN_HIST_01.rowCount !== 1) {
         logger.error(`Failed to execute insert_TB_COR_TXN_HIST_01\n`);
     }
+    else {
+        // 오래된 이력은 여기서 삭제
+        sql = await serviceSQL.getSQL00('delete_TB_COR_TXN_HIST', 1);
+        var delete_TB_COR_TXN_HIST_01 = await database.executeSQL(sql,
+            [
+            ]);
+        logger.info(`delete_TB_COR_TXN_HIST_01\n${delete_TB_COR_TXN_HIST_01}`);
+    }
 }
