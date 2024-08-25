@@ -49,7 +49,7 @@ export default function Home() {
           data-ad-format="auto"
           data-full-width-responsive="true"></ins>
 
-        <ins className="adsbygoogle"
+        {/* <ins className="adsbygoogle"
           style={{ display: 'block' }}
           data-ad-client="ca-pub-3879149687745447"
           data-ad-slot="5876281933"
@@ -81,7 +81,7 @@ export default function Home() {
           style={{ display: 'block' }}
           data-ad-format="autorelaxed"
           data-ad-client="ca-pub-3879149687745447"
-          data-ad-slot="7911989152"></ins>
+          data-ad-slot="7911989152"></ins> */}
       </>
     );
   };
