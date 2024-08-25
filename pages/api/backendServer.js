@@ -14,12 +14,15 @@ async function initialize() {
     var serviceSql = null;
     if (!process.serviceSQL)
         serviceSql = await serviceSQL.loadAllSQL();
+    else
+        serviceSql = process.serviceSQL;
+
+    return serviceSql.size;
 }
 
+var sql_loading = false;
 
 export default async (req, res) => {
-    await initialize();
-
     const response = {};
     var remoteIp = null;
     var jRequest = null;
@@ -31,6 +34,19 @@ export default async (req, res) => {
     var durationMs = null;
 
     try {
+        var loadedSQLSize = 0;
+
+        if (!sql_loading) {
+            loadedSQLSize = await initialize();
+        }
+        else {
+            throw Error("Server is now initializing...");
+        }
+
+        if (!process.serviceSQL || process.serviceSQL.length == 0) {
+            throw Error("Server is now initializing...");
+        }
+
         remoteIp = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
         jRequest = req.method === "GET" ? JSON.parse(req.params.requestJson) : req.method === "POST" ? req.body : null;
         txnId = await generateTxnId();
