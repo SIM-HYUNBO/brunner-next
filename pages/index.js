@@ -41,7 +41,7 @@ export default function Home() {
           }}
         />
 
-        광고 단위 생성
+        {/* 광고 단위 생성 */}
         <ins className="adsbygoogle"
           style={{ display: 'block' }}
           data-ad-client="ca-pub-3879149687745447"
