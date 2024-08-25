@@ -29,7 +29,9 @@ const executeSQL = async (sql, params) => {
       throw new Exception("SQL not loaded.")
     }
     logger.info(`SQL:\n${sql}\nPARAMS:${JSON.stringify(params)}\n`);
-    return await (await getPool()).query(sql, params);
+
+    var pool = await getPool();
+    return await pool.query(sql, params);
   }
   catch (err) {
     logger.error(err);

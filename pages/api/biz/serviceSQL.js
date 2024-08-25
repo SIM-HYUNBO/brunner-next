@@ -32,7 +32,7 @@ async function loadAllSQL(txnId) {
 
     logger.info(`Start loading service queries.\n`)
 
-    process.serviceSQL = new Map();
+    var loadedSQLs = new Map();
 
     var sql = `
     SELECT SYSTEM_CODE, 
@@ -44,10 +44,12 @@ async function loadAllSQL(txnId) {
 
     const sql_result = await database.executeSQL(sql, []);
 
-    if (sql_result && sql_result.rows) {
+    if (sql_result && sql_result.rowCount > 0) {
       sql_result.rows.forEach(row => {
-        process.serviceSQL.set(`${row.system_code}_${row.sql_name}_${row.sql_seq}`, row.sql_content);
+        loadedSQLs.set(`${row.system_code}_${row.sql_name}_${row.sql_seq}`, row.sql_content);
       });
+      process.serviceSQL = loadedSQLs;
+      return process.serviceSQL.size;
     }
     else {
       throw new Error('failed to loadAllSQL ');
@@ -57,7 +59,7 @@ async function loadAllSQL(txnId) {
     throw err;
   }
   finally {
-    return process.serviceSQL;
+    return process.serviceSQL.size;
   }
 };
 
