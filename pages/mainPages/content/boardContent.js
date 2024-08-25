@@ -571,7 +571,7 @@ function BoardContent({ post, onAddComment, onEditPost, onDeletePost, onEditComm
                     className="flex-1 p-2 border border-gray-300 rounded-md text-slate-600 dark:text-slate-400"
                 />
                 <button onClick={handleAddComment} className="ml-2 px-4 py-2 bg-blue-500 text-white rounded-md">
-                    Add Comment
+                    Add...
                 </button>
             </div>
         </div>
