@@ -26,6 +26,80 @@ export default function Home() {
           src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3879149687745447"
           crossorigin="anonymous"
         />
+
+        {/* 광고 단위 생성
+         */}
+        <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3879149687745447"
+          crossorigin="anonymous"></script>
+
+        {/* 디스플레이 광고 - 사각형 */}
+        <ins class="adsbygoogle"
+          style="display:block"
+          data-ad-client="ca-pub-3879149687745447"
+          data-ad-slot="5669803344"
+          data-ad-format="auto"
+          data-full-width-responsive="true"></ins>
+        <script>
+          (adsbygoogle = window.adsbygoogle || []).push({ });
+        </script>
+
+        {/* 디스플레이 광고 - 수평형 */}
+        <ins class="adsbygoogle"
+          style="display:block"
+          data-ad-client="ca-pub-3879149687745447"
+          data-ad-slot="5876281933"
+          data-ad-format="auto"
+          data-full-width-responsive="true"></ins>
+        <script>
+          (adsbygoogle = window.adsbygoogle || []).push({ });
+        </script>
+
+        {/* 디스플레이 광고 - 수직형 */}
+        <ins class="adsbygoogle"
+          style="display:block"
+          data-ad-client="ca-pub-3879149687745447"
+          data-ad-slot="6930914120"
+          data-ad-format="auto"
+          data-full-width-responsive="true"></ins>
+        <script>
+          (adsbygoogle = window.adsbygoogle || []).push({ });
+        </script>
+
+        {/* 인피드 광고 - 상단 이미지 광고 */}
+        <ins class="adsbygoogle"
+          style="display:block"
+          data-ad-format="fluid"
+          data-ad-layout-key="-6t+ed+2i-1n-4w"
+          data-ad-client="ca-pub-3879149687745447"
+          data-ad-slot="5426260766"></ins>
+        <Script>
+          (adsbygoogle = window.adsbygoogle || []).push({ });
+        </Script>
+
+        {/* 인아티클 */}
+        <Script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3879149687745447"
+          crossorigin="anonymous"></Script>
+        <ins class="adsbygoogle"
+          style="display:block; text-align:center;"
+          data-ad-layout="in-article"
+          data-ad-format="fluid"
+          data-ad-client="ca-pub-3879149687745447"
+          data-ad-slot="2851234162"></ins>
+        <Script>
+          (adsbygoogle = window.adsbygoogle || []).push({ });
+        </Script>
+
+        {/* 멀티플렉스 */}
+        <Script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3879149687745447"
+          crossorigin="anonymous"></Script>
+        <ins class="adsbygoogle"
+          style="display:block"
+          data-ad-format="autorelaxed"
+          data-ad-client="ca-pub-3879149687745447"
+          data-ad-slot="7911989152"></ins>
+        <Script>
+          (adsbygoogle = window.adsbygoogle || []).push({ });
+        </Script>
       </>
     )
   }
