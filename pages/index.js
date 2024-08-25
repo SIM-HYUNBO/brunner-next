@@ -20,6 +20,13 @@ export default function Home() {
   }, []);
 
   const GoogleScript = () => {
+    useEffect(() => {
+      // Google Ads 스크립트가 로드된 후 초기화
+      if (window.adsbygoogle) {
+        (window.adsbygoogle = window.adsbygoogle || []).push({});
+      }
+    }, []);
+
     return (
       <>
         {/* Google Ads 스크립트 로드 */}
@@ -27,7 +34,10 @@ export default function Home() {
           src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3879149687745447"
           strategy="afterInteractive"
           onLoad={() => {
-            (window.adsbygoogle = window.adsbygoogle || []).push({});
+            // 스크립트 로드 후 adsbygoogle 초기화
+            if (window.adsbygoogle) {
+              (window.adsbygoogle = window.adsbygoogle || []).push({});
+            }
           }}
         />
 
