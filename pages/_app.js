@@ -6,6 +6,7 @@ import { ThemeProvider } from 'next-themes'
 import requestServer from './../components/requestServer'
 import { useEffect, useState } from 'react'
 import BrunnerMessageBox from '@/components/BrunnerMessageBox'
+import Script from 'next/script';
 
 // Entry Point
 export default function App({ Component, pageProps }) {
@@ -46,18 +47,21 @@ export default function App({ Component, pageProps }) {
     });
   };
 
-  async function requestLoadAllSqls() {
-    var jRequest = {};
-    var jResponse = null;
-
-    jRequest.commandName = "serviceSQL.loadAllSQL";
-
-    setLoading(true); // 데이터 로딩 시작
-    jResponse = await requestServer('POST', JSON.stringify(jRequest));
-    setLoading(false); // 데이터 로딩 시작
-
-    if (jResponse.error_code < 0) // 에러
-      openModal(jResponse.error_message);
+  const GoogleAdScript = () => {
+    return (
+      <>
+        <Script
+          async
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3879149687745447"
+          crossOrigin="anonymous"
+        />
+        <Script
+          async
+          custom-element="amp-auto-ads"
+          src="https://cdn.ampproject.org/v0/amp-auto-ads-0.1.js">
+        </Script>
+      </>
+    )
   }
 
   return (
@@ -70,6 +74,7 @@ export default function App({ Component, pageProps }) {
       />
 
       <ThemeProvider attribute='class'>
+        <GoogleAdScript />
         <Component {...pageProps} />
       </ThemeProvider>
 
