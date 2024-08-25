@@ -152,7 +152,7 @@ export default function TickerInfoContent({ tickerCode: tickerCode }) {
         </button>
         <RealtimeChart updateCurrentPrice={updateCurrentPrice} ></RealtimeChart>
         <div className="flex space-x-4 border w-full h-full text-align-left mt-10 readonly">
-          <p>{tickerNewsContentRef.current ? tickerNewsContentRef.current : 'Ticker news here.'}</p>
+          <pre>{tickerNewsContentRef.current ? tickerNewsContentRef.current : 'Ticker news here.'}</pre>
         </div>
         <div className="flex space-x-4 border w-full h-full text-align-left mt-10 readonly">
           <Board boardType={tickerCode} />
