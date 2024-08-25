@@ -21,11 +21,11 @@ export default function Home() {
 
   const GoogleScript = () => {
     return (
-      <>
-        <Script
-          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3879149687745447"
-          crossorigin="anonymous" />
-      </>
+      <Script
+        async
+        src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3879149687745447"
+        crossOrigin="anonymous"
+      />
     )
   }
 
