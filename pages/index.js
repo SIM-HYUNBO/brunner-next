@@ -5,7 +5,7 @@ import Head from 'next/head'
 import BodySection from '../components/bodySection'
 import React from 'react';
 import { useEffect } from 'react'
-import Script from 'next/script';
+
 
 import * as userInfo from './../components/userInfo'
 import HomeContent from './mainPages/content/homeContent'
@@ -19,16 +19,6 @@ export default function Home() {
 
   }, []);
 
-  const GoogleScript = () => {
-    return (
-      <Script
-        async
-        src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3879149687745447"
-        crossOrigin="anonymous"
-      />
-    )
-  }
-
   return (
     <Layout>
       <Head>
@@ -37,7 +27,6 @@ export default function Home() {
         <meta name="keywords" content="Stock, Chart, Asset, Investment" />
         <meta rel="icon" href="/brunnerLogo.png"></meta>
         <meta name="google-adsense-account" content="ca-pub-3879149687745447"></meta>
-        <GoogleScript />
       </Head>
       <BodySection>
         <div className="container mx-auto flex px-5 md:flex-row flex-col items-center">
