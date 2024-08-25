@@ -44,10 +44,14 @@ async function loadAllSQL(txnId) {
 
     const sql_result = await database.executeSQL(sql, []);
 
-    sql_result.rows.forEach(row => {
-      process.serviceSQL.set(`${row.system_code}_${row.sql_name}_${row.sql_seq}`, row.sql_content);
-    });
-
+    if (sql_result && sql_result.rows) {
+      sql_result.rows.forEach(row => {
+        process.serviceSQL.set(`${row.system_code}_${row.sql_name}_${row.sql_seq}`, row.sql_content);
+      });
+    }
+    else {
+      throw new Error('failed to loadAllSQL ');
+    }
     return process.serviceSQL;
   }
   catch (err) {
