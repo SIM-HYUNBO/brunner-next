@@ -30,7 +30,7 @@ a {
 }
 
 p {
-    @apply text-slate-900 dark:text-white
+    @apply text-slate-600 dark:text-slate-400
 }
 
 .container {
