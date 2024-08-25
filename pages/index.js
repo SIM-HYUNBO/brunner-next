@@ -27,10 +27,10 @@ export default function Home() {
           crossorigin="anonymous"
         />
 
-        {/* 광고 단위 생성
-         */}
+        {/* 광고 단위 생성*/}
         <Script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3879149687745447"
-          crossorigin="anonymous"></Script>
+          crossorigin="anonymous">
+        </Script>
 
         {/* 디스플레이 광고 - 사각형 */}
         <ins class="adsbygoogle"
@@ -50,9 +50,9 @@ export default function Home() {
           data-ad-slot="5876281933"
           data-ad-format="auto"
           data-full-width-responsive="true"></ins>
-        <Sript>
+        <Script>
           (adsbygoogle = window.adsbygoogle || []).push({ });
-        </Sript>
+        </Script>
 
         {/* 디스플레이 광고 - 수직형 */}
         <ins class="adsbygoogle"
