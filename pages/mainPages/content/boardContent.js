@@ -3,231 +3,6 @@ import requestServer from '@/components/requestServer';
 import * as userInfo from '@/components/userInfo';
 import BrunnerMessageBox from '@/components/BrunnerMessageBox';
 
-// 게시글 컴포넌트
-function BoardContent({ post, onAddComment, onEditPost, onDeletePost, onEditComment, onDeleteComment }) {
-    const [loading, setLoading] = useState(false); // 로딩 상태 추가
-    const [modalContent, setModalContent] = useState({
-        isOpen: false,
-        message: '',
-        onConfirm: () => { },
-        onClose: () => { }
-    });
-
-    // 모달 열기 함수
-    const openModal = (message) => {
-        return new Promise((resolve, reject) => {
-            setModalContent({
-                isOpen: true,
-                message: message,
-                onConfirm: (result) => { resolve(result); closeModal(); },
-                onClose: () => { reject(false); closeModal(); }
-            });
-        });
-    };
-
-    // 모달 닫기 함수
-    const closeModal = () => {
-        setModalContent({
-            isOpen: false,
-            message: '',
-            onConfirm: () => { },
-            onClose: () => { }
-        });
-    };
-    const [commentText, setCommentText] = useState('');
-    const [isEditingPost, setIsEditingPost] = useState(false);
-    const [editedPostText, setEditedPostText] = useState(post.post_content);
-    const [editingCommentId, setEditingCommentId] = useState(null);
-    const [editedCommentText, setEditedCommentText] = useState('');
-
-    const handleCommentChange = (e) => {
-        setCommentText(e.target.value);
-    };
-
-    const handleAddComment = () => {
-        if (commentText.trim()) {
-            onAddComment(post.post_id, commentText);
-            setCommentText('');
-        }
-    };
-
-    const handleEditPostChange = (e) => {
-        setEditedPostText(e.target.value);
-    };
-
-    const handleEditPost = () => {
-        onEditPost(post.post_id, editedPostText);
-        setIsEditingPost(false);
-    };
-
-    const handleDeletePost = () => {
-        onDeletePost(post.post_id);
-    };
-
-    const handleEditCommentChange = (e) => {
-        setEditedCommentText(e.target.value);
-    };
-
-    const handleEditComment = (commentId) => {
-        onEditComment(post.post_id, commentId, editedCommentText);
-        setEditingCommentId(null);
-    };
-
-    const handleDeleteComment = (commentId) => {
-        onDeleteComment(post.post_id, commentId);
-    };
-
-    return (
-        <div className="border-b border-gray-300 py-4">
-            {loading && (
-                <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-gray-500 bg-opacity-75 z-50">
-                    <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-gray-900"></div>
-                </div>
-            )}
-            <BrunnerMessageBox
-                isOpen={modalContent.isOpen}
-                message={modalContent.message}
-                onConfirm={modalContent.onConfirm}
-                onClose={modalContent.onClose}
-            />
-            {isEditingPost ? (
-                <div>
-                    <textarea
-                        value={editedPostText}
-                        onChange={handleEditPostChange}
-                        className="w-full p-2 border border-gray-300 rounded-md"
-                    />
-                    <button onClick={handleEditPost} className="mt-2 px-4 py-2 bg-blue-500 text-white rounded-md">
-                        Save
-                    </button>
-                    <button onClick={() => setIsEditingPost(false)} className="mt-2 ml-2 px-4 py-2 bg-gray-500 text-white rounded-md">
-                        Cancel
-                    </button>
-                </div>
-            ) : (
-                <p className='w-full text-left'>
-                    <strong className="text-left">{post.create_user_id}</strong>
-                    <br />
-                    <span className="text-gray-500 text-sm">{new Date(post.create_time).toLocaleString()}</span>
-                    <br />
-                    <p className='w-full text-left'>{post.post_content}</p>
-                </p>
-            )}
-            <div className="flex mt-2">
-                {!isEditingPost && (
-                    <>
-                        <button onClick={() => {
-                            const userId = userInfo.getLoginUserId();
-                            if (!userId) {
-                                openModal('You do not have permission');
-                                return;
-                            }
-                            setIsEditingPost(true)
-                        }} className="mr-2 px-4 py-2 bg-yellow-500 text-white rounded-md">
-                            Edit
-                        </button>
-                        <button onClick={() => {
-                            const userId = userInfo.getLoginUserId();
-                            if (!userId) {
-                                openModal('You do not have permission');
-                                return;
-                            }
-                            handleDeletePost()
-                        }} className="px-4 py-2 bg-red-500 text-white rounded-md">
-                            Delete
-                        </button>
-                    </>
-                )}
-            </div>
-            <div className="ml-5 mt-2">
-                {post.comments?.map((comment, index) => (
-                    <div key={index} className="ml-1 mb-2">
-                        {editingCommentId === comment.comment_id ? (
-                            <div>
-                                <input
-                                    type="text"
-                                    value={editedCommentText}
-                                    onChange={handleEditCommentChange}
-                                    className="w-full p-2 border border-gray-300 rounded-md"
-                                />
-                                <button onClick={() => handleEditComment(comment.comment_id)} className="mt-2 px-4 py-2 bg-blue-500 text-white rounded-md">
-                                    Save
-                                </button>
-                                <button onClick={() => setEditingCommentId(null)} className="mt-2 ml-2 px-4 py-2 bg-gray-500 text-white rounded-md">
-                                    Cancel
-                                </button>
-                            </div>
-                        ) : (
-                            <p className='w-full text-left'>
-                                <strong className="text-left">{comment.create_user_id}</strong>
-                                <br />
-                                <span className="text-gray-500 text-sm text-left">{new Date(comment.create_time).toLocaleString()}</span>
-                                <br />
-                                <p className="w-full text-left">{comment.comment_content}</p>
-                            </p>
-                        )}
-                        <div className="flex mt-1">
-                            {editingCommentId !== comment.comment_id && (
-                                <>
-                                    <button onClick={() => {
-                                        const userId = userInfo.getLoginUserId();
-                                        if (!userId) {
-                                            openModal('You do not have permission');
-                                            return;
-                                        }
-                                        setEditingCommentId(comment.comment_id);
-                                        setEditedCommentText(comment.comment_content);
-                                    }} className="mr-2 px-3 py-1 bg-yellow-500 text-white rounded-md">
-                                        Edit
-                                    </button>
-                                    <button onClick={() => {
-                                        const userId = userInfo.getLoginUserId();
-                                        if (!userId) {
-                                            openModal('You do not have permission');
-                                            return;
-                                        }
-                                        handleDeleteComment(comment.comment_id)
-                                    }} className="px-3 py-1 bg-red-500 text-white rounded-md">
-                                        Delete
-                                    </button>
-                                </>
-                            )}
-                        </div>
-                    </div>
-                ))}
-            </div>
-            <div className="flex mt-2">
-                <input
-                    type="text"
-                    value={commentText}
-                    onChange={handleCommentChange}
-                    placeholder="Input Comment."
-                    className="flex-1 p-2 border border-gray-300 rounded-md"
-                />
-                <button onClick={handleAddComment} className="ml-2 px-4 py-2 bg-blue-500 text-white rounded-md">
-                    Add Comment
-                </button>
-            </div>
-        </div>
-    );
-}
-
-/* 데이터 모델의 구조
-
-post.post_id : String (일련번호)
-post.create_user_id : String
-post.post_content : String
-post.create_time : Date
-post.comments : JsonArray of JsonObject 
-
-comment.comment_id:  : String (일련번호)
-comment.create_user_id
-comment.comment_content
-comment.create_time
-
-*/
-
-// 게시판 컴포넌트
 function Board(boardInfo) {
     const [loading, setLoading] = useState(false); // 로딩 상태 추가
     const [modalContent, setModalContent] = useState({
@@ -284,21 +59,6 @@ function Board(boardInfo) {
             setLoading(false); // 데이터 로딩 시작
 
             if (jResponse.error_code === 0) {
-
-                /*
-                {
-                    system_code
-                    post_id
-                    post_type
-                    post_content
-                    create_user_id
-                    create_time
-                    update_user_id
-                    update_time
-                    comments[] => 댓글의 배열을 시간의 역순 조회해서 저장
-                }
-                */
-
                 setPosts(jResponse.postList);
             } else {
                 openModal(jResponse.error_message);
@@ -570,9 +330,9 @@ function Board(boardInfo) {
                 <textarea
                     value={postText}
                     onChange={handlePostChange}
-                    placeholder="Input new post content..."
+                    placeholder="Write new post..."
                     maxLength="1000"
-                    className="w-full p-2 border border-gray-300 rounded-md"
+                    className="w-full p-2 border border-gray-300 rounded-md text-slate-600 dark:text-slate-400"
                 />
                 <button onClick={handleAddPost} className="mt-2 px-4 py-2 bg-green-500 text-white rounded-md">
                     Post
@@ -590,6 +350,229 @@ function Board(boardInfo) {
                         onDeleteComment={handleDeleteComment}
                     />
                 ))}
+            </div>
+        </div>
+    );
+}
+
+/* 게시글 컴포넌트
+
+* 데이터 모델
+
+post.post_id : String (일련번호)
+post.create_user_id : String
+post.post_content : String
+post.create_time : Date
+post.comments : JsonArray of JsonObject 
+
+comment.comment_id:  : String (일련번호)
+comment.create_user_id
+comment.comment_content
+comment.create_time
+*/
+
+function BoardContent({ post, onAddComment, onEditPost, onDeletePost, onEditComment, onDeleteComment }) {
+    const [loading, setLoading] = useState(false); // 로딩 상태 추가
+    const [modalContent, setModalContent] = useState({
+        isOpen: false,
+        message: '',
+        onConfirm: () => { },
+        onClose: () => { }
+    });
+
+    // 모달 열기 함수
+    const openModal = (message) => {
+        return new Promise((resolve, reject) => {
+            setModalContent({
+                isOpen: true,
+                message: message,
+                onConfirm: (result) => { resolve(result); closeModal(); },
+                onClose: () => { reject(false); closeModal(); }
+            });
+        });
+    };
+
+    // 모달 닫기 함수
+    const closeModal = () => {
+        setModalContent({
+            isOpen: false,
+            message: '',
+            onConfirm: () => { },
+            onClose: () => { }
+        });
+    };
+    const [commentText, setCommentText] = useState('');
+    const [isEditingPost, setIsEditingPost] = useState(false);
+    const [editedPostText, setEditedPostText] = useState(post.post_content);
+    const [editingCommentId, setEditingCommentId] = useState(null);
+    const [editedCommentText, setEditedCommentText] = useState('');
+
+    const handleCommentChange = (e) => {
+        setCommentText(e.target.value);
+    };
+
+    const handleAddComment = () => {
+        if (commentText.trim()) {
+            onAddComment(post.post_id, commentText);
+            setCommentText('');
+        }
+    };
+
+    const handleEditPostChange = (e) => {
+        setEditedPostText(e.target.value);
+    };
+
+    const handleEditPost = () => {
+        onEditPost(post.post_id, editedPostText);
+        setIsEditingPost(false);
+    };
+
+    const handleDeletePost = () => {
+        onDeletePost(post.post_id);
+    };
+
+    const handleEditCommentChange = (e) => {
+        setEditedCommentText(e.target.value);
+    };
+
+    const handleEditComment = (commentId) => {
+        onEditComment(post.post_id, commentId, editedCommentText);
+        setEditingCommentId(null);
+    };
+
+    const handleDeleteComment = (commentId) => {
+        onDeleteComment(post.post_id, commentId);
+    };
+
+    return (
+        <div className="border-b border-gray-300 py-4">
+            {loading && (
+                <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-gray-500 bg-opacity-75 z-50">
+                    <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-gray-900"></div>
+                </div>
+            )}
+            <BrunnerMessageBox
+                isOpen={modalContent.isOpen}
+                message={modalContent.message}
+                onConfirm={modalContent.onConfirm}
+                onClose={modalContent.onClose}
+            />
+            <hr />
+            {isEditingPost ? (
+                <div>
+                    <textarea
+                        value={editedPostText}
+                        onChange={handleEditPostChange}
+                        className="w-full p-2 border border-gray-300 rounded-md text-slate-600 dark:text-slate-400"
+                    />
+                    <button onClick={handleEditPost} className="mt-2 px-4 py-2 bg-blue-500 text-slate-400 rounded-md">
+                        Save
+                    </button>
+                    <button onClick={() => setIsEditingPost(false)} className="mt-2 ml-2 px-4 py-2 bg-gray-500 text-white rounded-md">
+                        Cancel
+                    </button>
+                </div>
+            ) : (
+                <p className='w-full text-left'>
+                    <strong className="text-left text-sm">{post.create_user_id}</strong>
+                    <span className="text-gray-400 ml-2 text-xs">{new Date(post.create_time).toLocaleString()}</span>
+                    <br />
+                    <p className='w-full text-left'>{post.post_content}</p>
+                </p>
+            )}
+            <div className="flex mt-2">
+                {!isEditingPost && (
+                    <>
+                        <button onClick={() => {
+                            const userId = userInfo.getLoginUserId();
+                            if (!userId) {
+                                openModal('You do not have permission');
+                                return;
+                            }
+                            setIsEditingPost(true)
+                        }} className="mr-2 px-4 py-2 bg-yellow-500 text-white rounded-md">
+                            Edit
+                        </button>
+                        <button onClick={() => {
+                            const userId = userInfo.getLoginUserId();
+                            if (!userId) {
+                                openModal('You do not have permission');
+                                return;
+                            }
+                            handleDeletePost()
+                        }} className="px-4 py-2 bg-red-500 text-white rounded-md">
+                            Delete
+                        </button>
+                    </>
+                )}
+            </div>
+            <div className="ml-5 mt-2">
+                {post.comments?.map((comment, index) => (
+                    <div key={index} className="ml-1 mb-2">
+                        {editingCommentId === comment.comment_id ? (
+                            <div>
+                                <input
+                                    type="text"
+                                    value={editedCommentText}
+                                    onChange={handleEditCommentChange}
+                                    className="w-full p-2 border border-gray-300 rounded-md"
+                                />
+                                <button onClick={() => handleEditComment(comment.comment_id)} className="mt-2 px-4 py-2 bg-blue-500 text-white rounded-md">
+                                    Save
+                                </button>
+                                <button onClick={() => setEditingCommentId(null)} className="mt-2 ml-2 px-4 py-2 bg-gray-500 text-white rounded-md">
+                                    Cancel
+                                </button>
+                            </div>
+                        ) : (
+                            <p className='w-full text-left'>
+                                <strong className="text-left text-sm">{comment.create_user_id}</strong>
+                                <span className="text-gray-400 ml-2 text-xs">{new Date(comment.create_time).toLocaleString()}</span>
+                                <br />
+                                <p className="w-full text-left">{comment.comment_content}</p>
+                            </p>
+                        )}
+                        <div className="flex mt-1">
+                            {editingCommentId !== comment.comment_id && (
+                                <>
+                                    <button onClick={() => {
+                                        const userId = userInfo.getLoginUserId();
+                                        if (!userId) {
+                                            openModal('You do not have permission');
+                                            return;
+                                        }
+                                        setEditingCommentId(comment.comment_id);
+                                        setEditedCommentText(comment.comment_content);
+                                    }} className="mr-2 px-3 py-1 bg-yellow-500 text-white rounded-md">
+                                        Edit
+                                    </button>
+                                    <button onClick={() => {
+                                        const userId = userInfo.getLoginUserId();
+                                        if (!userId) {
+                                            openModal('You do not have permission');
+                                            return;
+                                        }
+                                        handleDeleteComment(comment.comment_id)
+                                    }} className="px-3 py-1 bg-red-500 text-white rounded-md">
+                                        Delete
+                                    </button>
+                                </>
+                            )}
+                        </div>
+                    </div>
+                ))}
+            </div>
+            <div className="flex mt-2">
+                <input
+                    type="text"
+                    value={commentText}
+                    onChange={handleCommentChange}
+                    placeholder="Write new comment."
+                    className="flex-1 p-2 border border-gray-300 rounded-md text-slate-600 dark:text-slate-400"
+                />
+                <button onClick={handleAddComment} className="ml-2 px-4 py-2 bg-blue-500 text-white rounded-md">
+                    Add Comment
+                </button>
             </div>
         </div>
     );
