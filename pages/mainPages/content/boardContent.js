@@ -326,7 +326,7 @@ function Board(boardInfo) {
                 onConfirm={modalContent.onConfirm}
                 onClose={modalContent.onClose}
             />
-            <div className="mb-6">
+            <div className="mb-6 flex">
                 <textarea
                     value={postText}
                     onChange={handlePostChange}
@@ -334,7 +334,7 @@ function Board(boardInfo) {
                     maxLength="1000"
                     className="w-full p-2 border border-gray-300 rounded-md text-slate-600 dark:text-slate-400"
                 />
-                <button onClick={handleAddPost} className="mt-2 px-4 py-2 bg-green-500 text-white rounded-md">
+                <button onClick={handleAddPost} className="mt-2 px-4 py-2 bg-green-500 text-white rounded-md ml-2 justify-end">
                     Post
                 </button>
             </div>
