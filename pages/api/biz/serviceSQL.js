@@ -52,10 +52,12 @@ async function loadAllSQL(txnId) {
     else {
       throw new Error('failed to loadAllSQL ');
     }
-    return process.serviceSQL;
   }
   catch (err) {
     throw err;
+  }
+  finally {
+    return process.serviceSQL;
   }
 };
 
