@@ -135,6 +135,6 @@ const saveTxnHistory = async (remoteIp, txnId, jRequest, jResponse) => {
         var delete_TB_COR_TXN_HIST_01 = await database.executeSQL(sql,
             [
             ]);
-        logger.info(`delete_TB_COR_TXN_HIST_01\n${delete_TB_COR_TXN_HIST_01}`);
+        logger.info(`delete_TB_COR_TXN_HIST_01\n${delete_TB_COR_TXN_HIST_01.rowCount} rows deleted.`);
     }
 }
