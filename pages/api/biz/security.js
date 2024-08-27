@@ -3,6 +3,7 @@
 import logger from "./../winston/logger"
 import * as database from "./database/database"
 import * as serviceSQL from "./serviceSQL"
+import bcrypt from "bcryptjs"
 
 const executeService = (txnId, jRequest) => {
     var jResponse = {};
@@ -56,6 +57,10 @@ const signup = async (txnId, jRequest) => {
             Please enter a value.`;
             return jResponse;
         }
+
+        // 비밀번호 해싱
+        const hashedPassword = await bcrypt.hash(jRequest.password, 10);
+
         if (jRequest.password.length < 5) {
             jResponse.error_code = -2;
             jResponse.error_message = `The [password] length should be more than 5.`;
@@ -125,7 +130,7 @@ const signup = async (txnId, jRequest) => {
             [
                 jRequest.systemCode,
                 jRequest.userId,
-                jRequest.password,
+                hashedPassword, // 해싱된 비밀번호를 db에 저장 
                 jRequest.userName,
                 jRequest.address,
                 jRequest.phoneNumber,
@@ -171,7 +176,10 @@ const signin = async (txnId, jRequest) => {
         if (select_TB_COR_USER_MST_01.rows.length == 1) {
             logger.info(`RESULT:\n${JSON.stringify(select_TB_COR_USER_MST_01.rows[0])}\n`);
 
-            if (select_TB_COR_USER_MST_01.rows[0].password === jRequest.password) {
+            // 비밀번호 비교
+            const storedHashedPassword = select_TB_COR_USER_MST_01.rows[0].password;
+            const isMatch = await bcrypt.compare(jRequest.password, storedHashedPassword);
+            if (isMatch) {
                 jResponse.error_code = 0;
                 jResponse.error_message = "";
 
@@ -239,7 +247,7 @@ const resetPassword = async (txnId, jRequest) => {
             return jResponse;
         }
 
-        var sql = await serviceSQL.getSQL00(promisePool, `select_TB_COR_USER_MST`, 1);
+        var sql = await serviceSQL.getSQL00(`select_TB_COR_USER_MST`, 1);
         var select_TB_COR_USER_MST_01 = await database.executeSQL(sql,
             [
                 jRequest.systemCode,
@@ -257,14 +265,17 @@ const resetPassword = async (txnId, jRequest) => {
 
         logger.info(`OLD PASSWORD:${select_TB_COR_USER_MST_01.rows[0].password} NEW PASSWORD: ${jRequest.newPassword}\n`);
 
-        if (select_TB_COR_USER_MST_01.rows[0].password === jRequest.newPassword) {
+        const hashedCurrentPassword = select_TB_COR_USER_MST_01.rows[0].password;
+        const isMatch = await bcrypt.compare(jRequest.newPassword, hashedCurrentPassword);
+        if (isMatch) {
             jResponse.error_code = -1;
             jResponse.error_message = `The new password is same with current password.`;
             jResponse.rowCount = 0;
             return jResponse;
         }
         else {
-            var sql = await serviceSQL.getSQL00(promisePool, `update_TB_COR_USER_MST`, 1);
+            const hashedNewPassword = jRequest.newPassword;
+            var sql = await serviceSQL.getSQL00(`update_TB_COR_USER_MST`, 1);
             var update_TB_COR_USER_MST_01 = await database.executeSQL(sql,
                 [
                     jRequest.newPassword,
@@ -272,7 +283,7 @@ const resetPassword = async (txnId, jRequest) => {
                     jRequest.userId,
                     jRequest.registerNo,
                     jRequest.phoneNumber,
-                    jRequest.newPassword
+                    hashedNewPassword
                 ]);
 
             logger.info(`RESULT: rowCount=${update_TB_COR_USER_MST_01.rowCount}\n`);
