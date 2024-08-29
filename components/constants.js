@@ -24,7 +24,7 @@ export const
     COMMAND_BOARD_GET_POST_LIST = "board.getPostList",
     COMMAND_BOARD_ADD_POST = "board.addPost",
     COMMAND_BOARD_EDIT_POST = "board.editPost",
-    COMMAND_PDP = "board.deletePost",
-    COMMAND_BAC = "board.addPostComment",
-    COMMAND_BEC = "board.editPostComment",
-    COMMAND_BDC = "board.deletePostComment"
+    COMMAND_BOARD_DELETE_POST = "board.deletePost",
+    COMMAND_BOARD_ADD_COMMENT = "board.addPostComment",
+    COMMAND_BOARD_EDIT_COMMENT = "board.editPostComment",
+    COMMAND_BOARD_DELETE_COMMENT = "board.deletePostComment"
