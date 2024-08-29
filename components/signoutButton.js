@@ -1,3 +1,5 @@
+`use strict`
+
 import requestServer from './requestServer'
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'

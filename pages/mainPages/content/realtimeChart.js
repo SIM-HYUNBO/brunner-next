@@ -1,3 +1,5 @@
+`use strict`
+
 import { useState, useRef, useEffect, useCallback } from 'react';
 import dynamic from 'next/dynamic';
 import requestServer from '../../../components/requestServer';

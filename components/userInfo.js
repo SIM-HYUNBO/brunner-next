@@ -1,3 +1,5 @@
+`use strict`
+
 import SignoutButton from "./signoutButton";
 import DarkModeToggleButton from "./darkModeToggleButton";
 import { useState, useEffect } from 'react';

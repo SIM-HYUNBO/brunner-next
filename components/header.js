@@ -1,3 +1,5 @@
+`use strict`
+
 import Link from "next/link";
 import Image from 'next/image'
 import UserInfo from "./userInfo";
