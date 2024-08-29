@@ -6,6 +6,7 @@ import { ThemeProvider } from 'next-themes'
 import requestServer from './../components/requestServer'
 import { useEffect, useState } from 'react'
 import BrunnerMessageBox from '@/components/BrunnerMessageBox'
+import * as Constants from '@/components/constants'
 
 // Entry Point
 export default function App({ Component, pageProps }) {
@@ -50,7 +51,7 @@ export default function App({ Component, pageProps }) {
     var jRequest = {};
     var jResponse = null;
 
-    jRequest.commandName = "serviceSQL.loadAllSQL";
+    jRequest.commandName = Constants.COMMAND_SLAS;
 
     setLoading(true); // 데이터 로딩 시작
     jResponse = await requestServer('POST', JSON.stringify(jRequest));

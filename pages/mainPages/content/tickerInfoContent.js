@@ -6,6 +6,7 @@ import { useRouter } from 'next/router'
 import requestServer from '@/components/requestServer'
 import Board from '@/pages/mainPages/content/boardContent'
 import RealtimeChart from './realtimeChart';
+import Constants from '@/components/constants'
 
 export default function TickerInfoContent({ tickerCode: tickerCode }) {
   const [loading, setLoading] = useState(false); // 로딩 상태 추가
@@ -87,7 +88,7 @@ export default function TickerInfoContent({ tickerCode: tickerCode }) {
         openModal(JSON.stringify(jResponse.error_message));
       }
     } catch (err) {
-      openModal(err instanceof Error ? err.message : 'Unknown error occurred');
+      openModal(err instanceof Error ? err.message : constants.MESSAGE_UEO);
     }
     finally {
       setLoading(false);

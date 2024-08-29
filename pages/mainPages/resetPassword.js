@@ -8,6 +8,7 @@ import requestServer from '../../components/requestServer'
 import { useRouter } from 'next/router'
 import { useState } from 'react'
 import BrunnerMessageBox from '@/components/BrunnerMessageBox'
+import * as Constants from '@/components/constants'
 
 export default function ResetPassword() {
   const router = useRouter();
@@ -71,7 +72,7 @@ export default function ResetPassword() {
     var jRequest = {};
     var jResponse = null;
 
-    jRequest.commandName = "security.resetPassword";
+    jRequest.commandName = Constants.COMMAND_SRP;
     jRequest.systemCode = process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE;
     jRequest.userId = userId;
     jRequest.registerNo = registerNo;

@@ -7,6 +7,7 @@ import requestServer from '@/components/requestServer';
 import * as userInfo from '@/components/userInfo';
 import moment from 'moment';
 import BrunnerMessageBox from '@/components/BrunnerMessageBox';
+import * as Constants from '@/components/constants';
 
 export default function AssetContent() {
   const router = useRouter();
@@ -117,7 +118,7 @@ export default function AssetContent() {
     setLoading(false);
 
     if (jResponse.error_code === 0) {
-      openModal('Successfully added.');
+      openModal(Constants.MESSAGE_SAD);
       fetchIncomeHistory(); // 데이터 다시 가져오기
       setAmountInput('');
       setCommentInput('');
@@ -148,7 +149,7 @@ export default function AssetContent() {
     amount = String(amount).replace(/,/g, '');
 
     if (isNaN(Number(amount))) {
-      openModal('Invalid number of amount.');
+      openModal(Constants.MESSAGE_INOA);
       return;
     }
 
@@ -185,7 +186,7 @@ export default function AssetContent() {
     const userId = userInfo.getLoginUserId();
     if (!userId) return;
 
-    const deleteConfirm = await openModal(`Delete this item?`);
+    const deleteConfirm = await openModal(Constants.MESSAGE_DTI);
     if (!deleteConfirm)
       return;
 
@@ -203,7 +204,7 @@ export default function AssetContent() {
     setLoading(false); // 데이터 로딩 시작
 
     if (jResponse.error_code === 0) {
-      openModal('Successfully deleted.');
+      openModal(Constants.MESSAGE_SDD);
       fetchIncomeHistory(); // 데이터 다시 가져오기
     } else {
       openModal(jResponse.error_message);

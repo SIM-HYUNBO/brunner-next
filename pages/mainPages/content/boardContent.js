@@ -4,6 +4,8 @@ import React, { useState, useEffect } from 'react';
 import requestServer from '@/components/requestServer';
 import * as userInfo from '@/components/userInfo';
 import BrunnerMessageBox from '@/components/BrunnerMessageBox';
+import * as Constants from '@/components/constants'
+import { constants } from 'fs/promises';
 
 function Board(boardInfo) {
     const [loading, setLoading] = useState(false); // 로딩 상태 추가
@@ -52,7 +54,7 @@ function Board(boardInfo) {
         var jResponse = null;
 
         try {
-            jRequest.commandName = "board.getPostList";
+            jRequest.commandName = Constants.COMMAND_BGPL;
             jRequest.systemCode = process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE;
             jRequest.postInfo = { postType: `TICKER_INFO-${boardType}` }; // 게시판 유형을 TICKER_INFO-{종모코드}로 함
 
@@ -120,7 +122,7 @@ function Board(boardInfo) {
 
             const userId = userInfo.getLoginUserId();
             if (!userId) {
-                openModal('You do not have permission');
+                openModal(Constants.MESSAGE_YDHP);
                 return;
             }
 
@@ -158,7 +160,7 @@ function Board(boardInfo) {
 
             const userId = userInfo.getLoginUserId();
             if (!userId) {
-                openModal('You do not have permission');
+                openModal(Constants.MESSAGE_YDHP);
                 return;
             }
 
@@ -235,7 +237,7 @@ function Board(boardInfo) {
 
             const userId = userInfo.getLoginUserId();
             if (!userId) {
-                openModal('You do not have permission');
+                openModal(Constants.MESSAGE_YDHP);
                 return;
             }
 
@@ -280,7 +282,7 @@ function Board(boardInfo) {
 
             const userId = userInfo.getLoginUserId();
             if (!userId) {
-                openModal('You do not have permission');
+                openModal(Constants.MESSAGE_YDHP);
                 return;
             }
 
@@ -488,7 +490,7 @@ function BoardContent({ post, onAddComment, onEditPost, onDeletePost, onEditComm
                         <button onClick={() => {
                             const userId = userInfo.getLoginUserId();
                             if (!userId) {
-                                openModal('You do not have permission');
+                                openModal(Constants.MESSAGE_YDHP);
                                 return;
                             }
                             setIsEditingPost(true)
@@ -498,7 +500,7 @@ function BoardContent({ post, onAddComment, onEditPost, onDeletePost, onEditComm
                         <button onClick={() => {
                             const userId = userInfo.getLoginUserId();
                             if (!userId) {
-                                openModal('You do not have permission');
+                                openModal(Constants.MESSAGE_YDHP);
                                 return;
                             }
                             handleDeletePost()
@@ -540,7 +542,7 @@ function BoardContent({ post, onAddComment, onEditPost, onDeletePost, onEditComm
                                     <button onClick={() => {
                                         const userId = userInfo.getLoginUserId();
                                         if (!userId) {
-                                            openModal('You do not have permission');
+                                            openModal(Constants.MESSAGE_YDHP);
                                             return;
                                         }
                                         setEditingCommentId(comment.comment_id);
@@ -551,7 +553,7 @@ function BoardContent({ post, onAddComment, onEditPost, onDeletePost, onEditComm
                                     <button onClick={() => {
                                         const userId = userInfo.getLoginUserId();
                                         if (!userId) {
-                                            openModal('You do not have permission');
+                                            openModal(Constants.MESSAGE_YDHP);
                                             return;
                                         }
                                         handleDeleteComment(comment.comment_id)

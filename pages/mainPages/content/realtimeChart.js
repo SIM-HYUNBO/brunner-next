@@ -4,6 +4,7 @@ import { useState, useRef, useEffect, useCallback } from 'react';
 import dynamic from 'next/dynamic';
 import requestServer from '../../../components/requestServer';
 import BrunnerMessageBox from '@/components/BrunnerMessageBox'
+import * as Constants from '@/components/constants';
 
 // dynamic import로 ApexCharts를 사용합니다.
 const ApexCharts = dynamic(() => import('react-apexcharts'), { ssr: false });
@@ -246,7 +247,7 @@ const RealtimeChart = ({ updateCurrentPrice }) => {
                 }
             }
         } catch (err) {
-            openModal(err instanceof Error ? err.message : 'Unknown error occurred');
+            openModal(err instanceof Error ? err.message : Constants.MESSAGE_UEO);
         }
     }, [intervalTime]);
 
