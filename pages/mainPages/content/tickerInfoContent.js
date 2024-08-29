@@ -71,7 +71,7 @@ export default function TickerInfoContent({ tickerCode: tickerCode }) {
   const getTickerInfo = async () => {
     try {
       if (!tickerCodeRef.current) {
-        openModal(Constants.MESSAGE_REQUIRED_FIELD);
+        openModal(`${Constants.MESSAGE_REQUIRED_FIELD} [tickerCode]`);
         return;
       }
 
