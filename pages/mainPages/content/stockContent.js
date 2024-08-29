@@ -10,9 +10,12 @@ import requestServer from '@/components/requestServer';
 import BrunnerMessageBox from '@/components/BrunnerMessageBox';
 import RealtimeChart from './realtimeChart';
 import * as Constants from '@/components/constants';
+import { useRouter } from 'next/navigation'
 
 const StockContent = () => {
     const theme = useTheme();
+    const router = useRouter();
+
     const isDarkMode = () => {
         return theme.theme === "dark";
     }
@@ -245,6 +248,18 @@ const StockContent = () => {
         }
         fetchStockData();
     };
+
+    const handleNewsClick = (event) => {
+        // 기본 링크 동작 방지
+        event.preventDefault();
+
+        if (!currentTickerRef.current) {
+            openModal(Constants.MESSAGE_INPUT_STOCK_SYMBOL);
+            return;
+        }
+
+        router.push(`/mainPages/tickerInfo?tickerCode=${currentTickerRef.current}`);  // 원하는 경로로 이동
+    }
 
     // 선택한 종목의 주식 데이터를 서버에서 조회
     const fetchStockData = async () => {
@@ -729,19 +744,6 @@ const StockContent = () => {
             </div>
         );
     };
-
-    const handleNewsClick = (event) => {
-        // 기본 링크 동작 방지
-        event.preventDefault();
-
-        if(!currentTickerRef.current){
-            openModal(Constants.MESSAGE_INPUT_STOCK_SYMBOL);
-            return;
-        }
-
-        navigate('/mainPages/tickerInfo');  // 원하는 경로로 이동
-    }
-
 
     return (
         <div className='w-full'>
