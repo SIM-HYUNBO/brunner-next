@@ -1,4 +1,7 @@
+`use strict`
+
 import React from 'react';
+
 const BrunnerMessageBox = ({ isOpen, message, onConfirm, onClose }) => {
     if (!isOpen) return null; // isOpen이 false면 모달을 렌더링하지 않음
 

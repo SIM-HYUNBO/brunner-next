@@ -7,9 +7,10 @@ import Link from "next/link";
 import moment from 'moment';
 import dynamic from 'next/dynamic';
 
-import requestServer from './../../../components/requestServer';
+import requestServer from '@/components/requestServer';
 import BrunnerMessageBox from '@/components/BrunnerMessageBox';
 import RealtimeChart from './realtimeChart';
+import * as Constant from '@/components/constants';
 
 const StockContent = () => {
     const theme = useTheme();
@@ -221,7 +222,7 @@ const StockContent = () => {
                 openModal(JSON.stringify(jResponse.error_message));
             }
         } catch (err) {
-            openModal(err instanceof Error ? err.message : 'Unknown error occurred');
+            openModal(err instanceof Error ? err.message : Constant.MESSAGE_UNKNOWN_ERROR_OCCURED);
         }
         finally {
             setLoading(false);
@@ -237,7 +238,7 @@ const StockContent = () => {
         if (!currentTickerRef.current) {
             setModalContent({
                 isOpen: true,
-                message: '주식 심볼을 입력해 주세요.',
+                message: Constant.MESSAGE_SISS,
                 onConfirm: () => setModalContent({ ...modalContent, isOpen: false }),
                 onClose: () => setModalContent({ ...modalContent, isOpen: false }),
             });
@@ -290,7 +291,7 @@ const StockContent = () => {
                 openModal(JSON.stringify(jResponse.error_message));
             }
         } catch (err) {
-            openModal(err instanceof Error ? err.message : 'Unknown error occurred');
+            openModal(err instanceof Error ? err.message : Constant.MESSAGE_UNKNOWN_ERROR_OCCURED);
         }
         finally {
             setLoading(false);

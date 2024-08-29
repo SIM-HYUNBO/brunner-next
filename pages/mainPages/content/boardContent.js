@@ -1,3 +1,5 @@
+`use strict`
+
 import React, { useState, useEffect } from 'react';
 import requestServer from '@/components/requestServer';
 import * as userInfo from '@/components/userInfo';

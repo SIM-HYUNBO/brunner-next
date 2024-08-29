@@ -1,3 +1,4 @@
+`use strict`
 
 import { useState, useRef, useEffect } from 'react';
 import { useTheme } from 'next-themes'
