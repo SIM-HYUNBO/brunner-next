@@ -82,7 +82,7 @@ export default function Signup() {
     var jRequest = {};
     var jResponse = null;
 
-    jRequest.commandName = Constants.COMMAND_SSU; 
+    jRequest.commandName = Constants.COMMAND_SECURITY_SIGNUP;
     jRequest.systemCode = process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE;
     jRequest.userId = userId;
     jRequest.password = password;
