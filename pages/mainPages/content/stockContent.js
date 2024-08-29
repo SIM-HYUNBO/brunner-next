@@ -9,7 +9,7 @@ import dynamic from 'next/dynamic';
 import requestServer from '@/components/requestServer';
 import BrunnerMessageBox from '@/components/BrunnerMessageBox';
 import RealtimeChart from './realtimeChart';
-import * as Constant from '@/components/constants';
+import * as Constants from '@/components/constants';
 
 const StockContent = () => {
     const theme = useTheme();
@@ -221,7 +221,7 @@ const StockContent = () => {
                 openModal(JSON.stringify(jResponse.error_message));
             }
         } catch (err) {
-            openModal(err instanceof Error ? err.message : Constant.MESSAGE_UNKNOWN_ERROR_OCCURED);
+            openModal(err instanceof Error ? err.message : Constants.MESSAGE_UEO);
         }
         finally {
             setLoading(false);
@@ -237,7 +237,7 @@ const StockContent = () => {
         if (!currentTickerRef.current) {
             setModalContent({
                 isOpen: true,
-                message: Constant.MESSAGE_SISS,
+                message: Constants.MESSAGE_SISS,
                 onConfirm: () => setModalContent({ ...modalContent, isOpen: false }),
                 onClose: () => setModalContent({ ...modalContent, isOpen: false }),
             });
@@ -290,7 +290,7 @@ const StockContent = () => {
                 openModal(JSON.stringify(jResponse.error_message));
             }
         } catch (err) {
-            openModal(err instanceof Error ? err.message : Constant.MESSAGE_UNKNOWN_ERROR_OCCURED);
+            openModal(err instanceof Error ? err.message : Constants.MESSAGE_UEO);
         }
         finally {
             setLoading(false);
@@ -735,7 +735,7 @@ const StockContent = () => {
         event.preventDefault();
 
         if(!currentTickerRef.current){
-            openModal(Constant.MESSAGE_SISS);
+            openModal(Constants.MESSAGE_SISS);
             return;
         }
 

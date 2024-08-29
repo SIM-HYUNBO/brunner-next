@@ -7,6 +7,7 @@ import requestServer from './../../components/requestServer'
 import { useRouter } from 'next/router'
 import { useState } from 'react'
 import BrunnerMessageBox from '@/components/BrunnerMessageBox'
+import * as Constants from '@/components/constants'
 
 export default function Signup() {
   const router = useRouter();
@@ -81,7 +82,7 @@ export default function Signup() {
     var jRequest = {};
     var jResponse = null;
 
-    jRequest.commandName = "security.signup";
+    jRequest.commandName = Constants.COMMAND_SSU; 
     jRequest.systemCode = process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE;
     jRequest.userId = userId;
     jRequest.password = password;
@@ -96,7 +97,7 @@ export default function Signup() {
     setLoading(false); // 데이터 로딩 시작
 
     if (jResponse.error_code == 0) {
-      openModal(`successfully signed up. you will move to sign-in page.`);
+      openModal(Constants.MESSAGE_SSU);
     } else {
       openModal(jResponse.error_message);
     }

@@ -4,6 +4,7 @@ import requestServer from './requestServer'
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 import BrunnerMessageBox from './BrunnerMessageBox';
+import * as Constants from '@/components/constants'
 
 export default function SignoutButton() {
 
@@ -43,7 +44,7 @@ export default function SignoutButton() {
     var jRequest = {};
     var jResponse = null;
 
-    jRequest.commandName = "security.signout";
+    jRequest.commandName = Constants.COMMAND_SSO;
     var userInfo = process.env.userInfo ? process.env.userInfo : null;
 
     jRequest.userId = userInfo?.USER_ID;
@@ -95,7 +96,7 @@ export default function SignoutButton() {
                                 rounded text-base mt-4 md:mt-0"
           type="button"
           onClick={async () => {
-            var result = await openModal("Do you want to logout now?")
+            var result = await openModal(Constants.MESSAGE_DWLO)
             if (result)
               requestSignout();
           }}>
