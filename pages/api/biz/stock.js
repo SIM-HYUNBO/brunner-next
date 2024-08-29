@@ -5,6 +5,7 @@ import * as database from "./database/database"
 import * as serviceSQL from './serviceSQL'
 import axios from 'axios';
 import moment from 'moment';
+import * as Constants from '@/components/constants'
 
 const executeService = (txnId, jRequest) => {
     var jResponse = {};
@@ -45,50 +46,43 @@ const getStockInfo = async (txnId, jRequest) => {
 
         if (!jRequest.stocksTicker) {
             jResponse.error_code = -2;
-            jResponse.error_message = `The [stocksTicker] is a required field. 
-            Please set a value.`;
+            jResponse.error_message = `${Constants.SERVER_MESSAGE_FIS} [stocksTicker]`;
             return jResponse;
         }
 
         if (!jRequest.multiplier) {
             jResponse.error_code = -2;
-            jResponse.error_message = `The [multiplier] is a required field. 
-            Please set a value.`;
+            jResponse.error_message = `${Constants.SERVER_MESSAGE_FIS} [multiplier]`;
             return jResponse;
         }
 
         if (!jRequest.timespan) {
             jResponse.error_code = -2;
-            jResponse.error_message = `The [timespan] is a required field. 
-            Please set a value.`;
+            jResponse.error_message = `${Constants.SERVER_MESSAGE_FIS} [timespan]`;
             return jResponse;
         }
 
         if (!jRequest.from) {
             jResponse.error_code = -2;
-            jResponse.error_message = `The [from] is a required field. 
-            Please set a value.`;
+            jResponse.error_message = `${Constants.SERVER_MESSAGE_FIS} [from]`;
             return jResponse;
         }
 
         if (!jRequest.to) {
             jResponse.error_code = -2;
-            jResponse.error_message = `The [to] is a required field. 
-            Please set a value.`;
+            jResponse.error_message = `${Constants.SERVER_MESSAGE_FIS} [to]`;
             return jResponse;
         }
 
         if (!jRequest.adjust) {
             jResponse.error_code = -2;
-            jResponse.error_message = `The [adjust] is a required field. 
-            Please set a value.`;
+            jResponse.error_message = `${Constants.SERVER_MESSAGE_FIS} [adjust]`;
             return jResponse;
         }
 
         if (!jRequest.sort) {
             jResponse.error_code = -2;
-            jResponse.error_message = `The [sort] is a required field. 
-            Please set a value.`;
+            jResponse.error_message = `${Constants.SERVER_MESSAGE_FIS} [sort]`;
             return jResponse;
         }
 
@@ -134,7 +128,7 @@ const getTickerList = async (txnId, jRequest) => {
         jResponse.tickerList = select_TB_COR_TICKER_INFO_01.rows;
 
         jResponse.error_code = 0;
-        jResponse.error_message = "";
+        jResponse.error_message = Constants.EMPTY_STRING;
     } catch (e) {
         logger.error(e);
         jResponse.error_code = -1; // exception
@@ -173,7 +167,7 @@ const getTickerInfo = async (txnId, jRequest) => {
         }
 
         jResponse.error_code = 0;
-        jResponse.error_message = "";
+        jResponse.error_message = Constants.EMPTY_STRING;
     } catch (e) {
         logger.error(e);
         jResponse.error_code = -1; // exception
@@ -192,14 +186,12 @@ const getLatestStockInfo = async (txnId, jRequest) => {
 
         if (!jRequest.stocksTicker) {
             jResponse.error_code = -2;
-            jResponse.error_message = `The [stocksTicker] is a required field. 
-            Please set a value.`;
+            jResponse.error_message = `${Constants.SERVER_MESSAGE_FIS} [stocksTicker]`;
             return jResponse;
         }
         if (!jRequest.dataCount) {
             jResponse.error_code = -2;
-            jResponse.error_message = `The [dataCount] is a required field. 
-            Please set a value.`;
+            jResponse.error_message = `${Constants.SERVER_MESSAGE_FIS} [dataCount]`;
             return jResponse;
         }
 
@@ -240,8 +232,7 @@ const getRealtimeStockInfo = async (txnId, jRequest) => {
 
         if (!jRequest.stocksTicker) {
             jResponse.error_code = -2;
-            jResponse.error_message = `The [stocksTicker] is a required field. 
-            Please set a value.`;
+            jResponse.error_message = `${Constants.SERVER_MESSAGE_FIS} [stocksTicker]`;
 
             return jResponse;
         }
@@ -253,7 +244,7 @@ const getRealtimeStockInfo = async (txnId, jRequest) => {
         }
         jResponse.stockInfo = { type: 'stockInfo', data: response.data, time: new Date(response.data.t * 1000).toISOString() }
         jResponse.error_code = 0;
-        jResponse.error_message = '';
+        jResponse.error_message = Constants.EMPTY_STRING;
     }
     catch (e) {
         logger.error(e);

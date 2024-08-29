@@ -1,4 +1,5 @@
 'use strict'
+import * as Constants from '@/components/constants'
 
 export default async function requestServer(method, jRequest) {
   let res = null;
@@ -20,7 +21,7 @@ export default async function requestServer(method, jRequest) {
   catch (e) {
     jResponse = {};
     jResponse.error_code = -1;
-    jResponse.error_message = `cannot connect to seerver. ${e}`;
+    jResponse.error_message = `${Constants.MESSAGE_CCS} ${e}`;
     return jResponse;
   }
 }

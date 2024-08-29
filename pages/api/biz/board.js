@@ -1,9 +1,10 @@
 `use strict`
 
+import axios from 'axios';
 import logger from "../winston/logger"
+import * as Constants from '@/components/constants'
 import * as database from "./database/database"
 import * as serviceSQL from './serviceSQL'
-import axios from 'axios';
 
 const executeService = (txnId, jRequest) => {
     var jResponse = {};
@@ -58,15 +59,13 @@ const getPostList = async (txnId, jRequest) => {
 
         if (!jRequest.postInfo) {
             jResponse.error_code = -2;
-            jResponse.error_message = `The [postInfo] is a required field. 
-            Please set a value.`;
+            jResponse.error_message = `${Constants.SERVER_MESSAGE_FIS} [postInfo].`;
             return jResponse;
         }
 
         if (!jRequest.postInfo.postType) {
             jResponse.error_code = -2;
-            jResponse.error_message = `The [postType] is a required field. 
-            Please set a value.`;
+            jResponse.error_message = `${Constants.SERVER_MESSAGE_FIS} [postType]`;
             return jResponse;
         }
 
@@ -94,7 +93,7 @@ const getPostList = async (txnId, jRequest) => {
         jResponse.postList = select_TB_COR_POST_INFO.rows;
 
         jResponse.error_code = 0;
-        jResponse.error_message = "";
+        jResponse.error_message = Constants.EMPTY_STRING
     } catch (e) {
         logger.error(e);
         jResponse.error_code = -1; // exception
@@ -134,7 +133,7 @@ const addPost = async (txnId, jRequest) => {
             jResponse.postInfo = select_TB_COR_POST_INFO_02.rows[0];
             jResponse.postInfo.comments = [];
             jResponse.error_code = 0;
-            jResponse.error_message = "";
+            jResponse.error_message = Constants.EMPTY_STRING
 
         }
         else {
@@ -168,7 +167,7 @@ const editPost = async (txnId, jRequest) => {
 
         if (update_TB_COR_POST_INFO_01.rowCount === 1) {
             jResponse.error_code = 0;
-            jResponse.error_message = "";
+            jResponse.error_message = Constants.EMPTY_STRING
         }
         else {
             jResponse.error_code = -1;
@@ -192,8 +191,7 @@ const deletePost = async (txnId, jRequest) => {
 
         if (!jRequest.postInfo) {
             jResponse.error_code = -2;
-            jResponse.error_message = `The [postInfo] is a required field. 
-            Please set a value.`;
+            jResponse.error_message = `${Constants.SERVER_MESSAGE_FIS} [postInfo]`;
 
             return jResponse;
         }
@@ -217,7 +215,7 @@ const deletePost = async (txnId, jRequest) => {
                 ]);
 
             jResponse.error_code = 0;
-            jResponse.error_message = "";
+            jResponse.error_message = Constants.EMPTY_STRING
         }
         else {
             jResponse.error_code = -1;
@@ -262,7 +260,7 @@ const addPostComment = async (txnId, jRequest) => {
             jResponse.commentInfo = select_TB_COR_POST_COMMENT_INFO_02.rows[0];
 
             jResponse.error_code = 0;
-            jResponse.error_message = "";
+            jResponse.error_message = Constants.EMPTY_STRING;
         }
         else {
             jResponse.error_code = -1;
@@ -286,8 +284,7 @@ const editPostComment = async (txnId, jRequest) => {
 
         if (!jRequest.commentInfo) {
             jResponse.error_code = -2;
-            jResponse.error_message = `The [commentInfo] is a required field. 
-            Please set a value.`;
+            jResponse.error_message = `${Constants.SERVER_MESSAGE_FIS} [commentInfo]`;
 
             return jResponse;
         }
@@ -305,7 +302,7 @@ const editPostComment = async (txnId, jRequest) => {
 
         if (update_TB_COR_POST_COMMENT_INFO_02.rowCount === 1) {
             jResponse.error_code = 0;
-            jResponse.error_message = "";
+            jResponse.error_message = Constants.EMPTY_STRING
         }
         else {
             jResponse.error_code = -1;
@@ -328,8 +325,7 @@ const deletePostComment = async (txnId, jRequest) => {
 
         if (!jRequest.commentInfo) {
             jResponse.error_code = -2;
-            jResponse.error_message = `The [commentInfo] is a required field. 
-            Please set a value.`;
+            jResponse.error_message = `${Constants.SERVER_MESSAGE_FIS} [commentInfo]`;
 
             return jResponse;
         }
@@ -346,7 +342,7 @@ const deletePostComment = async (txnId, jRequest) => {
 
         if (delete_TB_COR_POST_COMMENT_INFO_02.rowCount === 1) {
             jResponse.error_code = 0;
-            jResponse.error_message = "";
+            jResponse.error_message = Constants.EMPTY_STRING;
         }
         else {
             jResponse.error_code = -1;

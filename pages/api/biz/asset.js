@@ -3,6 +3,7 @@
 import logger from "../winston/logger"
 import * as database from './database/database'
 import * as serviceSQL from './serviceSQL'
+import * as Constants from '@/components/constants'
 
 const executeService = (txnId, jRequest) => {
     var jResponse = {};
@@ -51,11 +52,11 @@ const addIncome = async (txnId, jRequest) => {
 
         if (insert_TB_COR_INCOME_HIST_01.rowCount == 1) {
             jResponse.error_code = 0;
-            jResponse.error_message = "success";
+            jResponse.error_message = Constants.EMPTY_STRING;
         }
         else {
             jResponse.error_code = -1;
-            jResponse.error_message = "Database fail";
+            jResponse.error_message = Constants.SERVER_MESSAGE_DBF;
 
         }
     } catch (e) {
@@ -84,7 +85,7 @@ const getIncomeHistory = async (txnId, jRequest) => {
         jResponse.incomeHistory = select_TB_COR_INCOME_HIST_01.rows;
 
         jResponse.error_code = 0;
-        jResponse.error_message = "";
+        jResponse.error_message = Constants.EMPTY_STRING;
     } catch (e) {
         logger.error(e);
         jResponse.error_code = -3; // exception
@@ -113,11 +114,11 @@ const deleteIncome = async (txnId, jRequest) => {
 
         if (delete_TB_COR_INCOME_HIST_01.rowCount === 1) {
             jResponse.error_code = 0;
-            jResponse.error_message = "success";
+            jResponse.error_message = Constants.EMPTY_STRING;
         }
         else {
             jResponse.error_code = -1;
-            jResponse.error_message = "Database fail";
+            jResponse.error_message = Constants.SERVER_MESSAGE_DBF;
         }
     } catch (e) {
         logger.error(e);
@@ -148,11 +149,11 @@ const updateIncome = async (txnId, jRequest) => {
 
         if (update_TB_COR_INCOME_HIST_01.rowCount === 1) {
             jResponse.error_code = 0;
-            jResponse.error_message = "success";
+            jResponse.error_message = Constants.EMPTY_STRING;
         }
         else {
             jResponse.error_code = -1;
-            jResponse.error_message = "Database fail";
+            jResponse.error_message = Constants.SERVER_MESSAGE_DBF;
         }
     } catch (e) {
         logger.error(e);
