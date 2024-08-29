@@ -2,6 +2,7 @@
 
 import logger from "./../../winston/logger"
 import { Pool } from "pg";
+import * as Constants from "@/components/constants"
 
 const getPool = async () => {
 
@@ -26,7 +27,7 @@ const getPool = async () => {
 const executeSQL = async (sql, params) => {
   try {
     if (!sql) {
-      throw new Exception("SQL not loaded.")
+      throw new Exception(Constants.SERVER_SQL_NOT_LOADED)
     }
     logger.info(`SQL:\n${sql}\nPARAMS:${JSON.stringify(params)}\n`);
 

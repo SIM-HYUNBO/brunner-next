@@ -21,7 +21,7 @@ export default async function requestServer(method, jRequest) {
   catch (e) {
     jResponse = {};
     jResponse.error_code = -1;
-    jResponse.error_message = `${Constants.MESSAGE_CCS} ${e}`;
+    jResponse.error_message = `${Constants.MESSAGE_SERVER_NOT_CONNECTTED} ${e}`;
     return jResponse;
   }
 }

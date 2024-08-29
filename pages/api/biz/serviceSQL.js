@@ -53,7 +53,7 @@ async function loadAllSQL(txnId) {
       return process.serviceSQL.size;
     }
     else {
-      throw new Error('failed to loadAllSQL ');
+      throw new Error(Constants.SERVER_SQL_NOT_LOADED);
     }
   }
   catch (err) {

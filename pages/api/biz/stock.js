@@ -12,19 +12,18 @@ const executeService = (txnId, jRequest) => {
 
     try {
         switch (jRequest.commandName) {
-            case "stock.getTickerList":
-                jResponse = getTickerList(txnId, jRequest);
+            case Constants.COMMAND_STOCK_GET_TICKER_LIST:
                 break;
-            case "stock.getTickerInfo":
+            case Constants.COMMAND_STOCK_GET_TICKER_INFO:
                 jResponse = getTickerInfo(txnId, jRequest);
                 break;
-            case "stock.getStockInfo":
+            case Constants.COMMAND_STOCK_GET_STOCK_INFO:
                 jResponse = getStockInfo(txnId, jRequest);
                 break;
-            case "stock.getLatestStockInfo":
+            case Constants.COMMAND_STOCK_GET_LATEST_STOCK_INFO:
                 jResponse = getLatestStockInfo(txnId, jRequest);
                 break;
-            case "stock.getRealtimeStockInfo":
+            case Constants.COMMAND_STOCK_GET_REALTIME_STOCK_INFO:
                 jResponse = getRealtimeStockInfo(txnId, jRequest);
                 break;
             default:
@@ -46,43 +45,43 @@ const getStockInfo = async (txnId, jRequest) => {
 
         if (!jRequest.stocksTicker) {
             jResponse.error_code = -2;
-            jResponse.error_message = `${Constants.SERVER_MESSAGE_FIS} [stocksTicker]`;
+            jResponse.error_message = `${Constants.SERVER_MESSAGE_REQUIRED_FIELD} [stocksTicker]`;
             return jResponse;
         }
 
         if (!jRequest.multiplier) {
             jResponse.error_code = -2;
-            jResponse.error_message = `${Constants.SERVER_MESSAGE_FIS} [multiplier]`;
+            jResponse.error_message = `${Constants.SERVER_MESSAGE_REQUIRED_FIELD} [multiplier]`;
             return jResponse;
         }
 
         if (!jRequest.timespan) {
             jResponse.error_code = -2;
-            jResponse.error_message = `${Constants.SERVER_MESSAGE_FIS} [timespan]`;
+            jResponse.error_message = `${Constants.SERVER_MESSAGE_REQUIRED_FIELD} [timespan]`;
             return jResponse;
         }
 
         if (!jRequest.from) {
             jResponse.error_code = -2;
-            jResponse.error_message = `${Constants.SERVER_MESSAGE_FIS} [from]`;
+            jResponse.error_message = `${Constants.SERVER_MESSAGE_REQUIRED_FIELD} [from]`;
             return jResponse;
         }
 
         if (!jRequest.to) {
             jResponse.error_code = -2;
-            jResponse.error_message = `${Constants.SERVER_MESSAGE_FIS} [to]`;
+            jResponse.error_message = `${Constants.SERVER_MESSAGE_REQUIRED_FIELD} [to]`;
             return jResponse;
         }
 
         if (!jRequest.adjust) {
             jResponse.error_code = -2;
-            jResponse.error_message = `${Constants.SERVER_MESSAGE_FIS} [adjust]`;
+            jResponse.error_message = `${Constants.SERVER_MESSAGE_REQUIRED_FIELD} [adjust]`;
             return jResponse;
         }
 
         if (!jRequest.sort) {
             jResponse.error_code = -2;
-            jResponse.error_message = `${Constants.SERVER_MESSAGE_FIS} [sort]`;
+            jResponse.error_message = `${Constants.SERVER_MESSAGE_REQUIRED_FIELD} [sort]`;
             return jResponse;
         }
 
@@ -186,12 +185,12 @@ const getLatestStockInfo = async (txnId, jRequest) => {
 
         if (!jRequest.stocksTicker) {
             jResponse.error_code = -2;
-            jResponse.error_message = `${Constants.SERVER_MESSAGE_FIS} [stocksTicker]`;
+            jResponse.error_message = `${Constants.SERVER_MESSAGE_REQUIRED_FIELD} [stocksTicker]`;
             return jResponse;
         }
         if (!jRequest.dataCount) {
             jResponse.error_code = -2;
-            jResponse.error_message = `${Constants.SERVER_MESSAGE_FIS} [dataCount]`;
+            jResponse.error_message = `${Constants.SERVER_MESSAGE_REQUIRED_FIELD} [dataCount]`;
             return jResponse;
         }
 
@@ -232,7 +231,7 @@ const getRealtimeStockInfo = async (txnId, jRequest) => {
 
         if (!jRequest.stocksTicker) {
             jResponse.error_code = -2;
-            jResponse.error_message = `${Constants.SERVER_MESSAGE_FIS} [stocksTicker]`;
+            jResponse.error_message = `${Constants.SERVER_MESSAGE_REQUIRED_FIELD} [stocksTicker]`;
 
             return jResponse;
         }

@@ -9,6 +9,7 @@ import * as security from './biz/security'
 import * as asset from './biz/asset'
 import * as stock from './biz/stock'
 import * as board from './biz/board'
+import * as Constants from "@/components/constants"
 
 async function initialize() {
     var serviceSql = null;
@@ -92,7 +93,7 @@ const executeService = async (method, req) => {
     } else {
         jResponse = JSON.stringify({
             error_code: -1,
-            error_message: `[${commandName}] not supported function`
+            error_message: `[${commandName}] ${Constants.SERVER_NOT_SUPPORTED_MODULE}`
         })
     }
     return jResponse;

@@ -122,7 +122,7 @@ function Board(boardInfo) {
 
             const userId = userInfo.getLoginUserId();
             if (!userId) {
-                openModal(Constants.MESSAGE_YDHP);
+                openModal(Constants.MESSAGE_NO_PERMISSION);
                 return;
             }
 
@@ -160,7 +160,7 @@ function Board(boardInfo) {
 
             const userId = userInfo.getLoginUserId();
             if (!userId) {
-                openModal(Constants.MESSAGE_YDHP);
+                openModal(Constants.MESSAGE_NO_PERMISSION);
                 return;
             }
 
@@ -237,7 +237,7 @@ function Board(boardInfo) {
 
             const userId = userInfo.getLoginUserId();
             if (!userId) {
-                openModal(Constants.MESSAGE_YDHP);
+                openModal(Constants.MESSAGE_NO_PERMISSION);
                 return;
             }
 
@@ -282,7 +282,7 @@ function Board(boardInfo) {
 
             const userId = userInfo.getLoginUserId();
             if (!userId) {
-                openModal(Constants.MESSAGE_YDHP);
+                openModal(Constants.MESSAGE_NO_PERMISSION);
                 return;
             }
 
@@ -490,7 +490,7 @@ function BoardContent({ post, onAddComment, onEditPost, onDeletePost, onEditComm
                         <button onClick={() => {
                             const userId = userInfo.getLoginUserId();
                             if (!userId) {
-                                openModal(Constants.MESSAGE_YDHP);
+                                openModal(Constants.MESSAGE_NO_PERMISSION);
                                 return;
                             }
                             setIsEditingPost(true)
@@ -500,7 +500,7 @@ function BoardContent({ post, onAddComment, onEditPost, onDeletePost, onEditComm
                         <button onClick={() => {
                             const userId = userInfo.getLoginUserId();
                             if (!userId) {
-                                openModal(Constants.MESSAGE_YDHP);
+                                openModal(Constants.MESSAGE_NO_PERMISSION);
                                 return;
                             }
                             handleDeletePost()
@@ -542,7 +542,7 @@ function BoardContent({ post, onAddComment, onEditPost, onDeletePost, onEditComm
                                     <button onClick={() => {
                                         const userId = userInfo.getLoginUserId();
                                         if (!userId) {
-                                            openModal(Constants.MESSAGE_YDHP);
+                                            openModal(Constants.MESSAGE_NO_PERMISSION);
                                             return;
                                         }
                                         setEditingCommentId(comment.comment_id);
@@ -553,7 +553,7 @@ function BoardContent({ post, onAddComment, onEditPost, onDeletePost, onEditComm
                                     <button onClick={() => {
                                         const userId = userInfo.getLoginUserId();
                                         if (!userId) {
-                                            openModal(Constants.MESSAGE_YDHP);
+                                            openModal(Constants.MESSAGE_NO_PERMISSION);
                                             return;
                                         }
                                         handleDeleteComment(comment.comment_id)
