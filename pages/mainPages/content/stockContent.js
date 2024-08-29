@@ -3,7 +3,6 @@
 import dotenv from 'dotenv';
 import { useState, useRef, useEffect } from 'react';
 import { useTheme } from 'next-themes'
-import Link from "next/link";
 import moment from 'moment';
 import dynamic from 'next/dynamic';
 
@@ -731,6 +730,19 @@ const StockContent = () => {
         );
     };
 
+    const handleNewsClick = (event) => {
+        // 기본 링크 동작 방지
+        event.preventDefault();
+
+        if(!currentTickerRef.current){
+            openModal(Constant.MESSAGE_SISS);
+            return;
+        }
+
+        navigate('/mainPages/tickerInfo');  // 원하는 경로로 이동
+    }
+
+
     return (
         <div className='w-full'>
             {loading && (
@@ -876,11 +888,10 @@ const StockContent = () => {
                     >
                         Refresh
                     </button>
-                    <Link
-                        className="bg-indigo-500 text-white py-2 px-4 ml-1 h-10"
-                        href={{ pathname: '/mainPages/tickerInfo', query: `tickerCode=${currentTickerRef.current}` }}>
+                    <button className="bg-indigo-500 text-white py-2 px-4 ml-1 h-10"
+                        onClick={handleNewsClick}>
                         News...
-                    </Link>
+                    </button>
                 </div>
             </div>
 
