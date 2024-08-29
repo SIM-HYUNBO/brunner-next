@@ -4,6 +4,7 @@ import logger from "./../winston/logger"
 import * as database from "./database/database"
 import * as serviceSQL from "./serviceSQL"
 import bcrypt from "bcryptjs"
+import * as Constants from '@/components/constants'
 
 const executeService = (txnId, jRequest) => {
     var jResponse = {};
@@ -42,8 +43,7 @@ const signup = async (txnId, jRequest) => {
 
         if (!jRequest.userId) {
             jResponse.error_code = -2;
-            jResponse.error_message = `The [userId] is a required field. 
-            Please enter a value.`;
+            jResponse.error_message = `${Constants.SERVER_MESSAGE_FIS} [userId`;
             return jResponse;
         }
         if (jRequest.userId.length < 5 || jRequest.userId.length > 10) {
@@ -53,8 +53,7 @@ const signup = async (txnId, jRequest) => {
         }
         if (!jRequest.password) {
             jResponse.error_code = -2;
-            jResponse.error_message = `The [password] is a required field. 
-            Please enter a value.`;
+            jResponse.error_message = `${Constants.SERVER_MESSAGE_FIS} [password]`;
             return jResponse;
         }
 
@@ -68,8 +67,7 @@ const signup = async (txnId, jRequest) => {
         }
         if (!jRequest.userName) {
             jResponse.error_code = -2;
-            jResponse.error_message = `The [userName] is a required field. 
-            Please enter a value.`;
+            jResponse.error_message = `${Constants.SERVER_MESSAGE_FIS} [userName]`;
             return jResponse;
         }
         if (jRequest.userName.length < 2 || jRequest.userName.length > 10) {
@@ -79,8 +77,7 @@ const signup = async (txnId, jRequest) => {
         }
         if (!jRequest.phoneNumber) {
             jResponse.error_code = -2;
-            jResponse.error_message = `The [phoneNumber] is a required field. 
-            Please enter a value.`;
+            jResponse.error_message = `${Constants.SERVER_MESSAGE_FIS} [phoneNumber]`;
             return jResponse;
         }
         if (verifyTelNo(jRequest.phoneNumber) == false) {
@@ -90,8 +87,7 @@ const signup = async (txnId, jRequest) => {
         }
         if (!jRequest.email) {
             jResponse.error_code = -2;
-            jResponse.error_message = `The [email] is a required field. 
-            Please enter a value.`;
+            jResponse.error_message = `${Constants.SERVER_MESSAGE_FIS} [email]`;
             return jResponse;
         }
         if (verifyEMail(jRequest.email) == false) {
@@ -101,14 +97,12 @@ const signup = async (txnId, jRequest) => {
         }
         if (!jRequest.registerNo) {
             jResponse.error_code = -2;
-            jResponse.error_message = `The [registerNo] is a required field. 
-            Please enter a value.`;
+            jResponse.error_message = `${Constants.SERVER_MESSAGE_FIS} [registerNo]`;
             return jResponse;
         }
         if (!jRequest.address) {
             jResponse.error_code = -2;
-            jResponse.error_message = `The [address] is a required field. 
-            Please enter a value.`;
+            jResponse.error_message = `${Constants.SERVER_MESSAGE_FIS} [address]`;
             return jResponse;
         }
 
@@ -144,7 +138,7 @@ const signup = async (txnId, jRequest) => {
 
         if (insert_TB_COR_USER_MST_01.rowCount == 1) {
             jResponse.error_code = 0;
-            jResponse.error_message = "";
+            jResponse.error_message = Constants.EMPTY_STRING;
         }
         else {
             jResponse.error_code = -3;
@@ -181,7 +175,7 @@ const signin = async (txnId, jRequest) => {
             const isMatch = await bcrypt.compare(jRequest.password, storedHashedPassword);
             if (isMatch) {
                 jResponse.error_code = 0;
-                jResponse.error_message = "";
+                jResponse.error_message = Constants.EMPTY_STRING;
 
                 jResponse.userId = select_TB_COR_USER_MST_01.rows[0].user_id;
                 jResponse.userName = select_TB_COR_USER_MST_01.rows[0].user_name;
@@ -211,33 +205,28 @@ const resetPassword = async (txnId, jRequest) => {
 
         if (jRequest.userId === ``) {
             jResponse.error_code = -2;
-            jResponse.error_message = `The [userId] field is a required field. 
-            Please enter a value.`;
+            jResponse.error_message = `${Constants.SERVER_MESSAGE_FIS} [userId]`;
             return jResponse;
         }
         if (jRequest.registerNo === ``) {
             jResponse.error_code = -2;
-            jResponse.error_message = `The [registerNo] field is a required field. 
-            Please enter a value.`;
+            jResponse.error_message = `${Constants.SERVER_MESSAGE_FIS} [registerNo]`;
             return jResponse;
         }
         if (jRequest.phoneNumber === ``) {
             jResponse.error_code = -2;
-            jResponse.error_message = `The [phoneNumber] field is a required field. 
-            Please enter a value.`;
+            jResponse.error_message = `${Constants.SERVER_MESSAGE_FIS} [phoneNumber]`;
             return jResponse;
 
         }
         if (jRequest.newPassword === ``) {
             jResponse.error_code = -2;
-            jResponse.error_message = `The [newPassword] field is a required field. 
-            Please enter a value.`;
+            jResponse.error_message = `${Constants.SERVER_MESSAGE_FIS} [newPassword]`;
             return jResponse;
         }
         if (jRequest.confirmPassword === ``) {
             jResponse.error_code = -2;
-            jResponse.error_message = `The [confirmPassword] field is a required field. 
-            Please enter a value.`;
+            jResponse.error_message = `${Constants.SERVER_MESSAGE_FIS} [confirmPassword]`;
             return jResponse;
 
         }
@@ -314,7 +303,7 @@ const signout = (txnId, jRequest) => {
         jResponse.__REMOTE_CLIENT_IP = jRequest.__REMOTE_CLIENT_IP;
 
         jResponse.error_code = 0;
-        jResponse.error_message = "";
+        jResponse.error_message = Constants.EMPTY_STRING;
     } catch (e) {
         logger.error(e);
         jResponse.error_code = -3; // exception
