@@ -10,16 +10,16 @@ const executeService = (txnId, jRequest) => {
 
     try {
         switch (jRequest.commandName) {
-            case "asset.getIncomeHistory":
+            case Constants.COMMAND_ASSET_GET_INCOME_HISTORY:
                 jResponse = getIncomeHistory(txnId, jRequest);
                 break;
-            case "asset.updateIncome":
+            case Constants.COMMAND_ASSET_UPDATE_INCOME:
                 jResponse = updateIncome(txnId, jRequest);
                 break;
-            case "asset.deleteIncome":
+            case Constants.COMMAND_ASSET_DELETE_INCOME:
                 jResponse = deleteIncome(txnId, jRequest);
                 break;
-            case "asset.addIncome":
+            case Constants.COMMAND_ASSET_ADD_INCOME:
                 jResponse = addIncome(txnId, jRequest);
                 break;
             default:
@@ -56,7 +56,7 @@ const addIncome = async (txnId, jRequest) => {
         }
         else {
             jResponse.error_code = -1;
-            jResponse.error_message = Constants.SERVER_MESSAGE_DBF;
+            jResponse.error_message = Constants.SERVER_MESSAGE_DATABASE_FAILED;
 
         }
     } catch (e) {
@@ -118,7 +118,7 @@ const deleteIncome = async (txnId, jRequest) => {
         }
         else {
             jResponse.error_code = -1;
-            jResponse.error_message = Constants.SERVER_MESSAGE_DBF;
+            jResponse.error_message = Constants.SERVER_MESSAGE_DATABASE_FAILED;
         }
     } catch (e) {
         logger.error(e);
@@ -153,7 +153,7 @@ const updateIncome = async (txnId, jRequest) => {
         }
         else {
             jResponse.error_code = -1;
-            jResponse.error_message = Constants.SERVER_MESSAGE_DBF;
+            jResponse.error_message = Constants.SERVER_MESSAGE_DATABASE_FAILED;
         }
     } catch (e) {
         logger.error(e);

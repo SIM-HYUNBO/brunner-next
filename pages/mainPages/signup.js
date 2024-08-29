@@ -97,7 +97,7 @@ export default function Signup() {
     setLoading(false); // 데이터 로딩 시작
 
     if (jResponse.error_code == 0) {
-      openModal(Constants.MESSAGE_SSU);
+      openModal(Constants.MESSAGE_SUCCESS_SIGNUP);
     } else {
       openModal(jResponse.error_message);
     }

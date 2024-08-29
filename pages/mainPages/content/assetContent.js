@@ -118,7 +118,7 @@ export default function AssetContent() {
     setLoading(false);
 
     if (jResponse.error_code === 0) {
-      openModal(Constants.MESSAGE_SAD);
+      openModal(Constants.MESSAGE_SUCESS_ADDED);
       fetchIncomeHistory(); // 데이터 다시 가져오기
       setAmountInput('');
       setCommentInput('');
@@ -149,7 +149,7 @@ export default function AssetContent() {
     amount = String(amount).replace(/,/g, '');
 
     if (isNaN(Number(amount))) {
-      openModal(Constants.MESSAGE_INOA);
+      openModal(Constants.MESSAGE_INVALIED_NUMBER_AMOUNT);
       return;
     }
 
@@ -186,7 +186,7 @@ export default function AssetContent() {
     const userId = userInfo.getLoginUserId();
     if (!userId) return;
 
-    const deleteConfirm = await openModal(Constants.MESSAGE_DTI);
+    const deleteConfirm = await openModal(Constants.MESSAGE_DELETE_ITEM);
     if (!deleteConfirm)
       return;
 
@@ -204,7 +204,7 @@ export default function AssetContent() {
     setLoading(false); // 데이터 로딩 시작
 
     if (jResponse.error_code === 0) {
-      openModal(Constants.MESSAGE_SDD);
+      openModal(Constants.MESSAGE_SUCCESS_DELEE);
       fetchIncomeHistory(); // 데이터 다시 가져오기
     } else {
       openModal(jResponse.error_message);

@@ -247,7 +247,7 @@ const RealtimeChart = ({ updateCurrentPrice }) => {
                 }
             }
         } catch (err) {
-            openModal(err instanceof Error ? err.message : Constants.MESSAGE_UEO);
+            openModal(err instanceof Error ? err.message : Constants.MESSAGE_UNKNOWN_ERROR);
         }
     }, [intervalTime]);
 

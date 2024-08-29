@@ -221,7 +221,7 @@ const StockContent = () => {
                 openModal(JSON.stringify(jResponse.error_message));
             }
         } catch (err) {
-            openModal(err instanceof Error ? err.message : Constants.MESSAGE_UEO);
+            openModal(err instanceof Error ? err.message : Constants.MESSAGE_UNKNOWN_ERROR);
         }
         finally {
             setLoading(false);
@@ -237,7 +237,7 @@ const StockContent = () => {
         if (!currentTickerRef.current) {
             setModalContent({
                 isOpen: true,
-                message: Constants.MESSAGE_SISS,
+                message: Constants.MESSAGE_INPUT_STOCK_SYMBOL,
                 onConfirm: () => setModalContent({ ...modalContent, isOpen: false }),
                 onClose: () => setModalContent({ ...modalContent, isOpen: false }),
             });
@@ -290,7 +290,7 @@ const StockContent = () => {
                 openModal(JSON.stringify(jResponse.error_message));
             }
         } catch (err) {
-            openModal(err instanceof Error ? err.message : Constants.MESSAGE_UEO);
+            openModal(err instanceof Error ? err.message : Constants.MESSAGE_UNKNOWN_ERROR);
         }
         finally {
             setLoading(false);
@@ -735,7 +735,7 @@ const StockContent = () => {
         event.preventDefault();
 
         if(!currentTickerRef.current){
-            openModal(Constants.MESSAGE_SISS);
+            openModal(Constants.MESSAGE_INPUT_STOCK_SYMBOL);
             return;
         }
 

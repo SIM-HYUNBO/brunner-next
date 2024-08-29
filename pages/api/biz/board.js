@@ -2,34 +2,34 @@
 
 import axios from 'axios';
 import logger from "../winston/logger"
-import * as Constants from '@/components/constants'
 import * as database from "./database/database"
 import * as serviceSQL from './serviceSQL'
+import * as Constants from '@/components/constants'
 
 const executeService = (txnId, jRequest) => {
     var jResponse = {};
 
     try {
         switch (jRequest.commandName) {
-            case "board.getPostList":
+            case Constants.COMMAND_BOARD_GET_POST_LIST:
                 jResponse = getPostList(txnId, jRequest);
                 break;
-            case "board.addPost":
+            case Constants.COMMAND_BOARD_ADD_POST:
                 jResponse = addPost(txnId, jRequest);
                 break;
-            case "board.editPost":
+            case Constants.COMMAND_BOARD_EDIT_POST:
                 jResponse = editPost(txnId, jRequest);
                 break;
-            case "board.deletePost":
+            case Constants.COMMAND_BOARD_DELETE_POST:
                 jResponse = deletePost(txnId, jRequest);
                 break;
-            case "board.addPostComment":
+            case Constants.COMMAND_BOARD_ADD_COMMENT:
                 jResponse = addPostComment(txnId, jRequest);
                 break;
-            case "board.editPostComment":
+            case Constants.COMMAND_BOARD_EDIT_COMMENT:
                 jResponse = editPostComment(txnId, jRequest);
                 break;
-            case "board.deletePostComment":
+            case Constants.COMMAND_BOARD_DELETE_COMMENT:
                 jResponse = deletePostComment(txnId, jRequest);
                 break;
             default:
@@ -59,13 +59,13 @@ const getPostList = async (txnId, jRequest) => {
 
         if (!jRequest.postInfo) {
             jResponse.error_code = -2;
-            jResponse.error_message = `${Constants.SERVER_MESSAGE_FIS} [postInfo].`;
+            jResponse.error_message = `${Constants.SERVER_MESSAGE_REQUIRED_FIELD} [postInfo].`;
             return jResponse;
         }
 
         if (!jRequest.postInfo.postType) {
             jResponse.error_code = -2;
-            jResponse.error_message = `${Constants.SERVER_MESSAGE_FIS} [postType]`;
+            jResponse.error_message = `${Constants.SERVER_MESSAGE_REQUIRED_FIELD} [postType]`;
             return jResponse;
         }
 
@@ -191,7 +191,7 @@ const deletePost = async (txnId, jRequest) => {
 
         if (!jRequest.postInfo) {
             jResponse.error_code = -2;
-            jResponse.error_message = `${Constants.SERVER_MESSAGE_FIS} [postInfo]`;
+            jResponse.error_message = `${Constants.SERVER_MESSAGE_REQUIRED_FIELD} [postInfo]`;
 
             return jResponse;
         }
@@ -284,7 +284,7 @@ const editPostComment = async (txnId, jRequest) => {
 
         if (!jRequest.commentInfo) {
             jResponse.error_code = -2;
-            jResponse.error_message = `${Constants.SERVER_MESSAGE_FIS} [commentInfo]`;
+            jResponse.error_message = `${Constants.SERVER_MESSAGE_REQUIRED_FIELD} [commentInfo]`;
 
             return jResponse;
         }
@@ -325,7 +325,7 @@ const deletePostComment = async (txnId, jRequest) => {
 
         if (!jRequest.commentInfo) {
             jResponse.error_code = -2;
-            jResponse.error_message = `${Constants.SERVER_MESSAGE_FIS} [commentInfo]`;
+            jResponse.error_message = `${Constants.SERVER_MESSAGE_REQUIRED_FIELD} [commentInfo]`;
 
             return jResponse;
         }

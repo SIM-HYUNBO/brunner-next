@@ -96,7 +96,7 @@ export default function SignoutButton() {
                                 rounded text-base mt-4 md:mt-0"
           type="button"
           onClick={async () => {
-            var result = await openModal(Constants.MESSAGE_DWLO)
+            var result = await openModal(Constants.MESSAGE_SIGNOUT)
             if (result)
               requestSignout();
           }}>
