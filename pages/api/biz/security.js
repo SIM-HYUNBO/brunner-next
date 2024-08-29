@@ -43,7 +43,7 @@ const signup = async (txnId, jRequest) => {
 
         if (!jRequest.userId) {
             jResponse.error_code = -2;
-            jResponse.error_message = `${Constants.SERVER_MESSAGE_REQUIRED_FIELD} [userId`;
+            jResponse.error_message = `${Constants.MESSAGE_REQUIRED_FIELD} [userId`;
             return jResponse;
         }
         if (jRequest.userId.length < 5 || jRequest.userId.length > 10) {
@@ -53,7 +53,7 @@ const signup = async (txnId, jRequest) => {
         }
         if (!jRequest.password) {
             jResponse.error_code = -2;
-            jResponse.error_message = `${Constants.SERVER_MESSAGE_REQUIRED_FIELD} [password]`;
+            jResponse.error_message = `${Constants.MESSAGE_REQUIRED_FIELD} [password]`;
             return jResponse;
         }
 
@@ -67,7 +67,7 @@ const signup = async (txnId, jRequest) => {
         }
         if (!jRequest.userName) {
             jResponse.error_code = -2;
-            jResponse.error_message = `${Constants.SERVER_MESSAGE_REQUIRED_FIELD} [userName]`;
+            jResponse.error_message = `${Constants.MESSAGE_REQUIRED_FIELD} [userName]`;
             return jResponse;
         }
         if (jRequest.userName.length < 2 || jRequest.userName.length > 10) {
@@ -77,7 +77,7 @@ const signup = async (txnId, jRequest) => {
         }
         if (!jRequest.phoneNumber) {
             jResponse.error_code = -2;
-            jResponse.error_message = `${Constants.SERVER_MESSAGE_REQUIRED_FIELD} [phoneNumber]`;
+            jResponse.error_message = `${Constants.MESSAGE_REQUIRED_FIELD} [phoneNumber]`;
             return jResponse;
         }
         if (verifyTelNo(jRequest.phoneNumber) == false) {
@@ -87,7 +87,7 @@ const signup = async (txnId, jRequest) => {
         }
         if (!jRequest.email) {
             jResponse.error_code = -2;
-            jResponse.error_message = `${Constants.SERVER_MESSAGE_REQUIRED_FIELD} [email]`;
+            jResponse.error_message = `${Constants.MESSAGE_REQUIRED_FIELD} [email]`;
             return jResponse;
         }
         if (verifyEMail(jRequest.email) == false) {
@@ -97,12 +97,12 @@ const signup = async (txnId, jRequest) => {
         }
         if (!jRequest.registerNo) {
             jResponse.error_code = -2;
-            jResponse.error_message = `${Constants.SERVER_MESSAGE_REQUIRED_FIELD} [registerNo]`;
+            jResponse.error_message = `${Constants.MESSAGE_REQUIRED_FIELD} [registerNo]`;
             return jResponse;
         }
         if (!jRequest.address) {
             jResponse.error_code = -2;
-            jResponse.error_message = `${Constants.SERVER_MESSAGE_REQUIRED_FIELD} [address]`;
+            jResponse.error_message = `${Constants.MESSAGE_REQUIRED_FIELD} [address]`;
             return jResponse;
         }
 
@@ -205,28 +205,28 @@ const resetPassword = async (txnId, jRequest) => {
 
         if (jRequest.userId === ``) {
             jResponse.error_code = -2;
-            jResponse.error_message = `${Constants.SERVER_MESSAGE_REQUIRED_FIELD} [userId]`;
+            jResponse.error_message = `${Constants.MESSAGE_REQUIRED_FIELD} [userId]`;
             return jResponse;
         }
         if (jRequest.registerNo === ``) {
             jResponse.error_code = -2;
-            jResponse.error_message = `${Constants.SERVER_MESSAGE_REQUIRED_FIELD} [registerNo]`;
+            jResponse.error_message = `${Constants.MESSAGE_REQUIRED_FIELD} [registerNo]`;
             return jResponse;
         }
         if (jRequest.phoneNumber === ``) {
             jResponse.error_code = -2;
-            jResponse.error_message = `${Constants.SERVER_MESSAGE_REQUIRED_FIELD} [phoneNumber]`;
+            jResponse.error_message = `${Constants.MESSAGE_REQUIRED_FIELD} [phoneNumber]`;
             return jResponse;
 
         }
         if (jRequest.newPassword === ``) {
             jResponse.error_code = -2;
-            jResponse.error_message = `${Constants.SERVER_MESSAGE_REQUIRED_FIELD} [newPassword]`;
+            jResponse.error_message = `${Constants.MESSAGE_REQUIRED_FIELD} [newPassword]`;
             return jResponse;
         }
         if (jRequest.confirmPassword === ``) {
             jResponse.error_code = -2;
-            jResponse.error_message = `${Constants.SERVER_MESSAGE_REQUIRED_FIELD} [confirmPassword]`;
+            jResponse.error_message = `${Constants.MESSAGE_REQUIRED_FIELD} [confirmPassword]`;
             return jResponse;
 
         }

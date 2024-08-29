@@ -46,43 +46,43 @@ const getStockInfo = async (txnId, jRequest) => {
 
         if (!jRequest.stocksTicker) {
             jResponse.error_code = -2;
-            jResponse.error_message = `${Constants.SERVER_MESSAGE_REQUIRED_FIELD} [stocksTicker]`;
+            jResponse.error_message = `${Constants.MESSAGE_REQUIRED_FIELD} [stocksTicker]`;
             return jResponse;
         }
 
         if (!jRequest.multiplier) {
             jResponse.error_code = -2;
-            jResponse.error_message = `${Constants.SERVER_MESSAGE_REQUIRED_FIELD} [multiplier]`;
+            jResponse.error_message = `${Constants.MESSAGE_REQUIRED_FIELD} [multiplier]`;
             return jResponse;
         }
 
         if (!jRequest.timespan) {
             jResponse.error_code = -2;
-            jResponse.error_message = `${Constants.SERVER_MESSAGE_REQUIRED_FIELD} [timespan]`;
+            jResponse.error_message = `${Constants.MESSAGE_REQUIRED_FIELD} [timespan]`;
             return jResponse;
         }
 
         if (!jRequest.from) {
             jResponse.error_code = -2;
-            jResponse.error_message = `${Constants.SERVER_MESSAGE_REQUIRED_FIELD} [from]`;
+            jResponse.error_message = `${Constants.MESSAGE_REQUIRED_FIELD} [from]`;
             return jResponse;
         }
 
         if (!jRequest.to) {
             jResponse.error_code = -2;
-            jResponse.error_message = `${Constants.SERVER_MESSAGE_REQUIRED_FIELD} [to]`;
+            jResponse.error_message = `${Constants.MESSAGE_REQUIRED_FIELD} [to]`;
             return jResponse;
         }
 
         if (!jRequest.adjust) {
             jResponse.error_code = -2;
-            jResponse.error_message = `${Constants.SERVER_MESSAGE_REQUIRED_FIELD} [adjust]`;
+            jResponse.error_message = `${Constants.MESSAGE_REQUIRED_FIELD} [adjust]`;
             return jResponse;
         }
 
         if (!jRequest.sort) {
             jResponse.error_code = -2;
-            jResponse.error_message = `${Constants.SERVER_MESSAGE_REQUIRED_FIELD} [sort]`;
+            jResponse.error_message = `${Constants.MESSAGE_REQUIRED_FIELD} [sort]`;
             return jResponse;
         }
 
@@ -186,12 +186,12 @@ const getLatestStockInfo = async (txnId, jRequest) => {
 
         if (!jRequest.stocksTicker) {
             jResponse.error_code = -2;
-            jResponse.error_message = `${Constants.SERVER_MESSAGE_REQUIRED_FIELD} [stocksTicker]`;
+            jResponse.error_message = `${Constants.MESSAGE_REQUIRED_FIELD} [stocksTicker]`;
             return jResponse;
         }
         if (!jRequest.dataCount) {
             jResponse.error_code = -2;
-            jResponse.error_message = `${Constants.SERVER_MESSAGE_REQUIRED_FIELD} [dataCount]`;
+            jResponse.error_message = `${Constants.MESSAGE_REQUIRED_FIELD} [dataCount]`;
             return jResponse;
         }
 
@@ -232,7 +232,7 @@ const getRealtimeStockInfo = async (txnId, jRequest) => {
 
         if (!jRequest.stocksTicker) {
             jResponse.error_code = -2;
-            jResponse.error_message = `${Constants.SERVER_MESSAGE_REQUIRED_FIELD} [stocksTicker]`;
+            jResponse.error_message = `${Constants.MESSAGE_REQUIRED_FIELD} [stocksTicker]`;
 
             return jResponse;
         }
