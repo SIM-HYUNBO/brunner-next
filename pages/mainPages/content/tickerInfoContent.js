@@ -6,7 +6,7 @@ import { useRouter } from 'next/router'
 import requestServer from '@/components/requestServer'
 import Board from '@/pages/mainPages/content/boardContent'
 import RealtimeChart from './realtimeChart';
-import Constants from '@/components/constants'
+import * as Constants from '@/components/constants'
 
 export default function TickerInfoContent({ tickerCode: tickerCode }) {
   const [loading, setLoading] = useState(false); // 로딩 상태 추가
@@ -40,6 +40,8 @@ export default function TickerInfoContent({ tickerCode: tickerCode }) {
 
   const router = useRouter()
 
+  const tickerCodeRef = useRef(tickerCode);
+
   const [tickerDesc, setTickerDesc] = useState('');
   const tickerDescRef = useRef(tickerDesc);
   const setTickerDescRef = (newValue) => {
@@ -68,10 +70,15 @@ export default function TickerInfoContent({ tickerCode: tickerCode }) {
 
   const getTickerInfo = async () => {
     try {
+      if (!tickerCodeRef.current) {
+        openModal(Constants.MESSAGE_REQUIRED_FIELD);
+        return;
+      }
+
       const jRequest = {
         commandName: 'stock.getTickerInfo',
         systemCode: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE,
-        tickerCode: tickerCode,
+        tickerCode: tickerCodeRef.current,
       };
 
       setLoading(true);

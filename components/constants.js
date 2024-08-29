@@ -5,11 +5,11 @@ export const
     MESSAGE_UNKNOWN_ERROR = "Unknown error occured.",
     MESSAGE_SUCCESS_SIGNUP = "successfully signed up.",
     MESSAGE_SIGNOUT = "Do you want to signout now?",
+    MESSAGE_REQUIRED_FIELD = "The field value is required.",
 
     SERVER_MESSAGE_DATABASE_FAILED = "Database failed.",
-    SERVER_MESSAGE_REQUIRED_FIELD = "The field value is required.",
     SERVER_NOT_SUPPORTED_MODULE = "not supported module",
-    SERVER_SQL_NOT_LOADED="Service SQL not loaded.",
+    SERVER_SQL_NOT_LOADED = "Service SQL not loaded.",
 
     MESSAGE_SERVER_NOT_CONNECTTED = "cannot connect to seerver",
     MESSAGE_INPUT_STOCK_SYMBOL = "Select or Input a stock symbol.",
@@ -21,9 +21,9 @@ export const
 
     COMMAND_ASSET_ADD_INCOME = "asset.addIncome",
     COMMAND_ASSET_DELETE_INCOME = "asset.deleteIncome",
-    COMMAND_ASSET_GET_INCOME_HISTORY="asset.getIncomeHistory",
+    COMMAND_ASSET_GET_INCOME_HISTORY = "asset.getIncomeHistory",
     COMMAND_ASSET_UPDATE_INCOME = "asset.updateIncome",
-    
+
     COMMAND_BOARD_ADD_POST = "board.addPost",
     COMMAND_BOARD_ADD_COMMENT = "board.addPostComment",
     COMMAND_BOARD_DELETE_POST = "board.deletePost",
@@ -35,13 +35,12 @@ export const
     COMMAND_SERVICESQL_LOAD_ALL_SQL = "serviceSQL.loadAllSQL",
     COMMAND_SECURITY_RESET_PASSWORD = "security.resetPassword",
     COMMAND_SECURITY_SIGNOUT = "security.signout",
-    COMMAND_SECURITY_SIGNUP = "security.signup",    
+    COMMAND_SECURITY_SIGNUP = "security.signup",
     COMMAND_SECURITY_SIGNIN = "security.signin",
 
     COMMAND_STOCK_GET_TICKER_LIST = "stock.getTickerList",
     COMMAND_STOCK_GET_TICKER_INFO = "stock.getTickerInfo",
     COMMAND_STOCK_GET_STOCK_INFO = "stock.getStockInfo",
     COMMAND_STOCK_GET_LATEST_STOCK_INFO = "stock.getLatestStockInfo",
-    COMMAND_STOCK_GET_REALTIME_STOCK_INFO  = "stock.getRealtimeStockInfo" 
+    COMMAND_STOCK_GET_REALTIME_STOCK_INFO = "stock.getRealtimeStockInfo"
 
-    

@@ -59,13 +59,13 @@ const getPostList = async (txnId, jRequest) => {
 
         if (!jRequest.postInfo) {
             jResponse.error_code = -2;
-            jResponse.error_message = `${Constants.SERVER_MESSAGE_REQUIRED_FIELD} [postInfo].`;
+            jResponse.error_message = `${Constants.MESSAGE_REQUIRED_FIELD} [postInfo].`;
             return jResponse;
         }
 
         if (!jRequest.postInfo.postType) {
             jResponse.error_code = -2;
-            jResponse.error_message = `${Constants.SERVER_MESSAGE_REQUIRED_FIELD} [postType]`;
+            jResponse.error_message = `${Constants.MESSAGE_REQUIRED_FIELD} [postType]`;
             return jResponse;
         }
 
@@ -191,7 +191,7 @@ const deletePost = async (txnId, jRequest) => {
 
         if (!jRequest.postInfo) {
             jResponse.error_code = -2;
-            jResponse.error_message = `${Constants.SERVER_MESSAGE_REQUIRED_FIELD} [postInfo]`;
+            jResponse.error_message = `${Constants.MESSAGE_REQUIRED_FIELD} [postInfo]`;
 
             return jResponse;
         }
@@ -284,7 +284,7 @@ const editPostComment = async (txnId, jRequest) => {
 
         if (!jRequest.commentInfo) {
             jResponse.error_code = -2;
-            jResponse.error_message = `${Constants.SERVER_MESSAGE_REQUIRED_FIELD} [commentInfo]`;
+            jResponse.error_message = `${Constants.MESSAGE_REQUIRED_FIELD} [commentInfo]`;
 
             return jResponse;
         }
@@ -325,7 +325,7 @@ const deletePostComment = async (txnId, jRequest) => {
 
         if (!jRequest.commentInfo) {
             jResponse.error_code = -2;
-            jResponse.error_message = `${Constants.SERVER_MESSAGE_REQUIRED_FIELD} [commentInfo]`;
+            jResponse.error_message = `${Constants.MESSAGE_REQUIRED_FIELD} [commentInfo]`;
 
             return jResponse;
         }
