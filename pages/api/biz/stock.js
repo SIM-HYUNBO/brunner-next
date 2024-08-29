@@ -13,6 +13,7 @@ const executeService = (txnId, jRequest) => {
     try {
         switch (jRequest.commandName) {
             case Constants.COMMAND_STOCK_GET_TICKER_LIST:
+                jResponse = getTickerList(txnId, jRequest);
                 break;
             case Constants.COMMAND_STOCK_GET_TICKER_INFO:
                 jResponse = getTickerInfo(txnId, jRequest);
