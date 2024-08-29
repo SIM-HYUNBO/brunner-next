@@ -54,7 +54,7 @@ function Board(boardInfo) {
         var jResponse = null;
 
         try {
-            jRequest.commandName = Constants.COMMAND_BGPL;
+            jRequest.commandName = Constants.COMMAND_BOARD_GET_POST_LIST;
             jRequest.systemCode = process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE;
             jRequest.postInfo = { postType: `TICKER_INFO-${boardType}` }; // 게시판 유형을 TICKER_INFO-{종모코드}로 함
 

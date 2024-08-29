@@ -51,7 +51,7 @@ export default function App({ Component, pageProps }) {
     var jRequest = {};
     var jResponse = null;
 
-    jRequest.commandName = Constants.COMMAND_SLAS;
+    jRequest.commandName = Constants.COMMAND_SERVICESQL_LOAD_ALL_SQL;
 
     setLoading(true); // 데이터 로딩 시작
     jResponse = await requestServer('POST', JSON.stringify(jRequest));

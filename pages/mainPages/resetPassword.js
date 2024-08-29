@@ -72,7 +72,7 @@ export default function ResetPassword() {
     var jRequest = {};
     var jResponse = null;
 
-    jRequest.commandName = Constants.COMMAND_SRP;
+    jRequest.commandName = Constants.COMMAND_SECURITY_RESET_PASSWORD;
     jRequest.systemCode = process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE;
     jRequest.userId = userId;
     jRequest.registerNo = registerNo;
