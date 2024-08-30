@@ -36,7 +36,6 @@ export default function TickerInfoContent({ tickerCode: tickerCode }) {
     });
   };
 
-
   const [tickerDesc, setTickerDesc] = useState('');
   const tickerDescRef = useRef(tickerDesc);
   const setTickerDescRef = (newValue) => {
