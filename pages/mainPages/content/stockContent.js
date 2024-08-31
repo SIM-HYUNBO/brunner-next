@@ -268,7 +268,7 @@ const StockContent = () => {
             const timeto = moment().format('YYYY-MM-DD');
 
             const jRequest = {
-                commandName: 'stock.getStockInfo',
+                commandName: Constants.COMMAND_STOCK_GET_STOCK_INFO,
                 systemCode: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE,
                 stocksTicker: currentTickerRef.current,
                 multiplier: 1,

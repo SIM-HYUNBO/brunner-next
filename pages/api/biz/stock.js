@@ -95,11 +95,19 @@ const getStockInfo = async (txnId, jRequest) => {
 
         const data = await response.json();
         jResponse.stockInfo = data.results;
-        data.results.map((d) => {
-            d.t = d.t / 1000;
-        });
-        jResponse.error_code = 0; // exception
-        jResponse.error_message = data.status;
+
+        if (data.results) {
+            jResponse.error_code = 0; // exception
+            jResponse.error_message = Constants.EMPTY_STRING;
+
+            data.results.map((d) => {
+                d.t = d.t / 1000;
+            });
+        }
+        else {
+            jResponse.error_code = -1; // exception
+            jResponse.error_message = data.status;
+        }
     }
     catch (e) {
         logger.error(e);
@@ -207,12 +215,18 @@ const getLatestStockInfo = async (txnId, jRequest) => {
         }
 
         const data = await response.json();
-        jResponse.stockInfo = data.results.slice(jRequest.dataCount);
-        jResponse.stockInfo.map((d) => {
-            d.t = d.t / 1000; // 시간의 단위는 초로
-        });
-        jResponse.error_code = 0; // exception
-        jResponse.error_message = data.status;
+        if (data.results) {
+            jResponse.stockInfo = data.results.slice(jRequest.dataCount);
+            jResponse.stockInfo.map((d) => {
+                d.t = d.t / 1000; // 시간의 단위는 초로
+            });
+            jResponse.error_code = 0; // exception
+            jResponse.error_message = data.status;
+        }
+        else {
+            jResponse.error_code = -1; // exception
+            jResponse.error_message = data.status;
+        }
     }
     catch (e) {
         logger.error(e);
