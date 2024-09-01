@@ -3,7 +3,7 @@
 import dotenv from 'dotenv'
 import '@/styles/globals.css'
 import { ThemeProvider } from 'next-themes'
-import requestServer from './../components/requestServer'
+import requestServer from '@/components/requestServer'
 import { useEffect, useState } from 'react'
 import BrunnerMessageBox from '@/components/BrunnerMessageBox'
 import * as Constants from '@/components/constants'
@@ -11,7 +11,7 @@ import * as Constants from '@/components/constants'
 // Entry Point
 export default function App({ Component, pageProps }) {
   useEffect(async () => {
-    // await requestLoadAllSqls();
+    ;
   }, []);
 
   dotenv.config();
