@@ -235,7 +235,7 @@ const RealtimeChart = ({ updateCurrentPrice }) => {
             if (!currentTickerRef.current) return;
 
             const jRequest = {
-                commandName: COMMAND_STOCK_GET_REALTIME_STOCK_INFO,
+                commandName: Constants.COMMAND_STOCK_GET_REALTIME_STOCK_INFO,
                 stocksTicker: currentTickerRef.current,
             };
 
