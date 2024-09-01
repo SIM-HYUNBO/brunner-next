@@ -75,7 +75,7 @@ export default function AssetContent() {
 
     try {
       const jRequest = {
-        commandName: 'asset.getIncomeHistory',
+        commandName: Constants.COMMAND_ASSET_GET_INCOME_HISTORY,
         systemCode: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE,
         userId: userId,
       };
@@ -112,7 +112,7 @@ export default function AssetContent() {
 
     try {
       const jRequest = {
-        commandName: 'asset.addIncome',
+        commandName: Constants.COMMAND_ASSET_ADD_INCOME,
         systemCode: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE,
         userId: userId,
         amount: Number(amountInput.replace(/[^0-9.-]/g, '').replace(/,/g, '')), // 숫자로 변환하여 전송
@@ -165,7 +165,7 @@ export default function AssetContent() {
 
     try {
       const jRequest = {
-        commandName: 'asset.updateIncome',
+        commandName: Constants.COMMAND_ASSET_UPDATE_INCOME,
         systemCode: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE,
         userId: userId,
         historyId: row.original.history_id,
@@ -209,7 +209,7 @@ export default function AssetContent() {
 
     try {
       const jRequest = {
-        commandName: 'asset.deleteIncome',
+        commandName: Constants.COMMAND_ASSET_DELETE_INCOME,
         systemCode: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE,
         userId: userId,
         historyId: historyId,
