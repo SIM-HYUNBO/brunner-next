@@ -40,8 +40,9 @@ export default function Home() {
     <Layout>
       <Head>
         <title>Brunner Home</title>
-        <meta name="description" content="Stock Charts and Market Analysis, Asset Management"></meta>
-        <meta name="keywords" content="Stock, Chart, Asset, Investment" />
+        <meta name="title" content="Stock Quotes and Investment Information - Brunner-Next"></meta>
+        <meta name="description" content="Brunner-Next provides real-time stock quotes. Make effective investments with real-time stock charts, investment strategies, stock news, and stock analysis tools."></meta>
+        <meta name="keywords" content="Stock, Stock Quotes, Stock Analysis, US Stock Quotes, Stock Investment, Real-Time Stock Quotes, Stock Analysis Tools, 주식, 주식 시세, 주식 분석, 미국 주식 시세, 주식 투자, 실시간 주식 시세, 주식 종목 분석"> </meta>
         <meta rel="icon" href="/brunnerLogo.png"></meta>
         <meta name="google-adsense-account" content="ca-pub-3879149687745447"></meta>
         <GoogleAdScript />
