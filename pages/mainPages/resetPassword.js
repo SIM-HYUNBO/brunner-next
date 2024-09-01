@@ -82,7 +82,7 @@ export default function ResetPassword() {
 
     setLoading(true); // 데이터 로딩 시작
     jResponse = await requestServer('POST', JSON.stringify(jRequest));
-    setLoading(false); // 데이터 로딩 시작
+    setLoading(false); // 데이터 로딩 끝
 
     openModal(jResponse.error_message);
   };

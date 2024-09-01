@@ -94,7 +94,7 @@ export default function Signup() {
 
     setLoading(true); // 데이터 로딩 시작
     jResponse = await requestServer('POST', JSON.stringify(jRequest));
-    setLoading(false); // 데이터 로딩 시작
+    setLoading(false); // 데이터 로딩 끝
 
     if (jResponse.error_code == 0) {
       openModal(Constants.MESSAGE_SUCCESS_SIGNUP);

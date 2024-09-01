@@ -81,7 +81,7 @@ export default function AssetContent() {
 
     setLoading(true); // 데이터 로딩 시작
     const jResponse = await requestServer('POST', JSON.stringify(jRequest));
-    setLoading(false); // 데이터 로딩 시작
+    setLoading(false); // 데이터 로딩 끝
 
     if (jResponse.error_code === 0) {
       return jResponse.incomeHistory;
@@ -164,7 +164,7 @@ export default function AssetContent() {
 
     setLoading(true); // 데이터 로딩 시작
     const jResponse = await requestServer('POST', JSON.stringify(jRequest));
-    setLoading(false); // 데이터 로딩 시작
+    setLoading(false); // 데이터 로딩 끝
 
     openModal('Successfully updated.');
 
@@ -201,7 +201,7 @@ export default function AssetContent() {
 
     setLoading(true); // 데이터 로딩 시작
     const jResponse = await requestServer('POST', JSON.stringify(jRequest));
-    setLoading(false); // 데이터 로딩 시작
+    setLoading(false); // 데이터 로딩 끝
 
     if (jResponse.error_code === 0) {
       openModal(Constants.MESSAGE_SUCCESS_DELEE);
