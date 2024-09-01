@@ -52,7 +52,7 @@ const RealtimeChart = ({ updateCurrentPrice }) => {
         setSeries(newVal);
     }
 
-    const [intervalTime, setIntervalTime] = useState(10000); // 인터벌 시간 상태 (밀리초)
+    const [intervalTime, setIntervalTime] = useState(30000); // 인터벌 시간 상태 (밀리초)
     const [intervalId, setIntervalId] = useState(null);
 
     /* 차트 색깔 결정 
