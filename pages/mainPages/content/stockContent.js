@@ -217,6 +217,7 @@ const StockContent = () => {
             setLoading(true);
             setCurrentTickerStockDataRef(null);
             const jResponse = await requestServer('POST', JSON.stringify(jRequest));
+            setLoading(false);
 
             if (jResponse.error_code === 0) {
                 await setTickerListRef(jResponse.tickerList);
@@ -224,10 +225,8 @@ const StockContent = () => {
                 openModal(JSON.stringify(jResponse.error_message));
             }
         } catch (err) {
-            openModal(err instanceof Error ? err.message : Constants.MESSAGE_UNKNOWN_ERROR);
-        }
-        finally {
             setLoading(false);
+            openModal(err instanceof Error ? err.message : Constants.MESSAGE_UNKNOWN_ERROR);
         }
     };
 
@@ -302,13 +301,12 @@ const StockContent = () => {
                     localStorage.setItem('recentSearches', JSON.stringify(updatedSearches));
                 }
             } else {
+                setLoading(false);
                 openModal(JSON.stringify(jResponse.error_message));
             }
         } catch (err) {
-            openModal(err instanceof Error ? err.message : Constants.MESSAGE_UNKNOWN_ERROR);
-        }
-        finally {
             setLoading(false);
+            openModal(err instanceof Error ? err.message : Constants.MESSAGE_UNKNOWN_ERROR);
         }
     };
 

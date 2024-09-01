@@ -81,13 +81,12 @@ export default function TickerInfoContent({ tickerCode: tickerCode }) {
           setTickerNewsContentRef(jResponse.tickerInfo.tickerNewsContent);
         }
       } else {
+        setLoading(false);
         openModal(JSON.stringify(jResponse.error_message));
       }
     } catch (err) {
-      openModal(err instanceof Error ? err.message : constants.MESSAGE_UEO);
-    }
-    finally {
       setLoading(false);
+      openModal(err instanceof Error ? err.message : constants.MESSAGE_UEO);
     }
   };
 
