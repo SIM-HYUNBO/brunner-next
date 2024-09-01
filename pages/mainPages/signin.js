@@ -7,6 +7,7 @@ import { useRouter } from 'next/router'
 import { useState, useEffect, useRef } from 'react'
 import requestServer from './../../components/requestServer'
 import BrunnerMessageBox from '@/components/BrunnerMessageBox'
+import * as Constants from '@/components/constants';
 
 export default function Signin() {
   const router = useRouter();
@@ -60,7 +61,7 @@ export default function Signin() {
   const requestSignin = async () => {
     try {
       const jRequest = {
-        commandName: "security.signin",
+        commandName: Constants.COMMAND_SECURITY_SIGNIN,
         systemCode: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE,
         userId: userId,
         password: password
