@@ -71,20 +71,24 @@ export default function ResetPassword() {
   const requestResetPassword = async () => {
     var jRequest = {};
     var jResponse = null;
+    
+    try {
+      jRequest.commandName = Constants.COMMAND_SECURITY_RESET_PASSWORD;
+      jRequest.systemCode = process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE;
+      jRequest.userId = userId;
+      jRequest.registerNo = registerNo;
+      jRequest.phoneNumber = phoneNumber;
+      jRequest.newPassword = newPassword;
+      jRequest.confirmPassword = confirmPassword;
 
-    jRequest.commandName = Constants.COMMAND_SECURITY_RESET_PASSWORD;
-    jRequest.systemCode = process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE;
-    jRequest.userId = userId;
-    jRequest.registerNo = registerNo;
-    jRequest.phoneNumber = phoneNumber;
-    jRequest.newPassword = newPassword;
-    jRequest.confirmPassword = confirmPassword;
-
-    setLoading(true); // 데이터 로딩 시작
-    jResponse = await requestServer('POST', JSON.stringify(jRequest));
-    setLoading(false); // 데이터 로딩 끝
-
-    openModal(jResponse.error_message);
+      setLoading(true); // 데이터 로딩 시작
+      jResponse = await requestServer('POST', JSON.stringify(jRequest));
+      setLoading(false); // 데이터 로딩 끝
+      openModal(jResponse.error_message);
+    } catch (error) {
+      setLoading(false); // 데이터 로딩 끝
+      openModal(error);
+    }
   };
 
   return (

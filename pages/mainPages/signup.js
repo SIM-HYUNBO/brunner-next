@@ -81,25 +81,30 @@ export default function Signup() {
   const requestSignup = async () => {
     var jRequest = {};
     var jResponse = null;
+    
+    try {
+      jRequest.commandName = Constants.COMMAND_SECURITY_SIGNUP;
+      jRequest.systemCode = process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE;
+      jRequest.userId = userId;
+      jRequest.password = password;
+      jRequest.userName = userName;
+      jRequest.phoneNumber = phoneNumber;
+      jRequest.email = email;
+      jRequest.registerNo = registerNo;
+      jRequest.address = address;
 
-    jRequest.commandName = Constants.COMMAND_SECURITY_SIGNUP;
-    jRequest.systemCode = process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE;
-    jRequest.userId = userId;
-    jRequest.password = password;
-    jRequest.userName = userName;
-    jRequest.phoneNumber = phoneNumber;
-    jRequest.email = email;
-    jRequest.registerNo = registerNo;
-    jRequest.address = address;
+      setLoading(true); // 데이터 로딩 시작
+      jResponse = await requestServer('POST', JSON.stringify(jRequest));
+      setLoading(false); // 데이터 로딩 끝
 
-    setLoading(true); // 데이터 로딩 시작
-    jResponse = await requestServer('POST', JSON.stringify(jRequest));
-    setLoading(false); // 데이터 로딩 끝
-
-    if (jResponse.error_code == 0) {
-      openModal(Constants.MESSAGE_SUCCESS_SIGNUP);
-    } else {
-      openModal(jResponse.error_message);
+      if (jResponse.error_code == 0) {
+        openModal(Constants.MESSAGE_SUCCESS_SIGNUP);
+      } else {
+        openModal(jResponse.error_message);
+      }
+    } catch (error) {
+      setLoading(false); // 데이터 로딩 끝
+      openModal(error);
     }
   };
 

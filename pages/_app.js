@@ -47,20 +47,6 @@ export default function App({ Component, pageProps }) {
     });
   };
 
-  async function requestLoadAllSqls() {
-    var jRequest = {};
-    var jResponse = null;
-
-    jRequest.commandName = Constants.COMMAND_SERVICESQL_LOAD_ALL_SQL;
-
-    setLoading(true); // 데이터 로딩 시작
-    jResponse = await requestServer('POST', JSON.stringify(jRequest));
-    setLoading(false); // 데이터 로딩 끝
-
-    if (jResponse.error_code < 0) // 에러
-      openModal(jResponse.error_message);
-  }
-
   return (
     <div>
       <BrunnerMessageBox

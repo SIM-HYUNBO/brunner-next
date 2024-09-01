@@ -73,19 +73,26 @@ export default function AssetContent() {
     const userId = userInfo.getLoginUserId();
     if (!userId) return [];
 
-    const jRequest = {
-      commandName: 'asset.getIncomeHistory',
-      systemCode: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE,
-      userId: userId,
-    };
+    try {
+      const jRequest = {
+        commandName: 'asset.getIncomeHistory',
+        systemCode: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE,
+        userId: userId,
+      };
 
-    setLoading(true); // 데이터 로딩 시작
-    const jResponse = await requestServer('POST', JSON.stringify(jRequest));
-    setLoading(false); // 데이터 로딩 끝
+      setLoading(true); // 데이터 로딩 시작
+      const jResponse = await requestServer('POST', JSON.stringify(jRequest));
+      setLoading(false); // 데이터 로딩 끝
 
-    if (jResponse.error_code === 0) {
-      return jResponse.incomeHistory;
-    } else {
+      if (jResponse.error_code === 0) {
+        return jResponse.incomeHistory;
+      } else {
+        openModal(jResponse.error_message);
+        return [];
+      }
+    } catch (error) {
+      setLoading(false); // 데이터 로딩 끝
+      openModal(error);
       return [];
     }
   };
@@ -103,27 +110,30 @@ export default function AssetContent() {
       return;
     }
 
-    setLoading(true);
+    try {
+      const jRequest = {
+        commandName: 'asset.addIncome',
+        systemCode: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE,
+        userId: userId,
+        amount: Number(amountInput.replace(/[^0-9.-]/g, '').replace(/,/g, '')), // 숫자로 변환하여 전송
+        comment: commentInput,
+      };
 
-    const jRequest = {
-      commandName: 'asset.addIncome',
-      systemCode: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE,
-      userId: userId,
-      amount: Number(amountInput.replace(/[^0-9.-]/g, '').replace(/,/g, '')), // 숫자로 변환하여 전송
-      comment: commentInput,
-    };
+      setLoading(true); // 데이터 로딩 시작    
+      const jResponse = await requestServer('POST', JSON.stringify(jRequest));
+      setLoading(false);
 
-    setLoading(true); // 데이터 로딩 시작    
-    const jResponse = await requestServer('POST', JSON.stringify(jRequest));
-    setLoading(false);
-
-    if (jResponse.error_code === 0) {
-      openModal(Constants.MESSAGE_SUCESS_ADDED);
-      fetchIncomeHistory(); // 데이터 다시 가져오기
-      setAmountInput('');
-      setCommentInput('');
-    } else {
-      openModal(jResponse.error_message);
+      if (jResponse.error_code === 0) {
+        openModal(Constants.MESSAGE_SUCESS_ADDED);
+        fetchIncomeHistory(); // 데이터 다시 가져오기
+        setAmountInput('');
+        setCommentInput('');
+      } else {
+        openModal(jResponse.error_message);
+      }
+    } catch (error) {
+      setLoading(false); // 데이터 로딩 끝
+      openModal(error);
     }
   };
 
@@ -153,26 +163,31 @@ export default function AssetContent() {
       return;
     }
 
-    const jRequest = {
-      commandName: 'asset.updateIncome',
-      systemCode: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE,
-      userId: userId,
-      historyId: row.original.history_id,
-      amount: Number(amount), // 숫자로 변환
-      comment: row.values.comment,
-    };
+    try {
+      const jRequest = {
+        commandName: 'asset.updateIncome',
+        systemCode: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE,
+        userId: userId,
+        historyId: row.original.history_id,
+        amount: Number(amount), // 숫자로 변환
+        comment: row.values.comment,
+      };
 
-    setLoading(true); // 데이터 로딩 시작
-    const jResponse = await requestServer('POST', JSON.stringify(jRequest));
-    setLoading(false); // 데이터 로딩 끝
+      setLoading(true); // 데이터 로딩 시작
+      const jResponse = await requestServer('POST', JSON.stringify(jRequest));
+      setLoading(false); // 데이터 로딩 끝
 
-    openModal('Successfully updated.');
+      openModal('Successfully updated.');
 
-    if (jResponse.error_code === 0) {
-      fetchIncomeHistory(); // 데이터 다시 가져오기
-    } else {
-      openModal(jResponse.error_message);
-      fetchIncomeHistory(); // 실패 시 데이터 다시 가져오기
+      if (jResponse.error_code === 0) {
+        fetchIncomeHistory(); // 데이터 다시 가져오기
+      } else {
+        openModal(jResponse.error_message);
+        fetchIncomeHistory(); // 실패 시 데이터 다시 가져오기
+      }
+    } catch (error) {
+      setLoading(false); // 데이터 로딩 끝
+      openModal(error);
     }
   };
 
@@ -192,23 +207,28 @@ export default function AssetContent() {
 
     const historyId = tableDataRef.current[rowIndex].history_id;
 
-    const jRequest = {
-      commandName: 'asset.deleteIncome',
-      systemCode: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE,
-      userId: userId,
-      historyId: historyId,
-    };
+    try {
+      const jRequest = {
+        commandName: 'asset.deleteIncome',
+        systemCode: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE,
+        userId: userId,
+        historyId: historyId,
+      };
 
-    setLoading(true); // 데이터 로딩 시작
-    const jResponse = await requestServer('POST', JSON.stringify(jRequest));
-    setLoading(false); // 데이터 로딩 끝
+      setLoading(true); // 데이터 로딩 시작
+      const jResponse = await requestServer('POST', JSON.stringify(jRequest));
+      setLoading(false); // 데이터 로딩 끝
 
-    if (jResponse.error_code === 0) {
-      openModal(Constants.MESSAGE_SUCCESS_DELEE);
-      fetchIncomeHistory(); // 데이터 다시 가져오기
-    } else {
-      openModal(jResponse.error_message);
-      fetchIncomeHistory(); // 실패 시 데이터 다시 가져오기
+      if (jResponse.error_code === 0) {
+        openModal(Constants.MESSAGE_SUCCESS_DELEE);
+        fetchIncomeHistory(); // 데이터 다시 가져오기
+      } else {
+        openModal(jResponse.error_message);
+        fetchIncomeHistory(); // 실패 시 데이터 다시 가져오기
+      }
+    } catch (error) {
+      setLoading(false); // 데이터 로딩 끝
+      openModal(error);
     }
   };
 
