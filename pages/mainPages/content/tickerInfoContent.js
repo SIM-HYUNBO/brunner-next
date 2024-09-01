@@ -132,7 +132,7 @@ export default function TickerInfoContent({ tickerCode: tickerCode }) {
         </div>
         <input ref={currentPriceTextColorRef} className={`text-center text-5xl text-gray bg-slate-50 dark:bg-slate-800 border border-slate-400 mt-10 mb-2 h-100 w-[100%] px-5 py-3`}
           type="text"
-          value={currentPriceRef.current}
+          value={`${currentPriceRef.current} (USD)`}
         />
         <button
           className="bg-indigo-500 text-white py-2 px-4 h-10 mb-5"

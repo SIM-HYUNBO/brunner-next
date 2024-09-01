@@ -14,11 +14,9 @@ export default function HomeContent() {
           Asset management
         </h1>
         <div className="main-governing-text">
-          Effective Management: The Key to Wealth and Stock Market Success
-          Achieve Wealth Through Smart Management and Market Engagement
-          Unlock Wealth: Manage Well, Stay Engaged, and Use Brunner Safely
-          Master Management for Wealth: Stay Engaged in the Stock Market
-          Stay in the Market, Communicate, and Get Wealthy with Brunner-Next
+          The key to success in wealth and the stock market is consistent market participation and smart management. <br />
+          Manage your assets well and stay engaged in the stock market by using Brunner-Next.<br />
+          Stay in the market, connect and get rich with Brunner-Next.
         </div>
         <div className="flex flex-col">
           <div className="dark:text-slate-400 mb-2">
