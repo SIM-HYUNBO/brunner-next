@@ -70,7 +70,9 @@ export default async (req, res) => {
         jResponse._durationMs = durationMs;
         res.send(`${JSON.stringify(jResponse)}`);
 
-        await saveTxnHistory(remoteIp, txnId, jRequest, jResponse);
+        if (commandName !== Constants.COMMAND_STOCK_GET_REALTIME_STOCK_INFO)
+            await saveTxnHistory(remoteIp, txnId, jRequest, jResponse);
+
         logger.warn(`END TXN ${(!commandName) ? "" : commandName} in ${durationMs} milliseconds.\n`)
     }
 }
