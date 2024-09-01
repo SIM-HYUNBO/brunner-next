@@ -1,9 +1,9 @@
 `use strict`
 
-import Layout from './../../components/layout'
+import Layout from '@/components/layout'
 import Head from 'next/head'
-import BodySection from '../../components/bodySection'
-import requestServer from './../../components/requestServer'
+import BodySection from '@/components/bodySection'
+import requestServer from '@/components/requestServer'
 import { useRouter } from 'next/router'
 import { useState } from 'react'
 import BrunnerMessageBox from '@/components/BrunnerMessageBox'
@@ -81,7 +81,7 @@ export default function Signup() {
   const requestSignup = async () => {
     var jRequest = {};
     var jResponse = null;
-    
+
     try {
       jRequest.commandName = Constants.COMMAND_SECURITY_SIGNUP;
       jRequest.systemCode = process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE;

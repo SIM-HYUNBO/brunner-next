@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect, useCallback } from 'react';
 import dynamic from 'next/dynamic';
-import requestServer from '../../../components/requestServer';
+import requestServer from '@/components/requestServer';
 import BrunnerMessageBox from '@/components/BrunnerMessageBox'
 import * as Constants from '@/components/constants';
 

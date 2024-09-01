@@ -2,7 +2,7 @@
 
 import HomeContentAnimation from './content-animation/homeContentAnimation'
 import { useRouter } from 'next/router'
-import * as userInfo from './../../../components/userInfo'
+import * as userInfo from '@/components/userInfo'
 
 export default function HomeContent() {
   const router = useRouter()
