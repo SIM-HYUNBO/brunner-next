@@ -65,7 +65,7 @@ export default function TickerInfoContent({ tickerCode: tickerCode }) {
   const getTickerInfo = async () => {
     try {
       const jRequest = {
-        commandName: Constants.COMMAND_STOCK_GET_STOCK_INFO,
+        commandName: Constants.COMMAND_STOCK_GET_TICKER_INFO,
         systemCode: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE,
         tickerCode: tickerCode,
       };
