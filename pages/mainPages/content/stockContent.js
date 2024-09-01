@@ -813,7 +813,7 @@ const StockContent = () => {
                                             handleTickerChange({ key: searchItem.value, value: searchItem.value });
                                             handleRecentSearchClick(searchItem.value)
                                         }}
-                                        className={`cursor-pointer p-2 hover:bg-indigo-500 hover:text-white ${selectedTicker?.value === searchItem.value
+                                        className={`cursor-pointer p-2 hover:bg-indigo-500 hover:text-white border border-slate-300 dark:border-slate-600 ${selectedTicker?.value === searchItem.value
                                             ? "bg-indigo-500 text-white"
                                             : ""
                                             }`}
@@ -840,7 +840,7 @@ const StockContent = () => {
                                     onClick={() => {
                                         handleTickerChange(option);
                                     }}
-                                    className={`cursor-pointer p-2 hover:bg-indigo-500 hover:text-white ${selectedTicker?.value === option.value
+                                    className={`cursor-pointer p-2 hover:bg-indigo-500 border border-slate-300 dark:border-slate-600 hover:text-white ${selectedTicker?.value === option.value
                                         ? "bg-indigo-500 text-white"
                                         : ""
                                         }`}
@@ -877,7 +877,7 @@ const StockContent = () => {
                         className={`text-center bg-slate-50 dark:bg-slate-800 border border-slate-400 h-10 w-[30%]`}
                         type="text"
                         value={currentPriceRef.current}
-                        placeholder="Current Price"
+                        placeholder="Current Price (USD)"
                     />
                     <button
                         className="bg-indigo-500 text-white py-2 px-4 ml-1 h-10"
