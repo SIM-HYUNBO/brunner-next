@@ -68,6 +68,7 @@ function Board(boardInfo) {
                 openModal(jResponse.error_message);
             }
         } catch (error) {
+            setLoading(false); // 데이터 로딩 끝
             openModal(error);
         }
     };

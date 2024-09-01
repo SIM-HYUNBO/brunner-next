@@ -279,9 +279,11 @@ const StockContent = () => {
                 limit: '',
             };
 
-            setLoading(true);
             setCurrentTickerStockDataRef(null);
+
+            setLoading(true);
             const jResponse = await requestServer('POST', JSON.stringify(jRequest));
+            setLoading(false);
 
             if (jResponse.error_code === 0) {
                 setCurrentTickerStockDataRef(jResponse.stockInfo);

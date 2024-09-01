@@ -72,6 +72,7 @@ export default function TickerInfoContent({ tickerCode: tickerCode }) {
 
       setLoading(true);
       const jResponse = await requestServer('POST', JSON.stringify(jRequest));
+      setLoading(false);
 
       if (jResponse.error_code === 0) {
 
