@@ -5,7 +5,7 @@ import { useState, useRef, useEffect } from 'react'
 import requestServer from '@/components/requestServer'
 import Board from '@/pages/mainPages/content/boardContent'
 import RealtimeChart from './realtimeChart';
-import Constants from '@/components/constants'
+import * as Constants from '@/components/constants'
 
 export default function TickerInfoContent({ tickerCode: tickerCode }) {
   const [loading, setLoading] = useState(false); // 로딩 상태 추가
@@ -65,7 +65,7 @@ export default function TickerInfoContent({ tickerCode: tickerCode }) {
   const getTickerInfo = async () => {
     try {
       const jRequest = {
-        commandName: 'stock.getTickerInfo',
+        commandName: Constants.COMMAND_STOCK_GET_STOCK_INFO,
         systemCode: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE,
         tickerCode: tickerCode,
       };

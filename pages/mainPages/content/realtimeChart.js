@@ -52,7 +52,13 @@ const RealtimeChart = ({ updateCurrentPrice }) => {
         setSeries(newVal);
     }
 
-    const [intervalTime, setIntervalTime] = useState(30000); // 인터벌 시간 상태 (밀리초)
+    const [intervalTime, setIntervalTime] = useState(1000); // 인터벌 시간 상태 (밀리초)
+    const intervalTimeRef = useRef(intervalTime);
+    const setIntervalTimeRef = (newVal) => {
+        setIntervalTime(newVal);
+        intervalTimeRef.current = newVal;
+    }
+
     const [intervalId, setIntervalId] = useState(null);
 
     /* 차트 색깔 결정 
@@ -229,7 +235,7 @@ const RealtimeChart = ({ updateCurrentPrice }) => {
             if (!currentTickerRef.current) return;
 
             const jRequest = {
-                commandName: 'stock.getRealtimeStockInfo',
+                commandName: COMMAND_STOCK_GET_REALTIME_STOCK_INFO,
                 stocksTicker: currentTickerRef.current,
             };
 
@@ -242,8 +248,8 @@ const RealtimeChart = ({ updateCurrentPrice }) => {
                     ; // 과거 데이터는 낮시간에 발생 하므로 표시하지 않음
             } else {
                 if (jResponse.error_code === 429) { // Too Many Request error 처리
-                    setIntervalTime(prevTime => prevTime + 1000);
-                    openModal(JSON.stringify(jResponse.error_message));
+                    setIntervalTimeRef(intervalTimeRef.current + 1000);
+                    console.log(JSON.stringify(`${jResponse.error_message} Refresh inteval will be increased to ${intervalTimeRef.current} ms`));
                 }
             }
         } catch (err) {
@@ -256,7 +262,7 @@ const RealtimeChart = ({ updateCurrentPrice }) => {
 
             /* 최근 데이터 100개 요청 */
             const jRequest = {
-                commandName: 'stock.getLatestStockInfo',
+                commandName: Constants.COMMAND_STOCK_GET_LATEST_STOCK_INFO,
                 stocksTicker: currentTickerRef.current,
                 dataCount: -100
             };

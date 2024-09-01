@@ -210,7 +210,7 @@ const StockContent = () => {
     const fetchTickerList = async () => {
         try {
             const jRequest = {
-                commandName: 'stock.getTickerList',
+                commandName: Constants.COMMAND_STOCK_GET_TICKER_LIST,
                 systemCode: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE
             };
 
