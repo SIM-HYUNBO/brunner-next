@@ -174,6 +174,30 @@ const getTickerInfo = async (txnId, jRequest) => {
             return jResponse;
         }
 
+        // ticker 최신 news 조회
+        const apiUrl = `https://api.polygon.io/v3/reference/tickers/${jRequest.tickerCode}?apiKey=${process.env.POLYGON_API_KEY}`
+        const response = await fetch(apiUrl);
+        if (!response.ok) {
+            jResponse.error_code = response.status;
+            jResponse.error_message = response.statusText;
+            return jResponse;
+        }
+        else {
+            const data = await response.json();
+            if (data.results) {
+                jResponse.tickerInfo.tickerNewsContent = `${jResponse.tickerInfo.tickerNewsContent}
+
+${JSON.stringify(data.results, null, 2)}
+                `;
+                jResponse.error_code = 0; // exception
+                jResponse.error_message = data.status;
+            }
+            else {
+                jResponse.error_code = -1; // exception
+                jResponse.error_message = data.status;
+            }
+        }
+
         jResponse.error_code = 0;
         jResponse.error_message = Constants.EMPTY_STRING;
     } catch (e) {
