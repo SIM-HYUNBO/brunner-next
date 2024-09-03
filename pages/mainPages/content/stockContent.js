@@ -509,7 +509,7 @@ const StockContent = () => {
             },
             series: [
                 {
-                    name: 'Price (USD)',
+                    name: 'Price',
                     data: priceData,
                 },
                 {
@@ -710,7 +710,7 @@ const StockContent = () => {
             },
             series: [
                 {
-                    name: 'Price (USD)',
+                    name: 'Price',
                     data: priceData,
                 },
                 {
@@ -877,7 +877,7 @@ const StockContent = () => {
                         className={`text-center bg-slate-50 dark:bg-slate-800 border border-slate-400 h-10 w-[30%]`}
                         type="text"
                         value={currentPriceRef.current}
-                        placeholder="Current Price (USD)"
+                        placeholder="Current Price"
                     />
                     <button
                         className="bg-indigo-500 text-white py-2 px-4 ml-1 h-10"
