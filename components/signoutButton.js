@@ -44,7 +44,7 @@ export default function SignoutButton() {
     var jRequest = {};
     var jResponse = null;
 
-    jRequest.commandName = Constants.COMMAND_SECURITY_SIGNOUT.SIGNOUT;
+    jRequest.commandName = Constants.COMMAND_SECURITY_SIGNOUT;
     var userInfo = process.env.userInfo ? process.env.userInfo : null;
 
     jRequest.userId = userInfo?.USER_ID;
