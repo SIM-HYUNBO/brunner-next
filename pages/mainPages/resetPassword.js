@@ -48,14 +48,19 @@ export default function ResetPassword() {
     setUserId(e.target.value);
   };
 
-  const [registerNo, setRegisterNo] = useState('');
-  const changeRegisterNoValue = (e) => {
-    setRegisterNo(e.target.value);
-  };
-
   const [phoneNumber, setPhoneNumber] = useState('');
   const changePhoneNumberValue = (e) => {
     setPhoneNumber(e.target.value);
+  };
+
+  const [email, setEmail] = useState('');
+  const changeEMailValue = (e) => {
+    setEmail(e.target.value);
+  };
+
+  const [authCode, setAuthCode] = useState('');
+  const changeAuthCode = (e) => {
+    setAuthCode(e.target.value);
   };
 
   const [newPassword, setNewPassword] = useState('');
@@ -68,6 +73,34 @@ export default function ResetPassword() {
     setConfirmPassword(e.target.value);
   };
 
+  // 1. 인증코드를 이메일로 발송요청 
+  const sendEMailAuthCode = async () => {
+    // id
+    // phone-no
+    // eMail
+    // 요청
+
+    var jRequest = {};
+    var jResponse = null;
+
+    try {
+      jRequest.commandName = Constants.COMMAND_SECURITY_SEND_EMAIL_AUTHCODE;
+      jRequest.systemCode = process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE;
+      jRequest.userId = userId;
+      jRequest.phoneNumber = phoneNumber;
+      jRequest.email = email; // 추가
+
+      setLoading(true); // 데이터 로딩 시작
+      jResponse = await requestServer('POST', JSON.stringify(jRequest));
+      setLoading(false); // 데이터 로딩 끝
+      openModal(jResponse.error_message);
+    } catch (error) {
+      setLoading(false); // 데이터 로딩 끝
+      openModal(error);
+    }
+
+  }
+
   const requestResetPassword = async () => {
     var jRequest = {};
     var jResponse = null;
@@ -76,15 +109,21 @@ export default function ResetPassword() {
       jRequest.commandName = Constants.COMMAND_SECURITY_RESET_PASSWORD;
       jRequest.systemCode = process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE;
       jRequest.userId = userId;
-      jRequest.registerNo = registerNo;
       jRequest.phoneNumber = phoneNumber;
+      jRequest.email = email; // 추가
+      jRequest.authCode = authCode // 추가
       jRequest.newPassword = newPassword;
       jRequest.confirmPassword = confirmPassword;
+
 
       setLoading(true); // 데이터 로딩 시작
       jResponse = await requestServer('POST', JSON.stringify(jRequest));
       setLoading(false); // 데이터 로딩 끝
-      openModal(jResponse.error_message);
+      var result = await openModal(jResponse.error_message);
+      if (jResponse.error_code == 0 && result) {
+        router.push('/mainPages/signin');
+      }
+
     } catch (error) {
       setLoading(false); // 데이터 로딩 끝
       openModal(error);
@@ -122,10 +161,22 @@ export default function ResetPassword() {
                 <label htmlFor="phone-number" className="leading-7 text-sm text-gray-400">Phone Number</label>
                 <input type="text" id="phone-number" name="Id" onChange={(e) => changePhoneNumberValue(e)} className="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out" />
               </div>
-              <div className="relative mb-4">
-                <label htmlFor="register-number" className="leading-7 text-sm text-gray-400">Register Number</label>
-                <input type="text" id="register-number" name="Id" onChange={(e) => changeRegisterNoValue(e)} className="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out" />
+              <div className="relative mb-4 mr-5 w-80">
+                <label htmlFor="email" className="leading-7 text-sm text-gray-400">E-Mail</label>
+                <input type="email"
+                  className="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"
+                  onChange={(e) => changeEMailValue(e)}
+                />
+                <button onClick={() => sendEMailAuthCode()} className="text-white bg-indigo-500 border-0 py-2 px-4 focus:outline-none hover:bg-indigo-600 rounded text-lg">Send Code</button>
               </div>
+              <div className="relative mb-4 mr-5 w-40">
+                <label htmlFor="email" className="leading-7 text-sm text-gray-400">Authorization Code</label>
+                <input type="text"
+                  className="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"
+                  onChange={(e) => changeAuthCode(e)}
+                />
+              </div>
+
               <div className="relative mb-4">
                 <label htmlFor="new-password" className="leading-7 text-sm text-gray-400">New Password</label>
                 <input type="password" id="new-password" name="new-password"

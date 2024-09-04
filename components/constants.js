@@ -33,6 +33,7 @@ export const
     COMMAND_BOARD_GET_POST_LIST = "board.getPostList",
 
     COMMAND_SERVICESQL_LOAD_ALL_SQL = "serviceSQL.loadAllSQL",
+    COMMAND_SECURITY_SEND_EMAIL_AUTHCODE = "security.sendEMailAuthCode",
     COMMAND_SECURITY_RESET_PASSWORD = "security.resetPassword",
     COMMAND_SECURITY_SIGNOUT = "security.signout",
     COMMAND_SECURITY_SIGNUP = "security.signup",

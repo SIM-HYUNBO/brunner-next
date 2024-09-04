@@ -98,7 +98,10 @@ export default function Signup() {
       setLoading(false); // 데이터 로딩 끝
 
       if (jResponse.error_code == 0) {
-        openModal(Constants.MESSAGE_SUCCESS_SIGNUP);
+        var result = await openModal(Constants.MESSAGE_SUCCESS_SIGNUP);
+        if (result) {
+          router.push('/mainPages/signin');
+        }
       } else {
         openModal(jResponse.error_message);
       }
