@@ -139,8 +139,8 @@ export default function ResetPassword() {
       jRequest.systemCode = process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE;
       jRequest.userId = userId;
       jRequest.phoneNumber = phoneNumber;
-      jRequest.email = email; 
-      jRequest.authCode = authCode 
+      jRequest.email = email;
+      jRequest.authCode = authCode
       jRequest.newPassword = newPassword;
       jRequest.confirmPassword = confirmPassword;
 
@@ -177,50 +177,59 @@ export default function ResetPassword() {
         <BodySection className="text-gray-600 body-font">
           <div className="container px-5 py-14 mx-auto flex flex-wrap items-center">
             <div className="lg:w-3/5 md:w-1/2 md:pr-16 lg:pr-0 pr-0">
-              <h1 className="title-font font-medium text-3xl text-gray-900">Forgot your password? </h1>
-              <p className="leading-relaxed mt-4">Enter your ID, phone number, and register number to reset password.</p>
+              <h1 className="title-font font-medium text-3xl text-gray-900">Protect your important information.</h1>
+              <p className="mt-2">Enter information to leave or reset password.</p>
             </div>
-            <div className="lg:flex-grow md:w-1/2 lg:pr-24 md:pr-16 flex flex-col md:items-start md:text-left mb-16 md:mb-0 items-center text-center">
-              <h2 className="text-gray-900 text-lg font-medium title-font mb-5">Reset password</h2>
-              <div className="relative mb-4">
-                <label htmlFor="id" className="text-gray-400 leading-relaxed mt-4">ID</label>
+            <div className="lg:flex-grow md:w-1/2 flex flex-col md:items-start md:text-left mb-16 md:mb-0 items-center text-center mt-5">
+              <div className="relative w-1/2">
+                <label htmlFor="id" className="text-gray-400">ID</label>
                 <input type="text" id="id" name="Id" onChange={(e) => changeUserIdValue(e)} className="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out" />
-              </div>
-              <div className="relative mb-4">
-                <label htmlFor="phone-number" className="leading-7 text-sm text-gray-400">Phone Number</label>
+                <label htmlFor="phone-number" className="text-sm text-gray-400 w-full">Phone Number</label>
                 <input type="text" id="phone-number" name="Id" onChange={(e) => changePhoneNumberValue(e)} className="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out" />
+                <label htmlFor="email" className="text-sm text-gray-400 w-full">E-Mail</label>
+                <input type="email" onChange={(e) => changeEMailValue(e)} className="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out" />
+                <div className="relative w-full">
+                  <button onClick={() => sendEMailAuthCode()} className="text-white bg-indigo-500 border-0 py-2 px-4 focus:outline-none hover:bg-indigo-600 rounded text-lg mt-2">
+                    Send Code
+                  </button>
+                </div>
               </div>
-              <div className="relative mb-4 mr-5 w-80">
-                <label htmlFor="email" className="leading-7 text-sm text-gray-400">E-Mail</label>
-                <input type="email"
-                  className="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"
-                  onChange={(e) => changeEMailValue(e)}
-                />
-                <button onClick={() => sendEMailAuthCode()} className="text-white bg-indigo-500 border-0 py-2 px-4 focus:outline-none hover:bg-indigo-600 rounded text-lg">Send Code</button>
-              </div>
-              <div className="relative mb-4 mr-5 w-40">
-                <label htmlFor="email" className="leading-7 text-sm text-gray-400">Authorization Code</label>
+              <div className="relative mt-2 w-1/2">
+                <label htmlFor="email"
+                  className="text-sm text-gray-400 w-full">
+                  Authorization Code
+                </label>
                 <input type="text"
-                  className="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"
+                  className="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 leading-8 transition-colors duration-200 ease-in-out"
                   onChange={(e) => changeAuthCode(e)}
                 />
-              <button onClick={() => requestDeleteAccount()} className="text-white bg-indigo-500 border-0 py-2 px-4 focus:outline-none hover:bg-indigo-600 rounded text-lg mt-2">Delete account</button>
+                <button onClick={() => requestDeleteAccount()}
+                  className="text-white bg-pink-500 border-0 py-2 px-4 focus:outline-none hover:bg-indigo-600 rounded text-lg mt-2">
+                  Delete account
+                </button>
               </div>
-
-              <div className="relative mb-4">
-                <label htmlFor="new-password" className="leading-7 text-sm text-gray-400">New Password</label>
+              <div className="relative mt-6 w-1/2">
+                <label htmlFor="new-password"
+                  className="text-sm text-gray-400">
+                  New Password
+                </label>
                 <input type="password" id="new-password" name="new-password"
                   className="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"
-                  onChange={(e) => changePasswordValue(e)}></input>
-              </div>
-              <div className="relative mb-4">
-                <label htmlFor="confirm-password" className="leading-7 text-sm text-gray-400">Confirm Password</label>
-                <input type="password" id="confirm-password" name="confirm-password"
+                  onChange={(e) => changePasswordValue(e)}>
+                </input>
+                <label htmlFor="confirm-password"
+                  className="text-sm text-gray-400">
+                  Confirm Password
+                </label>
+                <input type="password"
                   className="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"
-                  onChange={(e) => changeConfirmPasswordValue(e)}></input>
+                  onChange={(e) => changeConfirmPasswordValue(e)}>
+                </input>
               </div>
-              <button onClick={() => requestResetPassword()} className="text-white bg-indigo-500 border-0 py-2 px-4 focus:outline-none hover:bg-indigo-600 rounded text-lg">Reset password</button>
-              <p className="text-xs text-gray-500 mt-3">Protect your important information.</p>
+              <button onClick={() => requestResetPassword()}
+                className="text-white bg-indigo-500 border-0 py-2 px-4 focus:outline-none hover:bg-indigo-600 rounded text-lg mt-2">
+                Reset password
+              </button>
             </div>
           </div>
         </BodySection>
