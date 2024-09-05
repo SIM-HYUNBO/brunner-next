@@ -464,7 +464,7 @@ Please check the received email and enter the code.`;
 
             }
         }
-        else if (select_TB_COR_USER_MST_01.rowCount <= 0) {
+        else if (select_TB_COR_USER_MST_02.rowCount <= 0) {
             jResponse.error_code = -1;
             jResponse.error_message = `The user Id not exist.`;
             return jResponse;
