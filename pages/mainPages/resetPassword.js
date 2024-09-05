@@ -130,6 +130,35 @@ export default function ResetPassword() {
     }
   };
 
+  const requestDeleteAccount = async () => {
+    var jRequest = {};
+    var jResponse = null;
+
+    try {
+      jRequest.commandName = Constants.COMMAND_SECURITY_DELETE_ACCOUNT;
+      jRequest.systemCode = process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE;
+      jRequest.userId = userId;
+      jRequest.phoneNumber = phoneNumber;
+      jRequest.email = email; 
+      jRequest.authCode = authCode 
+      jRequest.newPassword = newPassword;
+      jRequest.confirmPassword = confirmPassword;
+
+
+      setLoading(true); // 데이터 로딩 시작
+      jResponse = await requestServer('POST', JSON.stringify(jRequest));
+      setLoading(false); // 데이터 로딩 끝
+      var result = await openModal(jResponse.error_message);
+      if (jResponse.error_code == 0 && result) {
+        router.push('/mainPages/signin');
+      }
+
+    } catch (error) {
+      setLoading(false); // 데이터 로딩 끝
+      openModal(error);
+    }
+  };
+
   return (
     <>
       <BrunnerMessageBox
@@ -175,6 +204,7 @@ export default function ResetPassword() {
                   className="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"
                   onChange={(e) => changeAuthCode(e)}
                 />
+              <button onClick={() => requestDeleteAccount()} className="text-white bg-indigo-500 border-0 py-2 px-4 focus:outline-none hover:bg-indigo-600 rounded text-lg mt-2">Delete account</button>
               </div>
 
               <div className="relative mb-4">
