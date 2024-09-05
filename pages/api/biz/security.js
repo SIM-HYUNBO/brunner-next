@@ -167,7 +167,7 @@ const signin = async (txnId, jRequest) => {
         jResponse.commanaName = jRequest.commandName;
 
         var sql = null
-        sql = await serviceSQL.getSQL00(`select_TB_COR_USER_MST`, 1);
+        sql = await serviceSQL.getSQL00(`select_TB_COR_USER_MST`, 2);
         var select_TB_COR_USER_MST_02 = await database.executeSQL(sql,
             [
                 jRequest.systemCode,
@@ -245,7 +245,7 @@ const resetPassword = async (txnId, jRequest) => {
             return jResponse;
         }
 
-        var sql = await serviceSQL.getSQL00(`select_TB_COR_USER_MST`, 1);
+        var sql = await serviceSQL.getSQL00(`select_TB_COR_USER_MST`, 2);
         var select_TB_COR_USER_MST_02 = await database.executeSQL(sql,
             [
                 jRequest.systemCode,
@@ -334,7 +334,7 @@ const deleteAccount = async (txnId, jRequest) => {
             return jResponse;
         }
 
-        var sql = await serviceSQL.getSQL00(`select_TB_COR_USER_MST`, 1);
+        var sql = await serviceSQL.getSQL00(`select_TB_COR_USER_MST`, 2);
         var select_TB_COR_USER_MST_02 = await database.executeSQL(sql,
             [
                 jRequest.systemCode,
