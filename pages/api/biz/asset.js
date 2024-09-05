@@ -48,8 +48,6 @@ const addIncome = async (txnId, jRequest) => {
                 jRequest.comment
             ]);
 
-        // logger.info(`RESULT:\n${JSON.stringify(select_TB_COR_USER_MST_01.rows[0])}\n`);
-
         if (insert_TB_COR_INCOME_HIST_01.rowCount == 1) {
             jResponse.error_code = 0;
             jResponse.error_message = Constants.EMPTY_STRING;
@@ -110,8 +108,6 @@ const deleteIncome = async (txnId, jRequest) => {
                 jRequest.userId
             ]);
 
-        // logger.info(`RESULT:\n${JSON.stringify(select_TB_COR_USER_MST_01.rows[0])}\n`);
-
         if (delete_TB_COR_INCOME_HIST_01.rowCount === 1) {
             jResponse.error_code = 0;
             jResponse.error_message = Constants.EMPTY_STRING;
@@ -144,8 +140,6 @@ const updateIncome = async (txnId, jRequest) => {
                 jRequest.userId,
                 jRequest.historyId
             ]);
-
-        // logger.info(`RESULT:\n${JSON.stringify(select_TB_COR_USER_MST_01.rows[0])}\n`);
 
         if (update_TB_COR_INCOME_HIST_01.rowCount === 1) {
             jResponse.error_code = 0;

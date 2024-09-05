@@ -168,24 +168,24 @@ const signin = async (txnId, jRequest) => {
 
         var sql = null
         sql = await serviceSQL.getSQL00(`select_TB_COR_USER_MST`, 1);
-        var select_TB_COR_USER_MST_01 = await database.executeSQL(sql,
+        var select_TB_COR_USER_MST_02 = await database.executeSQL(sql,
             [
                 jRequest.systemCode,
                 jRequest.userId
             ]);
 
-        if (select_TB_COR_USER_MST_01.rows.length == 1) {
-            logger.info(`RESULT:\n${JSON.stringify(select_TB_COR_USER_MST_01.rows[0])}\n`);
+        if (select_TB_COR_USER_MST_02.rows.length == 1) {
+            logger.info(`RESULT:\n${JSON.stringify(select_TB_COR_USER_MST_02.rows[0])}\n`);
 
             // 비밀번호 비교
-            const storedHashedPassword = select_TB_COR_USER_MST_01.rows[0].password;
+            const storedHashedPassword = select_TB_COR_USER_MST_02.rows[0].password;
             const isMatch = await bcrypt.compare(jRequest.password, storedHashedPassword);
             if (isMatch) {
                 jResponse.error_code = 0;
                 jResponse.error_message = Constants.EMPTY_STRING;
 
-                jResponse.userId = select_TB_COR_USER_MST_01.rows[0].user_id;
-                jResponse.userName = select_TB_COR_USER_MST_01.rows[0].user_name;
+                jResponse.userId = select_TB_COR_USER_MST_02.rows[0].user_id;
+                jResponse.userName = select_TB_COR_USER_MST_02.rows[0].user_name;
             } else {
                 jResponse.error_code = -1;
                 jResponse.error_message = `Incorrect password`;
@@ -246,30 +246,30 @@ const resetPassword = async (txnId, jRequest) => {
         }
 
         var sql = await serviceSQL.getSQL00(`select_TB_COR_USER_MST`, 1);
-        var select_TB_COR_USER_MST_01 = await database.executeSQL(sql,
+        var select_TB_COR_USER_MST_02 = await database.executeSQL(sql,
             [
                 jRequest.systemCode,
                 jRequest.userId
             ]);
 
-        if (select_TB_COR_USER_MST_01.rowCount === 1) {
-            logger.info(`RESULT:\n${JSON.stringify(select_TB_COR_USER_MST_01.rows[0])}\n`);
+        if (select_TB_COR_USER_MST_02.rowCount === 1) {
+            logger.info(`RESULT:\n${JSON.stringify(select_TB_COR_USER_MST_02.rows[0])}\n`);
         }
-        else if (select_TB_COR_USER_MST_01.rowCount <= 0) {
+        else if (select_TB_COR_USER_MST_02.rowCount <= 0) {
             jResponse.error_code = -1;
             jResponse.error_message = `The user Id not exist.`;
             return jResponse;
         }
 
-        if (jRequest.authCode !== select_TB_COR_USER_MST_01.rows[0].auth_code) {
+        if (jRequest.authCode !== select_TB_COR_USER_MST_02.rows[0].auth_code) {
             jResponse.error_code = -2;
             jResponse.error_message = `The invalid user authorization code. please check email again.`;
             return jResponse;
         }
 
-        logger.info(`OLD PASSWORD:${select_TB_COR_USER_MST_01.rows[0].password} NEW PASSWORD: ${jRequest.newPassword}\n`);
+        logger.info(`OLD PASSWORD:${select_TB_COR_USER_MST_02.rows[0].password} NEW PASSWORD: ${jRequest.newPassword}\n`);
 
-        const hashedCurrentPassword = select_TB_COR_USER_MST_01.rows[0].password;
+        const hashedCurrentPassword = select_TB_COR_USER_MST_02.rows[0].password;
         const isMatch = await bcrypt.compare(jRequest.newPassword, hashedCurrentPassword);
         if (isMatch) {
             jResponse.error_code = -1;
@@ -335,22 +335,22 @@ const deleteAccount = async (txnId, jRequest) => {
         }
 
         var sql = await serviceSQL.getSQL00(`select_TB_COR_USER_MST`, 1);
-        var select_TB_COR_USER_MST_01 = await database.executeSQL(sql,
+        var select_TB_COR_USER_MST_02 = await database.executeSQL(sql,
             [
                 jRequest.systemCode,
                 jRequest.userId
             ]);
 
-        if (select_TB_COR_USER_MST_01.rowCount === 1) {
-            logger.info(`RESULT:\n${JSON.stringify(select_TB_COR_USER_MST_01.rows[0])}\n`);
+        if (select_TB_COR_USER_MST_02.rowCount === 1) {
+            logger.info(`RESULT:\n${JSON.stringify(select_TB_COR_USER_MST_02.rows[0])}\n`);
         }
-        else if (select_TB_COR_USER_MST_01.rowCount <= 0) {
+        else if (select_TB_COR_USER_MST_02.rowCount <= 0) {
             jResponse.error_code = -1;
             jResponse.error_message = `The user Id not exist.`;
             return jResponse;
         }
 
-        if (jRequest.authCode !== select_TB_COR_USER_MST_01.rows[0].auth_code) {
+        if (jRequest.authCode !== select_TB_COR_USER_MST_02.rows[0].auth_code) {
             jResponse.error_code = -2;
             jResponse.error_message = `The invalid user authorization code. please check email again.`;
             return jResponse;
@@ -408,19 +408,17 @@ const sendEMailAuthCode = async (txnId, jRequest) => {
 
         }
 
-        var sql = await serviceSQL.getSQL00(`select_TB_COR_USER_MST`, 2);
-        var select_TB_COR_USER_MST_02 = await database.executeSQL(sql,
+        var sql = await serviceSQL.getSQL00(`select_TB_COR_USER_MST`, 3);
+        var select_TB_COR_USER_MST_03 = await database.executeSQL(sql,
             [
                 jRequest.systemCode,
                 jRequest.userId
             ]);
 
-        if (select_TB_COR_USER_MST_02.rowCount === 1) {
-            logger.info(`RESULT:\n${JSON.stringify(select_TB_COR_USER_MST_02.rows[0])}\n`);
-
+        if (select_TB_COR_USER_MST_03.rowCount === 1) {
             // ID, 전화번호, 이메일주소가 맞늕지 확인 후
-            if (select_TB_COR_USER_MST_02.rows[0].phone_number !== jRequest.phoneNumber ||
-                select_TB_COR_USER_MST_02.rows[0].email_id !== jRequest.email) {
+            if (select_TB_COR_USER_MST_03.rows[0].phone_number !== jRequest.phoneNumber ||
+                select_TB_COR_USER_MST_03.rows[0].email_id !== jRequest.email) {
 
                 // 사용자 정보 불일치 오류 - 사용자 전화번호와 이메일 주소 확인 메시지
                 jResponse.error_code = -1;
@@ -435,7 +433,7 @@ const sendEMailAuthCode = async (txnId, jRequest) => {
 
                 sendEmail({
                     from: 'brunner-admin@brunner-next.com', // 발신자 이메일 주소
-                    to: select_TB_COR_USER_MST_02.rows[0].email_id,  // 수신자 이메일 주소
+                    to: select_TB_COR_USER_MST_03.rows[0].email_id,  // 수신자 이메일 주소
                     subject: '[brunner-next]Your Authentication Code',
                     text: `Your user authentication code is: ${authCode}` // 이메일 본문
                 })
@@ -464,7 +462,7 @@ Please check the received email and enter the code.`;
 
             }
         }
-        else if (select_TB_COR_USER_MST_02.rowCount <= 0) {
+        else if (select_TB_COR_USER_MST_03.rowCount <= 0) {
             jResponse.error_code = -1;
             jResponse.error_message = `The user Id not exist.`;
             return jResponse;
