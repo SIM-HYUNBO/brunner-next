@@ -38,7 +38,7 @@ export const
     COMMAND_SECURITY_SIGNOUT = "security.signout",
     COMMAND_SECURITY_SIGNUP = "security.signup",
     COMMAND_SECURITY_SIGNIN = "security.signin",
-
+    COMMAND_SECURITY_DELETE_ACCOUNT= "security.deleteAccount",
     COMMAND_STOCK_GET_TICKER_LIST = "stock.getTickerList",
     COMMAND_STOCK_GET_TICKER_INFO = "stock.getTickerInfo",
     COMMAND_STOCK_GET_STOCK_INFO = "stock.getStockInfo",

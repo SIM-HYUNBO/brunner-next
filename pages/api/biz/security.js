@@ -24,6 +24,9 @@ const executeService = (txnId, jRequest) => {
             case Constants.COMMAND_SECURITY_RESET_PASSWORD:
                 jResponse = resetPassword(txnId, jRequest);
                 break;
+            case Constants.COMMAND_SECURITY_DELETE_ACCOUNT:
+                jResponse = deleteAccount(txnId, jRequest);
+                break;
             case Constants.COMMAND_SECURITY_SEND_EMAIL_AUTHCODE:
                 jResponse = sendEMailAuthCode(txnId, jRequest);
                 break;
@@ -212,11 +215,6 @@ const resetPassword = async (txnId, jRequest) => {
             jResponse.error_message = `${Constants.MESSAGE_REQUIRED_FIELD} [userId]`;
             return jResponse;
         }
-        if (jRequest.registerNo === ``) {
-            jResponse.error_code = -2;
-            jResponse.error_message = `${Constants.MESSAGE_REQUIRED_FIELD} [registerNo]`;
-            return jResponse;
-        }
         if (jRequest.phoneNumber === ``) {
             jResponse.error_code = -2;
             jResponse.error_message = `${Constants.MESSAGE_REQUIRED_FIELD} [phoneNumber]`;
@@ -299,8 +297,82 @@ const resetPassword = async (txnId, jRequest) => {
             } else {
                 jResponse.error_code = -2;
                 jResponse.error_message = `Failed to reset password. 
-                Please check the phone number and register number.`;
+                Please check the phone number and authoriztion code.`;
             }
+        }
+    } catch (e) {
+        logger.error(e);
+        jResponse.error_code = -3; // exception
+        jResponse.error_message = e.message
+    } finally {
+        return jResponse;
+    }
+};
+
+const deleteAccount = async (txnId, jRequest) => {
+    var jResponse = {};
+
+    try {
+        jResponse.commanaName = jRequest.commandName;
+        jResponse.userId = jRequest.userId;
+
+        if (jRequest.userId === ``) {
+            jResponse.error_code = -2;
+            jResponse.error_message = `${Constants.MESSAGE_REQUIRED_FIELD} [userId]`;
+            return jResponse;
+        }
+        if (jRequest.phoneNumber === ``) {
+            jResponse.error_code = -2;
+            jResponse.error_message = `${Constants.MESSAGE_REQUIRED_FIELD} [phoneNumber]`;
+            return jResponse;
+
+        }
+
+        if (jRequest.authCode === '') {
+            jResponse.error_code = -2;
+            jResponse.error_message = `${Constants.MESSAGE_REQUIRED_FIELD} [authCode]`;
+            return jResponse;
+        }
+
+        var sql = await serviceSQL.getSQL00(`select_TB_COR_USER_MST`, 1);
+        var select_TB_COR_USER_MST_01 = await database.executeSQL(sql,
+            [
+                jRequest.systemCode,
+                jRequest.userId
+            ]);
+
+        if (select_TB_COR_USER_MST_01.rowCount === 1) {
+            logger.info(`RESULT:\n${JSON.stringify(select_TB_COR_USER_MST_01.rows[0])}\n`);
+        }
+        else if (select_TB_COR_USER_MST_01.rowCount <= 0) {
+            jResponse.error_code = -1;
+            jResponse.error_message = `The user Id not exist.`;
+            return jResponse;
+        }
+
+        if (jRequest.authCode !== select_TB_COR_USER_MST_01.rows[0].auth_code) {
+            jResponse.error_code = -2;
+            jResponse.error_message = `The invalid user authorization code. please check email again.`;
+            return jResponse;
+        }
+
+        var sql = await serviceSQL.getSQL00(`update_TB_COR_USER_MST`, 3);
+        var update_TB_COR_USER_MST_03 = await database.executeSQL(sql,
+            [
+                jRequest.systemCode,
+                jRequest.userId,
+                jRequest.phoneNumber
+            ]);
+
+        logger.info(`RESULT: rowCount=${update_TB_COR_USER_MST_03.rowCount}\n`);
+        if (update_TB_COR_USER_MST_03.rowCount == 1) {
+            jResponse.error_code = 0;
+            jResponse.error_message = `The user account successfully deleted.`;
+            logger.info(`RESULT:\n${JSON.stringify(jResponse)}\n`);
+        } else {
+            jResponse.error_code = -2;
+            jResponse.error_message = `Failed to delete account. 
+            Please check the phone number and authoriztion code.`;
         }
     } catch (e) {
         logger.error(e);
