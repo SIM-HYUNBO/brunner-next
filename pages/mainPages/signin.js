@@ -140,8 +140,7 @@ export default function Signin() {
               </div>
               <button
                 className="text-white bg-indigo-500 border-0 py-2 px-4 focus:outline-none hover:bg-indigo-600 rounded text-lg"
-                onClick={requestSignin}
-              >
+                onClick={requestSignin}>
                 Sign in
               </button>
               <p className="text-xs text-gray-500 mt-10">
@@ -149,17 +148,18 @@ export default function Signin() {
               </p>
               <button
                 className="text-white bg-indigo-500 border-0 py-2 px-4 focus:outline-none hover:bg-indigo-600 rounded text-lg mt-5"
-                onClick={() => router.push('/mainPages/resetPassword')}
-              >
+                onClick={() => router.push('/mainPages/resetPassword')}>
                 Reset password
               </button>
+              <p className="text-xs text-gray-500 mt-10">
+                You can delete account.
+              </p>
               <button
                 className="text-white bg-indigo-500 border-0 py-2 px-4 focus:outline-none hover:bg-indigo-600 rounded text-lg mt-5"
-                onClick={() => router.push('/mainPages/resetPassword')}
-              >
+                onClick={() => router.push('/mainPages/resetPassword')}>
                 Leave & Delete Account
-              </button>            
-              </div>
+              </button>
+            </div>
           </div>
         </BodySection>
       </Layout>
