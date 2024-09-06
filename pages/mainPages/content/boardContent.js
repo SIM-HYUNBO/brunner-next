@@ -5,7 +5,6 @@ import requestServer from '@/components/requestServer';
 import * as userInfo from '@/components/userInfo';
 import BrunnerMessageBox from '@/components/BrunnerMessageBox';
 import * as Constants from '@/components/constants'
-import { constants } from 'fs/promises';
 
 function Board(boardInfo) {
     const [loading, setLoading] = useState(false); // 로딩 상태 추가

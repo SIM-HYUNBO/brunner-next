@@ -124,7 +124,7 @@ export default function AssetContent() {
       setLoading(false);
 
       if (jResponse.error_code === 0) {
-        openModal(Constants.MESSAGE_SUCESS_ADDED);
+        openModal(Constants.MESSAGE_SUCCESS_ADDED);
         fetchIncomeHistory(); // 데이터 다시 가져오기
         setAmountInput('');
         setCommentInput('');
@@ -309,10 +309,10 @@ export default function AssetContent() {
         Cell: ({ row }) => (
           <div className="flex justify-center">
             <button onClick={() => handleSave(row)} className="text-sm text-yellow-600 py-1 px-3 rounded">
-              저장
+              Save
             </button>
             <button onClick={() => handleDelete(row.index)} className="text-sm text-red-600 py-1 px-3 rounded">
-              삭제
+              Delete
             </button>
           </div>
         ),

@@ -41,6 +41,16 @@ export const getLoginName = () => {
   }
 }
 
+export const isAdminUser = () => {
+  var userInfo = null;
+
+  if (process.env.userInfo) {
+    userInfo = process.env.userInfo;
+
+    return !userInfo?.adminFlag ? '' : userInfo?.adminFlag;
+  }
+}
+
 export const isLogin = () => {
   return process.env.userInfo?.userId ? true : false;
 }

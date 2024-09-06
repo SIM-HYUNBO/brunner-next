@@ -2,15 +2,15 @@
 
 import Link from "next/link";
 import Image from 'next/image'
-import UserInfo from "./userInfo";
+import * as userInfo from '@/components/userInfo'
 
 export default function Header() {
-
+    const UserInfo = userInfo.default;
 
     return (
         <>
             <header className="text-gray-600 body-font mb-10">
-                <div className="container mx-auto flex flex-wrap p-5 flex-col md:flex-row items-center">
+                <div className="container mx-auto flex flex-wrap p-5 flex-co l md:flex-row items-center">
                     <Link className="flex title-font font-medium items-center text-gray-900 mb-4 md:mb-0" href="/">
                         <Image src="/brunnerLogo.png" height={100} width={100} alt='brunner logo' priority='true' />
                     </Link>
@@ -25,6 +25,9 @@ export default function Header() {
                         <Link className="mr-5 text-gray-600 dark:text-gray-100 hover:text-gray-400" href="/mainPages/contact">
                             Contact
                         </Link>
+                        {userInfo.isAdminUser() && <Link className="mr-5 text-gray-600 dark:text-gray-100 hover:text-gray-400" href="/mainPages/administration">
+                            Administration
+                        </Link>}
                     </nav>
                     <UserInfo />
                 </div>
