@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 import BrunnerMessageBox from './BrunnerMessageBox';
 import * as Constants from '@/components/constants'
-
+import * as userInfo from '@/components/userInfo';
 export default function SignoutButton() {
 
   const [modalContent, setModalContent] = useState({
@@ -61,16 +61,6 @@ export default function SignoutButton() {
     }
   }
 
-  const getLoginId = () => {
-    var userInfo = null;
-
-    if (process.env.userInfo) {
-      userInfo = process.env.userInfo;
-
-      return userInfo?.userId;
-    }
-    return null;
-  }
 
   return (
     <>
@@ -81,7 +71,7 @@ export default function SignoutButton() {
         onClose={modalContent.onClose}
       />
 
-      {getLoginId() &&
+      {userInfo.getLoginUserId() &&
         <button className="inline-flex items-center 
                                   boder-0 
                                   py-1 

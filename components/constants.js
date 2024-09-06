@@ -17,7 +17,8 @@ export const
     MESSAGE_DELETE_ITEM = "Delete this item?",
     MESSAGE_SUCCESS_DELEE = "Successfully deleted.",
     MESSAGE_NO_PERMISSION = "You do not have permission",
-    MESSAGE_SUCESS_ADDED = "Successfully added.",
+    MESSAGE_SUCCESS_ADDED = "Successfully added.",
+    MESSAGE_SUCCESS_SAVED = "Successfully saved.",
 
     COMMAND_ASSET_ADD_INCOME = "asset.addIncome",
     COMMAND_ASSET_DELETE_INCOME = "asset.deleteIncome",
@@ -33,12 +34,15 @@ export const
     COMMAND_BOARD_GET_POST_LIST = "board.getPostList",
 
     COMMAND_SERVICESQL_LOAD_ALL_SQL = "serviceSQL.loadAllSQL",
+    COMMAND_SERVICESQL_GET_ALL_SQL = "serviceSQL.getAllSQL",
+    COMMAND_SERVICESQL_UPDATE_SERVICE_SQL = "serviceSQL.updateServiceSQL",
+
     COMMAND_SECURITY_SEND_EMAIL_AUTHCODE = "security.sendEMailAuthCode",
     COMMAND_SECURITY_RESET_PASSWORD = "security.resetPassword",
     COMMAND_SECURITY_SIGNOUT = "security.signout",
     COMMAND_SECURITY_SIGNUP = "security.signup",
     COMMAND_SECURITY_SIGNIN = "security.signin",
-    COMMAND_SECURITY_DELETE_ACCOUNT= "security.deleteAccount",
+    COMMAND_SECURITY_DELETE_ACCOUNT = "security.deleteAccount",
     COMMAND_STOCK_GET_TICKER_LIST = "stock.getTickerList",
     COMMAND_STOCK_GET_TICKER_INFO = "stock.getTickerInfo",
     COMMAND_STOCK_GET_STOCK_INFO = "stock.getStockInfo",

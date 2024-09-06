@@ -1,0 +1,24 @@
+`use strict`
+
+import Layout from '@/components/layout'
+import Head from 'next/head'
+import BodySection from '@/components/bodySection'
+
+import AdminContent from './content/adminContent'
+
+export default function AdminPage() {
+  return (
+    <Layout>
+      <Head>
+        <title>Administration - Brunner</title>
+        <meta name="description" content="Breakfast, Lunch and Dinner"></meta>
+        <meta rel="icon" href="/brunnerLogo.png"></meta>
+      </Head>
+      <BodySection>
+        <div className="container mx-auto flex px-5 md:flex-row flex-col items-center">
+          <AdminContent></AdminContent>
+        </div>
+      </BodySection>
+    </Layout>
+  );
+}

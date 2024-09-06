@@ -186,6 +186,7 @@ const signin = async (txnId, jRequest) => {
 
                 jResponse.userId = select_TB_COR_USER_MST_02.rows[0].user_id;
                 jResponse.userName = select_TB_COR_USER_MST_02.rows[0].user_name;
+                jResponse.adminFlag = select_TB_COR_USER_MST_02.rows[0].admin_flag;
             } else {
                 jResponse.error_code = -1;
                 jResponse.error_message = `Incorrect password`;
