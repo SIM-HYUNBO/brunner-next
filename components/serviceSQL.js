@@ -72,6 +72,8 @@ const ServiceSQL = () => {
     };
 
     const [isEditing, setIsEditing] = useState(false);
+    const [isCreating, setIsCreating] = useState(false);
+
     const [queries, setQueries] = useState([]);
     const [form, setForm] = useState({
         system_code: '',
@@ -122,6 +124,17 @@ const ServiceSQL = () => {
             } else {
                 openModal(jResponse.error_message);
             }
+
+            setForm({
+                system_code: '',
+                sql_name: '',
+                sql_seq: '',
+                sql_content: ''
+            });
+            setCurrentServiceSQL(null);
+            setIsEditing(false);
+            setIsCreating(false);
+
         } catch (error) {
             setLoading(false); // 데이터 로딩 끝
             openModal(error.toString());
@@ -142,7 +155,7 @@ const ServiceSQL = () => {
             jRequest.sqlName = form.sql_name;
             jRequest.sqlSeq = form.sql_seq;
             jRequest.sqlContent = form.sql_content;
-            jRequest.action = isEditing ? 'Create' : 'Update';
+            jRequest.action = isEditing ? 'Update' : isCreating ? 'Create' : null;
             jRequest.userId = userInfo.getLoginUserId();
 
             setLoading(true); // 데이터 로딩 시작
@@ -151,15 +164,6 @@ const ServiceSQL = () => {
 
             if (jResponse.error_code === 0) {
                 openModal(Constants.MESSAGE_SUCCESS_SAVED);
-
-                setForm({
-                    system_code: '',
-                    sql_name: '',
-                    sql_seq: '',
-                    sql_content: ''
-                });
-                setCurrentServiceSQL(null);
-                setIsEditing(false);
                 fetchServiceSQLs()
             }
             else
@@ -184,7 +188,7 @@ const ServiceSQL = () => {
             'sql_content': '',
 
         });
-        setIsEditing(true); // 신규 데이터 생성 모드 활성화
+        setIsCreating(true); // 신규 데이터 생성 모드 활성화
     };
 
     // Handle edit action
@@ -197,6 +201,8 @@ const ServiceSQL = () => {
         });
 
         setCurrentServiceSQL(userQueryItem);
+
+        setIsEditing(true);
     };
 
     // Handle delete action
@@ -221,15 +227,6 @@ const ServiceSQL = () => {
 
             if (jResponse.error_code === 0) {
                 openModal(Constants.MESSAGE_SUCCESS_DELETED);
-
-                setForm({
-                    system_code: '',
-                    sql_name: '',
-                    sql_seq: '',
-                    sql_content: ''
-                });
-                setCurrentServiceSQL(null);
-                setIsEditing(false);
                 fetchServiceSQLs()
             }
             else
@@ -265,7 +262,7 @@ const ServiceSQL = () => {
                             name="system_code"
                             value={form.system_code}
                             onChange={handleInputChange}
-                            readOnly={!isEditing}
+                            readOnly={!isEditing && !isCreating}
                             className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50"
                             required
                         />
@@ -277,7 +274,7 @@ const ServiceSQL = () => {
                             name="sql_name"
                             value={form.sql_name}
                             onChange={handleInputChange}
-                            readOnly={!isEditing}
+                            readOnly={!isEditing && !isCreating}
                             className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50"
                             required
                         />
@@ -289,7 +286,7 @@ const ServiceSQL = () => {
                             name="sql_seq"
                             value={form.sql_seq}
                             onChange={handleInputChange}
-                            readOnly={!isEditing}
+                            readOnly={!isEditing && !isCreating}
                             className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50"
                             required
                         />
@@ -300,7 +297,7 @@ const ServiceSQL = () => {
                             name="sql_content"
                             value={form.sql_content}
                             onChange={handleInputChange}
-                            readOnly={!isEditing}
+                            readOnly={!isEditing && !isCreating}
                         />
                     </label>
                     <button
