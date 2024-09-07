@@ -172,7 +172,9 @@ const getTickerInfo = async (txnId, jRequest) => {
             return jResponse;
         }
 
-        // ticker 최신 news 조회
+        // ticker별 최신 news 조회 url은 https://api.polygon.io/v2/reference/news?ticker=TICKER_SYMBOL&apiKey=YOUR_API_KEY
+        // 무료가 아니므로 못함
+
         const apiUrl = `https://api.polygon.io/v3/reference/tickers/${jRequest.tickerCode}?apiKey=${process.env.POLYGON_API_KEY}`
         const response = await fetch(apiUrl);
         if (!response.ok) {
@@ -183,7 +185,7 @@ const getTickerInfo = async (txnId, jRequest) => {
         else {
             const data = await response.json();
             if (data.results) {
-                jResponse.tickerInfo.tickerNewsContent = convertJsonToPlainText(data.results);
+                jResponse.tickerInfo.tickerInfoContent = data.results;
                 jResponse.error_code = 0; // exception
                 jResponse.error_message = data.status;
             }
@@ -203,24 +205,6 @@ const getTickerInfo = async (txnId, jRequest) => {
         return jResponse;
     }
 };
-
-function convertJsonToPlainText(jsonObject) {
-    return Object.entries(jsonObject)
-        .map(([key, value]) => {
-            if (typeof value === 'object' && value !== null) {
-                // 객체 값을 문자열로 변환하고 콤마와 따옴표를 제거
-                const formattedObject = JSON.stringify(value, null, 2)
-                    .replace(/"([^"]+)":/g, '$1:') // 키의 따옴표 제거
-                    .replace(/"([^"]+)"/g, '$1')   // 값의 따옴표 제거
-                    .replace(/,\s*([\]}])/g, '$1') // 마지막 콤마 제거
-                    .replace(/^\{\n/, '')          // 시작 중괄호 및 줄바꿈 제거
-                    .replace(/\n\}$/, '');         // 마지막 중괄호 및 줄바꿈 제거
-                return `${key}: \n${formattedObject}`;
-            }
-            return `${key}: ${value}`;
-        })
-        .join('\n'); // 항목 간에 줄바꿈을 두 번 추가하여 구분
-}
 
 const getLatestStockInfo = async (txnId, jRequest) => {
     var jResponse = {};
