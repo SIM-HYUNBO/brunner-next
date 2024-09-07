@@ -19,7 +19,9 @@ const executeService = async (txnId, jRequest) => {
       case Constants.COMMAND_SERVICESQL_UPDATE_SERVICE_SQL:
         jResponse = updateServiceSql(txnId, jRequest);
         break;
-      default:
+      case Constants.COMMAND_SERVICESQL_DELETE_SERVICE_SQL:
+        jResponse = deleteServiceSql(txnId, jRequest);
+        break; default:
         break;
     }
   } catch (error) {
@@ -208,6 +210,77 @@ async function updateServiceSql(txnId, jRequest) {
   }
 };
 
+async function deleteServiceSql(txnId, jRequest) {
+  var jResponse = {};
+
+  try {
+    jResponse.commanaName = jRequest.commandName;
+
+    if (!jRequest.userId) {
+      jResponse.error_code = -2;
+      jResponse.error_message = `${Constants.MESSAGE_REQUIRED_FIELD} [userId`;
+      return jResponse;
+    }
+    if (!jRequest.systemCode) {
+      jResponse.error_code = -2;
+      jResponse.error_message = `${Constants.MESSAGE_REQUIRED_FIELD} [systemCode]`;
+      return jResponse;
+    }
+
+    if (!jRequest.sqlName) {
+      jResponse.error_code = -2;
+      jResponse.error_message = `${Constants.MESSAGE_REQUIRED_FIELD} [sqlName]`;
+      return jResponse;
+    }
+
+    if (!jRequest.sqlSeq) {
+      jResponse.error_code = -2;
+      jResponse.error_message = `${Constants.MESSAGE_REQUIRED_FIELD} [sqlSeq]`;
+      return jResponse;
+    }
+
+    var sql = await serviceSQL.getSQL00(`select_TB_COR_SQL_INFO`, 2);
+    var select_TB_COR_SQL_INFO_02 = await database.executeSQL(sql,
+      [
+        jRequest.systemCode,
+        jRequest.sqlName,
+        jRequest.sqlSeq
+      ]);
+
+    if (select_TB_COR_SQL_INFO_02.rowCount <= 0) {
+      jResponse.error_code = -1;
+      jResponse.error_message = `The SQL not exist.`;
+      return jResponse;
+    }
+
+    sql = await serviceSQL.getSQL00(`delete_TB_COR_SQL_INFO`, 1);
+    var delete_TB_COR_SQL_INFO_01 = await database.executeSQL(sql,
+      [
+        jRequest.systemCode,
+        jRequest.sqlName,
+        jRequest.sqlSeq
+      ]);
+
+    if (delete_TB_COR_SQL_INFO_01.rowCount == 1) {
+      deleteSQL(jRequest.systemCode, jRequest.sqlName, jRequest.sqlSeq, jRequest.sqlContent);
+
+      jResponse.error_code = 0;
+      jResponse.error_message = Constants.EMPTY_STRING;
+    }
+    else {
+      jResponse.error_code = -3;
+      jResponse.error_message = `Failed to delete serviceSQL.\n`
+    }
+  } catch (e) {
+    logger.error(e);
+    jResponse.error_code = -3; // exception
+    jResponse.error_message = e.message
+  } finally {
+    return jResponse;
+  }
+};
+
+
 const getSQL = async (systemCode, sqlName, sqlSeq) => {
   try {
 
@@ -223,6 +296,17 @@ const setSQL = async (systemCode, sqlName, sqlSeq, sqlContent) => {
   try {
 
     var sql = process.serviceSQL.set(`${systemCode}_${sqlName}_${sqlSeq}`, sqlContent);
+    return sql;
+  }
+  catch (err) {
+    throw err;
+  }
+};
+
+const deleteSQL = async (systemCode, sqlName, sqlSeq) => {
+  try {
+
+    var sql = process.serviceSQL.delete(`${systemCode}_${sqlName}_${sqlSeq}`);
     return sql;
   }
   catch (err) {
