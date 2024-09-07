@@ -55,8 +55,8 @@ const ServiceSQL = () => {
             setModalContent({
                 isOpen: true,
                 message: message,
-                onConfirm: () => { resolve(); closeModal(); },
-                onClose: () => { reject(); closeModal(); }
+                onConfirm: (result) => { resolve(result); closeModal(); },
+                onClose: () => { reject(false); closeModal(); }
             });
         });
     };
@@ -200,14 +200,43 @@ const ServiceSQL = () => {
     };
 
     // Handle delete action
-    const handleDelete = async (id) => {
+    const handleDelete = async (userQueryItem) => {
         try {
-            // await axios.delete(`/api/queries/${id}`);
-            // Refresh the list
-            const response = await axios.get('/api/queries');
-            setQueries(response.data);
+            var confirm = await openModal(Constants.MESSAGE_DELETE_ITEM)
+            if (!confirm)
+                return;
+
+            var jRequest = {};
+            var jResponse = null;
+
+            jRequest.commandName = Constants.COMMAND_SERVICESQL_DELETE_SERVICE_SQL;
+            jRequest.systemCode = userQueryItem.system_code;
+            jRequest.sqlName = userQueryItem.sql_name;
+            jRequest.sqlSeq = userQueryItem.sql_seq;
+            jRequest.userId = userInfo.getLoginUserId();
+
+            setLoading(true); // 데이터 로딩 시작
+            jResponse = await requestServer('POST', JSON.stringify(jRequest));
+            setLoading(false); // 데이터 로딩 끝
+
+            if (jResponse.error_code === 0) {
+                openModal(Constants.MESSAGE_SUCCESS_DELETED);
+
+                setForm({
+                    system_code: '',
+                    sql_name: '',
+                    sql_seq: '',
+                    sql_content: ''
+                });
+                setCurrentServiceSQL(null);
+                setIsEditing(false);
+                fetchServiceSQLs()
+            }
+            else
+                openModal(jResponse.error_message);
+
         } catch (error) {
-            console.error('Failed to delete query:', error);
+            openModal(error);
         }
     };
 
@@ -317,7 +346,7 @@ const ServiceSQL = () => {
                                         Edit
                                     </button>
                                     <button
-                                        onClick={() => handleDelete(query.id)}
+                                        onClick={() => handleDelete(query)}
                                         className="bg-red-500 text-white py-1 px-2 rounded-md hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50"
                                     >
                                         Delete

@@ -220,7 +220,7 @@ export default function AssetContent() {
       setLoading(false); // 데이터 로딩 끝
 
       if (jResponse.error_code === 0) {
-        openModal(Constants.MESSAGE_SUCCESS_DELEE);
+        openModal(Constants.MESSAGE_SUCCESS_DELETED);
         fetchIncomeHistory(); // 데이터 다시 가져오기
       } else {
         openModal(jResponse.error_message);

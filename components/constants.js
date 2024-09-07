@@ -15,7 +15,7 @@ export const
     MESSAGE_INPUT_STOCK_SYMBOL = "Select or Input a stock symbol.",
     MESSAGE_INVALIED_NUMBER_AMOUNT = "Invalid number or amount.",
     MESSAGE_DELETE_ITEM = "Delete this item?",
-    MESSAGE_SUCCESS_DELEE = "Successfully deleted.",
+    MESSAGE_SUCCESS_DELETED = "Successfully deleted.",
     MESSAGE_NO_PERMISSION = "You do not have permission",
     MESSAGE_SUCCESS_ADDED = "Successfully added.",
     MESSAGE_SUCCESS_SAVED = "Successfully saved.",
@@ -36,6 +36,7 @@ export const
     COMMAND_SERVICESQL_LOAD_ALL_SQL = "serviceSQL.loadAllSQL",
     COMMAND_SERVICESQL_GET_ALL_SQL = "serviceSQL.getAllSQL",
     COMMAND_SERVICESQL_UPDATE_SERVICE_SQL = "serviceSQL.updateServiceSQL",
+    COMMAND_SERVICESQL_DELETE_SERVICE_SQL = "serviceSQL.deleteServiceSQL",
 
     COMMAND_SECURITY_SEND_EMAIL_AUTHCODE = "security.sendEMailAuthCode",
     COMMAND_SECURITY_RESET_PASSWORD = "security.resetPassword",
