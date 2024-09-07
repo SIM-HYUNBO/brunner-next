@@ -43,19 +43,15 @@ export default function TickerInfoContent({ tickerCode: tickerCode }) {
     tickerDescRef.current = newValue;
   }
 
-  // const [tickerInfoContent, setTickerInfoContent] = useState('');
-  // const tickerInfoContentRef = useRef(tickerInfoContent);
-  // const setTickerInfoContentRef = (newValue) => {
-  //   setTickerInfoContent(newValue);
-  //   tickerInfoContentRef.current = newValue;
-  // }
-
-  const [tickerInfoContent, settickerInfoContent] = useState('');
+  const [tickerInfoContent, setTickerInfoContent] = useState('');
   const tickerInfoContentRef = useRef(tickerInfoContent);
   const settickerInfoContentRef = (newValue) => {
-    settickerInfoContent(newValue);
+    setTickerInfoContent(newValue);
     tickerInfoContentRef.current = newValue;
   }
+
+  const [brandingInfo, setBrandingInfo] = useState({});
+
 
   useEffect(() => {
     getTickerInfo();
@@ -83,11 +79,10 @@ export default function TickerInfoContent({ tickerCode: tickerCode }) {
           for (let key in jResponse.tickerInfo.tickerInfoContent) {
             const value = jResponse.tickerInfo.tickerInfoContent[key]
             if (key === 'branding') {
-              for (let key2 in jResponse.tickerInfo.tickerInfoContent[key]) {
-                const value2 = jResponse.tickerInfo.tickerInfoContent[key][key2]
-                console.log(key2);
-                console.log(value2);
-              }
+              var tmpBrandingInfo = {};
+              tmpBrandingInfo.logo_url = `${jResponse.tickerInfo.tickerInfoContent[key]['logo_url']}?apikey=${jResponse.apikey}`;
+              tmpBrandingInfo.icon_url = `${jResponse.tickerInfo.tickerInfoContent[key]['icon_url']}?apikey=${jResponse.apikey}`;
+              setBrandingInfo(tmpBrandingInfo);
             }
           }
         }
@@ -156,6 +151,7 @@ export default function TickerInfoContent({ tickerCode: tickerCode }) {
           {`${tickerCode}`}
         </h1>
         <div className="main-governing-text">
+          <img src={brandingInfo.icon_url} alt="" />
           <h2>{tickerDescRef.current}</h2>
         </div>
         <input ref={currentPriceTextColorRef} className={`text-center text-5xl text-gray bg-slate-50 dark:bg-slate-800 border border-slate-400 mt-10 mb-2 h-100 w-[100%] px-5 py-3`}
@@ -180,8 +176,8 @@ export default function TickerInfoContent({ tickerCode: tickerCode }) {
         </div>
 
       </div>
-      <div className="lg:h-2/6 lg:w-2/6 border w-100 h-100" >
-        <TickerInfoAnimation />
+      <div className="lg:h-2/6 lg:w-2/6 border w-100 h-100 flex flex-col justify-center items-center" >
+        <img src={brandingInfo.logo_url} className='mt-5' alt="" />
       </div>
     </>
   );

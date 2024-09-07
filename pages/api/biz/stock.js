@@ -194,7 +194,7 @@ const getTickerInfo = async (txnId, jRequest) => {
                 jResponse.error_message = data.status;
             }
         }
-
+        jResponse.apikey = process.env.POLYGON_API_KEY;
         jResponse.error_code = 0;
         jResponse.error_message = Constants.EMPTY_STRING;
     } catch (e) {

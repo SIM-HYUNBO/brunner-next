@@ -892,7 +892,7 @@ const StockContent = () => {
                     </button>
                     <button className="bg-indigo-500 text-white py-2 px-4 ml-1 h-10"
                         onClick={handleNewsClick}>
-                        News...
+                        Details...
                     </button>
                 </div>
             </div>
