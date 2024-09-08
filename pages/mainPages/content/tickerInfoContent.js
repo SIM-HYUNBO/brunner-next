@@ -1,11 +1,11 @@
 `use strict`
 
-import TickerInfoAnimation from './content-animation/tickerInfoAnimation'
 import { useState, useRef, useEffect } from 'react'
 import requestServer from '@/components/requestServer'
 import Board from '@/pages/mainPages/content/boardContent'
 import RealtimeChart from './realtimeChart';
 import * as Constants from '@/components/constants'
+import Container from "@/components/container"
 
 export default function TickerInfoContent({ tickerCode: tickerCode }) {
   const [loading, setLoading] = useState(false); // 로딩 상태 추가
@@ -146,39 +146,41 @@ export default function TickerInfoContent({ tickerCode: tickerCode }) {
 
   return (
     <>
-      <div className="lg:flex-grow md:w-1/2 lg:px-24 md:px-16 xs: sm:px-8 flex flex-col md:items-center md:text-left md:mb-0 items-center text-center">
-        <h1 className="title-font sm:text-4xl text-3xl mb-10 font-medium text-green-900">
-          {`${tickerCode}`}
-        </h1>
-        <div className="main-governing-text">
-          <img src={brandingInfo.icon_url} alt="" />
-          <h2>{tickerDescRef.current}</h2>
-        </div>
-        <input ref={currentPriceTextColorRef} className={`text-center text-5xl text-gray bg-slate-50 dark:bg-slate-800 border border-slate-400 mt-10 mb-2 h-100 w-[100%] px-5 py-3`}
-          type="text"
-          value={currentPriceRef.current ? `${currentPriceRef.current}` : ``}
-        />
-        <button
-          className="bg-indigo-500 text-white py-2 px-4 h-10 mb-5"
-          type="submit"
-          onClick={() => {
-            getTickerInfo();
-          }}
-        >
-          Refresh
-        </button>
-        <RealtimeChart updateCurrentPrice={updateCurrentPrice} ></RealtimeChart>
-        <div className="flex space-x-4 border w-full h-full sm:max-w-full text-align-left m-5 readonly">
-          <pre>{tickerInfoContentRef.current ? tickerInfoContentRef.current : 'Ticker news here.'}</pre>
-        </div>
-        <div className="flex space-x-4 border w-full h-full text-align-left mt-10 readonly">
-          <Board boardType={tickerCode} />
-        </div>
+      <Container>
+        <div className="lg:flex-grow flex flex-col md:items-center md:text-left md:mb-0 items-center text-center">
+          <h1 className="title-font sm:text-4xl text-3xl mb-10 font-medium text-green-900">
+            {`${tickerCode}`}
+          </h1>
+          <div className="main-governing-text">
+            <img src={brandingInfo.icon_url} alt="" />
+            <h2>{tickerDescRef.current}</h2>
+          </div>
+          <input ref={currentPriceTextColorRef} className={`text-center text-5xl text-gray bg-slate-50 dark:bg-slate-800 border border-slate-400 mt-10 mb-2 h-100 w-[100%] px-5 py-3`}
+            type="text"
+            value={currentPriceRef.current ? `${currentPriceRef.current}` : ``}
+          />
+          <button
+            className="bg-indigo-500 text-white py-2 px-4 h-10 mb-5"
+            type="submit"
+            onClick={() => {
+              getTickerInfo();
+            }}
+          >
+            Refresh
+          </button>
+          <RealtimeChart updateCurrentPrice={updateCurrentPrice} ></RealtimeChart>
+          <div className="flex space-x-4 border w-full h-full sm:max-w-full text-align-left m-5 readonly">
+            <pre>{tickerInfoContentRef.current ? tickerInfoContentRef.current : 'Ticker news here.'}</pre>
+          </div>
+          <div className="flex space-x-4 border w-full h-full text-align-left mt-10 readonly">
+            <Board boardType={tickerCode} />
+          </div>
 
-      </div>
-      <div className="lg:h-2/6 lg:w-2/6 border w-100 h-100 flex flex-col justify-center items-center" >
-        <img src={brandingInfo.logo_url} className='mt-5' alt="" />
-      </div>
+        </div>
+        <div className="lg:h-2/6 lg:w-2/6 border w-100 h-100 flex flex-col justify-center items-center" >
+          <img src={brandingInfo.logo_url} className='mt-5' alt="" />
+        </div>
+      </Container>
     </>
   );
 }

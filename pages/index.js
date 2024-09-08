@@ -47,19 +47,8 @@ export default function Home() {
         <GoogleAdScript />
       </Head>
       <BodySection>
-        <div className="container mx-auto flex px-5 md:flex-row flex-col items-center">
-          <HomeContent></HomeContent>
-        </div>
-        {(userInfo.isLogin()) &&
-          <div className="container mx-auto flex px-5 md:flex-row flex-col items-left ">
-            <div className="container mx-auto flex px-5 md:flex-row flex-col items-center">
-              <AssetContent></AssetContent>
-            </div>
-          </div>
-        }
-        <div className="container mx-auto flex px-5 md:flex-row flex-col items-center">
-          <StockContent></StockContent>
-        </div>
+        <HomeContent></HomeContent>
+        <StockContent></StockContent>
       </BodySection>
     </Layout>
   )

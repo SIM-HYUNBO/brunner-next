@@ -9,6 +9,8 @@ import { useRouter } from 'next/router'
 import { useState } from 'react'
 import BrunnerMessageBox from '@/components/BrunnerMessageBox'
 import * as Constants from '@/components/constants'
+import Conatiner from "@/components/container"
+import Container from '@/components/container'
 
 export default function ResetPassword() {
   const router = useRouter();
@@ -75,11 +77,6 @@ export default function ResetPassword() {
 
   // 1. 인증코드를 이메일로 발송요청 
   const sendEMailAuthCode = async () => {
-    // id
-    // phone-no
-    // eMail
-    // 요청
-
     var jRequest = {};
     var jResponse = null;
 
@@ -174,8 +171,8 @@ export default function ResetPassword() {
           <meta rel="icon" href="/brunnerLogo.png"></meta>
           <link></link>
         </Head>
-        <BodySection className="text-gray-600 body-font">
-          <div className="container px-5 py-14 mx-auto flex flex-wrap items-center">
+        <BodySection>
+          <Container>
             <div className="lg:w-3/5 md:w-1/2 md:pr-16 lg:pr-0 pr-0">
               <h1 className="title-font font-medium text-3xl text-gray-900">Protect your important information.</h1>
               <p className="mt-2">Enter information to leave or reset password.</p>
@@ -231,7 +228,7 @@ export default function ResetPassword() {
                 Reset password
               </button>
             </div>
-          </div>
+          </Container>
         </BodySection>
       </Layout>
     </>
