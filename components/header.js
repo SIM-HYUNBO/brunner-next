@@ -29,6 +29,9 @@ export default function Header() {
                             Administration
                         </Link>}
                     </nav>
+                    <Link href="/" className="ml-4 flex items-center">
+                        <Image src="/homeIcon.png" height={24} width={24} alt="home icon" />
+                    </Link>
                     <UserInfo />
                 </div>
             </header>
