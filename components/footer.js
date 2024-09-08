@@ -1,13 +1,13 @@
 `use strict`
 
 import Link from "next/link";
-import Conatiner from "@/components/pageContainer"
+import PageContainer from "@/components/pageContainer"
 
 export default function Footer() {
     return (
         <>
             <footer className="body-font">
-                <Conatiner>
+                <PageContainer>
                     <Link className="flex title-font font-medium items-center md:justify-start justify-center text-gray-600 dark:text-gray-400" href="/">Brunner</Link>
                     <p className="text-sm text-gray-600 dark:text-gray-400 sm:ml-4 sm:pl-4 sm:border-l-2 sm:border-gray-200 sm:py-2 sm:mt-0 mt-4">© 2020 Brunner —
                         <a href="https://twitter.com/" className="text-gray-600 dark:text-gray-400  ml-1" rel="noopener noreferrer" target="_blank">hbsim0605</a>
@@ -36,7 +36,7 @@ export default function Footer() {
                             </svg>
                         </a>
                     </span>
-                </Conatiner>
+                </PageContainer>
             </footer>
         </>
     );
