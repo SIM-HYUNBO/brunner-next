@@ -21,7 +21,7 @@ export default function AdminContent() {
                        mb-10 
                        font-medium 
                        text-green-900">
-                Brunner administration.
+                Brunner administration
               </h1>
               <div className="flex justify-center">
                 <ServiceSQL />
