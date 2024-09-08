@@ -4,7 +4,7 @@
 
 /* 주배경 (min-h-[footer높이(5rem)]) */
 .bg-primary { 
-    @apply bg-white dark:bg-slate-800 h-full min-h-[calc(100vh-5rem)] pb-20 w-full
+    @apply bg-white dark:bg-slate-800 h-full min-h-[calc(100vh-5rem)] pb-20 max-w-full w-full
 }
 
 /* footer 높이:5rem */
