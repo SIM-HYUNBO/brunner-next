@@ -3,6 +3,7 @@
 import HomeContentAnimation from './content-animation/homeContentAnimation'
 import { useRouter } from 'next/router'
 import * as userInfo from '@/components/userInfo'
+import AssetContent from './assetContent'
 import PageContainer from "@/components/pageContainer"
 
 export default function HomeContent() {
