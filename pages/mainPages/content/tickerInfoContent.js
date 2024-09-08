@@ -146,7 +146,7 @@ export default function TickerInfoContent({ tickerCode: tickerCode }) {
 
   return (
     <>
-      <div className="lg:flex-grow md:w-1/2 lg:px-24 md:px-16 xs:px-8 flex flex-col md:items-center md:text-left md:mb-0 items-center text-center">
+      <div className="lg:flex-grow md:w-1/2 lg:px-24 md:px-16 xs: sm-24 flex flex-col md:items-center md:text-left md:mb-0 items-center text-center">
         <h1 className="title-font sm:text-4xl text-3xl mb-10 font-medium text-green-900">
           {`${tickerCode}`}
         </h1>
