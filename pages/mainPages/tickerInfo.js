@@ -19,7 +19,7 @@ export default function TickerInfo() {
         <link></link>
       </Head>
       <BodySection>
-        <div className="mx-auto flex px-5 flex-col items-center">
+        <div className="mx-auto flex px-10 flex-col items-center">
           <TickerInfoContent tickerCode={tickerCode}></TickerInfoContent>
         </div>
       </BodySection>
