@@ -34,7 +34,7 @@ p {
 }
 
 .container {
-    @apply h-full mx-auto flex w-full items-center p-5 
+    @apply h-full mx-auto flex flex-wrap w-full items-center p-5 
 }
 
 .main-governing-text {
