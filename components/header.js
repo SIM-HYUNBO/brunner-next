@@ -3,7 +3,7 @@
 import Link from "next/link";
 import Image from 'next/image'
 import * as userInfo from '@/components/userInfo'
-import Container from '@/components/container'
+import PageContainer from '@/components/pageContainer'
 
 export default function Header() {
     const UserInfo = userInfo.default;
@@ -11,7 +11,7 @@ export default function Header() {
     return (
         <>
             <header className="text-gray-600 body-font mb-10">
-                <Container>
+                <PageContainer>
                     <nav className="md:ml-auto flex flex-wrap items-center text-base justify-center">
                         <Link className="flex title-font font-medium items-center text-gray-900 mb-4 md:mb-0" href="/">
                             <Image src="/brunnerLogo.png" height={100} width={100} alt='brunner logo' priority='true' />
@@ -33,7 +33,7 @@ export default function Header() {
                         </Link>
                         <UserInfo />
                     </nav>
-                </Container>
+                </PageContainer>
             </header>
         </>
     );

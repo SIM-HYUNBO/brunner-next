@@ -5,7 +5,7 @@ import requestServer from '@/components/requestServer'
 import Board from '@/pages/mainPages/content/boardContent'
 import RealtimeChart from './realtimeChart';
 import * as Constants from '@/components/constants'
-import Container from "@/components/container"
+import PageContainer from "@/components/pageContainer"
 
 export default function TickerInfoContent({ tickerCode: tickerCode }) {
   const [loading, setLoading] = useState(false); // 로딩 상태 추가
@@ -146,7 +146,7 @@ export default function TickerInfoContent({ tickerCode: tickerCode }) {
 
   return (
     <>
-      <Container>
+      <PageContainer>
         <div className="lg:flex-grow flex flex-col md:items-center md:text-left md:mb-0 items-center text-center">
           <h1 className="title-font sm:text-4xl text-3xl mb-10 font-medium text-green-900">
             {`${tickerCode}`}
@@ -180,7 +180,7 @@ export default function TickerInfoContent({ tickerCode: tickerCode }) {
         <div className="lg:h-2/6 lg:w-2/6 border w-100 h-100 flex flex-col justify-center items-center" >
           <img src={brandingInfo.logo_url} className='mt-5' alt="" />
         </div>
-      </Container>
+      </PageContainer>
     </>
   );
 }

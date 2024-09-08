@@ -8,7 +8,7 @@ import { useRouter } from 'next/router'
 import { useState } from 'react'
 import BrunnerMessageBox from '@/components/BrunnerMessageBox'
 import * as Constants from '@/components/constants'
-import Container from "@/components/container"
+import PageContainer from "@/components/pageContainer"
 
 export default function Signup() {
   const router = useRouter();
@@ -128,7 +128,7 @@ export default function Signup() {
           <link></link>
         </Head>
         <BodySection>
-          <Container>
+          <PageContainer>
             <div className="lg:flex-grow md:w-1/2 lg:pr-24 md:pr-16 flex flex-col md:items-start md:text-left mb-16 md:mb-0 text-center">
               <h2 className="title-font sm:text-4xl text-3xl mb-10 font-medium text-green-900">
                 Create account
@@ -217,7 +217,7 @@ export default function Signup() {
 
               <p className="text-xs text-gray-500 mt-3">Nice to meet you.</p>
             </div>
-          </Container>
+          </PageContainer>
         </BodySection>
       </Layout>
     </>
