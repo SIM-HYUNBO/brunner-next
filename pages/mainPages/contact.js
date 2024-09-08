@@ -16,9 +16,7 @@ export default function Contact() {
         <link></link>
       </Head>
       <BodySection>
-        <div className="container mx-auto flex px-5 md:flex-row flex-col items-center">
-          <ContactContent></ContactContent>
-        </div>
+        <ContactContent></ContactContent>
       </BodySection>
     </Layout>
   );

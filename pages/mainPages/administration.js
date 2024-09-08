@@ -15,9 +15,7 @@ export default function AdminPage() {
         <meta rel="icon" href="/brunnerLogo.png"></meta>
       </Head>
       <BodySection>
-        <div className="container mx-auto flex px-5 md:flex-row flex-col items-center">
-          <AdminContent></AdminContent>
-        </div>
+        <AdminContent></AdminContent>
       </BodySection>
     </Layout>
   );
