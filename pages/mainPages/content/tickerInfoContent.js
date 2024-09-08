@@ -168,7 +168,7 @@ export default function TickerInfoContent({ tickerCode: tickerCode }) {
           Refresh
         </button>
         <RealtimeChart updateCurrentPrice={updateCurrentPrice} ></RealtimeChart>
-        <div className="flex space-x-4 border sm:max-w-full w-full h-full text-align-left mt-5 readonly">
+        <div className="flex space-x-4 border w-full h-full sm:max-w-full text-align-left mt-5 readonly">
           <pre>{tickerInfoContentRef.current ? tickerInfoContentRef.current : 'Ticker news here.'}</pre>
         </div>
         <div className="flex space-x-4 border w-full h-full text-align-left mt-10 readonly">
