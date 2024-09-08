@@ -3,14 +3,14 @@
 import HomeContentAnimation from './content-animation/homeContentAnimation'
 import { useRouter } from 'next/router'
 import * as userInfo from '@/components/userInfo'
-import Container from "@/components/container"
+import PageContainer from "@/components/pageContainer"
 
 export default function HomeContent() {
   const router = useRouter()
 
   return (
     <>
-      <Container>
+      <PageContainer>
         <div className="lg:flex-grow md:w-1/2 lg:pr-24 md:pr-16 flex flex-col md:items-start md:text-left mb-16 md:mb-0 items-center text-center">
           <h1 className="title-font sm:text-4xl text-3xl mb-10 font-medium text-green-900">
             Asset management
@@ -44,7 +44,7 @@ export default function HomeContent() {
         <div className="lg:h-2/6 lg:w-2/6">
           <HomeContentAnimation />
         </div>
-      </Container>
+      </PageContainer>
     </>
   );
 }

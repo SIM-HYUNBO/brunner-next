@@ -1,7 +1,7 @@
 `use strict`
 
 import Link from "next/link";
-import Conatiner from "@/components/container"
+import Conatiner from "@/components/pageContainer"
 
 export default function Footer() {
     return (
