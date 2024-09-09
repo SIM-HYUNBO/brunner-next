@@ -17,9 +17,16 @@ sm, md, lg 이런 접두사를 보다 보면 반응형을 구현할 때,
 @tailwind components;
 @tailwind utilities;
 
-/* 주배경 (min-h-[footer높이(5rem)]) */
+/* 주배경 (min-h-[footer높이(5rem)]) 
+좌우 여백
+px-5 (모바일) 
+md:px-32 (탭)
+lg:px-48 (데스크탑) 
+
+*/
+
 .bg-primary { 
-    @apply bg-white dark:bg-slate-800 h-full min-h-[calc(100vh-5rem)] pb-20 max-w-full w-full px-5 lg:px-48 md:px-16}
+    @apply bg-white dark:bg-slate-800 w-full h-full min-h-[calc(100vh-5rem)] max-w-full  px-5 pb-20 lg:px-48 md:px-32}
 
 /* footer 높이:5rem */
 footer {
