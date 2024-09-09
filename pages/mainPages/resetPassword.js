@@ -166,7 +166,7 @@ export default function ResetPassword() {
       />
       <Layout>
         <Head>
-          <title>Brunner Home</title>
+          <title>Stock Quotes and Investment Information - Brunner-Next</title>
           <meta name="description" content="서비스플랫폼"></meta>
           <meta rel="icon" href="/brunnerLogo.png"></meta>
           <link></link>
