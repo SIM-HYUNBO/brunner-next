@@ -4,14 +4,14 @@ import ServiceSQL from '@/components/serviceSQL';
 import AdminContentAnimation from './content-animation/adminContentAnimation'
 import { useRouter } from 'next/router'
 import * as userInfo from '@/components/userInfo';
-import PageContainer from "@/components/pageContainer"
+import Container from "@/components/container"
 
 export default function AdminContent() {
   const router = useRouter()
 
   return (
     <>
-      <PageContainer>
+      <Container>
         {userInfo?.isAdminUser() &&
           <>
             <div className="lg:flex-grow md:w-1/2 lg:pr-24 md:pr-16 flex flex-col md:items-start md:text-left md:mb-0 items-center text-center mb-20">
@@ -32,7 +32,7 @@ export default function AdminContent() {
             </div>
           </>
         }
-      </PageContainer>
+      </Container>
     </>
   );
 }

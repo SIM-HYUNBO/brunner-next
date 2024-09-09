@@ -2,15 +2,14 @@
 
 import ContactContentAnimation from './content-animation/supportContentAnimation'
 import { useRouter } from 'next/router'
-import PageContainer from "@/components/pageContainer"
+import Container from "@/components/container"
 
 export default function ContactContent() {
   const router = useRouter()
 
   return (
     <>
-      <PageContainer className="md:flex-row flex-col">
-
+      <Container className="md:flex-row flex-col">
         <div className="lg:flex-grow md:w-1/2 lg:pr-24 md:pr-16 flex flex-col md:items-start md:text-left md:mb-0 items-center text-center mb-20">
           <h1 className="title-font 
                        sm:text-4xl 
@@ -31,7 +30,7 @@ export default function ContactContent() {
         <div className="lg:h-2/6 lg:w-2/6">
           {<ContactContentAnimation />}
         </div>
-      </PageContainer>
+      </Container>
     </>
   );
 }
