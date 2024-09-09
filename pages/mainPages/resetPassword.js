@@ -9,8 +9,8 @@ import { useRouter } from 'next/router'
 import { useState } from 'react'
 import BrunnerMessageBox from '@/components/BrunnerMessageBox'
 import * as Constants from '@/components/constants'
-import Conatiner from "@/components/pageContainer"
-import PageContainer from '@/components/pageContainer'
+import Conatiner from "@/components/container"
+import Container from '@/components/container'
 
 export default function ResetPassword() {
   const router = useRouter();
@@ -172,7 +172,7 @@ export default function ResetPassword() {
           <link></link>
         </Head>
         <BodySection>
-          <PageContainer>
+          <Container>
             <div className="lg:w-3/5 md:w-1/2 md:pr-16 lg:pr-0 pr-0">
               <h1 className="title-font font-medium text-3xl text-gray-900">Protect your important information.</h1>
               <p className="mt-2">Enter information to leave or reset password.</p>
@@ -228,7 +228,7 @@ export default function ResetPassword() {
                 Reset password
               </button>
             </div>
-          </PageContainer>
+          </Container>
         </BodySection>
       </Layout>
     </>

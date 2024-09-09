@@ -11,7 +11,7 @@ import BrunnerMessageBox from '@/components/BrunnerMessageBox';
 import RealtimeChart from './realtimeChart';
 import * as Constants from '@/components/constants';
 import { useRouter } from 'next/navigation'
-import PageContainer from "@/components/pageContainer"
+import Container from "@/components/container"
 
 const StockContent = () => {
     const theme = useTheme();
@@ -747,7 +747,7 @@ const StockContent = () => {
     };
 
     return (
-        <PageContainer className="md:flex-row flex-col">
+        <Container className="md:flex-row flex-col">
             <div className='w-full'>
                 {loading && (
                     <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-gray-500 bg-opacity-75 z-50">
@@ -907,7 +907,7 @@ const StockContent = () => {
                 />
                 {currentTickerStockDataRef.current && renderChart()}
             </div >
-        </PageContainer >
+        </Container >
     );
 };
 

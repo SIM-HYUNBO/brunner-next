@@ -8,7 +8,7 @@ import * as userInfo from '@/components/userInfo';
 import moment from 'moment';
 import BrunnerMessageBox from '@/components/BrunnerMessageBox';
 import * as Constants from '@/components/constants';
-import PageContainer from "@/components/pageContainer"
+import Container from "@/components/container"
 
 export default function AssetContent() {
   const router = useRouter();
@@ -340,7 +340,7 @@ export default function AssetContent() {
 
   return (
     <>
-      <PageContainer>
+      <Container>
         <BrunnerMessageBox
           isOpen={modalContent.isOpen}
           message={modalContent.message}
@@ -427,7 +427,7 @@ export default function AssetContent() {
             </table>
           </div>
         </div>
-      </PageContainer>
+      </Container>
     </>
   );
 }
