@@ -19,7 +19,7 @@ sm, md, lg 이런 접두사를 보다 보면 반응형을 구현할 때,
 
 /* 주배경 (min-h-[footer높이(5rem)]) */
 .bg-primary { 
-    @apply bg-white dark:bg-slate-800 h-full min-h-[calc(100vh-5rem)] pb-20 max-w-full w-full px-2 lg:px-48 md:px-16}
+    @apply bg-white dark:bg-slate-800 h-full min-h-[calc(100vh-5rem)] pb-20 max-w-full w-full px-5 lg:px-48 md:px-16}
 
 /* footer 높이:5rem */
 footer {
