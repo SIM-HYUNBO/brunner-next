@@ -1,11 +1,25 @@
+/* 
+sm, md, lg 이런 접두사를 보다 보면 반응형을 구현할 때,
+'모바일의 경우는 sm을 쓰면 되는구나~~' 라고 생각할 수도 있는데 
+테일윈드 CSS에서는 추천하지 않는 방식이다.
+
+공식문서에 따르면 Tailwind는 기본적으로 부트스트랩과 같이 모바일 우선 중단점 시스템을 사용하기 때문에
+모바일용으로 CSS를 적용하려면 sm:w-16과 같이 sm을 붙이는 것이 아닌, 
+아무 접두사도 붙이지 않는 w-16으로 사용해야 한다는 것이다.
+
+테일윈드 CSS를 사용해 반응형 디자인을 구현할 거라면
+"모바일"에 먼저 맞게 디자인을 적용하고 
+만약 태블릿이나 데스크톱 등 다양한 환경을 위해서는 md: 또는 lg:를 붙여서 
+기기에 맞게 스타일링하면 된다는 것이다.
+*/
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 /* 주배경 (min-h-[footer높이(5rem)]) */
 .bg-primary { 
-    @apply bg-white dark:bg-slate-800 h-full min-h-[calc(100vh-5rem)] pb-20 max-w-full w-full px-48 sm:px-0
-}
+    @apply bg-white dark:bg-slate-800 h-full min-h-[calc(100vh-5rem)] pb-20 max-w-full w-full }
 
 /* footer 높이:5rem */
 footer {
