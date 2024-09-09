@@ -17,7 +17,7 @@ export default function Header() {
                     </Link>
                     <Link className="flex title-font font-medium items-center text-gray-900 mb-4 md:mb-0" href="/">
                         <h1 className="title-font sm:text-4xl text-3xl m-5 font-medium text-orange-900">Brunner
-                            <br className="hidden lg:inline-block" />
+                            {/* <br className="hidden lg:inline-block" /> */}
                         </h1>
                     </Link>
                     <nav className="md:ml-auto flex flex-wrap items-center text-base justify-center">
