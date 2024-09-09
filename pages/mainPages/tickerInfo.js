@@ -13,7 +13,7 @@ export default function TickerInfo() {
   return (
     <Layout>
       <Head>
-        <title>Brunner Home</title>
+        <title>Stock Quotes and Investment Information - Brunner-Next</title>
         <meta name="description" content="ContactUs"></meta>
         <meta rel="icon" href="/brunnerLogo.png"></meta>
         <link></link>

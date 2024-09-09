@@ -10,7 +10,7 @@ export default function AdminPage() {
   return (
     <Layout>
       <Head>
-        <title>Administration - Brunner</title>
+        <title>Stock Quotes and Investment Information - Brunner-Next</title>
         <meta name="description" content="Breakfast, Lunch and Dinner"></meta>
         <meta rel="icon" href="/brunnerLogo.png"></meta>
       </Head>
