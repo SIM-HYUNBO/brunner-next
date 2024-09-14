@@ -748,165 +748,154 @@ const StockContent = () => {
 
     return (
         <DivContainer className="md:flex-row flex-col">
-            <div className='w-full'>
-                {loading && (
-                    <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-gray-500 bg-opacity-75 z-50">
-                        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-gray-900"></div>
-                    </div>
-                )}
-                <div>
-                    <h1 className="title-font sm:text-4xl text-3xl my-10 font-medium text-green-900">
-                        Stock search
-                    </h1>
-                    <div className="items-start mt-2 dark:text-slate-400">
-                        <label>Span</label>
-                        <select
-                            className="dark:text-slate-400 ml-2 bg-slate-50 dark:bg-slate-800"
-                            value={dataIntervalUnitRef.current}
-                            onChange={(e) => setDataIntervalUnitRef(e.target.value)}
-                        >
-                            <option value="minute">minute</option>
-                            <option value="hour">hour</option>
-                            <option value="day">day</option>
-                            <option value="week">week</option>
-                            <option value="month">month</option>
-                            <option value="year">year</option>
-                        </select>
-                    </div>
-                    <div className="items-start mt-2 dark:text-slate-400">
-                        <label className="dark:text-slate-400 dark:bg-slate-800">
-                            Period
-                            <input
-                                className="dark:text-slate-400 ml-2 text-center bg-slate-50 dark:bg-slate-800"
-                                type="number"
-                                value={period}
-                                onChange={(e) => setPeriod(e.target.value)}
-                                min="1"
-                            />
-                        </label>
-                        <select
-                            className="ml-2 text-center dark:text-slate-400 bg-slate-50 dark:bg-slate-800"
-                            value={periodUnitRef.current}
-                            onChange={(e) => setPeriodUnitRef(e.target.value)}
-                        >
-                            <option value="minutes">minute</option>
-                            <option value="hours">hour</option>
-                            <option value="days">day</option>
-                            <option value="weeks">week</option>
-                            <option value="months">month</option>
-                            <option value="years">year</option>
-                        </select>
-                    </div>
-
-                    {/* Flex container for horizontal layout */}
-                    <div className="flex mb-4">
-                        {/* Recent Symbols List */}
-                        <div className="w-[30%] h-72 py-10">
-                            <h3 className="font-bold text-lg mb-2">Recent...</h3>
-                            <ul
-                                className={`items-start ${isDarkMode() ? "bg-slate-800 text-white" : "bg-slate-50 text-black"
-                                    } border border-slate-400 h-full overflow-y-auto`}
-                            >
-                                {recentSearches.length > 0 ? (
-                                    recentSearches.map((searchItem) => (
-                                        <li
-                                            key={searchItem.value}
-                                            onClick={() => {
-                                                handleTickerChange({ key: searchItem.value, value: searchItem.value });
-                                                handleRecentSearchClick(searchItem.value)
-                                            }}
-                                            className={`cursor-pointer p-2 hover:bg-indigo-500 hover:text-white border border-slate-300 dark:border-slate-600 ${selectedTicker?.value === searchItem.value
-                                                ? "bg-indigo-500 text-white"
-                                                : ""
-                                                }`}
-                                        >
-                                            {searchItem.label}
-                                        </li>
-                                    ))
-                                ) : (
-                                    <li className="text-gray-500">No recent symbols.</li>
-                                )}
-                            </ul>
-                        </div>
-
-                        {/* Select Symbols List */}
-                        <div className="w-[70%] h-72 py-10">
-                            <h3 className="font-bold text-lg mb-2">Select...</h3>
-                            <ul ref={tickerListDOMRef}
-                                className={`items-start ${isDarkMode() ? "bg-slate-800 text-white" : "bg-slate-50 text-black"
-                                    } border border-slate-400 h-full overflow-y-auto`}
-                            >
-                                {tickerListRef.current?.map((option) => (
-                                    <li
-                                        key={option.value}
-                                        onClick={() => {
-                                            handleTickerChange(option);
-                                        }}
-                                        className={`cursor-pointer p-2 hover:bg-indigo-500 border border-slate-300 dark:border-slate-600 hover:text-white ${selectedTicker?.value === option.value
-                                            ? "bg-indigo-500 text-white"
-                                            : ""
-                                            }`}
-                                    >
-                                        {option.label}
-                                    </li>
-                                ))
-                                }
-                            </ul>
-                        </div>
-                    </div>
-
-                    {/* Input Fields and Refresh Button */}
-                    <div className="flex mt-4" > {/* Centered inputs */}
-                        <input
-                            className="text-center bg-slate-50 text-slate-600 dark-text-slate-400 dark:bg-slate-800 border p-2 ml-1 h-10 w-[30%]"
-                            type="text"
-                            value={currentTickerRef.current}
-                            placeholder="Symbol. ex) AAPL, GOOGL, TSLA ..."
-                            onChange={(e) => {
-                                setCurrentTickerRef(e.target.value.toUpperCase());
-                                scrollToTicker(e.target.value.toUpperCase());
-                            }}
-                            onKeyUp={(e) => {
-                                if (e.key === 'Enter') {
-                                    setSelectedTicker(currentTickerRef.current);
-                                    scrollToTicker(currentTickerRef.current);
-                                    handleStockRequest();
-                                }
-                            }}
-                        />
-                        <input
-                            ref={currentPriceTextColorRef}
-                            className={`text-center bg-slate-50 dark:bg-slate-800 border border-slate-400 h-10 w-[30%]`}
-                            type="text"
-                            value={currentPriceRef.current}
-                            placeholder="Current Price"
-                        />
-                        <button
-                            className="bg-indigo-500 text-white py-2 px-4 ml-1 h-10"
-                            type="submit"
-                            onClick={() => {
-                                setSelectedTicker(currentTickerRef.current);
-                                scrollToTicker(currentTickerRef.current);
-                                handleStockRequest();
-                            }}
-                        >
-                            Refresh
-                        </button>
-                        <button className="bg-indigo-500 text-white py-2 px-4 ml-1 h-10"
-                            onClick={handleNewsClick}>
-                            Details...
-                        </button>
-                    </div>
+            {loading && (
+                <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-gray-500 bg-opacity-75 z-50">
+                    <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-gray-900"></div>
                 </div>
+            )}
+            <BrunnerMessageBox
+                isOpen={modalContent.isOpen}
+                message={modalContent.message}
+                onConfirm={modalContent.onConfirm}
+                onClose={modalContent.onClose}
+            />
 
-                <BrunnerMessageBox
-                    isOpen={modalContent.isOpen}
-                    message={modalContent.message}
-                    onConfirm={modalContent.onConfirm}
-                    onClose={modalContent.onClose}
+            <h1 className="title-font sm:text-4xl text-3xl w-full my-10 font-medium text-green-900">
+                Stock search
+            </h1>
+            <div className="items-start mt-2 dark:text-slate-400 w-full">
+                <label>Span</label>
+                <select
+                    className="dark:text-slate-400 ml-2 bg-slate-50 dark:bg-slate-800"
+                    value={dataIntervalUnitRef.current}
+                    onChange={(e) => setDataIntervalUnitRef(e.target.value)}
+                >
+                    <option value="minute">minute</option>
+                    <option value="hour">hour</option>
+                    <option value="day">day</option>
+                    <option value="week">week</option>
+                    <option value="month">month</option>
+                    <option value="year">year</option>
+                </select>
+            </div>
+            <div className="items-start mt-2 dark:text-slate-400">
+                <label className="dark:text-slate-400 dark:bg-slate-800">
+                    Period
+                    <input
+                        className="dark:text-slate-400 ml-2 text-center bg-slate-50 dark:bg-slate-800"
+                        type="number"
+                        value={period}
+                        onChange={(e) => setPeriod(e.target.value)}
+                        min="1"
+                    />
+                </label>
+                <select
+                    className="ml-2 text-center dark:text-slate-400 bg-slate-50 dark:bg-slate-800"
+                    value={periodUnitRef.current}
+                    onChange={(e) => setPeriodUnitRef(e.target.value)}
+                >
+                    <option value="minutes">minute</option>
+                    <option value="hours">hour</option>
+                    <option value="days">day</option>
+                    <option value="weeks">week</option>
+                    <option value="months">month</option>
+                    <option value="years">year</option>
+                </select>
+            </div>
+            <div className="flex mb-4">
+                {/* Recent Symbols List */}
+                <div className="w-[30%] h-72 py-10">
+                    <h3 className="font-bold text-lg mb-2">Recent...</h3>
+                    <ul
+                        className={`items-start ${isDarkMode() ? "bg-slate-800 text-white" : "bg-slate-50 text-black"
+                            } border border-slate-400 h-full overflow-y-auto`}
+                    >
+                        {recentSearches.length > 0 ? (
+                            recentSearches.map((searchItem) => (
+                                <li
+                                    key={searchItem.value}
+                                    onClick={() => {
+                                        handleTickerChange({ key: searchItem.value, value: searchItem.value });
+                                        handleRecentSearchClick(searchItem.value)
+                                    }}
+                                    className={`cursor-pointer p-2 hover:bg-indigo-500 hover:text-white border border-slate-300 dark:border-slate-600 ${selectedTicker?.value === searchItem.value
+                                        ? "bg-indigo-500 text-white"
+                                        : ""
+                                        }`}
+                                >
+                                    {searchItem.label}
+                                </li>
+                            ))
+                        ) : (
+                            <li className="text-gray-500">No recent symbols.</li>
+                        )}
+                    </ul>
+                </div>
+                <div className="w-[70%] h-72 py-10">
+                    <h3 className="font-bold text-lg mb-2">Select...</h3>
+                    <ul ref={tickerListDOMRef}
+                        className={`items-start ${isDarkMode() ? "bg-slate-800 text-white" : "bg-slate-50 text-black"
+                            } border border-slate-400 h-full overflow-y-auto`}
+                    >
+                        {tickerListRef.current?.map((option) => (
+                            <li
+                                key={option.value}
+                                onClick={() => {
+                                    handleTickerChange(option);
+                                }}
+                                className={`cursor-pointer p-2 hover:bg-indigo-500 border border-slate-300 dark:border-slate-600 hover:text-white ${selectedTicker?.value === option.value
+                                    ? "bg-indigo-500 text-white"
+                                    : ""
+                                    }`}
+                            >
+                                {option.label}
+                            </li>
+                        ))
+                        }
+                    </ul>
+                </div>
+            </div>
+            <div className="flex mt-2" > {/* Centered inputs */}
+                <input className="text-center bg-slate-50 text-slate-600 dark-text-slate-400 dark:bg-slate-800 border p-2 ml-1 h-10 w-full"
+                    type="text"
+                    value={currentTickerRef.current}
+                    placeholder="Symbol. ex) AAPL, GOOGL, TSLA ..."
+                    onChange={(e) => {
+                        setCurrentTickerRef(e.target.value.toUpperCase());
+                        scrollToTicker(e.target.value.toUpperCase());
+                    }}
+                    onKeyUp={(e) => {
+                        if (e.key === 'Enter') {
+                            setSelectedTicker(currentTickerRef.current);
+                            scrollToTicker(currentTickerRef.current);
+                            handleStockRequest();
+                        }
+                    }}
                 />
-                {currentTickerStockDataRef.current && renderChart()}
-            </div >
+                <input ref={currentPriceTextColorRef}
+                    className={`text-center bg-slate-50 dark:bg-slate-800 border border-slate-400 h-10 w-full ml-2`}
+                    type="text"
+                    value={currentPriceRef.current}
+                    placeholder="Current Price (USD)"
+                />
+                <button className="bg-indigo-500 text-white py-2 px-4 ml-1 h-10"
+                    type="submit"
+                    onClick={() => {
+                        setSelectedTicker(currentTickerRef.current);
+                        scrollToTicker(currentTickerRef.current);
+                        handleStockRequest();
+                    }}
+                >
+                    Refresh
+                </button>
+                <button className="bg-indigo-500 text-white py-2 px-4 ml-1 h-10"
+                    onClick={handleNewsClick}>
+                    Details...
+                </button>
+            </div>
+
+            {currentTickerStockDataRef.current && renderChart()}
+
         </DivContainer >
     );
 };
