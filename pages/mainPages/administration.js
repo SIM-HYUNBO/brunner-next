@@ -11,7 +11,7 @@ export default function AdminPage() {
     <Layout>
       <Head>
         <title>Stock Quotes and Investment Information - Brunner-Next</title>
-        <meta name="description" content="Breakfast, Lunch and Dinner"></meta>
+        <meta name="description" content="Brunner-Next provides real-time stock quotes. Make effective investments with real-time stock charts, investment strategies, stock news, and stock analysis tools."></meta>
         <meta rel="icon" href="/brunnerLogo.png"></meta>
       </Head>
       <BodySection>
