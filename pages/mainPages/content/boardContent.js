@@ -315,8 +315,6 @@ function Board(boardInfo) {
         }
     };
 
-
-
     return (
         <div className="w-full max-w-4xl mx-auto">
             {loading && (

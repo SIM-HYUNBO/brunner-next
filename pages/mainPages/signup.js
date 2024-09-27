@@ -78,7 +78,6 @@ export default function Signup() {
     setRegisterNo(e.target.value);
   };
 
-
   const requestSignup = async () => {
     var jRequest = {};
     var jResponse = null;
