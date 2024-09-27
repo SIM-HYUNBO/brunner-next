@@ -101,7 +101,7 @@ export default function Signin() {
       <Layout>
         <Head>
           <title>Stock Quotes and Investment Information - Brunner-Next</title>
-          <meta name="description" content="IT 기술 연구소" />
+          <meta name="description" content="Brunner-Next provides real-time stock quotes. Make effective investments with real-time stock charts, investment strategies, stock news, and stock analysis tools." />
           <link rel="icon" href="/brunnerLogo.png" />
         </Head>
         <BodySection>
