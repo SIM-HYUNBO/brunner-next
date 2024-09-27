@@ -52,11 +52,9 @@ export default function TickerInfoContent({ tickerCode: tickerCode }) {
 
   const [brandingInfo, setBrandingInfo] = useState({});
 
-
   useEffect(() => {
     getTickerInfo();
   }, []);
-
 
   const getTickerInfo = async () => {
     try {
