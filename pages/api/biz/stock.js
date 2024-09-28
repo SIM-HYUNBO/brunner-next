@@ -40,7 +40,7 @@ const executeService = (txnId, jRequest) => {
 var recentSearch_getTickerList = null;
 var recentSearch_getTickerInfo = new Map();
 var recentSearch_getLatestStockInfo = new Map();
-// const recentSearch_getRealtimeStockInfo = useState(new Map());
+var recentSearch_getRealtimeStockInfo = new Map();
 
 
 const getStockInfo = async (txnId, jRequest) => {
@@ -131,22 +131,22 @@ const getTickerList = async (txnId, jRequest) => {
 
     try {
         jResponse.commanaName = jRequest.commandName;
-        
+
         var searchFlag = true; // 지금 조회를 해야 하는지 여부
-        if(recentSearch_getTickerList != null) { // 최근 조회이력이 있고
-            const diffTime = (new Date() - recentSearch_getTickerList.searchTime) / (24 * 60 * 60 * 1000);
-            if (diffTime < 1){ // 조회한지 하루가 지나지 않은 경우
+        if (recentSearch_getTickerList != null) { // 최근 조회이력이 있고
+            const diffDay = (new Date() - recentSearch_getTickerList.searchTime) / (24 * 60 * 60 * 1000);
+            if (diffDay < 1) { // 조회한지 하루가 지나지 않은 경우
                 searchFlag = false; // 조회하지 않고 최근값으로 리턴
             }
-        }       
-        
-        if(searchFlag){ // 지금 조회를 해야 한다면
+        }
+
+        if (searchFlag) { // 지금 조회를 해야 한다면
             var sql = null
             sql = await serviceSQL.getSQL00('select_TB_COR_TICKER_INFO', 1);
             var select_TB_COR_TICKER_INFO_01 = await database.executeSQL(sql,
-            [
-                jRequest.systemCode
-            ]);
+                [
+                    jRequest.systemCode
+                ]);
 
             jResponse.tickerList = select_TB_COR_TICKER_INFO_01.rows;
 
@@ -155,9 +155,9 @@ const getTickerList = async (txnId, jRequest) => {
             recentSearch_getTickerList.searchData = jResponse.tickerList;
         }
         else {
-                jResponse.tickerList = recentSearch_getTickerList.searchData;
+            jResponse.tickerList = recentSearch_getTickerList.searchData;
         }
-        
+
         jResponse.error_code = 0;
         jResponse.error_message = Constants.EMPTY_STRING;
     } catch (e) {
@@ -176,14 +176,14 @@ const getTickerInfo = async (txnId, jRequest) => {
         jResponse.commanaName = jRequest.commandName;
 
         var searchFlag = true; // 지금 조회를 해야 하는지 여부
-        if(recentSearch_getTickerInfo != null && recentSearch_getTickerInfo.has(jRequest.systemCode + '_' + jRequest.tickerCode)) { // 최근 조회이력이 있고
-            const diffTime = (new Date() - recentSearch_getTickerInfo.get(jRequest.systemCode + '_' + jRequest.tickerCode).searchTime) / (24 * 60 * 60 * 1000);
-            if (diffTime < 1){ // 조회한지 하루가 지나지 않은 경우
+        if (recentSearch_getTickerInfo != null && recentSearch_getTickerInfo.has(jRequest.systemCode + '_' + jRequest.tickerCode)) { // 최근 조회이력이 있고
+            const diffDay = (new Date() - recentSearch_getTickerInfo.get(jRequest.systemCode + '_' + jRequest.tickerCode).searchTime) / (24 * 60 * 60 * 1000);
+            if (diffDay < 1) { // 조회한지 하루가 지나지 않은 경우
                 searchFlag = false; // 조회하지 않고 최근값으로 리턴
             }
-        }       
-        
-        if(searchFlag){ // 지금 조회를 해야 한다면        
+        }
+
+        if (searchFlag) { // 지금 조회를 해야 한다면        
 
             var sql = null
             sql = await serviceSQL.getSQL00('select_TB_COR_TICKER_INFO', 2);
@@ -268,14 +268,14 @@ const getLatestStockInfo = async (txnId, jRequest) => {
         }
 
         var searchFlag = true; // 지금 조회를 해야 하는지 여부
-        if(recentSearch_getLatestStockInfo != null && recentSearch_getLatestStockInfo.has(jRequest.systemCode + '_' + jRequest.tickerCode)) { // 최근 조회이력이 있고
-            const diffTime = (new Date() - recentSearch_getLatestStockInfo.get(jRequest.systemCode + '_' + jRequest.tickerCode).searchTime) / (24 * 60 * 60 * 1000);
-            if (diffTime < 1){ // 조회한지 하루가 지나지 않은 경우
+        if (recentSearch_getLatestStockInfo != null && recentSearch_getLatestStockInfo.has(jRequest.systemCode + '_' + jRequest.tickerCode)) { // 최근 조회이력이 있고
+            const diffDay = (new Date() - recentSearch_getLatestStockInfo.get(jRequest.systemCode + '_' + jRequest.tickerCode).searchTime) / (24 * 60 * 60 * 1000);
+            if (diffDay < 1) { // 조회한지 하루가 지나지 않은 경우
                 searchFlag = false; // 조회하지 않고 최근값으로 리턴
             }
-        }       
-        
-        if(searchFlag){ // 지금 조회를 해야 한다면        
+        }
+
+        if (searchFlag) { // 지금 조회를 해야 한다면        
 
             const from = moment().subtract(5, "day").format('YYYY-MM-DD')
             const to = moment().format('YYYY-MM-DD');
@@ -294,7 +294,7 @@ const getLatestStockInfo = async (txnId, jRequest) => {
                 jResponse.stockInfo.map((d) => {
                     d.t = d.t / 1000; // 시간의 단위는 초로
                 });
-                
+
                 jResponse.stockInfo.searchTime = new Date();
                 recentSearch_getLatestStockInfo.set(jRequest.systemCode + '_' + jRequest.tickerCode, jResponse.stockInfo);
 
@@ -342,12 +342,29 @@ const getRealtimeStockInfo = async (txnId, jRequest) => {
             return jResponse;
         }
 
-        const FINNHUB_REALTIME_URL = `https://finnhub.io/api/v1/quote?symbol=${jRequest.tickerCode}&token=${process.env.FINNHUB_API_KEY}`;
-        response = await axios.get(FINNHUB_REALTIME_URL);
-        if (response.status !== 200) {
-            throw Error(response.statusText)
+        var searchFlag = true; // 지금 조회를 해야 하는지 여부
+        if (recentSearch_getRealtimeStockInfo != null && recentSearch_getRealtimeStockInfo.has(jRequest.systemCode + '_' + jRequest.tickerCode)) { // 최근 조회이력이 있고
+            const diffDay = (new Date() - recentSearch_getRealtimeStockInfo.get(jRequest.systemCode + '_' + jRequest.tickerCode).searchTime) / (24 * 60 * 60 * 1000);
+            if (diffDay * 24 * 60 < 1) { // 조회한지 1분이 지나지 않은 경우
+                searchFlag = false; // 조회하지 않고 최근값으로 리턴
+            }
         }
-        jResponse.stockInfo = { type: 'stockInfo', data: response.data, time: new Date(response.data.t * 1000).toISOString() }
+
+        if (searchFlag) { // 지금 조회를 해야 한다면   
+
+            const FINNHUB_REALTIME_URL = `https://finnhub.io/api/v1/quote?symbol=${jRequest.tickerCode}&token=${process.env.FINNHUB_API_KEY}`;
+            response = await axios.get(FINNHUB_REALTIME_URL);
+            if (response.status !== 200) {
+                throw Error(response.statusText)
+            }
+            jResponse.stockInfo = { type: 'stockInfo', data: response.data, time: new Date(response.data.t * 1000).toISOString() }
+            jResponse.stockInfo.searchTime = new Date();
+            recentSearch_getRealtimeStockInfo.set(jRequest.systemCode + '_' + jRequest.tickerCode, jResponse.stockInfo);
+        }
+        else {
+            jResponse.stockInfo = recentSearch_getRealtimeStockInfo.get(jRequest.systemCode + '_' + jRequest.tickerCode);
+        }
+
         jResponse.error_code = 0;
         jResponse.error_message = Constants.EMPTY_STRING;
     }
