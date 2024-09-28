@@ -236,7 +236,7 @@ const RealtimeChart = ({ updateCurrentPrice }) => {
 
             const jRequest = {
                 commandName: Constants.COMMAND_STOCK_GET_REALTIME_STOCK_INFO,
-                systemCode:process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE,
+                systemCode: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE,
                 tickerCode: currentTickerRef.current,
             };
 
@@ -264,7 +264,7 @@ const RealtimeChart = ({ updateCurrentPrice }) => {
             /* 최근 데이터 100개 요청 */
             const jRequest = {
                 commandName: Constants.COMMAND_STOCK_GET_LATEST_STOCK_INFO,
-                systemCode:process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE,
+                systemCode: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE,
                 tickerCode: currentTickerRef.current,
                 dataCount: -100
             };
@@ -362,7 +362,9 @@ const RealtimeChart = ({ updateCurrentPrice }) => {
         const timerId = fetchLatestStockInfo();
 
         // 컴포넌트 언마운트 시 인터벌 클리어
-        return () => clearInterval(timerId);
+        return () => {
+            clearInterval(timerId);
+        }
     }, []);
 
     return (
