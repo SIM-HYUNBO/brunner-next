@@ -270,7 +270,7 @@ const StockContent = () => {
             const jRequest = {
                 commandName: Constants.COMMAND_STOCK_GET_STOCK_INFO,
                 systemCode: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE,
-                stocksTicker: currentTickerRef.current,
+                tickerCode: currentTickerRef.current,
                 multiplier: 1,
                 timespan: dataIntervalUnitRef.current,
                 from: timefrom,
