@@ -95,7 +95,7 @@ const getStockInfo = async (txnId, jRequest) => {
 
         for (let key of recentSearch_getStockInfo.keys()) {
             if (key.startsWith(jRequest.systemCode + '_' + jRequest.tickerCode + '_')) {
-                if (key.split('_')[3] < jRequest.to) { // 과거 날짜에 조회한 데이터는 삭제
+                if (key.split('_')[3] < jRequest.to) { // 과거 날짜에 조회했던 데이터는 삭제
                     recentSearch_getStockInfo.delete(key);
                     continue;
                 }
@@ -106,7 +106,7 @@ const getStockInfo = async (txnId, jRequest) => {
         if (recentSearch_getStockInfo != null && recentSearch_getStockInfo.has(jRequest.systemCode + '_' + jRequest.tickerCode + '_' + jRequest.from + '_' + jRequest.to)) { // 최근 조회이력이 있고
             const diffDay = (new Date() - recentSearch_getStockInfo.get(jRequest.systemCode + '_' + jRequest.tickerCode + '_' + jRequest.from + '_' + jRequest.to).searchTime) / (24 * 60 * 60 * 1000);
             if (diffDay < 1) { // 조회한지 하루가 지나지 않은 경우
-                searchFlag = false; // 조회하지 않고 최근값으로 리턴
+                searchFlag = false; // 조회하지 않고 최근 조회결과로 리턴
             }
         }
 
@@ -162,7 +162,7 @@ const getTickerList = async (txnId, jRequest) => {
         if (recentSearch_getTickerList != null) { // 최근 조회이력이 있고
             const diffDay = (new Date() - recentSearch_getTickerList.searchTime) / (24 * 60 * 60 * 1000);
             if (diffDay < 1) { // 조회한지 하루가 지나지 않은 경우
-                searchFlag = false; // 조회하지 않고 최근값으로 리턴
+                searchFlag = false; // 조회하지 않고 최근 조회결과로 리턴
             }
         }
 
@@ -205,7 +205,7 @@ const getTickerInfo = async (txnId, jRequest) => {
         if (recentSearch_getTickerInfo != null && recentSearch_getTickerInfo.has(jRequest.systemCode + '_' + jRequest.tickerCode)) { // 최근 조회이력이 있고
             const diffDay = (new Date() - recentSearch_getTickerInfo.get(jRequest.systemCode + '_' + jRequest.tickerCode).searchTime) / (24 * 60 * 60 * 1000);
             if (diffDay < 1) { // 조회한지 하루가 지나지 않은 경우
-                searchFlag = false; // 조회하지 않고 최근값으로 리턴
+                searchFlag = false; // 조회하지 않고 최근 조회결과로 리턴
             }
         }
 
@@ -297,7 +297,7 @@ const getLatestStockInfo = async (txnId, jRequest) => {
         if (recentSearch_getLatestStockInfo != null && recentSearch_getLatestStockInfo.has(jRequest.systemCode + '_' + jRequest.tickerCode)) { // 최근 조회이력이 있고
             const diffDay = (new Date() - recentSearch_getLatestStockInfo.get(jRequest.systemCode + '_' + jRequest.tickerCode).searchTime) / (24 * 60 * 60 * 1000);
             if (diffDay < 1) { // 조회한지 하루가 지나지 않은 경우
-                searchFlag = false; // 조회하지 않고 최근값으로 리턴
+                searchFlag = false; // 조회하지 않고 최근 조회결과로 리턴
             }
         }
 
@@ -372,7 +372,7 @@ const getRealtimeStockInfo = async (txnId, jRequest) => {
         if (recentSearch_getRealtimeStockInfo != null && recentSearch_getRealtimeStockInfo.has(jRequest.systemCode + '_' + jRequest.tickerCode)) { // 최근 조회이력이 있고
             const diffDay = (new Date() - recentSearch_getRealtimeStockInfo.get(jRequest.systemCode + '_' + jRequest.tickerCode).searchTime) / (24 * 60 * 60 * 1000);
             if (diffDay * 24 * 60 < 1) { // 조회한지 1분이 지나지 않은 경우
-                searchFlag = false; // 조회하지 않고 최근값으로 리턴
+                searchFlag = false; // 조회하지 않고 최근 조회결과로 리턴
             }
         }
 
