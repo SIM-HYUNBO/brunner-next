@@ -59,8 +59,6 @@ const RealtimeChart = ({ updateCurrentPrice }) => {
         intervalTimeRef.current = newVal;
     }
 
-    const [intervalId, setIntervalId] = useState(null);
-
     /* 차트 색깔 결정 
         처음값 대비 올랐으면 빨간색
         내렸으면 파란색
@@ -225,7 +223,7 @@ const RealtimeChart = ({ updateCurrentPrice }) => {
     var lastChartData = null;
     var firstChartData = null;
 
-    const fetchRealtimeStockData = useCallback(async () => {
+    const fetchRealtimeStockData = async () => {
         try {
             if (currentTickerRef.current !== process.currentTicker) {
                 setCurrentTicker(process.currentTicker);
@@ -256,7 +254,7 @@ const RealtimeChart = ({ updateCurrentPrice }) => {
         } catch (err) {
             openModal(err instanceof Error ? err.message : Constants.MESSAGE_UNKNOWN_ERROR);
         }
-    }, [intervalTime]);
+    };
 
     const fetchLatestStockInfo = async () => {
         try {
@@ -280,12 +278,11 @@ const RealtimeChart = ({ updateCurrentPrice }) => {
             openModal(err);
         }
         finally {
-            fetchRealtimeStockData(); // 처음에 실행하고 타이머 반복
-            const id = setInterval(() => {
-                fetchRealtimeStockData();
+            await fetchRealtimeStockData(); // 처음에 실행하고 타이머 반복
+            const id = setInterval(async () => {
+                await fetchRealtimeStockData();
             }, intervalTime);
 
-            setIntervalId(id); // 새로운 인터벌 ID 저장
             return id;
         }
     }
@@ -354,11 +351,6 @@ const RealtimeChart = ({ updateCurrentPrice }) => {
     }
 
     useEffect(() => {
-        // 인터벌 설정
-        if (intervalId) {
-            clearInterval(intervalId); // 이전 인터벌 제거
-        }
-
         const timerId = fetchLatestStockInfo();
 
         // 컴포넌트 언마운트 시 인터벌 클리어
