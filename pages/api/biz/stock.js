@@ -37,6 +37,12 @@ const executeService = (txnId, jRequest) => {
     }
 }
 
+var recentSearch_getTickerList = null;
+var recentSearch_getTickerInfo = new Map();
+var recentSearch_getLatestStockInfo = new Map();
+// const recentSearch_getRealtimeStockInfo = useState(new Map());
+
+
 const getStockInfo = async (txnId, jRequest) => {
     var jResponse = {};
 
@@ -44,9 +50,9 @@ const getStockInfo = async (txnId, jRequest) => {
         jResponse.commanaName = jRequest.commandName;
         jResponse.userId = jRequest.userId;
 
-        if (!jRequest.stocksTicker) {
+        if (!jRequest.tickerCode) {
             jResponse.error_code = -2;
-            jResponse.error_message = `${Constants.MESSAGE_REQUIRED_FIELD} [stocksTicker]`;
+            jResponse.error_message = `${Constants.MESSAGE_REQUIRED_FIELD} [tickerCode]`;
             return jResponse;
         }
 
@@ -86,7 +92,7 @@ const getStockInfo = async (txnId, jRequest) => {
             return jResponse;
         }
 
-        const apiUrl = `https://api.polygon.io/v2/aggs/ticker/${jRequest.stocksTicker}/range/${jRequest.multiplier}/${jRequest.timespan}/${jRequest.from}/${jRequest.to}?adjusted=${jRequest.adjust}&sort=${jRequest.sort}&apiKey=${process.env.POLYGON_API_KEY}`
+        const apiUrl = `https://api.polygon.io/v2/aggs/ticker/${jRequest.tickerCode}/range/${jRequest.multiplier}/${jRequest.timespan}/${jRequest.from}/${jRequest.to}?adjusted=${jRequest.adjust}&sort=${jRequest.sort}&apiKey=${process.env.POLYGON_API_KEY}`
 
         const response = await fetch(apiUrl);
         if (!response.ok) {
@@ -125,16 +131,33 @@ const getTickerList = async (txnId, jRequest) => {
 
     try {
         jResponse.commanaName = jRequest.commandName;
-
-        var sql = null
-        sql = await serviceSQL.getSQL00('select_TB_COR_TICKER_INFO', 1);
-        var select_TB_COR_TICKER_INFO_01 = await database.executeSQL(sql,
+        
+        var searchFlag = true; // 지금 조회를 해야 하는지 여부
+        if(recentSearch_getTickerList != null) { // 최근 조회이력이 있고
+            const diffTime = (new Date() - recentSearch_getTickerList.searchTime) / (24 * 60 * 60 * 1000);
+            if (diffTime < 1){ // 조회한지 하루가 지나지 않은 경우
+                searchFlag = false; // 조회하지 않고 최근값으로 리턴
+            }
+        }       
+        
+        if(searchFlag){ // 지금 조회를 해야 한다면
+            var sql = null
+            sql = await serviceSQL.getSQL00('select_TB_COR_TICKER_INFO', 1);
+            var select_TB_COR_TICKER_INFO_01 = await database.executeSQL(sql,
             [
                 jRequest.systemCode
             ]);
 
-        jResponse.tickerList = select_TB_COR_TICKER_INFO_01.rows;
+            jResponse.tickerList = select_TB_COR_TICKER_INFO_01.rows;
 
+            recentSearch_getTickerList = {};
+            recentSearch_getTickerList.searchTime = new Date();
+            recentSearch_getTickerList.searchData = jResponse.tickerList;
+        }
+        else {
+                jResponse.tickerList = recentSearch_getTickerList.searchData;
+        }
+        
         jResponse.error_code = 0;
         jResponse.error_message = Constants.EMPTY_STRING;
     } catch (e) {
@@ -152,48 +175,68 @@ const getTickerInfo = async (txnId, jRequest) => {
     try {
         jResponse.commanaName = jRequest.commandName;
 
-        var sql = null
-        sql = await serviceSQL.getSQL00('select_TB_COR_TICKER_INFO', 2);
-        var select_TB_COR_TICKER_INFO_02 = await database.executeSQL(sql,
-            [
-                jRequest.systemCode,
-                jRequest.tickerCode,
-            ]);
+        var searchFlag = true; // 지금 조회를 해야 하는지 여부
+        if(recentSearch_getTickerInfo != null && recentSearch_getTickerInfo.has(jRequest.systemCode + '_' + jRequest.tickerCode)) { // 최근 조회이력이 있고
+            const diffTime = (new Date() - recentSearch_getTickerInfo.get(jRequest.systemCode + '_' + jRequest.tickerCode).searchTime) / (24 * 60 * 60 * 1000);
+            if (diffTime < 1){ // 조회한지 하루가 지나지 않은 경우
+                searchFlag = false; // 조회하지 않고 최근값으로 리턴
+            }
+        }       
+        
+        if(searchFlag){ // 지금 조회를 해야 한다면        
 
-        if (select_TB_COR_TICKER_INFO_02.rowCount === 1) {
-            logger.info(`RESULT:\n${JSON.stringify(select_TB_COR_TICKER_INFO_02.rows[0])}\n`);
+            var sql = null
+            sql = await serviceSQL.getSQL00('select_TB_COR_TICKER_INFO', 2);
+            var select_TB_COR_TICKER_INFO_02 = await database.executeSQL(sql,
+                [
+                    jRequest.systemCode,
+                    jRequest.tickerCode,
+                ]);
 
-            jResponse.tickerInfo = {};
-            jResponse.tickerInfo.tickerDesc = select_TB_COR_TICKER_INFO_02.rows[0].ticker_desc;
-        }
-        else if (select_TB_COR_TICKER_INFO_02.rowCount <= 0) {
-            jResponse.error_code = -1;
-            jResponse.error_message = `The ticker info not exist.`;
-            return jResponse;
-        }
+            if (select_TB_COR_TICKER_INFO_02.rowCount === 1) {
+                logger.info(`RESULT:\n${JSON.stringify(select_TB_COR_TICKER_INFO_02.rows[0])}\n`);
 
-        // ticker별 최신 news 조회 url은 https://api.polygon.io/v2/reference/news?ticker=TICKER_SYMBOL&apiKey=YOUR_API_KEY
-        // 무료가 아니므로 못함
+                jResponse.tickerInfo = {};
+                jResponse.tickerInfo.tickerDesc = select_TB_COR_TICKER_INFO_02.rows[0].ticker_desc;
+            }
+            else if (select_TB_COR_TICKER_INFO_02.rowCount <= 0) {
+                jResponse.error_code = -1;
+                jResponse.error_message = `The ticker info not exist.`;
+                return jResponse;
+            }
 
-        const apiUrl = `https://api.polygon.io/v3/reference/tickers/${jRequest.tickerCode}?apiKey=${process.env.POLYGON_API_KEY}`
-        const response = await fetch(apiUrl);
-        if (!response.ok) {
-            jResponse.error_code = response.status;
-            jResponse.error_message = response.statusText;
-            return jResponse;
-        }
-        else {
-            const data = await response.json();
-            if (data.results) {
-                jResponse.tickerInfo.tickerInfoContent = data.results;
-                jResponse.error_code = 0; // exception
-                jResponse.error_message = data.status;
+            // ticker별 최신 news 조회 url은 https://api.polygon.io/v2/reference/news?ticker=TICKER_SYMBOL&apiKey=YOUR_API_KEY
+            // 무료가 아니므로 못함
+
+            const apiUrl = `https://api.polygon.io/v3/reference/tickers/${jRequest.tickerCode}?apiKey=${process.env.POLYGON_API_KEY}`
+            const response = await fetch(apiUrl);
+            if (!response.ok) {
+                jResponse.error_code = response.status;
+                jResponse.error_message = response.statusText;
+                return jResponse;
             }
             else {
-                jResponse.error_code = -1; // exception
-                jResponse.error_message = data.status;
+                const data = await response.json();
+                if (data.results) {
+                    jResponse.tickerInfo.tickerInfoContent = data.results;
+                    jResponse.tickerInfo.searchTime = new Date();
+                    recentSearch_getTickerInfo.set(jRequest.systemCode + '_' + jRequest.tickerCode, jResponse.tickerInfo);
+
+                    jResponse.error_code = 0; // exception
+                    jResponse.error_message = data.status;
+                }
+                else {
+                    jResponse.error_code = -1; // exception
+                    jResponse.error_message = data.status;
+                }
             }
         }
+        else {
+            jResponse.tickerInfo = recentSearch_getTickerInfo.get(jRequest.systemCode + '_' + jRequest.tickerCode);
+            jResponse.error_code = 0; // exception
+            jResponse.error_message = '';
+        }
+
         jResponse.apikey = process.env.POLYGON_API_KEY;
         jResponse.error_code = 0;
         jResponse.error_message = Constants.EMPTY_STRING;
@@ -213,9 +256,9 @@ const getLatestStockInfo = async (txnId, jRequest) => {
         jResponse.commanaName = jRequest.commandName;
         jResponse.userId = jRequest.userId;
 
-        if (!jRequest.stocksTicker) {
+        if (!jRequest.tickerCode) {
             jResponse.error_code = -2;
-            jResponse.error_message = `${Constants.MESSAGE_REQUIRED_FIELD} [stocksTicker]`;
+            jResponse.error_message = `${Constants.MESSAGE_REQUIRED_FIELD} [tickerCode]`;
             return jResponse;
         }
         if (!jRequest.dataCount) {
@@ -224,29 +267,49 @@ const getLatestStockInfo = async (txnId, jRequest) => {
             return jResponse;
         }
 
-        const from = moment().subtract(5, "day").format('YYYY-MM-DD')
-        const to = moment().format('YYYY-MM-DD');
-        const apiUrl = `https://api.polygon.io/v2/aggs/ticker/${jRequest.stocksTicker}/range/1/minute/${from}/${to}?adjusted=true&sort=asc&apiKey=${process.env.POLYGON_API_KEY}`
+        var searchFlag = true; // 지금 조회를 해야 하는지 여부
+        if(recentSearch_getLatestStockInfo != null && recentSearch_getLatestStockInfo.has(jRequest.systemCode + '_' + jRequest.tickerCode)) { // 최근 조회이력이 있고
+            const diffTime = (new Date() - recentSearch_getLatestStockInfo.get(jRequest.systemCode + '_' + jRequest.tickerCode).searchTime) / (24 * 60 * 60 * 1000);
+            if (diffTime < 1){ // 조회한지 하루가 지나지 않은 경우
+                searchFlag = false; // 조회하지 않고 최근값으로 리턴
+            }
+        }       
+        
+        if(searchFlag){ // 지금 조회를 해야 한다면        
 
-        const response = await fetch(apiUrl);
-        if (!response.ok) {
-            jResponse.error_code = response.status;
-            jResponse.error_message = response.statusText;
-            return jResponse;
-        }
+            const from = moment().subtract(5, "day").format('YYYY-MM-DD')
+            const to = moment().format('YYYY-MM-DD');
+            const apiUrl = `https://api.polygon.io/v2/aggs/ticker/${jRequest.tickerCode}/range/1/minute/${from}/${to}?adjusted=true&sort=asc&apiKey=${process.env.POLYGON_API_KEY}`
 
-        const data = await response.json();
-        if (data.results) {
-            jResponse.stockInfo = data.results.slice(jRequest.dataCount);
-            jResponse.stockInfo.map((d) => {
-                d.t = d.t / 1000; // 시간의 단위는 초로
-            });
-            jResponse.error_code = 0; // exception
-            jResponse.error_message = data.status;
+            const response = await fetch(apiUrl);
+            if (!response.ok) {
+                jResponse.error_code = response.status;
+                jResponse.error_message = response.statusText;
+                return jResponse;
+            }
+
+            const data = await response.json();
+            if (data.results) {
+                jResponse.stockInfo = data.results.slice(jRequest.dataCount);
+                jResponse.stockInfo.map((d) => {
+                    d.t = d.t / 1000; // 시간의 단위는 초로
+                });
+                
+                jResponse.stockInfo.searchTime = new Date();
+                recentSearch_getLatestStockInfo.set(jRequest.systemCode + '_' + jRequest.tickerCode, jResponse.stockInfo);
+
+                jResponse.error_code = 0; // exception
+                jResponse.error_message = data.status;
+            }
+            else {
+                jResponse.error_code = -1; // exception
+                jResponse.error_message = data.status;
+            }
         }
         else {
-            jResponse.error_code = -1; // exception
-            jResponse.error_message = data.status;
+            jResponse.stockInfo = recentSearch_getLatestStockInfo.get(jRequest.systemCode + '_' + jRequest.tickerCode);
+            jResponse.error_code = 0; // exception
+            jResponse.error_message = '';
         }
     }
     catch (e) {
@@ -265,14 +328,21 @@ const getRealtimeStockInfo = async (txnId, jRequest) => {
     try {
         jResponse.commanaName = jRequest.commandName;
 
-        if (!jRequest.stocksTicker) {
+        if (!jRequest.systemCode) {
             jResponse.error_code = -2;
-            jResponse.error_message = `${Constants.MESSAGE_REQUIRED_FIELD} [stocksTicker]`;
+            jResponse.error_message = `${Constants.MESSAGE_REQUIRED_FIELD} [systemCode]`;
 
             return jResponse;
         }
 
-        const FINNHUB_REALTIME_URL = `https://finnhub.io/api/v1/quote?symbol=${jRequest.stocksTicker}&token=${process.env.FINNHUB_API_KEY}`;
+        if (!jRequest.tickerCode) {
+            jResponse.error_code = -2;
+            jResponse.error_message = `${Constants.MESSAGE_REQUIRED_FIELD} [tickerCode]`;
+
+            return jResponse;
+        }
+
+        const FINNHUB_REALTIME_URL = `https://finnhub.io/api/v1/quote?symbol=${jRequest.tickerCode}&token=${process.env.FINNHUB_API_KEY}`;
         response = await axios.get(FINNHUB_REALTIME_URL);
         if (response.status !== 200) {
             throw Error(response.statusText)
