@@ -3,7 +3,6 @@
 import logger from "./../winston/logger"
 import * as database from "./database/database"
 import * as serviceSQL from './serviceSQL'
-import axios from 'axios';
 import moment from 'moment';
 import * as Constants from '@/components/constants'
 
@@ -222,7 +221,7 @@ const getTickerInfo = async (txnId, jRequest) => {
             if (select_TB_COR_TICKER_INFO_02.rowCount === 1) {
                 logger.info(`RESULT:\n${JSON.stringify(select_TB_COR_TICKER_INFO_02.rows[0])}\n`);
 
-                jResponse.tickerInfo = {};
+                jResponse.tickerInfo = {}; 5
                 jResponse.tickerInfo.tickerDesc = select_TB_COR_TICKER_INFO_02.rows[0].ticker_desc;
             }
             else if (select_TB_COR_TICKER_INFO_02.rowCount <= 0) {
@@ -235,6 +234,7 @@ const getTickerInfo = async (txnId, jRequest) => {
             // 무료가 아니므로 못함
 
             const apiUrl = `https://api.polygon.io/v3/reference/tickers/${jRequest.tickerCode}?apiKey=${process.env.POLYGON_API_KEY}`
+
             const response = await fetch(apiUrl);
             if (!response.ok) {
                 jResponse.error_code = response.status;
@@ -378,12 +378,14 @@ const getRealtimeStockInfo = async (txnId, jRequest) => {
 
         if (searchFlag) { // 지금 조회를 해야 한다면   
 
-            const FINNHUB_REALTIME_URL = `https://finnhub.io/api/v1/quote?symbol=${jRequest.tickerCode}&token=${process.env.FINNHUB_API_KEY}`;
-            response = await axios.get(FINNHUB_REALTIME_URL);
-            if (response.status !== 200) {
+            const apiUrl = `https://finnhub.io/api/v1/quote?symbol=${jRequest.tickerCode}&token=${process.env.FINNHUB_API_KEY}`;
+            response = await fetch(apiUrl);
+            if (!response.ok) {
                 throw Error(response.statusText)
             }
-            jResponse.stockInfo = { type: 'stockInfo', data: response.data, time: new Date(response.data.t * 1000).toISOString() }
+
+            const data = await response.json();
+            jResponse.stockInfo = { type: 'stockInfo', data: data, time: new Date(data.t * 1000).toISOString() }
             jResponse.stockInfo.searchTime = new Date();
             recentSearch_getRealtimeStockInfo.set(jRequest.systemCode + '_' + jRequest.tickerCode, jResponse.stockInfo);
         }
