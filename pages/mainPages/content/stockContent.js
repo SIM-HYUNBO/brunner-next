@@ -21,9 +21,6 @@ const StockContent = () => {
         return theme.theme === "dark";
     }
 
-    // react-select
-    const Select = dynamic(() => import('react-select'), { ssr: false });
-
     // ApexCharts dynamic import
     const ApexCharts = dynamic(() => import('react-apexcharts'), { ssr: false });
 
@@ -174,7 +171,7 @@ const StockContent = () => {
 
     // 최근 검색 콤보박스에서 종목을 선택했을 때 처리
     const handleRecentSearchClick = (ticker) => {
-        fetchStockData(ticker);
+        getStockInfo(ticker);
 
         // 선택한 티커가 목록에 있는지 확인하고 스크롤 이동
         scrollToTicker(ticker);
@@ -197,18 +194,18 @@ const StockContent = () => {
         displayInitialTickerList();
     }, []);
 
-    // useEffect 내에서 동기호출을 해야 하므로 함수 분리
+    // useEffect 내에서 동기호출을 해야하므로 함수 분리
     const displayInitialTickerList = async () => {
         // 컴포넌트가 마운트될 때 티커 목록 가져오기
         setTickerListRef(process.tickerList);
 
         if (!tickerListRef.current) {
-            await fetchTickerList();
+            await getTickerList();
         }
     }
 
     // 모든 종목 목록을 서버에서 조회
-    const fetchTickerList = async () => {
+    const getTickerList = async () => {
         try {
             const jRequest = {
                 commandName: Constants.COMMAND_STOCK_GET_TICKER_LIST,
@@ -223,11 +220,12 @@ const StockContent = () => {
             if (jResponse.error_code === 0) {
                 await setTickerListRef(jResponse.tickerList);
             } else {
-                openModal(JSON.stringify(jResponse.error_message));
+                console.log(`${Constants.COMMAND_STOCK_GET_TICKER_LIST}:${JSON.stringify(jResponse.error_message)}`);
+                openModal(jResponse.error_message);
             }
         } catch (err) {
             setLoading(false);
-            openModal(err instanceof Error ? err.message : Constants.MESSAGE_UNKNOWN_ERROR);
+            openModal(`${Constants.COMMAND_STOCK_GET_TICKER_LIST}:${err instanceof Error ? err.message : Constants.MESSAGE_UNKNOWN_ERROR}`);
         }
     };
 
@@ -246,7 +244,8 @@ const StockContent = () => {
             });
             return;
         }
-        fetchStockData();
+
+        getStockInfo();
     };
 
     const handleNewsClick = (event) => {
@@ -258,11 +257,11 @@ const StockContent = () => {
             return;
         }
 
-        router.push(`/mainPages/tickerInfo?tickerCode=${currentTickerRef.current}`);  // 원하는 경로로 이동
+        router.push(`/ mainPages / tickerInfo ? tickerCode = ${currentTickerRef.current}`);  // 원하는 경로로 이동
     }
 
     // 선택한 종목의 주식 데이터를 서버에서 조회
-    const fetchStockData = async () => {
+    const getStockInfo = async () => {
         try {
             const timefrom = moment().subtract(period, periodUnitRef.current).format('YYYY-MM-DD');
             const timeto = moment().format('YYYY-MM-DD');
@@ -305,11 +304,12 @@ const StockContent = () => {
                 }
             } else {
                 setLoading(false);
-                openModal(JSON.stringify(jResponse.error_message));
+                console.log(`${Constants.COMMAND_STOCK_GET_STOCK_INFO}: ${JSON.stringify(jResponse.error_message)}`);
+                openModal(jResponse.error_message);
             }
         } catch (err) {
             setLoading(false);
-            openModal(err instanceof Error ? err.message : Constants.MESSAGE_UNKNOWN_ERROR);
+            openModal(`${Constants.COMMAND_STOCK_GET_STOCK_INFO}:${err instanceof Error ? err.message : Constants.MESSAGE_UNKNOWN_ERROR}`);
         }
     };
 
