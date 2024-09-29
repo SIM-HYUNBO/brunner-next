@@ -52,7 +52,7 @@ const RealtimeChart = ({ updateCurrentPrice }) => {
         setSeries(newVal);
     }
 
-    const [intervalTime, setIntervalTime] = useState(30000); // 인터벌 시간 상태 (밀리초)
+    const [intervalTime, setIntervalTime] = useState(10000); // 인터벌 시간 상태 (밀리초)
     const intervalTimeRef = useRef(intervalTime);
     const setIntervalTimeRef = (newVal) => {
         setIntervalTime(newVal);
@@ -223,7 +223,13 @@ const RealtimeChart = ({ updateCurrentPrice }) => {
     var lastChartData = null;
     var firstChartData = null;
 
-    const fetchRealtimeStockData = async () => {
+    function delay(ms) {
+        return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
+    var prevTickerCode = null;
+
+    const getRealtimeStockInfo = async () => {
         try {
             if (currentTickerRef.current !== process.currentTicker) {
                 setCurrentTicker(process.currentTicker);
@@ -232,31 +238,40 @@ const RealtimeChart = ({ updateCurrentPrice }) => {
 
             if (!currentTickerRef.current) return;
 
-            const jRequest = {
-                commandName: Constants.COMMAND_STOCK_GET_REALTIME_STOCK_INFO,
-                systemCode: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE,
-                tickerCode: currentTickerRef.current,
-            };
+            while (true) {
+                if (!currentTickerRef.current || isUnmounted) // 종목이 없거나 종목 선택이 바뀐경우 종료 처리 필요
+                    break;
 
-            const jResponse = await requestServer('POST', JSON.stringify(jRequest));
+                prevTickerCode = currentTickerRef.current;
 
-            if (jResponse.error_code === 0) {
-                if (jResponse.stockInfo.data.t > lastChartData?.t) /*차트에 있는 마지막데이터의 시간값과 비교*/
-                    handleNewData(jResponse.stockInfo.data);
-                else
-                    ; // 과거 데이터는 낮시간에 발생 하므로 표시하지 않음
-            } else {
-                if (jResponse.error_code === 429) { // Too Many Request error 처리
-                    setIntervalTimeRef(intervalTimeRef.current + 1000);
-                    console.log(JSON.stringify(`${jResponse.error_message} Refresh inteval will be increased to ${intervalTimeRef.current} ms`));
+                const jRequest = {
+                    commandName: Constants.COMMAND_STOCK_GET_REALTIME_STOCK_INFO,
+                    systemCode: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE,
+                    tickerCode: currentTickerRef.current,
+                };
+
+                const jResponse = await requestServer('POST', JSON.stringify(jRequest));
+
+                if (jResponse.error_code === 0) {
+                    if (jResponse.stockInfo.data.t > lastChartData?.t) /*차트에 있는 마지막데이터의 시간값과 비교*/
+                        handleNewData(jResponse.stockInfo.data);
+                    else
+                        ; // 과거 데이터는 낮시간에 발생 하므로 표시하지 않음
+                } else {
+                    if (jResponse.error_code === 429) { // Too Many Request error 처리
+                        setIntervalTimeRef(intervalTimeRef.current + 1000);
+                        console.log(JSON.stringify(`${jResponse.error_message} Refresh inteval will be increased to ${intervalTimeRef.current} ms`));
+                    }
                 }
+
+                await delay(intervalTime);
             }
         } catch (err) {
             openModal(err instanceof Error ? err.message : Constants.MESSAGE_UNKNOWN_ERROR);
         }
     };
 
-    const fetchLatestStockInfo = async () => {
+    const getLatestStockInfo = async () => {
         try {
 
             /* 최근 데이터 100개 요청 */
@@ -278,12 +293,7 @@ const RealtimeChart = ({ updateCurrentPrice }) => {
             openModal(err);
         }
         finally {
-            await fetchRealtimeStockData(); // 처음에 실행하고 타이머 반복
-            const id = setInterval(async () => {
-                await fetchRealtimeStockData();
-            }, intervalTime);
-
-            return id;
+            await getRealtimeStockInfo(); // 처음에 실행하고 타이머 반복
         }
     }
 
@@ -350,12 +360,14 @@ const RealtimeChart = ({ updateCurrentPrice }) => {
         });
     }
 
-    useEffect(() => {
-        const timerId = fetchLatestStockInfo();
+    var isUnmounted = false;
 
-        // 컴포넌트 언마운트 시 인터벌 클리어
+    useEffect(() => {
+        getLatestStockInfo();
+
+        // 컴포넌트 언마운트
         return () => {
-            clearInterval(timerId);
+            isUnmounted = true;
         }
     }, []);
 
