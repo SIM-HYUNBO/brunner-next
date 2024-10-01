@@ -11,7 +11,7 @@ import BrunnerMessageBox from '@/components/BrunnerMessageBox';
 import RealtimeChart from './realtimeChart';
 import * as Constants from '@/components/constants';
 import { useRouter } from 'next/navigation'
-import DivContainer from "@/components/DivContainer"
+import DivContainer from '@/components/DivContainer'
 
 const StockContent = () => {
     const theme = useTheme();
@@ -257,7 +257,7 @@ const StockContent = () => {
             return;
         }
 
-        router.push(`/ mainPages / tickerInfo ? tickerCode = ${currentTickerRef.current}`);  // 원하는 경로로 이동
+        router.push(`/mainPages/tickerInfo?tickerCode=${currentTickerRef.current}`);  // 원하는 경로로 이동
     }
 
     // 선택한 종목의 주식 데이터를 서버에서 조회
