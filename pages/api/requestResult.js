@@ -74,6 +74,6 @@ export const saveRequestResult = async (
   ]);
 
   if (insert_TB_COR_REQUEST_RESULT_01.rowCount > 0)
-    return insert_TB_COR_REQUEST_RESULT_01.rows[0];
+    return insert_TB_COR_REQUEST_RESULT_01.rowCount;
   else return null;
 };

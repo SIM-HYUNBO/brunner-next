@@ -39,7 +39,6 @@ const executeService = (txnId, jRequest) => {
 
 var recentSearch_getTickerList = null;
 var recentSearch_getTickerInfo = new Map();
-var recentSearch_getLatestStockInfo = new Map();
 var recentSearch_getRealtimeStockInfo = new Map();
 
 
@@ -281,19 +280,19 @@ const getLatestStockInfo = async (txnId, jRequest) => {
             jResponse.error_message = `${Constants.MESSAGE_REQUIRED_FIELD} [dataCount]`;
             return jResponse;
         }
+        const from = moment().subtract(5, "day").format('YYYY-MM-DD')
+        const to = moment().format('YYYY-MM-DD');
 
         var searchFlag = true; // 지금 조회를 해야 하는지 여부
-        if (recentSearch_getLatestStockInfo != null && recentSearch_getLatestStockInfo.has(jRequest.systemCode + '_' + jRequest.tickerCode)) { // 최근 조회이력이 있고
-            const diffDay = (new Date() - recentSearch_getLatestStockInfo.get(jRequest.systemCode + '_' + jRequest.tickerCode).searchTime) / (24 * 60 * 60 * 1000);
-            if (diffDay < 1) { // 조회한지 하루가 지나지 않은 경우
-                searchFlag = false; // 조회하지 않고 최근 조회결과로 리턴
-            }
+
+        var recentRequestResult = await requestResult.getRequestResult(jRequest.systemCode, Constants.COMMAND_STOCK_GET_LATEST_STOCK_INFO, jRequest.tickerCode, '', '', from, to, '', '', '', '', '')
+
+        var data = null;
+        if (recentRequestResult) {
+            searchFlag = false;
         }
 
         if (searchFlag) { // 지금 조회를 해야 한다면        
-
-            const from = moment().subtract(5, "day").format('YYYY-MM-DD')
-            const to = moment().format('YYYY-MM-DD');
             const apiUrl = `https://api.polygon.io/v2/aggs/ticker/${jRequest.tickerCode}/range/1/minute/${from}/${to}?adjusted=true&sort=asc&apiKey=${process.env.POLYGON_API_KEY}`
 
             const response = await fetch(apiUrl);
@@ -303,15 +302,30 @@ const getLatestStockInfo = async (txnId, jRequest) => {
                 return jResponse;
             }
 
-            const data = await response.json();
+            data = await response.json();
             if (data.results) {
                 jResponse.stockInfo = data.results.slice(jRequest.dataCount);
                 jResponse.stockInfo.map((d) => {
                     d.t = d.t / 1000; // 시간의 단위는 초로
                 });
 
-                jResponse.stockInfo.searchTime = new Date();
-                recentSearch_getLatestStockInfo.set(jRequest.systemCode + '_' + jRequest.tickerCode, jResponse.stockInfo);
+                jResponse.error_code = 0; // exception
+                jResponse.error_message = data.status;
+
+                await requestResult.saveRequestResult(jRequest.systemCode, Constants.COMMAND_STOCK_GET_LATEST_STOCK_INFO, jRequest.tickerCode, '', '', from, to, '', '', '', '', '', data)
+            }
+            else {
+                jResponse.error_code = -1; // exception
+                jResponse.error_message = data.status;
+            }
+        }
+        else {
+            data = JSON.parse(recentRequestResult);
+            if (data.results) {
+                jResponse.stockInfo = data.results.slice(jRequest.dataCount);
+                jResponse.stockInfo.map((d) => {
+                    d.t = d.t / 1000; // 시간의 단위는 초로
+                });
 
                 jResponse.error_code = 0; // exception
                 jResponse.error_message = data.status;
@@ -321,11 +335,7 @@ const getLatestStockInfo = async (txnId, jRequest) => {
                 jResponse.error_message = data.status;
             }
         }
-        else {
-            jResponse.stockInfo = recentSearch_getLatestStockInfo.get(jRequest.systemCode + '_' + jRequest.tickerCode);
-            jResponse.error_code = 0; // exception
-            jResponse.error_message = '';
-        }
+
     }
     catch (e) {
         logger.error(e);
