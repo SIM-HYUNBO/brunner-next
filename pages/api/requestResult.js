@@ -73,9 +73,7 @@ export const saveRequestResult = async (
     requestResult
   ]);
 
-  if (insert_TB_COR_REQUEST_RESULT_01.rowCount > 0)
-    return insert_TB_COR_REQUEST_RESULT_01.rowCount;
-  else return null;
+  return insert_TB_COR_REQUEST_RESULT_01.rowCount;
 };
 
 export const deleteRequestResult = async (
@@ -89,7 +87,5 @@ export const deleteRequestResult = async (
     condition5
   ]);
 
-  if (delete_TB_COR_REQUEST_RESULT_01.rowCount > 0)
-    return delete_TB_COR_REQUEST_RESULT_01.rowCount;
-  else return null;
+  return delete_TB_COR_REQUEST_RESULT_01.rowCount;
 };
