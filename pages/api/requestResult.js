@@ -36,11 +36,28 @@ export const getRequestResult = async (
   ]);
 
   if (select_TB_COR_REQUEST_RESULT_01.rows.length > 0)
-    return select_TB_COR_REQUEST_RESULT_01.rows[0];
+    return select_TB_COR_REQUEST_RESULT_01.rows[0].request_result;
   else return null;
 };
 
 export const saveRequestResult = async (
+  systemCode,
+  apiName,
+  condition1,
+  condition2,
+  condition3,
+  condition4,
+  condition5,
+  condition6,
+  condition7,
+  condition8,
+  condition9,
+  condition10,
+  requestResult
+) => {
+  var sql = null;
+  sql = await serviceSQL.getSQL00("insert_TB_COR_REQUEST_RESULT", 1);
+  var insert_TB_COR_REQUEST_RESULT_01 = await database.executeSQL(sql, [
     systemCode,
     apiName,
     condition1,
@@ -54,26 +71,9 @@ export const saveRequestResult = async (
     condition9,
     condition10,
     requestResult
-  ) => {
-    var sql = null;
-    sql = await serviceSQL.getSQL00("insert_TB_COR_REQUEST_RESULT", 1);
-    var insert_TB_COR_REQUEST_RESULT_01 = await database.executeSQL(sql, [
-      systemCode,
-      apiName,
-      condition1,
-      condition2,
-      condition3,
-      condition4,
-      condition5,
-      condition6,
-      condition7,
-      condition8,
-      condition9,
-      condition10,
-      requestResult
-    ]);
-  
-    if (insert_TB_COR_REQUEST_RESULT_01.rowCount > 0)
-      return insert_TB_COR_REQUEST_RESULT_01.rows[0];
-    else return null;
-  };
+  ]);
+
+  if (insert_TB_COR_REQUEST_RESULT_01.rowCount > 0)
+    return insert_TB_COR_REQUEST_RESULT_01.rows[0];
+  else return null;
+};

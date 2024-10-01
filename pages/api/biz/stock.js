@@ -94,8 +94,8 @@ const getStockInfo = async (txnId, jRequest) => {
 
         var searchFlag = true; // 지금 조회를 해야 하는지 여부
 
-        var recentRequestResult = await requestResult.getRequestResult(jRequest.systemCode, Constants.COMMAND_STOCK_GET_STOCK_INFO, jRequest.tickerCode, jRequest.multiplier, jRequest.timespan, jRequest.from, jRequest.to, jRequest.adjust, jRequest.sort)
-        if(recentRequestResult) {
+        var recentRequestResult = await requestResult.getRequestResult(jRequest.systemCode, Constants.COMMAND_STOCK_GET_STOCK_INFO, jRequest.tickerCode, jRequest.multiplier, jRequest.timespan, jRequest.from, jRequest.to, jRequest.adjust, jRequest.sort, '', '', '')
+        if (recentRequestResult) {
             searchFlag = false;
             jResponse.stockInfo = JSON.parse(recentRequestResult);
 
