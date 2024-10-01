@@ -5,6 +5,7 @@ import * as database from "./database/database"
 import * as serviceSQL from './serviceSQL'
 import moment from 'moment';
 import * as Constants from '@/components/constants'
+import * as requestResult from '../requestResult'
 
 const executeService = (txnId, jRequest) => {
     var jResponse = {};
@@ -36,7 +37,6 @@ const executeService = (txnId, jRequest) => {
     }
 }
 
-var recentSearch_getStockInfo = new Map();
 var recentSearch_getTickerList = null;
 var recentSearch_getTickerInfo = new Map();
 var recentSearch_getLatestStockInfo = new Map();
@@ -92,21 +92,15 @@ const getStockInfo = async (txnId, jRequest) => {
             return jResponse;
         }
 
-        for (let key of recentSearch_getStockInfo.keys()) {
-            if (key.startsWith(jRequest.systemCode + '_' + jRequest.tickerCode + '_')) {
-                if (key.split('_')[3] < jRequest.to) { // 과거 날짜에 조회했던 데이터는 삭제
-                    recentSearch_getStockInfo.delete(key);
-                    continue;
-                }
-            }
-        }
-
         var searchFlag = true; // 지금 조회를 해야 하는지 여부
-        if (recentSearch_getStockInfo != null && recentSearch_getStockInfo.has(jRequest.systemCode + '_' + jRequest.tickerCode + '_' + jRequest.from + '_' + jRequest.to)) { // 최근 조회이력이 있고
-            const diffDay = (new Date() - recentSearch_getStockInfo.get(jRequest.systemCode + '_' + jRequest.tickerCode + '_' + jRequest.from + '_' + jRequest.to).searchTime) / (24 * 60 * 60 * 1000);
-            if (diffDay < 1) { // 조회한지 하루가 지나지 않은 경우
-                searchFlag = false; // 조회하지 않고 최근 조회결과로 리턴
-            }
+
+        var recentRequestResult = await requestResult.getRequestResult(jRequest.systemCode, Constants.COMMAND_STOCK_GET_STOCK_INFO, jRequest.tickerCode, jRequest.multiplier, jRequest.timespan, jRequest.from, jRequest.to, jRequest.adjust, jRequest.sort)
+        if(recentRequestResult) {
+            searchFlag = false;
+            jResponse.stockInfo = JSON.parse(recentRequestResult);
+
+            jResponse.error_code = 0; // exception
+            jResponse.error_message = Constants.EMPTY_STRING;
         }
 
         if (searchFlag) { // 지금 조회를 해야 한다면
@@ -123,8 +117,8 @@ const getStockInfo = async (txnId, jRequest) => {
                     d.t = d.t / 1000;
                 });
                 jResponse.stockInfo = data.results;
-                jResponse.stockInfo.searchTime = new Date();
-                recentSearch_getStockInfo.set(jRequest.systemCode + '_' + jRequest.tickerCode + '_' + jRequest.from + '_' + jRequest.to, jResponse.stockInfo)
+
+                await requestResult.saveRequestResult(jRequest.systemCode, Constants.COMMAND_STOCK_GET_STOCK_INFO, jRequest.tickerCode, jRequest.multiplier, jRequest.timespan, jRequest.from, jRequest.to, jRequest.adjust, jRequest.sort, '', '', '', JSON.stringify(data.results))
 
                 jResponse.error_code = 0; // exception
                 jResponse.error_message = Constants.EMPTY_STRING;
@@ -133,11 +127,6 @@ const getStockInfo = async (txnId, jRequest) => {
                 jResponse.error_code = -1; // exception
                 jResponse.error_message = data.status;
             }
-        } else {
-            jResponse.stockInfo = recentSearch_getStockInfo.get(jRequest.systemCode + '_' + jRequest.tickerCode + '_' + jRequest.from + '_' + jRequest.to);
-
-            jResponse.error_code = 0; // exception
-            jResponse.error_message = Constants.EMPTY_STRING;
         }
     }
     catch (e) {
