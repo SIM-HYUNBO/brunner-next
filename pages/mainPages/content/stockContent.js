@@ -133,12 +133,12 @@ const StockContent = () => {
     const setTickerListRef = (newValue) => {
         setTickerList(newValue);
 
-        const options = newValue?.map(ticker => ({
+        const currentTickerList = newValue?.map(ticker => ({
             value: ticker.ticker_code, // ticker_code 사용
             label: `${ticker.ticker_code} - ${ticker.ticker_desc}` // ticker_desc 사용
         }));
 
-        tickerListRef.current = options;
+        tickerListRef.current = currentTickerList;
         process.tickerList = newValue;
     };
 
@@ -837,18 +837,18 @@ const StockContent = () => {
                         className={`items-start ${isDarkMode() ? "bg-slate-800 text-white" : "bg-slate-50 text-black"
                             } border border-slate-400 h-full overflow-y-auto`}
                     >
-                        {tickerListRef.current?.map((option) => (
+                        {tickerListRef.current?.map((tickerInfo) => (
                             <li
-                                key={option.value}
+                                key={tickerInfo.label}
                                 onClick={() => {
-                                    handleTickerChange(option);
+                                    handleTickerChange(tickerInfo);
                                 }}
-                                className={`cursor-pointer p-2 hover:bg-indigo-500 border border-slate-300 dark:border-slate-600 hover:text-white ${selectedTicker?.value === option.value
+                                className={`cursor-pointer p-2 hover:bg-indigo-500 border border-slate-300 dark:border-slate-600 hover:text-white ${selectedTicker?.value === tickerInfo.value
                                     ? "bg-indigo-500 text-white"
                                     : ""
                                     }`}
                             >
-                                {option.label}
+                                {tickerInfo.label}
                             </li>
                         ))
                         }
