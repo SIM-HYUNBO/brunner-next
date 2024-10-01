@@ -335,7 +335,7 @@ const getLatestStockInfo = async (txnId, jRequest) => {
                 jResponse.error_message = data.status;
             }
         }
-
+        await requestResult.deleteRequestResult(jRequest.systemCode, to)
     }
     catch (e) {
         logger.error(e);

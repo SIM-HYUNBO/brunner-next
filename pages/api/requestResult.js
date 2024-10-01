@@ -77,3 +77,19 @@ export const saveRequestResult = async (
     return insert_TB_COR_REQUEST_RESULT_01.rowCount;
   else return null;
 };
+
+export const deleteRequestResult = async (
+  systemCode,
+  condition5
+) => {
+  var sql = null;
+  sql = await serviceSQL.getSQL00("delete_TB_COR_REQUEST_RESULT", 1);
+  var delete_TB_COR_REQUEST_RESULT_01 = await database.executeSQL(sql, [
+    systemCode,
+    condition5
+  ]);
+
+  if (delete_TB_COR_REQUEST_RESULT_01.rowCount > 0)
+    return delete_TB_COR_REQUEST_RESULT_01.rowCount;
+  else return null;
+};
