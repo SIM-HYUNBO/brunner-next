@@ -248,7 +248,7 @@ const StockContent = () => {
         getStockInfo();
     };
 
-    const handleNewsClick = (event) => {
+    const viewDetailInfo = (event) => {
         // 기본 링크 동작 방지
         event.preventDefault();
 
@@ -872,13 +872,14 @@ const StockContent = () => {
                         }
                     }}
                 />
-                <button className="bg-indigo-500 text-white py-2 px-4 ml-1 h-10"
-                    onClick={handleNewsClick}>
-                    ...
-                </button>
+                <img onClick={viewDetailInfo}
+                    src="/detailInfo.png" // 이미지 경로를 지정하세요
+                    alt="Refresh"
+                    className="h-10 w-10" // 적절한 크기로 조정
+                />
 
                 <input ref={currentPriceTextColorRef}
-                    className={`text-center bg-slate-50 dark:bg-slate-800 border border-slate-400 h-10 w-full ml-2`}
+                    className={`text-center bg-slate-50 dark:bg-slate-800 border border-slate-400 h-10 w-full`}
                     type="text"
                     value={currentPriceRef.current}
                     placeholder="Current Price (USD)"
@@ -891,7 +892,7 @@ const StockContent = () => {
                 }}
                     src="/refresh-icon.png" // 이미지 경로를 지정하세요
                     alt="Refresh"
-                    className="h-10 w-15" // 적절한 크기로 조정
+                    className="h-10 w-10" // 적절한 크기로 조정
                 />
             </div>
 
