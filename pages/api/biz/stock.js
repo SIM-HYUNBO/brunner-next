@@ -304,6 +304,8 @@ const getLatestStockInfo = async (txnId, jRequest) => {
 
             data = await response.json();
             if (data.results) {
+                await requestResult.saveRequestResult(jRequest.systemCode, Constants.COMMAND_STOCK_GET_LATEST_STOCK_INFO, jRequest.tickerCode, '', '', from, to, '', '', '', '', '', data)
+
                 jResponse.stockInfo = data.results.slice(jRequest.dataCount);
                 jResponse.stockInfo.map((d) => {
                     d.t = d.t / 1000; // 시간의 단위는 초로
@@ -312,7 +314,6 @@ const getLatestStockInfo = async (txnId, jRequest) => {
                 jResponse.error_code = 0; // exception
                 jResponse.error_message = data.status;
 
-                await requestResult.saveRequestResult(jRequest.systemCode, Constants.COMMAND_STOCK_GET_LATEST_STOCK_INFO, jRequest.tickerCode, '', '', from, to, '', '', '', '', '', data)
             }
             else {
                 jResponse.error_code = -1; // exception

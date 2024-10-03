@@ -1,10 +1,10 @@
-import React, { useState, useRef, useEffect, useCallback } from 'react';
+import React, { useState, useRef, useEffect, useCallback, forwardRef } from 'react';
 import * as Constants from '@/components/constants';
 import * as userInfo from '@/components/userInfo';
 import requestServer from '@/components/requestServer';
 import BrunnerMessageBox from '@/components/BrunnerMessageBox';
 
-const AutoResizeTextarea = ({ name, value, onChange, readOnly }) => {
+const AutoResizeTextarea = forwardRef(({ name, value, onChange, readOnly }, ref) => {
     const textareaRef = useRef(null);
 
     // 높이 조정 로직
@@ -24,7 +24,7 @@ const AutoResizeTextarea = ({ name, value, onChange, readOnly }) => {
         if (!readOnly) {
             onChange(e); // 값 변경 처리
         }
-        handleResizeHeight()
+        handleResizeHeight();
     };
 
     return (
@@ -38,7 +38,7 @@ const AutoResizeTextarea = ({ name, value, onChange, readOnly }) => {
             rows="10"
         />
     );
-};
+});
 
 const ServiceSQL = () => {
     const [modalContent, setModalContent] = useState({
@@ -48,6 +48,8 @@ const ServiceSQL = () => {
         onClose: () => { }
     });
     const [loading, setLoading] = useState(false); // 로딩 상태 추가
+
+    const editPanelRef = useRef(null); // EditPanel Div 참조
 
     // 모달 열기 함수
     const openModal = (message) => {
@@ -203,6 +205,10 @@ const ServiceSQL = () => {
         setCurrentServiceSQL(userQueryItem);
 
         setIsEditing(true);
+
+        // 스크롤을 TextArea로 이동
+        editPanelRef.current.scrollIntoView({ behavior: 'smooth' });
+
     };
 
     // Handle delete action
@@ -254,7 +260,7 @@ const ServiceSQL = () => {
                 >
                     New SQL
                 </button>
-                <div className="mb-4">
+                <div ref={editPanelRef} className="mb-4">
                     <label className="block mb-2">
                         <span className="text-gray-700">System Code:</span>
                         <input
