@@ -874,8 +874,8 @@ const StockContent = () => {
                 />
                 <img onClick={viewDetailInfo}
                     src="/detailInfo.png" // 이미지 경로를 지정하세요
-                    alt="Refresh"
-                    className="h-10 w-10" // 적절한 크기로 조정
+                    alt="Info"
+                    className="h-10 w-10 align-middle" // 적절한 크기로 조정
                 />
 
                 <input ref={currentPriceTextColorRef}
@@ -892,7 +892,7 @@ const StockContent = () => {
                 }}
                     src="/refresh-icon.png" // 이미지 경로를 지정하세요
                     alt="Refresh"
-                    className="h-10 w-10" // 적절한 크기로 조정
+                    className="h-8 w-8 ml-1 mt-1 align-middle" // 적절한 크기로 조정
                 />
             </div>
 
