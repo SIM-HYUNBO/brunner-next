@@ -872,26 +872,27 @@ const StockContent = () => {
                         }
                     }}
                 />
+                <button className="bg-indigo-500 text-white py-2 px-4 ml-1 h-10"
+                    onClick={handleNewsClick}>
+                    ...
+                </button>
+
                 <input ref={currentPriceTextColorRef}
                     className={`text-center bg-slate-50 dark:bg-slate-800 border border-slate-400 h-10 w-full ml-2`}
                     type="text"
                     value={currentPriceRef.current}
                     placeholder="Current Price (USD)"
                 />
-                <button className="bg-indigo-500 text-white py-2 px-4 ml-1 h-10"
-                    type="submit"
-                    onClick={() => {
-                        setSelectedTicker(currentTickerRef.current);
-                        scrollToTicker(currentTickerRef.current);
-                        handleStockRequest();
-                    }}
-                >
-                    Refresh
-                </button>
-                <button className="bg-indigo-500 text-white py-2 px-4 ml-1 h-10"
-                    onClick={handleNewsClick}>
-                    Details...
-                </button>
+
+                <img onClick={() => {
+                    setSelectedTicker(currentTickerRef.current);
+                    scrollToTicker(currentTickerRef.current);
+                    handleStockRequest();
+                }}
+                    src="/refresh-icon.png" // 이미지 경로를 지정하세요
+                    alt="Refresh"
+                    className="h-10 w-15" // 적절한 크기로 조정
+                />
             </div>
 
             {currentTickerStockDataRef.current && renderChart()}
