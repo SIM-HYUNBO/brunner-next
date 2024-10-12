@@ -4,7 +4,7 @@ import HomeContentAnimation from './content-animation/homeContentAnimation'
 import { useRouter } from 'next/router'
 import * as userInfo from '@/components/userInfo'
 import AssetContent from './assetContent'
-import DivContainer from '@/components/DivContainer'
+import DivContainer from '@/components/divContainer'
 import BrunnerVideo from '@/components/brunnerVideo'
 
 export default function HomeContent() {
@@ -46,12 +46,12 @@ export default function HomeContent() {
         <div className="lg:h-2/6 lg:w-2/6">
           <HomeContentAnimation />
         </div>
-        {/* <BrunnerVideo
-          url={'https://youtu.be/kWnD6BP18oE'} 
+        <BrunnerVideo
+          url={'https://youtu.be/kWnD6BP18oE'}
           title={'캐롯 자동차 보험'}
           width="800px" // 100%
           height="450px"> // 100%
-        </BrunnerVideo> */}
+        </BrunnerVideo>
       </DivContainer >
     </>
   );

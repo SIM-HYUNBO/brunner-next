@@ -3,7 +3,7 @@
 import dotenv from 'dotenv'
 import '@/styles/globals.css'
 import { ThemeProvider } from 'next-themes'
-import requestServer from '@/components/requestServer'
+import RequestServer from '@/components/requestServer'
 import { useEffect, useState } from 'react'
 import BrunnerMessageBox from '@/components/brunnerMessageBox'
 import * as Constants from '@/components/constants'

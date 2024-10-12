@@ -3,7 +3,7 @@
 import Layout from '@/components/layout'
 import Head from 'next/head'
 import BodySection from '@/components/bodySection'
-import requestServer from '@/components/requestServer'
+import RequestServer from '@/components/requestServer'
 import { useRouter } from 'next/router'
 import { useState } from 'react'
 import BrunnerMessageBox from '@/components/brunnerMessageBox'
@@ -94,7 +94,7 @@ export default function Signup() {
       jRequest.address = address;
 
       setLoading(true); // 데이터 로딩 시작
-      jResponse = await requestServer('POST', JSON.stringify(jRequest));
+      jResponse = await RequestServer('POST', JSON.stringify(jRequest));
       setLoading(false); // 데이터 로딩 끝
 
       if (jResponse.error_code == 0) {
