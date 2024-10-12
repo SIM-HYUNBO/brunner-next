@@ -47,7 +47,8 @@ export default function HomeContent() {
           <HomeContentAnimation />
         </div>
         {/* <BrunnerVideo
-          url={'https://youtu.be/kWnD6BP18oE'} title={'캐롯 자동차 보험'}
+          url={'https://youtu.be/kWnD6BP18oE'} 
+          title={'캐롯 자동차 보험'}
           width="800px" // 100%
           height="450px"> // 100%
         </BrunnerVideo> */}
