@@ -6,6 +6,7 @@ export const
     MESSAGE_SUCCESS_SIGNUP = `successfully signed up.`,
     MESSAGE_SIGNOUT = `Do you want to signout now?`,
     MESSAGE_REQUIRED_FIELD = `The field value is required.`,
+    MESSAGE_SERVER_NOW_INITIALIZING = "Server is now initializing...",
 
     SERVER_MESSAGE_DATABASE_FAILED = `Database failed.`,
     SERVER_NOT_SUPPORTED_MODULE = `not supported module`,
