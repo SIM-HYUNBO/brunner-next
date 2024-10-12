@@ -7,11 +7,11 @@ import moment from 'moment';
 import dynamic from 'next/dynamic';
 
 import requestServer from '@/components/requestServer';
-import BrunnerMessageBox from '@/components/BrunnerMessageBox';
+import BrunnerMessageBox from '@/components/brunnerMessageBox';
 import RealtimeChart from './realtimeChart';
 import * as Constants from '@/components/constants';
 import { useRouter } from 'next/navigation'
-import DivContainer from '@/components/DivContainer'
+import DivContainer from '@/components/divContainer'
 
 const StockContent = () => {
     const theme = useTheme();

@@ -54,7 +54,7 @@ const addIncome = async (txnId, jRequest) => {
         }
         else {
             jResponse.error_code = -1;
-            jResponse.error_message = Constants.SERVER_MESSAGE_DATABASE_FAILED;
+            jResponse.error_message = Constants.MESSAGE_DATABASE_FAILED;
 
         }
     } catch (e) {
@@ -114,7 +114,7 @@ const deleteIncome = async (txnId, jRequest) => {
         }
         else {
             jResponse.error_code = -1;
-            jResponse.error_message = Constants.SERVER_MESSAGE_DATABASE_FAILED;
+            jResponse.error_message = Constants.MESSAGE_DATABASE_FAILED;
         }
     } catch (e) {
         logger.error(e);
@@ -147,7 +147,7 @@ const updateIncome = async (txnId, jRequest) => {
         }
         else {
             jResponse.error_code = -1;
-            jResponse.error_message = Constants.SERVER_MESSAGE_DATABASE_FAILED;
+            jResponse.error_message = Constants.MESSAGE_DATABASE_FAILED;
         }
     } catch (e) {
         logger.error(e);
