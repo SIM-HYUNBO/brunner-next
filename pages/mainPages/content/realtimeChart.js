@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect, useCallback } from 'react';
 import dynamic from 'next/dynamic';
-import requestServer from '@/components/requestServer';
+import RequestServer from '@/components/requestServer';
 import BrunnerMessageBox from '@/components/brunnerMessageBox'
 import * as Constants from '@/components/constants';
 
@@ -250,7 +250,7 @@ const RealtimeChart = ({ updateCurrentPrice }) => {
                     tickerCode: currentTickerRef.current,
                 };
 
-                const jResponse = await requestServer('POST', JSON.stringify(jRequest));
+                const jResponse = await RequestServer('POST', JSON.stringify(jRequest));
 
                 if (jResponse.error_code === 0) {
                     if (jResponse.stockInfo.data.t > lastChartData?.t) /*차트에 있는 마지막데이터의 시간값과 비교*/
@@ -282,7 +282,7 @@ const RealtimeChart = ({ updateCurrentPrice }) => {
                 dataCount: -100
             };
 
-            const jResponse = await requestServer('POST', JSON.stringify(jRequest));
+            const jResponse = await RequestServer('POST', JSON.stringify(jRequest));
 
             if (jResponse.error_code === 0) {
                 handleNewData(jResponse.stockInfo);

@@ -6,7 +6,7 @@ import { useTheme } from 'next-themes'
 import moment from 'moment';
 import dynamic from 'next/dynamic';
 
-import requestServer from '@/components/requestServer';
+import RequestServer from '@/components/requestServer';
 import BrunnerMessageBox from '@/components/brunnerMessageBox';
 import RealtimeChart from './realtimeChart';
 import * as Constants from '@/components/constants';
@@ -214,7 +214,7 @@ const StockContent = () => {
 
             setLoading(true);
             setCurrentTickerStockDataRef(null);
-            const jResponse = await requestServer('POST', JSON.stringify(jRequest));
+            const jResponse = await RequestServer('POST', JSON.stringify(jRequest));
             setLoading(false);
 
             if (jResponse.error_code === 0) {
@@ -282,7 +282,7 @@ const StockContent = () => {
             setCurrentTickerStockDataRef(null);
 
             setLoading(true);
-            const jResponse = await requestServer('POST', JSON.stringify(jRequest));
+            const jResponse = await RequestServer('POST', JSON.stringify(jRequest));
             setLoading(false);
 
             if (jResponse.error_code === 0) {

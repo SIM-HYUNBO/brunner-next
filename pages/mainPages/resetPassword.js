@@ -4,7 +4,7 @@ import Layout from '@/components/layout'
 import Head from 'next/head'
 import BodySection from '@/components/bodySection'
 
-import requestServer from '@/components/requestServer'
+import RequestServer from '@/components/requestServer'
 import { useRouter } from 'next/router'
 import { useState } from 'react'
 import BrunnerMessageBox from '@/components/brunnerMessageBox'
@@ -88,7 +88,7 @@ export default function ResetPassword() {
       jRequest.email = email; // 추가
 
       setLoading(true); // 데이터 로딩 시작
-      jResponse = await requestServer('POST', JSON.stringify(jRequest));
+      jResponse = await RequestServer('POST', JSON.stringify(jRequest));
       setLoading(false); // 데이터 로딩 끝
       openModal(jResponse.error_message);
     } catch (error) {
@@ -114,7 +114,7 @@ export default function ResetPassword() {
 
 
       setLoading(true); // 데이터 로딩 시작
-      jResponse = await requestServer('POST', JSON.stringify(jRequest));
+      jResponse = await RequestServer('POST', JSON.stringify(jRequest));
       setLoading(false); // 데이터 로딩 끝
       var result = await openModal(jResponse.error_message);
       if (jResponse.error_code == 0 && result) {
@@ -143,7 +143,7 @@ export default function ResetPassword() {
 
 
       setLoading(true); // 데이터 로딩 시작
-      jResponse = await requestServer('POST', JSON.stringify(jRequest));
+      jResponse = await RequestServer('POST', JSON.stringify(jRequest));
       setLoading(false); // 데이터 로딩 끝
       var result = await openModal(jResponse.error_message);
       if (jResponse.error_code == 0 && result) {

@@ -5,7 +5,7 @@ import Head from 'next/head'
 import BodySection from '@/components/bodySection'
 import { useRouter } from 'next/router'
 import { useState, useEffect, useRef } from 'react'
-import requestServer from '@/components/requestServer'
+import RequestServer from '@/components/requestServer'
 import BrunnerMessageBox from '@/components/brunnerMessageBox'
 import * as Constants from '@/components/constants';
 import DivContainer from "@/components/divContainer"
@@ -69,7 +69,7 @@ export default function Signin() {
       };
 
       setLoading(true); // 데이터 로딩 시작
-      const jResponse = await requestServer('POST', JSON.stringify(jRequest));
+      const jResponse = await RequestServer('POST', JSON.stringify(jRequest));
       setLoading(false); // 데이터 로딩 끝
 
       if (jResponse.error_code === 0) {

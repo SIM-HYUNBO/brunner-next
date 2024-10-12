@@ -1,7 +1,7 @@
 `use strict`
 
 import { useState, useRef, useEffect } from 'react'
-import requestServer from '@/components/requestServer'
+import RequestServer from '@/components/requestServer'
 import Board from '@/pages/mainPages/content/boardContent'
 import RealtimeChart from './realtimeChart';
 import * as Constants from '@/components/constants'
@@ -65,7 +65,7 @@ export default function TickerInfoContent({ tickerCode: tickerCode }) {
       };
 
       setLoading(true);
-      const jResponse = await requestServer('POST', JSON.stringify(jRequest));
+      const jResponse = await RequestServer('POST', JSON.stringify(jRequest));
       setLoading(false);
 
       if (jResponse.error_code === 0) {

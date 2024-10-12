@@ -1,7 +1,7 @@
 `use strict`
 
 import React, { useState, useEffect } from 'react';
-import requestServer from '@/components/requestServer';
+import RequestServer from '@/components/requestServer';
 import * as userInfo from '@/components/userInfo';
 import BrunnerMessageBox from '@/components/brunnerMessageBox';
 import * as Constants from '@/components/constants'
@@ -58,7 +58,7 @@ function Board(boardInfo) {
             jRequest.postInfo = { postType: `TICKER_INFO-${boardType}` }; // 게시판 유형을 TICKER_INFO-{종모코드}로 함
 
             setLoading(true); // 데이터 로딩 시작
-            jResponse = await requestServer('POST', JSON.stringify(jRequest));
+            jResponse = await RequestServer('POST', JSON.stringify(jRequest));
             setLoading(false); // 데이터 로딩 끝
 
             if (jResponse.error_code === 0) {
@@ -97,7 +97,7 @@ function Board(boardInfo) {
                 jRequest.postInfo = newPost;
 
                 setLoading(true);
-                jResponse = await requestServer('POST', JSON.stringify(jRequest));
+                jResponse = await RequestServer('POST', JSON.stringify(jRequest));
                 setLoading(false);
 
                 if (jResponse.error_code === 0) {
@@ -135,7 +135,7 @@ function Board(boardInfo) {
             };
 
             setLoading(true);
-            jResponse = await requestServer('POST', JSON.stringify(jRequest));
+            jResponse = await RequestServer('POST', JSON.stringify(jRequest));
             setLoading(false);
 
             if (jResponse.error_code === 0) {
@@ -173,7 +173,7 @@ function Board(boardInfo) {
             };
 
             setLoading(true);
-            jResponse = await requestServer('POST', JSON.stringify(jRequest));
+            jResponse = await RequestServer('POST', JSON.stringify(jRequest));
             setLoading(false);
 
             if (jResponse.error_code === 0) {
@@ -205,7 +205,7 @@ function Board(boardInfo) {
                 userId: userId ? userId : 'anonymous user',
             };
 
-            jResponse = await requestServer('POST', JSON.stringify(jRequest));
+            jResponse = await RequestServer('POST', JSON.stringify(jRequest));
 
             if (jResponse.error_code === 0) {
                 const updatedPosts = posts.map((post) => {
@@ -252,7 +252,7 @@ function Board(boardInfo) {
                 userId: userId ? userId : 'anonymous user',
             };
 
-            jResponse = await requestServer('POST', JSON.stringify(jRequest));
+            jResponse = await RequestServer('POST', JSON.stringify(jRequest));
 
             if (jResponse.error_code === 0) {
                 const updatedPosts = posts.map((post) => {
@@ -295,7 +295,7 @@ function Board(boardInfo) {
                 userId: userId ? userId : 'anonymous user',
             };
 
-            jResponse = await requestServer('POST', JSON.stringify(jRequest));
+            jResponse = await RequestServer('POST', JSON.stringify(jRequest));
 
             if (jResponse.error_code === 0) {
                 const updatedPosts = posts.map((post) => {
