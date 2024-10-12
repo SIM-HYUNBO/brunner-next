@@ -2,7 +2,7 @@
 
 import ContactContentAnimation from './content-animation/supportContentAnimation'
 import { useRouter } from 'next/router'
-import DivContainer from "@/components/DivContainer"
+import DivContainer from "@/components/divContainer"
 
 export default function ContactContent() {
   const router = useRouter()

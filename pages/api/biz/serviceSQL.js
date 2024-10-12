@@ -61,7 +61,7 @@ async function loadAllSQL(txnId, jRequest) {
       return process.serviceSQL.size;
     }
     else {
-      throw new Error(Constants.SERVER_SQL_NOT_LOADED);
+      throw new Error(Constants.MESSAGE_SERVER_SQL_NOT_LOADED);
     }
   }
   catch (err) {
@@ -92,7 +92,7 @@ async function getAllSQL(txnId, jRequest) {
       jResponse.error_message = Constants.EMPTY_STRING;
     }
     else {
-      throw new Error(Constants.SERVER_SQL_NOT_LOADED);
+      throw new Error(Constants.MESSAGE_SERVER_SQL_NOT_LOADED);
     }
   }
   catch (err) {

@@ -27,7 +27,7 @@ const getPool = async () => {
 const executeSQL = async (sql, params) => {
   try {
     if (!sql) {
-      throw new Exception(Constants.SERVER_SQL_NOT_LOADED)
+      throw new Exception(Constants.MESSAGE_SERVER_SQL_NOT_LOADED)
     }
     logger.info(`SQL:\n${sql}\nPARAMS:${JSON.stringify(params)}\n`);
 

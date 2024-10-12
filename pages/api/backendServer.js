@@ -95,7 +95,7 @@ const executeService = async (method, req) => {
     } else {
         jResponse = JSON.stringify({
             error_code: -1,
-            error_message: `[${commandName}] ${Constants.SERVER_NOT_SUPPORTED_MODULE}`
+            error_message: `[${commandName}] ${Constants.MESSAGE_SERVER_NOT_SUPPORTED_MODULE}`
         })
     }
     return jResponse;

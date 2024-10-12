@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect, useCallback, forwardRef } from 'rea
 import * as Constants from '@/components/constants';
 import * as userInfo from '@/components/userInfo';
 import requestServer from '@/components/requestServer';
-import BrunnerMessageBox from '@/components/BrunnerMessageBox';
+import BrunnerMessageBox from '@/components/brunnerMessageBox';
 
 const AutoResizeTextarea = forwardRef(({ name, value, onChange, readOnly }, ref) => {
     const textareaRef = useRef(null);
