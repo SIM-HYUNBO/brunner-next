@@ -5,7 +5,6 @@ import { useRouter } from 'next/router'
 import * as userInfo from '@/components/userInfo'
 import AssetContent from './assetContent'
 import DivContainer from '@/components/divContainer'
-import BrunnerVideo from '@/components/brunnerVideo'
 
 export default function HomeContent() {
   const router = useRouter()
@@ -47,20 +46,6 @@ export default function HomeContent() {
           <HomeContentAnimation />
         </div>
       </DivContainer >
-      <div className="lg:h-2/6 lg:w-2/6">
-        <BrunnerVideo
-          url={'https://www.youtube.com/watch?v=5nRs1niZ9h4&list=PLqb1KKjbyLLjjsGoYF9KlogyNIF3KDo0Z'}
-          title={'사마의-미완의 책사'}
-          width="800px" // 100%
-          height="450px"> // 100%
-        </BrunnerVideo>
-        <BrunnerVideo
-          url={'https://www.youtube.com/watch?v=UOmp8Zbvs7k&list=PLqb1KKjbyLLiVTGRO7cB_3PsbmbBRAvCj'}
-          title={'사마의-최후의 승자'}
-          width="800px" // 100%
-          height="450px"> // 100%
-        </BrunnerVideo>
-      </div>
     </>
   );
 }

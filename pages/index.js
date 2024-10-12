@@ -9,8 +9,8 @@ import Script from 'next/script';
 
 import * as userInfo from '@/components/userInfo'
 import HomeContent from '@/pages/mainPages/content/homeContent'
-import AssetContent from '@/pages/mainPages/content/assetContent'
 import StockContent from '@/pages/mainPages/content/stockContent'
+import BrunnerVideo from '@/components/brunnerVideo'
 
 // Home 페이지
 export default function Home() {
@@ -49,6 +49,24 @@ export default function Home() {
       <BodySection>
         <HomeContent></HomeContent>
         <StockContent></StockContent>
+        <div className="lg:h-2/6 lg:w-2/6 mt-10">
+          <BrunnerVideo
+            url={'https://www.youtube.com/watch?v=5nRs1niZ9h4&list=PLqb1KKjbyLLjjsGoYF9KlogyNIF3KDo0Z'}
+            title={'사마의-미완의 책사'}
+            width="800px" // 100%
+            height="450px"// 100%
+            className="mt-2"
+          >
+          </BrunnerVideo>
+          <BrunnerVideo
+            url={'https://www.youtube.com/watch?v=UOmp8Zbvs7k&list=PLqb1KKjbyLLiVTGRO7cB_3PsbmbBRAvCj'}
+            title={'사마의-최후의 승자'}
+            width="800px" // 100%
+            height="450px"
+            className="mt-5" // 100%
+          >
+          </BrunnerVideo>
+        </div>
       </BodySection>
     </Layout>
   )
