@@ -10,7 +10,7 @@ export default function ContactContent() {
   return (
     <>
       <DivContainer className="mobile:flex-row desktop:flex-col">
-        <div className="mobile:w-full desktop:w-1/2 flex flex-col items-start text-left md:mb-0 mb-20">
+        <div className="mobile:w-full desktop:w-1/2 items-start text-left">
           <h2 className="title-font 
                        sm:text-4xl 
                        text-3xl 
