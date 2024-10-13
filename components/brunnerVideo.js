@@ -35,7 +35,7 @@ const BrunnerVideo = ({ title, url }) => {
 
     return (
         <div className="w-full h-full">
-            <h1 className="text-2xl font-bold text-start mb-4 text-gray-800 w-fit">{title}</h1>
+            <h1 className="text-start mb-4 text-gray-800 w-fit">{title}</h1>
             <div className="relative" style={{ width: size.width, height: size.height }}>
                 <ReactPlayer
                     url={url}
