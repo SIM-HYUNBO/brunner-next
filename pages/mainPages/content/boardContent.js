@@ -1,10 +1,10 @@
 `use strict`
 
 import React, { useState, useEffect } from 'react';
-import RequestServer from '@/components/RequestServer';
-import * as userInfo from '@/components/UserInfo';
+import RequestServer from '@/components/requestServer';
+import * as userInfo from '@/components/userInfo';
 import BrunnerMessageBox from '@/components/BrunnerMessageBox';
-import * as Constants from '@/components/Constants'
+import * as Constants from '@/components/constants'
 
 function Board(boardInfo) {
     const [loading, setLoading] = useState(false); // 로딩 상태 추가

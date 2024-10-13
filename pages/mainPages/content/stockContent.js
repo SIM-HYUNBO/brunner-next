@@ -7,10 +7,10 @@ import { useTheme } from 'next-themes'
 import moment from 'moment';
 import dynamic from 'next/dynamic';
 import DivContainer from '@/components/DivContainer'
-import RequestServer from '@/components/RequestServer';
+import RequestServer from '@/components/requestServer';
 import BrunnerMessageBox from '@/components/BrunnerMessageBox';
-import * as Constants from '@/components/Constants';
-import * as UserInfo from '@/components/UserInfo'
+import * as Constants from '@/components/constants';
+import * as UserInfo from '@/components/userInfo'
 import RealtimeChart from './realtimeChart';
 import AssetContent from './assetContent'
 

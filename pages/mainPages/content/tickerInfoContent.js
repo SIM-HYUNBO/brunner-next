@@ -1,10 +1,10 @@
 `use strict`
 
 import { useState, useRef, useEffect } from 'react'
-import RequestServer from '@/components/RequestServer'
+import RequestServer from '@/components/requestServer'
 import Board from '@/pages/mainPages/content/boardContent'
 import RealtimeChart from './realtimeChart';
-import * as Constants from '@/components/Constants'
+import * as Constants from '@/components/constants'
 import DivContainer from "@/components/DivContainer"
 
 export default function TickerInfoContent({ tickerCode: tickerCode }) {

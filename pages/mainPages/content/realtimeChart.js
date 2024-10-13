@@ -2,9 +2,9 @@
 
 import { useState, useRef, useEffect, useCallback } from 'react';
 import dynamic from 'next/dynamic';
-import RequestServer from '@/components/RequestServer';
+import RequestServer from '@/components/requestServer';
 import BrunnerMessageBox from '@/components/BrunnerMessageBox'
-import * as Constants from '@/components/Constants';
+import * as Constants from '@/components/constants';
 
 // dynamic import로 ApexCharts를 사용합니다.
 const ApexCharts = dynamic(() => import('react-apexcharts'), { ssr: false });
