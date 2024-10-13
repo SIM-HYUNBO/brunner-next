@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import RequestServer from '@/components/requestServer';
 import * as userInfo from '@/components/userInfo';
-import BrunnerMessageBox from '@/components/brunnerMessageBox';
+import BrunnerMessageBox from '@/components/BrunnerMessageBox';
 import * as Constants from '@/components/constants'
 
 function Board(boardInfo) {

@@ -8,7 +8,7 @@ import moment from 'moment';
 import dynamic from 'next/dynamic';
 import DivContainer from '@/components/divContainer'
 import RequestServer from '@/components/requestServer';
-import BrunnerMessageBox from '@/components/brunnerMessageBox';
+import BrunnerMessageBox from '@/components/BrunnerMessageBox';
 import * as Constants from '@/components/constants';
 import * as UserInfo from '@/components/userInfo'
 import RealtimeChart from './realtimeChart';
