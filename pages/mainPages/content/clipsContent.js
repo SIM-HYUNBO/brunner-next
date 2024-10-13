@@ -25,8 +25,8 @@ export default function ClipsContent() {
                     </div>
 
 
-                    <div className="flex justify-center w-full">
-                        <div className="w-full">
+                    <div className="flex justify-center">
+                        <div className="lg:h-2/6 lg:w-2/6 mt-10">
                             <BrunnerVideo
                                 url={'https://youtu.be/MddvuCH-XUU'}
                                 title={'S&P500 INDEX FUND'}
