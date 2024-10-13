@@ -2,6 +2,7 @@
 
 import React from 'react';
 
+
 const BrunnerMessageBox = ({ isOpen, message, onConfirm, onClose }) => {
     const isObject = (value) => value && typeof value === 'object' && !Array.isArray(value);
 
