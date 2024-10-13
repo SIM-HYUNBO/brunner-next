@@ -3,8 +3,8 @@
 import HomeContentAnimation from './content-animation/homeContentAnimation'
 import { useRouter } from 'next/router'
 import * as userInfo from '@/components/userInfo'
-import AssetContent from './assetContent'
 import DivContainer from '@/components/divContainer'
+import BrunnerVideo from '@/components/brunnerVideo'
 
 export default function HomeContent() {
   const router = useRouter()
@@ -37,9 +37,16 @@ export default function HomeContent() {
               </button>
             </div>
             }
-            {(userInfo.isLogin()) &&
-              <AssetContent></AssetContent>
-            }
+            <div className="mt-10">
+              <BrunnerVideo
+                url={'https://youtu.be/0j1BdlsL_ew?t=2'}
+                title="The powerful effect of S&P500"
+                width="800px" // 100%
+                height="450px"// 100%          
+              >
+              </BrunnerVideo>
+            </div>
+
           </div>
         </div>
         <div className="lg:h-2/6 lg:w-2/6">
