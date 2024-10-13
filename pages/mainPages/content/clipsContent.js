@@ -18,10 +18,10 @@ export default function ClipsContent() {
                        mb-10 
                        font-medium 
                        text-green-900">
-                        Helpful Video clips for you.
+                        Videos that help life.
                     </h2>
                     <div className="main-governing-text">
-                        The video clips that may be helpful in your life & mental training
+                        The video clips that may be helpful in our life & mental training
                     </div>
 
 
