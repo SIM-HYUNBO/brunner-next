@@ -6,9 +6,9 @@ import BodySection from '@/components/bodySection'
 import RequestServer from '@/components/requestServer'
 import { useRouter } from 'next/router'
 import { useState } from 'react'
-import BrunnerMessageBox from '@/components/brunnerMessageBox'
+import BrunnerMessageBox from '@/components/BrunnerMessageBox'
 import * as Constants from '@/components/constants'
-import DivContainer from "@/components/divContainer"
+import DivContainer from "@/components/DivContainer"
 
 export default function Signup() {
   const router = useRouter();
