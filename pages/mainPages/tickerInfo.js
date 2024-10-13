@@ -5,8 +5,23 @@ import Head from 'next/head'
 import BodySection from '@/components/bodySection'
 import TickerInfoContent from './content/tickerInfoContent'
 import { useRouter } from 'next/router';
+import { useTheme } from 'next-themes'
 
 export default function TickerInfo() {
+  useEffect(() => {
+    setThemeRef(themeRef.current);
+  }, []);
+
+  // theme : 현재값 가져오기 getter
+  // setTheme : 현재값 바꾸기 setter
+  const { theme, setTheme } = useTheme()
+  const themeRef = useRef(theme);
+
+  const setThemeRef = (newValue) => {
+    themeRef.current = newValue;
+    setTheme(newValue);
+  };
+
   const router = useRouter();
   const { tickerCode } = router.query;
 

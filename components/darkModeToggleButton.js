@@ -6,7 +6,7 @@ import { useTheme } from 'next-themes'
 export default function DarkModeToggleButton() {
 
     useEffect(() => {
-        setThemeRef('light');
+        setThemeRef(themeRef.current);
     }, []);
 
     // theme : 현재값 가져오기 getter

@@ -1,16 +1,31 @@
 `use strict`
 
+import { useRouter } from 'next/router'
+import { useState } from 'react'
+import { useTheme } from 'next-themes'
 import Layout from '@/components/layout'
 import Head from 'next/head'
 import BodySection from '@/components/bodySection'
 import RequestServer from '@/components/requestServer'
-import { useRouter } from 'next/router'
-import { useState } from 'react'
 import BrunnerMessageBox from '@/components/BrunnerMessageBox'
 import * as Constants from '@/components/constants'
 import DivContainer from "@/components/DivContainer"
 
 export default function Signup() {
+  useEffect(() => {
+    setThemeRef(themeRef.current);
+  }, []);
+
+  // theme : 현재값 가져오기 getter
+  // setTheme : 현재값 바꾸기 setter
+  const { theme, setTheme } = useTheme()
+  const themeRef = useRef(theme);
+
+  const setThemeRef = (newValue) => {
+    themeRef.current = newValue;
+    setTheme(newValue);
+  };
+
   const router = useRouter();
   const [loading, setLoading] = useState(false); // 로딩 상태 추가
 

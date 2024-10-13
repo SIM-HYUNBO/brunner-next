@@ -15,11 +15,24 @@ import RealtimeChart from './realtimeChart';
 import AssetContent from './assetContent'
 
 const StockContent = () => {
-    const theme = useTheme();
+    useEffect(() => {
+        setThemeRef(themeRef.current);
+    }, []);
+
+    // theme : 현재값 가져오기 getter
+    // setTheme : 현재값 바꾸기 setter
+    const { theme, setTheme } = useTheme()
+    const themeRef = useRef(theme);
+
+    const setThemeRef = (newValue) => {
+        themeRef.current = newValue;
+        setTheme(newValue);
+    };
+
     const router = useRouter();
 
     const isDarkMode = () => {
-        return theme.theme === "dark";
+        return themeRef.current === "dark";
     }
 
     // ApexCharts dynamic import
