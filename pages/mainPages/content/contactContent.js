@@ -1,6 +1,6 @@
 `use strict`
 
-import ContactContentAnimation from './content-animation/supportContentAnimation'
+import ContactContentAnimation from './content-animation/contactContentAnimation'
 import { useRouter } from 'next/router'
 import DivContainer from "@/components/divContainer"
 

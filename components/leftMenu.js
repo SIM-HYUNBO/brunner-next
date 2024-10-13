@@ -8,7 +8,7 @@ export default function LeftMenu() {
             <nav className="fixed">
                 <ul>
                     <li><a href="/" className="block py-2">Home</a></li>
-                    <li><a href="#services" className="block py-2">Enjoy</a></li>
+                    <li><a href="/mainPages/clips" className="block py-2">Clips</a></li>
                     <li><a href="/mainPages/contact" className="block py-2">Contact</a></li>
                 </ul>
             </nav>
