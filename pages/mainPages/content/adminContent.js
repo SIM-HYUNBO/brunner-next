@@ -27,7 +27,7 @@ export default function AdminContent() {
                 <ServiceSQL />
               </div>
             </div>
-            <div className="lg:h-2/6 lg:w-2/6">
+            <div className="lg:h-2/6 lg:w-2/6 ml-20">
               {<AdminContentAnimation />}
             </div>
           </>
