@@ -10,7 +10,7 @@ export default function ContactContent() {
   return (
     <>
       <DivContainer className="mobile:flex-row desktop:flex-col">
-        <div className="w-1/2 pr-16 flex flex-col items-start text-left md:mb-0 mb-20">
+        <div className="mobile:w-full desktop:w-1/2 flex flex-col items-start text-left md:mb-0 mb-20">
           <h2 className="title-font 
                        sm:text-4xl 
                        text-3xl 
@@ -27,7 +27,7 @@ export default function ContactContent() {
             <GetContact />
           </div>
         </div>
-        <div className="lg:h-2/6 lg:w-2/6 ml-20">
+        <div className="w-full">
           {<ContactContentAnimation />}
         </div>
       </DivContainer>
