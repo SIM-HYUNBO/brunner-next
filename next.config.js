@@ -1,5 +1,4 @@
 /** @type {import('next').NextConfig} */
-const CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin');
 
 const nextConfig = {
   reactStrictMode: false,
@@ -27,7 +26,6 @@ const nextConfig = {
     };
     if (!options.isServer) {
       config.resolve.fallback = { fs: false, dns: false };
-      config.plugins.push(new CaseSensitivePathsPlugin());
     }
     return config;
   }
