@@ -23,8 +23,8 @@ export default function ContactContent() {
             <GetContact />
           </div>
         </div>
-        {(!isMobile) && <div className="w-full desktop:p-20">
-          {<ContactContentAnimation />}
+        {(!isMobile) && <div className="items-center">
+          {<ContactContentAnimation width={300} height={300} />}
         </div>}
       </DivContainer>
     </>

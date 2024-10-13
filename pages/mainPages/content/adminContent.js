@@ -28,8 +28,8 @@ export default function AdminContent() {
                 <ServiceSQL />
               </div>
             </div>
-            {(!isMobile) && <div className="lg:h-2/6 lg:w-2/6 desktop:p-20">
-              {<AdminContentAnimation />}
+            {(!isMobile) && <div className="items-center">
+              {<AdminContentAnimation width={300} height={300} />}
             </div>}
           </>
         }

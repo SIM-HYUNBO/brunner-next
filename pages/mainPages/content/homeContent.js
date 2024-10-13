@@ -48,8 +48,8 @@ export default function HomeContent() {
 
           </div>
         </div>
-        {(!isMobile) && <div className="w-2/6 desktop:p-20">
-          <HomeContentAnimation />
+        {(!isMobile) && <div className="items-center">
+          <HomeContentAnimation width={300} height={300} />
         </div>}
       </DivContainer >
     </>
