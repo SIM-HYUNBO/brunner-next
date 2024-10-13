@@ -21,6 +21,9 @@ export default function Header() {
                         </h1>
                     </Link>
                     <nav className="md:ml-auto flex flex-wrap items-center text-base justify-center">
+                        <Link className="mr-5 text-gray-600 dark:text-gray-100 hover:text-gray-400" href="/mainPages/clips">
+                            Clips
+                        </Link>
                         <Link className="mr-5 text-gray-600 dark:text-gray-100 hover:text-gray-400" href="/mainPages/contact">
                             Contact
                         </Link>

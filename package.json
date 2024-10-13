@@ -40,6 +40,7 @@
     "quill": "^2.0.1",
     "react": "^18.2.0",
     "react-apexcharts": "^1.4.1",
+    "react-device-detect": "^2.2.3",
     "react-dom": "^18.2.0",
     "react-draft-wysiwyg": "^1.15.0",
     "react-lottie-player": "^1.5.4",
