@@ -3,7 +3,7 @@
 import HomeContentAnimation from './content-animation/homeContentAnimation'
 import { useRouter } from 'next/router'
 import * as userInfo from '@/components/userInfo'
-import DivContainer from '@/components/divContainer'
+import DivContainer from '@/components/DivContainer'
 import BrunnerVideo from '@/components/brunnerVideo'
 
 export default function HomeContent() {

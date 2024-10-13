@@ -3,7 +3,7 @@
 import RequestServer from './requestServer'
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
-import BrunnerMessageBox from './brunnerMessageBox';
+import BrunnerMessageBox from './BrunnerMessageBox';
 import * as Constants from '@/components/constants'
 import * as userInfo from '@/components/userInfo';
 export default function SignoutButton() {
