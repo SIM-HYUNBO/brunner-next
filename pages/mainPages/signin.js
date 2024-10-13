@@ -8,7 +8,7 @@ import { useState, useEffect, useRef } from 'react'
 import RequestServer from '@/components/requestServer'
 import BrunnerMessageBox from '@/components/brunnerMessageBox'
 import * as Constants from '@/components/constants';
-import DivContainer from "@/components/DivContainer"
+import DivContainer from "@/components/divContainer"
 
 export default function Signin() {
   const router = useRouter();
