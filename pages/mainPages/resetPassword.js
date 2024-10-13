@@ -9,8 +9,8 @@ import { useRouter } from 'next/router'
 import { useState } from 'react'
 import BrunnerMessageBox from '@/components/brunnerMessageBox'
 import * as Constants from '@/components/constants'
-import Conatiner from "@/components/divContainer"
-import DivContainer from '@/components/divContainer'
+import Conatiner from "@/components/DivContainer"
+import DivContainer from '@/components/DivContainer'
 
 export default function ResetPassword() {
   const router = useRouter();
