@@ -17,8 +17,6 @@ export default function LeftMenu() {
                     <Link className="block text-gray-600 dark:text-gray-100 py-2" href="/mainPages/contact">
                         Contact
                     </Link>
-                    {/* <li><a href="/mainPages/clips" className="block text-green-900 dark:text-green-200 py-2">Clips</a></li>
-                    <li><a href="/mainPages/contact" className="block text-green-900 dark:text-green-200 py-2">Contact</a></li> */}
                 </ul>
             </nav>
         </aside>
