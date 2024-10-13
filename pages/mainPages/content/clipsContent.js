@@ -53,7 +53,7 @@ export default function ClipsContent() {
                         </div>
                     </div>
                 </div>
-                <div className="w-full">
+                <div className="w-full desktop:p-20">
                     {/* {<ClipsContentAnimation />} */}
                 </div>
             </DivContainer>

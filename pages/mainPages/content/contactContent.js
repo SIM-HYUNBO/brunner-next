@@ -27,7 +27,7 @@ export default function ContactContent() {
             <GetContact />
           </div>
         </div>
-        <div className="w-full">
+        <div className="w-full desktop:p-20">
           {<ContactContentAnimation />}
         </div>
       </DivContainer>
