@@ -25,14 +25,14 @@ export default function ClipsContent() {
                     </div>
 
 
-                    <div className="flex justify-center">
-                        <div className="lg:h-2/6 lg:w-2/6 mt-10">
+                    <div className="flex">
+                        <div className="w-full">
                             <BrunnerVideo
                                 url={'https://youtu.be/MddvuCH-XUU'}
                                 title={'S&P500 INDEX FUND'}
                                 width="800px" // 100%
                                 height="450px"// 100%
-                                className="mt-2"
+                                className="mt-5"
                             >
                             </BrunnerVideo>
                             <BrunnerVideo
@@ -40,7 +40,7 @@ export default function ClipsContent() {
                                 title={'大军师司马懿之 军师联盟 (2017) 대군사사마의지군사연맹 The Advisors Alliance'}
                                 width="800px" // 100%
                                 height="450px"// 100%
-                                className="mt-2"
+                                className="mt-5"
                             >
                             </BrunnerVideo>
                             <BrunnerVideo
