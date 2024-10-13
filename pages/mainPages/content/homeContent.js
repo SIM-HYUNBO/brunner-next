@@ -11,8 +11,8 @@ export default function HomeContent() {
 
   return (
     <>
-      <DivContainer>
-        <div className="w-full flex-col items-start text-left mb-16 md:mb-0">
+      <DivContainer className="desktop:flex-col mobile:flex-row ">
+        <div className="w-1/2 items-start text-left">
           <h2 className="title-font sm:text-4xl text-3xl mb-10 font-medium text-green-900">
             Asset management
           </h2>
@@ -41,15 +41,13 @@ export default function HomeContent() {
               <BrunnerVideo
                 url={'https://youtu.be/0j1BdlsL_ew?t=2'}
                 title="The powerful effect of S&P500"
-                width="800px" // 100%
-                height="450px"// 100%          
               >
               </BrunnerVideo>
             </div>
 
           </div>
         </div>
-        <div className="lg:h-2/6 lg:w-2/6">
+        <div className="w-2/6 items-center ml-20">
           <HomeContentAnimation />
         </div>
       </DivContainer >

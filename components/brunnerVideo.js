@@ -1,40 +1,47 @@
 import dynamic from 'next/dynamic';
-import { useState, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 
 const ReactPlayer = dynamic(() => import('react-player'), { ssr: false });
 
-const BrunnerVideo = ({ title, url, className }) => {
-    const [size, setSize] = useState({ width: 640, height: 360 });
-    const videoRef = useRef(null);
+const BrunnerVideo = ({ title, url, className, originalWidth = 640, originalHeight = 360 }) => {
+    const [size, setSize] = useState({ width: originalWidth, height: originalHeight });
+    const containerRef = useRef(null);
 
-    const handleMouseDown = (e) => {
-        e.preventDefault();
-        const startX = e.clientX;
-        const startY = e.clientY;
-        const startWidth = size.width;
-        const startHeight = size.height;
+    useEffect(() => {
+        const updateSize = () => {
+            if (containerRef.current) {
+                const containerWidth = containerRef.current.clientWidth;
 
-        const handleMouseMove = (e) => {
-            const newWidth = startWidth + (e.clientX - startX);
-            const newHeight = Math.round((newWidth * 9) / 16); // 유지할 비율 (16:9)
+                // 부모 div 너비와 원본 너비 중 작은 값을 선택
+                const newWidth = Math.min(containerWidth, originalWidth);
+                const aspectRatio = originalWidth / originalHeight;
 
-            setSize({
-                width: Math.max(320, Math.min(newWidth, 1280)), // 최소 320px, 최대 1280px
-                height: Math.max(180, Math.min(newHeight, 720)) // 최소 180px, 최대 720px
-            });
+                // 비율에 따라 높이 계산
+                const newHeight = Math.round(newWidth / aspectRatio);
+
+                setSize({
+                    width: newWidth,
+                    height: newHeight
+                });
+            }
         };
 
-        const handleMouseUp = () => {
-            document.removeEventListener('mousemove', handleMouseMove);
-            document.removeEventListener('mouseup', handleMouseUp);
-        };
+        // ResizeObserver를 사용해 부모 div 크기 변경 감지
+        const resizeObserver = new ResizeObserver(updateSize);
+        if (containerRef.current) {
+            resizeObserver.observe(containerRef.current);
+        }
 
-        document.addEventListener('mousemove', handleMouseMove);
-        document.addEventListener('mouseup', handleMouseUp);
-    };
+        // 컴포넌트 언마운트 시 옵저버 해제
+        return () => {
+            if (containerRef.current) {
+                resizeObserver.unobserve(containerRef.current);
+            }
+        };
+    }, [originalWidth, originalHeight]);
 
     return (
-        <div className={className}>
+        <div className={className} ref={containerRef}>
             <p className="text-start mb-1 text-gray-800 w-full">{title}</p>
             <div className="relative" style={{ width: size.width, height: size.height }}>
                 <ReactPlayer
@@ -42,13 +49,7 @@ const BrunnerVideo = ({ title, url, className }) => {
                     controls={true}
                     width="100%"
                     height="100%"
-                    className="w-full h-full rounded-lg"
-                />
-                {/* Resize Handle */}
-                <div
-                    onMouseDown={handleMouseDown}
-                    className="absolute right-0 bottom-0 w-4 h-4 bg-gray-600 cursor-se-resize"
-                    style={{ borderBottomRightRadius: '50%' }}
+                    className="w-full h-full rounded-lg "
                 />
             </div>
         </div>
