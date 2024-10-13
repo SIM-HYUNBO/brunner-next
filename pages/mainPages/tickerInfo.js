@@ -1,11 +1,12 @@
 `use strict`
 
+import { useState, useEffect, useRef } from 'react'
+import { useRouter } from 'next/router';
+import { useTheme } from 'next-themes'
 import Layout from '@/components/layout'
 import Head from 'next/head'
 import BodySection from '@/components/bodySection'
 import TickerInfoContent from './content/tickerInfoContent'
-import { useRouter } from 'next/router';
-import { useTheme } from 'next-themes'
 
 export default function TickerInfo() {
   useEffect(() => {
