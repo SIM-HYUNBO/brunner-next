@@ -11,7 +11,7 @@ export default function ClipsContent() {
     return (
         <>
             <DivContainer className="mobile:flex-row desktop:flex-col">
-                <div className="w-1/2 flex items-start text-left md:mb-0 mb-20">
+                <div className="mobile:w-full desktop:w-1/2 flex items-start text-left md:mb-0 mb-20">
                     <h2 className="title-font 
                        text-3xl 
                        mb-10 
@@ -53,7 +53,7 @@ export default function ClipsContent() {
                         </div>
                     </div>
                 </div>
-                <div className="lg:h-2/6 lg:w-2/6 desktop:p-20">
+                <div className="w-full">
                     {/* {<ClipsContentAnimation />} */}
                 </div>
             </DivContainer>
