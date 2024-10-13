@@ -41,11 +41,11 @@ export default async (req, res) => {
             loadedSQLSize = await initialize();
         }
         else {
-            throw Error(Constants.MESSAGE_SERVER_NOT_INITIALIZED);
+            throw Error(Constants.MESSAGE_SERVER_NOW_INITIALIZING);
         }
 
         if (!process.serviceSQL || process.serviceSQL.length == 0) {
-            throw Error(Constants.MESSAGE_SERVER_NOT_INITIALIZED);
+            throw Error(Constants.MESSAGE_SERVER_NOW_INITIALIZING);
         }
 
         remoteIp = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
