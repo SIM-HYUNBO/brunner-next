@@ -189,12 +189,12 @@ export default function ResetPassword() {
         </Head>
         <BodySection>
           <DivContainer>
-            <div className="lg:w-3/5 md:w-1/2 md:pr-16 lg:pr-0 pr-0">
+            <div className="w-3/5 pr-0">
               <h2 className="title-font font-medium text-3xl text-gray-900">Protect your important information.</h2>
               <p className="mt-2">Enter information to leave or reset password.</p>
             </div>
             <div className="w-full flex flex-col items-start text-left mb-16 mt-5">
-              <div className="relative w-1/2">
+              <div className="w-full">
                 <label htmlFor="id" className="text-gray-400">ID</label>
                 <input type="text" id="id" name="Id" onChange={(e) => changeUserIdValue(e)} className="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out" />
                 <label htmlFor="phone-number" className="text-sm text-gray-400 w-full">Phone Number</label>
@@ -207,7 +207,7 @@ export default function ResetPassword() {
                   </button>
                 </div>
               </div>
-              <div className="relative mt-2 w-1/2">
+              <div className="mt-2 w-full">
                 <label htmlFor="email"
                   className="text-sm text-gray-400 w-full">
                   Authorization Code
@@ -221,7 +221,7 @@ export default function ResetPassword() {
                   Delete account
                 </button>
               </div>
-              <div className="relative mt-6 w-1/2">
+              <div className="relative mt-6 w-full">
                 <label htmlFor="new-password"
                   className="text-sm text-gray-400">
                   New Password
