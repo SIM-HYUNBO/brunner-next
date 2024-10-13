@@ -125,7 +125,7 @@ export default function Signin() {
               <h2 className="title-font sm:text-4xl text-3xl mb-10 font-medium text-green-900">
                 Sign in
               </h2>
-              <div className="lg:w-3/5 md:w-1/2 md:pr-16 lg:pr-0 pr-0">
+              <div className="w-full">
                 <p className="leading-relaxed mt-4 mb-5">Inut ID and Password.</p>
               </div>
               <div className="relative mb-4">
