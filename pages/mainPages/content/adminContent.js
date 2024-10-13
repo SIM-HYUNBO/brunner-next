@@ -5,6 +5,7 @@ import AdminContentAnimation from './content-animation/adminContentAnimation'
 import { useRouter } from 'next/router'
 import * as userInfo from '@/components/userInfo';
 import DivContainer from "@/components/DivContainer"
+import { isMobile, isTablet, isBrowser } from 'react-device-detect';
 
 export default function AdminContent() {
   const router = useRouter()
@@ -27,9 +28,9 @@ export default function AdminContent() {
                 <ServiceSQL />
               </div>
             </div>
-            <div className="lg:h-2/6 lg:w-2/6 desktop:p-20">
+            {(!isMobile) && <div className="lg:h-2/6 lg:w-2/6 desktop:p-20">
               {<AdminContentAnimation />}
-            </div>
+            </div>}
           </>
         }
       </DivContainer>

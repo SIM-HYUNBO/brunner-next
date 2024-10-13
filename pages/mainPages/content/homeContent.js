@@ -5,6 +5,7 @@ import { useRouter } from 'next/router'
 import * as userInfo from '@/components/userInfo'
 import DivContainer from '@/components/DivContainer'
 import BrunnerVideo from '@/components/brunnerVideo'
+import { isMobile, isTablet, isBrowser } from 'react-device-detect';
 
 export default function HomeContent() {
   const router = useRouter()
@@ -47,9 +48,9 @@ export default function HomeContent() {
 
           </div>
         </div>
-        <div className="w-2/6 desktop:p-20">
+        {(!isMobile) && <div className="w-2/6 desktop:p-20">
           <HomeContentAnimation />
-        </div>
+        </div>}
       </DivContainer >
     </>
   );

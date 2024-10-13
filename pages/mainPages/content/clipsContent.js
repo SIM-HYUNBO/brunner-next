@@ -4,6 +4,7 @@
 import { useRouter } from 'next/router'
 import DivContainer from "@/components/DivContainer"
 import BrunnerVideo from '@/components/brunnerVideo'
+import { isMobile, isTablet, isBrowser } from 'react-device-detect';
 
 export default function ClipsContent() {
     const router = useRouter()
@@ -53,9 +54,9 @@ export default function ClipsContent() {
                         </div>
                     </div>
                 </div>
-                <div className="w-full desktop:p-20">
+                {(!isMobile) && <div className="w-full desktop:p-20">
                     {/* {<ClipsContentAnimation />} */}
-                </div>
+                </div>}
             </DivContainer>
         </>
     );
