@@ -9,8 +9,23 @@ import RequestServer from '@/components/requestServer'
 import BrunnerMessageBox from '@/components/BrunnerMessageBox'
 import * as Constants from '@/components/constants';
 import DivContainer from "@/components/DivContainer"
+import { useTheme } from 'next-themes'
 
 export default function Signin() {
+  useEffect(() => {
+    setThemeRef(themeRef.current);
+  }, []);
+
+  // theme : 현재값 가져오기 getter
+  // setTheme : 현재값 바꾸기 setter
+  const { theme, setTheme } = useTheme()
+  const themeRef = useRef(theme);
+
+  const setThemeRef = (newValue) => {
+    themeRef.current = newValue;
+    setTheme(newValue);
+  };
+
   const router = useRouter();
   const [loading, setLoading] = useState(false); // 로딩 상태 추가
 
