@@ -5,7 +5,7 @@ import '@/styles/globals.css'
 import { ThemeProvider } from 'next-themes'
 import RequestServer from '@/components/requestServer'
 import { useEffect, useState } from 'react'
-import BrunnerMessageBox from '@/components/BrunnerMessageBox'
+import BrunnerMessageBox from '@/components/brunnerMessageBox'
 import * as Constants from '@/components/constants'
 
 // Entry Point

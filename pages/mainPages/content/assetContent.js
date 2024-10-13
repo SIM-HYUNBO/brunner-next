@@ -6,7 +6,7 @@ import { useTable, useSortBy } from 'react-table';
 import RequestServer from '@/components/requestServer';
 import * as userInfo from '@/components/userInfo';
 import moment from 'moment';
-import BrunnerMessageBox from '@/components/BrunnerMessageBox';
+import BrunnerMessageBox from '@/components/brunnerMessageBox';
 import * as Constants from '@/components/constants';
 import DivContainer from "@/components/divContainer"
 
