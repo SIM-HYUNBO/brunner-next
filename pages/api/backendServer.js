@@ -9,7 +9,7 @@ import * as security from './biz/security'
 import * as asset from './biz/asset'
 import * as stock from './biz/stock'
 import * as board from './biz/board'
-import * as Constants from "@/components/Constants"
+import * as Constants from "@/components/constants"
 
 async function initialize() {
     var serviceSql = null;

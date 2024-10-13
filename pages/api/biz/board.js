@@ -4,7 +4,7 @@ import axios from 'axios';
 import logger from "../winston/logger"
 import * as database from "./database/database"
 import * as serviceSQL from './serviceSQL'
-import * as Constants from '@/components/Constants'
+import * as Constants from '@/components/constants'
 
 const executeService = (txnId, jRequest) => {
     var jResponse = {};

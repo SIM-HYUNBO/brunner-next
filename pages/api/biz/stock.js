@@ -4,7 +4,7 @@ import logger from "./../winston/logger"
 import * as database from "./database/database"
 import * as serviceSQL from './serviceSQL'
 import moment from 'moment';
-import * as Constants from '@/components/Constants'
+import * as Constants from '@/components/constants'
 import * as requestResult from '../requestResult'
 
 const executeService = (txnId, jRequest) => {

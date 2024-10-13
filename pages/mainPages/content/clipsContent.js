@@ -3,7 +3,7 @@
 // import ClipsContentAnimation from './content-animation/contactContentAnimation'
 import { useRouter } from 'next/router'
 import DivContainer from "@/components/DivContainer"
-import BrunnerVideo from '@/components/BrunnerVideo'
+import BrunnerVideo from '@/components/brunnerVideo'
 
 export default function ClipsContent() {
     const router = useRouter()

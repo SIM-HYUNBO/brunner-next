@@ -1,8 +1,8 @@
 `use strict`
 
-import Layout from '@/components/Layout'
+import Layout from '@/components/layout'
 import Head from 'next/head'
-import BodySection from '@/components/BodySection'
+import BodySection from '@/components/bodySection'
 
 import ClipsContent from './content/clipsContent'
 

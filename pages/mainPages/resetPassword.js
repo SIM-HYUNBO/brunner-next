@@ -1,14 +1,14 @@
 `use strict`
 
-import Layout from '@/components/Layout'
+import Layout from '@/components/layout'
 import Head from 'next/head'
-import BodySection from '@/components/BodySection'
+import BodySection from '@/components/bodySection'
 
-import RequestServer from '@/components/RequestServer'
+import RequestServer from '@/components/requestServer'
 import { useRouter } from 'next/router'
 import { useState } from 'react'
 import BrunnerMessageBox from '@/components/BrunnerMessageBox'
-import * as Constants from '@/components/Constants'
+import * as Constants from '@/components/constants'
 import Conatiner from "@/components/DivContainer"
 import DivContainer from '@/components/DivContainer'
 
