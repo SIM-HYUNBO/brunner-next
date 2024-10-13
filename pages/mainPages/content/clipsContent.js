@@ -12,7 +12,7 @@ export default function ClipsContent() {
     return (
         <>
             <DivContainer className="mobile:flex-row desktop:flex-col">
-                <div className="mobile:w-full desktop:w-1/2 items-start text-left">
+                <div className="mobile:w-full desktop:w-2/3 items-start text-left">
                     <h2 className="title-font 
                        text-3xl 
                        mb-10 

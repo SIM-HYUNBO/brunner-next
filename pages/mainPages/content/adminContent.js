@@ -16,12 +16,7 @@ export default function AdminContent() {
         {userInfo?.isAdminUser() &&
           <>
             <div className="w-full pr-16 flex flex-col items-start text-left md:mb-0 mb-20">
-              <h2 className="title-font 
-                       sm:text-4xl 
-                       text-3xl 
-                       mb-10 
-                       font-medium 
-                       text-green-900">
+              <h2 className="title-font sm:text-4xl text-3xl mb-10 font-medium text-green-900">
                 Brunner administration
               </h2>
               <div className="flex justify-center">
