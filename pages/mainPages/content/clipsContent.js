@@ -37,7 +37,7 @@ export default function ClipsContent() {
                             </BrunnerVideo>
                             <BrunnerVideo
                                 url={'https://www.youtube.com/watch?v=5nRs1niZ9h4&list=PLqb1KKjbyLLjjsGoYF9KlogyNIF3KDo0Z'}
-                                title={'大军师司马懿之 军师联盟 (2017) 대군사사마의지군사연맹 The Advisors Alliance'}
+                                title={'The Advisors Alliance 大军师司马懿之 军师联盟 (2017) 대군사사마의지군사연맹'}
                                 width="800px" // 100%
                                 height="450px"// 100%
                                 className="mt-5"
@@ -45,7 +45,7 @@ export default function ClipsContent() {
                             </BrunnerVideo>
                             <BrunnerVideo
                                 url={'https://www.youtube.com/watch?v=UOmp8Zbvs7k&list=PLqb1KKjbyLLiVTGRO7cB_3PsbmbBRAvCj'}
-                                title={'大军师司马懿之 虎啸龙吟 (2017) 대군사사마의지호소용음 Growling Tiger, Roaring Dragon'}
+                                title={'Growling Tiger, Roaring Dragon 大军师司马懿之 虎啸龙吟 (2017) 대군사사마의지호소용음 '}
                                 width="800px" // 100%
                                 height="450px"
                                 className="mt-5" // 100%
