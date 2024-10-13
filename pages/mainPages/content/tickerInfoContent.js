@@ -5,7 +5,7 @@ import RequestServer from '@/components/requestServer'
 import Board from '@/pages/mainPages/content/boardContent'
 import RealtimeChart from './realtimeChart';
 import * as Constants from '@/components/constants'
-import DivContainer from "@/components/divContainer"
+import DivContainer from "@/components/DivContainer"
 
 export default function TickerInfoContent({ tickerCode: tickerCode }) {
   const [loading, setLoading] = useState(false); // 로딩 상태 추가

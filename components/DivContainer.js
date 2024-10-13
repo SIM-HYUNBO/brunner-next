@@ -1,9 +1,11 @@
 `use strict`
 
-export default function DivContainer({ children }) {
+const DivContainer = ({ children }) => {
     return (
         <div className="container">
             {children}
         </div>
     );
 }
+
+export default DivContainer;
