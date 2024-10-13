@@ -26,7 +26,7 @@ lg:px-48 (데스크탑)
 */
 
 .bg-primary { 
-    @apply bg-white dark:bg-slate-800 w-full h-full min-h-[calc(100vh-5rem)] max-w-full pb-20}
+    @apply bg-white dark:bg-slate-800 w-full h-full min-h-[calc(100vh-5rem)] max-w-full desktop:px-40 pb-20}
 
 /* footer 높이:5rem */
 footer {
