@@ -3,20 +3,16 @@
 import ContactContentAnimation from './content-animation/contactContentAnimation'
 import { useRouter } from 'next/router'
 import DivContainer from "@/components/DivContainer"
+import { isMobile, isTablet, isBrowser } from 'react-device-detect';
 
 export default function ContactContent() {
   const router = useRouter()
 
   return (
     <>
-      <DivContainer className="mobile:flex-row desktop:flex-col">
+      <DivContainer>
         <div className="mobile:w-full desktop:w-1/2 items-start text-left">
-          <h2 className="title-font 
-                       sm:text-4xl 
-                       text-3xl 
-                       mb-10 
-                       font-medium 
-                       text-green-900">
+          <h2 className="title-font sm:text-4xl text-3xl mb-10 font-medium text-green-900">
             We are here for you always.
           </h2>
           <div className="main-governing-text">
@@ -27,9 +23,9 @@ export default function ContactContent() {
             <GetContact />
           </div>
         </div>
-        <div className="w-full desktop:p-20">
+        {(!isMobile) && <div className="w-full desktop:p-20">
           {<ContactContentAnimation />}
-        </div>
+        </div>}
       </DivContainer>
     </>
   );

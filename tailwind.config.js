@@ -19,14 +19,15 @@ module.exports = {
       },
     },
     screens: { // 아래의 값들은 min-width이다.
+      mobile: '360px',
+      xs: '360px',
       sm: '640px',
       md: '768px',
+      tablet: '768px',// 신규 추가
       lg: '1024px',
+      desktop: '1024px', // 신규 추가 == 2xl
       xl: '1280px',
-      mobile: '320px',
-      tablet: '600px',// 신규 추가
       laptop: '1200px',// 신규 추가 
-      desktop: '1536px', // 신규 추가 == 2xl
     }
   },
   plugins: [],
