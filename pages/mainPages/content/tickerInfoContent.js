@@ -146,9 +146,9 @@ export default function TickerInfoContent({ tickerCode: tickerCode }) {
     <>
       <DivContainer>
         <div className="lg:flex-grow flex flex-col md:items-center md:text-left md:mb-0 items-center text-center">
-          <h1 className="title-font sm:text-4xl text-3xl mb-10 font-medium text-green-900">
+          <h2 className="title-font sm:text-4xl text-3xl mb-10 font-medium text-green-900">
             {`${tickerCode}`}
-          </h1>
+          </h2>
           <div className="main-governing-text">
             <img src={brandingInfo.icon_url} alt="" />
             <h2>{tickerDescRef.current}</h2>
