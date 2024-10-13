@@ -190,7 +190,7 @@ export default function ResetPassword() {
         <BodySection>
           <DivContainer>
             <div className="lg:w-3/5 md:w-1/2 md:pr-16 lg:pr-0 pr-0">
-              <h1 className="title-font font-medium text-3xl text-gray-900">Protect your important information.</h1>
+              <h2 className="title-font font-medium text-3xl text-gray-900">Protect your important information.</h2>
               <p className="mt-2">Enter information to leave or reset password.</p>
             </div>
             <div className="lg:flex-grow md:w-1/2 flex flex-col md:items-start md:text-left mb-16 md:mb-0 items-center text-center mt-5">

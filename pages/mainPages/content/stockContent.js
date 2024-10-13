@@ -774,9 +774,9 @@ const StockContent = () => {
                 onClose={modalContent.onClose}
             />
 
-            <h1 className="title-font sm:text-4xl text-3xl w-full my-10 font-medium text-green-900">
+            <h2 className="title-font sm:text-4xl text-3xl w-full my-10 font-medium text-green-900">
                 Stock search
-            </h1>
+            </h2>
             <div className="items-start mt-2 dark:text-slate-400 w-full">
                 <label>Span</label>
                 <select

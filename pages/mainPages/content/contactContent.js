@@ -11,14 +11,14 @@ export default function ContactContent() {
     <>
       <DivContainer className="md:flex-row flex-col">
         <div className="lg:flex-grow md:w-1/2 lg:pr-24 md:pr-16 flex flex-col md:items-start md:text-left md:mb-0 items-center text-center mb-20">
-          <h1 className="title-font 
+          <h2 className="title-font 
                        sm:text-4xl 
                        text-3xl 
                        mb-10 
                        font-medium 
                        text-green-900">
-            Here for you always.
-          </h1>
+            We are here for you always.
+          </h2>
           <div className="main-governing-text">
             Brunner's call center is always available to assist investors.
             Contact us immediately

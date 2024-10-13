@@ -13,9 +13,9 @@ export default function HomeContent() {
     <>
       <DivContainer>
         <div className="lg:flex-grow md:w-1/2 flex-col md:items-start md:text-left mb-16 md:mb-0 items-center text-center">
-          <h1 className="title-font sm:text-4xl text-3xl mb-10 font-medium text-green-900">
+          <h2 className="title-font sm:text-4xl text-3xl mb-10 font-medium text-green-900">
             Asset management
-          </h1>
+          </h2>
           <div className="main-governing-text">
             The key to success in wealth and the stock market is consistent market participation and smart management. <br />
             Manage your assets well and stay engaged in the stock market by using Brunner-Next.<br />

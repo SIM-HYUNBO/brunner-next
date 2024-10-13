@@ -253,7 +253,7 @@ const ServiceSQL = () => {
                     onClose={modalContent.onClose}
                 />
 
-                <h1 className="text-xl font-bold mb-4">Service SQL Management</h1>
+                <h2 className="text-xl font-bold mb-4">Service SQL Management</h2>
                 <button
                     onClick={handleNew}
                     className="bg-green-500 text-white py-2 px-4 rounded-md hover:bg-green-600 focus:outline-none focus:ring focus:ring-green-500 focus:ring-opacity-50 mb-4"
