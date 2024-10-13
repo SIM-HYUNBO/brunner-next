@@ -193,7 +193,7 @@ export default function ResetPassword() {
               <h2 className="title-font font-medium text-3xl text-gray-900">Protect your important information.</h2>
               <p className="mt-2">Enter information to leave or reset password.</p>
             </div>
-            <div className="lg:flex-grow md:w-1/2 flex flex-col md:items-start md:text-left mb-16 md:mb-0 items-center text-center mt-5">
+            <div className="w-full flex flex-col items-start text-left mb-16 mt-5">
               <div className="relative w-1/2">
                 <label htmlFor="id" className="text-gray-400">ID</label>
                 <input type="text" id="id" name="Id" onChange={(e) => changeUserIdValue(e)} className="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out" />
