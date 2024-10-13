@@ -3,7 +3,7 @@ import { useState, useRef } from 'react';
 
 const ReactPlayer = dynamic(() => import('react-player'), { ssr: false });
 
-const BrunnerVideo = ({ title, url }) => {
+const BrunnerVideo = ({ title, url, className }) => {
     const [size, setSize] = useState({ width: 640, height: 360 });
     const videoRef = useRef(null);
 
@@ -34,8 +34,8 @@ const BrunnerVideo = ({ title, url }) => {
     };
 
     return (
-        <div className="w-full h-full">
-            <h1 className="text-start mb-4 text-gray-800 w-full">{title}</h1>
+        <div className={className}>
+            <h1 className="text-start mb-1 text-gray-800 w-full">{title}</h1>
             <div className="relative" style={{ width: size.width, height: size.height }}>
                 <ReactPlayer
                     url={url}
