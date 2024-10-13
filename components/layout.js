@@ -7,7 +7,7 @@ export default function Layout({ children }) {
     <>
       <div className="flex bg-primary min-h-screen justify-center">
         <LeftMenu></LeftMenu>
-        <div className="px-2 w-full desktop:w-3/4 mobile:px-3">
+        <div className="px-2 w-full desktop:w-3/4 mobile:ml-5">
           <Header />
           <main>{children}</main>
           <Footer />
