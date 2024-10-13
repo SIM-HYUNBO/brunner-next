@@ -347,8 +347,8 @@ export default function AssetContent() {
           onConfirm={modalContent.onConfirm}
           onClose={modalContent.onClose}
         />
-        <div className="lg:flex-grow md:w-1/2 md:pr-16 flex flex-col md:items-start md:text-left md:mb-0 items-center text-center my-10">
-          <h2 className="title-font sm:text-4xl text-3xl mb-10 font-medium text-green-900">
+        <div className="w-full pr-16 flex flex-col items-start text-left my-10">
+          <h2 className="title-font text-3xl mb-10 font-medium text-green-900">
             My Asset History
           </h2>
           <div className="mb-5 table w-full">

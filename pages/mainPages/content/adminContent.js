@@ -14,7 +14,7 @@ export default function AdminContent() {
       <DivContainer>
         {userInfo?.isAdminUser() &&
           <>
-            <div className="lg:flex-grow md:w-1/2 lg:pr-24 md:pr-16 flex flex-col md:items-start md:text-left md:mb-0 items-center text-center mb-20">
+            <div className="w-full pr-16 flex flex-col items-start text-left md:mb-0 mb-20">
               <h2 className="title-font 
                        sm:text-4xl 
                        text-3xl 
