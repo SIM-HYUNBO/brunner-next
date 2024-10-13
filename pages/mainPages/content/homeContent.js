@@ -47,7 +47,7 @@ export default function HomeContent() {
 
           </div>
         </div>
-        <div className="w-2/6 items-center desktop:p-20">
+        <div className="w-2/6 desktop:p-20">
           <HomeContentAnimation />
         </div>
       </DivContainer >
