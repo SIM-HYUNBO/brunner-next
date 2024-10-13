@@ -7,7 +7,7 @@ export default function Layout({ children }) {
     <>
       <div className="flex bg-primary min-h-screen">
         <LeftMenu></LeftMenu>
-        <div className="px-20">
+        <div className="px-2 w-screen">
           <Header />
           <main>{children}</main>
           <Footer />
