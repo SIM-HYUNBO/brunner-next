@@ -55,7 +55,7 @@ p {
 }
 
 .container {
-    @apply w-full h-full flex flex-wrap items-center p-1 
+    @apply w-full h-full flex desktop:flex-row items-start p-1 
 }
 
 .main-governing-text {

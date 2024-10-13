@@ -54,7 +54,7 @@ export default function ClipsContent() {
                         </div>
                     </div>
                 </div>
-                {(!isMobile) && <div className="w-full desktop:p-20">
+                {(!isMobile) && <div className="items-center">
                     {/* {<ClipsContentAnimation />} */}
                 </div>}
             </DivContainer>
