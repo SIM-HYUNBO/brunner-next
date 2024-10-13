@@ -2,7 +2,7 @@
 
 import logger from "./../../winston/logger"
 import { Pool } from "pg";
-import * as Constants from "@/components/constants"
+import * as Constants from "@/components/Constants"
 
 const getPool = async () => {
 

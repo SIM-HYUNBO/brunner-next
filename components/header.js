@@ -2,8 +2,8 @@
 
 import Link from "next/link";
 import Image from 'next/image'
-import * as userInfo from '@/components/userInfo'
-import DivContainer from '@/components/divContainer'
+import * as userInfo from '@/components/UserInfo'
+import DivContainer from '@/components/DivContainer'
 
 export default function Header() {
     const UserInfo = userInfo.default;

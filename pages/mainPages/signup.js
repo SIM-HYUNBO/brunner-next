@@ -1,14 +1,14 @@
 `use strict`
 
-import Layout from '@/components/layout'
+import Layout from '@/components/Layout'
 import Head from 'next/head'
-import BodySection from '@/components/bodySection'
-import RequestServer from '@/components/requestServer'
+import BodySection from '@/components/BodySection'
+import RequestServer from '@/components/RequestServer'
 import { useRouter } from 'next/router'
 import { useState } from 'react'
-import BrunnerMessageBox from '@/components/brunnerMessageBox'
-import * as Constants from '@/components/constants'
-import DivContainer from "@/components/divContainer"
+import BrunnerMessageBox from '@/components/BrunnerMessageBox'
+import * as Constants from '@/components/Constants'
+import DivContainer from "@/components/DivContainer"
 
 export default function Signup() {
   const router = useRouter();

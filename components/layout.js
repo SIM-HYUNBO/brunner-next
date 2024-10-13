@@ -1,6 +1,6 @@
-import Header from './header';
-import Footer from './footer';
-import LeftMenu from './leftMenu';
+import Header from './Header';
+import Footer from './Footer';
+import LeftMenu from './LeftMenu';
 
 export default function Layout({ children }) {
   return (

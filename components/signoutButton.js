@@ -1,11 +1,11 @@
 `use strict`
 
-import RequestServer from './requestServer'
+import RequestServer from './RequestServer'
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
-import BrunnerMessageBox from './brunnerMessageBox';
-import * as Constants from '@/components/constants'
-import * as userInfo from '@/components/userInfo';
+import BrunnerMessageBox from './BrunnerMessageBox';
+import * as Constants from '@/components/Constants'
+import * as userInfo from '@/components/UserInfo';
 export default function SignoutButton() {
 
   const [modalContent, setModalContent] = useState({

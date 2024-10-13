@@ -1,10 +1,10 @@
 `use strict`
 
-import ServiceSQL from '@/components/serviceSQL';
+import ServiceSQL from '@/components/ServiceSQL';
 import AdminContentAnimation from './content-animation/adminContentAnimation'
 import { useRouter } from 'next/router'
-import * as userInfo from '@/components/userInfo';
-import DivContainer from "@/components/divContainer"
+import * as userInfo from '@/components/UserInfo';
+import DivContainer from "@/components/DivContainer"
 
 export default function AdminContent() {
   const router = useRouter()
