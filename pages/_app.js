@@ -3,10 +3,10 @@
 import dotenv from 'dotenv'
 import '@/styles/globals.css'
 import { ThemeProvider } from 'next-themes'
-import RequestServer from '@/components/requestServer'
+import RequestServer from '@/components/RequestServer'
 import { useEffect, useState } from 'react'
-import BrunnerMessageBox from '@/components/brunnerMessageBox'
-import * as Constants from '@/components/constants'
+import BrunnerMessageBox from '@/components/BrunnerMessageBox'
+import * as Constants from '@/components/Constants'
 
 // Entry Point
 export default function App({ Component, pageProps }) {

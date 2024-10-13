@@ -3,12 +3,12 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/router';
 import { useTable, useSortBy } from 'react-table';
-import RequestServer from '@/components/requestServer';
-import * as userInfo from '@/components/userInfo';
+import RequestServer from '@/components/RequestServer';
+import * as userInfo from '@/components/UserInfo';
 import moment from 'moment';
-import BrunnerMessageBox from '@/components/brunnerMessageBox';
-import * as Constants from '@/components/constants';
-import DivContainer from "@/components/divContainer"
+import BrunnerMessageBox from '@/components/BrunnerMessageBox';
+import * as Constants from '@/components/Constants';
+import DivContainer from "@/components/DivContainer"
 
 export default function AssetContent() {
   const router = useRouter();

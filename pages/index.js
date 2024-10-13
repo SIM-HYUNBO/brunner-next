@@ -1,13 +1,13 @@
 `use strict`
 
-import Layout from '@/components/layout'
+import Layout from '@/components/Layout'
 import Head from 'next/head'
-import BodySection from '@/components/bodySection'
+import BodySection from '@/components/BodySection'
 import React from 'react';
 import { useEffect } from 'react'
 import Script from 'next/script';
 
-import * as userInfo from '@/components/userInfo'
+import * as userInfo from '@/components/UserInfo'
 import HomeContent from '@/pages/mainPages/content/homeContent'
 import StockContent from '@/pages/mainPages/content/stockContent'
 

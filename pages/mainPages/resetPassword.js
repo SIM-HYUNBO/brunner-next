@@ -1,16 +1,16 @@
 `use strict`
 
-import Layout from '@/components/layout'
+import Layout from '@/components/Layout'
 import Head from 'next/head'
-import BodySection from '@/components/bodySection'
+import BodySection from '@/components/BodySection'
 
-import RequestServer from '@/components/requestServer'
+import RequestServer from '@/components/RequestServer'
 import { useRouter } from 'next/router'
 import { useState } from 'react'
-import BrunnerMessageBox from '@/components/brunnerMessageBox'
-import * as Constants from '@/components/constants'
-import Conatiner from "@/components/divContainer"
-import DivContainer from '@/components/divContainer'
+import BrunnerMessageBox from '@/components/BrunnerMessageBox'
+import * as Constants from '@/components/Constants'
+import Conatiner from "@/components/DivContainer"
+import DivContainer from '@/components/DivContainer'
 
 export default function ResetPassword() {
   const router = useRouter();

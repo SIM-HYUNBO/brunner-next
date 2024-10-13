@@ -1,5 +1,5 @@
 'use strict'
-import * as Constants from '@/components/constants'
+import * as Constants from '@/components/Constants'
 
 export default async function RequestServer(method, jRequest) {
   let res = null;
