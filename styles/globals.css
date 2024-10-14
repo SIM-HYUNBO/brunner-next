@@ -30,7 +30,7 @@ lg:px-48 (데스크탑)
 
 /* footer 높이:5rem */
 footer {
-    @apply text-gray-200 bg-gray-300/50 dark:bg-gray-600/50 h-20 w-full relative bottom-0 mt-20 px-10
+    @apply text-gray-200 bg-gray-300/50 dark:bg-gray-600/50 h-20 w-full relative bottom-0 mt-20 px-10 py-5
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -55,7 +55,7 @@ p {
 }
 
 .container {
-    @apply w-full h-full flex desktop:flex-row items-start p-1 
+    @apply w-full h-full flex desktop:flex-wrap items-start p-1 
 }
 
 .main-governing-text {
