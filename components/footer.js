@@ -8,10 +8,7 @@ export default function Footer() {
         <>
             <footer className="body-font">
                 <DivContainer>
-                    <Link className="flex title-font font-medium items-center md:justify-start justify-center text-gray-600 dark:text-gray-400" href="/">Brunner</Link>
-                    <p className="text-sm text-gray-600 dark:text-gray-400 sm:ml-4 sm:pl-4 sm:border-l-2 sm:border-gray-200 sm:py-2 sm:mt-0 mt-4">© 2020 Brunner —
-                        <a href="https://twitter.com/" className="text-gray-600 dark:text-gray-400  ml-1" rel="noopener noreferrer" target="_blank">hbsim0605</a>
-                    </p>
+                    <Link className="flex title-font font-medium items-center md:justify-start justify-center text-gray-600 dark:text-gray-400" href="/">©2020 Brunner</Link>
                     <span className="inline-flex sm:ml-auto sm:mt-0 mt-4 justify-center sm:justify-start">
                         <a className="text-gray-500">
                             <svg fill="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" className="w-5 h-5" viewBox="0 0 24 24">
