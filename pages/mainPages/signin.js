@@ -1,24 +1,60 @@
-`use strict`
+`use strict`;
 
-import Layout from '@/components/layout'
-import Head from 'next/head'
-import BodySection from '@/components/bodySection'
-import { useRouter } from 'next/router'
-import { useState, useEffect, useRef } from 'react'
-import RequestServer from '@/components/requestServer'
-import BrunnerMessageBox from '@/components/BrunnerMessageBox'
-import * as Constants from '@/components/constants'
-import DivContainer from '@/components/DivContainer'
-import { useTheme } from 'next-themes'
+import Layout from "@/components/layout";
+import Head from "next/head";
+import BodySection from "@/components/bodySection";
+import { useRouter } from "next/router";
+import { useState, useEffect, useRef } from "react";
+import RequestServer from "@/components/requestServer";
+import BrunnerMessageBox from "@/components/BrunnerMessageBox";
+import * as Constants from "@/components/constants";
+import DivContainer from "@/components/DivContainer";
+import { useTheme } from "next-themes";
 
 export default function Signin() {
+  // 로딩 & 메시지 박스
+  // {
+  const [loading, setLoading] = useState(false);
+  const [modalContent, setModalContent] = useState({
+    isOpen: false,
+    message: "",
+    onConfirm: () => {},
+    onClose: () => {},
+  });
+  const openModal = (message) => {
+    return new Promise((resolve, reject) => {
+      setModalContent({
+        isOpen: true,
+        message: message,
+        onConfirm: (result) => {
+          resolve(result);
+          closeModal();
+        },
+        onClose: () => {
+          reject(false);
+          closeModal();
+        },
+      });
+    });
+  };
+  const closeModal = () => {
+    setModalContent({
+      isOpen: false,
+      message: "",
+      onConfirm: () => {},
+      onClose: () => {},
+    });
+  };
+  // }
+
   useEffect(() => {
     setThemeRef(themeRef.current);
+    userIdRef.current.focus();
   }, []);
 
   // theme : 현재값 가져오기 getter
   // setTheme : 현재값 바꾸기 setter
-  const { theme, setTheme } = useTheme()
+  const { theme, setTheme } = useTheme();
   const themeRef = useRef(theme);
 
   const setThemeRef = (newValue) => {
@@ -27,44 +63,9 @@ export default function Signin() {
   };
 
   const router = useRouter();
-  const [loading, setLoading] = useState(false); // 로딩 상태 추가
-
-  const [userId, setUserId] = useState('');
-  const [password, setPassword] = useState('');
+  const [userId, setUserId] = useState("");
+  const [password, setPassword] = useState("");
   const userIdRef = useRef();
-
-  useEffect(() => {
-    userIdRef.current.focus();
-  }, []);
-
-  const [modalContent, setModalContent] = useState({
-    isOpen: false,
-    message: '',
-    onConfirm: () => { },
-    onClose: () => { }
-  });
-
-  // 모달 열기 함수
-  const openModal = (message) => {
-    return new Promise((resolve, reject) => {
-      setModalContent({
-        isOpen: true,
-        message: message,
-        onConfirm: (result) => { resolve(result); closeModal(); },
-        onClose: () => { reject(false); closeModal(); }
-      });
-    });
-  };
-
-  // 모달 닫기 함수
-  const closeModal = () => {
-    setModalContent({
-      isOpen: false,
-      message: '',
-      onConfirm: () => { },
-      onClose: () => { }
-    });
-  };
 
   const changeUserIdValue = (e) => {
     setUserId(e.target.value);
@@ -74,22 +75,22 @@ export default function Signin() {
     setPassword(e.target.value);
   };
 
-  const requestSignin = async () => {
+  const requestSignIn = async () => {
     try {
       const jRequest = {
         commandName: Constants.COMMAND_SECURITY_SIGNIN,
         systemCode: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE,
         userId: userId,
-        password: password
+        password: password,
       };
 
       setLoading(true); // 데이터 로딩 시작
-      const jResponse = await RequestServer('POST', JSON.stringify(jRequest));
+      const jResponse = await RequestServer("POST", JSON.stringify(jRequest));
       setLoading(false); // 데이터 로딩 끝
 
       if (jResponse.error_code === 0) {
         process.env.userInfo = jResponse;
-        router.push('/');
+        router.push("/");
       } else {
         openModal(jResponse.error_message);
       }
@@ -100,8 +101,8 @@ export default function Signin() {
   };
 
   const handleKeyPress = (e) => {
-    if (e.key === 'Enter') {
-      requestSignin();
+    if (e.key === "Enter") {
+      requestSignIn();
     }
   };
 
@@ -116,7 +117,10 @@ export default function Signin() {
       <Layout>
         <Head>
           <title>Stock Quotes and Investment Information - Brunner-Next</title>
-          <meta name="description" content="Brunner-Next provides real-time stock quotes. Make effective investments with real-time stock charts, investment strategies, stock news, and stock analysis tools." />
+          <meta
+            name="description"
+            content="Brunner-Next provides real-time stock quotes. Make effective investments with real-time stock charts, investment strategies, stock news, and stock analysis tools."
+          />
           <link rel="icon" href="/brunnerLogo.png" />
         </Head>
         <BodySection>
@@ -126,7 +130,9 @@ export default function Signin() {
                 Sign in
               </h2>
               <div className="w-full">
-                <p className="leading-relaxed mt-4 mb-5">Inut ID and Password.</p>
+                <p className="leading-relaxed mt-4 mb-5">
+                  Inut ID and Password.
+                </p>
               </div>
               <div className="relative mb-4">
                 <label htmlFor="id" className="leading-7 text-sm text-gray-400">
@@ -142,7 +148,10 @@ export default function Signin() {
                 />
               </div>
               <div className="relative mb-4">
-                <label className="leading-7 text-sm text-gray-400" htmlFor="password">
+                <label
+                  className="leading-7 text-sm text-gray-400"
+                  htmlFor="password"
+                >
                   Password
                 </label>
                 <input
@@ -156,7 +165,8 @@ export default function Signin() {
               </div>
               <button
                 className="text-white bg-indigo-500 border-0 py-2 px-4 focus:outline-none hover:bg-indigo-600 rounded text-lg"
-                onClick={requestSignin}>
+                onClick={requestSignIn}
+              >
                 Sign in
               </button>
               <p className="text-xs text-gray-500 mt-10">
@@ -164,7 +174,8 @@ export default function Signin() {
               </p>
               <button
                 className="text-white bg-indigo-500 border-0 py-2 px-4 focus:outline-none hover:bg-indigo-600 rounded text-lg mt-5"
-                onClick={() => router.push('/mainPages/resetPassword')}>
+                onClick={() => router.push("/mainPages/resetPassword")}
+              >
                 Reset password
               </button>
               <p className="text-xs text-gray-500 mt-10">
@@ -172,13 +183,14 @@ export default function Signin() {
               </p>
               <button
                 className="text-white bg-indigo-500 border-0 py-2 px-4 focus:outline-none hover:bg-indigo-600 rounded text-lg mt-5"
-                onClick={() => router.push('/mainPages/resetPassword')}>
+                onClick={() => router.push("/mainPages/resetPassword")}
+              >
                 Leave & Delete Account
               </button>
             </div>
           </DivContainer>
         </BodySection>
-      </Layout >
+      </Layout>
     </>
   );
 }
