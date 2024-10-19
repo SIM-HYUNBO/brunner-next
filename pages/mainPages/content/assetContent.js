@@ -8,7 +8,7 @@ import * as userInfo from "@/components/userInfo";
 import moment from "moment";
 import BrunnerMessageBox from "@/components/BrunnerMessageBox";
 import * as Constants from "@/components/constants";
-import DivContainer from "@/components/divContainer";
+import DivContainer from "@/components/DivContainer";
 
 export default function AssetContent() {
   // 로딩 & 메시지 박스
