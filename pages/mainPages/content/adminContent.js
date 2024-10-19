@@ -4,7 +4,7 @@ import ServiceSQL from "@/components/serviceSQL";
 import AdminContentAnimation from "./content-animation/adminContentAnimation";
 import { useRouter } from "next/router";
 import * as userInfo from "@/components/userInfo";
-import DivContainer from "@/components/divContainer";
+import DivContainer from "@/components/DivContainer";
 import { isMobile, isTablet, isBrowser } from "react-device-detect";
 
 export default function AdminContent() {
