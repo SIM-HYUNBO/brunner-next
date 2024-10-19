@@ -105,7 +105,7 @@ const StockContent = () => {
   };
 
   // 차트 데이터 간격의 시간 단위
-  const [dataIntervalUnit, setDataIntervalUnit] = useState("hour");
+  const [dataIntervalUnit, setDataIntervalUnit] = useState("week");
   const dataIntervalUnitRef = useRef(dataIntervalUnit);
   const setDataIntervalUnitRef = (newVal) => {
     setDataIntervalUnit(newVal);
@@ -113,10 +113,10 @@ const StockContent = () => {
   };
 
   // 기간
-  const [period, setPeriod] = useState(15);
+  const [periodValue, setPeriodValue] = useState(1);
 
   // 기간의 시간 단위
-  const [periodUnit, setPeriodUnit] = useState("days");
+  const [periodUnit, setPeriodUnit] = useState("years");
   const periodUnitRef = useRef(periodUnit);
   const setPeriodUnitRef = (newVal) => {
     setPeriodUnit(newVal);
@@ -282,7 +282,7 @@ const StockContent = () => {
   const getStockInfo = async () => {
     try {
       const timefrom = moment()
-        .subtract(period, periodUnitRef.current)
+        .subtract(periodValue, periodUnitRef.current)
         .format("YYYY-MM-DD");
       const timeto = moment().format("YYYY-MM-DD");
 
@@ -839,8 +839,8 @@ const StockContent = () => {
             <input
               className="dark:text-slate-400 ml-2 text-center bg-slate-50 dark:bg-slate-800"
               type="number"
-              value={period}
-              onChange={(e) => setPeriod(e.target.value)}
+              value={periodValue}
+              onChange={(e) => setPeriodValue(e.target.value)}
               min="1"
             />
           </label>
