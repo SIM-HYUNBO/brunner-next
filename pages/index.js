@@ -46,9 +46,7 @@ export default function Home() {
       </Head>
       <BodySection>
         <HomeContent></HomeContent>
-
         <StockContent></StockContent>
-
       </BodySection>
     </Layout>
   )

@@ -7,7 +7,9 @@ import { useEffect } from "react";
 
 // Entry Point
 export default function App({ Component, pageProps }) {
-  useEffect(async () => {}, []);
+  useEffect(() => {
+    dotenv.config();
+  }, []);
 
   dotenv.config();
 

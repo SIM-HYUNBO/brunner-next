@@ -6,6 +6,7 @@ import Board from "@/pages/mainPages/content/boardContent";
 import RealtimeChart from "./realtimeChart";
 import * as Constants from "@/components/constants";
 import DivContainer from "@/components/divContainer";
+import GoverningMessage from "@/components/governingMessage";
 
 export default function TickerInfoContent({ tickerCode: tickerCode }) {
   // 로딩 & 메시지 박스
@@ -152,10 +153,10 @@ export default function TickerInfoContent({ tickerCode: tickerCode }) {
           <h2 className="title-font sm:text-4xl text-3xl mb-10 font-medium text-green-900">
             {`${tickerCode}`}
           </h2>
-          <div className="main-governing-text">
+          <GoverningMessage>
             <img src={brandingInfo.icon_url} alt="" />
             <h2>{tickerDescRef.current}</h2>
-          </div>
+          </GoverningMessage>
           <input
             ref={currentPriceTextColorRef}
             className={`text-center text-5xl text-gray bg-slate-50 dark:bg-slate-800 border border-slate-400 mt-10 mb-2 h-100 w-[100%] px-5 py-3`}
