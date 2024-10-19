@@ -4,6 +4,7 @@ import ContactContentAnimation from "./content-animation/contactContentAnimation
 import { useRouter } from "next/router";
 import DivContainer from "@/components/divContainer";
 import { isMobile, isTablet, isBrowser } from "react-device-detect";
+import GoverningMessage from "@/components/governingMessage";
 
 export default function ContactContent() {
   const router = useRouter();
@@ -15,10 +16,10 @@ export default function ContactContent() {
           <h2 className="title-font sm:text-4xl text-3xl mb-10 font-medium text-green-900">
             We are here for you always.
           </h2>
-          <div className="main-governing-text">
+          <GoverningMessage>
             Brunner's call center is always available to assist investors.
             Contact us immediately
-          </div>
+          </GoverningMessage>
           <div className="flex justify-center">
             <GetContact />
           </div>

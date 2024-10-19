@@ -6,6 +6,7 @@ import * as userInfo from "@/components/userInfo";
 import DivContainer from "@/components/divContainer";
 import BrunnerVideo from "@/components/brunnerVideo";
 import { isMobile, isTablet, isBrowser } from "react-device-detect";
+import GoverningMessage from "@/components/governingMessage";
 
 export default function HomeContent() {
   const router = useRouter();
@@ -17,14 +18,14 @@ export default function HomeContent() {
           <h2 className="title-font sm:text-4xl text-3xl mb-10 font-medium text-green-900">
             Asset management
           </h2>
-          <div className="main-governing-text">
+          <GoverningMessage>
             The key to success in wealth and the stock market is consistent
             market participation and smart management. <br />
             Manage your assets well and stay engaged in the stock market by
             using Brunner-Next.
             <br />
             Stay in the market, connect and get rich with Brunner-Next.
-          </div>
+          </GoverningMessage>
           <div className="flex flex-col">
             <div className="dark:text-slate-400 mb-2">
               Enjoy using Brunner in a safer and more convenient way.

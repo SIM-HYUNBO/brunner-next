@@ -15,6 +15,9 @@ import RealtimeChart from "./realtimeChart";
 import AssetContent from "./assetContent";
 
 const StockContent = () => {
+  // ApexCharts dynamic import
+  const ApexCharts = dynamic(() => import("react-apexcharts"), { ssr: false });
+
   // 로딩 & 메시지 박스
   // {
   const [loading, setLoading] = useState(false);
@@ -53,26 +56,35 @@ const StockContent = () => {
 
   useEffect(() => {
     setThemeRef(themeRef.current);
+
+    const storedSearches = localStorage.getItem("recentSearches");
+    if (storedSearches) {
+      setRecentSearches(JSON.parse(storedSearches));
+    }
+
+    const defaultTicker = localStorage.getItem("defaultTicker");
+    if (defaultTicker) {
+      // setDefaultTicker(defaultTicker);
+      setCurrentTickerRef(defaultTicker);
+      handleStockRequest();
+    }
+
+    displayInitialTickerList();
   }, []);
+
+  const router = useRouter();
 
   // theme : 현재값 가져오기 getter
   // setTheme : 현재값 바꾸기 setter
   const { theme, setTheme } = useTheme();
   const themeRef = useRef(theme);
-
   const setThemeRef = (newValue) => {
     themeRef.current = newValue;
     setTheme(newValue);
   };
-
-  const router = useRouter();
-
   const isDarkMode = () => {
     return themeRef.current === "dark";
   };
-
-  // ApexCharts dynamic import
-  const ApexCharts = dynamic(() => import("react-apexcharts"), { ssr: false });
 
   // 현재 선택한 주식 심볼
   const [currentTicker, setCurrentTicker] = useState("");
@@ -194,23 +206,6 @@ const StockContent = () => {
     // 선택한 티커가 목록에 있는지 확인하고 스크롤 이동
     scrollToTicker(ticker);
   };
-
-  // useEffect를 사용하여 최근 검색한 종목 코드 로드
-  useEffect(() => {
-    const storedSearches = localStorage.getItem("recentSearches");
-    if (storedSearches) {
-      setRecentSearches(JSON.parse(storedSearches));
-    }
-
-    const defaultTicker = localStorage.getItem("defaultTicker");
-    if (defaultTicker) {
-      // setDefaultTicker(defaultTicker);
-      setCurrentTickerRef(defaultTicker);
-      handleStockRequest();
-    }
-
-    displayInitialTickerList();
-  }, []);
 
   // useEffect 내에서 동기호출을 해야하므로 함수 분리
   const displayInitialTickerList = async () => {
@@ -817,17 +812,17 @@ const StockContent = () => {
 
   return (
     <DivContainer className="flex-wrap">
-      {loading && (
-        <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-gray-500 bg-opacity-75 z-50">
-          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-gray-900"></div>
-        </div>
-      )}
       <BrunnerMessageBox
         isOpen={modalContent.isOpen}
         message={modalContent.message}
         onConfirm={modalContent.onConfirm}
         onClose={modalContent.onClose}
       />
+      {loading && (
+        <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-gray-500 bg-opacity-75 z-50">
+          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-gray-900"></div>
+        </div>
+      )}
 
       <h2 className="title-font sm:text-4xl text-3xl w-full my-10 font-medium text-green-900">
         Stock search

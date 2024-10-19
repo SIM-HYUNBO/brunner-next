@@ -5,6 +5,7 @@ import { useRouter } from "next/router";
 import DivContainer from "@/components/divContainer";
 import BrunnerVideo from "@/components/brunnerVideo";
 import { isMobile, isTablet, isBrowser } from "react-device-detect";
+import GoverningMessage from "@/components/governingMessage";
 
 export default function ClipsContent() {
   const router = useRouter();
@@ -22,9 +23,9 @@ export default function ClipsContent() {
           >
             Videos that help life.
           </h2>
-          <div className="main-governing-text">
+          <GoverningMessage>
             The video clips that may be helpful in our life & mental training
-          </div>
+          </GoverningMessage>
 
           <div className="flex">
             <div className="w-full">
