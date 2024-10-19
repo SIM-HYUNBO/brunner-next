@@ -1,72 +1,78 @@
-`use strict`
+`use strict`;
 
-import React, { useState, useEffect, useRef } from 'react';
-import { useRouter } from 'next/router';
-import { useTable, useSortBy } from 'react-table';
-import RequestServer from '@/components/requestServer';
-import * as userInfo from '@/components/userInfo';
-import moment from 'moment';
-import BrunnerMessageBox from '@/components/BrunnerMessageBox';
-import * as Constants from '@/components/constants';
-import DivContainer from "@/components/DivContainer"
+import React, { useState, useEffect, useRef } from "react";
+import { useRouter } from "next/router";
+import { useTable, useSortBy } from "react-table";
+import RequestServer from "@/components/requestServer";
+import * as userInfo from "@/components/userInfo";
+import moment from "moment";
+import BrunnerMessageBox from "@/components/BrunnerMessageBox";
+import * as Constants from "@/components/constants";
+import DivContainer from "@/components/DivContainer";
 
 export default function AssetContent() {
-  const router = useRouter();
-
-  const [tableData, setTableData] = useState([]); // tableData를 변경하면 렌더링 되면서 값이 초기화 됨
-  const tableDataRef = useRef(tableData);         // state변수에 대한 참조
-  const setTableDataRef = (data) => {
-    tableDataRef.current = data;
-    setTableData(data);
-  };
-
-  const [amountInput, setAmountInput] = useState('');
-  const [commentInput, setCommentInput] = useState('');
-  const [loading, setLoading] = useState(false); // 로딩 상태 추가
+  // 로딩 & 메시지 박스
+  // {
+  const [loading, setLoading] = useState(false);
   const [modalContent, setModalContent] = useState({
     isOpen: false,
-    message: '',
-    onConfirm: () => { },
-    onClose: () => { }
+    message: "",
+    onConfirm: () => {},
+    onClose: () => {},
   });
-
-  // 모달 열기 함수
   const openModal = (message) => {
     return new Promise((resolve, reject) => {
       setModalContent({
         isOpen: true,
         message: message,
-        onConfirm: (result) => { resolve(result); closeModal(); },
-        onClose: () => { reject(false); closeModal(); }
+        onConfirm: (result) => {
+          resolve(result);
+          closeModal();
+        },
+        onClose: () => {
+          reject(false);
+          closeModal();
+        },
       });
     });
   };
-
-  // 모달 닫기 함수
   const closeModal = () => {
     setModalContent({
       isOpen: false,
-      message: '',
-      onConfirm: () => { },
-      onClose: () => { }
+      message: "",
+      onConfirm: () => {},
+      onClose: () => {},
     });
   };
+  // }
+
+  const router = useRouter();
+
+  const [tableData, setTableData] = useState([]); // tableData를 변경하면 렌더링 되면서 값이 초기화 됨
+  const tableDataRef = useRef(tableData); // state변수에 대한 참조
+  const setTableDataRef = (data) => {
+    tableDataRef.current = data;
+    setTableData(data);
+  };
+
+  const [amountInput, setAmountInput] = useState("");
+  const [commentInput, setCommentInput] = useState("");
 
   const fetchData = async function () {
     await fetchIncomeHistory();
   };
 
   useEffect(() => {
-
     fetchData();
-
   }, []);
 
   // 수익 내역 데이터 가져오기
   const fetchIncomeHistory = async () => {
     const result = await requestGetIncomeHistory();
     setTableDataRef(result);
-    console.log(`fetchData: tableData set as ${JSON.stringify(tableDataRef.current)}`);
+    console.log(
+      `fetchData: tableData set as ${JSON.stringify(tableDataRef.current)}`
+    );
   };
 
   // 수익 내역 요청
@@ -82,7 +88,7 @@ export default function AssetContent() {
       };
 
       setLoading(true); // 데이터 로딩 시작
-      const jResponse = await RequestServer('POST', JSON.stringify(jRequest));
+      const jResponse = await RequestServer("POST", JSON.stringify(jRequest));
       setLoading(false); // 데이터 로딩 끝
 
       if (jResponse.error_code === 0) {
@@ -116,19 +122,19 @@ export default function AssetContent() {
         commandName: Constants.COMMAND_ASSET_ADD_INCOME,
         systemCode: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE,
         userId: userId,
-        amount: Number(amountInput.replace(/[^0-9.-]/g, '').replace(/,/g, '')), // 숫자로 변환하여 전송
+        amount: Number(amountInput.replace(/[^0-9.-]/g, "").replace(/,/g, "")), // 숫자로 변환하여 전송
         comment: commentInput,
       };
 
-      setLoading(true); // 데이터 로딩 시작    
-      const jResponse = await RequestServer('POST', JSON.stringify(jRequest));
+      setLoading(true); // 데이터 로딩 시작
+      const jResponse = await RequestServer("POST", JSON.stringify(jRequest));
       setLoading(false);
 
       if (jResponse.error_code === 0) {
         openModal(Constants.MESSAGE_SUCCESS_ADDED);
         fetchIncomeHistory(); // 데이터 다시 가져오기
-        setAmountInput('');
-        setCommentInput('');
+        setAmountInput("");
+        setCommentInput("");
       } else {
         openModal(jResponse.error_message);
       }
@@ -141,11 +147,14 @@ export default function AssetContent() {
   // 입력값 변경 처리
   const handleInputChange = (e, inputName) => {
     const { value } = e.target;
-    if (inputName === 'amountInput') {
+    if (inputName === "amountInput") {
       // 숫자만 입력되도록 처리 (콤마 자동 추가)
-      const formattedValue = value.replace(/[^0-9.-]/g, '').replace(/,/g, '').toLocaleString();
+      const formattedValue = value
+        .replace(/[^0-9.-]/g, "")
+        .replace(/,/g, "")
+        .toLocaleString();
       setAmountInput(formattedValue);
-    } else if (inputName === 'commentInput') {
+    } else if (inputName === "commentInput") {
       setCommentInput(value);
     }
   };
@@ -157,7 +166,7 @@ export default function AssetContent() {
 
     let amount = row.values.amount;
     // Ensure amount is always formatted as a string before replacing commas
-    amount = String(amount).replace(/,/g, '');
+    amount = String(amount).replace(/,/g, "");
 
     if (isNaN(Number(amount))) {
       openModal(Constants.MESSAGE_INVALIED_NUMBER_AMOUNT);
@@ -175,10 +184,10 @@ export default function AssetContent() {
       };
 
       setLoading(true); // 데이터 로딩 시작
-      const jResponse = await RequestServer('POST', JSON.stringify(jRequest));
+      const jResponse = await RequestServer("POST", JSON.stringify(jRequest));
       setLoading(false); // 데이터 로딩 끝
 
-      openModal('Successfully updated.');
+      openModal("Successfully updated.");
 
       if (jResponse.error_code === 0) {
         fetchIncomeHistory(); // 데이터 다시 가져오기
@@ -203,8 +212,7 @@ export default function AssetContent() {
     if (!userId) return;
 
     const deleteConfirm = await openModal(Constants.MESSAGE_DELETE_ITEM);
-    if (!deleteConfirm)
-      return;
+    if (!deleteConfirm) return;
 
     const historyId = tableDataRef.current[rowIndex].history_id;
 
@@ -217,7 +225,7 @@ export default function AssetContent() {
       };
 
       setLoading(true); // 데이터 로딩 시작
-      const jResponse = await RequestServer('POST', JSON.stringify(jRequest));
+      const jResponse = await RequestServer("POST", JSON.stringify(jRequest));
       setLoading(false); // 데이터 로딩 끝
 
       if (jResponse.error_code === 0) {
@@ -235,7 +243,11 @@ export default function AssetContent() {
 
   // 수정 처리
   const handleEditAmount = (rowIdx, amount) => {
-    console.log(`handleEditAmount: tableData set as ${JSON.stringify(tableDataRef.current)}`);
+    console.log(
+      `handleEditAmount: tableData set as ${JSON.stringify(
+        tableDataRef.current
+      )}`
+    );
 
     const updatedData = [...tableDataRef.current];
     updatedData[rowIdx].amount = amount;
@@ -243,7 +255,11 @@ export default function AssetContent() {
   };
 
   const handleEditComment = (rowIdx, comment) => {
-    console.log(`handleEditComment: tableData set as ${JSON.stringify(tableDataRef.current)}`);
+    console.log(
+      `handleEditComment: tableData set as ${JSON.stringify(
+        tableDataRef.current
+      )}`
+    );
 
     const updatedData = [...tableDataRef.current];
     updatedData[rowIdx].comment = comment;
@@ -254,29 +270,29 @@ export default function AssetContent() {
   const columns = React.useMemo(
     () => [
       {
-        Header: 'ID',
-        accessor: 'history_id',
-        headerClassName: 'text-center bg-blue-500 text-blue-100',
+        Header: "ID",
+        accessor: "history_id",
+        headerClassName: "text-center bg-blue-500 text-blue-100",
         Cell: ({ row }) => (
-          <div className='text-center text-sm text-black dark:text-gray-300'>
+          <div className="text-center text-sm text-black dark:text-gray-300">
             {row.values.history_id}
           </div>
-        )
+        ),
       },
       {
-        Header: 'Date&Time',
-        accessor: 'create_time',
-        headerClassName: 'text-center bg-orange-500 text-orange-100',
+        Header: "Date&Time",
+        accessor: "create_time",
+        headerClassName: "text-center bg-orange-500 text-orange-100",
         Cell: ({ row }) => (
-          <div className='text-center text-sm text-black dark:text-gray-300'>
+          <div className="text-center text-sm text-black dark:text-gray-300">
             {getLocalTime(row.values.create_time)}
           </div>
         ),
       },
       {
-        Header: 'Amount',
-        accessor: 'amount',
-        headerClassName: 'text-center bg-blue-500 text-blue-100',
+        Header: "Amount",
+        accessor: "amount",
+        headerClassName: "text-center bg-blue-500 text-blue-100",
         Cell: ({ row }) => (
           <div className="text-right w-full">
             <input
@@ -289,54 +305,58 @@ export default function AssetContent() {
         ),
       },
       {
-        Header: 'Comment',
-        accessor: 'comment',
-        headerClassName: 'text-center bg-green-500 text-green-100',
+        Header: "Comment",
+        accessor: "comment",
+        headerClassName: "text-center bg-green-500 text-green-100",
         Cell: ({ row }) => (
           <div className="text-center w-full">
             <input
               type="text"
               className={`border-0 focus:ring-0 bg-transparent w-40 text-sm text-gray-900 dark:text-gray-300`}
-              value={row.values.comment || ''} // 코멘트 값이 undefined가 되지 않도록
+              value={row.values.comment || ""} // 코멘트 값이 undefined가 되지 않도록
               onChange={(e) => handleEditComment(row.index, e.target.value)}
             />
           </div>
         ),
       },
       {
-        Header: 'Save',
-        accessor: 'actions',
-        headerClassName: 'text-center bg-purple-500 text-green-100',
+        Header: "Save",
+        accessor: "actions",
+        headerClassName: "text-center bg-purple-500 text-green-100",
         Cell: ({ row }) => (
           <div className="flex justify-center">
-            <button onClick={() => handleSave(row)} className="text-sm text-yellow-600 py-1 px-3 rounded">
+            <button
+              onClick={() => handleSave(row)}
+              className="text-sm text-yellow-600 py-1 px-3 rounded"
+            >
               Save
             </button>
-            <button onClick={() => handleDelete(row.index)} className="text-sm text-red-600 py-1 px-3 rounded">
+            <button
+              onClick={() => handleDelete(row.index)}
+              className="text-sm text-red-600 py-1 px-3 rounded"
+            >
               Delete
             </button>
           </div>
         ),
-      }
+      },
     ],
     []
   );
 
-  const {
-    getTableProps,
-    getTableBodyProps,
-    headerGroups,
-    rows,
-    prepareRow
-  } = useTable({
-    columns,
-    data: tableData,
-    initialState: { hiddenColumns: ['history_id'] }
-  }, useSortBy); // useSortBy 추가
+  const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } =
+    useTable(
+      {
+        columns,
+        data: tableData,
+        initialState: { hiddenColumns: ["history_id"] },
+      },
+      useSortBy
+    ); // useSortBy 추가
 
   const getLocalTime = (utcTime) => {
-    return moment.utc(utcTime).local().format('YY-MM-DD HH:mm:ss');
-  }
+    return moment.utc(utcTime).local().format("YY-MM-DD HH:mm:ss");
+  };
 
   return (
     <>
@@ -356,7 +376,7 @@ export default function AssetContent() {
               type="text"
               name="amountInput"
               value={amountInput}
-              onChange={(e) => handleInputChange(e, 'amountInput')}
+              onChange={(e) => handleInputChange(e, "amountInput")}
               placeholder="Amount"
               className="mr-3 p-2 border rounded dark:text-gray-300 text-right table-column"
             />
@@ -365,16 +385,16 @@ export default function AssetContent() {
                 type="text"
                 name="commentInput"
                 value={commentInput}
-                onChange={(e) => handleInputChange(e, 'commentInput')}
+                onChange={(e) => handleInputChange(e, "commentInput")}
                 placeholder="Comment"
                 className="p-2 border rounded dark:text-gray-300 w-full table-column"
-                style={{ marginLeft: '-2px' }}
+                style={{ marginLeft: "-2px" }}
               />
             </div>
             <button
               onClick={handleAddIncome}
               className="bg-green-500 text-white py-2 px-4 rounded hover:bg-green-600"
-              style={{ alignSelf: 'flex-end' }}
+              style={{ alignSelf: "flex-end" }}
             >
               Add
             </button>
@@ -394,30 +414,41 @@ export default function AssetContent() {
             <table {...getTableProps()} className="border-collapse w-full">
               <thead>
                 {headerGroups.map((headerGroup) => (
-                  <tr {...headerGroup.getHeaderGroupProps()} className="bg-gray-100">
+                  <tr
+                    {...headerGroup.getHeaderGroupProps()}
+                    className="bg-gray-100"
+                  >
                     {headerGroup.headers.map((column) => (
-                      <th {...column.getHeaderProps(column.getSortByToggleProps())} className={`py-2 px-3 text-xs font-medium tracking-wider ${column.headerClassName}`}>
-                        {column.render('Header')}
+                      <th
+                        {...column.getHeaderProps(
+                          column.getSortByToggleProps()
+                        )}
+                        className={`py-2 px-3 text-xs font-medium tracking-wider ${column.headerClassName}`}
+                      >
+                        {column.render("Header")}
                         <span>
                           {column.isSorted
                             ? column.isSortedDesc
-                              ? ' ▼'
-                              : ' ▲'
-                            : ''}
+                              ? " ▼"
+                              : " ▲"
+                            : ""}
                         </span>
                       </th>
                     ))}
                   </tr>
                 ))}
               </thead>
-              <tbody {...getTableBodyProps()} className="divide-y divide-gray-200">
+              <tbody
+                {...getTableBodyProps()}
+                className="divide-y divide-gray-200"
+              >
                 {rows.map((row) => {
                   prepareRow(row);
                   return (
                     <tr {...row.getRowProps()} className="">
                       {row.cells.map((cell) => (
                         <td {...cell.getCellProps()} className="py-1 px-0 w-0">
-                          {cell.render('Cell')}
+                          {cell.render("Cell")}
                         </td>
                       ))}
                     </tr>

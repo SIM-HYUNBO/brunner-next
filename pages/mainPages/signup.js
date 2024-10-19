@@ -1,24 +1,59 @@
-`use strict`
+`use strict`;
 
-import { useState, useEffect, useRef } from 'react'
-import { useRouter } from 'next/router'
-import { useTheme } from 'next-themes'
-import Layout from '@/components/layout'
-import Head from 'next/head'
-import BodySection from '@/components/bodySection'
-import RequestServer from '@/components/requestServer'
-import BrunnerMessageBox from '@/components/BrunnerMessageBox'
-import * as Constants from '@/components/constants'
-import DivContainer from "@/components/DivContainer"
+import { useState, useEffect, useRef } from "react";
+import { useRouter } from "next/router";
+import { useTheme } from "next-themes";
+import Layout from "@/components/layout";
+import Head from "next/head";
+import BodySection from "@/components/bodySection";
+import RequestServer from "@/components/requestServer";
+import BrunnerMessageBox from "@/components/BrunnerMessageBox";
+import * as Constants from "@/components/constants";
+import DivContainer from "@/components/DivContainer";
 
 export default function Signup() {
+  // 로딩 & 메시지 박스
+  // {
+  const [loading, setLoading] = useState(false);
+  const [modalContent, setModalContent] = useState({
+    isOpen: false,
+    message: "",
+    onConfirm: () => {},
+    onClose: () => {},
+  });
+  const openModal = (message) => {
+    return new Promise((resolve, reject) => {
+      setModalContent({
+        isOpen: true,
+        message: message,
+        onConfirm: (result) => {
+          resolve(result);
+          closeModal();
+        },
+        onClose: () => {
+          reject(false);
+          closeModal();
+        },
+      });
+    });
+  };
+  const closeModal = () => {
+    setModalContent({
+      isOpen: false,
+      message: "",
+      onConfirm: () => {},
+      onClose: () => {},
+    });
+  };
+  // }
+
   useEffect(() => {
     setThemeRef(themeRef.current);
   }, []);
 
   // theme : 현재값 가져오기 getter
   // setTheme : 현재값 바꾸기 setter
-  const { theme, setTheme } = useTheme()
+  const { theme, setTheme } = useTheme();
   const themeRef = useRef(theme);
 
   const setThemeRef = (newValue) => {
@@ -27,68 +62,38 @@ export default function Signup() {
   };
 
   const router = useRouter();
-  const [loading, setLoading] = useState(false); // 로딩 상태 추가
 
-  const [modalContent, setModalContent] = useState({
-    isOpen: false,
-    message: '',
-    onConfirm: () => { },
-    onClose: () => { }
-  });
-
-  // 모달 열기 함수
-  const openModal = (message) => {
-    return new Promise((resolve, reject) => {
-      setModalContent({
-        isOpen: true,
-        message: message,
-        onConfirm: (result) => { resolve(result); closeModal(); },
-        onClose: () => { reject(false); closeModal(); }
-      });
-    });
-  };
-
-  // 모달 닫기 함수
-  const closeModal = () => {
-    setModalContent({
-      isOpen: false,
-      message: '',
-      onConfirm: () => { },
-      onClose: () => { }
-    });
-  };
-
-  const [userId, setUserId] = useState('');
+  const [userId, setUserId] = useState("");
   const changeUserIdValue = (e) => {
     setUserId(e.target.value);
   };
 
-  const [password, setPassword] = useState('');
+  const [password, setPassword] = useState("");
   const changePasswordValue = (e) => {
     setPassword(e.target.value);
   };
 
-  const [userName, setUserName] = useState('');
+  const [userName, setUserName] = useState("");
   const changeUserNameValue = (e) => {
     setUserName(e.target.value);
   };
 
-  const [address, setAddress] = useState('');
+  const [address, setAddress] = useState("");
   const changeAddressValue = (e) => {
     setAddress(e.target.value);
   };
 
-  const [phoneNumber, setPhoneNumber] = useState('');
+  const [phoneNumber, setPhoneNumber] = useState("");
   const changePhoneNumberValue = (e) => {
     setPhoneNumber(e.target.value);
   };
 
-  const [email, setEmail] = useState('');
+  const [email, setEmail] = useState("");
   const changeEMailValue = (e) => {
     setEmail(e.target.value);
   };
 
-  const [registerNo, setRegisterNo] = useState('');
+  const [registerNo, setRegisterNo] = useState("");
   const changeRegisterNoValue = (e) => {
     setRegisterNo(e.target.value);
   };
@@ -109,13 +114,13 @@ export default function Signup() {
       jRequest.address = address;
 
       setLoading(true); // 데이터 로딩 시작
-      jResponse = await RequestServer('POST', JSON.stringify(jRequest));
+      jResponse = await RequestServer("POST", JSON.stringify(jRequest));
       setLoading(false); // 데이터 로딩 끝
 
       if (jResponse.error_code == 0) {
         var result = await openModal(Constants.MESSAGE_SUCCESS_SIGNUP);
         if (result) {
-          router.push('/mainPages/signin');
+          router.push("/mainPages/signin");
         }
       } else {
         openModal(jResponse.error_message);
@@ -137,7 +142,10 @@ export default function Signup() {
       <Layout>
         <Head>
           <title>Stock Quotes and Investment Information - Brunner-Next</title>
-          <meta name="description" content="Brunner-Next provides real-time stock quotes. Make effective investments with real-time stock charts, investment strategies, stock news, and stock analysis tools."></meta>
+          <meta
+            name="description"
+            content="Brunner-Next provides real-time stock quotes. Make effective investments with real-time stock charts, investment strategies, stock news, and stock analysis tools."
+          ></meta>
           <meta rel="icon" href="/brunnerLogo.png"></meta>
           <link></link>
         </Head>
@@ -148,12 +156,20 @@ export default function Signup() {
                 Create account
               </h2>
               <div className="md:pr-16 lg:pr-0 pr-0">
-                <p className="leading-relaxed mt-4  mb-5">Enter your Information.</p>
+                <p className="leading-relaxed mt-4  mb-5">
+                  Enter your Information.
+                </p>
               </div>
               <div className="flex flex-wrap w-screen">
                 <div className="relative mb-4 mr-5 w-40 ">
-                  <label htmlFor="id" className="leading-7 text-sm text-gray-400">ID</label>
-                  <input type="text"
+                  <label
+                    htmlFor="id"
+                    className="leading-7 text-sm text-gray-400"
+                  >
+                    ID
+                  </label>
+                  <input
+                    type="text"
                     id="id"
                     name="Id"
                     className="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"
@@ -161,8 +177,14 @@ export default function Signup() {
                   />
                 </div>
                 <div className="relative mb-4 mr-5 w-40">
-                  <label htmlFor="password" className="leading-7 text-sm text-gray-400">Password</label>
-                  <input type="password"
+                  <label
+                    htmlFor="password"
+                    className="leading-7 text-sm text-gray-400"
+                  >
+                    Password
+                  </label>
+                  <input
+                    type="password"
                     id="password"
                     name="password"
                     className="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"
@@ -172,8 +194,14 @@ export default function Signup() {
               </div>
               <div className="flex flex-wrap w-screen">
                 <div className="relative mb-4 mr-5 w-40">
-                  <label htmlFor="name" className="leading-7 text-sm text-gray-400">Name</label>
-                  <input type="text"
+                  <label
+                    htmlFor="name"
+                    className="leading-7 text-sm text-gray-400"
+                  >
+                    Name
+                  </label>
+                  <input
+                    type="text"
                     id="name"
                     name="Name"
                     className="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"
@@ -182,8 +210,14 @@ export default function Signup() {
                 </div>
 
                 <div className="relative mb-4 mr-5 w-40">
-                  <label htmlFor="phoneNumber" className="leading-7 text-sm text-gray-400">Phone Number</label>
-                  <input type="text"
+                  <label
+                    htmlFor="phoneNumber"
+                    className="leading-7 text-sm text-gray-400"
+                  >
+                    Phone Number
+                  </label>
+                  <input
+                    type="text"
                     id="phoneNumber"
                     name="PhoneNumber"
                     className="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"
@@ -192,8 +226,14 @@ export default function Signup() {
                 </div>
 
                 <div className="relative mb-4 mr-5 w-40">
-                  <label htmlFor="email" className="leading-7 text-sm text-gray-400">E-Mail</label>
-                  <input type="email"
+                  <label
+                    htmlFor="email"
+                    className="leading-7 text-sm text-gray-400"
+                  >
+                    E-Mail
+                  </label>
+                  <input
+                    type="email"
                     id="phoneNumber"
                     name="PhoneNumber"
                     className="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"
@@ -202,8 +242,14 @@ export default function Signup() {
                 </div>
 
                 <div className="relative mb-4 mr-5 w-40">
-                  <label htmlFor="registerNo" className="leading-7 text-sm text-gray-400">Register No</label>
-                  <input type="text"
+                  <label
+                    htmlFor="registerNo"
+                    className="leading-7 text-sm text-gray-400"
+                  >
+                    Register No
+                  </label>
+                  <input
+                    type="text"
                     id="registerNo"
                     name="RegisterNo"
                     className="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"
@@ -212,8 +258,14 @@ export default function Signup() {
                 </div>
 
                 <div className="relative mb-4 mr-5 w-96">
-                  <label htmlFor="id" className="leading-7 text-sm text-gray-400">Address</label>
-                  <input type="text"
+                  <label
+                    htmlFor="id"
+                    className="leading-7 text-sm text-gray-400"
+                  >
+                    Address
+                  </label>
+                  <input
+                    type="text"
                     id="address"
                     name="Address"
                     className="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"
@@ -221,8 +273,10 @@ export default function Signup() {
                   />
                 </div>
               </div>
-              <button onClick={() => requestSignup()}
-                className="text-white bg-indigo-500 max-w-max border-0 py-2 px-4 focus:outline-none hover:bg-indigo-600 rounded text-lg">
+              <button
+                onClick={() => requestSignup()}
+                className="text-white bg-indigo-500 max-w-max border-0 py-2 px-4 focus:outline-none hover:bg-indigo-600 rounded text-lg"
+              >
                 Signup
               </button>
 
@@ -232,5 +286,5 @@ export default function Signup() {
         </BodySection>
       </Layout>
     </>
-  )
+  );
 }
