@@ -3,7 +3,7 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 import dynamic from "next/dynamic";
 import RequestServer from "@/components/requestServer";
-import BrunnerMessageBox from "@/components/BrunnerMessageBox";
+import BrunnerMessageBox from "@/components/brunnerMessageBox";
 import * as Constants from "@/components/constants";
 
 // dynamic import로 ApexCharts를 사용합니다.
@@ -16,8 +16,8 @@ const RealtimeChart = ({ updateCurrentPrice }) => {
   const [modalContent, setModalContent] = useState({
     isOpen: false,
     message: "",
-    onConfirm: () => {},
-    onClose: () => {},
+    onConfirm: () => { },
+    onClose: () => { },
   });
 
   const openModal = (message) => {
@@ -40,8 +40,8 @@ const RealtimeChart = ({ updateCurrentPrice }) => {
     setModalContent({
       isOpen: false,
       message: "",
-      onConfirm: () => {},
-      onClose: () => {},
+      onConfirm: () => { },
+      onClose: () => { },
     });
   };
   // }
@@ -163,10 +163,10 @@ const RealtimeChart = ({ updateCurrentPrice }) => {
           chartColor == "gray"
             ? "#808080"
             : chartColor == "red"
-            ? "#FF0000"
-            : chartColor == "blue"
-            ? "#0000FF"
-            : "#808080",
+              ? "#FF0000"
+              : chartColor == "blue"
+                ? "#0000FF"
+                : "#808080",
         ],
       },
       title: {
@@ -182,19 +182,19 @@ const RealtimeChart = ({ updateCurrentPrice }) => {
           chartColor == "gray"
             ? "#808080"
             : chartColor == "red"
-            ? "#FF0000"
-            : chartColor == "blue"
-            ? "#0000FF"
-            : "#808080",
+              ? "#FF0000"
+              : chartColor == "blue"
+                ? "#0000FF"
+                : "#808080",
         ], // 점 색상
         strokeColors: [
           chartColor == "gray"
             ? "#808080"
             : chartColor == "red"
-            ? "#FF0000"
-            : chartColor == "blue"
-            ? "#0000FF"
-            : "#808080",
+              ? "#FF0000"
+              : chartColor == "blue"
+                ? "#0000FF"
+                : "#808080",
         ], // 점 테두리 색상
         strokeWidth: 1, // 점 테두리 두께
       },
@@ -202,10 +202,10 @@ const RealtimeChart = ({ updateCurrentPrice }) => {
         chartColor == "gray"
           ? "#808080"
           : chartColor == "red"
-          ? "#FF0000"
-          : chartColor == "blue"
-          ? "#0000FF"
-          : "#808080",
+            ? "#FF0000"
+            : chartColor == "blue"
+              ? "#0000FF"
+              : "#808080",
       ],
       tooltip: {
         enabled: true,
@@ -217,10 +217,10 @@ const RealtimeChart = ({ updateCurrentPrice }) => {
             chartColor == "gray"
               ? "#808080"
               : chartColor == "red"
-              ? "#FF0000"
-              : chartColor == "blue"
-              ? "#0000FF"
-              : "#808080",
+                ? "#FF0000"
+                : chartColor == "blue"
+                  ? "#0000FF"
+                  : "#808080",
           ], // 텍스트 색상
         },
         onDatasetHover: {
@@ -367,33 +367,33 @@ const RealtimeChart = ({ updateCurrentPrice }) => {
 
     const firstData = firstChartData
       ? {
-          x: new Date(firstChartData?.t * 1000).getTime(),
-          y: firstChartData?.c,
-        }
+        x: new Date(firstChartData?.t * 1000).getTime(),
+        y: firstChartData?.c,
+      }
       : {
-          x: null,
-          y: null,
-        };
+        x: null,
+        y: null,
+      };
 
     const lastData = lastChartData
       ? {
-          x: new Date(lastChartData?.t * 1000).getTime(),
-          y: lastChartData?.c,
-        }
+        x: new Date(lastChartData?.t * 1000).getTime(),
+        y: lastChartData?.c,
+      }
       : {
-          x: null,
-          y: null,
-        };
+        x: null,
+        y: null,
+      };
 
     const newData = newValue
       ? {
-          x: new Date(newValue?.t * 1000).getTime(),
-          y: newValue?.c,
-        }
+        x: new Date(newValue?.t * 1000).getTime(),
+        y: newValue?.c,
+      }
       : {
-          x: null,
-          y: null,
-        };
+        x: null,
+        y: null,
+      };
 
     updateCurrentPrice(firstData, lastData, newData);
 

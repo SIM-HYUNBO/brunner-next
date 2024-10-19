@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import RequestServer from "@/components/requestServer";
 import * as userInfo from "@/components/userInfo";
-import BrunnerMessageBox from "@/components/BrunnerMessageBox";
+import BrunnerMessageBox from "@/components/brunnerMessageBox";
 import * as Constants from "@/components/constants";
 
 function Board(boardInfo) {
@@ -13,8 +13,8 @@ function Board(boardInfo) {
   const [modalContent, setModalContent] = useState({
     isOpen: false,
     message: "",
-    onConfirm: () => {},
-    onClose: () => {},
+    onConfirm: () => { },
+    onClose: () => { },
   });
   const openModal = (message) => {
     return new Promise((resolve, reject) => {
@@ -36,8 +36,8 @@ function Board(boardInfo) {
     setModalContent({
       isOpen: false,
       message: "",
-      onConfirm: () => {},
-      onClose: () => {},
+      onConfirm: () => { },
+      onClose: () => { },
     });
   };
   // }
@@ -144,10 +144,10 @@ function Board(boardInfo) {
         const updatedPosts = posts.map((post) =>
           post.post_id === postId
             ? {
-                ...post,
-                post_content: newContent,
-                update_user_id: userId ? userId : "anonymous user",
-              }
+              ...post,
+              post_content: newContent,
+              update_user_id: userId ? userId : "anonymous user",
+            }
             : post
         );
         setPosts(updatedPosts);
@@ -397,8 +397,8 @@ function BoardContent({
   const [modalContent, setModalContent] = useState({
     isOpen: false,
     message: "",
-    onConfirm: () => {},
-    onClose: () => {},
+    onConfirm: () => { },
+    onClose: () => { },
   });
   const openModal = (message) => {
     return new Promise((resolve, reject) => {
@@ -420,8 +420,8 @@ function BoardContent({
     setModalContent({
       isOpen: false,
       message: "",
-      onConfirm: () => {},
-      onClose: () => {},
+      onConfirm: () => { },
+      onClose: () => { },
     });
   };
   // }

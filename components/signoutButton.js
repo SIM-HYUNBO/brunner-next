@@ -3,7 +3,7 @@
 import RequestServer from "./requestServer";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
-import BrunnerMessageBox from "./BrunnerMessageBox";
+import BrunnerMessageBox from "./brunnerMessageBox";
 import * as Constants from "@/components/constants";
 import * as userInfo from "@/components/userInfo";
 export default function SignoutButton() {
@@ -13,8 +13,8 @@ export default function SignoutButton() {
   const [modalContent, setModalContent] = useState({
     isOpen: false,
     message: "",
-    onConfirm: () => {},
-    onClose: () => {},
+    onConfirm: () => { },
+    onClose: () => { },
   });
   const openModal = (message) => {
     return new Promise((resolve, reject) => {
@@ -36,8 +36,8 @@ export default function SignoutButton() {
     setModalContent({
       isOpen: false,
       message: "",
-      onConfirm: () => {},
-      onClose: () => {},
+      onConfirm: () => { },
+      onClose: () => { },
     });
   };
   // }
