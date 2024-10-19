@@ -1,19 +1,19 @@
-`use strict`
+`use strict`;
 
-import ServiceSQL from '@/components/serviceSQL';
-import AdminContentAnimation from './content-animation/adminContentAnimation'
-import { useRouter } from 'next/router'
-import * as userInfo from '@/components/userInfo';
-import DivContainer from "@/components/DivContainer"
-import { isMobile, isTablet, isBrowser } from 'react-device-detect';
+import ServiceSQL from "@/components/serviceSQL";
+import AdminContentAnimation from "./content-animation/adminContentAnimation";
+import { useRouter } from "next/router";
+import * as userInfo from "@/components/userInfo";
+import DivContainer from "@/components/divContainer";
+import { isMobile, isTablet, isBrowser } from "react-device-detect";
 
 export default function AdminContent() {
-  const router = useRouter()
+  const router = useRouter();
 
   return (
     <>
       <DivContainer>
-        {userInfo?.isAdminUser() &&
+        {userInfo?.isAdminUser() && (
           <>
             <div className="w-full pr-16 flex flex-col items-start text-left md:mb-0 mb-20">
               <h2 className="title-font sm:text-4xl text-3xl mb-10 font-medium text-green-900">
@@ -23,11 +23,13 @@ export default function AdminContent() {
                 <ServiceSQL />
               </div>
             </div>
-            {(!isMobile) && <div className="items-center">
-              {<AdminContentAnimation width={300} height={300} />}
-            </div>}
+            {!isMobile && (
+              <div className="items-center">
+                {<AdminContentAnimation width={300} height={300} />}
+              </div>
+            )}
           </>
-        }
+        )}
       </DivContainer>
     </>
   );
@@ -43,7 +45,6 @@ export function GetContact() {
       <div className="px-5 py-2 mr-2 bg-indigo-500">
         <a href="mailto:hbsim0605@gmail.com">Mail</a>
       </div>
-
     </>
-  )
+  );
 }

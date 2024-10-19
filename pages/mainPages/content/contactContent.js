@@ -1,12 +1,12 @@
-`use strict`
+`use strict`;
 
-import ContactContentAnimation from './content-animation/contactContentAnimation'
-import { useRouter } from 'next/router'
-import DivContainer from "@/components/DivContainer"
-import { isMobile, isTablet, isBrowser } from 'react-device-detect';
+import ContactContentAnimation from "./content-animation/contactContentAnimation";
+import { useRouter } from "next/router";
+import DivContainer from "@/components/divContainer";
+import { isMobile, isTablet, isBrowser } from "react-device-detect";
 
 export default function ContactContent() {
-  const router = useRouter()
+  const router = useRouter();
 
   return (
     <>
@@ -23,9 +23,11 @@ export default function ContactContent() {
             <GetContact />
           </div>
         </div>
-        {(!isMobile) && <div className="items-center">
-          {<ContactContentAnimation width={300} height={300} />}
-        </div>}
+        {!isMobile && (
+          <div className="items-center">
+            {<ContactContentAnimation width={300} height={300} />}
+          </div>
+        )}
       </DivContainer>
     </>
   );
@@ -41,7 +43,6 @@ export function GetContact() {
       <div className="px-5 py-2 mr-2 bg-indigo-500">
         <a href="mailto:hbsim0605@gmail.com">Mail</a>
       </div>
-
     </>
-  )
+  );
 }

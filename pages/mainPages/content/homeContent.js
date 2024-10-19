@@ -1,14 +1,14 @@
-`use strict`
+`use strict`;
 
-import HomeContentAnimation from './content-animation/homeContentAnimation'
-import { useRouter } from 'next/router'
-import * as userInfo from '@/components/userInfo'
-import DivContainer from '@/components/DivContainer'
-import BrunnerVideo from '@/components/brunnerVideo'
-import { isMobile, isTablet, isBrowser } from 'react-device-detect';
+import HomeContentAnimation from "./content-animation/homeContentAnimation";
+import { useRouter } from "next/router";
+import * as userInfo from "@/components/userInfo";
+import DivContainer from "@/components/divContainer";
+import BrunnerVideo from "@/components/brunnerVideo";
+import { isMobile, isTablet, isBrowser } from "react-device-detect";
 
 export default function HomeContent() {
-  const router = useRouter()
+  const router = useRouter();
 
   return (
     <>
@@ -18,40 +18,47 @@ export default function HomeContent() {
             Asset management
           </h2>
           <div className="main-governing-text">
-            The key to success in wealth and the stock market is consistent market participation and smart management. <br />
-            Manage your assets well and stay engaged in the stock market by using Brunner-Next.<br />
+            The key to success in wealth and the stock market is consistent
+            market participation and smart management. <br />
+            Manage your assets well and stay engaged in the stock market by
+            using Brunner-Next.
+            <br />
             Stay in the market, connect and get rich with Brunner-Next.
           </div>
           <div className="flex flex-col">
             <div className="dark:text-slate-400 mb-2">
               Enjoy using Brunner in a safer and more convenient way.
             </div>
-            {(!userInfo.isLogin()) && <div>
-              <button className="inline-flex text-white bg-indigo-500 border-0 py-2 px-6 focus:outline-none hover:bg-indigo-600 rounded text-lg mr-2"
-                onClick={() => router.push('/mainPages/signin')} >
-                Sign in
-              </button>
-              <button
-                className="inline-flex text-white bg-indigo-500 border-0 py-2 px-6 focus:outline-none hover:bg-indigo-600 rounded text-lg"
-                onClick={() => router.push('/mainPages/signup')} >
-                Sign up
-              </button>
-            </div>
-            }
+            {!userInfo.isLogin() && (
+              <div>
+                <button
+                  className="inline-flex text-white bg-indigo-500 border-0 py-2 px-6 focus:outline-none hover:bg-indigo-600 rounded text-lg mr-2"
+                  onClick={() => router.push("/mainPages/signin")}
+                >
+                  Sign in
+                </button>
+                <button
+                  className="inline-flex text-white bg-indigo-500 border-0 py-2 px-6 focus:outline-none hover:bg-indigo-600 rounded text-lg"
+                  onClick={() => router.push("/mainPages/signup")}
+                >
+                  Sign up
+                </button>
+              </div>
+            )}
             <div className="mt-10">
               <BrunnerVideo
-                url={'https://youtu.be/0j1BdlsL_ew?t=2'}
+                url={"https://youtu.be/0j1BdlsL_ew?t=2"}
                 title="The powerful effect of S&P500"
-              >
-              </BrunnerVideo>
+              ></BrunnerVideo>
             </div>
-
           </div>
         </div>
-        {(!isMobile) && <div className="items-center">
-          <HomeContentAnimation width={300} height={300} />
-        </div>}
-      </DivContainer >
+        {!isMobile && (
+          <div className="items-center">
+            <HomeContentAnimation width={300} height={300} />
+          </div>
+        )}
+      </DivContainer>
     </>
   );
 }
