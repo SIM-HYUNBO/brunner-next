@@ -11,7 +11,7 @@ import RequestServer from "@/components/requestServer";
 import BrunnerMessageBox from "@/components/brunnerMessageBox";
 import * as Constants from "@/components/constants";
 import * as UserInfo from "@/components/userInfo";
-import RealtimeChart from "./realtimeChart";
+import * as RealtimeChart from "./realtimeChart";
 import AssetContent from "./assetContent";
 
 const StockContent = () => {
@@ -133,6 +133,9 @@ const StockContent = () => {
   // 현재 가격
   const [currentPrice, setCurrentPrice] = useState();
   const currentPriceRef = useRef(currentPrice);
+  const [firstPrice, setFirstPrice] = useState();
+  const firstPriceRef = useRef(firstPrice);
+
   const updateCurrentPrice = (firstData, lastData, newData) => {
     var textColor = "";
 
@@ -141,6 +144,7 @@ const StockContent = () => {
     else textColor = "text-red-500";
 
     currentPriceRef.current = newData?.y;
+    setFirstPrice(firstData?.y);
     setCurrentPrice(newData?.y);
     setCurrentPriceTextColorRef(textColor);
   };
@@ -481,20 +485,22 @@ const StockContent = () => {
     handleStockRequest();
   };
 
+  var periodPriceData = null;
+
   // 차트 렌더링을 위한 준비
   const renderChart = () => {
     if (!currentTickerStockDataRef.current) return null;
 
-    const priceData = currentTickerStockDataRef.current.map((d) => ({
+    periodPriceData = currentTickerStockDataRef.current.map((d) => ({
       x: new Date(d.t).getTime(),
       y: d.c,
     }));
 
-    const sma = calculateSMA(priceData);
-    const ema = calculateEMA(priceData);
-    const rsi = calculateRSI(priceData);
-    const macdData = calculateMACD(priceData);
-    const bollingerBands = calculateBollingerBands(priceData);
+    const sma = calculateSMA(periodPriceData);
+    const ema = calculateEMA(periodPriceData);
+    const rsi = calculateRSI(periodPriceData);
+    const macdData = calculateMACD(periodPriceData);
+    const bollingerBands = calculateBollingerBands(periodPriceData);
 
     const formatter = new Intl.DateTimeFormat([], {
       // year: 'numeric',
@@ -552,7 +558,7 @@ const StockContent = () => {
       series: [
         {
           name: "Price",
-          data: priceData,
+          data: periodPriceData,
         },
         {
           name: "SMA",
@@ -753,7 +759,7 @@ const StockContent = () => {
       series: [
         {
           name: "Price",
-          data: priceData,
+          data: periodPriceData,
         },
         {
           name: "Upper Band",
@@ -776,9 +782,29 @@ const StockContent = () => {
     };
 
     return (
-      <div className="w-full mt-5">
-        <RealtimeChart updateCurrentPrice={updateCurrentPrice}></RealtimeChart>
-        <ApexCharts
+      <div className="w-full mt-2">
+        <RealtimeChart.RealtimeChart
+          updateCurrentPrice={updateCurrentPrice}
+        ></RealtimeChart.RealtimeChart>
+
+        <h2>[{currentTickerRef.current}] Recent {periodValue} {periodUnitRef.current}</h2>
+        <div className="w-full flex">
+          <input
+            className={`text-center bg-slate-50 dark:bg-slate-800 border border-slate-400 h-10 w-full`}
+            type="text"
+            value={currentTickerStockDataRef.current ? currentTickerStockDataRef.current[currentTickerStockDataRef.current.length - 1].c : ""}
+            placeholder="First Price of the Period"
+          />
+          <p>     ~     </p>
+          <input
+            className={`text-center bg-slate-50 dark:bg-slate-800 border border-slate-400 h-10 w-full`}
+            type="text"
+            value={currentPriceRef.current}
+            placeholder="Last Price of the Period"
+          />
+        </div>
+
+        <ApexCharts className="mt-2"
           options={chartOptions}
           series={chartOptions.series}
           type="line"
@@ -806,7 +832,7 @@ const StockContent = () => {
           height={350}
           width={"100%"}
         />
-      </div>
+      </div >
     );
   };
 
@@ -959,13 +985,25 @@ const StockContent = () => {
               scrollToTicker(currentTickerRef.current);
               handleStockRequest();
             }}
-            src="/refresh-icon.png" // 이미지 경로를 지정하세요
+            src="/refresh-icon.png" // 이미지 경로를 지정하세요   %%      
             alt="Refresh"
             className="h-8 w-8 ml-1 mt-1 align-middle" // 적절한 크기로 조정
           />
+
         </div>
       </div>
     );
+  }
+
+  const SearchResult = () => {
+    return (
+      <>
+        {
+          currentTickerStockDataRef.current &&
+          renderChart()
+        }
+      </>
+    )
   }
 
   return (
@@ -982,11 +1020,12 @@ const StockContent = () => {
         </div>
       )}
       <SearchPanel />
-      {currentTickerStockDataRef.current &&
-        renderChart()}
-      {UserInfo.isLogin() &&
-        <AssetContent></AssetContent>}
-    </DivContainer>
+      <SearchResult />
+      {
+        UserInfo.isLogin() &&
+        <AssetContent></AssetContent>
+      }
+    </DivContainer >
   );
 };
 

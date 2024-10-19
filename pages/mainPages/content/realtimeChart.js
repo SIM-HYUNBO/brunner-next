@@ -9,7 +9,7 @@ import * as Constants from "@/components/constants";
 // dynamic import로 ApexCharts를 사용합니다.
 const ApexCharts = dynamic(() => import("react-apexcharts"), { ssr: false });
 
-const RealtimeChart = ({ updateCurrentPrice }) => {
+export const RealtimeChart = ({ updateCurrentPrice }) => {
   // 로딩 & 메시지 박스
   // {
   const [loading, setLoading] = useState(false);
@@ -345,11 +345,20 @@ const RealtimeChart = ({ updateCurrentPrice }) => {
     }
   };
 
+  const getFistPrice = () => {
+    return firstChartData.y;
+  }
+
+  const getLastPrice = () => {
+    return lastChartData.y;
+  }
+
   const handleNewData = (newData) => {
     if (Array.isArray(newData)) {
       for (let i = 0; i < newData.length; i++) {
-        if (i == 0) firstChartData = newData[i];
-
+        if (i == 0) {
+          firstChartData = newData[i];
+        }
         handleSingleData(newData[i]);
         lastChartData = newData[i];
       }
@@ -442,5 +451,3 @@ const RealtimeChart = ({ updateCurrentPrice }) => {
     </div>
   );
 };
-
-export default RealtimeChart;
