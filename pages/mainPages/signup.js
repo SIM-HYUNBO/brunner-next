@@ -7,9 +7,9 @@ import Layout from "@/components/layout";
 import Head from "next/head";
 import BodySection from "@/components/bodySection";
 import RequestServer from "@/components/requestServer";
-import BrunnerMessageBox from "@/components/BrunnerMessageBox";
+import BrunnerMessageBox from "@/components/brunnerMessageBox";
 import * as Constants from "@/components/constants";
-import DivContainer from "@/components/DivContainer";
+import DivContainer from "@/components/divContainer";
 
 export default function Signup() {
   // 로딩 & 메시지 박스
@@ -18,8 +18,8 @@ export default function Signup() {
   const [modalContent, setModalContent] = useState({
     isOpen: false,
     message: "",
-    onConfirm: () => {},
-    onClose: () => {},
+    onConfirm: () => { },
+    onClose: () => { },
   });
   const openModal = (message) => {
     return new Promise((resolve, reject) => {
@@ -41,8 +41,8 @@ export default function Signup() {
     setModalContent({
       isOpen: false,
       message: "",
-      onConfirm: () => {},
-      onClose: () => {},
+      onConfirm: () => { },
+      onClose: () => { },
     });
   };
   // }

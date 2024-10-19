@@ -3,7 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import * as userInfo from "@/components/userInfo";
-import DivContainer from "@/components/DivContainer";
+import DivContainer from "@/components/divContainer";
 
 export default function Header() {
   const UserInfo = userInfo.default;

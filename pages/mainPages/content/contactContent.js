@@ -2,7 +2,7 @@
 
 import ContactContentAnimation from "./content-animation/contactContentAnimation";
 import { useRouter } from "next/router";
-import DivContainer from "@/components/DivContainer";
+import DivContainer from "@/components/divContainer";
 import { isMobile, isTablet, isBrowser } from "react-device-detect";
 
 export default function ContactContent() {

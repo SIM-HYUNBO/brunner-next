@@ -5,7 +5,7 @@ import RequestServer from "@/components/requestServer";
 import Board from "@/pages/mainPages/content/boardContent";
 import RealtimeChart from "./realtimeChart";
 import * as Constants from "@/components/constants";
-import DivContainer from "@/components/DivContainer";
+import DivContainer from "@/components/divContainer";
 
 export default function TickerInfoContent({ tickerCode: tickerCode }) {
   // 로딩 & 메시지 박스
@@ -14,8 +14,8 @@ export default function TickerInfoContent({ tickerCode: tickerCode }) {
   const [modalContent, setModalContent] = useState({
     isOpen: false,
     message: "",
-    onConfirm: () => {},
-    onClose: () => {},
+    onConfirm: () => { },
+    onClose: () => { },
   });
 
   const openModal = (message) => {
@@ -38,8 +38,8 @@ export default function TickerInfoContent({ tickerCode: tickerCode }) {
     setModalContent({
       isOpen: false,
       message: "",
-      onConfirm: () => {},
-      onClose: () => {},
+      onConfirm: () => { },
+      onClose: () => { },
     });
   };
   // }

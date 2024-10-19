@@ -8,7 +8,7 @@ import React, {
 import * as Constants from "@/components/constants";
 import * as userInfo from "@/components/userInfo";
 import RequestServer from "@/components/requestServer";
-import BrunnerMessageBox from "@/components/BrunnerMessageBox";
+import BrunnerMessageBox from "@/components/brunnerMessageBox";
 
 const AutoResizeTextarea = forwardRef(
   ({ name, value, onChange, readOnly }, ref) => {
@@ -42,9 +42,8 @@ const AutoResizeTextarea = forwardRef(
         value={value}
         onChange={handleChange}
         readOnly={readOnly}
-        className={`resize-none w-full border border-gray-300 rounded-md p-2 mt-1 ${
-          readOnly ? "bg-gray-100" : ""
-        }`}
+        className={`resize-none w-full border border-gray-300 rounded-md p-2 mt-1 ${readOnly ? "bg-gray-100" : ""
+          }`}
         rows="10"
       />
     );
@@ -58,8 +57,8 @@ const ServiceSQL = () => {
   const [modalContent, setModalContent] = useState({
     isOpen: false,
     message: "",
-    onConfirm: () => {},
-    onClose: () => {},
+    onConfirm: () => { },
+    onClose: () => { },
   });
   const openModal = (message) => {
     return new Promise((resolve, reject) => {
@@ -81,8 +80,8 @@ const ServiceSQL = () => {
     setModalContent({
       isOpen: false,
       message: "",
-      onConfirm: () => {},
-      onClose: () => {},
+      onConfirm: () => { },
+      onClose: () => { },
     });
   };
   // }

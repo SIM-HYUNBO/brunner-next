@@ -6,9 +6,9 @@ import { useRouter } from "next/navigation";
 import { useTheme } from "next-themes";
 import moment from "moment";
 import dynamic from "next/dynamic";
-import DivContainer from "@/components/DivContainer";
+import DivContainer from "@/components/divContainer";
 import RequestServer from "@/components/requestServer";
-import BrunnerMessageBox from "@/components/BrunnerMessageBox";
+import BrunnerMessageBox from "@/components/brunnerMessageBox";
 import * as Constants from "@/components/constants";
 import * as UserInfo from "@/components/userInfo";
 import RealtimeChart from "./realtimeChart";
@@ -21,8 +21,8 @@ const StockContent = () => {
   const [modalContent, setModalContent] = useState({
     isOpen: false,
     message: "",
-    onConfirm: () => {},
-    onClose: () => {},
+    onConfirm: () => { },
+    onClose: () => { },
   });
 
   const openModal = (message) => {
@@ -45,8 +45,8 @@ const StockContent = () => {
     setModalContent({
       isOpen: false,
       message: "",
-      onConfirm: () => {},
-      onClose: () => {},
+      onConfirm: () => { },
+      onClose: () => { },
     });
   };
   // }
@@ -248,8 +248,7 @@ const StockContent = () => {
     } catch (err) {
       setLoading(false);
       openModal(
-        `${Constants.COMMAND_STOCK_GET_TICKER_LIST}:${
-          err instanceof Error ? err.message : Constants.MESSAGE_UNKNOWN_ERROR
+        `${Constants.COMMAND_STOCK_GET_TICKER_LIST}:${err instanceof Error ? err.message : Constants.MESSAGE_UNKNOWN_ERROR
         }`
       );
     }
@@ -344,8 +343,7 @@ const StockContent = () => {
     } catch (err) {
       setLoading(false);
       openModal(
-        `${Constants.COMMAND_STOCK_GET_STOCK_INFO}:${
-          err instanceof Error ? err.message : Constants.MESSAGE_UNKNOWN_ERROR
+        `${Constants.COMMAND_STOCK_GET_STOCK_INFO}:${err instanceof Error ? err.message : Constants.MESSAGE_UNKNOWN_ERROR
         }`
       );
     }
@@ -878,11 +876,10 @@ const StockContent = () => {
         <div className="w-[30%] h-72 py-10">
           <p className="text-lg mb-2">Recent...</p>
           <ul
-            className={`items-start ${
-              isDarkMode()
-                ? "bg-slate-800 text-white"
-                : "bg-slate-50 text-black"
-            } border border-slate-400 h-full overflow-y-auto`}
+            className={`items-start ${isDarkMode()
+              ? "bg-slate-800 text-white"
+              : "bg-slate-50 text-black"
+              } border border-slate-400 h-full overflow-y-auto`}
           >
             {recentSearches.length > 0 ? (
               recentSearches.map((searchItem) => (
@@ -895,11 +892,10 @@ const StockContent = () => {
                     });
                     handleRecentSearchClick(searchItem.value);
                   }}
-                  className={`cursor-pointer p-2 hover:bg-indigo-500 hover:text-white border border-slate-300 dark:border-slate-600 ${
-                    selectedTicker?.value === searchItem.value
-                      ? "bg-indigo-500 text-white"
-                      : ""
-                  }`}
+                  className={`cursor-pointer p-2 hover:bg-indigo-500 hover:text-white border border-slate-300 dark:border-slate-600 ${selectedTicker?.value === searchItem.value
+                    ? "bg-indigo-500 text-white"
+                    : ""
+                    }`}
                 >
                   {searchItem.label}
                 </li>
@@ -913,11 +909,10 @@ const StockContent = () => {
           <p className="text-lg mb-2">Select...</p>
           <ul
             ref={tickerListDOMRef}
-            className={`items-start ${
-              isDarkMode()
-                ? "bg-slate-800 text-white"
-                : "bg-slate-50 text-black"
-            } border border-slate-400 h-full overflow-y-auto`}
+            className={`items-start ${isDarkMode()
+              ? "bg-slate-800 text-white"
+              : "bg-slate-50 text-black"
+              } border border-slate-400 h-full overflow-y-auto`}
           >
             {tickerListRef.current?.map((tickerInfo) => (
               <li
@@ -925,11 +920,10 @@ const StockContent = () => {
                 onClick={() => {
                   handleTickerChange(tickerInfo);
                 }}
-                className={`cursor-pointer p-2 hover:bg-indigo-500 border border-slate-300 dark:border-slate-600 hover:text-white ${
-                  selectedTicker?.value === tickerInfo.value
-                    ? "bg-indigo-500 text-white"
-                    : ""
-                }`}
+                className={`cursor-pointer p-2 hover:bg-indigo-500 border border-slate-300 dark:border-slate-600 hover:text-white ${selectedTicker?.value === tickerInfo.value
+                  ? "bg-indigo-500 text-white"
+                  : ""
+                  }`}
               >
                 {tickerInfo.label}
               </li>
