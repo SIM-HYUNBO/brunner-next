@@ -813,6 +813,9 @@ const StockContent = () => {
   const SearchPanel = () => {
     return (
       <div className="mobile:flex:col desktop:flex-col">
+        <h2 className="title-font sm:text-4xl text-3xl w-full my-10 font-medium text-green-900">
+          Stock search
+        </h2>
         {/* Span */}
         <div className="items-start mt-2 dark:text-slate-400 w-full">
           <label>Span</label>
@@ -966,7 +969,7 @@ const StockContent = () => {
   }
 
   return (
-    <DivContainer className="flex-wrap">
+    <DivContainer className="flex-col">
       <BrunnerMessageBox
         isOpen={modalContent.isOpen}
         message={modalContent.message}
@@ -979,9 +982,6 @@ const StockContent = () => {
         </div>
       )}
 
-      <h2 className="title-font sm:text-4xl text-3xl w-full my-10 font-medium text-green-900">
-        Stock search
-      </h2>
       <SearchPanel />
 
       {currentTickerStockDataRef.current && renderChart()}
