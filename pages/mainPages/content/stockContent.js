@@ -791,7 +791,7 @@ const StockContent = () => {
     }
 
     return (
-      <div className="w-full mt-5">
+      <div className="mobile:flex desktop:flex w-full mt-5">
         <RealtimeChart updateCurrentPrice={updateCurrentPrice}></RealtimeChart>
 
         <h2>[{currentTickerRef.current}] Recent {periodValue} {periodUnitRef.current}</h2>
