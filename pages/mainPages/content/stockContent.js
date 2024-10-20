@@ -1005,7 +1005,7 @@ const StockContent = () => {
   }
 
   return (
-    <DivContainer className="flex flex-col mobile:flex mobile:flex-col">
+    <DivContainer >
       <BrunnerMessageBox
         isOpen={modalContent.isOpen}
         message={modalContent.message}
