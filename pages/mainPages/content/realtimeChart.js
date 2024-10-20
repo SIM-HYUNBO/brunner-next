@@ -395,7 +395,8 @@ const RealtimeChart = ({ updateCurrentPrice }) => {
         y: null,
       };
 
-    updateCurrentPrice(firstData, lastData, newData);
+    if (lastChartData?.c != newValue?.c)
+      updateCurrentPrice(firstData, lastData, newData);
 
     setSeriesRef((prevSeries) => {
       const existingData = prevSeries[0].data;
