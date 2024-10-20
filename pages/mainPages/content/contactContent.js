@@ -12,7 +12,7 @@ export default function ContactContent() {
   return (
     <>
       <DivContainer>
-        <div className="mobile:w-full desktop:w-2/3 items-start text-left">
+        <div className="w-full desktop:w-2/3 items-start text-left">
           <h2 className="title-font sm:text-4xl text-3xl mb-10 font-medium text-green-900">
             We are here for you always.
           </h2>
