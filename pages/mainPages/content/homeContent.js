@@ -13,7 +13,7 @@ export default function HomeContent() {
 
   return (
     <>
-      <DivContainer className="desktop:flex-col mobile:flex-row ">
+      <DivContainer className="flex-row ">
         <div className="mobile:w-full desktop:w-2/3 items-start text-left">
           <h2 className="title-font sm:text-4xl text-3xl mb-10 font-medium text-green-900">
             Asset management
