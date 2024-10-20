@@ -791,7 +791,7 @@ const StockContent = () => {
     }
 
     return (
-      <div className="mobile:flex-col desktop:flex-col w-full mt-5">
+      <div className="mt-5">
         <RealtimeChart updateCurrentPrice={updateCurrentPrice}></RealtimeChart>
 
         <h2>[{currentTickerRef.current}] Recent {periodValue} {periodUnitRef.current}</h2>
@@ -1018,8 +1018,11 @@ const StockContent = () => {
         </div>
       )}
       <SearchPanel />
-      {currentTickerStockDataRef.current &&
-        renderChart()}
+      {currentTickerStockDataRef.current && (
+        <div className="flex flex-col">
+          {renderChart()}
+        </div>
+      )}
       {UserInfo.isLogin() &&
         <AssetContent></AssetContent>}
     </DivContainer>
