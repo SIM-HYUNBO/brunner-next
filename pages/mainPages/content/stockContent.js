@@ -1031,9 +1031,9 @@ const StockContent = () => {
             {renderChart()}
           </div>
         )}
+        {UserInfo.isLogin() &&
+          <AssetContent></AssetContent>}
       </div>
-      {UserInfo.isLogin() &&
-        <AssetContent></AssetContent>}
     </DivContainer>
   );
 };
