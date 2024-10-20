@@ -1005,7 +1005,7 @@ const StockContent = () => {
   }
 
   return (
-    <DivContainer >
+    <DivContainer className="flex flex-col">
       <BrunnerMessageBox
         isOpen={modalContent.isOpen}
         message={modalContent.message}
@@ -1017,10 +1017,10 @@ const StockContent = () => {
           <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-gray-900"></div>
         </div>
       )}
-      <SearchPanel />
+      <SearchPanel className="w-full" />
       {currentTickerStockDataRef.current && (
-        <div className="flex flex-col mobile:flex mobile:flex-col w-screen h-screen mobile:bg-red">
-          {/* {renderChart()} */}
+        <div className="flex flex-col mobile:flex mobile:flex-col w-full">
+          {renderChart()}
         </div>
       )}
       {UserInfo.isLogin() &&
