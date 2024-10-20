@@ -848,7 +848,7 @@ const StockContent = () => {
 
   const SearchPanel = () => {
     return (
-      <div className="mobile:flex:col desktop:flex-col">
+      <div className="flex:col desktop:flex-col">
         <h2 className="title-font sm:text-4xl text-3xl w-full my-10 font-medium text-green-900">
           Stock search
         </h2>
@@ -1019,7 +1019,7 @@ const StockContent = () => {
       )}
       <SearchPanel className="w-full" />
       {currentTickerStockDataRef.current && (
-        <div className="flex flex-col mobile:flex mobile:flex-col w-full">
+        <div className="flex flex-col w-full">
           {renderChart()}
         </div>
       )}
