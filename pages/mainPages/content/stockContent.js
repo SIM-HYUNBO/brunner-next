@@ -791,7 +791,7 @@ const StockContent = () => {
     }
 
     return (
-      <div className="mobile:flex desktop:flex w-full mt-5">
+      <div className="mobile:flex-col desktop:flex-col w-full mt-5">
         <RealtimeChart updateCurrentPrice={updateCurrentPrice}></RealtimeChart>
 
         <h2>[{currentTickerRef.current}] Recent {periodValue} {periodUnitRef.current}</h2>
@@ -1005,7 +1005,7 @@ const StockContent = () => {
   }
 
   return (
-    <DivContainer className="mobile:flex-wrap desktop:flex-wrap">
+    <DivContainer className="flex fl">
       <BrunnerMessageBox
         isOpen={modalContent.isOpen}
         message={modalContent.message}
