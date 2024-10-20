@@ -1007,12 +1007,6 @@ const StockContent = () => {
             className="h-8 w-8 ml-1 mt-1 align-middle" // 적절한 크기로 조정
           />
         </div>
-        {currentTickerStockDataRef.current && (
-          <div className="flex flex-col w-full">
-            {renderChart()}
-          </div>
-        )}
-
       </div>
     );
   }
@@ -1030,7 +1024,14 @@ const StockContent = () => {
           <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-gray-900"></div>
         </div>
       )}
-      <SearchPanel className="w-full" />
+      <div className="flex flex-col">
+        <SearchPanel className="w-full" />
+        {currentTickerStockDataRef.current && (
+          <div className="flex flex-col w-full">
+            {renderChart()}
+          </div>
+        )}
+      </얖>
       {UserInfo.isLogin() &&
         <AssetContent></AssetContent>}
     </DivContainer>
