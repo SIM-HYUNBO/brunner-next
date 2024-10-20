@@ -1019,8 +1019,8 @@ const StockContent = () => {
       )}
       <SearchPanel />
       {currentTickerStockDataRef.current && (
-        <div className="flex flex-col mobile:flex mobile:flex-col w-full">
-          {renderChart()}
+        <div className="flex flex-col mobile:flex mobile:flex-col w-screen h-screen mobile:bg-red">
+          {/* {renderChart()} */}
         </div>
       )}
       {UserInfo.isLogin() &&
