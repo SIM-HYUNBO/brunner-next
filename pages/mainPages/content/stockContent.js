@@ -133,6 +133,11 @@ const StockContent = () => {
   // 현재 가격
   const [currentPrice, setCurrentPrice] = useState();
   const currentPriceRef = useRef(currentPrice);
+  const setCurrentPriceRef = (newValue) => {
+    currentPriceRef.current = newValue;
+    setCurrentPrice(newValue);
+  }
+
   const updateCurrentPrice = (firstData, lastData, newData) => {
     var textColor = "";
 
@@ -140,9 +145,11 @@ const StockContent = () => {
     else if (firstData?.y > newData?.y) textColor = "text-blue-500";
     else textColor = "text-red-500";
 
-    currentPriceRef.current = newData?.y;
-    setCurrentPrice(newData?.y);
-    setCurrentPriceTextColorRef(textColor);
+    if (currentPriceRef.current != newData.y) {
+      currentPriceRef.current = newData.y;
+      setCurrentPriceRef(newData.y);
+      setCurrentPriceTextColorRef(textColor);
+    }
   };
 
   // 현재가격 표시 색깔
