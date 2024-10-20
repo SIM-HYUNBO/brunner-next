@@ -19,7 +19,7 @@ module.exports = {
       },
     },
     screens: { // 아래의 값들은 min-width이다.
-      mobile: '360px',
+      // mobile: '360px', // 모바일 (default)
       xs: '360px',
       sm: '640px',
       md: '768px',
