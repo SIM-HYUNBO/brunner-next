@@ -1000,6 +1000,12 @@ const StockContent = () => {
             className="h-8 w-8 ml-1 mt-1 align-middle" // 적절한 크기로 조정
           />
         </div>
+        {currentTickerStockDataRef.current && (
+          <div className="flex flex-col w-full">
+            {renderChart()}
+          </div>
+        )}
+
       </div>
     );
   }
@@ -1018,11 +1024,6 @@ const StockContent = () => {
         </div>
       )}
       <SearchPanel className="w-full" />
-      {currentTickerStockDataRef.current && (
-        <div className="flex flex-col w-full">
-          {renderChart()}
-        </div>
-      )}
       {UserInfo.isLogin() &&
         <AssetContent></AssetContent>}
     </DivContainer>
