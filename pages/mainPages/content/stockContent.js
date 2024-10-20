@@ -801,7 +801,7 @@ const StockContent = () => {
       <div className="flex flex-col mt-5 w-full">
         <RealtimeChart updateCurrentPrice={updateCurrentPrice}></RealtimeChart>
 
-        <h2>[{currentTickerRef.current}] Recent {periodValue} {periodUnitRef.current}</h2>
+        <h2>[{currentTickerRef.current}] Recent {periodValue} {periodUnitRef.current} {Math.abs(currentPriceRef.current - getFirstPrice())} USD {currentPriceRef.current - getFirstPrice() >= 0 ? 'up' : 'down'}</h2>
         <div className="w-full flex">
           <input
             className={`text-${getPriceColor()} text-center bg-slate-50 dark:bg-slate-800 border border-slate-400 h-10 w-full`}
