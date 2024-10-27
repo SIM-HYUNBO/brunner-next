@@ -70,6 +70,12 @@ const StockContent = () => {
     }
 
     displayInitialTickerList();
+
+    if (!currencyListRef.current || currencyListRef.current.length === 0) {
+      getCurrencyList();
+      setSelectedCurrencyRef({ 'currency_code': 'USD' })
+      setSelectedExchangeRef(1)
+    }
   }, []);
 
   const router = useRouter();
@@ -160,6 +166,37 @@ const StockContent = () => {
     currentPriceTextColorRef.current.classList.remove("text-blue-500");
 
     currentPriceTextColorRef.current.classList.add(newValue);
+  };
+
+  // 환율 목록
+  const [currencyList, setCurrencyList] = useState([]);
+  const currencyListRef = useRef(currencyList);
+  const setCurrencyListRef = (newValue) => {
+    setCurrencyList(newValue);
+    currencyListRef.current = newValue;
+  };
+
+  // 선택한 통화
+  const [selectedCurrency, setSelectedCurrency] = useState(null);
+  const selectedCurrencyRef = useRef(selectedCurrency);
+  const setSelectedCurrencyRef = (newValue) => {
+    setSelectedCurrency(newValue);
+
+    selectedCurrencyRef.current = newValue;
+  };
+
+  const selectedCurrencyChanged = (event) => {
+    setSelectedCurrencyRef({ 'currency_code': event.target.value }); // 선택된 값을 상태에 저장
+    setExchangeByCurrency();
+  }
+
+  // 선택한 통화의 환율
+  const [selectedExchange, setSelectedExchange] = useState(1);
+  const selectedExchangeRef = useRef(selectedExchange);
+  const setSelectedExchangeRef = (newValue) => {
+    setSelectedExchange(newValue);
+
+    selectedExchangeRef.current = newValue;
   };
 
   // 모든 종목 목록
@@ -853,9 +890,57 @@ const StockContent = () => {
     );
   };
 
+  const getCurrencyList = async () => {
+    try {
+      const jRequest = {
+        commandName: Constants.COMMAND_STOCK_GET_CURRENCY_LIST,
+        systemCode: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE,
+      };
+
+      const jResponse = await RequestServer("POST", JSON.stringify(jRequest));
+      if (jResponse.error_code === 0) {
+        setCurrencyListRef(jResponse.currencyList);
+      } else {
+        openModal(jResponse.error_message);
+      }
+    } catch (err) {
+      openModal(
+        `${Constants.COMMAND_STOCK_GET_CURRENCY_LIST}:${err instanceof Error ? err.message : Constants.MESSAGE_UNKNOWN_ERROR
+        }`
+      );
+    }
+  }
+
+  const setExchangeByCurrency = async () => {
+    try {
+      const jRequest = {
+        commandName: Constants.COMMAND_STOCK_GET_EXCHANGE_BY_CURRENCY,
+        currencyCode: selectedCurrencyRef.current.currency_code
+      };
+
+      const jResponse = await RequestServer("POST", JSON.stringify(jRequest));
+      if (jResponse.error_code === 0) {
+        if (jResponse.exchangeRate.hasOwnProperty(selectedCurrencyRef.current.currency_code) == true) {
+          const exchangeRate = jResponse.exchangeRate[selectedCurrencyRef.current.currency_code] / jResponse.exchangeRate['USD']
+          setSelectedExchangeRef(exchangeRate);
+        } else {
+          openModal(jResponse.error_message);
+        }
+      }
+      else {
+        openModal(jResponse.error_message);
+      }
+    } catch (err) {
+      openModal(
+        `${Constants.COMMAND_STOCK_GET_CURRENCY_LIST}:${err instanceof Error ? err.message : Constants.MESSAGE_UNKNOWN_ERROR
+        }`
+      );
+    }
+  }
+
   const SearchPanel = () => {
     return (
-      <div className="flex:col desktop:flex-col">
+      <div className="flex:col">
         <h2 className="title-font sm:text-4xl text-3xl w-full my-10 font-medium text-green-900">
           Stock search
         </h2>
@@ -892,12 +977,12 @@ const StockContent = () => {
             value={periodUnitRef.current}
             onChange={(e) => setPeriodUnitRef(e.target.value)}
           >
-            <option value="minutes">minute</option>
-            <option value="hours">hour</option>
-            <option value="days">day</option>
-            <option value="weeks">week</option>
-            <option value="months">month</option>
-            <option value="years">year</option>
+            <option key="min" value="minutes">minute</option>
+            <option key="hr" value="hours">hour</option>
+            <option key="d" value="days">day</option>
+            <option key="w" value="weeks">week</option>
+            <option key="m" value="months">month</option>
+            <option key="y" value="years">year</option>
           </select>
         </div>
         {/* Recent & Select */}
@@ -989,12 +1074,13 @@ const StockContent = () => {
             alt="Info"
             className="h-10 w-10 align-middle"
           />
+
           <input
             ref={currentPriceTextColorRef}
             className={`text-center bg-slate-50 dark:bg-slate-800 border border-slate-400 h-10 w-full`}
             type="text"
-            value={currentPriceRef.current}
-            placeholder="Current Price (USD)"
+            value={currentPriceRef.current * selectedExchangeRef.current}
+            placeholder={`Current Price ${selectedCurrencyRef.current?.currency_code ? selectedCurrencyRef.current.currency_code : ''}`}
           />
           <img
             onClick={() => {
@@ -1005,6 +1091,24 @@ const StockContent = () => {
             src="/refresh-icon.png" // 이미지 경로를 지정하세요
             alt="Refresh"
             className="h-8 w-8 ml-1 mt-1 align-middle" // 적절한 크기로 조정
+          />
+          <select
+            className="dark:text-slate-400 ml-2 bg-slate-50 dark:bg-slate-800"
+            value={selectedCurrencyRef.current?.currency_code}
+            onChange={selectedCurrencyChanged}
+          >
+            {currencyListRef.current.map((currencyItem) => (
+              <option key={currencyItem.current_code} value={currencyItem.currency_code}>
+                {currencyItem.currency_code}
+              </option>
+            ))}
+          </select>
+          <input
+            className={`text-center bg-slate-50 dark:bg-slate-800 border border-slate-400 h-10 w-full ml-2`}
+            type="text"
+            value={selectedExchangeRef.current}
+            placeholder={`Current Exchange`}
+            readOnly
           />
         </div>
       </div>
