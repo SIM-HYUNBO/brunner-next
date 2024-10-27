@@ -27,6 +27,12 @@ const executeService = (txnId, jRequest) => {
             case Constants.COMMAND_STOCK_GET_REALTIME_STOCK_INFO:
                 jResponse = getRealtimeStockInfo(txnId, jRequest);
                 break;
+            case Constants.COMMAND_STOCK_GET_CURRENCY_LIST:
+                jResponse = getCurrencyList(txnId, jRequest);
+                break;
+            case Constants.COMMAND_STOCK_GET_EXCHANGE_BY_CURRENCY:
+                jResponse = getExchangeByCurrency(txnId, jRequest);
+                break;
             default:
                 break;
         }
@@ -402,6 +408,62 @@ const getRealtimeStockInfo = async (txnId, jRequest) => {
         jResponse.error_message = e.response.statusText;
     }
     finally {
+        return jResponse;
+    }
+};
+
+const getCurrencyList = async (txnId, jRequest) => {
+    var jResponse = {};
+
+    try {
+        jResponse.commanaName = jRequest.commandName;
+        jResponse.systemCode = jRequest.systemCode;
+
+        var sql = null
+        sql = await serviceSQL.getSQL00('select_TB_COR_CURRENCY_MST', 1);
+        var select_TB_COR_CURRENCY_MST_01 = await database.executeSQL(sql,
+            [
+                jRequest.systemCode
+            ]);
+
+        jResponse.currencyList = select_TB_COR_CURRENCY_MST_01.rows;
+        jResponse.error_code = 0;
+        jResponse.error_message = Constants.EMPTY_STRING;
+    } catch (e) {
+        logger.error(e);
+        jResponse.error_code = -1; // exception
+        jResponse.error_message = e.message
+    } finally {
+        return jResponse;
+    }
+};
+
+const getExchangeByCurrency = async (txnId, jRequest) => {
+    var jResponse = {};
+
+    try {
+        jResponse.commanaName = jRequest.commandName;
+        jResponse.currencyCode = jRequest.currencyCode;
+
+        const apiUrl = `https://api.exchangerate-api.com/v4/latest/${jRequest.currencyCode}`;
+        const res = await fetch(apiUrl);
+        if (!res.ok) {
+            jResponse.error_code = -1;
+            jResponse.error_message = `Failed to fetch exchange rate data for ${jRequest.currencyCode}`;
+        }
+        else {
+            const data = await res.json();
+            jResponse.exchangeRate = data.rates;
+            jResponse.base = data.base;
+
+            jResponse.error_code = 0;
+            jResponse.error_message = Constants.EMPTY_STRING;
+        }
+    } catch (e) {
+        logger.error(e);
+        jResponse.error_code = -1; // exception
+        jResponse.error_message = e.message
+    } finally {
         return jResponse;
     }
 };

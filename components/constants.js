@@ -40,9 +40,10 @@ export const
     COMMAND_SERVICESQL_GET_ALL_SQL = `serviceSQL.getAllSQL`,
     COMMAND_SERVICESQL_LOAD_ALL_SQL = `serviceSQL.loadAllSQL`,
     COMMAND_SERVICESQL_UPDATE_SERVICE_SQL = `serviceSQL.updateServiceSQL`,
+    COMMAND_STOCK_GET_CURRENCY_LIST = `stock.getCurrencyList`,
+    COMMAND_STOCK_GET_EXCHANGE_BY_CURRENCY = `stock.getExchangeByCurrency`,
     COMMAND_STOCK_GET_LATEST_STOCK_INFO = `stock.getLatestStockInfo`,
     COMMAND_STOCK_GET_REALTIME_STOCK_INFO = `stock.getRealtimeStockInfo`,
     COMMAND_STOCK_GET_STOCK_INFO = `stock.getStockInfo`,
     COMMAND_STOCK_GET_TICKER_INFO = `stock.getTickerInfo`,
     COMMAND_STOCK_GET_TICKER_LIST = `stock.getTickerList`
-
