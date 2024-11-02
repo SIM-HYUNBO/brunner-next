@@ -846,6 +846,7 @@ const StockContent = () => {
             value={getFirstPrice()}
             placeholder="First Price of the Period"
             style={{ color: getPriceColor() }}
+            readOnly
           />
           <p>     ~     </p>
           <input
@@ -854,7 +855,7 @@ const StockContent = () => {
             value={currentPriceRef.current}
             placeholder="Last Price of the Period"
             style={{ color: getPriceColor() }}
-
+            readOnly
           />
         </div>
 
@@ -1079,8 +1080,9 @@ const StockContent = () => {
             ref={currentPriceTextColorRef}
             className={`text-center bg-slate-50 dark:bg-slate-800 border border-slate-400 h-10 w-full`}
             type="text"
-            value={currentPriceRef.current * selectedExchangeRef.current}
+            value={currentPriceRef.current ? currentPriceRef.current * selectedExchangeRef.current : ''}
             placeholder={`Current Price ${selectedCurrencyRef.current?.currency_code ? selectedCurrencyRef.current.currency_code : ''}`}
+            readOnly
           />
           <img
             onClick={() => {
