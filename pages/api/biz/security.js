@@ -1,11 +1,11 @@
 `use strict`
 
 import logger from "./../winston/logger"
+import bcrypt from "bcryptjs"
+import nodemailer from 'nodemailer';
 import * as database from "./database/database"
 import * as serviceSQL from "./serviceSQL"
-import bcrypt from "bcryptjs"
 import * as Constants from '@/components/constants'
-import nodemailer from 'nodemailer';
 
 const executeService = (txnId, jRequest) => {
     var jResponse = {};
