@@ -953,12 +953,12 @@ const StockContent = () => {
             value={dataIntervalUnitRef.current}
             onChange={(e) => setDataIntervalUnitRef(e.target.value)}
           >
-            <option value="minute">minute</option>
-            <option value="hour">hour</option>
-            <option value="day">day</option>
-            <option value="week">week</option>
-            <option value="month">month</option>
-            <option value="year">year</option>
+            <option key="minutes" value="minute">minute</option>
+            <option key="hour" value="hour">hour</option>
+            <option key="day" value="day">day</option>
+            <option key="week" value="week">week</option>
+            <option key="month" value="month">month</option>
+            <option key="year" value="year">year</option>
           </select>
         </div>
         {/* Period */}
@@ -978,12 +978,12 @@ const StockContent = () => {
             value={periodUnitRef.current}
             onChange={(e) => setPeriodUnitRef(e.target.value)}
           >
-            <option key="min" value="minutes">minute</option>
-            <option key="hr" value="hours">hour</option>
-            <option key="d" value="days">day</option>
-            <option key="w" value="weeks">week</option>
-            <option key="m" value="months">month</option>
-            <option key="y" value="years">year</option>
+            <option key="minutes" value="minutes">minute</option>
+            <option key="hours" value="hours">hour</option>
+            <option key="days" value="days">day</option>
+            <option key="weeks" value="weeks">week</option>
+            <option key="months" value="months">month</option>
+            <option key="years" value="years">year</option>
           </select>
         </div>
         {/* Recent & Select */}
