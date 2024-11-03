@@ -1,9 +1,9 @@
 `use strict`
 
 import logger from "./../winston/logger"
+import moment from 'moment';
 import * as database from "./database/database"
 import * as serviceSQL from './serviceSQL'
-import moment from 'moment';
 import * as Constants from '@/components/constants'
 import * as requestResult from '../requestResult'
 

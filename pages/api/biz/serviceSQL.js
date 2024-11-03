@@ -280,7 +280,6 @@ async function deleteServiceSql(txnId, jRequest) {
   }
 };
 
-
 const getSQL = async (systemCode, sqlName, sqlSeq) => {
   try {
 

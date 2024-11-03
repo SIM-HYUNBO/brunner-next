@@ -1,6 +1,5 @@
 `use strict`
 
-import axios from 'axios';
 import logger from "../winston/logger"
 import * as database from "./database/database"
 import * as serviceSQL from './serviceSQL'

@@ -1,15 +1,13 @@
 `use strict`
 
 import logger from "./winston/logger"
+import * as Constants from "@/components/constants"
 import * as database from "./biz/database/database"
-
-// server modules.
 import * as serviceSQL from './biz/serviceSQL'
 import * as security from './biz/security'
 import * as asset from './biz/asset'
 import * as stock from './biz/stock'
 import * as board from './biz/board'
-import * as Constants from "@/components/constants"
 
 async function initialize() {
     var serviceSql = null;
