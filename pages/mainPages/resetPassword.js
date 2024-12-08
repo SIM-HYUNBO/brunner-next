@@ -15,8 +15,7 @@ import Conatiner from "@/components/divContainer";
 import DivContainer from "@/components/divContainer";
 
 export default function ResetPassword() {
-  // 로딩 & 메시지 박스
-  // {
+
   const [loading, setLoading] = useState(false);
   const [modalContent, setModalContent] = useState({
     isOpen: false,
@@ -48,14 +47,11 @@ export default function ResetPassword() {
       onClose: () => { },
     });
   };
-  // }
 
   useEffect(() => {
     setThemeRef(themeRef.current);
   }, []);
 
-  // theme : 현재값 가져오기 getter
-  // setTheme : 현재값 바꾸기 setter
   const { theme, setTheme } = useTheme();
   const themeRef = useRef(theme);
 

@@ -6,12 +6,10 @@ import RequestServer from "@/components/requestServer";
 import BrunnerMessageBox from "@/components/brunnerMessageBox";
 import * as Constants from "@/components/constants";
 
-// dynamic import로 ApexCharts를 사용합니다.
 const ApexCharts = dynamic(() => import("react-apexcharts"), { ssr: false });
 
 const RealtimeChart = ({ updateCurrentPrice }) => {
-  // 로딩 & 메시지 박스
-  // {
+
   const [loading, setLoading] = useState(false);
   const [modalContent, setModalContent] = useState({
     isOpen: false,

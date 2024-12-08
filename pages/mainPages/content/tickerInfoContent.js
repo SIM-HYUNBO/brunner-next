@@ -9,8 +9,7 @@ import DivContainer from "@/components/divContainer";
 import GoverningMessage from "@/components/governingMessage";
 
 export default function TickerInfoContent({ tickerCode: tickerCode }) {
-  // 로딩 & 메시지 박스
-  // {
+
   const [loading, setLoading] = useState(false);
   const [modalContent, setModalContent] = useState({
     isOpen: false,

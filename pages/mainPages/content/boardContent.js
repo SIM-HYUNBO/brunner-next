@@ -7,8 +7,7 @@ import BrunnerMessageBox from "@/components/brunnerMessageBox";
 import * as Constants from "@/components/constants";
 
 function Board(boardInfo) {
-  // 로딩 & 메시지 박스
-  // {
+
   const [loading, setLoading] = useState(false);
   const [modalContent, setModalContent] = useState({
     isOpen: false,

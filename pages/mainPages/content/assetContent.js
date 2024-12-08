@@ -11,8 +11,7 @@ import * as Constants from "@/components/constants";
 import DivContainer from "@/components/divContainer";
 
 export default function AssetContent() {
-  // 로딩 & 메시지 박스
-  // {
+
   const [loading, setLoading] = useState(false);
   const [modalContent, setModalContent] = useState({
     isOpen: false,

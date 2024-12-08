@@ -1,6 +1,5 @@
 `use strict`;
 
-// import ClipsContentAnimation from './content-animation/contactContentAnimation'
 import { useRouter } from "next/router";
 import DivContainer from "@/components/divContainer";
 import BrunnerVideo from "@/components/brunnerVideo";
