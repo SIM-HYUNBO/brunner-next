@@ -13,8 +13,6 @@ export default function Clips() {
         setThemeRef(themeRef.current);
     }, []);
 
-    // theme : 현재값 가져오기 getter
-    // setTheme : 현재값 바꾸기 setter
     const { theme, setTheme } = useTheme()
     const themeRef = useRef(theme);
 

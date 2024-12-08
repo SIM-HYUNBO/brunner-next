@@ -3,7 +3,6 @@
 import Layout from '@/components/layout'
 import Head from 'next/head'
 import BodySection from '@/components/bodySection'
-
 import AdminContent from './content/adminContent'
 
 export default function AdminPage() {

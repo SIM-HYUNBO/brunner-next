@@ -15,11 +15,7 @@ import RealtimeChart from "./realtimeChart";
 import AssetContent from "./assetContent";
 
 const StockContent = () => {
-  // ApexCharts dynamic import
   const ApexCharts = dynamic(() => import("react-apexcharts"), { ssr: false });
-
-  // 로딩 & 메시지 박스
-  // {
   const [loading, setLoading] = useState(false);
   const [modalContent, setModalContent] = useState({
     isOpen: false,

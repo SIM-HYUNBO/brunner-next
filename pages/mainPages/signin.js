@@ -12,8 +12,7 @@ import DivContainer from "@/components/divContainer";
 import { useTheme } from "next-themes";
 
 export default function Signin() {
-  // 로딩 & 메시지 박스
-  // {
+
   const [loading, setLoading] = useState(false);
   const [modalContent, setModalContent] = useState({
     isOpen: false,
@@ -45,15 +44,12 @@ export default function Signin() {
       onClose: () => { },
     });
   };
-  // }
 
   useEffect(() => {
     setThemeRef(themeRef.current);
     userIdRef.current.focus();
   }, []);
 
-  // theme : 현재값 가져오기 getter
-  // setTheme : 현재값 바꾸기 setter
   const { theme, setTheme } = useTheme();
   const themeRef = useRef(theme);
 
