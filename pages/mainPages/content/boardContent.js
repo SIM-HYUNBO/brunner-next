@@ -4,7 +4,7 @@ import React, { useState, useEffect } from "react";
 import RequestServer from "@/components/requestServer";
 import * as userInfo from "@/components/userInfo";
 import BrunnerMessageBox from "@/components/brunnerMessageBox";
-import * as Constants from "@/components/constants";
+import * as constants from "@/components/constants";
 
 function Board(boardInfo) {
 
@@ -34,7 +34,7 @@ function Board(boardInfo) {
   const closeModal = () => {
     setModalContent({
       isOpen: false,
-      message: "",
+      message: constants.EMPTY_STRING,
       onConfirm: () => { },
       onClose: () => { },
     });
@@ -55,7 +55,7 @@ function Board(boardInfo) {
     var jResponse = null;
 
     try {
-      jRequest.commandName = Constants.COMMAND_BOARD_GET_POST_LIST;
+      jRequest.commandName = constants.COMMAND_TB_COR_POST_INFO_SELECTALL;
       jRequest.systemCode = process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE;
       jRequest.postInfo = { postType: `TICKER_INFO-${boardType}` }; // 게시판 유형을 TICKER_INFO-{종모코드}로 함
 
@@ -94,7 +94,7 @@ function Board(boardInfo) {
           userId: userId ? userId : "anonymous user",
         };
 
-        jRequest.commandName = "board.addPost";
+        jRequest.commandName = constants.COMMAND_TB_COR_POST_INFO_INSERTONE;
         jRequest.systemCode = process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE;
         jRequest.postInfo = newPost;
 
@@ -123,11 +123,11 @@ function Board(boardInfo) {
 
       const userId = userInfo.getLoginUserId();
       if (!userId) {
-        openModal(Constants.MESSAGE_NO_PERMISSION);
+        openModal(constants.MESSAGE_NO_PERMISSION);
         return;
       }
 
-      jRequest.commandName = "board.editPost";
+      jRequest.commandName = constants.COMMAND_TB_COR_POST_INFO_UPDATEONE;
       jRequest.systemCode = process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE;
       jRequest.postInfo = {
         postId: postId,
@@ -167,11 +167,11 @@ function Board(boardInfo) {
 
       const userId = userInfo.getLoginUserId();
       if (!userId) {
-        openModal(Constants.MESSAGE_NO_PERMISSION);
+        openModal(constants.MESSAGE_NO_PERMISSION);
         return;
       }
 
-      jRequest.commandName = "board.deletePost";
+      jRequest.commandName = constants.COMMAND_TB_COR_POST_INFO_DELETEONE;
       jRequest.systemCode = process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE;
 
       jRequest.postInfo = {
@@ -203,7 +203,7 @@ function Board(boardInfo) {
 
       const userId = userInfo.getLoginUserId();
 
-      jRequest.commandName = "board.addPostComment";
+      jRequest.commandName = constants.COMMAND_TB_COR_POST_COMMENT_INFO_INSERTONE;
       jRequest.systemCode = process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE;
 
       jRequest.commentInfo = {
@@ -241,13 +241,13 @@ function Board(boardInfo) {
 
       const userId = userInfo.getLoginUserId();
       if (!userId) {
-        openModal(Constants.MESSAGE_NO_PERMISSION);
+        openModal(constants.MESSAGE_NO_PERMISSION);
         return;
       }
 
       const post = posts.find((post) => post.post_id === postId);
 
-      jRequest.commandName = "board.editPostComment";
+      jRequest.commandName = constants.COMMAND_TB_COR_POST_COMMENT_INFO_UPDATEONE;
       jRequest.systemCode = process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE;
       jRequest.commentInfo = {
         postId: postId,
@@ -287,11 +287,11 @@ function Board(boardInfo) {
 
       const userId = userInfo.getLoginUserId();
       if (!userId) {
-        openModal(Constants.MESSAGE_NO_PERMISSION);
+        openModal(constants.MESSAGE_NO_PERMISSION);
         return;
       }
 
-      jRequest.commandName = "board.deletePostComment";
+      jRequest.commandName = constants.COMMAND_TB_COR_POST_COMMENT_INFO_DELETEONE;
       jRequest.systemCode = process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE;
 
       jRequest.commentInfo = {
@@ -519,7 +519,7 @@ function BoardContent({
               onClick={() => {
                 const userId = userInfo.getLoginUserId();
                 if (!userId) {
-                  openModal(Constants.MESSAGE_NO_PERMISSION);
+                  openModal(constants.MESSAGE_NO_PERMISSION);
                   return;
                 }
                 setIsEditingPost(true);
@@ -532,7 +532,7 @@ function BoardContent({
               onClick={() => {
                 const userId = userInfo.getLoginUserId();
                 if (!userId) {
-                  openModal(Constants.MESSAGE_NO_PERMISSION);
+                  openModal(constants.MESSAGE_NO_PERMISSION);
                   return;
                 }
                 handleDeletePost();
@@ -587,7 +587,7 @@ function BoardContent({
                     onClick={() => {
                       const userId = userInfo.getLoginUserId();
                       if (!userId) {
-                        openModal(Constants.MESSAGE_NO_PERMISSION);
+                        openModal(constants.MESSAGE_NO_PERMISSION);
                         return;
                       }
                       setEditingCommentId(comment.comment_id);
@@ -601,7 +601,7 @@ function BoardContent({
                     onClick={() => {
                       const userId = userInfo.getLoginUserId();
                       if (!userId) {
-                        openModal(Constants.MESSAGE_NO_PERMISSION);
+                        openModal(constants.MESSAGE_NO_PERMISSION);
                         return;
                       }
                       handleDeleteComment(comment.comment_id);

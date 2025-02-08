@@ -4,7 +4,7 @@ import { useState, useRef, useEffect, useCallback } from "react";
 import dynamic from "next/dynamic";
 import RequestServer from "@/components/requestServer";
 import BrunnerMessageBox from "@/components/brunnerMessageBox";
-import * as Constants from "@/components/constants";
+import * as constants from "@/components/constants";
 
 const ApexCharts = dynamic(() => import("react-apexcharts"), { ssr: false });
 
@@ -13,7 +13,7 @@ const RealtimeChart = ({ updateCurrentPrice }) => {
   const [loading, setLoading] = useState(false);
   const [modalContent, setModalContent] = useState({
     isOpen: false,
-    message: "",
+    message: constants.EMPTY_STRING,
     onConfirm: () => { },
     onClose: () => { },
   });
@@ -37,7 +37,7 @@ const RealtimeChart = ({ updateCurrentPrice }) => {
   const closeModal = () => {
     setModalContent({
       isOpen: false,
-      message: "",
+      message: constants.EMPTY_STRING,
       onConfirm: () => { },
       onClose: () => { },
     });
@@ -286,7 +286,7 @@ const RealtimeChart = ({ updateCurrentPrice }) => {
         prevTickerCode = currentTickerRef.current;
 
         const jRequest = {
-          commandName: Constants.COMMAND_STOCK_GET_REALTIME_STOCK_INFO,
+          commandName: constants.COMMAND_STOCK_GET_REALTIME_STOCK_INFO,
           systemCode: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE,
           tickerCode: currentTickerRef.current,
         };
@@ -314,7 +314,7 @@ const RealtimeChart = ({ updateCurrentPrice }) => {
       }
     } catch (err) {
       openModal(
-        err instanceof Error ? err.message : Constants.MESSAGE_UNKNOWN_ERROR
+        err instanceof Error ? err.message : constants.MESSAGE_UNKNOWN_ERROR
       );
     }
   };
@@ -323,7 +323,7 @@ const RealtimeChart = ({ updateCurrentPrice }) => {
     try {
       /* 최근 데이터 100개 요청 */
       const jRequest = {
-        commandName: Constants.COMMAND_STOCK_GET_LATEST_STOCK_INFO,
+        commandName: constants.COMMAND_STOCK_GET_LATEST_STOCK_INFO,
         systemCode: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE,
         tickerCode: currentTickerRef.current,
         dataCount: -100,

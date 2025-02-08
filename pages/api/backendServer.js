@@ -1,18 +1,18 @@
 `use strict`
 
 import logger from "./winston/logger"
-import * as Constants from "@/components/constants"
+import * as constants from "@/components/constants"
 import * as database from "./biz/database/database"
-import * as serviceSQL from './biz/serviceSQL'
-import * as security from './biz/security'
-import * as asset from './biz/asset'
-import * as stock from './biz/stock'
-import * as board from './biz/board'
+import * as serviceSQL from './biz/tb_cor_sql_info'
+import * as security from './biz/tb_cor_user_mst'
+import * as asset from './biz/tb_cor_income_hist'
+import * as stock from './biz/tb_cor_ticker_info'
+import * as board from './biz/tb_cor_post_info'
 
 async function initialize() {
     var serviceSql = null;
     if (!process.serviceSQL)
-        serviceSql = await serviceSQL.loadAllSQL();
+        serviceSql = await serviceSQL.loadAll();
     else
         serviceSql = process.serviceSQL;
 
@@ -39,11 +39,11 @@ export default async (req, res) => {
             loadedSQLSize = await initialize();
         }
         else {
-            throw Error(Constants.MESSAGE_SERVER_NOW_INITIALIZING);
+            throw Error(constants.MESSAGE_SERVER_NOW_INITIALIZING);
         }
 
         if (!process.serviceSQL || process.serviceSQL.length == 0) {
-            throw Error(Constants.MESSAGE_SERVER_NOW_INITIALIZING);
+            throw Error(constants.MESSAGE_SERVER_NOW_INITIALIZING);
         }
 
         remoteIp = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
@@ -68,7 +68,7 @@ export default async (req, res) => {
         jResponse._durationMs = durationMs;
         res.send(`${JSON.stringify(jResponse)}`);
 
-        if (commandName !== Constants.COMMAND_STOCK_GET_REALTIME_STOCK_INFO)
+        if (commandName !== constants.COMMAND_STOCK_GET_REALTIME_STOCK_INFO)
             await saveTxnHistory(remoteIp, txnId, jRequest, jResponse);
 
         logger.warn(`END TXN ${(!commandName) ? "" : commandName} in ${durationMs} milliseconds.\n`)
@@ -93,7 +93,7 @@ const executeService = async (method, req) => {
     } else {
         jResponse = JSON.stringify({
             error_code: -1,
-            error_message: `[${commandName}] ${Constants.MESSAGE_SERVER_NOT_SUPPORTED_MODULE}`
+            error_message: `[${commandName}] ${constants.MESSAGE_SERVER_NOT_SUPPORTED_MODULE}`
         })
     }
     return jResponse;

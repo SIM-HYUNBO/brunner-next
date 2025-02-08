@@ -1,26 +1,26 @@
 `use strict`
 
 import logger from "../winston/logger"
+import * as constants from '@/components/constants'
 import * as database from './database/database'
-import * as serviceSQL from './serviceSQL'
-import * as Constants from '@/components/constants'
+import * as db_cor_sql_info from './tb_cor_sql_info'
 
 const executeService = (txnId, jRequest) => {
     var jResponse = {};
 
     try {
         switch (jRequest.commandName) {
-            case Constants.COMMAND_ASSET_GET_INCOME_HISTORY:
-                jResponse = getIncomeHistory(txnId, jRequest);
+            case constants.COMMAND_TB_COR_INCOME_HIST_INSERTONE:
+                jResponse = insertOne(txnId, jRequest);
                 break;
-            case Constants.COMMAND_ASSET_UPDATE_INCOME:
-                jResponse = updateIncome(txnId, jRequest);
+            case constants.COMMAND_TB_COR_INCOME_HIST_UPDATEONE:
+                jResponse = updateOne(txnId, jRequest);
                 break;
-            case Constants.COMMAND_ASSET_DELETE_INCOME:
-                jResponse = deleteIncome(txnId, jRequest);
+            case constants.COMMAND_TB_COR_INCOME_HIST_DELETEONE:
+                jResponse = deleteOne(txnId, jRequest);
                 break;
-            case Constants.COMMAND_ASSET_ADD_INCOME:
-                jResponse = addIncome(txnId, jRequest);
+            case constants.COMMAND_TB_COR_INCOME_HIST_SELECTONE:
+                jResponse = selectOne(txnId, jRequest);
                 break;
             default:
                 break;
@@ -32,14 +32,14 @@ const executeService = (txnId, jRequest) => {
     }
 }
 
-const addIncome = async (txnId, jRequest) => {
+const insertOne = async (txnId, jRequest) => {
     var jResponse = {};
 
     try {
         jResponse.commanaName = jRequest.commandName;
 
         var sql = null
-        sql = await serviceSQL.getSQL00('insert_TB_COR_INCOME_HIST', 1);
+        sql = await db_cor_sql_info.getSQL00('insert_TB_COR_INCOME_HIST', 1);
         var insert_TB_COR_INCOME_HIST_01 = await database.executeSQL(sql,
             [
                 jRequest.systemCode,
@@ -50,11 +50,11 @@ const addIncome = async (txnId, jRequest) => {
 
         if (insert_TB_COR_INCOME_HIST_01.rowCount == 1) {
             jResponse.error_code = 0;
-            jResponse.error_message = Constants.EMPTY_STRING;
+            jResponse.error_message = constants.EMPTY_STRING;
         }
         else {
             jResponse.error_code = -1;
-            jResponse.error_message = Constants.MESSAGE_DATABASE_FAILED;
+            jResponse.error_message = constants.MESSAGE_DATABASE_FAILED;
 
         }
     } catch (e) {
@@ -66,14 +66,14 @@ const addIncome = async (txnId, jRequest) => {
     }
 };
 
-const getIncomeHistory = async (txnId, jRequest) => {
+const selectOne = async (txnId, jRequest) => {
     var jResponse = {};
 
     try {
         jResponse.commanaName = jRequest.commandName;
 
         var sql = null
-        sql = await serviceSQL.getSQL00('select_TB_COR_INCOME_HIST', 1);
+        sql = await db_cor_sql_info.getSQL00('select_TB_COR_INCOME_HIST', 1);
         var select_TB_COR_INCOME_HIST_01 = await database.executeSQL(sql,
             [
                 jRequest.systemCode,
@@ -83,7 +83,7 @@ const getIncomeHistory = async (txnId, jRequest) => {
         jResponse.incomeHistory = select_TB_COR_INCOME_HIST_01.rows;
 
         jResponse.error_code = 0;
-        jResponse.error_message = Constants.EMPTY_STRING;
+        jResponse.error_message = constants.EMPTY_STRING;
     } catch (e) {
         logger.error(e);
         jResponse.error_code = -3; // exception
@@ -93,14 +93,14 @@ const getIncomeHistory = async (txnId, jRequest) => {
     }
 };
 
-const deleteIncome = async (txnId, jRequest) => {
+const deleteOne = async (txnId, jRequest) => {
     var jResponse = {};
 
     try {
         jResponse.commanaName = jRequest.commandName;
 
         var sql = null
-        sql = await serviceSQL.getSQL00('delete_TB_COR_INCOME_HIST', 1);
+        sql = await db_cor_sql_info.getSQL00('delete_TB_COR_INCOME_HIST', 1);
         var delete_TB_COR_INCOME_HIST_01 = await database.executeSQL(sql,
             [
                 jRequest.historyId,
@@ -110,11 +110,11 @@ const deleteIncome = async (txnId, jRequest) => {
 
         if (delete_TB_COR_INCOME_HIST_01.rowCount === 1) {
             jResponse.error_code = 0;
-            jResponse.error_message = Constants.EMPTY_STRING;
+            jResponse.error_message = constants.EMPTY_STRING;
         }
         else {
             jResponse.error_code = -1;
-            jResponse.error_message = Constants.MESSAGE_DATABASE_FAILED;
+            jResponse.error_message = constants.MESSAGE_DATABASE_FAILED;
         }
     } catch (e) {
         logger.error(e);
@@ -125,14 +125,14 @@ const deleteIncome = async (txnId, jRequest) => {
     }
 };
 
-const updateIncome = async (txnId, jRequest) => {
+const updateOne = async (txnId, jRequest) => {
     var jResponse = {};
 
     try {
         jResponse.commanaName = jRequest.commandName;
 
         var sql = null
-        sql = await serviceSQL.getSQL00('update_TB_COR_INCOME_HIST', 1);
+        sql = await db_cor_sql_info.getSQL00('update_TB_COR_INCOME_HIST', 1);
         var update_TB_COR_INCOME_HIST_01 = await database.executeSQL(sql,
             [
                 jRequest.amount,
@@ -143,11 +143,11 @@ const updateIncome = async (txnId, jRequest) => {
 
         if (update_TB_COR_INCOME_HIST_01.rowCount === 1) {
             jResponse.error_code = 0;
-            jResponse.error_message = Constants.EMPTY_STRING;
+            jResponse.error_message = constants.EMPTY_STRING;
         }
         else {
             jResponse.error_code = -1;
-            jResponse.error_message = Constants.MESSAGE_DATABASE_FAILED;
+            jResponse.error_message = constants.MESSAGE_DATABASE_FAILED;
         }
     } catch (e) {
         logger.error(e);
