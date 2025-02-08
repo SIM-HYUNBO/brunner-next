@@ -1,6 +1,6 @@
 `use strict`
 
-// 푸시 테스트
+// 푸시 테스트2
 export const
     EMPTY_STRING = '',
 
