@@ -3,39 +3,39 @@
 import logger from "../winston/logger"
 import * as constants from '@/components/constants'
 import * as database from "./database/database"
-import * as serviceSQL from "./tb_cor_sql_info"
+import * as tb_cor_sql_info from "./tb_cor_sql_info"
 
 import bcrypt from "bcryptjs"
 import nodemailer from 'nodemailer';
 
-const executeService = (txnId, jRequest) => {
+const executeService = async (txnId, jRequest) => {
     var jResponse = {};
 
     try {
         switch (jRequest.commandName) {
-            case constants.COMMAND_SECURITY_SIGNUP:
-                jResponse = signup(txnId, jRequest);
+            case constants.commands.COMMAND_SECURITY_SIGNUP:
+                jResponse = await signup(txnId, jRequest);
                 break;
-            case constants.COMMAND_SECURITY_SIGNIN:
-                jResponse = signin(txnId, jRequest);
+            case constants.commands.COMMAND_SECURITY_SIGNIN:
+                jResponse = await signin(txnId, jRequest);
                 break;
-            case constants.COMMAND_SECURITY_SIGNOUT:
-                jResponse = signout(txnId, jRequest);
+            case constants.commands.COMMAND_SECURITY_SIGNOUT:
+                jResponse = await signout(txnId, jRequest);
                 break;
-            case constants.COMMAND_SECURITY_RESET_PASSWORD:
-                jResponse = resetPassword(txnId, jRequest);
+            case constants.commands.COMMAND_SECURITY_RESET_PASSWORD:
+                jResponse = await resetPassword(txnId, jRequest);
                 break;
-            case constants.COMMAND_SECURITY_DELETE_ACCOUNT:
-                jResponse = deleteAccount(txnId, jRequest);
+            case constants.commands.COMMAND_SECURITY_DELETE_ACCOUNT:
+                jResponse = await deleteAccount(txnId, jRequest);
                 break;
-            case constants.COMMAND_SECURITY_SEND_EMAIL_AUTHCODE:
-                jResponse = sendEMailAuthCode(txnId, jRequest);
+            case constants.commands.COMMAND_SECURITY_SEND_EMAIL_AUTHCODE:
+                jResponse = await sendEMailAuthCode(txnId, jRequest);
                 break;
             default:
                 break;
         }
     } catch (error) {
-        logger.error(error);
+        logger.error(`message:${error.message}\n stack:${error.stack}\n`);
     } finally {
         return jResponse;
     }
@@ -51,7 +51,7 @@ const signup = async (txnId, jRequest) => {
 
         if (!jRequest.userId) {
             jResponse.error_code = -2;
-            jResponse.error_message = `${constants.MESSAGE_REQUIRED_FIELD} [userId`;
+            jResponse.error_message = `${constants.messages.MESSAGE_REQUIRED_FIELD} [userId`;
             return jResponse;
         }
         if (jRequest.userId.length < 5 || jRequest.userId.length > 10) {
@@ -61,7 +61,7 @@ const signup = async (txnId, jRequest) => {
         }
         if (!jRequest.password) {
             jResponse.error_code = -2;
-            jResponse.error_message = `${constants.MESSAGE_REQUIRED_FIELD} [password]`;
+            jResponse.error_message = `${constants.messages.MESSAGE_REQUIRED_FIELD} [password]`;
             return jResponse;
         }
 
@@ -75,7 +75,7 @@ const signup = async (txnId, jRequest) => {
         }
         if (!jRequest.userName) {
             jResponse.error_code = -2;
-            jResponse.error_message = `${constants.MESSAGE_REQUIRED_FIELD} [userName]`;
+            jResponse.error_message = `${constants.messages.MESSAGE_REQUIRED_FIELD} [userName]`;
             return jResponse;
         }
         if (jRequest.userName.length < 2 || jRequest.userName.length > 10) {
@@ -85,7 +85,7 @@ const signup = async (txnId, jRequest) => {
         }
         if (!jRequest.phoneNumber) {
             jResponse.error_code = -2;
-            jResponse.error_message = `${constants.MESSAGE_REQUIRED_FIELD} [phoneNumber]`;
+            jResponse.error_message = `${constants.messages.MESSAGE_REQUIRED_FIELD} [phoneNumber]`;
             return jResponse;
         }
         if (verifyTelNo(jRequest.phoneNumber) == false) {
@@ -95,7 +95,7 @@ const signup = async (txnId, jRequest) => {
         }
         if (!jRequest.email) {
             jResponse.error_code = -2;
-            jResponse.error_message = `${constants.MESSAGE_REQUIRED_FIELD} [email]`;
+            jResponse.error_message = `${constants.messages.MESSAGE_REQUIRED_FIELD} [email]`;
             return jResponse;
         }
         if (verifyEMail(jRequest.email) == false) {
@@ -105,16 +105,16 @@ const signup = async (txnId, jRequest) => {
         }
         if (!jRequest.registerNo) {
             jResponse.error_code = -2;
-            jResponse.error_message = `${constants.MESSAGE_REQUIRED_FIELD} [registerNo]`;
+            jResponse.error_message = `${constants.messages.MESSAGE_REQUIRED_FIELD} [registerNo]`;
             return jResponse;
         }
         if (!jRequest.address) {
             jResponse.error_code = -2;
-            jResponse.error_message = `${constants.MESSAGE_REQUIRED_FIELD} [address]`;
+            jResponse.error_message = `${constants.messages.MESSAGE_REQUIRED_FIELD} [address]`;
             return jResponse;
         }
 
-        var sql = await serviceSQL.getSQL00(`select_TB_COR_USER_MST`, 1);
+        var sql = await tb_cor_sql_info.getSQL00(`select_TB_COR_USER_MST`, 1);
         var select_TB_COR_USER_MST_01 = await database.executeSQL(sql,
             [
                 jRequest.systemCode,
@@ -127,7 +127,7 @@ const signup = async (txnId, jRequest) => {
             return jResponse;
         }
 
-        sql = await serviceSQL.getSQL00(`insert_TB_COR_USER_MST`, 1);
+        sql = await tb_cor_sql_info.getSQL00(`insert_TB_COR_USER_MST`, 1);
         var insert_TB_COR_USER_MST_01 = await database.executeSQL(sql,
             [
                 jRequest.systemCode,
@@ -146,7 +146,7 @@ const signup = async (txnId, jRequest) => {
 
         if (insert_TB_COR_USER_MST_01.rowCount == 1) {
             jResponse.error_code = 0;
-            jResponse.error_message = constants.EMPTY_STRING;
+            jResponse.error_message = constants.messages.EMPTY_STRING;
         }
         else {
             jResponse.error_code = -3;
@@ -168,7 +168,7 @@ const signin = async (txnId, jRequest) => {
         jResponse.commanaName = jRequest.commandName;
 
         var sql = null
-        sql = await serviceSQL.getSQL00(`select_TB_COR_USER_MST`, 2);
+        sql = await tb_cor_sql_info.getSQL00(`select_TB_COR_USER_MST`, 2);
         var select_TB_COR_USER_MST_02 = await database.executeSQL(sql,
             [
                 jRequest.systemCode,
@@ -180,10 +180,14 @@ const signin = async (txnId, jRequest) => {
 
             // 비밀번호 비교
             const storedHashedPassword = select_TB_COR_USER_MST_02.rows[0].password;
+
+            logger.warn(`PASSWORD Comparing:\n${jRequest.password} and ${storedHashedPassword}\n`);
             const isMatch = await bcrypt.compare(jRequest.password, storedHashedPassword);
             if (isMatch) {
+                logger.warn(`PASSWORD MATCH\n`);
+
                 jResponse.error_code = 0;
-                jResponse.error_message = constants.EMPTY_STRING;
+                jResponse.error_message = constants.messages.EMPTY_STRING;
 
                 jResponse.userId = select_TB_COR_USER_MST_02.rows[0].user_id;
                 jResponse.userName = select_TB_COR_USER_MST_02.rows[0].user_name;
@@ -201,6 +205,7 @@ const signin = async (txnId, jRequest) => {
         jResponse.error_code = -3; // exception
         jResponse.error_message = e.message
     } finally {
+        logger.warn(`return ${JSON.stringify(jResponse)}\n`);
         return jResponse;
     }
 };
@@ -214,30 +219,30 @@ const resetPassword = async (txnId, jRequest) => {
 
         if (jRequest.userId === ``) {
             jResponse.error_code = -2;
-            jResponse.error_message = `${constants.MESSAGE_REQUIRED_FIELD} [userId]`;
+            jResponse.error_message = `${constants.messages.MESSAGE_REQUIRED_FIELD} [userId]`;
             return jResponse;
         }
         if (jRequest.phoneNumber === ``) {
             jResponse.error_code = -2;
-            jResponse.error_message = `${constants.MESSAGE_REQUIRED_FIELD} [phoneNumber]`;
+            jResponse.error_message = `${constants.messages.MESSAGE_REQUIRED_FIELD} [phoneNumber]`;
             return jResponse;
 
         }
 
         if (jRequest.authCode === '') {
             jResponse.error_code = -2;
-            jResponse.error_message = `${constants.MESSAGE_REQUIRED_FIELD} [authCode]`;
+            jResponse.error_message = `${constants.messages.MESSAGE_REQUIRED_FIELD} [authCode]`;
             return jResponse;
         }
 
         if (jRequest.newPassword === ``) {
             jResponse.error_code = -2;
-            jResponse.error_message = `${constants.MESSAGE_REQUIRED_FIELD} [newPassword]`;
+            jResponse.error_message = `${constants.messages.MESSAGE_REQUIRED_FIELD} [newPassword]`;
             return jResponse;
         }
         if (jRequest.confirmPassword === ``) {
             jResponse.error_code = -2;
-            jResponse.error_message = `${constants.MESSAGE_REQUIRED_FIELD} [confirmPassword]`;
+            jResponse.error_message = `${constants.messages.MESSAGE_REQUIRED_FIELD} [confirmPassword]`;
             return jResponse;
 
         }
@@ -247,7 +252,7 @@ const resetPassword = async (txnId, jRequest) => {
             return jResponse;
         }
 
-        var sql = await serviceSQL.getSQL00(`select_TB_COR_USER_MST`, 2);
+        var sql = await tb_cor_sql_info.getSQL00(`select_TB_COR_USER_MST`, 2);
         var select_TB_COR_USER_MST_02 = await database.executeSQL(sql,
             [
                 jRequest.systemCode,
@@ -281,7 +286,7 @@ const resetPassword = async (txnId, jRequest) => {
         }
         else {
             const hashedNewPassword = await bcrypt.hash(jRequest.newPassword, 10);
-            var sql = await serviceSQL.getSQL00(`update_TB_COR_USER_MST`, 1);
+            var sql = await tb_cor_sql_info.getSQL00(`update_TB_COR_USER_MST`, 1);
             var update_TB_COR_USER_MST_01 = await database.executeSQL(sql,
                 [
                     hashedNewPassword,
@@ -320,23 +325,23 @@ const deleteAccount = async (txnId, jRequest) => {
 
         if (jRequest.userId === ``) {
             jResponse.error_code = -2;
-            jResponse.error_message = `${constants.MESSAGE_REQUIRED_FIELD} [userId]`;
+            jResponse.error_message = `${constants.messages.MESSAGE_REQUIRED_FIELD} [userId]`;
             return jResponse;
         }
         if (jRequest.phoneNumber === ``) {
             jResponse.error_code = -2;
-            jResponse.error_message = `${constants.MESSAGE_REQUIRED_FIELD} [phoneNumber]`;
+            jResponse.error_message = `${constants.messages.MESSAGE_REQUIRED_FIELD} [phoneNumber]`;
             return jResponse;
 
         }
 
         if (jRequest.authCode === '') {
             jResponse.error_code = -2;
-            jResponse.error_message = `${constants.MESSAGE_REQUIRED_FIELD} [authCode]`;
+            jResponse.error_message = `${constants.messages.MESSAGE_REQUIRED_FIELD} [authCode]`;
             return jResponse;
         }
 
-        var sql = await serviceSQL.getSQL00(`select_TB_COR_USER_MST`, 2);
+        var sql = await tb_cor_sql_info.getSQL00(`select_TB_COR_USER_MST`, 2);
         var select_TB_COR_USER_MST_02 = await database.executeSQL(sql,
             [
                 jRequest.systemCode,
@@ -358,7 +363,7 @@ const deleteAccount = async (txnId, jRequest) => {
             return jResponse;
         }
 
-        var sql = await serviceSQL.getSQL00(`update_TB_COR_USER_MST`, 3);
+        var sql = await tb_cor_sql_info.getSQL00(`update_TB_COR_USER_MST`, 3);
         var update_TB_COR_USER_MST_03 = await database.executeSQL(sql,
             [
                 jRequest.systemCode,
@@ -394,23 +399,23 @@ const sendEMailAuthCode = async (txnId, jRequest) => {
 
         if (jRequest.userId === ``) {
             jResponse.error_code = -2;
-            jResponse.error_message = `${constants.MESSAGE_REQUIRED_FIELD} [userId]`;
+            jResponse.error_message = `${constants.messages.MESSAGE_REQUIRED_FIELD} [userId]`;
             return jResponse;
         }
         if (jRequest.phoneNumber === ``) {
             jResponse.error_code = -2;
-            jResponse.error_message = `${constants.MESSAGE_REQUIRED_FIELD} [phoneNumber]`;
+            jResponse.error_message = `${constants.messages.MESSAGE_REQUIRED_FIELD} [phoneNumber]`;
             return jResponse;
 
         }
         if (jRequest.email === ``) {
             jResponse.error_code = -2;
-            jResponse.error_message = `${constants.MESSAGE_REQUIRED_FIELD} [email]`;
+            jResponse.error_message = `${constants.messages.MESSAGE_REQUIRED_FIELD} [email]`;
             return jResponse;
 
         }
 
-        var sql = await serviceSQL.getSQL00(`select_TB_COR_USER_MST`, 3);
+        var sql = await tb_cor_sql_info.getSQL00(`select_TB_COR_USER_MST`, 3);
         var select_TB_COR_USER_MST_03 = await database.executeSQL(sql,
             [
                 jRequest.systemCode,
@@ -441,7 +446,7 @@ const sendEMailAuthCode = async (txnId, jRequest) => {
                 })
 
                 // 해당 인증코드를 DB에 저장
-                var sql = await serviceSQL.getSQL00(`update_TB_COR_USER_MST`, 2);
+                var sql = await tb_cor_sql_info.getSQL00(`update_TB_COR_USER_MST`, 2);
                 var update_TB_COR_USER_MST_02 = await database.executeSQL(sql,
                     [
                         authCode,
@@ -507,7 +512,7 @@ const sendEmail = async (mailOptions) => {
         const info = await transporter.sendMail(mailOptions);
         console.log('Email sent:', info.response);
     } catch (error) {
-        console.error('Error sending email:', error);
+        console.error(`Error sending email: message:${error.message}\n stack:${error.stack}\n`);
     }
 };
 
@@ -519,7 +524,7 @@ const signout = (txnId, jRequest) => {
         jResponse.__REMOTE_CLIENT_IP = jRequest.__REMOTE_CLIENT_IP;
 
         jResponse.error_code = 0;
-        jResponse.error_message = constants.EMPTY_STRING;
+        jResponse.error_message = constants.messages.EMPTY_STRING;
     } catch (e) {
         logger.error(e);
         jResponse.error_code = -3; // exception

@@ -5,28 +5,28 @@ import * as constants from '@/components/constants'
 import * as database from './database/database'
 import * as db_cor_sql_info from './tb_cor_sql_info'
 
-const executeService = (txnId, jRequest) => {
+const executeService = async (txnId, jRequest) => {
     var jResponse = {};
 
     try {
         switch (jRequest.commandName) {
-            case constants.COMMAND_TB_COR_INCOME_HIST_INSERTONE:
-                jResponse = insertOne(txnId, jRequest);
+            case constants.commands.COMMAND_TB_COR_INCOME_HIST_INSERTONE:
+                jResponse = await insertOne(txnId, jRequest);
                 break;
-            case constants.COMMAND_TB_COR_INCOME_HIST_UPDATEONE:
-                jResponse = updateOne(txnId, jRequest);
+            case constants.commands.COMMAND_TB_COR_INCOME_HIST_UPDATEONE:
+                jResponse = await updateOne(txnId, jRequest);
                 break;
-            case constants.COMMAND_TB_COR_INCOME_HIST_DELETEONE:
-                jResponse = deleteOne(txnId, jRequest);
+            case constants.commands.COMMAND_TB_COR_INCOME_HIST_DELETEONE:
+                jResponse = await deleteOne(txnId, jRequest);
                 break;
-            case constants.COMMAND_TB_COR_INCOME_HIST_SELECTONE:
-                jResponse = selectOne(txnId, jRequest);
+            case constants.commands.COMMAND_TB_COR_INCOME_HIST_SELECTBYUSERID:
+                jResponse = await selectByUserId(txnId, jRequest);
                 break;
             default:
                 break;
         }
     } catch (error) {
-        logger.error(error);
+        logger.error(`message:${error.message}\n stack:${error.stack}\n`);     
     } finally {
         return jResponse;
     }
@@ -50,11 +50,11 @@ const insertOne = async (txnId, jRequest) => {
 
         if (insert_TB_COR_INCOME_HIST_01.rowCount == 1) {
             jResponse.error_code = 0;
-            jResponse.error_message = constants.EMPTY_STRING;
+            jResponse.error_message = constants.messages.EMPTY_STRING;
         }
         else {
             jResponse.error_code = -1;
-            jResponse.error_message = constants.MESSAGE_DATABASE_FAILED;
+            jResponse.error_message = constants.messages.MESSAGE_DATABASE_FAILED;
 
         }
     } catch (e) {
@@ -66,7 +66,7 @@ const insertOne = async (txnId, jRequest) => {
     }
 };
 
-const selectOne = async (txnId, jRequest) => {
+const selectByUserId = async (txnId, jRequest) => {
     var jResponse = {};
 
     try {
@@ -83,7 +83,7 @@ const selectOne = async (txnId, jRequest) => {
         jResponse.incomeHistory = select_TB_COR_INCOME_HIST_01.rows;
 
         jResponse.error_code = 0;
-        jResponse.error_message = constants.EMPTY_STRING;
+        jResponse.error_message = constants.messages.EMPTY_STRING;
     } catch (e) {
         logger.error(e);
         jResponse.error_code = -3; // exception
@@ -110,11 +110,11 @@ const deleteOne = async (txnId, jRequest) => {
 
         if (delete_TB_COR_INCOME_HIST_01.rowCount === 1) {
             jResponse.error_code = 0;
-            jResponse.error_message = constants.EMPTY_STRING;
+            jResponse.error_message = constants.messages.EMPTY_STRING;
         }
         else {
             jResponse.error_code = -1;
-            jResponse.error_message = constants.MESSAGE_DATABASE_FAILED;
+            jResponse.error_message = constants.messages.MESSAGE_DATABASE_FAILED;
         }
     } catch (e) {
         logger.error(e);
@@ -143,11 +143,11 @@ const updateOne = async (txnId, jRequest) => {
 
         if (update_TB_COR_INCOME_HIST_01.rowCount === 1) {
             jResponse.error_code = 0;
-            jResponse.error_message = constants.EMPTY_STRING;
+            jResponse.error_message = constants.messages.EMPTY_STRING;
         }
         else {
             jResponse.error_code = -1;
-            jResponse.error_message = constants.MESSAGE_DATABASE_FAILED;
+            jResponse.error_message = constants.messages.MESSAGE_DATABASE_FAILED;
         }
     } catch (e) {
         logger.error(e);

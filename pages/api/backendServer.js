@@ -3,7 +3,7 @@
 import logger from "./winston/logger"
 import * as constants from "@/components/constants"
 import * as database from "./biz/database/database"
-import * as serviceSQL from './biz/tb_cor_sql_info'
+import * as tb_cor_sql_info from './biz/tb_cor_sql_info'
 import * as security from './biz/tb_cor_user_mst'
 import * as asset from './biz/tb_cor_income_hist'
 import * as stock from './biz/tb_cor_ticker_info'
@@ -12,7 +12,7 @@ import * as board from './biz/tb_cor_post_info'
 async function initialize() {
     var serviceSql = null;
     if (!process.serviceSQL)
-        serviceSql = await serviceSQL.loadAll();
+        serviceSql = await tb_cor_sql_info.loadAll();
     else
         serviceSql = process.serviceSQL;
 
@@ -22,10 +22,10 @@ async function initialize() {
 var sql_loading = false;
 
 export default async (req, res) => {
-    const response = {};
+    var response = null;
     var remoteIp = null;
     var jRequest = null;
-    var jResponse = null;
+    var jResponse = {};
     var commandName = null;
     var txnId = null;
     var startTxnTime = null;
@@ -39,11 +39,11 @@ export default async (req, res) => {
             loadedSQLSize = await initialize();
         }
         else {
-            throw Error(constants.MESSAGE_SERVER_NOW_INITIALIZING);
+            throw Error(constants.messages.MESSAGE_SERVER_NOW_INITIALIZING);
         }
 
         if (!process.serviceSQL || process.serviceSQL.length == 0) {
-            throw Error(constants.MESSAGE_SERVER_NOW_INITIALIZING);
+            throw Error(constants.messages.MESSAGE_SERVER_NOW_INITIALIZING);
         }
 
         remoteIp = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
@@ -51,27 +51,33 @@ export default async (req, res) => {
         txnId = await generateTxnId();
         commandName = jRequest.commandName;
         logger.warn(`START TXN ${commandName}\n`);
-        req.body._txnId = txnId;
+        jRequest._txnId = txnId;
         logger.info(`method:${req.method} from ${remoteIp}\n requestBody:${JSON.stringify(req.body)}\n`);
         startTxnTime = new Date();
 
-        jResponse = await executeService(req.method, req);
+        response = await executeService(req.method, req);
+        if(response && constants.isJsonObject(response))
+            jResponse= response;
+        else
+            jResponse = JSON.parse(response.toString())
     }
     catch (e) {
+        logger.error(`${e}\n`);
         jResponse = e;
     }
     finally {
         endTxnTime = new Date();
-
-        jResponse._txnId = txnId;
         durationMs = endTxnTime - startTxnTime;
+        
+        jResponse._txnId = txnId;
         jResponse._durationMs = durationMs;
+
         res.send(`${JSON.stringify(jResponse)}`);
 
-        if (commandName !== constants.COMMAND_STOCK_GET_REALTIME_STOCK_INFO)
+        if (commandName !== constants.commands.COMMAND_STOCK_GET_REALTIME_STOCK_INFO)
             await saveTxnHistory(remoteIp, txnId, jRequest, jResponse);
 
-        logger.warn(`END TXN ${(!commandName) ? "" : commandName} in ${durationMs} milliseconds.\n`)
+        logger.warn(`END TXN ${(!commandName) ? "" : commandName} in ${durationMs} milliseconds.\n response: ${JSON.stringify(jResponse)}\n`)
     }
 }
 
@@ -80,20 +86,22 @@ const executeService = async (method, req) => {
     var jRequest = method === "GET" ? JSON.parse(req.params.requestJson) : method === "POST" ? req.body : null;
     const commandName = jRequest.commandName;
 
-    if (commandName.startsWith('security.')) {
+    if (commandName.startsWith('tb_cor_user_mst.')) {
         jResponse = await security.executeService(req.body._txnId, jRequest);
-    } else if (commandName.startsWith('serviceSQL.')) {
-        jResponse = await serviceSQL.executeService(req.body._txnId, jRequest);
-    } else if (commandName.startsWith('asset.')) {
+    } else if (commandName.startsWith('tb_cor_sql_info.')) {
+        jResponse = await tb_cor_sql_info.executeService(req.body._txnId, jRequest);
+    } else if (commandName.startsWith('tb_cor_income_hist.')) {
         jResponse = await asset.executeService(req.body._txnId, jRequest);
-    } else if (commandName.startsWith('stock.')) {
+    } else if (commandName.startsWith('tb_cor_ticker_info.')) {
         jResponse = await stock.executeService(req.body._txnId, jRequest);
-    } else if (commandName.startsWith('board.')) {
+    } else if (commandName.startsWith('tb_cor_post_info.')) {
+        jResponse = await board.executeService(req.body._txnId, jRequest);
+    } else if (commandName.startsWith('tb_cor_post_comment_info.')) {
         jResponse = await board.executeService(req.body._txnId, jRequest);
     } else {
         jResponse = JSON.stringify({
             error_code: -1,
-            error_message: `[${commandName}] ${constants.MESSAGE_SERVER_NOT_SUPPORTED_MODULE}`
+            error_message: `[${commandName}] ${constants.messages.MESSAGE_SERVER_NOT_SUPPORTED_MODULE}`
         })
     }
     return jResponse;
@@ -118,7 +126,7 @@ const generateTxnId = async () => {
 }
 
 const saveTxnHistory = async (remoteIp, txnId, jRequest, jResponse) => {
-    var sql = await serviceSQL.getSQL00('insert_TB_COR_TXN_HIST', 1);
+    var sql = await tb_cor_sql_info.getSQL00('insert_TB_COR_TXN_HIST', 1);
     var insert_TB_COR_TXN_HIST_01 = await database.executeSQL(sql,
         [
             txnId,
@@ -132,7 +140,7 @@ const saveTxnHistory = async (remoteIp, txnId, jRequest, jResponse) => {
     }
     else {
         // 오래된 이력은 여기서 삭제
-        sql = await serviceSQL.getSQL00('delete_TB_COR_TXN_HIST', 1);
+        sql = await tb_cor_sql_info.getSQL00('delete_TB_COR_TXN_HIST', 1);
         var delete_TB_COR_TXN_HIST_01 = await database.executeSQL(sql,
             [
             ]);

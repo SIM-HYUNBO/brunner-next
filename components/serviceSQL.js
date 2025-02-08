@@ -126,7 +126,7 @@ const ServiceSQL = () => {
 
     try {
       const jRequest = {
-        commandName: constants.COMMAND_TB_COR_SQL_INFO_SELECTALL,
+        commandName: constants.commands.COMMAND_TB_COR_SQL_INFO_SELECTALL,
         systemCode: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE,
         userId: userId,
       };
@@ -152,7 +152,8 @@ const ServiceSQL = () => {
       setIsCreating(false);
     } catch (error) {
       setLoading(false); // 데이터 로딩 끝
-      openModal(error.toString());
+      openModal(error.message);
+      console.error(`message:${error.message}\n stack:${error.stack}\n`);
     }
   };
 
@@ -167,7 +168,7 @@ const ServiceSQL = () => {
         `${form.system_code} ${form.sql_name} ${form.sql_seq} ${form.sql_content}`
       );
 
-      jRequest.commandName = constants.COMMAND_TB_COR_SQL_INFO_UPDATEONE;
+      jRequest.commandName = constants.commands.COMMAND_TB_COR_SQL_INFO_UPDATEONE;
       jRequest.systemCode = form.system_code;
       jRequest.sqlName = form.sql_name;
       jRequest.sqlSeq = form.sql_seq;
@@ -180,11 +181,12 @@ const ServiceSQL = () => {
       setLoading(false); // 데이터 로딩 끝
 
       if (jResponse.error_code === 0) {
-        openModal(constants.MESSAGE_SUCCESS_SAVED);
+        openModal(constants.messages.MESSAGE_SUCCESS_SAVED);
         fetchServiceSQLs();
       } else openModal(jResponse.error_message);
     } catch (error) {
-      openModal(error);
+      openModal(error.message);
+      console.error(`message:${error.message}\n stack:${error.stack}\n`);
     }
   };
 
@@ -224,13 +226,13 @@ const ServiceSQL = () => {
   // Handle delete action
   const handleDelete = async (userQueryItem) => {
     try {
-      var confirm = await openModal(constants.MESSAGE_DELETE_ITEM);
+      var confirm = await openModal(constants.messages.MESSAGE_DELETE_ITEM);
       if (!confirm) return;
 
       var jRequest = {};
       var jResponse = null;
 
-      jRequest.commandName = constants.COMMAND_TB_COR_SQL_INFO_DELETEONE;
+      jRequest.commandName = constants.commands.COMMAND_TB_COR_SQL_INFO_DELETEONE;
       jRequest.systemCode = userQueryItem.system_code;
       jRequest.sqlName = userQueryItem.sql_name;
       jRequest.sqlSeq = userQueryItem.sql_seq;
@@ -241,11 +243,12 @@ const ServiceSQL = () => {
       setLoading(false); // 데이터 로딩 끝
 
       if (jResponse.error_code === 0) {
-        openModal(constants.MESSAGE_SUCCESS_DELETED);
+        openModal(constants.messages.MESSAGE_SUCCESS_DELETED);
         fetchServiceSQLs();
       } else openModal(jResponse.error_message);
     } catch (error) {
-      openModal(error);
+      openModal(error.message);
+      console.error(`message:${error.message}\n stack:${error.stack}\n`);
     }
   };
 

@@ -2,7 +2,7 @@
 
 import logger from "./winston/logger"
 import * as database from "./biz/database/database"
-import * as serviceSQL from "./biz/tb_cor_sql_info"
+import * as tb_cor_sql_info from "./biz/tb_cor_sql_info"
 
 export const getRequestResult = async (
   systemCode,
@@ -19,7 +19,7 @@ export const getRequestResult = async (
   condition10
 ) => {
   var sql = null;
-  sql = await serviceSQL.getSQL00("select_TB_COR_REQUEST_RESULT", 1);
+  sql = await tb_cor_sql_info.getSQL00("select_TB_COR_REQUEST_RESULT", 1);
   var select_TB_COR_REQUEST_RESULT_01 = await database.executeSQL(sql, [
     systemCode,
     apiName,
@@ -56,7 +56,7 @@ export const saveRequestResult = async (
   requestResult
 ) => {
   var sql = null;
-  sql = await serviceSQL.getSQL00("insert_TB_COR_REQUEST_RESULT", 1);
+  sql = await tb_cor_sql_info.getSQL00("insert_TB_COR_REQUEST_RESULT", 1);
   var insert_TB_COR_REQUEST_RESULT_01 = await database.executeSQL(sql, [
     systemCode,
     apiName,
@@ -81,7 +81,7 @@ export const deleteRequestResult = async (
   condition5
 ) => {
   var sql = null;
-  sql = await serviceSQL.getSQL00("delete_TB_COR_REQUEST_RESULT", 1);
+  sql = await tb_cor_sql_info.getSQL00("delete_TB_COR_REQUEST_RESULT", 1);
   var delete_TB_COR_REQUEST_RESULT_01 = await database.executeSQL(sql, [
     systemCode,
     condition5

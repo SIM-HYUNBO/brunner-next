@@ -66,7 +66,7 @@ export default function TickerInfoContent({ tickerCode: tickerCode }) {
   const getTickerInfo = async () => {
     try {
       const jRequest = {
-        commandName: constants.COMMAND_STOCK_GET_TICKER_INFO,
+        commandName: constants.commands.COMMAND_STOCK_GET_TICKER_INFO,
         systemCode: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE,
         tickerCode: tickerCode,
       };
@@ -98,7 +98,7 @@ export default function TickerInfoContent({ tickerCode: tickerCode }) {
       }
     } catch (err) {
       setLoading(false);
-      openModal(err instanceof Error ? err.message : constants.MESSAGE_UEO);
+      openModal(err instanceof Error ? err.message : constants.messages.MESSAGE_UEO);
     }
   };
 

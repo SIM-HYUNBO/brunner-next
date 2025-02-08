@@ -81,7 +81,7 @@ export default function AssetContent() {
 
     try {
       const jRequest = {
-        commandName: constants.COMMAND_TB_COR_INCOME_HIST_SELECTONE,
+        commandName: constants.commands.COMMAND_TB_COR_INCOME_HIST_SELECTBYUSERID,
         systemCode: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE,
         userId: userId,
       };
@@ -98,7 +98,8 @@ export default function AssetContent() {
       }
     } catch (error) {
       setLoading(false); // 데이터 로딩 끝
-      openModal(error);
+      openModal(error.message);
+      console.error(`message:${error.message}\n stack:${error.stack}\n`);
       return [];
     }
   };
@@ -118,7 +119,7 @@ export default function AssetContent() {
 
     try {
       const jRequest = {
-        commandName: constants.COMMAND_TB_COR_INCOME_HIST_INSERTONE,
+        commandName: constants.commands.COMMAND_TB_COR_INCOME_HIST_INSERTONE,
         systemCode: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE,
         userId: userId,
         amount: Number(amountInput.replace(/[^0-9.-]/g, "").replace(/,/g, "")), // 숫자로 변환하여 전송
@@ -130,7 +131,7 @@ export default function AssetContent() {
       setLoading(false);
 
       if (jResponse.error_code === 0) {
-        openModal(constants.MESSAGE_SUCCESS_ADDED);
+        openModal(constants.messages.MESSAGE_SUCCESS_ADDED);
         fetchIncomeHistory(); // 데이터 다시 가져오기
         setAmountInput("");
         setCommentInput("");
@@ -139,7 +140,8 @@ export default function AssetContent() {
       }
     } catch (error) {
       setLoading(false); // 데이터 로딩 끝
-      openModal(error);
+      openModal(error.message);
+      console.error(`message:${error.message}\n stack:${error.stack}\n`);
     }
   };
 
@@ -168,13 +170,13 @@ export default function AssetContent() {
     amount = String(amount).replace(/,/g, "");
 
     if (isNaN(Number(amount))) {
-      openModal(constants.MESSAGE_INVALIED_NUMBER_AMOUNT);
+      openModal(constants.messages.MESSAGE_INVALIED_NUMBER_AMOUNT);
       return;
     }
 
     try {
       const jRequest = {
-        commandName: constants.COMMAND_TB_COR_INCOME_HIST_UPDATEONE,
+        commandName: constants.commands.COMMAND_TB_COR_INCOME_HIST_UPDATEONE,
         systemCode: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE,
         userId: userId,
         historyId: row.original.history_id,
@@ -196,7 +198,8 @@ export default function AssetContent() {
       }
     } catch (error) {
       setLoading(false); // 데이터 로딩 끝
-      openModal(error);
+      openModal(error.message);
+      console.error(`message:${error.message}\n stack:${error.stack}\n`);
     }
   };
 
@@ -210,14 +213,14 @@ export default function AssetContent() {
     const userId = userInfo.getLoginUserId();
     if (!userId) return;
 
-    const deleteConfirm = await openModal(constants.MESSAGE_DELETE_ITEM);
+    const deleteConfirm = await openModal(constants.messages.MESSAGE_DELETE_ITEM);
     if (!deleteConfirm) return;
 
     const historyId = tableDataRef.current[rowIndex].history_id;
 
     try {
       const jRequest = {
-        commandName: constants.COMMAND_TB_COR_INCOME_HIST_DELETEONE,
+        commandName: constants.commands.COMMAND_TB_COR_INCOME_HIST_DELETEONE,
         systemCode: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE,
         userId: userId,
         historyId: historyId,
@@ -228,7 +231,7 @@ export default function AssetContent() {
       setLoading(false); // 데이터 로딩 끝
 
       if (jResponse.error_code === 0) {
-        openModal(constants.MESSAGE_SUCCESS_DELETED);
+        openModal(constants.messages.MESSAGE_SUCCESS_DELETED);
         fetchIncomeHistory(); // 데이터 다시 가져오기
       } else {
         openModal(jResponse.error_message);
@@ -236,7 +239,8 @@ export default function AssetContent() {
       }
     } catch (error) {
       setLoading(false); // 데이터 로딩 끝
-      openModal(error);
+      openModal(error.message);
+      console.error(`message:${error.message}\n stack:${error.stack}\n`);
     }
   };
 

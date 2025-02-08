@@ -97,7 +97,7 @@ export default function ResetPassword() {
     var jResponse = null;
 
     try {
-      jRequest.commandName = constants.COMMAND_SECURITY_SEND_EMAIL_AUTHCODE;
+      jRequest.commandName = constants.commands.COMMAND_SECURITY_SEND_EMAIL_AUTHCODE;
       jRequest.systemCode = process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE;
       jRequest.userId = userId;
       jRequest.phoneNumber = phoneNumber;
@@ -109,7 +109,8 @@ export default function ResetPassword() {
       openModal(jResponse.error_message);
     } catch (error) {
       setLoading(false); // 데이터 로딩 끝
-      openModal(error);
+      openModal(error.message);
+      console.error(`message:${error.message}\n stack:${error.stack}\n`);
     }
   };
 
@@ -118,7 +119,7 @@ export default function ResetPassword() {
     var jResponse = null;
 
     try {
-      jRequest.commandName = constants.COMMAND_SECURITY_RESET_PASSWORD;
+      jRequest.commandName = constants.commands.COMMAND_SECURITY_RESET_PASSWORD;
       jRequest.systemCode = process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE;
       jRequest.userId = userId;
       jRequest.phoneNumber = phoneNumber;
@@ -136,7 +137,8 @@ export default function ResetPassword() {
       }
     } catch (error) {
       setLoading(false); // 데이터 로딩 끝
-      openModal(error);
+      openModal(error.message);
+      console.error(`message:${error.message}\n stack:${error.stack}\n`);
     }
   };
 
@@ -145,7 +147,7 @@ export default function ResetPassword() {
     var jResponse = null;
 
     try {
-      jRequest.commandName = constants.COMMAND_SECURITY_DELETE_ACCOUNT;
+      jRequest.commandName = constants.commands.COMMAND_SECURITY_DELETE_ACCOUNT;
       jRequest.systemCode = process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE;
       jRequest.userId = userId;
       jRequest.phoneNumber = phoneNumber;
@@ -163,7 +165,8 @@ export default function ResetPassword() {
       }
     } catch (error) {
       setLoading(false); // 데이터 로딩 끝
-      openModal(error);
+      openModal(error.message);
+      console.error(`message:${error.message}\n stack:${error.stack}\n`);
     }
   };
 

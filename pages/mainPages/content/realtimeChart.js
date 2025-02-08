@@ -13,7 +13,7 @@ const RealtimeChart = ({ updateCurrentPrice }) => {
   const [loading, setLoading] = useState(false);
   const [modalContent, setModalContent] = useState({
     isOpen: false,
-    message: constants.EMPTY_STRING,
+    message: constants.messages.EMPTY_STRING,
     onConfirm: () => { },
     onClose: () => { },
   });
@@ -37,7 +37,7 @@ const RealtimeChart = ({ updateCurrentPrice }) => {
   const closeModal = () => {
     setModalContent({
       isOpen: false,
-      message: constants.EMPTY_STRING,
+      message: constants.messages.EMPTY_STRING,
       onConfirm: () => { },
       onClose: () => { },
     });
@@ -286,7 +286,7 @@ const RealtimeChart = ({ updateCurrentPrice }) => {
         prevTickerCode = currentTickerRef.current;
 
         const jRequest = {
-          commandName: constants.COMMAND_STOCK_GET_REALTIME_STOCK_INFO,
+          commandName: constants.commands.COMMAND_STOCK_GET_REALTIME_STOCK_INFO,
           systemCode: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE,
           tickerCode: currentTickerRef.current,
         };
@@ -314,7 +314,7 @@ const RealtimeChart = ({ updateCurrentPrice }) => {
       }
     } catch (err) {
       openModal(
-        err instanceof Error ? err.message : constants.MESSAGE_UNKNOWN_ERROR
+        err instanceof Error ? err.message : constants.messages.MESSAGE_UNKNOWN_ERROR
       );
     }
   };
@@ -323,7 +323,7 @@ const RealtimeChart = ({ updateCurrentPrice }) => {
     try {
       /* 최근 데이터 100개 요청 */
       const jRequest = {
-        commandName: constants.COMMAND_STOCK_GET_LATEST_STOCK_INFO,
+        commandName: constants.commands.COMMAND_STOCK_GET_LATEST_STOCK_INFO,
         systemCode: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE,
         tickerCode: currentTickerRef.current,
         dataCount: -100,
