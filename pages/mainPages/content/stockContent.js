@@ -9,7 +9,7 @@ import dynamic from "next/dynamic";
 import DivContainer from "@/components/divContainer";
 import RequestServer from "@/components/requestServer";
 import BrunnerMessageBox from "@/components/brunnerMessageBox";
-import * as Constants from "@/components/constants";
+import * as constants from "@/components/constants";
 import * as UserInfo from "@/components/userInfo";
 import RealtimeChart from "./realtimeChart";
 import AssetContent from "./assetContent";
@@ -261,7 +261,7 @@ const StockContent = () => {
   const getTickerList = async () => {
     try {
       const jRequest = {
-        commandName: Constants.COMMAND_STOCK_GET_TICKER_LIST,
+        commandName: constants.COMMAND_STOCK_GET_TICKER_LIST,
         systemCode: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE,
       };
 
@@ -274,7 +274,7 @@ const StockContent = () => {
         await setTickerListRef(jResponse.tickerList);
       } else {
         console.log(
-          `${Constants.COMMAND_STOCK_GET_TICKER_LIST}:${JSON.stringify(
+          `${constants.COMMAND_STOCK_GET_TICKER_LIST}:${JSON.stringify(
             jResponse.error_message
           )}`
         );
@@ -283,7 +283,7 @@ const StockContent = () => {
     } catch (err) {
       setLoading(false);
       openModal(
-        `${Constants.COMMAND_STOCK_GET_TICKER_LIST}:${err instanceof Error ? err.message : Constants.MESSAGE_UNKNOWN_ERROR
+        `${constants.COMMAND_STOCK_GET_TICKER_LIST}:${err instanceof Error ? err.message : constants.MESSAGE_UNKNOWN_ERROR
         }`
       );
     }
@@ -296,7 +296,7 @@ const StockContent = () => {
     if (!currentTickerRef.current) {
       setModalContent({
         isOpen: true,
-        message: Constants.MESSAGE_INPUT_STOCK_SYMBOL,
+        message: constants.MESSAGE_INPUT_STOCK_SYMBOL,
         onConfirm: () => setModalContent({ ...modalContent, isOpen: false }),
         onClose: () => setModalContent({ ...modalContent, isOpen: false }),
       });
@@ -311,7 +311,7 @@ const StockContent = () => {
     event.preventDefault();
 
     if (!currentTickerRef.current) {
-      openModal(Constants.MESSAGE_INPUT_STOCK_SYMBOL);
+      openModal(constants.MESSAGE_INPUT_STOCK_SYMBOL);
       return;
     }
 
@@ -327,7 +327,7 @@ const StockContent = () => {
       const timeto = moment().format("YYYY-MM-DD");
 
       const jRequest = {
-        commandName: Constants.COMMAND_STOCK_GET_STOCK_INFO,
+        commandName: constants.COMMAND_STOCK_GET_STOCK_INFO,
         systemCode: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE,
         tickerCode: currentTickerRef.current,
         multiplier: 1,
@@ -369,7 +369,7 @@ const StockContent = () => {
       } else {
         setLoading(false);
         console.log(
-          `${Constants.COMMAND_STOCK_GET_STOCK_INFO}: ${JSON.stringify(
+          `${constants.COMMAND_STOCK_GET_STOCK_INFO}: ${JSON.stringify(
             jResponse.error_message
           )}`
         );
@@ -378,7 +378,7 @@ const StockContent = () => {
     } catch (err) {
       setLoading(false);
       openModal(
-        `${Constants.COMMAND_STOCK_GET_STOCK_INFO}:${err instanceof Error ? err.message : Constants.MESSAGE_UNKNOWN_ERROR
+        `${constants.COMMAND_STOCK_GET_STOCK_INFO}:${err instanceof Error ? err.message : constants.MESSAGE_UNKNOWN_ERROR
         }`
       );
     }
@@ -890,7 +890,7 @@ const StockContent = () => {
   const getCurrencyList = async () => {
     try {
       const jRequest = {
-        commandName: Constants.COMMAND_STOCK_GET_CURRENCY_LIST,
+        commandName: constants.COMMAND_STOCK_GET_CURRENCY_LIST,
         systemCode: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE,
       };
 
@@ -902,7 +902,7 @@ const StockContent = () => {
       }
     } catch (err) {
       openModal(
-        `${Constants.COMMAND_STOCK_GET_CURRENCY_LIST}:${err instanceof Error ? err.message : Constants.MESSAGE_UNKNOWN_ERROR
+        `${constants.COMMAND_STOCK_GET_CURRENCY_LIST}:${err instanceof Error ? err.message : constants.MESSAGE_UNKNOWN_ERROR
         }`
       );
     }
@@ -911,7 +911,7 @@ const StockContent = () => {
   const setExchangeByCurrency = async () => {
     try {
       const jRequest = {
-        commandName: Constants.COMMAND_STOCK_GET_EXCHANGE_BY_CURRENCY,
+        commandName: constants.COMMAND_STOCK_GET_EXCHANGE_BY_CURRENCY,
         currencyCode: selectedCurrencyRef.current.currency_code
       };
 
@@ -929,7 +929,7 @@ const StockContent = () => {
       }
     } catch (err) {
       openModal(
-        `${Constants.COMMAND_STOCK_GET_CURRENCY_LIST}:${err instanceof Error ? err.message : Constants.MESSAGE_UNKNOWN_ERROR
+        `${constants.COMMAND_STOCK_GET_CURRENCY_LIST}:${err instanceof Error ? err.message : constants.MESSAGE_UNKNOWN_ERROR
         }`
       );
     }

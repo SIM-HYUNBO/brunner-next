@@ -2,7 +2,7 @@
 
 import logger from "./winston/logger"
 import * as database from "./biz/database/database"
-import * as serviceSQL from "./biz/serviceSQL"
+import * as serviceSQL from "./biz/tb_cor_sql_info"
 
 export const getRequestResult = async (
   systemCode,

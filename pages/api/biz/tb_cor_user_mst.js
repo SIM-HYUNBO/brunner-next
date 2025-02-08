@@ -1,33 +1,34 @@
 `use strict`
 
-import logger from "./../winston/logger"
+import logger from "../winston/logger"
+import * as constants from '@/components/constants'
+import * as database from "./database/database"
+import * as serviceSQL from "./tb_cor_sql_info"
+
 import bcrypt from "bcryptjs"
 import nodemailer from 'nodemailer';
-import * as database from "./database/database"
-import * as serviceSQL from "./serviceSQL"
-import * as Constants from '@/components/constants'
 
 const executeService = (txnId, jRequest) => {
     var jResponse = {};
 
     try {
         switch (jRequest.commandName) {
-            case Constants.COMMAND_SECURITY_SIGNUP:
+            case constants.COMMAND_SECURITY_SIGNUP:
                 jResponse = signup(txnId, jRequest);
                 break;
-            case Constants.COMMAND_SECURITY_SIGNIN:
+            case constants.COMMAND_SECURITY_SIGNIN:
                 jResponse = signin(txnId, jRequest);
                 break;
-            case Constants.COMMAND_SECURITY_SIGNOUT:
+            case constants.COMMAND_SECURITY_SIGNOUT:
                 jResponse = signout(txnId, jRequest);
                 break;
-            case Constants.COMMAND_SECURITY_RESET_PASSWORD:
+            case constants.COMMAND_SECURITY_RESET_PASSWORD:
                 jResponse = resetPassword(txnId, jRequest);
                 break;
-            case Constants.COMMAND_SECURITY_DELETE_ACCOUNT:
+            case constants.COMMAND_SECURITY_DELETE_ACCOUNT:
                 jResponse = deleteAccount(txnId, jRequest);
                 break;
-            case Constants.COMMAND_SECURITY_SEND_EMAIL_AUTHCODE:
+            case constants.COMMAND_SECURITY_SEND_EMAIL_AUTHCODE:
                 jResponse = sendEMailAuthCode(txnId, jRequest);
                 break;
             default:
@@ -50,7 +51,7 @@ const signup = async (txnId, jRequest) => {
 
         if (!jRequest.userId) {
             jResponse.error_code = -2;
-            jResponse.error_message = `${Constants.MESSAGE_REQUIRED_FIELD} [userId`;
+            jResponse.error_message = `${constants.MESSAGE_REQUIRED_FIELD} [userId`;
             return jResponse;
         }
         if (jRequest.userId.length < 5 || jRequest.userId.length > 10) {
@@ -60,7 +61,7 @@ const signup = async (txnId, jRequest) => {
         }
         if (!jRequest.password) {
             jResponse.error_code = -2;
-            jResponse.error_message = `${Constants.MESSAGE_REQUIRED_FIELD} [password]`;
+            jResponse.error_message = `${constants.MESSAGE_REQUIRED_FIELD} [password]`;
             return jResponse;
         }
 
@@ -74,7 +75,7 @@ const signup = async (txnId, jRequest) => {
         }
         if (!jRequest.userName) {
             jResponse.error_code = -2;
-            jResponse.error_message = `${Constants.MESSAGE_REQUIRED_FIELD} [userName]`;
+            jResponse.error_message = `${constants.MESSAGE_REQUIRED_FIELD} [userName]`;
             return jResponse;
         }
         if (jRequest.userName.length < 2 || jRequest.userName.length > 10) {
@@ -84,7 +85,7 @@ const signup = async (txnId, jRequest) => {
         }
         if (!jRequest.phoneNumber) {
             jResponse.error_code = -2;
-            jResponse.error_message = `${Constants.MESSAGE_REQUIRED_FIELD} [phoneNumber]`;
+            jResponse.error_message = `${constants.MESSAGE_REQUIRED_FIELD} [phoneNumber]`;
             return jResponse;
         }
         if (verifyTelNo(jRequest.phoneNumber) == false) {
@@ -94,7 +95,7 @@ const signup = async (txnId, jRequest) => {
         }
         if (!jRequest.email) {
             jResponse.error_code = -2;
-            jResponse.error_message = `${Constants.MESSAGE_REQUIRED_FIELD} [email]`;
+            jResponse.error_message = `${constants.MESSAGE_REQUIRED_FIELD} [email]`;
             return jResponse;
         }
         if (verifyEMail(jRequest.email) == false) {
@@ -104,12 +105,12 @@ const signup = async (txnId, jRequest) => {
         }
         if (!jRequest.registerNo) {
             jResponse.error_code = -2;
-            jResponse.error_message = `${Constants.MESSAGE_REQUIRED_FIELD} [registerNo]`;
+            jResponse.error_message = `${constants.MESSAGE_REQUIRED_FIELD} [registerNo]`;
             return jResponse;
         }
         if (!jRequest.address) {
             jResponse.error_code = -2;
-            jResponse.error_message = `${Constants.MESSAGE_REQUIRED_FIELD} [address]`;
+            jResponse.error_message = `${constants.MESSAGE_REQUIRED_FIELD} [address]`;
             return jResponse;
         }
 
@@ -145,7 +146,7 @@ const signup = async (txnId, jRequest) => {
 
         if (insert_TB_COR_USER_MST_01.rowCount == 1) {
             jResponse.error_code = 0;
-            jResponse.error_message = Constants.EMPTY_STRING;
+            jResponse.error_message = constants.EMPTY_STRING;
         }
         else {
             jResponse.error_code = -3;
@@ -182,7 +183,7 @@ const signin = async (txnId, jRequest) => {
             const isMatch = await bcrypt.compare(jRequest.password, storedHashedPassword);
             if (isMatch) {
                 jResponse.error_code = 0;
-                jResponse.error_message = Constants.EMPTY_STRING;
+                jResponse.error_message = constants.EMPTY_STRING;
 
                 jResponse.userId = select_TB_COR_USER_MST_02.rows[0].user_id;
                 jResponse.userName = select_TB_COR_USER_MST_02.rows[0].user_name;
@@ -213,30 +214,30 @@ const resetPassword = async (txnId, jRequest) => {
 
         if (jRequest.userId === ``) {
             jResponse.error_code = -2;
-            jResponse.error_message = `${Constants.MESSAGE_REQUIRED_FIELD} [userId]`;
+            jResponse.error_message = `${constants.MESSAGE_REQUIRED_FIELD} [userId]`;
             return jResponse;
         }
         if (jRequest.phoneNumber === ``) {
             jResponse.error_code = -2;
-            jResponse.error_message = `${Constants.MESSAGE_REQUIRED_FIELD} [phoneNumber]`;
+            jResponse.error_message = `${constants.MESSAGE_REQUIRED_FIELD} [phoneNumber]`;
             return jResponse;
 
         }
 
         if (jRequest.authCode === '') {
             jResponse.error_code = -2;
-            jResponse.error_message = `${Constants.MESSAGE_REQUIRED_FIELD} [authCode]`;
+            jResponse.error_message = `${constants.MESSAGE_REQUIRED_FIELD} [authCode]`;
             return jResponse;
         }
 
         if (jRequest.newPassword === ``) {
             jResponse.error_code = -2;
-            jResponse.error_message = `${Constants.MESSAGE_REQUIRED_FIELD} [newPassword]`;
+            jResponse.error_message = `${constants.MESSAGE_REQUIRED_FIELD} [newPassword]`;
             return jResponse;
         }
         if (jRequest.confirmPassword === ``) {
             jResponse.error_code = -2;
-            jResponse.error_message = `${Constants.MESSAGE_REQUIRED_FIELD} [confirmPassword]`;
+            jResponse.error_message = `${constants.MESSAGE_REQUIRED_FIELD} [confirmPassword]`;
             return jResponse;
 
         }
@@ -319,19 +320,19 @@ const deleteAccount = async (txnId, jRequest) => {
 
         if (jRequest.userId === ``) {
             jResponse.error_code = -2;
-            jResponse.error_message = `${Constants.MESSAGE_REQUIRED_FIELD} [userId]`;
+            jResponse.error_message = `${constants.MESSAGE_REQUIRED_FIELD} [userId]`;
             return jResponse;
         }
         if (jRequest.phoneNumber === ``) {
             jResponse.error_code = -2;
-            jResponse.error_message = `${Constants.MESSAGE_REQUIRED_FIELD} [phoneNumber]`;
+            jResponse.error_message = `${constants.MESSAGE_REQUIRED_FIELD} [phoneNumber]`;
             return jResponse;
 
         }
 
         if (jRequest.authCode === '') {
             jResponse.error_code = -2;
-            jResponse.error_message = `${Constants.MESSAGE_REQUIRED_FIELD} [authCode]`;
+            jResponse.error_message = `${constants.MESSAGE_REQUIRED_FIELD} [authCode]`;
             return jResponse;
         }
 
@@ -393,18 +394,18 @@ const sendEMailAuthCode = async (txnId, jRequest) => {
 
         if (jRequest.userId === ``) {
             jResponse.error_code = -2;
-            jResponse.error_message = `${Constants.MESSAGE_REQUIRED_FIELD} [userId]`;
+            jResponse.error_message = `${constants.MESSAGE_REQUIRED_FIELD} [userId]`;
             return jResponse;
         }
         if (jRequest.phoneNumber === ``) {
             jResponse.error_code = -2;
-            jResponse.error_message = `${Constants.MESSAGE_REQUIRED_FIELD} [phoneNumber]`;
+            jResponse.error_message = `${constants.MESSAGE_REQUIRED_FIELD} [phoneNumber]`;
             return jResponse;
 
         }
         if (jRequest.email === ``) {
             jResponse.error_code = -2;
-            jResponse.error_message = `${Constants.MESSAGE_REQUIRED_FIELD} [email]`;
+            jResponse.error_message = `${constants.MESSAGE_REQUIRED_FIELD} [email]`;
             return jResponse;
 
         }
@@ -518,7 +519,7 @@ const signout = (txnId, jRequest) => {
         jResponse.__REMOTE_CLIENT_IP = jRequest.__REMOTE_CLIENT_IP;
 
         jResponse.error_code = 0;
-        jResponse.error_message = Constants.EMPTY_STRING;
+        jResponse.error_message = constants.EMPTY_STRING;
     } catch (e) {
         logger.error(e);
         jResponse.error_code = -3; // exception

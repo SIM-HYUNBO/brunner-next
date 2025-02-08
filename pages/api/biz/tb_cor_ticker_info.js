@@ -1,10 +1,10 @@
 `use strict`
 
-import logger from "./../winston/logger"
+import logger from "../winston/logger"
 import moment from 'moment';
 import * as database from "./database/database"
-import * as serviceSQL from './serviceSQL'
-import * as Constants from '@/components/constants'
+import * as serviceSQL from './tb_cor_sql_info'
+import * as constants from '@/components/constants'
 import * as requestResult from '../requestResult'
 
 const executeService = (txnId, jRequest) => {
@@ -12,25 +12,25 @@ const executeService = (txnId, jRequest) => {
 
     try {
         switch (jRequest.commandName) {
-            case Constants.COMMAND_STOCK_GET_TICKER_LIST:
+            case constants.COMMAND_STOCK_GET_TICKER_LIST:
                 jResponse = getTickerList(txnId, jRequest);
                 break;
-            case Constants.COMMAND_STOCK_GET_TICKER_INFO:
+            case constants.COMMAND_STOCK_GET_TICKER_INFO:
                 jResponse = getTickerInfo(txnId, jRequest);
                 break;
-            case Constants.COMMAND_STOCK_GET_STOCK_INFO:
+            case constants.COMMAND_STOCK_GET_STOCK_INFO:
                 jResponse = getStockInfo(txnId, jRequest);
                 break;
-            case Constants.COMMAND_STOCK_GET_LATEST_STOCK_INFO:
+            case constants.COMMAND_STOCK_GET_LATEST_STOCK_INFO:
                 jResponse = getLatestStockInfo(txnId, jRequest);
                 break;
-            case Constants.COMMAND_STOCK_GET_REALTIME_STOCK_INFO:
+            case constants.COMMAND_STOCK_GET_REALTIME_STOCK_INFO:
                 jResponse = getRealtimeStockInfo(txnId, jRequest);
                 break;
-            case Constants.COMMAND_STOCK_GET_CURRENCY_LIST:
+            case constants.COMMAND_STOCK_GET_CURRENCY_LIST:
                 jResponse = getCurrencyList(txnId, jRequest);
                 break;
-            case Constants.COMMAND_STOCK_GET_EXCHANGE_BY_CURRENCY:
+            case constants.COMMAND_STOCK_GET_EXCHANGE_BY_CURRENCY:
                 jResponse = getExchangeByCurrency(txnId, jRequest);
                 break;
             default:
@@ -57,55 +57,55 @@ const getStockInfo = async (txnId, jRequest) => {
 
         if (!jRequest.tickerCode) {
             jResponse.error_code = -2;
-            jResponse.error_message = `${Constants.MESSAGE_REQUIRED_FIELD} [tickerCode]`;
+            jResponse.error_message = `${constants.MESSAGE_REQUIRED_FIELD} [tickerCode]`;
             return jResponse;
         }
 
         if (!jRequest.multiplier) {
             jResponse.error_code = -2;
-            jResponse.error_message = `${Constants.MESSAGE_REQUIRED_FIELD} [multiplier]`;
+            jResponse.error_message = `${constants.MESSAGE_REQUIRED_FIELD} [multiplier]`;
             return jResponse;
         }
 
         if (!jRequest.timespan) {
             jResponse.error_code = -2;
-            jResponse.error_message = `${Constants.MESSAGE_REQUIRED_FIELD} [timespan]`;
+            jResponse.error_message = `${constants.MESSAGE_REQUIRED_FIELD} [timespan]`;
             return jResponse;
         }
 
         if (!jRequest.from) {
             jResponse.error_code = -2;
-            jResponse.error_message = `${Constants.MESSAGE_REQUIRED_FIELD} [from]`;
+            jResponse.error_message = `${constants.MESSAGE_REQUIRED_FIELD} [from]`;
             return jResponse;
         }
 
         if (!jRequest.to) {
             jResponse.error_code = -2;
-            jResponse.error_message = `${Constants.MESSAGE_REQUIRED_FIELD} [to]`;
+            jResponse.error_message = `${constants.MESSAGE_REQUIRED_FIELD} [to]`;
             return jResponse;
         }
 
         if (!jRequest.adjust) {
             jResponse.error_code = -2;
-            jResponse.error_message = `${Constants.MESSAGE_REQUIRED_FIELD} [adjust]`;
+            jResponse.error_message = `${constants.MESSAGE_REQUIRED_FIELD} [adjust]`;
             return jResponse;
         }
 
         if (!jRequest.sort) {
             jResponse.error_code = -2;
-            jResponse.error_message = `${Constants.MESSAGE_REQUIRED_FIELD} [sort]`;
+            jResponse.error_message = `${constants.MESSAGE_REQUIRED_FIELD} [sort]`;
             return jResponse;
         }
 
         var searchFlag = true; // 지금 조회를 해야 하는지 여부
 
-        var recentRequestResult = await requestResult.getRequestResult(jRequest.systemCode, Constants.COMMAND_STOCK_GET_STOCK_INFO, jRequest.tickerCode, jRequest.multiplier, jRequest.timespan, jRequest.from, jRequest.to, jRequest.adjust, jRequest.sort, '', '', '')
+        var recentRequestResult = await requestResult.getRequestResult(jRequest.systemCode, constants.COMMAND_STOCK_GET_STOCK_INFO, jRequest.tickerCode, jRequest.multiplier, jRequest.timespan, jRequest.from, jRequest.to, jRequest.adjust, jRequest.sort, '', '', '')
         if (recentRequestResult) {
             searchFlag = false;
             jResponse.stockInfo = JSON.parse(recentRequestResult);
 
             jResponse.error_code = 0; // exception
-            jResponse.error_message = Constants.EMPTY_STRING;
+            jResponse.error_message = constants.EMPTY_STRING;
         }
 
         if (searchFlag) { // 지금 조회를 해야 한다면
@@ -123,10 +123,10 @@ const getStockInfo = async (txnId, jRequest) => {
                 });
                 jResponse.stockInfo = data.results;
 
-                await requestResult.saveRequestResult(jRequest.systemCode, Constants.COMMAND_STOCK_GET_STOCK_INFO, jRequest.tickerCode, jRequest.multiplier, jRequest.timespan, jRequest.from, jRequest.to, jRequest.adjust, jRequest.sort, '', '', '', JSON.stringify(data.results))
+                await requestResult.saveRequestResult(jRequest.systemCode, constants.COMMAND_STOCK_GET_STOCK_INFO, jRequest.tickerCode, jRequest.multiplier, jRequest.timespan, jRequest.from, jRequest.to, jRequest.adjust, jRequest.sort, '', '', '', JSON.stringify(data.results))
 
                 jResponse.error_code = 0; // exception
-                jResponse.error_message = Constants.EMPTY_STRING;
+                jResponse.error_message = constants.EMPTY_STRING;
             }
             else {
                 jResponse.error_code = -1; // exception
@@ -178,7 +178,7 @@ const getTickerList = async (txnId, jRequest) => {
         }
 
         jResponse.error_code = 0;
-        jResponse.error_message = Constants.EMPTY_STRING;
+        jResponse.error_message = constants.EMPTY_STRING;
     } catch (e) {
         logger.error(e);
         jResponse.error_code = -1; // exception
@@ -259,7 +259,7 @@ const getTickerInfo = async (txnId, jRequest) => {
 
         jResponse.apikey = process.env.POLYGON_API_KEY;
         jResponse.error_code = 0;
-        jResponse.error_message = Constants.EMPTY_STRING;
+        jResponse.error_message = constants.EMPTY_STRING;
     } catch (e) {
         logger.error(e);
         jResponse.error_code = -1; // exception
@@ -278,12 +278,12 @@ const getLatestStockInfo = async (txnId, jRequest) => {
 
         if (!jRequest.tickerCode) {
             jResponse.error_code = -2;
-            jResponse.error_message = `${Constants.MESSAGE_REQUIRED_FIELD} [tickerCode]`;
+            jResponse.error_message = `${constants.MESSAGE_REQUIRED_FIELD} [tickerCode]`;
             return jResponse;
         }
         if (!jRequest.dataCount) {
             jResponse.error_code = -2;
-            jResponse.error_message = `${Constants.MESSAGE_REQUIRED_FIELD} [dataCount]`;
+            jResponse.error_message = `${constants.MESSAGE_REQUIRED_FIELD} [dataCount]`;
             return jResponse;
         }
         const from = moment().subtract(5, "day").format('YYYY-MM-DD')
@@ -291,7 +291,7 @@ const getLatestStockInfo = async (txnId, jRequest) => {
 
         var searchFlag = true; // 지금 조회를 해야 하는지 여부
 
-        var recentRequestResult = await requestResult.getRequestResult(jRequest.systemCode, Constants.COMMAND_STOCK_GET_LATEST_STOCK_INFO, jRequest.tickerCode, '', '', from, to, '', '', '', '', '')
+        var recentRequestResult = await requestResult.getRequestResult(jRequest.systemCode, constants.COMMAND_STOCK_GET_LATEST_STOCK_INFO, jRequest.tickerCode, '', '', from, to, '', '', '', '', '')
 
         var data = null;
         if (recentRequestResult) {
@@ -310,7 +310,7 @@ const getLatestStockInfo = async (txnId, jRequest) => {
 
             data = await response.json();
             if (data.results) {
-                await requestResult.saveRequestResult(jRequest.systemCode, Constants.COMMAND_STOCK_GET_LATEST_STOCK_INFO, jRequest.tickerCode, '', '', from, to, '', '', '', '', '', data)
+                await requestResult.saveRequestResult(jRequest.systemCode, constants.COMMAND_STOCK_GET_LATEST_STOCK_INFO, jRequest.tickerCode, '', '', from, to, '', '', '', '', '', data)
 
                 jResponse.stockInfo = data.results.slice(jRequest.dataCount);
                 jResponse.stockInfo.map((d) => {
@@ -362,14 +362,14 @@ const getRealtimeStockInfo = async (txnId, jRequest) => {
 
         if (!jRequest.systemCode) {
             jResponse.error_code = -2;
-            jResponse.error_message = `${Constants.MESSAGE_REQUIRED_FIELD} [systemCode]`;
+            jResponse.error_message = `${constants.MESSAGE_REQUIRED_FIELD} [systemCode]`;
 
             return jResponse;
         }
 
         if (!jRequest.tickerCode) {
             jResponse.error_code = -2;
-            jResponse.error_message = `${Constants.MESSAGE_REQUIRED_FIELD} [tickerCode]`;
+            jResponse.error_message = `${constants.MESSAGE_REQUIRED_FIELD} [tickerCode]`;
 
             return jResponse;
         }
@@ -400,7 +400,7 @@ const getRealtimeStockInfo = async (txnId, jRequest) => {
         }
 
         jResponse.error_code = 0;
-        jResponse.error_message = Constants.EMPTY_STRING;
+        jResponse.error_message = constants.EMPTY_STRING;
     }
     catch (e) {
         logger.error(e);
@@ -428,7 +428,7 @@ const getCurrencyList = async (txnId, jRequest) => {
 
         jResponse.currencyList = select_TB_COR_CURRENCY_MST_01.rows;
         jResponse.error_code = 0;
-        jResponse.error_message = Constants.EMPTY_STRING;
+        jResponse.error_message = constants.EMPTY_STRING;
     } catch (e) {
         logger.error(e);
         jResponse.error_code = -1; // exception
@@ -457,7 +457,7 @@ const getExchangeByCurrency = async (txnId, jRequest) => {
             jResponse.base = data.base;
 
             jResponse.error_code = 0;
-            jResponse.error_message = Constants.EMPTY_STRING;
+            jResponse.error_message = constants.EMPTY_STRING;
         }
     } catch (e) {
         logger.error(e);

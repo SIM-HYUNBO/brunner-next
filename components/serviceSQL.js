@@ -5,7 +5,7 @@ import React, {
   useCallback,
   forwardRef,
 } from "react";
-import * as Constants from "@/components/constants";
+import * as constants from "@/components/constants";
 import * as userInfo from "@/components/userInfo";
 import RequestServer from "@/components/requestServer";
 import BrunnerMessageBox from "@/components/brunnerMessageBox";
@@ -126,7 +126,7 @@ const ServiceSQL = () => {
 
     try {
       const jRequest = {
-        commandName: Constants.COMMAND_SERVICESQL_GET_ALL_SQL,
+        commandName: constants.COMMAND_TB_COR_SQL_INFO_SELECTALL,
         systemCode: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE,
         userId: userId,
       };
@@ -167,7 +167,7 @@ const ServiceSQL = () => {
         `${form.system_code} ${form.sql_name} ${form.sql_seq} ${form.sql_content}`
       );
 
-      jRequest.commandName = Constants.COMMAND_SERVICESQL_UPDATE_SERVICE_SQL;
+      jRequest.commandName = constants.COMMAND_TB_COR_SQL_INFO_UPDATEONE;
       jRequest.systemCode = form.system_code;
       jRequest.sqlName = form.sql_name;
       jRequest.sqlSeq = form.sql_seq;
@@ -180,7 +180,7 @@ const ServiceSQL = () => {
       setLoading(false); // 데이터 로딩 끝
 
       if (jResponse.error_code === 0) {
-        openModal(Constants.MESSAGE_SUCCESS_SAVED);
+        openModal(constants.MESSAGE_SUCCESS_SAVED);
         fetchServiceSQLs();
       } else openModal(jResponse.error_message);
     } catch (error) {
@@ -224,13 +224,13 @@ const ServiceSQL = () => {
   // Handle delete action
   const handleDelete = async (userQueryItem) => {
     try {
-      var confirm = await openModal(Constants.MESSAGE_DELETE_ITEM);
+      var confirm = await openModal(constants.MESSAGE_DELETE_ITEM);
       if (!confirm) return;
 
       var jRequest = {};
       var jResponse = null;
 
-      jRequest.commandName = Constants.COMMAND_SERVICESQL_DELETE_SERVICE_SQL;
+      jRequest.commandName = constants.COMMAND_TB_COR_SQL_INFO_DELETEONE;
       jRequest.systemCode = userQueryItem.system_code;
       jRequest.sqlName = userQueryItem.sql_name;
       jRequest.sqlSeq = userQueryItem.sql_seq;
@@ -241,7 +241,7 @@ const ServiceSQL = () => {
       setLoading(false); // 데이터 로딩 끝
 
       if (jResponse.error_code === 0) {
-        openModal(Constants.MESSAGE_SUCCESS_DELETED);
+        openModal(constants.MESSAGE_SUCCESS_DELETED);
         fetchServiceSQLs();
       } else openModal(jResponse.error_message);
     } catch (error) {

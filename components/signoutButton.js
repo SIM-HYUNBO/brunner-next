@@ -4,7 +4,7 @@ import RequestServer from "./requestServer";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import BrunnerMessageBox from "./brunnerMessageBox";
-import * as Constants from "@/components/constants";
+import * as constants from "@/components/constants";
 import * as userInfo from "@/components/userInfo";
 export default function SignoutButton() {
   // 로딩 & 메시지 박스
@@ -48,7 +48,7 @@ export default function SignoutButton() {
     var jRequest = {};
     var jResponse = null;
 
-    jRequest.commandName = Constants.COMMAND_SECURITY_SIGNOUT;
+    jRequest.commandName = constants.COMMAND_SECURITY_SIGNOUT;
     var userInfo = process.env.userInfo ? process.env.userInfo : null;
 
     jRequest.userId = userInfo?.USER_ID;
@@ -90,7 +90,7 @@ export default function SignoutButton() {
                                 rounded text-base mt-4 md:mt-0"
           type="button"
           onClick={async () => {
-            var result = await openModal(Constants.MESSAGE_SIGNOUT);
+            var result = await openModal(constants.MESSAGE_SIGNOUT);
             if (result) requestSignout();
           }}
         >

@@ -7,7 +7,7 @@ import RequestServer from "@/components/requestServer";
 import * as userInfo from "@/components/userInfo";
 import moment from "moment";
 import BrunnerMessageBox from "@/components/brunnerMessageBox";
-import * as Constants from "@/components/constants";
+import * as constants from "@/components/constants";
 import DivContainer from "@/components/divContainer";
 
 export default function AssetContent() {
@@ -81,7 +81,7 @@ export default function AssetContent() {
 
     try {
       const jRequest = {
-        commandName: Constants.COMMAND_ASSET_GET_INCOME_HISTORY,
+        commandName: constants.COMMAND_TB_COR_INCOME_HIST_SELECTONE,
         systemCode: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE,
         userId: userId,
       };
@@ -118,7 +118,7 @@ export default function AssetContent() {
 
     try {
       const jRequest = {
-        commandName: Constants.COMMAND_ASSET_ADD_INCOME,
+        commandName: constants.COMMAND_TB_COR_INCOME_HIST_INSERTONE,
         systemCode: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE,
         userId: userId,
         amount: Number(amountInput.replace(/[^0-9.-]/g, "").replace(/,/g, "")), // 숫자로 변환하여 전송
@@ -130,7 +130,7 @@ export default function AssetContent() {
       setLoading(false);
 
       if (jResponse.error_code === 0) {
-        openModal(Constants.MESSAGE_SUCCESS_ADDED);
+        openModal(constants.MESSAGE_SUCCESS_ADDED);
         fetchIncomeHistory(); // 데이터 다시 가져오기
         setAmountInput("");
         setCommentInput("");
@@ -168,13 +168,13 @@ export default function AssetContent() {
     amount = String(amount).replace(/,/g, "");
 
     if (isNaN(Number(amount))) {
-      openModal(Constants.MESSAGE_INVALIED_NUMBER_AMOUNT);
+      openModal(constants.MESSAGE_INVALIED_NUMBER_AMOUNT);
       return;
     }
 
     try {
       const jRequest = {
-        commandName: Constants.COMMAND_ASSET_UPDATE_INCOME,
+        commandName: constants.COMMAND_TB_COR_INCOME_HIST_UPDATEONE,
         systemCode: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE,
         userId: userId,
         historyId: row.original.history_id,
@@ -210,14 +210,14 @@ export default function AssetContent() {
     const userId = userInfo.getLoginUserId();
     if (!userId) return;
 
-    const deleteConfirm = await openModal(Constants.MESSAGE_DELETE_ITEM);
+    const deleteConfirm = await openModal(constants.MESSAGE_DELETE_ITEM);
     if (!deleteConfirm) return;
 
     const historyId = tableDataRef.current[rowIndex].history_id;
 
     try {
       const jRequest = {
-        commandName: Constants.COMMAND_ASSET_DELETE_INCOME,
+        commandName: constants.COMMAND_TB_COR_INCOME_HIST_DELETEONE,
         systemCode: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE,
         userId: userId,
         historyId: historyId,
@@ -228,7 +228,7 @@ export default function AssetContent() {
       setLoading(false); // 데이터 로딩 끝
 
       if (jResponse.error_code === 0) {
-        openModal(Constants.MESSAGE_SUCCESS_DELETED);
+        openModal(constants.MESSAGE_SUCCESS_DELETED);
         fetchIncomeHistory(); // 데이터 다시 가져오기
       } else {
         openModal(jResponse.error_message);

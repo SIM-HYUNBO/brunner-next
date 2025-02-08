@@ -1,10 +1,11 @@
 `use strict`;
 
 import { useState, useRef, useEffect } from "react";
+import * as constants from "@/components/constants";
+
 import RequestServer from "@/components/requestServer";
 import Board from "@/pages/mainPages/content/boardContent";
 import RealtimeChart from "./realtimeChart";
-import * as Constants from "@/components/constants";
 import DivContainer from "@/components/divContainer";
 import GoverningMessage from "@/components/governingMessage";
 
@@ -65,7 +66,7 @@ export default function TickerInfoContent({ tickerCode: tickerCode }) {
   const getTickerInfo = async () => {
     try {
       const jRequest = {
-        commandName: Constants.COMMAND_STOCK_GET_TICKER_INFO,
+        commandName: constants.COMMAND_STOCK_GET_TICKER_INFO,
         systemCode: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE,
         tickerCode: tickerCode,
       };
