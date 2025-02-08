@@ -48,7 +48,7 @@ export default function SignoutButton() {
     var jRequest = {};
     var jResponse = null;
 
-    jRequest.commandName = constants.COMMAND_SECURITY_SIGNOUT;
+    jRequest.commandName = constants.commands.COMMAND_SECURITY_SIGNOUT;
     var userInfo = process.env.userInfo ? process.env.userInfo : null;
 
     jRequest.userId = userInfo?.USER_ID;
@@ -90,7 +90,7 @@ export default function SignoutButton() {
                                 rounded text-base mt-4 md:mt-0"
           type="button"
           onClick={async () => {
-            var result = await openModal(constants.MESSAGE_SIGNOUT);
+            var result = await openModal(constants.messages.MESSAGE_SIGNOUT);
             if (result) requestSignout();
           }}
         >

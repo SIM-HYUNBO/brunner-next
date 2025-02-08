@@ -5,28 +5,28 @@ import * as constants from '@/components/constants'
 import * as database from "./database/database"
 import * as db_cor_sql_info from './tb_cor_sql_info'
 
-const executeService = (txnId, jRequest) => {
+const executeService = async (txnId, jRequest) => {
     var jResponse = {};
 
     try {
         switch (jRequest.commandName) {
-            case constants.COMMAND_TB_COR_POST_INFO_SELECTALL:
-                jResponse = selectAll(txnId, jRequest);
+            case constants.commands.COMMAND_TB_COR_POST_INFO_SELECTALL:
+                jResponse = await selectAll(txnId, jRequest);
                 break;
-            case constants.COMMAND_TB_COR_POST_INFO_INSERTONE:
-                jResponse = insertOne(txnId, jRequest);
+            case constants.commands.COMMAND_TB_COR_POST_INFO_INSERTONE:
+                jResponse = await insertOne(txnId, jRequest);
                 break;
-            case constants.COMMAND_TB_COR_POST_INFO_UPDATEONE:
-                jResponse = updateOne(txnId, jRequest);
+            case constants.commands.COMMAND_TB_COR_POST_INFO_UPDATEONE:
+                jResponse = await updateOne(txnId, jRequest);
                 break;
-            case constants.COMMAND_TB_COR_POST_INFO_DELETEONE:
-                jResponse = deleteOne(txnId, jRequest);
+            case constants.commands.COMMAND_TB_COR_POST_INFO_DELETEONE:
+                jResponse = await deleteOne(txnId, jRequest);
                 break;
             default:
                 break;
         }
     } catch (error) {
-        logger.error(error);
+        logger.error(`message:${error.message}\n stack:${error.stack}\n`);
     } finally {
         return jResponse;
     }
@@ -41,13 +41,13 @@ const selectAll = async (txnId, jRequest) => {
 
         if (!jRequest.postInfo) {
             jResponse.error_code = -2;
-            jResponse.error_message = `${constants.MESSAGE_REQUIRED_FIELD} [postInfo].`;
+            jResponse.error_message = `${constants.messages.MESSAGE_REQUIRED_FIELD} [postInfo].`;
             return jResponse;
         }
 
         if (!jRequest.postInfo.postType) {
             jResponse.error_code = -2;
-            jResponse.error_message = `${constants.MESSAGE_REQUIRED_FIELD} [postType]`;
+            jResponse.error_message = `${constants.messages.MESSAGE_REQUIRED_FIELD} [postType]`;
             return jResponse;
         }
 
@@ -75,7 +75,7 @@ const selectAll = async (txnId, jRequest) => {
         jResponse.postList = select_TB_COR_POST_INFO.rows;
 
         jResponse.error_code = 0;
-        jResponse.error_message = constants.EMPTY_STRING
+        jResponse.error_message = constants.messages.EMPTY_STRING
     } catch (e) {
         logger.error(e);
         jResponse.error_code = -1; // exception
@@ -115,7 +115,7 @@ const insertOne = async (txnId, jRequest) => {
             jResponse.postInfo = select_TB_COR_POST_INFO_02.rows[0];
             jResponse.postInfo.comments = [];
             jResponse.error_code = 0;
-            jResponse.error_message = constants.EMPTY_STRING
+            jResponse.error_message = constants.messages.EMPTY_STRING
 
         }
         else {
@@ -149,7 +149,7 @@ const updateOne = async (txnId, jRequest) => {
 
         if (update_TB_COR_POST_INFO_01.rowCount === 1) {
             jResponse.error_code = 0;
-            jResponse.error_message = constants.EMPTY_STRING
+            jResponse.error_message = constants.messages.EMPTY_STRING
         }
         else {
             jResponse.error_code = -1;
@@ -173,7 +173,7 @@ const deleteOne = async (txnId, jRequest) => {
 
         if (!jRequest.postInfo) {
             jResponse.error_code = -2;
-            jResponse.error_message = `${constants.MESSAGE_REQUIRED_FIELD} [postInfo]`;
+            jResponse.error_message = `${constants.messages.MESSAGE_REQUIRED_FIELD} [postInfo]`;
 
             return jResponse;
         }
@@ -197,7 +197,7 @@ const deleteOne = async (txnId, jRequest) => {
                 ]);
 
             jResponse.error_code = 0;
-            jResponse.error_message = constants.EMPTY_STRING
+            jResponse.error_message = constants.messages.EMPTY_STRING
         }
         else {
             jResponse.error_code = -1;

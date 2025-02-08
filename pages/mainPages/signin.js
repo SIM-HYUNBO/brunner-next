@@ -74,7 +74,7 @@ export default function Signin() {
   const requestSignIn = async () => {
     try {
       const jRequest = {
-        commandName: constants.COMMAND_SECURITY_SIGNIN,
+        commandName: constants.commands.COMMAND_SECURITY_SIGNIN,
         systemCode: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE,
         userId: userId,
         password: password,
@@ -92,7 +92,8 @@ export default function Signin() {
       }
     } catch (error) {
       setLoading(false); // 데이터 로딩 끝
-      openModal(error);
+      openModal(error.message);
+      console.error(`message:${error.message}\n stack:${error.stack}\n`);
     }
   };
 

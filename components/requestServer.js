@@ -2,7 +2,7 @@
 import * as constants from '@/components/constants'
 
 export default async function RequestServer(method, jRequest) {
-  let res = null;
+    let res = null;
   let jResponse = null;
   const serverUrl = `/api/backendServer/`;
 
@@ -21,7 +21,7 @@ export default async function RequestServer(method, jRequest) {
   catch (e) {
     jResponse = {};
     jResponse.error_code = -1;
-    jResponse.error_message = `${constants.MESSAGE_SERVER_NOT_CONNECTTED} ${e}`;
+    jResponse.error_message = `${constants.messages.MESSAGE_SERVER_NOT_CONNECTTED} ${e}`;
     return jResponse;
   }
 }
