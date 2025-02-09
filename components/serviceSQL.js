@@ -223,6 +223,25 @@ const ServiceSQL = () => {
     editPanelRef.current.scrollIntoView({ behavior: "smooth" });
   };
 
+  const ClearInputButton = () => {
+    return (
+      <button
+            onClick={handleNew}
+            className="bg-green-500 text-white py-2 px-4 rounded-md hover:bg-green-600 focus:outline-none focus:ring focus:ring-green-500 focus:ring-opacity-50 ml-2"
+          >
+            Clear
+          </button>
+    )
+  }
+
+  const CreateUpdateButton = () =>{
+    return (
+      <button onClick={handleCreateOrUpdate} className="bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50">
+        {currentServiceSQL ? "Update" : "Create"}
+      </button>
+    )
+  }
+
   // Handle delete action
   const handleDelete = async (userQueryItem) => {
     try {
@@ -264,12 +283,7 @@ const ServiceSQL = () => {
           />
 
           <h2 className="text-xl font-bold mb-4">Service SQL Management</h2>
-          <button
-            onClick={handleNew}
-            className="bg-green-500 text-white py-2 px-4 rounded-md hover:bg-green-600 focus:outline-none focus:ring focus:ring-green-500 focus:ring-opacity-50 mb-4"
-          >
-            New SQL
-          </button>
+          
           <div ref={editPanelRef} className="mb-4">
             <label className="block mb-2">
               <span className="text-gray-700">System Code:</span>
@@ -316,14 +330,12 @@ const ServiceSQL = () => {
                 readOnly={!isEditing && !isCreating}
               />
             </label>
-            <button
-              onClick={handleCreateOrUpdate}
-              className="bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
-            >
-              {currentServiceSQL ? "Update" : "Create"}
-            </button>
+            <div className="">
+              <CreateUpdateButton/>
+              <ClearInputButton/>
+            </div>
           </div>
-
+          
           <h2 className="text-lg font-semibold mb-4">Query List</h2>
 
           <button
