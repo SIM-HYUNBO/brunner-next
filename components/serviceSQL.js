@@ -101,7 +101,7 @@ const ServiceSQL = () => {
 
   // Fetch queries from API
   useEffect(() => {
-    fetchServiceSQLs();
+    fetchSQLList();
   }, []);
 
   var editingServiceSQL;
@@ -119,7 +119,7 @@ const ServiceSQL = () => {
     setForm((prevForm) => editingServiceSQL);
   };
 
-  const fetchServiceSQLs = async () => {
+  const fetchSQLList = async () => {
     // 관리자 계정인 경우만 조회
     const userId = userInfo.getLoginUserId();
     // if (!userId) return;
@@ -182,7 +182,7 @@ const ServiceSQL = () => {
 
       if (jResponse.error_code === 0) {
         openModal(constants.messages.MESSAGE_SUCCESS_SAVED);
-        fetchServiceSQLs();
+        fetchSQLList();
       } else openModal(jResponse.error_message);
     } catch (error) {
       openModal(error.message);
@@ -263,7 +263,7 @@ const ServiceSQL = () => {
 
       if (jResponse.error_code === 0) {
         openModal(constants.messages.MESSAGE_SUCCESS_DELETED);
-        fetchServiceSQLs();
+        fetchSQLList();
       } else openModal(jResponse.error_message);
     } catch (error) {
       openModal(error.message);
@@ -339,7 +339,7 @@ const ServiceSQL = () => {
           <h2 className="text-lg font-semibold mb-4">Query List</h2>
 
           <button
-            onClick={fetchServiceSQLs}
+            onClick={fetchSQLList}
             className="bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 mt-2"
           >
             Refresh
@@ -394,7 +394,7 @@ const ServiceSQL = () => {
             </tbody>
           </table>
           <button
-            onClick={fetchServiceSQLs}
+            onClick={fetchSQLList}
             className="bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 mt-2"
           >
             Refresh
