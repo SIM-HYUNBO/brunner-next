@@ -57,217 +57,9 @@ export default function AssetContent() {
   const [amountInput, setAmountInput] = useState("");
   const [commentInput, setCommentInput] = useState("");
 
-  const fetchData = async function () {
-    await fetchIncomeHistory();
-  };
-
   useEffect(() => {
     fetchData();
   }, []);
-
-  // 수익 내역 데이터 가져오기
-  const fetchIncomeHistory = async () => {
-    const result = await requestGetIncomeHistory();
-    setTableDataRef(result);
-    console.log(
-      `fetchData: tableData set as ${JSON.stringify(tableDataRef.current)}`
-    );
-  };
-
-  // 수익 내역 요청
-  const requestGetIncomeHistory = async () => {
-    const userId = userInfo.getLoginUserId();
-    if (!userId) return [];
-
-    try {
-      const jRequest = {
-        commandName: constants.commands.COMMAND_TB_COR_INCOME_HIST_SELECTBYUSERID,
-        systemCode: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE,
-        userId: userId,
-      };
-
-      setLoading(true); // 데이터 로딩 시작
-      const jResponse = await RequestServer("POST", JSON.stringify(jRequest));
-      setLoading(false); // 데이터 로딩 끝
-
-      if (jResponse.error_code === 0) {
-        return jResponse.incomeHistory;
-      } else {
-        openModal(jResponse.error_message);
-        return [];
-      }
-    } catch (error) {
-      setLoading(false); // 데이터 로딩 끝
-      openModal(error.message);
-      console.error(`message:${error.message}\n stack:${error.stack}\n`);
-      return [];
-    }
-  };
-
-  // 수익 내역 추가 처리
-  const handleAddIncome = async () => {
-    const userId = userInfo.getLoginUserId();
-    if (!userId) return;
-    if (!amountInput) {
-      openModal(`Input amount.`);
-      return;
-    }
-    if (!commentInput) {
-      openModal(`Input comment.`);
-      return;
-    }
-
-    try {
-      const jRequest = {
-        commandName: constants.commands.COMMAND_TB_COR_INCOME_HIST_INSERTONE,
-        systemCode: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE,
-        userId: userId,
-        amount: Number(amountInput.replace(/[^0-9.-]/g, "").replace(/,/g, "")), // 숫자로 변환하여 전송
-        comment: commentInput,
-      };
-
-      setLoading(true); // 데이터 로딩 시작
-      const jResponse = await RequestServer("POST", JSON.stringify(jRequest));
-      setLoading(false);
-
-      if (jResponse.error_code === 0) {
-        openModal(constants.messages.MESSAGE_SUCCESS_ADDED);
-        fetchIncomeHistory(); // 데이터 다시 가져오기
-        setAmountInput("");
-        setCommentInput("");
-      } else {
-        openModal(jResponse.error_message);
-      }
-    } catch (error) {
-      setLoading(false); // 데이터 로딩 끝
-      openModal(error.message);
-      console.error(`message:${error.message}\n stack:${error.stack}\n`);
-    }
-  };
-
-  // 입력값 변경 처리
-  const handleInputChange = (e, inputName) => {
-    const { value } = e.target;
-    if (inputName === "amountInput") {
-      // 숫자만 입력되도록 처리 (콤마 자동 추가)
-      const formattedValue = value
-        .replace(/[^0-9.-]/g, "")
-        .replace(/,/g, "")
-        .toLocaleString();
-      setAmountInput(formattedValue);
-    } else if (inputName === "commentInput") {
-      setCommentInput(value);
-    }
-  };
-
-  // 저장 처리
-  const handleSave = async (row) => {
-    const userId = userInfo.getLoginUserId();
-    if (!userId) return;
-
-    let amount = row.values.amount;
-    // Ensure amount is always formatted as a string before replacing commas
-    amount = String(amount).replace(/,/g, "");
-
-    if (isNaN(Number(amount))) {
-      openModal(constants.messages.MESSAGE_INVALIED_NUMBER_AMOUNT);
-      return;
-    }
-
-    try {
-      const jRequest = {
-        commandName: constants.commands.COMMAND_TB_COR_INCOME_HIST_UPDATEONE,
-        systemCode: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE,
-        userId: userId,
-        historyId: row.original.history_id,
-        amount: Number(amount), // 숫자로 변환
-        comment: row.values.comment,
-      };
-
-      setLoading(true); // 데이터 로딩 시작
-      const jResponse = await RequestServer("POST", JSON.stringify(jRequest));
-      setLoading(false); // 데이터 로딩 끝
-
-      openModal("Successfully updated.");
-
-      if (jResponse.error_code === 0) {
-        fetchIncomeHistory(); // 데이터 다시 가져오기
-      } else {
-        openModal(jResponse.error_message);
-        fetchIncomeHistory(); // 실패 시 데이터 다시 가져오기
-      }
-    } catch (error) {
-      setLoading(false); // 데이터 로딩 끝
-      openModal(error.message);
-      console.error(`message:${error.message}\n stack:${error.stack}\n`);
-    }
-  };
-
-  // 새로고침 처리
-  const handleRefresh = () => {
-    fetchIncomeHistory(); // 데이터 새로고침
-  };
-
-  // 삭제 처리
-  const handleDelete = async (rowIndex) => {
-    const userId = userInfo.getLoginUserId();
-    if (!userId) return;
-
-    const deleteConfirm = await openModal(constants.messages.MESSAGE_DELETE_ITEM);
-    if (!deleteConfirm) return;
-
-    const historyId = tableDataRef.current[rowIndex].history_id;
-
-    try {
-      const jRequest = {
-        commandName: constants.commands.COMMAND_TB_COR_INCOME_HIST_DELETEONE,
-        systemCode: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE,
-        userId: userId,
-        historyId: historyId,
-      };
-
-      setLoading(true); // 데이터 로딩 시작
-      const jResponse = await RequestServer("POST", JSON.stringify(jRequest));
-      setLoading(false); // 데이터 로딩 끝
-
-      if (jResponse.error_code === 0) {
-        openModal(constants.messages.MESSAGE_SUCCESS_DELETED);
-        fetchIncomeHistory(); // 데이터 다시 가져오기
-      } else {
-        openModal(jResponse.error_message);
-        fetchIncomeHistory(); // 실패 시 데이터 다시 가져오기
-      }
-    } catch (error) {
-      setLoading(false); // 데이터 로딩 끝
-      openModal(error.message);
-      console.error(`message:${error.message}\n stack:${error.stack}\n`);
-    }
-  };
-
-  // 수정 처리
-  const handleEditAmount = (rowIdx, amount) => {
-    console.log(
-      `handleEditAmount: tableData set as ${JSON.stringify(
-        tableDataRef.current
-      )}`
-    );
-
-    const updatedData = [...tableDataRef.current];
-    updatedData[rowIdx].amount = amount;
-    setTableDataRef(updatedData);
-  };
-
-  const handleEditComment = (rowIdx, comment) => {
-    console.log(
-      `handleEditComment: tableData set as ${JSON.stringify(
-        tableDataRef.current
-      )}`
-    );
-
-    const updatedData = [...tableDataRef.current];
-    updatedData[rowIdx].comment = comment;
-    setTableDataRef(updatedData);
-  };
 
   // 테이블 컬럼 정의
   const columns = React.useMemo(
@@ -323,30 +115,41 @@ export default function AssetContent() {
         ),
       },
       {
-        Header: "Save",
+        Header: "Actions",
         accessor: "actions",
         headerClassName: "text-center bg-purple-500 text-green-100",
         Cell: ({ row }) => (
           <div className="flex justify-center">
             <button
               onClick={() => handleSave(row)}
-              className="text-sm text-yellow-600 py-1 px-3 rounded"
+              className="p-2 rounded"
+              title="Save"
             >
-              Save
+              <img
+                src="/save-icon.png"
+                alt="Save"
+                className="w-6 h-6"
+              />
             </button>
             <button
               onClick={() => handleDelete(row.index)}
-              className="text-sm text-red-600 py-1 px-3 rounded"
+              className="p-2 rounded"
+              title="Delete"
             >
-              Delete
+              <img
+                src="/delete-icon.png"
+                alt="Delete"
+                className="w-6 h-6"
+              />
             </button>
           </div>
         ),
-      },
+      }
     ],
     []
   );
 
+  // 테이블 속성 정의
   const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } =
     useTable(
       {
@@ -355,26 +158,220 @@ export default function AssetContent() {
         initialState: { hiddenColumns: ["history_id"] },
       },
       useSortBy
-    ); // useSortBy 추가
+  );
 
-  const getLocalTime = (utcTime) => {
-    return moment.utc(utcTime).local().format("YY-MM-DD HH:mm:ss");
+ // 테이블 데이터 가져오기
+ const fetchData = async function () {
+    await fetchIncomeHistory();
   };
 
-  return (
-    <>
-      <DivContainer>
-        <BrunnerMessageBox
-          isOpen={modalContent.isOpen}
-          message={modalContent.message}
-          onConfirm={modalContent.onConfirm}
-          onClose={modalContent.onClose}
-        />
-        <div className="w-full pr-16 flex flex-col items-start text-left my-10">
-          <h2 className="title-font text-3xl mb-10 font-medium text-green-900">
-            My Asset History
-          </h2>
-          <div className="mb-5 table w-full">
+  const fetchIncomeHistory = async () => {
+    const result = await requestGetIncomeHistory();
+    setTableDataRef(result);
+    console.log(
+      `fetchData: tableData set as ${JSON.stringify(tableDataRef.current)}`
+    );
+  };
+
+  // 테이블 데이터 서버 요청
+  const requestGetIncomeHistory = async () => {
+    const userId = userInfo.getLoginUserId();
+    if (!userId) return [];
+
+    try {
+      const jRequest = {
+        commandName: constants.commands.COMMAND_TB_COR_INCOME_HIST_SELECTBYUSERID,
+        systemCode: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE,
+        userId: userId,
+      };
+
+      setLoading(true); // 데이터 로딩 시작
+      const jResponse = await RequestServer("POST", JSON.stringify(jRequest));
+      setLoading(false); // 데이터 로딩 끝
+
+      if (jResponse.error_code === 0) {
+        return jResponse.incomeHistory;
+      } else {
+        openModal(jResponse.error_message);
+        return [];
+      }
+    } catch (error) {
+      setLoading(false); // 데이터 로딩 끝
+      openModal(error.message);
+      console.error(`message:${error.message}\n stack:${error.stack}\n`);
+      return [];
+    }
+  };
+
+  // 테이블 데이터 추가 처리
+  const handleAddIncome = async () => {
+    const userId = userInfo.getLoginUserId();
+    if (!userId) return;
+    if (!amountInput) {
+      openModal(`Input amount.`);
+      return;
+    }
+    if (!commentInput) {
+      openModal(`Input comment.`);
+      return;
+    }
+
+    try {
+      const jRequest = {
+        commandName: constants.commands.COMMAND_TB_COR_INCOME_HIST_INSERTONE,
+        systemCode: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE,
+        userId: userId,
+        amount: Number(amountInput.replace(/[^0-9.-]/g, "").replace(/,/g, "")), // 숫자로 변환하여 전송
+        comment: commentInput,
+      };
+
+      setLoading(true); // 데이터 로딩 시작
+      const jResponse = await RequestServer("POST", JSON.stringify(jRequest));
+      setLoading(false);
+
+      if (jResponse.error_code === 0) {
+        openModal(constants.messages.MESSAGE_SUCCESS_ADDED);
+        fetchIncomeHistory(); // 데이터 다시 가져오기
+        setAmountInput("");
+        setCommentInput("");
+      } else {
+        openModal(jResponse.error_message);
+      }
+    } catch (error) {
+      setLoading(false); // 데이터 로딩 끝
+      openModal(error.message);
+      console.error(`message:${error.message}\n stack:${error.stack}\n`);
+    }
+  };
+
+  // 입력값 변경 처리
+  const handleInputChange = (e, inputName) => {
+    const { value } = e.target;
+    if (inputName === "amountInput") {
+      // 숫자만 입력되도록 처리 (콤마 자동 추가)
+      const formattedValue = value
+        .replace(/[^0-9.-]/g, "")
+        .replace(/,/g, "")
+        .toLocaleString();
+      setAmountInput(formattedValue);
+    } else if (inputName === "commentInput") {
+      setCommentInput(value);
+    }
+  };
+
+  // 테이블 데이터 저장 처리
+  const handleSave = async (row) => {
+    const userId = userInfo.getLoginUserId();
+    if (!userId) return;
+
+    let amount = row.values.amount;
+    // Ensure amount is always formatted as a string before replacing commas
+    amount = String(amount).replace(/,/g, "");
+
+    if (isNaN(Number(amount))) {
+      openModal(constants.messages.MESSAGE_INVALIED_NUMBER_AMOUNT);
+      return;
+    }
+
+    try {
+      const jRequest = {
+        commandName: constants.commands.COMMAND_TB_COR_INCOME_HIST_UPDATEONE,
+        systemCode: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE,
+        userId: userId,
+        historyId: row.original.history_id,
+        amount: Number(amount), // 숫자로 변환
+        comment: row.values.comment,
+      };
+
+      setLoading(true); // 데이터 로딩 시작
+      const jResponse = await RequestServer("POST", JSON.stringify(jRequest));
+      setLoading(false); // 데이터 로딩 끝
+
+      openModal("Successfully updated.");
+
+      if (jResponse.error_code === 0) {
+        fetchIncomeHistory(); // 데이터 다시 가져오기
+      } else {
+        openModal(jResponse.error_message);
+        fetchIncomeHistory(); // 실패 시 데이터 다시 가져오기
+      }
+    } catch (error) {
+      setLoading(false); // 데이터 로딩 끝
+      openModal(error.message);
+      console.error(`message:${error.message}\n stack:${error.stack}\n`);
+    }
+  };
+
+  // 새로고침 처리
+  const handleRefresh = () => {
+    fetchIncomeHistory(); // 데이터 새로고침
+  };
+
+  // 테이블 데이터 삭제 처리
+  const handleDelete = async (rowIndex) => {
+    const userId = userInfo.getLoginUserId();
+    if (!userId) return;
+
+    const deleteConfirm = await openModal(constants.messages.MESSAGE_DELETE_ITEM);
+    if (!deleteConfirm) return;
+
+    const historyId = tableDataRef.current[rowIndex].history_id;
+
+    try {
+      const jRequest = {
+        commandName: constants.commands.COMMAND_TB_COR_INCOME_HIST_DELETEONE,
+        systemCode: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE,
+        userId: userId,
+        historyId: historyId,
+      };
+
+      setLoading(true); // 데이터 로딩 시작
+      const jResponse = await RequestServer("POST", JSON.stringify(jRequest));
+      setLoading(false); // 데이터 로딩 끝
+
+      if (jResponse.error_code === 0) {
+        openModal(constants.messages.MESSAGE_SUCCESS_DELETED);
+        fetchIncomeHistory(); // 데이터 다시 가져오기
+      } else {
+        openModal(jResponse.error_message);
+        fetchIncomeHistory(); // 실패 시 데이터 다시 가져오기
+      }
+    } catch (error) {
+      setLoading(false); // 데이터 로딩 끝
+      openModal(error.message);
+      console.error(`message:${error.message}\n stack:${error.stack}\n`);
+    }
+  };
+
+  // 테이블 데이터 수정 처리
+  const handleEditAmount = (rowIdx, amount) => {
+    console.log(
+      `handleEditAmount: tableData set as ${JSON.stringify(
+        tableDataRef.current
+      )}`
+    );
+
+    const updatedData = [...tableDataRef.current];
+    updatedData[rowIdx].amount = amount;
+    setTableDataRef(updatedData);
+  };
+
+  // 테이블 데이터 수정 처리
+  const handleEditComment = (rowIdx, comment) => {
+    console.log(
+      `handleEditComment: tableData set as ${JSON.stringify(
+        tableDataRef.current
+      )}`
+    );
+
+    const updatedData = [...tableDataRef.current];
+    updatedData[rowIdx].comment = comment;
+    setTableDataRef(updatedData);
+  };
+
+  const InputArea = () => {
+      return (
+          <div className="mb-5 table w-full bg-slate-100 mt-2 p-2">
             <input
               type="text"
               name="amountInput"
@@ -396,70 +393,104 @@ export default function AssetContent() {
             </div>
             <button
               onClick={handleAddIncome}
-              className="bg-green-500 text-white py-2 px-4 rounded hover:bg-green-600"
+              className="bg-green-500 text-white py-2 px-4 rounded hover:bg-green-600 justify"
               style={{ alignSelf: "flex-end" }}
             >
               Add
             </button>
-          </div>
-          <button
-            onClick={handleRefresh}
-            className="text-white bg-indigo-500 border-0 py-2 px-6 focus:outline-none hover:bg-indigo-600 rounded text-lg mb-3"
-          >
-            Refresh
-          </button>
-          <div className="overflow-x-auto w-full">
-            {loading && (
-              <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-gray-500 bg-opacity-75 z-50">
-                <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-gray-900"></div>
-              </div>
-            )}
-            <table {...getTableProps()} className="border-collapse w-full">
-              <thead>
-                {headerGroups.map((headerGroup) => (
-                  <tr
-                    {...headerGroup.getHeaderGroupProps()}
-                    className="bg-gray-100"
-                  >
-                    {headerGroup.headers.map((column) => (
-                      <th
-                        {...column.getHeaderProps(
-                          column.getSortByToggleProps()
-                        )}
-                        className={`py-2 px-3 text-xs font-medium tracking-wider ${column.headerClassName}`}
-                      >
-                        {column.render("Header")}
-                        <span>
-                          {column.isSorted
-                            ? column.isSortedDesc
-                              ? " ▼"
-                              : " ▲"
-                            : ""}
-                        </span>
-                      </th>
-                    ))}
-                  </tr>
+          </div>        
+      );
+  }
+
+  const TableArea = () => {
+      return (
+        <table {...getTableProps()} className="border-collapse w-full">
+        <thead>
+          {headerGroups.map((headerGroup) => (
+            <tr
+              {...headerGroup.getHeaderGroupProps()}
+              className="bg-gray-100"
+            >
+              {headerGroup.headers.map((column) => (
+                <th
+                  {...column.getHeaderProps(
+                    column.getSortByToggleProps()
+                  )}
+                  className={`py-2 px-3 text-xs font-medium tracking-wider ${column.headerClassName}`}
+                >
+                  {column.render("Header")}
+                  <span>
+                    {column.isSorted
+                      ? column.isSortedDesc
+                        ? " ▼"
+                        : " ▲"
+                      : ""}
+                  </span>
+                </th>
+              ))}
+            </tr>
+          ))}
+        </thead>
+        <tbody
+          {...getTableBodyProps()}
+          className="divide-y divide-gray-200"
+        >
+          {rows.map((row) => {
+            prepareRow(row);
+            return (
+              <tr {...row.getRowProps()} className="">
+                {row.cells.map((cell) => (
+                  <td {...cell.getCellProps()} className="py-1 px-0 w-0">
+                    {cell.render("Cell")}
+                  </td>
                 ))}
-              </thead>
-              <tbody
-                {...getTableBodyProps()}
-                className="divide-y divide-gray-200"
-              >
-                {rows.map((row) => {
-                  prepareRow(row);
-                  return (
-                    <tr {...row.getRowProps()} className="">
-                      {row.cells.map((cell) => (
-                        <td {...cell.getCellProps()} className="py-1 px-0 w-0">
-                          {cell.render("Cell")}
-                        </td>
-                      ))}
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>        
+      )
+  }
+
+  const RefreshButton = () =>{
+      return (
+        <button
+        onClick={handleRefresh}
+        className="text-white bg-indigo-500 border-0 py-2 px-6 focus:outline-none hover:bg-indigo-600 rounded text-lg my-2"
+      >
+        Refresh
+      </button>
+      )
+  }
+
+  const getLocalTime = (utcTime) => {
+    return moment.utc(utcTime).local().format("YY-MM-DD HH:mm:ss");
+  };
+
+  return (
+    <>
+      <DivContainer>
+        <BrunnerMessageBox
+          isOpen={modalContent.isOpen}
+          message={modalContent.message}
+          onConfirm={modalContent.onConfirm}
+          onClose={modalContent.onClose}
+        />
+        {loading && (
+          <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-gray-500 bg-opacity-75 z-50">
+            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-gray-900"></div>
           </div>
+        )}
+
+        <div className="w-full pr-16 flex flex-col items-start text-left my-10">
+          <h2 className="title-font text-3xl mb-10 font-medium text-green-900">
+            Asset History
+          </h2>
+          <div className="overflow-x-auto w-full">
+            <TableArea/>
+            <RefreshButton/>
+            <InputArea/>
+            </div>
         </div>
       </DivContainer>
     </>
