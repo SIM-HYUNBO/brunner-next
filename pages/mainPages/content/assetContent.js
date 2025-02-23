@@ -447,15 +447,14 @@ export default function AssetContent() {
           onClose={modalContent.onClose}
         />
       )}
-      <DivContainer>
 
+      <DivContainer>
       <div className="w-full px-1">
         <TableTitleArea />      
         <TableConditionArea />
         <TableBodyArea />
         <TableInputDataArea />
       </div>
-
       </DivContainer>
     </>
   );
