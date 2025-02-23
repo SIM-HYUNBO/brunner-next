@@ -281,7 +281,7 @@ export default function AssetContent() {
 
     return (
       <h2 className="title-font sm:text-4xl text-3xl w-full my-10 font-medium text-green-900">
-        {tableTitle}   
+      {tableTitle}   
       </h2>
     );
   };
@@ -448,7 +448,7 @@ export default function AssetContent() {
       )}
       <DivContainer>
         <TableTitleArea />      
-        <div className="bg-gray-200 w-full px-1">
+        <div className="w-full px-1">
           <TableConditionArea />
           <TableBodyArea />
           <TableInputDataArea />
