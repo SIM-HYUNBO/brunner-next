@@ -347,87 +347,87 @@ export default function AssetContent() {
 
       <DivContainer>
 
-      {/* 조회 조건 영역 */}
-      <div className="flex justify-end w-full p-4 bg-gray-100 mt-5">    
-        {/* 조회 버튼 */}
-        <button
-            onClick={handleRefresh}
-            className="text-white bg-indigo-500 border-0 py-2 px-6 focus:outline-none hover:bg-indigo-600 rounded text-lg mb-3"
-        >
-            Refresh
-        </button>
-      </div>
+      <div className="bg-gray-200 w-full px-2">  
+        {/* 조회 조건 영역 */}
+        <div className="flex justify-end w-full p-4 bg-gray-100 mt-5">    
+          {/* 조회 버튼 */}
+          <button
+              onClick={handleRefresh}
+              className="text-white bg-indigo-500 border-0 py-2 px-6 focus:outline-none hover:bg-indigo-600 rounded text-lg mb-3"
+          >
+              Refresh
+          </button>
+        </div>
 
-      {/* 조회 결과 테이블 */}
-      <table {...getTableProps()} className="w-full text-left table-auto">
-        <thead>
-          {headerGroups.map((headerGroup) => (
-            <tr {...headerGroup.getHeaderGroupProps()}>
-              {headerGroup.headers.map((column) => (
-                <th {...column.getHeaderProps(column.getSortByToggleProps())}>
-                  {column.render("Header")}
-                  <span>
-                    {column.isSorted
-                      ? column.isSortedDesc
-                        ? " 🔽"
-                        : " 🔼"
-                      : ""}
-                  </span>
-                </th>
-              ))}
-            </tr>
-          ))}
-        </thead>
-        <tbody {...getTableBodyProps()}>
-          {rows.map((row) => {
-            prepareRow(row);
-            return (
-              <tr {...row.getRowProps()}>
-                {row.cells.map((cell) => {
-                  return (
-                    <td {...cell.getCellProps()} className="p-2 border-b dark:border-slate-700">
-                      {cell.render("Cell")}
-                    </td>
-                  );
-                })}
+        {/* 조회 결과 테이블 */}
+        <table {...getTableProps()} className="w-full text-left table-auto mt-2">
+          <thead>
+            {headerGroups.map((headerGroup) => (
+              <tr {...headerGroup.getHeaderGroupProps()}>
+                {headerGroup.headers.map((column) => (
+                  <th {...column.getHeaderProps(column.getSortByToggleProps())}>
+                    {column.render("Header")}
+                    <span>
+                      {column.isSorted
+                        ? column.isSortedDesc
+                          ? " 🔽"
+                          : " 🔼"
+                        : ""}
+                    </span>
+                  </th>
+                ))}
               </tr>
-            );
-          })}
-        </tbody>
-      </table>
+            ))}
+          </thead>
+          <tbody {...getTableBodyProps()}>
+            {rows.map((row) => {
+              prepareRow(row);
+              return (
+                <tr {...row.getRowProps()}>
+                  {row.cells.map((cell) => {
+                    return (
+                      <td {...cell.getCellProps()} className="p-2 border-b dark:border-slate-700">
+                        {cell.render("Cell")}
+                      </td>
+                    );
+                  })}
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
 
-      {/* 테이블 데이터 입력 패널 */}
-      <div className="mb-5 table w-full bg-slate-100 mt-2 p-2">
-        <input
-          type="text"
-          name="amountInput"
-          value={amountInput}
-          onChange={(e) => handleInputChange(e, "amountInput")}
-          placeholder="Amount"
-          className="mr-3 p-2 border rounded dark:text-gray-300 text-right table-column"
-          ref={amountInputRef}  // ref 추가
-        />
-      </div>
-
-      <div className="relative flex-grow">
-        <input
+        {/* 테이블 데이터 입력 패널 */}
+        <div className="mb-5 table w-full bg-slate-100 mt-2 p-2">
+          <input
             type="text"
-            name="commentInput"
-            value={commentInput}
-            onChange={(e) => handleInputChange(e, "commentInput")}
-            placeholder="Comment"
-            className="p-2 border rounded dark:text-gray-300 w-full table-column"
-            style={{ marginLeft: "-2px" }}
-            ref={commentInputRef}  // ref 추가
+            name="amountInput"
+            value={amountInput}
+            onChange={(e) => handleInputChange(e, "amountInput")}
+            placeholder="Amount"
+            className="mr-3 p-2 border rounded dark:text-gray-300 text-right table-column"
+            ref={amountInputRef}  // ref 추가
           />
+          <input
+              type="text"
+              name="commentInput"
+              value={commentInput}
+              onChange={(e) => handleInputChange(e, "commentInput")}
+              placeholder="Comment"
+              className="p-2 border rounded dark:text-gray-300 w-full table-column"
+              style={{ marginLeft: "-2px" }}
+              ref={commentInputRef}  // ref 추가
+            />
+          <button
+              onClick={handleAddNewTableData}
+              className="bg-green-500 text-white py-2 px-4 rounded hover:bg-green-600 justify mt-5"
+              style={{ alignSelf: "flex-end" }}
+            >
+              Add
+          </button>
+        </div>
+        
       </div>
-      <button
-          onClick={handleAddNewTableData}
-          className="bg-green-500 text-white py-2 px-4 rounded hover:bg-green-600 justify"
-          style={{ alignSelf: "flex-end" }}
-        >
-          Add
-      </button>
 
       </DivContainer>
     </>
