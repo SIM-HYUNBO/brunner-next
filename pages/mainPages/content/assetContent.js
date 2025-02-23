@@ -341,11 +341,11 @@ export default function AssetContent() {
   const TableInputDataArea = () => {
 
     // 테이블 데이터 입력 필드
-  const [amountInput, setAmountInput] = useState("");
-  const [commentInput, setCommentInput] = useState("");
-
-  const amountInputRef = useRef(null);  // Amount input ref
-  const commentInputRef = useRef(null);  // Comment input ref
+    const [amountInput, setAmountInput] = useState("");
+    const [commentInput, setCommentInput] = useState("");
+  
+    const amountInputRef = useRef(null);  // Amount input ref
+    const commentInputRef = useRef(null);  // Comment input ref
 
     const handleAddNewTableData = async () => {
       const userId = userInfo.getLoginUserId();
