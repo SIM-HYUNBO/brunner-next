@@ -347,9 +347,11 @@ export default function AssetContent() {
 
       <DivContainer>
 
+      {/* 테이블 제목 */}
       <h2 className="title-font sm:text-4xl text-3xl w-full my-10 font-medium text-green-900">
           Asset History
       </h2>
+
       <div className="bg-gray-200 w-full px-2">  
         {/* 조회 조건 영역 */}
         <div className="flex justify-end w-full p-4 bg-gray-100 mt-5">    
