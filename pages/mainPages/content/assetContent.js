@@ -276,6 +276,7 @@ export default function AssetContent() {
     return moment(timeString).format("YYYY-MM-DD HH:mm:ss");
   };
 
+  // 테이블 상단 제목 표시 부분
   const TableTitleArea = () => {
     const tableTitle = 'Asset History';
 
@@ -286,6 +287,7 @@ export default function AssetContent() {
     );
   };
 
+  // 테이블 상단 조회 조건 표시 부분
   const TableConditionArea = () => {
     return (
       <div className="flex justify-end w-full p-4 bg-gray-100 mt-2">    
@@ -299,6 +301,7 @@ export default function AssetContent() {
     );
   };
 
+  // 테이블 데이터 표시 부분
   const TableBodyArea = () => {
     return (
       <table {...getTableProps()} className="w-full text-left table-auto mt-2">
@@ -340,6 +343,7 @@ export default function AssetContent() {
     );
   };
 
+  // 신규 데이터 입력란
   const TableInputDataArea = () => {
 
     // 테이블 데이터 입력 필드
@@ -447,12 +451,14 @@ export default function AssetContent() {
         />
       )}
       <DivContainer>
+
+      <div className="w-full px-1">
         <TableTitleArea />      
-        <div className="w-full px-1">
-          <TableConditionArea />
-          <TableBodyArea />
-          <TableInputDataArea />
-        </div>
+        <TableConditionArea />
+        <TableBodyArea />
+        <TableInputDataArea />
+      </div>
+
       </DivContainer>
     </>
   );
