@@ -277,9 +277,11 @@ export default function AssetContent() {
   };
 
   const TableTitleArea = () => {
+    const tableTitle = 'Asset History';
+
     return (
       <h2 className="title-font sm:text-4xl text-3xl w-full my-10 font-medium text-green-900">
-        Asset History
+        {tableTitle}   
       </h2>
     );
   };
