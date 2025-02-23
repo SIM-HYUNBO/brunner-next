@@ -79,7 +79,8 @@ export default function AssetContent() {
         headerClassName: "text-center bg-orange-500 text-orange-100",
         Cell: ({ row }) => (
           <div className="text-center text-sm text-black dark:text-gray-300">
-            {getLocalTime(row.values.create_time)}
+            {/* 로컬 타임 표시 */}
+            { moment(row.values.create_time).format("YYYY-MM-DD HH:mm:ss") }
           </div>
         ),
       },
@@ -270,10 +271,6 @@ export default function AssetContent() {
       openModal(error.message);
       console.error(`message:${error.message}\n stack:${error.stack}\n`);
     }
-  };
-
-  const getLocalTime = (timeString) => {
-    return moment(timeString).format("YYYY-MM-DD HH:mm:ss");
   };
 
   // 테이블 상단 제목 표시 부분
