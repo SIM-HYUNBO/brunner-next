@@ -12,6 +12,7 @@ import DivContainer from "@/components/divContainer";
 
 export default function AssetContent() {
   const [loading, setLoading] = useState(false);
+
   const [modalContent, setModalContent] = useState({
     isOpen: false,
     message: "",
@@ -47,7 +48,6 @@ export default function AssetContent() {
 
   const router = useRouter();
 
-  // 테이블 데이터 CRUD 일반화
   useEffect(() => {
     fetchTableData();
   }, []);
@@ -150,8 +150,7 @@ export default function AssetContent() {
   );
 
   // 테이블 속성 정의
-  const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } =
-    useTable(
+  const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } = useTable(
       {
         columns,
         data: tableData,
