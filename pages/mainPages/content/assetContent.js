@@ -64,32 +64,32 @@ export default function AssetContent() {
   const columns = React.useMemo(
     () => [
       {
-        Header: "ID",
-        accessor: "history_id",
-        headerClassName: "text-center bg-blue-500 text-blue-100",
+        Header: 'ID',
+        accessor: 'history_id',
+        headerClassName: 'text-center bg-blue-500 text-blue-100 !important',
         Cell: ({ row }) => (
-          <div className="text-center text-sm text-black dark:text-gray-300">
+          <div className={`text-center text-sm text-black dark:text-gray-300`}>
             {row.values.history_id}
           </div>
         ),
       },
       {
-        Header: "Date&Time",
-        accessor: "create_time",
-        headerClassName: "text-center bg-orange-500 text-orange-100",
+        Header: 'Date&Time',
+        accessor: 'create_time',
+        headerClassName: 'text-center bg-orange-500 text-orange-100 !important',
         Cell: ({ row }) => (
-          <div className="text-center text-sm text-black dark:text-gray-300">
+          <div className={`text-center text-sm text-black dark:text-gray-300`}>
             {/* 로컬 타임 표시 */}
             { moment(row.values.create_time).format("YYYY-MM-DD HH:mm:ss") }
           </div>
         ),
       },
       {
-        Header: "Amount",
-        accessor: "amount",
-        headerClassName: "text-center bg-blue-500 text-blue-100",
+        Header: 'Amount',
+        accessor: 'amount',
+        headerClassName: 'text-center bg-blue-500 text-blue-100 !important',
         Cell: ({ row }) => (
-          <div className="text-right w-full">
+          <div className={`text-right w-full`}>
             <input
               type="text"
               className={`border-0 focus:ring-0 bg-transparent w-20 text-sm text-gray-900 dark:text-gray-300`}
@@ -100,11 +100,11 @@ export default function AssetContent() {
         ),
       },
       {
-        Header: "Comment",
+        Header: `Comment`,
         accessor: "comment",
-        headerClassName: "text-center bg-green-500 text-green-100",
+        headerClassName: 'text-center bg-green-500 text-green-100 !important',
         Cell: ({ row }) => (
-          <div className="text-center w-full">
+          <div className={`text-center w-full`}>
             <input
               type="text"
               className={`border-0 focus:ring-0 bg-transparent w-40 text-sm text-gray-900 dark:text-gray-300`}
@@ -117,9 +117,9 @@ export default function AssetContent() {
       {
         Header: "Actions",
         accessor: "actions",
-        headerClassName: "text-center bg-purple-500 text-green-100",
+        headerClassName: "text-center bg-purple-500 text-green-100 !important",
         Cell: ({ row }) => (
-          <div className="flex justify-center">
+          <div className={`flex justify-center`}>
             <button
               onClick={() => handleUpdateTableData(row)}
               className="p-2 rounded"
@@ -133,13 +133,13 @@ export default function AssetContent() {
             </button>
             <button
               onClick={() => handleDeleteTableData(row.index)}
-              className="p-2 rounded"
+              className={`p-2 rounded`}
               title="Delete"
             >
               <img
                 src="/delete-icon.png"
                 alt="Delete"
-                className="w-6 h-6"
+                className={`w-6 h-6`}
               />
             </button>
           </div>
@@ -305,7 +305,10 @@ export default function AssetContent() {
           {headerGroups.map((headerGroup) => (
             <tr {...headerGroup.getHeaderGroupProps()}>
               {headerGroup.headers.map((column) => (
-                <th {...column.getHeaderProps(column.getSortByToggleProps())}>
+                <th {...column.getHeaderProps({
+                  className: `text-center ${column.headerClassName ? column.headerClassName : ''}`,
+                })}>
+                                    
                   {column.render("Header")}
                   <span>
                     {column.isSorted
