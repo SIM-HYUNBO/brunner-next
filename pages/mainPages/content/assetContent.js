@@ -50,10 +50,11 @@ export default function AssetContent() {
  
   const brunnerTableRef = useRef();
 
-  const columnHeaders = [
+  const ch = [
     { Header: 'ID', 
       accessor: 'history_id', 
       type: 'text', 
+      editable: false,
       hidden: true, 
       input_hidden: true, 
       headerClassName: 'text-center bg-blue-500 text-blue-100 !important'
@@ -61,17 +62,20 @@ export default function AssetContent() {
     { Header: 'Date&Time', 
       accessor: 'create_time', 
       type: 'datetime-local', 
+      editable: false,
       headerClassName: 'text-center bg-orange-500 text-orange-100 !important', 
       formatter: (value) => moment(value).format("YYYY-MM-DD HH:mm:ss") 
     },
     { Header: 'Amount', 
       accessor: 'amount', 
       type: 'number', 
+      editable: true,
       headerClassName: 'text-center bg-blue-500 text-blue-100 !important'
     },
     { Header: 'Comment', 
       accessor: 'comment', 
       type: 'text', 
+      editable: true,
       headerClassName: 'text-center bg-green-500 text-green-100 !important'
     },
   ];
@@ -118,7 +122,7 @@ export default function AssetContent() {
         systemCode: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE,
         userId: userId,
         historyId: row.original.history_id,
-        amount: Number(amount),
+        amount: Number(row.values.amount),
         comment: row.values.comment,
       };
 
@@ -127,7 +131,7 @@ export default function AssetContent() {
 
       if (jResponse.error_code === 0) {
         openModal("Successfully updated.");
-        brunnerTableRef.current.handleRefresh();
+        brunnerTableRef.current.fetchTableData();
       } else {
         openModal(jResponse.error_message);
       }
@@ -138,7 +142,7 @@ export default function AssetContent() {
     }
   };
 
-  const requestDeleteTableData = async (rowIndex, tableDataRef) => {
+  const requestDeleteTableData = async (row) => {
     const userId = userInfo.getLoginUserId();
     if (!userId) return;
 
@@ -146,7 +150,7 @@ export default function AssetContent() {
     if (!deleteConfirm) return;
 
     setLoading(true);
-    const historyId = tableDataRef.current[rowIndex].history_id;
+    const historyId = row.values.history_id;
 
     try {
       const jRequest = {
@@ -161,7 +165,7 @@ export default function AssetContent() {
 
       if (jResponse.error_code === 0) {
         openModal(constants.messages.MESSAGE_SUCCESS_DELETED);
-        brunnerTableRef.current.handleRefresh();
+        brunnerTableRef.current.fetchTableData();
       } else {
         openModal(jResponse.error_message);
       }
@@ -177,7 +181,7 @@ export default function AssetContent() {
     if (!userId) return;
 
     for (const key in inputValues) {
-      const column = columnHeaders.find((header) => header.accessor === key);
+      const column = ch.find((header) => header.accessor === key);
       if (!inputValues[key] && column && !column.input_hidden) {
         openModal(`Please fill in the ${key}.`);
         return;
@@ -198,7 +202,7 @@ export default function AssetContent() {
 
       if (jResponse.error_code === 0) {
         openModal(constants.messages.MESSAGE_SUCCESS_ADDED);
-        brunnerTableRef.current.handleRefresh();
+        brunnerTableRef.current.fetchTableData();
       } else {
         openModal(jResponse.error_message);
       }
@@ -228,7 +232,7 @@ export default function AssetContent() {
       <DivContainer>
       <div className="w-full px-1">
         <BrunnerTable ref={brunnerTableRef}
-                      columnHeaders={columnHeaders} 
+                      columnHeaders={ch} 
                       tableTitle='Asset History'
                       requestTableData={requestTableData}
                       requestAddNewTableData={requestAddNewTableData}

@@ -1,47 +1,17 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useImperativeHandle, forwardRef } from "react";
 import moment from "moment";
 import { useTable, useSortBy } from "react-table";
 import DivContainer from "@/components/divContainer";
-import RequestServer from "@/components/requestServer";
-import * as constants from "@/components/constants";
-import * as userInfo from "@/components/userInfo";
-import BrunnerMessageBox from "@/components/brunnerMessageBox";
 import { useRouter } from "next/router";
 
-export default function BrunnerTable({ columnHeaders, tableTitle }) {
-  const [loading, setLoading] = useState(false);
-  const [modalContent, setModalContent] = useState({
-    isOpen: false,
-    message: "",
-    onConfirm: () => {},
-    onClose: () => {},
-  });
-
-  const openModal = (message) => {
-    return new Promise((resolve, reject) => {
-      setModalContent({
-        isOpen: true,
-        message: message,
-        onConfirm: (result) => {
-          resolve(result);
-          closeModal();
-        },
-        onClose: () => {
-          reject(false);
-          closeModal();
-        },
-      });
-    });
-  };
-
-  const closeModal = () => {
-    setModalContent({
-      isOpen: false,
-      message: "",
-      onConfirm: () => {},
-      onClose: () => {},
-    });
-  };
+const BrunnerTable = forwardRef(({
+  columnHeaders,
+  tableTitle,
+  requestTableData,
+  requestAddNewTableData,
+  requestUpdateTableData,
+  requestDeleteTableData
+}, ref) => {
 
   const router = useRouter();
 
@@ -58,9 +28,45 @@ export default function BrunnerTable({ columnHeaders, tableTitle }) {
 
   const columns = React.useMemo(() => {
     const dynamicColumns = [
-      ...columnHeaders.map((col) => ({
-        ...col
-      })),
+      ...columnHeaders.map((col) => {
+        // `datetime-local` 타입의 컬럼을 처리
+        if (col.type === 'datetime-local') {
+          return {
+            ...col,
+            // Cell 렌더링을 수정하여 클라이언트의 현지 시간으로 변환
+            Cell: ({ value }) => {
+              // 서버에서 받은 datetime 값을 Date 객체로 변환
+              const serverDate = new Date(value);
+  
+              // 클라이언트의 타임존으로 변환
+              const clientTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+              const clientDateTime = new Date(serverDate.toLocaleString("en-US", {
+                timeZone: clientTimeZone, // 클라이언트의 타임존
+              }));
+    
+              const year = clientDateTime.getFullYear();
+              const month = (clientDateTime.getMonth() + 1).toString().padStart(2, '0');
+              const day = clientDateTime.getDate().toString().padStart(2, '0');
+              const hours = clientDateTime.getHours().toString().padStart(2, '0');
+              const minutes = clientDateTime.getMinutes().toString().padStart(2, '0');
+  
+              const formattedLocalDateTime = `${year}-${month}-${day}T${hours}:${minutes}`;
+                
+              return (
+                <input
+                  type="datetime-local"
+                  value={formattedLocalDateTime}
+                  readOnly
+                  className="text-center bg-purple-100"
+                />
+              );
+            },
+          };
+        }
+  
+        // `datetime-local`이 아닌 다른 컬럼은 원래의 설정대로 반환
+        return col;
+      }),
       {
         Header: "Actions",
         accessor: "actions",
@@ -69,14 +75,14 @@ export default function BrunnerTable({ columnHeaders, tableTitle }) {
         Cell: ({ row }) => (
           <div className="flex justify-center">
             <button
-              onClick={() => handleUpdateTableData(row)}
+              onClick={() => requestUpdateTableData(row)}
               className="p-2 rounded"
               title="Save"
             >
               <img src="/save-icon.png" alt="Save" className="w-6 h-6" />
             </button>
             <button
-              onClick={() => handleDeleteTableData(row.index)}
+              onClick={() => requestDeleteTableData(row)}
               className="p-2 rounded"
               title="Delete"
             >
@@ -84,48 +90,13 @@ export default function BrunnerTable({ columnHeaders, tableTitle }) {
             </button>
           </div>
         ),
-      }
+      },
     ];
-
+  
     return dynamicColumns;
   }, [columnHeaders]);
 
-  const fetchTableData = async () => {
-    const result = await requestTableData();
-    setTableDataRef(result);
-  };
-
-  const requestTableData = async () => {
-    const userId = userInfo.getLoginUserId();
-    if (!userId) return [];
-
-    try {
-      const jRequest = {
-        commandName: constants.commands.COMMAND_TB_COR_INCOME_HIST_SELECTBYUSERID,
-        systemCode: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE,
-        userId: userId,
-      };
-
-      setLoading(true);
-      const jResponse = await RequestServer("POST", JSON.stringify(jRequest));
-      setLoading(false);
-
-      if (jResponse.error_code === 0) {
-        return jResponse.incomeHistory;
-      } else {
-        openModal(jResponse.error_message);
-        return [];
-      }
-    } catch (error) {
-      setLoading(false);
-      openModal(error.message);
-      console.error(`message:${error.message}\n stack:${error.stack}\n`);
-      return [];
-    }
-  };
-
   const TableTitleArea = () => {
-    const tableTitle = 'Asset History';
     return (
       <h2 className="title-font sm:text-4xl text-3xl w-full my-10 font-medium text-green-900">
         {tableTitle}
@@ -137,7 +108,7 @@ export default function BrunnerTable({ columnHeaders, tableTitle }) {
     return (
       <div className="flex justify-end w-full p-4 bg-gray-100 mt-2">
         <button
-          onClick={handleRefresh}
+          onClick={requestTableData}
           className="text-white bg-indigo-500 border-0 py-2 px-6 focus:outline-none hover:bg-indigo-600 rounded text-lg mb-3"
         >
           Refresh
@@ -167,6 +138,10 @@ export default function BrunnerTable({ columnHeaders, tableTitle }) {
       },
       useSortBy
     );
+
+  const getLocalTime = (val) => {
+    return new Date(cell.value.toLocaleString("en-US", { timeZoneName: "short" })).toISOString().slice(0, 16);
+  }
 
     return (
       <table {...getTableProps()} className="w-full text-left table-auto mt-2">
@@ -203,7 +178,7 @@ export default function BrunnerTable({ columnHeaders, tableTitle }) {
                       {...cell.getCellProps()}
                       className="p-2 border-b dark:border-slate-700"
                     >
-                      {cell.column.id !== 'actions' ? (
+                      {cell.column.id !== 'actions' && cell.column.editable ? (
                         <EditableCell
                           value={cell.value}
                           rowIndex={row.index}
@@ -254,86 +229,7 @@ export default function BrunnerTable({ columnHeaders, tableTitle }) {
   const handleCellValueChange = (newValue, rowIndex, columnId) => {
     const updatedTableData = [...tableData];
     updatedTableData[rowIndex][columnId] = newValue;
-    setTableData(updatedTableData);
-  };
-
-  const handleUpdateTableData = async (row) => {
-    const userId = userInfo.getLoginUserId();
-    if (!userId) return;
-
-    let amount = row.values.amount;
-    amount = String(amount).replace(/,/g, "");
-
-    if (isNaN(Number(amount))) {
-      openModal(constants.messages.MESSAGE_INVALIED_NUMBER_AMOUNT);
-      return;
-    }
-
-    try {
-      const jRequest = {
-        commandName: constants.commands.COMMAND_TB_COR_INCOME_HIST_UPDATEONE,
-        systemCode: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE,
-        userId: userId,
-        historyId: row.original.history_id,
-        amount: Number(amount),
-        comment: row.values.comment,
-      };
-
-      setLoading(true);
-      const jResponse = await RequestServer("POST", JSON.stringify(jRequest));
-      setLoading(false);
-
-      openModal("Successfully updated.");
-
-      if (jResponse.error_code === 0) {
-        fetchTableData();
-      } else {
-        openModal(jResponse.error_message);
-        fetchTableData();
-      }
-    } catch (error) {
-      setLoading(false);
-      openModal(error.message);
-      console.error(`message:${error.message}\n stack:${error.stack}\n`);
-    }
-  };
-
-  const handleRefresh = () => {
-    fetchTableData();
-  };
-
-  const handleDeleteTableData = async (rowIndex) => {
-    const userId = userInfo.getLoginUserId();
-    if (!userId) return;
-
-    const deleteConfirm = await openModal(constants.messages.MESSAGE_DELETE_ITEM);
-    if (!deleteConfirm) return;
-
-    const historyId = tableDataRef.current[rowIndex].history_id;
-
-    try {
-      const jRequest = {
-        commandName: constants.commands.COMMAND_TB_COR_INCOME_HIST_DELETEONE,
-        systemCode: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE,
-        userId: userId,
-        historyId: historyId,
-      };
-
-      setLoading(true);
-      const jResponse = await RequestServer("POST", JSON.stringify(jRequest));
-      setLoading(false);
-
-      if (jResponse.error_code === 0) {
-        openModal(constants.messages.MESSAGE_SUCCESS_DELETED);
-        fetchTableData();
-      } else {
-        openModal(jResponse.error_message);
-      }
-    } catch (error) {
-      setLoading(false);
-      openModal(error.message);
-      console.error(`message:${error.message}\n stack:${error.stack}\n`);
-    }
+    setTableDataRef(updatedTableData);
   };
 
   const TableInputDataArea = () => {
@@ -352,42 +248,6 @@ export default function BrunnerTable({ columnHeaders, tableTitle }) {
       }));
     };
 
-    const handleAddNewTableData = async () => {
-      const userId = userInfo.getLoginUserId();
-      if (!userId) return;
-
-      for (const key in inputValues) {
-        if (!inputValues[key] && columnHeaders.some(header => header.accessor === key && !header.hidden)) {
-          openModal(`Please fill in the ${key}.`);
-          return;
-        }
-      }
-
-      try {
-        const jRequest = {
-          commandName: constants.commands.COMMAND_TB_COR_INCOME_HIST_INSERTONE,
-          systemCode: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE,
-          userId: userId,
-          ...inputValues,
-        };
-
-        setLoading(true);
-        const jResponse = await RequestServer("POST", JSON.stringify(jRequest));
-        setLoading(false);
-
-        if (jResponse.error_code === 0) {
-          openModal(constants.messages.MESSAGE_SUCCESS_ADDED);
-          fetchTableData();
-          setInputValues(initialInputState);
-        } else {
-          openModal(jResponse.error_message);
-        }
-      } catch (error) {
-        setLoading(false);
-        openModal(error.message);
-        console.error(`message:${error.message}\n stack:${error.stack}\n`);
-      }
-    };
 
     return (
       <div className="mb-2 table w-full bg-slate-100 mt-2 p-2">
@@ -409,7 +269,7 @@ export default function BrunnerTable({ columnHeaders, tableTitle }) {
           )
         ))}
         <button
-          onClick={handleAddNewTableData}
+          onClick={() => { requestAddNewTableData(inputValues) }}
           className="bg-green-500 text-white py-2 px-4 rounded hover:bg-green-600 mt-2"
           style={{ alignSelf: "flex-end" }}
         >
@@ -419,17 +279,20 @@ export default function BrunnerTable({ columnHeaders, tableTitle }) {
     );
   };
 
+  // 부모 컴포넌트에서 호출할 수 있게 노출
+  useImperativeHandle(ref, () => ({
+    fetchTableData,
+  }));
+
+  const fetchTableData = async () => {
+    const tableData = await requestTableData();
+
+    setTableDataRef(tableData);
+  }
+
+
   return (
     <>
-      {modalContent.isOpen && (
-        <BrunnerMessageBox
-          isOpen={modalContent.isOpen}
-          message={modalContent.message}
-          onConfirm={modalContent.onConfirm}
-          onClose={modalContent.onClose}
-        />
-      )}
-
       <DivContainer>
         <div className="w-full px-1">
           <TableTitleArea />
@@ -440,4 +303,6 @@ export default function BrunnerTable({ columnHeaders, tableTitle }) {
       </DivContainer>
     </>
   );
-}
+});
+
+export default BrunnerTable; 
