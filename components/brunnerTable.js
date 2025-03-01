@@ -36,21 +36,8 @@ const BrunnerTable = forwardRef(({
             // Cell 렌더링을 수정하여 클라이언트의 현지 시간으로 변환
             Cell: ({ value }) => {
               // 서버에서 받은 datetime 값을 Date 객체로 변환
-              const serverDate = new Date(value);
-  
-              // 클라이언트의 타임존으로 변환
-              const clientTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-              const clientDateTime = new Date(serverDate.toLocaleString("en-US", {
-                timeZone: clientTimeZone, // 클라이언트의 타임존
-              }));
-    
-              const year = clientDateTime.getFullYear();
-              const month = (clientDateTime.getMonth() + 1).toString().padStart(2, '0');
-              const day = clientDateTime.getDate().toString().padStart(2, '0');
-              const hours = clientDateTime.getHours().toString().padStart(2, '0');
-              const minutes = clientDateTime.getMinutes().toString().padStart(2, '0');
-  
-              const formattedLocalDateTime = `${year}-${month}-${day}T${hours}:${minutes}`;
+              const serverTime = new Date(value);
+              formattedLocalDateTime = getClientTime(serverTime);
                 
               return (
                 <input
@@ -95,6 +82,22 @@ const BrunnerTable = forwardRef(({
   
     return dynamicColumns;
   }, [columnHeaders]);
+
+  const getClientTime = (serverTime) => {
+    // 클라이언트의 타임존으로 변환
+    const clientTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    const clientDateTime = new Date(serverTime.toLocaleString("en-US", {
+      timeZone: clientTimeZone, // 클라이언트의 타임존
+    }));
+
+    const year = clientDateTime.getFullYear();
+    const month = (clientDateTime.getMonth() + 1).toString().padStart(2, '0');
+    const day = clientDateTime.getDate().toString().padStart(2, '0');
+    const hours = clientDateTime.getHours().toString().padStart(2, '0');
+    const minutes = clientDateTime.getMinutes().toString().padStart(2, '0');
+
+    return `${year}-${month}-${day}T${hours}:${minutes}`;    
+  }
 
   const TableTitleArea = () => {
     return (
@@ -289,7 +292,6 @@ const BrunnerTable = forwardRef(({
 
     setTableDataRef(tableData);
   }
-
 
   return (
     <>
