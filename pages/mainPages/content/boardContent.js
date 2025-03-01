@@ -329,17 +329,17 @@ function Board(boardInfo) {
 
   return (
     <div className="w-full max-w-4xl mx-auto">
-      {loading && (
-        <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-gray-500 bg-opacity-75 z-50">
-          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-gray-900"></div>
-        </div>
-      )}
       <BrunnerMessageBox
         isOpen={modalContent.isOpen}
         message={modalContent.message}
         onConfirm={modalContent.onConfirm}
         onClose={modalContent.onClose}
       />
+      {loading && (
+        <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-gray-500 bg-opacity-75 z-50">
+          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-gray-900"></div>
+        </div>
+      )}
       <div className="mb-6 flex">
         <textarea
           value={postText}
@@ -476,11 +476,6 @@ function BoardContent({
 
   return (
     <div className="border-b border-gray-300 py-4">
-      {loading && (
-        <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-gray-500 bg-opacity-75 z-50">
-          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-gray-900"></div>
-        </div>
-      )}
       <BrunnerMessageBox
         isOpen={modalContent.isOpen}
         message={modalContent.message}
@@ -488,6 +483,11 @@ function BoardContent({
         onClose={modalContent.onClose}
       />
       <hr />
+      {loading && (
+        <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-gray-500 bg-opacity-75 z-50">
+          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-gray-900"></div>
+        </div>
+      )}
       {isEditingPost ? (
         <div>
           <textarea

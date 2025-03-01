@@ -61,6 +61,30 @@ export default function BrunnerTable({ columnHeaders, tableTitle }) {
       ...columnHeaders.map((col) => ({
         ...col
       })),
+      {
+        Header: "Actions",
+        accessor: "actions",
+        id: "actions",
+        headerClassName: 'text-center bg-purple-500 text-purple-100 !important',
+        Cell: ({ row }) => (
+          <div className="flex justify-center">
+            <button
+              onClick={() => handleUpdateTableData(row)}
+              className="p-2 rounded"
+              title="Save"
+            >
+              <img src="/save-icon.png" alt="Save" className="w-6 h-6" />
+            </button>
+            <button
+              onClick={() => handleDeleteTableData(row.index)}
+              className="p-2 rounded"
+              title="Delete"
+            >
+              <img src="/delete-icon.png" alt="Delete" className="w-6 h-6" />
+            </button>
+          </div>
+        ),
+      }
     ];
 
     return dynamicColumns;
@@ -101,6 +125,7 @@ export default function BrunnerTable({ columnHeaders, tableTitle }) {
   };
 
   const TableTitleArea = () => {
+    const tableTitle = 'Asset History';
     return (
       <h2 className="title-font sm:text-4xl text-3xl w-full my-10 font-medium text-green-900">
         {tableTitle}
@@ -122,35 +147,7 @@ export default function BrunnerTable({ columnHeaders, tableTitle }) {
   };
 
   const TableBodyArea = () => {
-    const modifiedColumns = [
-      ...columns,
-      {
-        Header: "Actions",
-        accessor: "actions",
-        id: "actions",
-        headerClassName: 'text-center bg-purple-500 text-purple-100 !important',
-        Cell: ({ row }) => (
-          <div className="flex justify-center">
-            <button
-              onClick={() => handleUpdateTableData(row)}
-              className="p-2 rounded"
-              title="Save"
-            >
-              <img src="/save-icon.png" alt="Save" className="w-6 h-6" />
-            </button>
-            <button
-              onClick={() => handleDeleteTableData(row.index)}
-              className="p-2 rounded"
-              title="Delete"
-            >
-              <img src="/delete-icon.png" alt="Delete" className="w-6 h-6" />
-            </button>
-          </div>
-        ),
-      },
-    ];
-
-    const hiddenColumns = modifiedColumns
+    const hiddenColumns = columns
       .filter((column) => column.hidden)
       .map((column) => column.accessor || column.id);
 
@@ -162,7 +159,7 @@ export default function BrunnerTable({ columnHeaders, tableTitle }) {
       prepareRow,
     } = useTable(
       {
-        columns: modifiedColumns,
+        columns: columns,
         data: tableData,
         initialState: {
           hiddenColumns: hiddenColumns,
@@ -206,7 +203,16 @@ export default function BrunnerTable({ columnHeaders, tableTitle }) {
                       {...cell.getCellProps()}
                       className="p-2 border-b dark:border-slate-700"
                     >
-                      {cell.render("Cell")}
+                      {cell.column.id !== 'actions' ? (
+                        <EditableCell
+                          value={cell.value}
+                          rowIndex={row.index}
+                          columnId={cell.column.id}
+                          onValueChange={handleCellValueChange}
+                        />
+                      ) : (
+                        cell.render("Cell")
+                      )}
                     </td>
                   );
                 })}
@@ -216,6 +222,39 @@ export default function BrunnerTable({ columnHeaders, tableTitle }) {
         </tbody>
       </table>
     );
+  };
+
+  const EditableCell = ({ value, rowIndex, columnId, onValueChange }) => {
+    const [isEditing, setIsEditing] = useState(false);
+    const [newValue, setNewValue] = useState(value);
+
+    const handleBlur = () => {
+      setIsEditing(false);
+      onValueChange(newValue, rowIndex, columnId);
+    };
+
+    const handleChange = (e) => {
+      setNewValue(e.target.value);
+    };
+
+    return isEditing ? (
+      <input
+        type="text"
+        value={newValue}
+        onChange={handleChange}
+        onBlur={handleBlur}
+        className="border p-1 rounded"
+        autoFocus
+      />
+    ) : (
+      <span onClick={() => setIsEditing(true)}>{value}</span>
+    );
+  };
+
+  const handleCellValueChange = (newValue, rowIndex, columnId) => {
+    const updatedTableData = [...tableData];
+    updatedTableData[rowIndex][columnId] = newValue;
+    setTableData(updatedTableData);
   };
 
   const handleUpdateTableData = async (row) => {
@@ -318,8 +357,7 @@ export default function BrunnerTable({ columnHeaders, tableTitle }) {
       if (!userId) return;
 
       for (const key in inputValues) {
-        const column = columnHeaders.find((header) => header.accessor === key);
-        if (!inputValues[key] && column && !column.input_hidden) {
+        if (!inputValues[key] && columnHeaders.some(header => header.accessor === key && !header.hidden)) {
           openModal(`Please fill in the ${key}.`);
           return;
         }
@@ -351,7 +389,6 @@ export default function BrunnerTable({ columnHeaders, tableTitle }) {
       }
     };
 
-
     return (
       <div className="mb-2 table w-full bg-slate-100 mt-2 p-2">
         {columnHeaders.map((header) => (
@@ -364,22 +401,20 @@ export default function BrunnerTable({ columnHeaders, tableTitle }) {
                 value={inputValues[header.accessor]}
                 onChange={(e) => handleInputChange(e, header.accessor)}
                 placeholder={header.Header}
-                className={`p-1 border rounded dark:text-gray-300 w-full ${
+                className={`mr-3 p-2 border rounded dark:text-gray-300 w-full ${
                   header.type === "number" ? "text-right" : "text-left"
                 }`}
               />
             </div>
           )
         ))}
-        {/* Add 버튼을 감싸는 div에 flex justify-end 적용 */}
-        <div className="flex justify-end mt-2">
-          <button
-            onClick={handleAddNewTableData}
-            className="bg-green-500 text-white py-2 px-4 rounded hover:bg-green-600"
-          >
-            Add
-          </button>
-        </div>
+        <button
+          onClick={handleAddNewTableData}
+          className="bg-green-500 text-white py-2 px-4 rounded hover:bg-green-600 mt-2"
+          style={{ alignSelf: "flex-end" }}
+        >
+          Add
+        </button>
       </div>
     );
   };
