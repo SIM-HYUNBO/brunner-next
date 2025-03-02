@@ -58,7 +58,7 @@ const BrunnerTable = forwardRef(({
         Header: "Actions",
         accessor: "actions",
         id: "actions",
-        headerClassName: 'text-center bg-purple-500 text-purple-100 !important',
+        headerClassName: 'text-center bg-purple-500 text-purple-100 w-[100px] !important',
         Cell: ({ row }) => (
           <div className="flex justify-center">
             <button
@@ -142,10 +142,6 @@ const BrunnerTable = forwardRef(({
       useSortBy
     );
 
-  const getLocalTime = (val) => {
-    return new Date(cell.value.toLocaleString("en-US", { timeZoneName: "short" })).toISOString().slice(0, 16);
-  }
-
     return (
       <table {...getTableProps()} className="w-full text-left table-auto mt-2">
         <thead>
@@ -177,15 +173,17 @@ const BrunnerTable = forwardRef(({
               <tr {...row.getRowProps()}>
                 {row.cells.map((cell) => {
                   return (
-                    <td
+                    <td key={cell.column.id}
                       {...cell.getCellProps()}
-                      className="p-2 border-b dark:border-slate-700"
+                      className={`p-2 border-b dark:border-slate-700 ${cell.column.type === 'number' ? 'text-right': 'text-left'}`}
                     >
                       {cell.column.id !== 'actions' && cell.column.editable ? (
                         <EditableCell
                           value={cell.value}
                           rowIndex={row.index}
                           columnId={cell.column.id}
+                          type={cell.column.type}
+                          editable={cell.column.editable}
                           onValueChange={handleCellValueChange}
                         />
                       ) : (
@@ -202,7 +200,7 @@ const BrunnerTable = forwardRef(({
     );
   };
 
-  const EditableCell = ({ value, rowIndex, columnId, onValueChange }) => {
+  const EditableCell = ({ value, rowIndex, columnId, type, editable, onValueChange }) => {
     const [isEditing, setIsEditing] = useState(false);
     const [newValue, setNewValue] = useState(value);
 
@@ -216,12 +214,12 @@ const BrunnerTable = forwardRef(({
     };
 
     return isEditing ? (
-      <input
-        type="text"
+      ((type === 'number' || type === 'text' || type === 'datetime-local') && editable ) && <input
+        type = {type}
         value={newValue}
         onChange={handleChange}
         onBlur={handleBlur}
-        className="border p-1 rounded"
+        className={`border p-1 rounded w-full max-w-full resize-none ${type === 'number' ? 'text-right': 'text-left'}`}
         autoFocus
       />
     ) : (
@@ -238,7 +236,7 @@ const BrunnerTable = forwardRef(({
   const TableInputDataArea = () => {
     const initialInputState = {};
     columnHeaders.forEach((header) => {
-      initialInputState[header.accessor] = "";
+      initialInputState[header.accessor] = ``;
     });
 
     const [inputValues, setInputValues] = useState(initialInputState);
