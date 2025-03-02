@@ -13,22 +13,22 @@ const executeService = async (txnId, jRequest) => {
 
     try {
         switch (jRequest.commandName) {
-            case constants.commands.COMMAND_SECURITY_SIGNUP:
+            case constants.commands.COMMAND_TB_COR_USER_MST_SIGNUP:
                 jResponse = await signup(txnId, jRequest);
                 break;
-            case constants.commands.COMMAND_SECURITY_SIGNIN:
+            case constants.commands.COMMAND_TB_COR_USER_MST_SIGNIN:
                 jResponse = await signin(txnId, jRequest);
                 break;
-            case constants.commands.COMMAND_SECURITY_SIGNOUT:
+            case constants.commands.COMMAND_TB_COR_USER_MST_SIGNOUT:
                 jResponse = await signout(txnId, jRequest);
                 break;
-            case constants.commands.COMMAND_SECURITY_RESET_PASSWORD:
+            case constants.commands.COMMAND_TB_COR_USER_MST_RESET_PASSWORD:
                 jResponse = await resetPassword(txnId, jRequest);
                 break;
-            case constants.commands.COMMAND_SECURITY_DELETE_ACCOUNT:
+            case constants.commands.COMMAND_TB_COR_USER_MST_DELETE_ACCOUNT:
                 jResponse = await deleteAccount(txnId, jRequest);
                 break;
-            case constants.commands.COMMAND_SECURITY_SEND_EMAIL_AUTHCODE:
+            case constants.commands.COMMAND_TB_COR_USER_MST_SEND_EMAIL_AUTHCODE:
                 jResponse = await sendEMailAuthCode(txnId, jRequest);
                 break;
             default:

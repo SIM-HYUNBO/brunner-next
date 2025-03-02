@@ -10,16 +10,16 @@ const executeService = async (txnId, jRequest) => {
 
     try {
         switch (jRequest.commandName) {
-            case constants.commands.COMMAND_TB_COR_POST_INFO_SELECTALL:
+            case constants.commands.COMMAND_TB_COR_POST_INFO_SELECT_ALL:
                 jResponse = await selectAll(txnId, jRequest);
                 break;
-            case constants.commands.COMMAND_TB_COR_POST_INFO_INSERTONE:
+            case constants.commands.COMMAND_TB_COR_POST_INFO_INSERT_ONE:
                 jResponse = await insertOne(txnId, jRequest);
                 break;
-            case constants.commands.COMMAND_TB_COR_POST_INFO_UPDATEONE:
+            case constants.commands.COMMAND_TB_COR_POST_INFO_UPDATE_ONE:
                 jResponse = await updateOne(txnId, jRequest);
                 break;
-            case constants.commands.COMMAND_TB_COR_POST_INFO_DELETEONE:
+            case constants.commands.COMMAND_TB_COR_POST_INFO_DELETE_ONE:
                 jResponse = await deleteOne(txnId, jRequest);
                 break;
             default:

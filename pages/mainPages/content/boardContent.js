@@ -55,7 +55,7 @@ function Board(boardInfo) {
     var jResponse = null;
 
     try {
-      jRequest.commandName = constants.commands.COMMAND_TB_COR_POST_INFO_SELECTALL;
+      jRequest.commandName = constants.commands.COMMAND_TB_COR_POST_INFO_SELECT_ALL;
       jRequest.systemCode = process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE;
       jRequest.postInfo = { postType: `TICKER_INFO-${boardType}` }; // 게시판 유형을 TICKER_INFO-{종모코드}로 함
 
@@ -95,7 +95,7 @@ function Board(boardInfo) {
           userId: userId ? userId : "anonymous user",
         };
 
-        jRequest.commandName = constants.commands.COMMAND_TB_COR_POST_INFO_INSERTONE;
+        jRequest.commandName = constants.commands.COMMAND_TB_COR_POST_INFO_INSERT_ONE;
         jRequest.systemCode = process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE;
         jRequest.postInfo = newPost;
 
@@ -129,7 +129,7 @@ function Board(boardInfo) {
         return;
       }
 
-      jRequest.commandName = constants.commands.COMMAND_TB_COR_POST_INFO_UPDATEONE;
+      jRequest.commandName = constants.commands.COMMAND_TB_COR_POST_INFO_UPDATE_ONE;
       jRequest.systemCode = process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE;
       jRequest.postInfo = {
         postId: postId,
@@ -174,7 +174,7 @@ function Board(boardInfo) {
         return;
       }
 
-      jRequest.commandName = constants.commands.COMMAND_TB_COR_POST_INFO_DELETEONE;
+      jRequest.commandName = constants.commands.COMMAND_TB_COR_POST_INFO_DELETE_ONE;
       jRequest.systemCode = process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE;
 
       jRequest.postInfo = {
@@ -207,7 +207,7 @@ function Board(boardInfo) {
 
       const userId = userInfo.getLoginUserId();
 
-      jRequest.commandName = constants.commands.COMMAND_TB_COR_POST_COMMENT_INFO_INSERTONE;
+      jRequest.commandName = constants.commands.COMMAND_TB_COR_POST_COMMENT_INFO_INSERT_ONE;
       jRequest.systemCode = process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE;
 
       jRequest.commentInfo = {
@@ -252,7 +252,7 @@ function Board(boardInfo) {
 
       const post = posts.find((post) => post.post_id === postId);
 
-      jRequest.commandName = constants.commands.COMMAND_TB_COR_POST_COMMENT_INFO_UPDATEONE;
+      jRequest.commandName = constants.commands.COMMAND_TB_COR_POST_COMMENT_INFO_UPDATE_ONE;
       jRequest.systemCode = process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE;
       jRequest.commentInfo = {
         postId: postId,
@@ -297,7 +297,7 @@ function Board(boardInfo) {
         return;
       }
 
-      jRequest.commandName = constants.commands.COMMAND_TB_COR_POST_COMMENT_INFO_DELETEONE;
+      jRequest.commandName = constants.commands.COMMAND_TB_COR_POST_COMMENT_INFO_DELETE_ONE;
       jRequest.systemCode = process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE;
 
       jRequest.commentInfo = {
