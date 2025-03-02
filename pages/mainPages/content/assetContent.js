@@ -149,15 +149,14 @@ export default function AssetContent() {
     const deleteConfirm = await openModal(constants.messages.MESSAGE_DELETE_ITEM);
     if (!deleteConfirm) return;
 
-    setLoading(true);
-    const historyId = row.values.history_id;
-
     try {
+      setLoading(true);
+
       const jRequest = {
         commandName: constants.commands.COMMAND_TB_COR_INCOME_HIST_DELETE_ONE,
         systemCode: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE,
         userId: userId,
-        historyId: historyId,
+        historyId: row.values.history_id,
       };
 
       const jResponse = await RequestServer("POST", JSON.stringify(jRequest));
@@ -181,15 +180,15 @@ export default function AssetContent() {
     if (!userId) return;
 
     try {
-        for (const key in inputValues) {
+      setLoading(true);
+
+      for (const key in inputValues) {
         const column = columnHeaders.find((header) => header.accessor === key);
         if (!inputValues[key] && column && !column.input_hidden) {
           openModal(`Please fill in the ${key}.`);
           return;
         }
       }
-
-      setLoading(true);
       
       const jRequest = {
         commandName: constants.commands.COMMAND_TB_COR_INCOME_HIST_INSERT_ONE,
