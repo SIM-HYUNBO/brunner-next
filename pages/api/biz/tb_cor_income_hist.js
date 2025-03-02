@@ -10,16 +10,16 @@ const executeService = async (txnId, jRequest) => {
 
     try {
         switch (jRequest.commandName) {
-            case constants.commands.COMMAND_TB_COR_INCOME_HIST_INSERTONE:
+            case constants.commands.COMMAND_TB_COR_INCOME_HIST_INSERT_ONE:
                 jResponse = await insertOne(txnId, jRequest);
                 break;
-            case constants.commands.COMMAND_TB_COR_INCOME_HIST_UPDATEONE:
+            case constants.commands.COMMAND_TB_COR_INCOME_HIST_UPDATE_ONE:
                 jResponse = await updateOne(txnId, jRequest);
                 break;
-            case constants.commands.COMMAND_TB_COR_INCOME_HIST_DELETEONE:
+            case constants.commands.COMMAND_TB_COR_INCOME_HIST_DELETE_ONE:
                 jResponse = await deleteOne(txnId, jRequest);
                 break;
-            case constants.commands.COMMAND_TB_COR_INCOME_HIST_SELECTBYUSERID:
+            case constants.commands.COMMAND_TB_COR_INCOME_HIST_SELECT_BY_USERID:
                 jResponse = await selectByUserId(txnId, jRequest);
                 break;
             default:

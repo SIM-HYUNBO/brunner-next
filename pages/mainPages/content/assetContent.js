@@ -50,7 +50,7 @@ export default function AssetContent() {
  
   const brunnerTableRef = useRef();
 
-  const ch = [
+  const columnHeaders = [
     { Header: 'ID', 
       accessor: 'history_id', 
       type: 'text', 
@@ -88,7 +88,7 @@ export default function AssetContent() {
       setLoading(true);
 
       const jRequest = {
-        commandName: constants.commands.COMMAND_TB_COR_INCOME_HIST_SELECTBYUSERID,
+        commandName: constants.commands.COMMAND_TB_COR_INCOME_HIST_SELECT_BY_USERID,
         systemCode: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE,
         userId: userId,
       };
@@ -118,7 +118,7 @@ export default function AssetContent() {
       setLoading(true);
 
       const jRequest = {
-        commandName: constants.commands.COMMAND_TB_COR_INCOME_HIST_UPDATEONE,
+        commandName: constants.commands.COMMAND_TB_COR_INCOME_HIST_UPDATE_ONE,
         systemCode: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE,
         userId: userId,
         historyId: row.original.history_id,
@@ -154,7 +154,7 @@ export default function AssetContent() {
 
     try {
       const jRequest = {
-        commandName: constants.commands.COMMAND_TB_COR_INCOME_HIST_DELETEONE,
+        commandName: constants.commands.COMMAND_TB_COR_INCOME_HIST_DELETE_ONE,
         systemCode: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE,
         userId: userId,
         historyId: historyId,
@@ -181,7 +181,7 @@ export default function AssetContent() {
     if (!userId) return;
 
     for (const key in inputValues) {
-      const column = ch.find((header) => header.accessor === key);
+      const column = columnHeaders.find((header) => header.accessor === key);
       if (!inputValues[key] && column && !column.input_hidden) {
         openModal(`Please fill in the ${key}.`);
         return;
@@ -191,7 +191,7 @@ export default function AssetContent() {
     try {
       setLoading(true);
       const jRequest = {
-        commandName: constants.commands.COMMAND_TB_COR_INCOME_HIST_INSERTONE,
+        commandName: constants.commands.COMMAND_TB_COR_INCOME_HIST_INSERT_ONE,
         systemCode: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE,
         userId: userId,
         ...inputValues,
@@ -233,7 +233,7 @@ export default function AssetContent() {
       <div className="w-full px-1">
         <BrunnerTable ref={brunnerTableRef}
                       tableTitle='Asset History'
-                      columnHeaders={ch} 
+                      columnHeaders={columnHeaders} 
                       fetchTableData={fetchTableData}
                       addNewTableData={addNewTableData}
                       updateTableData={updateTableData}
