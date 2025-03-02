@@ -180,16 +180,17 @@ export default function AssetContent() {
     const userId = userInfo.getLoginUserId();
     if (!userId) return;
 
-    for (const key in inputValues) {
-      const column = columnHeaders.find((header) => header.accessor === key);
-      if (!inputValues[key] && column && !column.input_hidden) {
-        openModal(`Please fill in the ${key}.`);
-        return;
-      }
-    }
-
     try {
+        for (const key in inputValues) {
+        const column = columnHeaders.find((header) => header.accessor === key);
+        if (!inputValues[key] && column && !column.input_hidden) {
+          openModal(`Please fill in the ${key}.`);
+          return;
+        }
+      }
+
       setLoading(true);
+      
       const jRequest = {
         commandName: constants.commands.COMMAND_TB_COR_INCOME_HIST_INSERT_ONE,
         systemCode: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE,
