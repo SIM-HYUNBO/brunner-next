@@ -148,7 +148,7 @@ const BrunnerTable = forwardRef(({
           {headerGroups.map((headerGroup) => (
             <tr {...headerGroup.getHeaderGroupProps()}>
               {headerGroup.headers.map((column) => (
-                <th
+                <th 
                   {...column.getHeaderProps({
                     className: `text-center ${column.headerClassName ? column.headerClassName : ""}`,
                   })}
@@ -173,7 +173,7 @@ const BrunnerTable = forwardRef(({
               <tr {...row.getRowProps()}>
                 {row.cells.map((cell) => {
                   return (
-                    <td key={cell.column.id}
+                    <td
                       {...cell.getCellProps()}
                       className={`p-2 border-b dark:border-slate-700 ${cell.column.type === 'number' ? 'text-right': 'text-left'}`}
                     >
@@ -254,7 +254,7 @@ const BrunnerTable = forwardRef(({
       <div className="mb-2 table w-full bg-slate-100 mt-2 p-2">
         {columnHeaders.map((header) => (
           !header.input_hidden && (
-            <div key={header.accessor} className="flex items-center">
+            <div className="flex items-center">
               <label className="mr-2 text-sm">{header.Header}</label>
               <input
                 type={header.type}
