@@ -945,6 +945,7 @@ const StockContent = () => {
         <div className="items-start mt-2 dark:text-slate-400 w-full">
           <label>Span</label>
           <select
+            key={dataIntervalUnitRef.current}
             className="dark:text-slate-400 ml-2 bg-slate-50 dark:bg-slate-800"
             value={dataIntervalUnitRef.current}
             onChange={(e) => setDataIntervalUnitRef(e.target.value)}
@@ -1013,7 +1014,7 @@ const StockContent = () => {
                   </li>
                 ))
               ) : (
-                <li className="text-gray-500">No recent symbols.</li>
+                <li className="text-gray-500" key="No recent symbols.">No recent symbols.</li>
               )}
             </ul>
           </div>
@@ -1096,7 +1097,10 @@ const StockContent = () => {
             onChange={selectedCurrencyChanged}
           >
             {currencyListRef.current.map((currencyItem) => (
-              <option key={currencyItem.current_code} value={currencyItem.currency_code}>
+              <option
+                key={`${currencyItem.currency_code}-${currencyItem.current_code}`} // 두 값을 결합하여 고유한 key 생성
+                value={currencyItem.currency_code}
+              >
                 {currencyItem.currency_code}
               </option>
             ))}

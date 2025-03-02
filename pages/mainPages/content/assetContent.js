@@ -63,20 +63,20 @@ export default function AssetContent() {
       accessor: 'create_time', 
       type: 'datetime-local', 
       editable: false,
-      headerClassName: 'text-center bg-orange-500 text-orange-100 !important', 
+      headerClassName: 'text-center bg-orange-500 text-orange-100 w-[250px] !important', 
       formatter: (value) => moment(value).format("YYYY-MM-DD HH:mm:ss") 
     },
     { Header: 'Amount', 
       accessor: 'amount', 
       type: 'number', 
       editable: true,
-      headerClassName: 'text-center bg-blue-500 text-blue-100 !important'
+      headerClassName: 'text-center bg-blue-500 text-blue-100 w-[150px]  !important'
     },
     { Header: 'Comment', 
       accessor: 'comment', 
       type: 'text', 
       editable: true,
-      headerClassName: 'text-center bg-green-500 text-green-100 !important'
+      headerClassName: 'text-center bg-green-500 text-green-100 w-[auto] !important'
     },
   ];
 
@@ -131,7 +131,7 @@ export default function AssetContent() {
 
       if (jResponse.error_code === 0) {
         openModal("Successfully updated.");
-        brunnerTableRef.current.fetchTableData();
+        brunnerTableRef.current.refreshTableData();
       } else {
         openModal(jResponse.error_message);
       }
@@ -165,7 +165,7 @@ export default function AssetContent() {
 
       if (jResponse.error_code === 0) {
         openModal(constants.messages.MESSAGE_SUCCESS_DELETED);
-        brunnerTableRef.current.fetchTableData();
+        brunnerTableRef.current.refreshTableData();
       } else {
         openModal(jResponse.error_message);
       }
@@ -203,7 +203,7 @@ export default function AssetContent() {
 
       if (jResponse.error_code === 0) {
         openModal(constants.messages.MESSAGE_SUCCESS_ADDED);
-        brunnerTableRef.current.fetchTableData();
+        brunnerTableRef.current.refreshTableData();
       } else {
         openModal(jResponse.error_message);
       }
