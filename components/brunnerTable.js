@@ -5,18 +5,18 @@ import DivContainer from "@/components/divContainer";
 import { useRouter } from "next/router";
 
 const BrunnerTable = forwardRef(({
-  columnHeaders,
   tableTitle,
-  requestTableData,
-  requestAddNewTableData,
-  requestUpdateTableData,
-  requestDeleteTableData
+  columnHeaders,
+  fetchTableData,
+  addNewTableData,
+  updateTableData,
+  deleteTableData
 }, ref) => {
 
   const router = useRouter();
 
   useEffect(() => {
-    fetchTableData();
+    refreshTableData();
   }, []);
 
   const [tableData, setTableData] = useState([]);
@@ -37,7 +37,7 @@ const BrunnerTable = forwardRef(({
             Cell: ({ value }) => {
               // 서버에서 받은 datetime 값을 Date 객체로 변환
               const serverTime = new Date(value);
-              formattedLocalDateTime = getClientTime(serverTime);
+              const formattedLocalDateTime = getClientTime(serverTime);
                 
               return (
                 <input
@@ -62,14 +62,14 @@ const BrunnerTable = forwardRef(({
         Cell: ({ row }) => (
           <div className="flex justify-center">
             <button
-              onClick={() => requestUpdateTableData(row)}
+              onClick={() => updateTableData(row)}
               className="p-2 rounded"
               title="Save"
             >
               <img src="/save-icon.png" alt="Save" className="w-6 h-6" />
             </button>
             <button
-              onClick={() => requestDeleteTableData(row)}
+              onClick={() => deleteTableData(row)}
               className="p-2 rounded"
               title="Delete"
             >
@@ -111,7 +111,7 @@ const BrunnerTable = forwardRef(({
     return (
       <div className="flex justify-end w-full p-4 bg-gray-100 mt-2">
         <button
-          onClick={requestTableData}
+          onClick={fetchTableData}
           className="text-white bg-indigo-500 border-0 py-2 px-6 focus:outline-none hover:bg-indigo-600 rounded text-lg mb-3"
         >
           Refresh
@@ -272,7 +272,7 @@ const BrunnerTable = forwardRef(({
           )
         ))}
         <button
-          onClick={() => { requestAddNewTableData(inputValues) }}
+          onClick={() => { addNewTableData(inputValues) }}
           className="bg-green-500 text-white py-2 px-4 rounded hover:bg-green-600 mt-2"
           style={{ alignSelf: "flex-end" }}
         >
@@ -284,11 +284,11 @@ const BrunnerTable = forwardRef(({
 
   // 부모 컴포넌트에서 호출할 수 있게 노출
   useImperativeHandle(ref, () => ({
-    fetchTableData,
+    refreshTableData,
   }));
 
-  const fetchTableData = async () => {
-    const tableData = await requestTableData();
+  const refreshTableData = async () => {
+    const tableData = await fetchTableData();
 
     setTableDataRef(tableData);
   }

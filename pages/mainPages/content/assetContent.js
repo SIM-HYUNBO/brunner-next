@@ -80,7 +80,7 @@ export default function AssetContent() {
     },
   ];
 
-  const requestTableData = async () => {
+  const fetchTableData = async () => {
     const userId = userInfo.getLoginUserId();
     if (!userId) return [];
 
@@ -110,7 +110,7 @@ export default function AssetContent() {
     }
   };
 
-  const requestUpdateTableData = async (row) => {
+  const updateTableData = async (row) => {
     const userId = userInfo.getLoginUserId();
     if (!userId) return;
 
@@ -142,7 +142,7 @@ export default function AssetContent() {
     }
   };
 
-  const requestDeleteTableData = async (row) => {
+  const deleteTableData = async (row) => {
     const userId = userInfo.getLoginUserId();
     if (!userId) return;
 
@@ -176,7 +176,7 @@ export default function AssetContent() {
     }
   };
 
-  const requestAddNewTableData = async (inputValues) => {
+  const addNewTableData = async (inputValues) => {
     const userId = userInfo.getLoginUserId();
     if (!userId) return;
 
@@ -232,12 +232,12 @@ export default function AssetContent() {
       <DivContainer>
       <div className="w-full px-1">
         <BrunnerTable ref={brunnerTableRef}
-                      columnHeaders={ch} 
                       tableTitle='Asset History'
-                      requestTableData={requestTableData}
-                      requestAddNewTableData={requestAddNewTableData}
-                      requestUpdateTableData={requestUpdateTableData}
-                      requestDeleteTableData={requestDeleteTableData}
+                      columnHeaders={ch} 
+                      fetchTableData={fetchTableData}
+                      addNewTableData={addNewTableData}
+                      updateTableData={updateTableData}
+                      deleteTableData={deleteTableData}
                       />
       </div>
 
