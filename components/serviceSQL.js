@@ -8,7 +8,7 @@ import React, {
 import * as constants from "@/components/constants";
 import * as userInfo from "@/components/userInfo";
 import RequestServer from "@/components/requestServer";
-import BrunnerMessageBox from "@/components/brunnerMessageBox";
+import { useModal } from "@/components/brunnerModalUtils";
 
 const AutoResizeTextarea = forwardRef(
   ({ name, value, onChange, readOnly }, ref) => {
@@ -54,37 +54,7 @@ const ServiceSQL = () => {
   // 로딩 & 메시지 박스
   // {
   const [loading, setLoading] = useState(false);
-  const [modalContent, setModalContent] = useState({
-    isOpen: false,
-    message: "",
-    onConfirm: () => { },
-    onClose: () => { },
-  });
-  const openModal = (message) => {
-    return new Promise((resolve, reject) => {
-      setModalContent({
-        isOpen: true,
-        message: message,
-        onConfirm: (result) => {
-          resolve(result);
-          closeModal();
-        },
-        onClose: () => {
-          reject(false);
-          closeModal();
-        },
-      });
-    });
-  };
-  const closeModal = () => {
-    setModalContent({
-      isOpen: false,
-      message: "",
-      onConfirm: () => { },
-      onClose: () => { },
-    });
-  };
-  // }
+  const { BrunnerMessageBox, openModal } = useModal();
 
   const editPanelRef = useRef(null); // EditPanel Div 참조
   const [isEditing, setIsEditing] = useState(false);
@@ -275,12 +245,7 @@ const ServiceSQL = () => {
     <>
       {userInfo?.isAdminUser() && (
         <div className="p-4">
-          <BrunnerMessageBox
-            isOpen={modalContent.isOpen}
-            message={modalContent.message}
-            onConfirm={modalContent.onConfirm}
-            onClose={modalContent.onClose}
-          />
+          <BrunnerMessageBox />
 
           <h2 className="text-xl font-bold mb-4">Service SQL Management</h2>
           

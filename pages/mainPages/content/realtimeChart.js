@@ -3,7 +3,7 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 import dynamic from "next/dynamic";
 import RequestServer from "@/components/requestServer";
-import BrunnerMessageBox from "@/components/brunnerMessageBox";
+import { useModal } from "@/components/brunnerModalUtils";
 import * as constants from "@/components/constants";
 
 const ApexCharts = dynamic(() => import("react-apexcharts"), { ssr: false });
@@ -11,38 +11,7 @@ const ApexCharts = dynamic(() => import("react-apexcharts"), { ssr: false });
 const RealtimeChart = ({ updateCurrentPrice }) => {
 
   const [loading, setLoading] = useState(false);
-  const [modalContent, setModalContent] = useState({
-    isOpen: false,
-    message: constants.messages.EMPTY_STRING,
-    onConfirm: () => { },
-    onClose: () => { },
-  });
-
-  const openModal = (message) => {
-    return new Promise((resolve, reject) => {
-      setModalContent({
-        isOpen: true,
-        message: message,
-        onConfirm: (result) => {
-          resolve(result);
-          closeModal();
-        },
-        onClose: () => {
-          reject(false);
-          closeModal();
-        },
-      });
-    });
-  };
-  const closeModal = () => {
-    setModalContent({
-      isOpen: false,
-      message: constants.messages.EMPTY_STRING,
-      onConfirm: () => { },
-      onClose: () => { },
-    });
-  };
-  // }
+  const { BrunnerMessageBox, openModal } = useModal();
 
   const [currentTicker, setCurrentTicker] = useState(process.currentTicker);
   const currentTickerRef = useRef(currentTicker);
@@ -425,12 +394,7 @@ const RealtimeChart = ({ updateCurrentPrice }) => {
 
   return (
     <div className="w-full mt-5">
-      <BrunnerMessageBox
-        isOpen={modalContent.isOpen}
-        message={modalContent.message}
-        onConfirm={modalContent.onConfirm}
-        onClose={modalContent.onClose}
-      />
+      <BrunnerMessageBox />
       <ApexCharts
         options={options}
         series={series}

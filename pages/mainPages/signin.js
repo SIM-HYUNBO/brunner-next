@@ -6,7 +6,7 @@ import BodySection from "@/components/bodySection";
 import { useRouter } from "next/router";
 import { useState, useEffect, useRef } from "react";
 import RequestServer from "@/components/requestServer";
-import BrunnerMessageBox from "@/components/brunnerMessageBox";
+import { useModal } from "@/components/brunnerModalUtils";
 import * as constants from "@/components/constants";
 import DivContainer from "@/components/divContainer";
 import { useTheme } from "next-themes";
@@ -14,36 +14,7 @@ import { useTheme } from "next-themes";
 export default function Signin() {
 
   const [loading, setLoading] = useState(false);
-  const [modalContent, setModalContent] = useState({
-    isOpen: false,
-    message: "",
-    onConfirm: () => { },
-    onClose: () => { },
-  });
-  const openModal = (message) => {
-    return new Promise((resolve, reject) => {
-      setModalContent({
-        isOpen: true,
-        message: message,
-        onConfirm: (result) => {
-          resolve(result);
-          closeModal();
-        },
-        onClose: () => {
-          reject(false);
-          closeModal();
-        },
-      });
-    });
-  };
-  const closeModal = () => {
-    setModalContent({
-      isOpen: false,
-      message: "",
-      onConfirm: () => { },
-      onClose: () => { },
-    });
-  };
+  const { BrunnerMessageBox, openModal } = useModal();
 
   useEffect(() => {
     setThemeRef(themeRef.current);
@@ -105,12 +76,7 @@ export default function Signin() {
 
   return (
     <>
-      <BrunnerMessageBox
-        isOpen={modalContent.isOpen}
-        message={modalContent.message}
-        onConfirm={modalContent.onConfirm}
-        onClose={modalContent.onClose}
-      />
+      <BrunnerMessageBox />
       <Layout>
         <Head>
           <title>Stock Quotes and Investment Information - Brunner-Next</title>

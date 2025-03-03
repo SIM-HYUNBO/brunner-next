@@ -6,7 +6,7 @@ import DivContainer from "@/components/divContainer";
 import * as constants from "@/components/constants";
 import * as userInfo from "@/components/userInfo";
 import RequestServer from "@/components/requestServer";
-import BrunnerMessageBox from "@/components/brunnerMessageBox";
+import { useModal } from "@/components/brunnerModalUtils";
 import BrunnerTable from '@/components/brunnerTable';
 
 export default function AssetContent() {
@@ -14,39 +14,7 @@ export default function AssetContent() {
   }, []);
 
   const [loading, setLoading] = useState(false);
-
-  const [modalContent, setModalContent] = useState({
-    isOpen: false,
-    message: "",
-    onConfirm: () => {},
-    onClose: () => {},
-  });
-
-  const openModal = (message) => {
-    return new Promise((resolve, reject) => {
-      setModalContent({
-        isOpen: true,
-        message: message,
-        onConfirm: (result) => {
-          resolve(result);
-          closeModal();
-        },
-        onClose: () => {
-          reject(false);
-          closeModal();
-        },
-      });
-    });
-  };
-
-  const closeModal = () => {
-    setModalContent({
-      isOpen: false,
-      message: "",
-      onConfirm: () => {},
-      onClose: () => {},
-    });
-  };
+  const { BrunnerMessageBox, openModal } = useModal();
  
   const brunnerTableRef = useRef();
 
@@ -214,14 +182,7 @@ export default function AssetContent() {
 
   return (
     <>
-      {modalContent.isOpen && (
-        <BrunnerMessageBox
-          isOpen={modalContent.isOpen}
-          message={modalContent.message}
-          onConfirm={modalContent.onConfirm}
-          onClose={modalContent.onClose}
-        />
-      )}
+      <BrunnerMessageBox />
 
       {loading && (
         <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-gray-500 bg-opacity-75 z-50">

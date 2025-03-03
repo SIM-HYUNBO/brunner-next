@@ -7,43 +7,14 @@ import Layout from "@/components/layout";
 import Head from "next/head";
 import BodySection from "@/components/bodySection";
 import RequestServer from "@/components/requestServer";
-import BrunnerMessageBox from "@/components/brunnerMessageBox";
+import { useModal } from "@/components/brunnerModalUtils";
 import * as constants from "@/components/constants";
 import DivContainer from "@/components/divContainer";
 
 export default function Signup() {
 
   const [loading, setLoading] = useState(false);
-  const [modalContent, setModalContent] = useState({
-    isOpen: false,
-    message: "",
-    onConfirm: () => { },
-    onClose: () => { },
-  });
-  const openModal = (message) => {
-    return new Promise((resolve, reject) => {
-      setModalContent({
-        isOpen: true,
-        message: message,
-        onConfirm: (result) => {
-          resolve(result);
-          closeModal();
-        },
-        onClose: () => {
-          reject(false);
-          closeModal();
-        },
-      });
-    });
-  };
-  const closeModal = () => {
-    setModalContent({
-      isOpen: false,
-      message: "",
-      onConfirm: () => { },
-      onClose: () => { },
-    });
-  };
+  const { BrunnerMessageBox, openModal } = useModal();
 
   useEffect(() => {
     setThemeRef(themeRef.current);
@@ -130,12 +101,7 @@ export default function Signup() {
 
   return (
     <>
-      <BrunnerMessageBox
-        isOpen={modalContent.isOpen}
-        message={modalContent.message}
-        onConfirm={modalContent.onConfirm}
-        onClose={modalContent.onClose}
-      />
+      <BrunnerMessageBox />
       <Layout>
         <Head>
           <title>Stock Quotes and Investment Information - Brunner-Next</title>

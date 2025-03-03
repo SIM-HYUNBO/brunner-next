@@ -3,43 +3,14 @@
 import React, { useState, useEffect } from "react";
 import RequestServer from "@/components/requestServer";
 import * as userInfo from "@/components/userInfo";
-import BrunnerMessageBox from "@/components/brunnerMessageBox";
+import BrunnerMessageBox from "@/components/brunnerModalUtils";
+import { useModal } from "@/components/brunnerModalUtils";
 import * as constants from "@/components/constants";
 
 function Board(boardInfo) {
 
   const [loading, setLoading] = useState(false);
-  const [modalContent, setModalContent] = useState({
-    isOpen: false,
-    message: "",
-    onConfirm: () => { },
-    onClose: () => { },
-  });
-  const openModal = (message) => {
-    return new Promise((resolve, reject) => {
-      setModalContent({
-        isOpen: true,
-        message: message,
-        onConfirm: (result) => {
-          resolve(result);
-          closeModal();
-        },
-        onClose: () => {
-          reject(false);
-          closeModal();
-        },
-      });
-    });
-  };
-  const closeModal = () => {
-    setModalContent({
-      isOpen: false,
-      message: constants.messages.EMPTY_STRING,
-      onConfirm: () => { },
-      onClose: () => { },
-    });
-  };
-  // }
+  const { BrunnerMessageBox, openModal } = useModal();
 
   const [posts, setPosts] = useState([]);
   const [postText, setPostText] = useState("");
@@ -329,12 +300,7 @@ function Board(boardInfo) {
 
   return (
     <div className="w-full max-w-4xl mx-auto">
-      <BrunnerMessageBox
-        isOpen={modalContent.isOpen}
-        message={modalContent.message}
-        onConfirm={modalContent.onConfirm}
-        onClose={modalContent.onClose}
-      />
+      <BrunnerMessageBox />
       {loading && (
         <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-gray-500 bg-opacity-75 z-50">
           <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-gray-900"></div>
@@ -399,38 +365,7 @@ function BoardContent({
   // 로딩 & 메시지 박스
   // {
   const [loading, setLoading] = useState(false);
-  const [modalContent, setModalContent] = useState({
-    isOpen: false,
-    message: "",
-    onConfirm: () => { },
-    onClose: () => { },
-  });
-  const openModal = (message) => {
-    return new Promise((resolve, reject) => {
-      setModalContent({
-        isOpen: true,
-        message: message,
-        onConfirm: (result) => {
-          resolve(result);
-          closeModal();
-        },
-        onClose: () => {
-          reject(false);
-          closeModal();
-        },
-      });
-    });
-  };
-  const closeModal = () => {
-    setModalContent({
-      isOpen: false,
-      message: "",
-      onConfirm: () => { },
-      onClose: () => { },
-    });
-  };
-  // }
-
+  
   const [commentText, setCommentText] = useState("");
   const [isEditingPost, setIsEditingPost] = useState(false);
   const [editedPostText, setEditedPostText] = useState(post.post_content);
@@ -476,12 +411,7 @@ function BoardContent({
 
   return (
     <div className="border-b border-gray-300 py-4">
-      <BrunnerMessageBox
-        isOpen={modalContent.isOpen}
-        message={modalContent.message}
-        onConfirm={modalContent.onConfirm}
-        onClose={modalContent.onClose}
-      />
+      <BrunnerMessageBox />
       <hr />
       {loading && (
         <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-gray-500 bg-opacity-75 z-50">
