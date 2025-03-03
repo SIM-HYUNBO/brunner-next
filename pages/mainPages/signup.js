@@ -85,7 +85,7 @@ export default function Signup() {
       setLoading(false); // 데이터 로딩 끝
 
       if (jResponse.error_code == 0) {
-        var result = await openModal(constants.messages.MESSAGE_SUCCESS_SIGNUP);
+        const result = await openModal(constants.messages.MESSAGE_SUCCESS_SIGNUP);
         if (result) {
           router.push("/mainPages/signin");
         }

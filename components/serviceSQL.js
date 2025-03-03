@@ -215,8 +215,9 @@ const ServiceSQL = () => {
   // Handle delete action
   const handleDelete = async (userQueryItem) => {
     try {
-      var confirm = await openModal(constants.messages.MESSAGE_DELETE_ITEM);
-      if (!confirm) return;
+      const result = await openModal(constants.messages.MESSAGE_DELETE_ITEM);
+      if (!result) 
+        return;
 
       var jRequest = {};
       var jResponse = null;
