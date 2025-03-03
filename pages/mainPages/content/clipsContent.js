@@ -1,14 +1,11 @@
 `use strict`;
 
-import { useRouter } from "next/router";
 import DivContainer from "@/components/divContainer";
 import BrunnerVideo from "@/components/brunnerVideo";
 import { isMobile, isTablet, isBrowser } from "react-device-detect";
 import GoverningMessage from "@/components/governingMessage";
 
 export default function ClipsContent() {
-  const router = useRouter();
-
   return (
     <>
       <DivContainer className="flex-row desktop:flex-col">
