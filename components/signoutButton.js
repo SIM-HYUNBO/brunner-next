@@ -7,7 +7,6 @@ import { useModal } from "@/components/brunnerMessageBox";
 import * as constants from "@/components/constants";
 import * as userInfo from "@/components/userInfo";
 export default function SignoutButton() {
-  const [loading, setLoading] = useState(false);
   const { BrunnerMessageBox, openModal } = useModal();
   const router = useRouter();
 

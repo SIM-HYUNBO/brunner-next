@@ -119,6 +119,11 @@ export default function TickerInfoContent({ tickerCode: tickerCode }) {
   return (
     <>
       <BrunnerMessageBox />
+      {loading && (
+        <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-gray-500 bg-opacity-75 z-50">
+          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-gray-900"></div>
+        </div>
+      )}      
       <DivContainer>
         <div className="flex flex-col text-left item-start">
           <h2 className="title-font sm:text-4xl text-3xl mb-10 font-medium text-green-900">
