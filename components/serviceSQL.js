@@ -245,10 +245,13 @@ const ServiceSQL = () => {
     <>
       {userInfo?.isAdminUser() && (
         <div className="p-4">
+          {loading && (
+          <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-gray-500 bg-opacity-75 z-50">
+            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-gray-900"></div>
+          </div>
+          )}
           <BrunnerMessageBox />
-
           <h2 className="text-xl font-bold mb-4">Service SQL Management</h2>
-          
           <div ref={editPanelRef} className="mb-4">
             <label className="block mb-2">
               <span className="text-gray-700">System Code:</span>
@@ -300,9 +303,7 @@ const ServiceSQL = () => {
               <ClearInputButton/>
             </div>
           </div>
-          
           <h2 className="text-lg font-semibold mb-4">Query List</h2>
-
           <button
             onClick={fetchSQLList}
             className="bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 mt-2"
