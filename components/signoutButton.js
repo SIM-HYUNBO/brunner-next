@@ -3,44 +3,12 @@
 import RequestServer from "./requestServer";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
-import BrunnerMessageBox from "./brunnerMessageBox";
+import { useModal } from "@/components/brunnerModalUtils";
 import * as constants from "@/components/constants";
 import * as userInfo from "@/components/userInfo";
 export default function SignoutButton() {
-  // 로딩 & 메시지 박스
-  // {
   const [loading, setLoading] = useState(false);
-  const [modalContent, setModalContent] = useState({
-    isOpen: false,
-    message: "",
-    onConfirm: () => { },
-    onClose: () => { },
-  });
-  const openModal = (message) => {
-    return new Promise((resolve, reject) => {
-      setModalContent({
-        isOpen: true,
-        message: message,
-        onConfirm: (result) => {
-          resolve(result);
-          closeModal();
-        },
-        onClose: () => {
-          reject(false);
-          closeModal();
-        },
-      });
-    });
-  };
-  const closeModal = () => {
-    setModalContent({
-      isOpen: false,
-      message: "",
-      onConfirm: () => { },
-      onClose: () => { },
-    });
-  };
-  // }
+  const { BrunnerMessageBox, openModal } = useModal();
 
   const router = useRouter();
 
@@ -67,12 +35,7 @@ export default function SignoutButton() {
 
   return (
     <>
-      <BrunnerMessageBox
-        isOpen={modalContent.isOpen}
-        message={modalContent.message}
-        onConfirm={modalContent.onConfirm}
-        onClose={modalContent.onClose}
-      />
+      <BrunnerMessageBox />
 
       {userInfo.getLoginUserId() && (
         <button

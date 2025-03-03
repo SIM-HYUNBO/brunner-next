@@ -8,42 +8,12 @@ import Board from "@/pages/mainPages/content/boardContent";
 import RealtimeChart from "./realtimeChart";
 import DivContainer from "@/components/divContainer";
 import GoverningMessage from "@/components/governingMessage";
+import { useModal } from "@/components/brunnerModalUtils";
 
 export default function TickerInfoContent({ tickerCode: tickerCode }) {
 
   const [loading, setLoading] = useState(false);
-  const [modalContent, setModalContent] = useState({
-    isOpen: false,
-    message: "",
-    onConfirm: () => { },
-    onClose: () => { },
-  });
-
-  const openModal = (message) => {
-    return new Promise((resolve, reject) => {
-      setModalContent({
-        isOpen: true,
-        message: message,
-        onConfirm: (result) => {
-          resolve(result);
-          closeModal();
-        },
-        onClose: () => {
-          reject(false);
-          closeModal();
-        },
-      });
-    });
-  };
-  const closeModal = () => {
-    setModalContent({
-      isOpen: false,
-      message: "",
-      onConfirm: () => { },
-      onClose: () => { },
-    });
-  };
-  // }
+  const { BrunnerMessageBox, openModal } = useModal();
 
   const [tickerDesc, setTickerDesc] = useState("");
   const [brandingInfo, setBrandingInfo] = useState({});
@@ -148,6 +118,7 @@ export default function TickerInfoContent({ tickerCode: tickerCode }) {
 
   return (
     <>
+      <BrunnerMessageBox />
       <DivContainer>
         <div className="flex flex-col text-left item-start">
           <h2 className="title-font sm:text-4xl text-3xl mb-10 font-medium text-green-900">

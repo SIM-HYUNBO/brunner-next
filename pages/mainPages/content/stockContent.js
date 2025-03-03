@@ -8,7 +8,7 @@ import moment from "moment";
 import dynamic from "next/dynamic";
 import DivContainer from "@/components/divContainer";
 import RequestServer from "@/components/requestServer";
-import BrunnerMessageBox from "@/components/brunnerMessageBox";
+import { useModal } from "@/components/brunnerModalUtils";
 import * as constants from "@/components/constants";
 import * as UserInfo from "@/components/userInfo";
 import RealtimeChart from "./realtimeChart";
@@ -17,38 +17,7 @@ import AssetContent from "./assetContent";
 const StockContent = () => {
   const ApexCharts = dynamic(() => import("react-apexcharts"), { ssr: false });
   const [loading, setLoading] = useState(false);
-  const [modalContent, setModalContent] = useState({
-    isOpen: false,
-    message: "",
-    onConfirm: () => { },
-    onClose: () => { },
-  });
-
-  const openModal = (message) => {
-    return new Promise((resolve, reject) => {
-      setModalContent({
-        isOpen: true,
-        message: message,
-        onConfirm: (result) => {
-          resolve(result);
-          closeModal();
-        },
-        onClose: () => {
-          reject(false);
-          closeModal();
-        },
-      });
-    });
-  };
-  const closeModal = () => {
-    setModalContent({
-      isOpen: false,
-      message: "",
-      onConfirm: () => { },
-      onClose: () => { },
-    });
-  };
-  // }
+  const { BrunnerMessageBox, openModal } = useModal();
 
   useEffect(() => {
     setThemeRef(themeRef.current);
@@ -294,12 +263,7 @@ const StockContent = () => {
     if (event) event.preventDefault();
 
     if (!currentTickerRef.current) {
-      setModalContent({
-        isOpen: true,
-        message: constants.messages.MESSAGE_INPUT_STOCK_SYMBOL,
-        onConfirm: () => setModalContent({ ...modalContent, isOpen: false }),
-        onClose: () => setModalContent({ ...modalContent, isOpen: false }),
-      });
+      openModal(constants.messages.MESSAGE_INPUT_STOCK_SYMBOL);
       return;
     }
 
@@ -1119,12 +1083,7 @@ const StockContent = () => {
 
   return (
     <DivContainer className="flex flex-col">
-      <BrunnerMessageBox
-        isOpen={modalContent.isOpen}
-        message={modalContent.message}
-        onConfirm={modalContent.onConfirm}
-        onClose={modalContent.onClose}
-      />
+      <BrunnerMessageBox />
       {loading && (
         <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-gray-500 bg-opacity-75 z-50">
           <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-gray-900"></div>
