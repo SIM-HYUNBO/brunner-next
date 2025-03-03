@@ -3,13 +3,12 @@
 import RequestServer from "./requestServer";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
-import { useModal } from "@/components/brunnerModalUtils";
+import { useModal } from "@/components/brunnerMessageBox";
 import * as constants from "@/components/constants";
 import * as userInfo from "@/components/userInfo";
 export default function SignoutButton() {
   const [loading, setLoading] = useState(false);
   const { BrunnerMessageBox, openModal } = useModal();
-
   const router = useRouter();
 
   const requestSignout = async () => {

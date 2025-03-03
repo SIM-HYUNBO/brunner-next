@@ -8,7 +8,7 @@ import React, {
 import * as constants from "@/components/constants";
 import * as userInfo from "@/components/userInfo";
 import RequestServer from "@/components/requestServer";
-import { useModal } from "@/components/brunnerModalUtils";
+import { useModal } from "@/components/brunnerMessageBox";
 
 const AutoResizeTextarea = forwardRef(
   ({ name, value, onChange, readOnly }, ref) => {

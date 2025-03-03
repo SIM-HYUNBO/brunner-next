@@ -7,7 +7,7 @@ import Layout from "@/components/layout";
 import Head from "next/head";
 import BodySection from "@/components/bodySection";
 import RequestServer from "@/components/requestServer";
-import { useModal } from "@/components/brunnerModalUtils";
+import { useModal } from "@/components/brunnerMessageBox";
 import * as constants from "@/components/constants";
 import DivContainer from "@/components/divContainer";
 

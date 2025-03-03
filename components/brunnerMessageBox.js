@@ -74,5 +74,5 @@ export const useModal = () => {
     );
 };
 
-  return { modalContent, openModal, closeModal, BrunnerMessageBox };
+  return { BrunnerMessageBox, openModal };
 };
