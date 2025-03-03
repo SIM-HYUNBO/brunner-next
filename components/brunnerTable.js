@@ -2,7 +2,6 @@ import React, { useState, useEffect, useRef, useImperativeHandle, forwardRef } f
 import moment from "moment";
 import { useTable, useSortBy } from "react-table";
 import DivContainer from "@/components/divContainer";
-import { useRouter } from "next/router";
 
 const BrunnerTable = forwardRef(({
   tableTitle,
@@ -12,8 +11,6 @@ const BrunnerTable = forwardRef(({
   updateTableData,
   deleteTableData
 }, ref) => {
-
-  const router = useRouter();
 
   useEffect(() => {
     refreshTableData();
