@@ -3,7 +3,7 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 import dynamic from "next/dynamic";
 import RequestServer from "@/components/requestServer";
-import { useModal } from "@/components/brunnerModalUtils";
+import { useModal } from "@/components/brunnerMessageBox";
 import * as constants from "@/components/constants";
 
 const ApexCharts = dynamic(() => import("react-apexcharts"), { ssr: false });

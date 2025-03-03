@@ -3,8 +3,8 @@
 import React, { useState, useEffect } from "react";
 import RequestServer from "@/components/requestServer";
 import * as userInfo from "@/components/userInfo";
-import BrunnerMessageBox from "@/components/brunnerModalUtils";
-import { useModal } from "@/components/brunnerModalUtils";
+import BrunnerMessageBox from "@/components/brunnerMessageBox";
+import { useModal } from "@/components/brunnerMessageBox";
 import * as constants from "@/components/constants";
 
 function Board(boardInfo) {

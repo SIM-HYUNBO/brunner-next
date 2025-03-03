@@ -8,7 +8,7 @@ import Board from "@/pages/mainPages/content/boardContent";
 import RealtimeChart from "./realtimeChart";
 import DivContainer from "@/components/divContainer";
 import GoverningMessage from "@/components/governingMessage";
-import { useModal } from "@/components/brunnerModalUtils";
+import { useModal } from "@/components/brunnerMessageBox";
 
 export default function TickerInfoContent({ tickerCode: tickerCode }) {
 

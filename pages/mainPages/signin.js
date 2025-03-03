@@ -6,7 +6,7 @@ import BodySection from "@/components/bodySection";
 import { useRouter } from "next/router";
 import { useState, useEffect, useRef } from "react";
 import RequestServer from "@/components/requestServer";
-import { useModal } from "@/components/brunnerModalUtils";
+import { useModal } from "@/components/brunnerMessageBox";
 import * as constants from "@/components/constants";
 import DivContainer from "@/components/divContainer";
 import { useTheme } from "next-themes";

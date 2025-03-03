@@ -6,7 +6,7 @@ import DivContainer from "@/components/divContainer";
 import * as constants from "@/components/constants";
 import * as userInfo from "@/components/userInfo";
 import RequestServer from "@/components/requestServer";
-import { useModal } from "@/components/brunnerModalUtils";
+import { useModal } from "@/components/brunnerMessageBox";
 import BrunnerTable from '@/components/brunnerTable';
 
 export default function AssetContent() {
