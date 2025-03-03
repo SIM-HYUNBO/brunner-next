@@ -102,7 +102,8 @@ export default function ResetPassword() {
       setLoading(true); // 데이터 로딩 시작
       jResponse = await RequestServer("POST", JSON.stringify(jRequest));
       setLoading(false); // 데이터 로딩 끝
-      var result = await openModal(jResponse.error_message);
+      
+      const result = await openModal(jResponse.error_message);
       if (jResponse.error_code == 0 && result) {
         router.push("/mainPages/signin");
       }
@@ -130,7 +131,8 @@ export default function ResetPassword() {
       setLoading(true); // 데이터 로딩 시작
       jResponse = await RequestServer("POST", JSON.stringify(jRequest));
       setLoading(false); // 데이터 로딩 끝
-      var result = await openModal(jResponse.error_message);
+      
+      const result = await openModal(jResponse.error_message);
       if (jResponse.error_code == 0 && result) {
         router.push("/mainPages/signin");
       }

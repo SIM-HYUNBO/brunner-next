@@ -53,14 +53,13 @@ export default function AssetContent() {
     if (!userId) return [];
 
     try {
-      setLoading(true);
-
       const jRequest = {
         commandName: constants.commands.COMMAND_TB_COR_INCOME_HIST_SELECT_BY_USERID,
         systemCode: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE,
         userId: userId,
       };
 
+      setLoading(true);
       const jResponse = await RequestServer("POST", JSON.stringify(jRequest));
       setLoading(false);
 
@@ -83,8 +82,6 @@ export default function AssetContent() {
     if (!userId) return;
 
     try {
-      setLoading(true);
-
       const jRequest = {
         commandName: constants.commands.COMMAND_TB_COR_INCOME_HIST_UPDATE_ONE,
         systemCode: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE,
@@ -94,6 +91,7 @@ export default function AssetContent() {
         comment: row.values.comment,
       };
 
+      setLoading(true);
       const jResponse = await RequestServer("POST", JSON.stringify(jRequest));
       setLoading(false);
 
@@ -114,12 +112,11 @@ export default function AssetContent() {
     const userId = userInfo.getLoginUserId();
     if (!userId) return;
 
-    const deleteConfirm = await openModal(constants.messages.MESSAGE_DELETE_ITEM);
-    if (!deleteConfirm) return;
+    const result = await openModal(constants.messages.MESSAGE_DELETE_ITEM);
+    if (!result) 
+      return;
 
     try {
-      setLoading(true);
-
       const jRequest = {
         commandName: constants.commands.COMMAND_TB_COR_INCOME_HIST_DELETE_ONE,
         systemCode: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE,
@@ -127,6 +124,7 @@ export default function AssetContent() {
         historyId: row.values.history_id,
       };
 
+      setLoading(true);
       const jResponse = await RequestServer("POST", JSON.stringify(jRequest));
       setLoading(false);
 
@@ -148,8 +146,6 @@ export default function AssetContent() {
     if (!userId) return;
 
     try {
-      setLoading(true);
-
       for (const key in inputValues) {
         const column = columnHeaders.find((header) => header.accessor === key);
         if (!inputValues[key] && column && !column.input_hidden) {
@@ -165,6 +161,7 @@ export default function AssetContent() {
         ...inputValues,
       };
 
+      setLoading(true);
       const jResponse = await RequestServer("POST", JSON.stringify(jRequest));
       setLoading(false);
 
