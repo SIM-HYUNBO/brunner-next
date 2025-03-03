@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useRef, useImperativeHandle, forwardRef } from "react";
-import moment from "moment";
 import { useTable, useSortBy } from "react-table";
 import DivContainer from "@/components/divContainer";
 
