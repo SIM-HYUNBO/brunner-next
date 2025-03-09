@@ -1,7 +1,7 @@
 `use strict`
 
-import SignoutButton from "./signoutButton";
-import DarkModeToggleButton from "./darkModeToggleButton";
+import SignoutButton from "@components/signoutButton";
+import DarkModeToggleButton from "@components/darkModeToggleButton";
 import { useState, useEffect } from 'react';
 
 export default function UserInfo() {
