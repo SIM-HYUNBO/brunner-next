@@ -22,18 +22,6 @@ const StockContent = () => {
   useEffect(() => {
     setThemeRef(themeRef.current);
 
-    // theme : 현재값 가져오기 getter
-    // setTheme : 현재값 바꾸기 setter
-    const { theme, setTheme } = useTheme();
-    const themeRef = useRef(theme);
-    const setThemeRef = (newValue) => {
-      themeRef.current = newValue;
-      setTheme(newValue);
-    };
-    const isDarkMode = () => {
-      return themeRef.current === "dark";
-    };
-
     const storedSearches = localStorage.getItem("recentSearches");
     if (storedSearches) {
       setRecentSearches(JSON.parse(storedSearches));
@@ -56,6 +44,18 @@ const StockContent = () => {
   }, []);
 
   const router = useRouter();
+
+  // theme : 현재값 가져오기 getter
+  // setTheme : 현재값 바꾸기 setter
+  const { theme, setTheme } = useTheme();
+  const themeRef = useRef(theme);
+  const setThemeRef = (newValue) => {
+    themeRef.current = newValue;
+    setTheme(newValue);
+  };
+  const isDarkMode = () => {
+    return themeRef.current === "dark";
+  };
 
   // 현재 선택한 주식 심볼
   const [currentTicker, setCurrentTicker] = useState("");
