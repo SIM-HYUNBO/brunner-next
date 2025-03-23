@@ -16,10 +16,7 @@ export default function ContactContent() {
           <h2 className="title-font sm:text-4xl text-3xl mb-10 font-medium text-green-900">
             We are here for you always.
           </h2>
-          <GoverningMessage>
-            Brunner's call center is always available to assist investors.
-            Contact us immediately
-          </GoverningMessage>
+          <GoverningMessage governingMessage={"Brunner's call center is always available to assist investors.\nContact us immediately"} />
           <div className="flex justify-center">
             <GetContact />
           </div>
