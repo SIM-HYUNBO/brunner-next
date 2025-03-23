@@ -40,7 +40,7 @@ const BrunnerTable = forwardRef(({
                   type="datetime-local"
                   value={formattedLocalDateTime}
                   readOnly
-                  className="text-center bg-purple-100"
+                  className="text-center dark:bg-slate-800"
                 />
               );
             },
@@ -171,7 +171,7 @@ const BrunnerTable = forwardRef(({
                   return (
                     <td
                       {...cell.getCellProps()}
-                      className={`p-2 border-b dark:border-slate-700 ${cell.column.type === 'number' ? 'text-right': 'text-left'}`}
+                      className={`p-2 border-b text-slate-700 dark:text-slate-400 dark:border-slate-400 ${cell.column.type === 'number' ? 'text-right': 'text-left'}`}
                     >
                       {cell.column.id !== 'actions' && cell.column.editable ? (
                         <EditableCell
@@ -247,18 +247,18 @@ const BrunnerTable = forwardRef(({
 
 
     return (
-      <div className="mb-2 table w-full bg-slate-100 mt-2 p-2">
+      <div className="mb-2 table w-full dark:bg-slate-800 mt-2 p-2">
         {columnHeaders.map((header) => (
           !header.input_hidden && (
             <div className="flex items-center">
-              <label className="mr-2 text-sm">{header.Header}</label>
+              <label className="mr-2 dark:text-slate-400">{header.Header}</label>
               <input
                 type={header.type}
                 name={header.accessor}
                 value={inputValues[header.accessor]}
                 onChange={(e) => handleInputChange(e, header.accessor)}
                 placeholder={header.Header}
-                className={`mr-3 p-2 border rounded dark:text-gray-300 w-full ${
+                className={`mr-3 p-2 border rounded dark:text-slate-400 dark:bg-slate-800 w-full ${
                   header.type === "number" ? "text-right" : "text-left"
                 }`}
               />

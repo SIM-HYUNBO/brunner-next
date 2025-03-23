@@ -953,10 +953,7 @@ const StockContent = () => {
           <div className="w-[30%] h-72 py-10">
             <p className="text-lg mb-2">Recent...</p>
             <ul
-              className={`items-start ${isDarkMode()
-                ? "bg-slate-800 text-white"
-                : "bg-slate-50 text-black"
-                } border border-slate-400 h-full overflow-y-auto`}
+              className={`items-start dark:bg-slate-800 dark:text-white bg-slate-50 text-black border border-slate-400 h-full overflow-y-auto`}
             >
               {recentSearches.length > 0 ? (
                 recentSearches.map((searchItem) => (
@@ -987,10 +984,7 @@ const StockContent = () => {
             <p className="text-lg mb-2">Select...</p>
             <ul
               ref={tickerListDOMRef}
-              className={`items-start ${isDarkMode()
-                ? "bg-slate-800 text-white"
-                : "bg-slate-50 text-black"
-                } border border-slate-400 h-full overflow-y-auto`}
+              className={`items-start dark:bg-slate-800 dark:text-slate-400 bg-slate-50 border border-slate-400 h-full overflow-y-auto`}
             >
               {tickerListRef.current?.map((tickerInfo) => (
                 <li
@@ -998,10 +992,7 @@ const StockContent = () => {
                   onClick={() => {
                     handleTickerChange(tickerInfo);
                   }}
-                  className={`cursor-pointer p-2 hover:bg-indigo-500 border border-slate-300 dark:border-slate-600 hover:text-white ${selectedTicker?.value === tickerInfo.value
-                    ? "bg-indigo-500 text-white"
-                    : ""
-                    }`}
+                  className={`cursor-pointer p-2  hover:text-white hover:bg-indigo-500 border`}
                 >
                   {tickerInfo.label}
                 </li>
