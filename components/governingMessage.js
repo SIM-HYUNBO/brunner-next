@@ -1,9 +1,16 @@
 `use strict`
 
-export default function GoverningMessage({ governingMessage }) {
-    return (
-        <div className="main-governing-text">
-            {governingMessage}
-        </div>
-    );
-}
+import React from 'react';
+
+const GoverningMessage = ({ governingMessage }) => {
+    const formattedMessage = governingMessage.split('\n').map((line, index) => (
+      <React.Fragment key={index}>
+        {line}
+        <br />
+      </React.Fragment>
+    ));
+  
+    return <p>{formattedMessage}</p>;
+  };
+  
+  export default GoverningMessage;

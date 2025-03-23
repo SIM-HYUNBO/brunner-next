@@ -19,10 +19,7 @@ export default function ClipsContent() {
           >
             Videos that help life.
           </h2>
-          <GoverningMessage>
-            The video clips that may be helpful in our life & mental training
-          </GoverningMessage>
-
+          <GoverningMessage governingMessage="The video clips that may be helpful in our life & mental training." />
           <div className="flex">
             <div className="w-full">
               <BrunnerVideo
