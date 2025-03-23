@@ -30,7 +30,7 @@ export default function Clips() {
                 <link></link>
             </Head>
             <BodySection>
-                <ClipsContent></ClipsContent>
+                <ClipsContent />
             </BodySection>
         </Layout>
     );
