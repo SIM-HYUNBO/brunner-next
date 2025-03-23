@@ -92,8 +92,6 @@ const ServiceSQL = () => {
   const fetchSQLList = async () => {
     // 관리자 계정인 경우만 조회
     const userId = userInfo.getLoginUserId();
-    // if (!userId) return;
-
     try {
       const jRequest = {
         commandName: constants.commands.COMMAND_TB_COR_SQL_INFO_SELECT_ALL,
