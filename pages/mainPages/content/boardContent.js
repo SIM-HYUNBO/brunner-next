@@ -3,7 +3,6 @@
 import React, { useState, useEffect } from "react";
 import RequestServer from "@/components/requestServer";
 import * as userInfo from "@/components/userInfo";
-import BrunnerMessageBox from "@/components/brunnerMessageBox";
 import { useModal } from "@/components/brunnerMessageBox";
 import * as constants from "@/components/constants";
 
@@ -365,7 +364,7 @@ function BoardContent({
   // 로딩 & 메시지 박스
   // {
   const [loading, setLoading] = useState(false);
-  
+  const { BrunnerMessageBox, openModal } = useModal();
   const [commentText, setCommentText] = useState("");
   const [isEditingPost, setIsEditingPost] = useState(false);
   const [editedPostText, setEditedPostText] = useState(post.post_content);

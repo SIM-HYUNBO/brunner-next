@@ -2,7 +2,7 @@
 
 import React from 'react';
 
-const GoverningMessage = ({ governingMessage }) => {
+const GoverningMessage = ({ governingMessage = "" }) => {
     const formattedMessage = governingMessage.split('\n').map((line, index) => (
       <React.Fragment key={index}>
         {line}
