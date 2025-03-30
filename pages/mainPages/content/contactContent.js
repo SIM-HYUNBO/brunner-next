@@ -5,6 +5,7 @@ import { useRouter } from "next/router";
 import DivContainer from "@/components/divContainer";
 import { isMobile, isTablet, isBrowser } from "react-device-detect";
 import GoverningMessage from "@/components/governingMessage";
+import BrunnerWebcamStream from '@/components/brunnerWebcamStream';
 
 export default function ContactContent() {
   const router = useRouter();
@@ -26,6 +27,9 @@ export default function ContactContent() {
             {<ContactContentAnimation width={300} height={300} />}
           </div>
         )}
+        <div className="w-full flex justify-start mt-10">
+          <BrunnerWebcamStream title="Brunner studio" />
+        </div>        
       </DivContainer>
     </>
   );

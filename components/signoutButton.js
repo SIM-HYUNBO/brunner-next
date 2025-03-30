@@ -6,10 +6,12 @@ import { useRouter } from "next/router";
 import { useModal } from "@/components/brunnerMessageBox";
 import * as constants from "@/components/constants";
 import * as userInfo from "@/components/userInfo";
+
 export default function SignoutButton() {
   const { BrunnerMessageBox, openModal } = useModal();
   const router = useRouter();
-
+  const [loading, setLoading] = useState(false);
+  
   const requestSignout = async () => {
     var jRequest = {};
     var jResponse = null;
