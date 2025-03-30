@@ -37,7 +37,7 @@ const BrunnerWebcamStream = ({title}) => {
     };
   }, []);
 
-  return (
+  return ( 
     <div>
       <h1 className="mt-5">{title}</h1>
       <video className="border-4 border-blue-500" ref={videoRef} autoPlay playsInline></video>
