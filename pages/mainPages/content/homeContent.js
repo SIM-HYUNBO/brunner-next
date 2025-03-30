@@ -8,6 +8,7 @@ import BrunnerVideo from "@/components/brunnerVideo";
 import { isMobile, isTablet, isBrowser } from "react-device-detect";
 import GoverningMessage from "@/components/governingMessage";
 
+
 export default function HomeContent() {
   const router = useRouter();
 
