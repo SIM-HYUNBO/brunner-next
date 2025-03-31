@@ -1,15 +1,14 @@
 `use strict`;
 
 import ContactContentAnimation from "./content-animation/contactContentAnimation";
-import { useRouter } from "next/router";
 import DivContainer from "@/components/divContainer";
 import { isMobile, isTablet, isBrowser } from "react-device-detect";
 import GoverningMessage from "@/components/governingMessage";
+
 import BrunnerWebcamStream from '@/components/brunnerWebcamStream';
 
 export default function ContactContent() {
-  const router = useRouter();
-
+  
   return (
     <>
       <DivContainer>

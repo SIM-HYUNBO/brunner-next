@@ -26,6 +26,7 @@
     "express-rate-limit": "^6.7.0",
     "express-session": "^1.17.3",
     "figlet": "^1.6.0",
+    "firebase": "^11.5.0",
     "fs": "^0.0.1-security",
     "hawk": "^9.0.2",
     "moment": "^2.30.1",
