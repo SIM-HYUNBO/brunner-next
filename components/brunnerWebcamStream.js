@@ -3,66 +3,79 @@ import * as userInfo from "@/components/userInfo";
 import { ref, set, onValue } from "firebase/database";
 import { database } from "@/components/firebase";
 
-const BrunnerWebcamStream = ({title}) => {
+const BrunnerWebcamStream = ({ title }) => {
   const videoRef = useRef(null);
   const peerRef = useRef(null);
 
   useEffect(() => {
-
     const getCameraStream = async () => {
-
       // 🔹 WebRTC PeerConnection 설정
       const peer = new RTCPeerConnection({
         iceServers: [{ urls: "stun:stun.l.google.com:19302" }],
       });
       peerRef.current = peer;
 
-
-      if(userInfo.isAdminUser()){
+      if (userInfo.isAdminUser()) {
         // ✅ 관리자(송출자) 로직
         navigator.mediaDevices.getUserMedia({ video: true, audio: true }).then((stream) => {
           if (videoRef.current) videoRef.current.srcObject = stream;
           stream.getTracks().forEach((track) => peer.addTrack(track, stream));
         });
-  
+
         peer.onicecandidate = (event) => {
           if (event.candidate) {
             set(ref(database, "webrtc/candidate"), event.candidate.toJSON());
           }
         };
-  
+
         // 📌 Firebase에서 일반 사용자의 Offer 감지 후 처리
         onValue(ref(database, "webrtc/offer"), async (snapshot) => {
           const offer = snapshot.val();
           if (!offer) return;
-  
+
+          // 상태 확인 후 setRemoteDescription 호출
+          if (peer.signalingState === "stable") return;
+
           await peer.setRemoteDescription(new RTCSessionDescription(offer));
           const answer = await peer.createAnswer();
           await peer.setLocalDescription(answer);
-          set(ref(database, "webrtc/answer"), answer.toJSON());
+
+          // answer 객체를 JSON으로 변환하여 저장
+          set(ref(database, "webrtc/answer"), {
+            type: answer.type,
+            sdp: answer.sdp,
+          });
         });
-    } else {
-      // ✅ 일반 사용자(수신자) 로직
-      peer.ontrack = (event) => {
-        if (videoRef.current) videoRef.current.srcObject = event.streams[0];
-      };
+      } else {
+        // ✅ 일반 사용자(수신자) 로직
+        peer.ontrack = (event) => {
+          if (videoRef.current) videoRef.current.srcObject = event.streams[0];
+        };
 
-      onValue(ref(database, "webrtc/answer"), async (snapshot) => {
-        const answer = snapshot.val();
-        if (answer) {
+        onValue(ref(database, "webrtc/answer"), async (snapshot) => {
+          const answer = snapshot.val();
+          if (!answer) return;
+
+          // 상태 확인 후 setRemoteDescription 호출
+          if (peer.signalingState === "stable") return;
+
           await peer.setRemoteDescription(new RTCSessionDescription(answer));
+        });
+
+        // 📌 Offer 생성 후 Firebase에 저장
+        async function sendOffer() {
+          const offer = await peer.createOffer();
+          await peer.setLocalDescription(offer);
+
+          // offer 객체를 JSON으로 변환하여 저장
+          set(ref(database, "webrtc/offer"), {
+            type: offer.type,
+            sdp: offer.sdp,
+          });
         }
-      });
 
-      // 📌 Offer 생성 후 Firebase에 저장
-      async function sendOffer() {
-        const offer = await peer.createOffer();
-        await peer.setLocalDescription(offer);
-        set(ref(database, "webrtc/offer"), offer.toJSON());
+        sendOffer();
       }
-
-      sendOffer();      
-    }
     };
 
     // 컴포넌트가 마운트될 때 카메라 스트림을 시작
@@ -73,7 +86,7 @@ const BrunnerWebcamStream = ({title}) => {
       if (videoRef.current && videoRef.current.srcObject) {
         const stream = videoRef.current.srcObject;
         const tracks = stream.getTracks();
-        tracks.forEach(track => track.stop());
+        tracks.forEach((track) => track.stop());
       }
     };
   }, []);
