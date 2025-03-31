@@ -1,26 +1,67 @@
 import React, { useEffect, useRef } from 'react';
 import * as userInfo from "@/components/userInfo";
+import { ref, set, onValue } from "firebase/database";
+import { database } from "@/components/firebase";
 
 const BrunnerWebcamStream = ({title}) => {
   const videoRef = useRef(null);
+  const peerRef = useRef(null);
 
   useEffect(() => {
-    const getCameraStream = async () => {
-      if(userInfo.isAdminUser()){
-      try {
-        // 카메라 접근을 위한 getUserMedia 호출
-        const stream = await navigator.mediaDevices.getUserMedia({
-          video: true, // 오디오도 포함하고 싶다면 audio: true로 설정
-          audio: true, // 오디오를 사용하려면 true로 설정
-        });
 
-        // 비디오 스트림을 비디오 태그에 연결
-        if (videoRef.current) {
-          videoRef.current.srcObject = stream;
+    const getCameraStream = async () => {
+
+      // 🔹 WebRTC PeerConnection 설정
+      const peer = new RTCPeerConnection({
+        iceServers: [{ urls: "stun:stun.l.google.com:19302" }],
+      });
+      peerRef.current = peer;
+
+
+      if(userInfo.isAdminUser()){
+        // ✅ 관리자(송출자) 로직
+        navigator.mediaDevices.getUserMedia({ video: true, audio: true }).then((stream) => {
+          if (videoRef.current) videoRef.current.srcObject = stream;
+          stream.getTracks().forEach((track) => peer.addTrack(track, stream));
+        });
+  
+        peer.onicecandidate = (event) => {
+          if (event.candidate) {
+            set(ref(database, "webrtc/candidate"), event.candidate.toJSON());
+          }
+        };
+  
+        // 📌 Firebase에서 일반 사용자의 Offer 감지 후 처리
+        onValue(ref(database, "webrtc/offer"), async (snapshot) => {
+          const offer = snapshot.val();
+          if (!offer) return;
+  
+          await peer.setRemoteDescription(new RTCSessionDescription(offer));
+          const answer = await peer.createAnswer();
+          await peer.setLocalDescription(answer);
+          set(ref(database, "webrtc/answer"), answer.toJSON());
+        });
+    } else {
+      // ✅ 일반 사용자(수신자) 로직
+      peer.ontrack = (event) => {
+        if (videoRef.current) videoRef.current.srcObject = event.streams[0];
+      };
+
+      onValue(ref(database, "webrtc/answer"), async (snapshot) => {
+        const answer = snapshot.val();
+        if (answer) {
+          await peer.setRemoteDescription(new RTCSessionDescription(answer));
         }
-      } catch (err) {
-        console.error('카메라 접근 실패:', err);
+      });
+
+      // 📌 Offer 생성 후 Firebase에 저장
+      async function sendOffer() {
+        const offer = await peer.createOffer();
+        await peer.setLocalDescription(offer);
+        set(ref(database, "webrtc/offer"), offer.toJSON());
       }
+
+      sendOffer();      
     }
     };
 
