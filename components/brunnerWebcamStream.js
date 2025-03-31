@@ -49,32 +49,43 @@ const BrunnerWebcamStream = ({ title }) => {
       } else {
         // ✅ 일반 사용자(수신자) 로직
         peer.ontrack = (event) => {
-          if (videoRef.current) videoRef.current.srcObject = event.streams[0];
+          if (videoRef.current) {
+            videoRef.current.srcObject = event.streams[0];
+          }
         };
 
+        peer.onicecandidate = (event) => {
+          if (event.candidate) {
+            set(ref(database, "webrtc/candidate"), event.candidate.toJSON());
+          }
+        };
+
+        // 📌 Firebase에서 관리자의 Answer 감지 후 처리
         onValue(ref(database, "webrtc/answer"), async (snapshot) => {
           const answer = snapshot.val();
           if (!answer) return;
 
-          // 상태 확인 후 setRemoteDescription 호출
-          if (peer.signalingState === "stable") return;
+          if (peer.signalingState !== "stable") {
+            await peer.setRemoteDescription(new RTCSessionDescription(answer));
+          }
+        });
 
-          await peer.setRemoteDescription(new RTCSessionDescription(answer));
+        // 📌 Firebase에서 관리자의 ICE Candidate 감지 후 처리
+        onValue(ref(database, "webrtc/candidate"), async (snapshot) => {
+          const candidate = snapshot.val();
+          if (candidate) {
+            await peer.addIceCandidate(new RTCIceCandidate(candidate));
+          }
         });
 
         // 📌 Offer 생성 후 Firebase에 저장
-        async function sendOffer() {
-          const offer = await peer.createOffer();
-          await peer.setLocalDescription(offer);
+        const offer = await peer.createOffer();
+        await peer.setLocalDescription(offer);
 
-          // offer 객체를 JSON으로 변환하여 저장
-          set(ref(database, "webrtc/offer"), {
-            type: offer.type,
-            sdp: offer.sdp,
-          });
-        }
-
-        sendOffer();
+        set(ref(database, "webrtc/offer"), {
+          type: offer.type,
+          sdp: offer.sdp,
+        });
       }
     };
 
