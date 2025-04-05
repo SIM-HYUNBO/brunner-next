@@ -17,6 +17,23 @@ const BrunnerWebcamStream = ({ title }) => {
         iceServers: [{ urls: 'stun:stun.l.google.com:19302' }],
         iceTransportPolicy: 'all'  // ICE 후보 수집을 모든 경로에서 활성화
       });
+
+      // 일반 사용자(수신자) 로직
+      peer.ontrack = (event) => {
+        if (videoRef.current) {
+          videoRef.current.srcObject = event.streams[0];
+          console.log("Video stream received from remote peer");
+        } else {
+          console.log("No videoRef found to display stream");
+        }
+      };
+
+      peer.onicecandidate = (event) => {
+        if (event.candidate) {
+          set(ref(database, `webrtc/${adminSessionId}/candidate`), event.candidate.toJSON());
+        }
+      };
+
       peerRef.current = peer;
 
       peer.oniceconnectionstatechange = () => {
