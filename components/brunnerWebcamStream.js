@@ -26,10 +26,6 @@ const BrunnerWebcamStream = ({ title }) => {
       if (userInfo.isAdminUser()) {
         // 관리자(송출자) 로직
         try {
-          const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
-          if (videoRef.current) videoRef.current.srcObject = stream;
-          stream.getTracks().forEach((track) => peer.addTrack(track, stream));
-
           peer.onicecandidate = (event) => {
             if (event.candidate) {
               set(ref(database, `webrtc/${adminSessionId}/candidate`), event.candidate.toJSON());
@@ -45,8 +41,13 @@ const BrunnerWebcamStream = ({ title }) => {
             // 연결 상태 확인
             if (peer.signalingState !== 'closed') {
               peer.setRemoteDescription(new RTCSessionDescription(offer))
-                .then(() => {
+                .then(async () => {
                   console.log("Remote description set successfully");
+  
+                  const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+                  if (videoRef.current) videoRef.current.srcObject = stream;
+                  stream.getTracks().forEach((track) => peer.addTrack(track, stream));
+                          
                 })
                 .catch(error => {
                   console.error("Failed to set remote description:", error);
