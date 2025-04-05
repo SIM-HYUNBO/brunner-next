@@ -84,8 +84,28 @@ const BrunnerWebcamStream = ({ title }) => {
           const answer = snapshot.val();
           if (!answer) return;
 
-          if (peer.signalingState !== "stable") {
-            await peer.setRemoteDescription(new RTCSessionDescription(answer));
+          // peer.signalingState가 'closed'인 경우 새로운 RTCPeerConnection 객체 생성
+          if (peer.signalingState === "closed") {
+            console.log("Peer connection is closed. Creating a new connection.");
+
+            // 기존 peerConnection 종료
+            peer.close();
+
+            // 새로운 RTCPeerConnection 객체 생성
+            peer = new RTCPeerConnection();
+
+            // 새로 생성된 peer에서 다시 연결을 설정해야 할 경우 추가 작업 필요
+            // 예: setLocalDescription 등
+          }
+
+          // 연결이 종료된 상태가 아니라면 answer를 remoteDescription으로 설정
+          if (peer.signalingState !== "closed" && peer.signalingState !== "stable") {
+            try {
+              await peer.setRemoteDescription(new RTCSessionDescription(answer));
+              console.log("Remote description set successfully.");
+            } catch (error) {
+              console.error("Failed to set remote description:", error);
+            }
           }
         });
 
