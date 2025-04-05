@@ -43,11 +43,6 @@ const BrunnerWebcamStream = ({ title }) => {
               peer.setRemoteDescription(new RTCSessionDescription(offer))
                 .then(async () => {
                   console.log("Remote description set successfully");
-  
-                  const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
-                  if (videoRef.current) videoRef.current.srcObject = stream;
-                  stream.getTracks().forEach((track) => peer.addTrack(track, stream));
-                          
                 })
                 .catch(error => {
                   console.error("Failed to set remote description:", error);
@@ -62,6 +57,11 @@ const BrunnerWebcamStream = ({ title }) => {
                 const answerDescription = await peer.createAnswer();
                 await peer.setLocalDescription(answerDescription);
                 console.log('Answer created and local description set.');
+
+                const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+                if (videoRef.current) videoRef.current.srcObject = stream;
+                stream.getTracks().forEach((track) => peer.addTrack(track, stream));
+                console.log("Local stream added to peer connection");
                 
                 set(ref(database, `webrtc/${adminSessionId}/answer`), {
                   type: answerDescription.type,
