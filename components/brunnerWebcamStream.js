@@ -107,8 +107,6 @@ const BrunnerWebcamStream = ({ title }) => {
             });
             peerRef.current = peer;
 
-            addPeerEvent(peer);
-
             // 새로 생성된 peer에서 다시 연결을 설정해야 할 경우 추가 작업 필요
             // 예: setLocalDescription 등
           }
