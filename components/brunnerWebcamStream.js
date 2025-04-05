@@ -4,179 +4,152 @@ import { ref, set, onValue } from "firebase/database";
 import { database } from "@/components/firebase";
 import { v4 as uuidv4 } from 'uuid';
 
-const BrunnerWebcamStream = ({ title }) => {
+// 관리자 역할을 위한 컴포넌트
+const AdminStream = ({ adminSessionId }) => {
   const videoRef = useRef(null);
   const peerRef = useRef(null);
-  const sessionId = useRef(uuidv4()); // 고유한 세션 ID 생성
-  const adminSessionId = 'hbsim0605'; // 고유한 세션 ID 생성
 
   useEffect(() => {
     const getCameraStream = async () => {
-      // WebRTC 연결 설정
-      var peer = new RTCPeerConnection({
+      let peer = new RTCPeerConnection({
         iceServers: [{ urls: 'stun:stun.l.google.com:19302' }],
-        iceTransportPolicy: 'all'  // ICE 후보 수집을 모든 경로에서 활성화
+        iceTransportPolicy: 'all',
       });
+
       peerRef.current = peer;
+
+      // 로컬 스트림을 캡처하여 RTCPeerConnection에 추가
+      const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+      if (videoRef.current) {
+        videoRef.current.srcObject = stream;
+      }
+      stream.getTracks().forEach((track) => peer.addTrack(track, stream));
+      console.log("Local stream added to peer connection");
 
       // Offer 생성 후 Firebase에 저장
       const offer = await peer.createOffer();
       await peer.setLocalDescription(offer);
-
-      // Firebase에 Offer 저장
-      set(ref(database, `webrtc/${adminSessionId}/offer`), {
+      await set(ref(database, `webrtc/${adminSessionId}/offer`), {
         type: offer.type,
-        sdp: offer.sdp
-      }).then(() => {
-        console.log(`Offer saved to Firebase:\nsessionId:${adminSessionId}\nsdp:${offer.sdp}`);
-      });          
+        sdp: offer.sdp,
+      });
+      console.log(`Offer saved to Firebase:\nsessionId:${adminSessionId}\nsdp:${offer.sdp}`);
 
+      // ICE 후보를 Firebase에 저장
+      peer.onicecandidate = async (event) => {
+        if (event.candidate) {
+          await set(ref(database, `webrtc/${adminSessionId}/candidate`), event.candidate.toJSON());
+          console.log('ICE candidate sent to Firebase.');
+        }
+      };
 
+      // ICE 연결 상태 변경 이벤트
       peer.oniceconnectionstatechange = () => {
         console.log('ICE connection state:', peer.iceConnectionState);
       };
-
-      if (userInfo.isAdminUser()) {
-        // 관리자(송출자) 로직
-        try {
-          peer.onicecandidate = (event) => {
-            if (event.candidate) {
-              set(ref(database, `webrtc/${adminSessionId}/candidate`), event.candidate.toJSON());
-            }
-          };
-
-          // Firebase에서 일반 사용자의 Offer 감지 후 처리
-          onValue(ref(database, `webrtc/${adminSessionId}/offer`), async (snapshot) => {
-            console.log("Offer received from Firebase:", snapshot.val());  // 로그 추가
-            const offer = snapshot.val();
-            if (!offer) return;
-
-            // 연결 상태 확인
-            if (peer.signalingState !== 'closed') {
-              peer.setRemoteDescription(new RTCSessionDescription(offer))
-                .then(async () => {
-                  console.log("Remote description set successfully");
-                })
-                .catch(error => {
-                  console.error("Failed to set remote description:", error);
-                });
-            } else {
-              console.log("Cannot set remote description: PeerConnection is closed.");
-            }
-
-            // createAnswer 호출 전에 signalingState가 'closed' 상태인지 다시 확인
-            if (peer.signalingState !== 'closed') {
-              try {
-                const answerDescription = await peer.createAnswer();
-                await peer.setLocalDescription(answerDescription);
-                console.log('Answer created and local description set.');
-                
-                set(ref(database, `webrtc/${adminSessionId}/answer`), {
-                  type: answerDescription.type,
-                  sdp: answerDescription.sdp,
-                });
-              } catch (error) {
-                console.error('Failed to create answer:', error);
-              }
-            } else {
-              console.error('Peer connection is closed. Cannot create answer.');
-            }
-          });
-        } catch (error) {
-          console.error("Error accessing camera:", error);
-        }
-
-        const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
-        if (videoRef.current) videoRef.current.srcObject = stream;
-        stream.getTracks().forEach((track) => peer.addTrack(track, stream));
-        console.log("Local stream added to peer connection");
-      } else {
-        
-        peer.ontrack = (event) => {
-          if (videoRef.current) {
-            videoRef.current.srcObject = event.streams[0];
-            console.log("Video stream received from remote peer");
-          } else {
-            console.log("No videoRef found to display stream");
-          }
-        };
-
-        // Firebase에서 관리자의 Answer 감지 후 처리
-        onValue(ref(database, `webrtc/${adminSessionId}/answer`), async (snapshot) => {
-          const answer = snapshot.val();
-          if (!answer) return;
-
-          // peer.signalingState가 'closed'인 경우 새로운 RTCPeerConnection 객체 생성
-          if (peer.signalingState === "closed") {
-            console.log("Peer connection is closed. Creating a new connection.");
-
-            // 기존 peerConnection 종료
-            peer.close();
-
-            // 새로운 RTCPeerConnection 객체 생성
-            peer = new RTCPeerConnection({
-              iceServers: [{ urls: 'stun:stun.l.google.com:19302' }],
-              iceTransportPolicy: 'all'  // ICE 후보 수집을 모든 경로에서 활성화
-            });
-            peerRef.current = peer;
-            
-            // Offer 생성 후 Firebase에 저장
-            const offer = await peer.createOffer();
-            await peer.setLocalDescription(offer);
-
-            // Firebase에 Offer 저장
-            set(ref(database, `webrtc/${adminSessionId}/offer`), {
-              type: offer.type,
-              sdp: offer.sdp
-            }).then(() => {
-              console.log(`Offer saved to Firebase:\nsessionId:${adminSessionId}\nsdp:${offer.sdp}`);
-            });        
-            // 새로 생성된 peer에서 다시 연결을 설정해야 할 경우 추가 작업 필요
-            // 예: setLocalDescription 등
-          }
-
-          // 연결이 종료된 상태가 아니라면 answer를 remoteDescription으로 설정
-          if (peer.signalingState !== "closed" && peer.signalingState !== "stable") {
-            try {
-              await peer.setRemoteDescription(new RTCSessionDescription(answer));
-              console.log("Remote description set successfully.");
-            } catch (error) {
-              console.error("Failed to set remote description:", error);
-            }
-          }
-        });
-
-        // Firebase에서 관리자의 ICE Candidate 감지 후 처리
-        onValue(ref(database, `webrtc/${adminSessionId}/candidate`), async (snapshot) => {
-          const candidate = snapshot.val();
-          if (candidate) {
-            await peer.addIceCandidate(new RTCIceCandidate(candidate));
-            console.log("ICE candidate added successfully.");
-          }
-        });
-      }
     };
 
     getCameraStream();
 
     return () => {
-      // 컴포넌트 언마운트 시 리소스 정리
-      if (videoRef.current && videoRef.current.srcObject) {
-        const stream = videoRef.current.srcObject;
-        const tracks = stream.getTracks();
-        tracks.forEach((track) => track.stop());
-      }
-
       if (peerRef.current) {
         peerRef.current.close();
       }
     };
-  }, []);
+  }, [adminSessionId]);
 
   return (
     <div>
-      <h1 className="mt-5">{title}</h1>
-      <video className="border-4 border-blue-500" ref={videoRef} autoPlay playsInline></video>
+      <h1 className="mt-5">관리자 스트림</h1>
+      <video ref={videoRef} autoPlay playsInline></video>
+    </div>
+  );
+};
+
+// 일반 사용자 역할을 위한 컴포넌트
+const UserStream = ({ adminSessionId }) => {
+  const videoRef = useRef(null);
+  const peerRef = useRef(null);
+
+  useEffect(() => {
+    const getStream = async () => {
+      let peer = new RTCPeerConnection({
+        iceServers: [{ urls: 'stun:stun.l.google.com:19302' }],
+        iceTransportPolicy: 'all',
+      });
+
+      peerRef.current = peer;
+
+      // Firebase에서 관리자의 offer를 감지하고 처리
+      onValue(ref(database, `webrtc/${adminSessionId}/offer`), async (snapshot) => {
+        const offer = snapshot.val();
+        if (!offer) return;
+
+        // Offer 수신 후 Remote Description 설정
+        if (peer.signalingState !== 'closed') {
+          await peer.setRemoteDescription(new RTCSessionDescription(offer));
+          console.log("Remote description set successfully.");
+        }
+
+        // Answer 생성 후 Firebase에 저장
+        const answer = await peer.createAnswer();
+        await peer.setLocalDescription(answer);
+        await set(ref(database, `webrtc/${adminSessionId}/answer`), {
+          type: answer.type,
+          sdp: answer.sdp,
+        });
+        console.log('Answer created and sent to Firebase.');
+      });
+
+      // Firebase에서 ICE 후보 감지 후 처리
+      onValue(ref(database, `webrtc/${adminSessionId}/candidate`), async (snapshot) => {
+        const candidate = snapshot.val();
+        if (candidate) {
+          await peer.addIceCandidate(new RTCIceCandidate(candidate));
+          console.log("ICE candidate added successfully.");
+        }
+      });
+
+      // Remote Track 수신 및 화면에 표시
+      peer.ontrack = (event) => {
+        if (videoRef.current) {
+          videoRef.current.srcObject = event.streams[0];
+          console.log("Video stream received and displayed.");
+        }
+      };
+    };
+
+    getStream();
+
+    return () => {
+      if (peerRef.current) {
+        peerRef.current.close();
+      }
+    };
+  }, [adminSessionId]);
+
+  return (
+    <div>
+      <h1 className="mt-5">일반 사용자 스트림</h1>
+      <video ref={videoRef} autoPlay playsInline></video>
+    </div>
+  );
+};
+
+const BrunnerWebcamStream = ({ title }) => {
+  const adminSessionId = 'hbsim0605'; // 관리자의 세션 ID
+  const userSessionId = uuidv4(); // 일반 사용자 세션 ID (고유값)
+
+  return (
+    <div>
+      <h1>{title}</h1>
+      {userInfo.isAdminUser() ? (
+        // 관리자일 경우 관리자 스트림을 표시
+        <AdminStream adminSessionId={adminSessionId} />
+      ) : (
+        // 일반 사용자일 경우 사용자 스트림을 표시
+        <UserStream adminSessionId={adminSessionId} />
+      )}
     </div>
   );
 };
