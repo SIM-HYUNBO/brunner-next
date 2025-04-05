@@ -18,7 +18,7 @@ const BrunnerWebcamStream = ({ title }) => {
         iceTransportPolicy: 'all'  // ICE 후보 수집을 모든 경로에서 활성화
       });
 
-      addPeerEvent();
+      addPeerEvent(peer);
 
       if (userInfo.isAdminUser()) {
         // 관리자(송출자) 로직
@@ -90,7 +90,7 @@ const BrunnerWebcamStream = ({ title }) => {
             // 새로운 RTCPeerConnection 객체 생성
             peer = new RTCPeerConnection();
 
-            addPeerEvent();
+            addPeerEvent(peer);
 
             // 새로 생성된 peer에서 다시 연결을 설정해야 할 경우 추가 작업 필요
             // 예: setLocalDescription 등
@@ -129,9 +129,9 @@ const BrunnerWebcamStream = ({ title }) => {
       }
     };
 
-    const addPeerEvent = () => {
+    const addPeerEvent = (peerObj) => {
      // 일반 사용자(수신자) 로직
-     peer.ontrack = (event) => {
+     peerObj.ontrack = (event) => {
       if (videoRef.current) {
         videoRef.current.srcObject = event.streams[0];
         console.log("Video stream received from remote peer");
@@ -140,16 +140,16 @@ const BrunnerWebcamStream = ({ title }) => {
       }
     };
 
-    peer.onicecandidate = (event) => {
+    peerObj.onicecandidate = (event) => {
       if (event.candidate) {
         set(ref(database, `webrtc/${adminSessionId}/candidate`), event.candidate.toJSON());
       }
     };
     
-    peerRef.current = peer;
+    peerRef.current = peerObj;
 
-    peer.oniceconnectionstatechange = () => {
-      console.log('ICE connection state:', peer.iceConnectionState);
+    peerObj.oniceconnectionstatechange = () => {
+      console.log('ICE connection state:', peerObj.iceConnectionState);
     };
 
     }
