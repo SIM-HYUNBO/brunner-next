@@ -13,7 +13,7 @@ const BrunnerWebcamStream = ({ title }) => {
   useEffect(() => {
     const getCameraStream = async () => {
       // WebRTC 연결 설정
-      const peer = new RTCPeerConnection({
+      var peer = new RTCPeerConnection({
         iceServers: [{ urls: 'stun:stun.l.google.com:19302' }],
         iceTransportPolicy: 'all'  // ICE 후보 수집을 모든 경로에서 활성화
       });
