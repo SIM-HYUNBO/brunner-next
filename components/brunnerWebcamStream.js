@@ -107,8 +107,6 @@ const BrunnerWebcamStream = ({ title }) => {
             });
             peerRef.current = peer;
 
-            addPeerEvent(peer);
-
             // 새로 생성된 peer에서 다시 연결을 설정해야 할 경우 추가 작업 필요
             // 예: setLocalDescription 등
           }
@@ -122,7 +120,14 @@ const BrunnerWebcamStream = ({ title }) => {
               console.error("Failed to set remote description:", error);
             }
           }
-          
+        });
+
+        // Firebase에서 관리자의 ICE Candidate 감지 후 처리
+        onValue(ref(database, `webrtc/${adminSessionId}/candidate`), async (snapshot) => {
+          const candidate = snapshot.val();
+          if (candidate) {
+            await peer.addIceCandidate(new RTCIceCandidate(candidate));
+
           // Offer 생성 후 Firebase에 저장
           const offer = await peer.createOffer();
           await peer.setLocalDescription(offer);
@@ -134,13 +139,7 @@ const BrunnerWebcamStream = ({ title }) => {
           }).then(() => {
             console.log(`Offer saved to Firebase:\nsessionId:${adminSessionId}\nsdp:${offer.sdp}`);
           });          
-        });
 
-        // Firebase에서 관리자의 ICE Candidate 감지 후 처리
-        onValue(ref(database, `webrtc/${adminSessionId}/candidate`), async (snapshot) => {
-          const candidate = snapshot.val();
-          if (candidate) {
-            await peer.addIceCandidate(new RTCIceCandidate(candidate));
           }
         });
       }
