@@ -38,7 +38,19 @@ const BrunnerWebcamStream = ({ title }) => {
             const offer = snapshot.val();
             if (!offer) return;
 
-            await peer.setRemoteDescription(new RTCSessionDescription(offer));
+            // 연결 상태 확인
+            if (peerConnection.signalingState !== 'closed') {
+              peerConnection.setRemoteDescription(new RTCSessionDescription(offer))
+                .then(() => {
+                  console.log("Remote description set successfully");
+                })
+                .catch(error => {
+                  console.error("Failed to set remote description:", error);
+                });
+            } else {
+              console.log("Cannot set remote description: PeerConnection is closed.");
+            }
+
             const answer = await peer.createAnswer();
             await peer.setLocalDescription(answer);
 
