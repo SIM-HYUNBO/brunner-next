@@ -1,6 +1,8 @@
 import React, { useEffect, useRef } from 'react';
-import { ref, onValue } from "firebase/database";
+import * as userInfo from "@/components/userInfo";
+import { ref, set, onValue } from "firebase/database";
 import { database } from "@/components/firebase";
+import { v4 as uuidv4 } from 'uuid';
 
 // 관리자 역할을 위한 컴포넌트
 const AdminStream = ({ adminSessionId }) => {
