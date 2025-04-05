@@ -17,8 +17,11 @@ const BrunnerWebcamStream = ({ title }) => {
         iceServers: [{ urls: 'stun:stun.l.google.com:19302' }],
         iceTransportPolicy: 'all'  // ICE 후보 수집을 모든 경로에서 활성화
       });
+      peerRef.current = peer;
 
-      addPeerEvent(peer);
+      peer.oniceconnectionstatechange = () => {
+        console.log('ICE connection state:', peer.iceConnectionState);
+      };
 
       if (userInfo.isAdminUser()) {
         // 관리자(송출자) 로직
@@ -75,6 +78,16 @@ const BrunnerWebcamStream = ({ title }) => {
         stream.getTracks().forEach((track) => peer.addTrack(track, stream));
         console.log("Local stream added to peer connection");
       } else {
+        
+        peer.ontrack = (event) => {
+          if (videoRef.current) {
+            videoRef.current.srcObject = event.streams[0];
+            console.log("Video stream received from remote peer");
+          } else {
+            console.log("No videoRef found to display stream");
+          }
+        };
+
         // Firebase에서 관리자의 Answer 감지 후 처리
         onValue(ref(database, `webrtc/${adminSessionId}/answer`), async (snapshot) => {
           const answer = snapshot.val();
@@ -92,12 +105,35 @@ const BrunnerWebcamStream = ({ title }) => {
               iceServers: [{ urls: 'stun:stun.l.google.com:19302' }],
               iceTransportPolicy: 'all'  // ICE 후보 수집을 모든 경로에서 활성화
             });
+            peerRef.current = peer;
 
             addPeerEvent(peer);
 
             // 새로 생성된 peer에서 다시 연결을 설정해야 할 경우 추가 작업 필요
             // 예: setLocalDescription 등
           }
+
+          // 연결이 종료된 상태가 아니라면 answer를 remoteDescription으로 설정
+          if (peer.signalingState !== "closed" && peer.signalingState !== "stable") {
+            try {
+              await peer.setRemoteDescription(new RTCSessionDescription(answer));
+              console.log("Remote description set successfully.");
+            } catch (error) {
+              console.error("Failed to set remote description:", error);
+            }
+          }
+          
+          // Offer 생성 후 Firebase에 저장
+          const offer = await peer.createOffer();
+          await peer.setLocalDescription(offer);
+
+          // Firebase에 Offer 저장
+          set(ref(database, `webrtc/${adminSessionId}/offer`), {
+            type: offer.type,
+            sdp: offer.sdp
+          }).then(() => {
+            console.log(`Offer saved to Firebase:\nsessionId:${adminSessionId}\nsdp:${offer.sdp}`);
+          });          
         });
 
         // Firebase에서 관리자의 ICE Candidate 감지 후 처리
@@ -109,55 +145,6 @@ const BrunnerWebcamStream = ({ title }) => {
         });
       }
     };
-
-    const addPeerEvent = async (peer) => {
-     // 일반 사용자(수신자) 로직
-     peer.ontrack = (event) => {
-      if (videoRef.current) {
-        videoRef.current.srcObject = event.streams[0];
-        console.log("Video stream received from remote peer");
-      } else {
-        console.log("No videoRef found to display stream");
-      }
-    };
-
-    peer.onicecandidate = (event) => {
-      if (event.candidate) {
-        set(ref(database, `webrtc/${adminSessionId}/candidate`), event.candidate.toJSON());
-      }
-    };
-    
-    peer.oniceconnectionstatechange = () => {
-      console.log('ICE connection state:', peer.iceConnectionState);
-    };
-
-    // 연결이 종료된 상태가 아니라면 answer를 remoteDescription으로 설정
-    if (peer.signalingState !== "closed" && peer.signalingState !== "stable") {
-      try {
-        await peer.setRemoteDescription(new RTCSessionDescription(answer));
-        console.log("Remote description set successfully.");
-      } catch (error) {
-        console.error("Failed to set remote description:", error);
-      }
-    }    
-
-    console.log("New peer event added.");
-
-    peerRef.current = peer;
-
-    // Offer 생성 후 Firebase에 저장
-    const offer = await peer.createOffer();
-    await peer.setLocalDescription(offer);
-
-    // Firebase에 Offer 저장
-    set(ref(database, `webrtc/${adminSessionId}/offer`), {
-      type: offer.type,
-      sdp: offer.sdp
-    }).then(() => {
-      console.log(`Offer saved to Firebase:\nsessionId:${adminSessionId}\nsdp:${offer.sdp}`);
-    });
-
-    }
 
     getCameraStream();
 
