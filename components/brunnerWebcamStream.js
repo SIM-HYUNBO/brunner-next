@@ -120,7 +120,17 @@ const BrunnerWebcamStream = ({ title }) => {
             });
             peerRef.current = peer;
             
+            // Offer 생성 후 Firebase에 저장
+            const offer = await peer.createOffer();
+            await peer.setLocalDescription(offer);
 
+            // Firebase에 Offer 저장
+            set(ref(database, `webrtc/${adminSessionId}/offer`), {
+              type: offer.type,
+              sdp: offer.sdp
+            }).then(() => {
+              console.log(`Offer saved to Firebase:\nsessionId:${adminSessionId}\nsdp:${offer.sdp}`);
+            });        
             // 새로 생성된 peer에서 다시 연결을 설정해야 할 경우 추가 작업 필요
             // 예: setLocalDescription 등
           }
