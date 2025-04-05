@@ -57,11 +57,6 @@ const BrunnerWebcamStream = ({ title }) => {
                 const answerDescription = await peer.createAnswer();
                 await peer.setLocalDescription(answerDescription);
                 console.log('Answer created and local description set.');
-
-                const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
-                if (videoRef.current) videoRef.current.srcObject = stream;
-                stream.getTracks().forEach((track) => peer.addTrack(track, stream));
-                console.log("Local stream added to peer connection");
                 
                 set(ref(database, `webrtc/${adminSessionId}/answer`), {
                   type: answerDescription.type,
@@ -77,6 +72,11 @@ const BrunnerWebcamStream = ({ title }) => {
         } catch (error) {
           console.error("Error accessing camera:", error);
         }
+
+        const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+        if (videoRef.current) videoRef.current.srcObject = stream;
+        stream.getTracks().forEach((track) => peer.addTrack(track, stream));
+        console.log("Local stream added to peer connection");
       } else {
         // 일반 사용자(수신자) 로직
         peer.ontrack = (event) => {
