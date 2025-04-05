@@ -93,7 +93,7 @@ const BrunnerWebcamStream = ({ title }) => {
           type: offer.type,
           sdp: offer.sdp
         }).then(() => {
-          console.log(`Offer saved to Firebase:\nsessionId:${sessionId}\nsdp:${offer.sdp}`);
+          console.log(`Offer saved to Firebase:\nsessionId:${sessionId.current}\nsdp:${offer.sdp}`);
         });
       }
     };
