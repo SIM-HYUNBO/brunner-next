@@ -88,7 +88,10 @@ const BrunnerWebcamStream = ({ title }) => {
             peer.close();
 
             // 새로운 RTCPeerConnection 객체 생성
-            peer = new RTCPeerConnection();
+            peer = new RTCPeerConnection({
+              iceServers: [{ urls: 'stun:stun.l.google.com:19302' }],
+              iceTransportPolicy: 'all'  // ICE 후보 수집을 모든 경로에서 활성화
+            });
 
             addPeerEvent(peer);
 
