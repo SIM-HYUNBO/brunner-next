@@ -93,7 +93,7 @@ const BrunnerWebcamStream = ({ title }) => {
           type: offer.type,
           sdp: offer.sdp
         }).then(() => {
-          console.log('Offer saved to Firebase');
+          console.log('Offer saved to Firebase:' + offer.sdp);
         });
       }
     };
