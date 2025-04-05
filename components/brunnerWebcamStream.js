@@ -39,8 +39,8 @@ const BrunnerWebcamStream = ({ title }) => {
             if (!offer) return;
 
             // 연결 상태 확인
-            if (peerConnection.signalingState !== 'closed') {
-              peerConnection.setRemoteDescription(new RTCSessionDescription(offer))
+            if (peer.signalingState !== 'closed') {
+              peer.setRemoteDescription(new RTCSessionDescription(offer))
                 .then(() => {
                   console.log("Remote description set successfully");
                 })
