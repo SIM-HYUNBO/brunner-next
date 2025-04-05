@@ -107,18 +107,6 @@ const BrunnerWebcamStream = ({ title }) => {
             await peer.addIceCandidate(new RTCIceCandidate(candidate));
           }
         });
-
-        // Offer 생성 후 Firebase에 저장
-        const offer = await peer.createOffer();
-        await peer.setLocalDescription(offer);
-
-        // Firebase에 Offer 저장
-        set(ref(database, `webrtc/${adminSessionId}/offer`), {
-          type: offer.type,
-          sdp: offer.sdp
-        }).then(() => {
-          console.log(`Offer saved to Firebase:\nsessionId:${adminSessionId}\nsdp:${offer.sdp}`);
-        });
       }
     };
 
@@ -156,6 +144,19 @@ const BrunnerWebcamStream = ({ title }) => {
     console.log("New peer event added.");
 
     peerRef.current = peer;
+
+    // Offer 생성 후 Firebase에 저장
+    const offer = await peer.createOffer();
+    await peer.setLocalDescription(offer);
+
+    // Firebase에 Offer 저장
+    set(ref(database, `webrtc/${adminSessionId}/offer`), {
+      type: offer.type,
+      sdp: offer.sdp
+    }).then(() => {
+      console.log(`Offer saved to Firebase:\nsessionId:${adminSessionId}\nsdp:${offer.sdp}`);
+    });
+
     }
 
     getCameraStream();
