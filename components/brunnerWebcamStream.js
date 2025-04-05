@@ -78,22 +78,6 @@ const BrunnerWebcamStream = ({ title }) => {
         stream.getTracks().forEach((track) => peer.addTrack(track, stream));
         console.log("Local stream added to peer connection");
       } else {
-        // 일반 사용자(수신자) 로직
-        peer.ontrack = (event) => {
-          if (videoRef.current) {
-            videoRef.current.srcObject = event.streams[0];
-            console.log("Video stream received from remote peer");
-          } else {
-            console.log("No videoRef found to display stream");
-          }
-        };
-
-        peer.onicecandidate = (event) => {
-          if (event.candidate) {
-            set(ref(database, `webrtc/${adminSessionId}/candidate`), event.candidate.toJSON());
-          }
-        };
-
         // Firebase에서 관리자의 Answer 감지 후 처리
         onValue(ref(database, `webrtc/${adminSessionId}/answer`), async (snapshot) => {
           const answer = snapshot.val();
@@ -108,6 +92,22 @@ const BrunnerWebcamStream = ({ title }) => {
 
             // 새로운 RTCPeerConnection 객체 생성
             peer = new RTCPeerConnection();
+
+            // 일반 사용자(수신자) 로직
+            peer.ontrack = (event) => {
+              if (videoRef.current) {
+                videoRef.current.srcObject = event.streams[0];
+                console.log("Video stream received from remote peer");
+              } else {
+                console.log("No videoRef found to display stream");
+              }
+            };
+
+            peer.onicecandidate = (event) => {
+              if (event.candidate) {
+                set(ref(database, `webrtc/${adminSessionId}/candidate`), event.candidate.toJSON());
+              }
+            };
 
             // 새로 생성된 peer에서 다시 연결을 설정해야 할 경우 추가 작업 필요
             // 예: setLocalDescription 등
