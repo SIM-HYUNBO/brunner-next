@@ -155,6 +155,8 @@ const BrunnerWebcamStream = ({ title }) => {
       console.log('ICE connection state:', peerObj.iceConnectionState);
     };
 
+    console.log("New peer event added.");
+
     }
 
     getCameraStream();
