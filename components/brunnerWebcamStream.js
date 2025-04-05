@@ -19,7 +19,7 @@ const BrunnerWebcamStream = ({ title }) => {
       });
       peerRef.current = peer;
 
-      peer.current.oniceconnectionstatechange = () => {
+      peer.oniceconnectionstatechange = () => {
         console.log('ICE connection state:', peer.iceConnectionState);
       };
 
