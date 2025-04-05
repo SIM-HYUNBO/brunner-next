@@ -19,6 +19,10 @@ const BrunnerWebcamStream = ({ title }) => {
       });
       peerRef.current = peer;
 
+      peer.current.oniceconnectionstatechange = () => {
+        console.log('ICE connection state:', peer.iceConnectionState);
+      };
+
       if (userInfo.isAdminUser()) {
         // 관리자(송출자) 로직
         try {
@@ -62,7 +66,6 @@ const BrunnerWebcamStream = ({ title }) => {
                   type: answerDescription.type,
                   sdp: answerDescription.sdp,
                 });
-
               } catch (error) {
                 console.error('Failed to create answer:', error);
               }
