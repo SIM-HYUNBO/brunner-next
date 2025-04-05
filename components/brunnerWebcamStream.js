@@ -57,17 +57,18 @@ const BrunnerWebcamStream = ({ title }) => {
                 const answerDescription = await peer.createAnswer();
                 await peer.setLocalDescription(answerDescription);
                 console.log('Answer created and local description set.');
+                
+                set(ref(database, `webrtc/${adminSessionId}/answer`), {
+                  type: answerDescription.type,
+                  sdp: answerDescription.sdp,
+                });
+
               } catch (error) {
                 console.error('Failed to create answer:', error);
               }
             } else {
               console.error('Peer connection is closed. Cannot create answer.');
             }
-
-            set(ref(database, `webrtc/${adminSessionId}/answer`), {
-              type: answer.type,
-              sdp: answer.sdp,
-            });
           });
         } catch (error) {
           console.error("Error accessing camera:", error);
