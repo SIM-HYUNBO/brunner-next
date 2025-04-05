@@ -51,8 +51,18 @@ const BrunnerWebcamStream = ({ title }) => {
               console.log("Cannot set remote description: PeerConnection is closed.");
             }
 
-            const answer = await peer.createAnswer();
-            await peer.setLocalDescription(answer);
+            // createAnswer 호출 전에 signalingState가 'closed' 상태인지 다시 확인
+            if (peer.signalingState !== 'closed') {
+              try {
+                const answerDescription = await peer.createAnswer();
+                await peer.setLocalDescription(answerDescription);
+                console.log('Answer created and local description set.');
+              } catch (error) {
+                console.error('Failed to create answer:', error);
+              }
+            } else {
+              console.error('Peer connection is closed. Cannot create answer.');
+            }
 
             set(ref(database, `webrtc/${adminSessionId}/answer`), {
               type: answer.type,
