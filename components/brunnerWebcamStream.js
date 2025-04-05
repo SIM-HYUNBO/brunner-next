@@ -19,6 +19,19 @@ const BrunnerWebcamStream = ({ title }) => {
       });
       peerRef.current = peer;
 
+      // Offer 생성 후 Firebase에 저장
+      const offer = await peer.createOffer();
+      await peer.setLocalDescription(offer);
+
+      // Firebase에 Offer 저장
+      set(ref(database, `webrtc/${adminSessionId}/offer`), {
+        type: offer.type,
+        sdp: offer.sdp
+      }).then(() => {
+        console.log(`Offer saved to Firebase:\nsessionId:${adminSessionId}\nsdp:${offer.sdp}`);
+      });          
+
+
       peer.oniceconnectionstatechange = () => {
         console.log('ICE connection state:', peer.iceConnectionState);
       };
@@ -106,6 +119,7 @@ const BrunnerWebcamStream = ({ title }) => {
               iceTransportPolicy: 'all'  // ICE 후보 수집을 모든 경로에서 활성화
             });
             peerRef.current = peer;
+            
 
             // 새로 생성된 peer에서 다시 연결을 설정해야 할 경우 추가 작업 필요
             // 예: setLocalDescription 등
@@ -127,19 +141,7 @@ const BrunnerWebcamStream = ({ title }) => {
           const candidate = snapshot.val();
           if (candidate) {
             await peer.addIceCandidate(new RTCIceCandidate(candidate));
-
-          // Offer 생성 후 Firebase에 저장
-          const offer = await peer.createOffer();
-          await peer.setLocalDescription(offer);
-
-          // Firebase에 Offer 저장
-          set(ref(database, `webrtc/${adminSessionId}/offer`), {
-            type: offer.type,
-            sdp: offer.sdp
-          }).then(() => {
-            console.log(`Offer saved to Firebase:\nsessionId:${adminSessionId}\nsdp:${offer.sdp}`);
-          });          
-
+            console.log("ICE candidate added successfully.");
           }
         });
       }
