@@ -98,16 +98,6 @@ const BrunnerWebcamStream = ({ title }) => {
             // 새로 생성된 peer에서 다시 연결을 설정해야 할 경우 추가 작업 필요
             // 예: setLocalDescription 등
           }
-
-          // 연결이 종료된 상태가 아니라면 answer를 remoteDescription으로 설정
-          if (peer.signalingState !== "closed" && peer.signalingState !== "stable") {
-            try {
-              await peer.setRemoteDescription(new RTCSessionDescription(answer));
-              console.log("Remote description set successfully.");
-            } catch (error) {
-              console.error("Failed to set remote description:", error);
-            }
-          }
         });
 
         // Firebase에서 관리자의 ICE Candidate 감지 후 처리
@@ -132,7 +122,7 @@ const BrunnerWebcamStream = ({ title }) => {
       }
     };
 
-    const addPeerEvent = () => {
+    const addPeerEvent = async () => {
      // 일반 사용자(수신자) 로직
      peer.ontrack = (event) => {
       if (videoRef.current) {
@@ -152,6 +142,16 @@ const BrunnerWebcamStream = ({ title }) => {
     peer.oniceconnectionstatechange = () => {
       console.log('ICE connection state:', peer.iceConnectionState);
     };
+
+    // 연결이 종료된 상태가 아니라면 answer를 remoteDescription으로 설정
+    if (peer.signalingState !== "closed" && peer.signalingState !== "stable") {
+      try {
+        await peer.setRemoteDescription(new RTCSessionDescription(answer));
+        console.log("Remote description set successfully.");
+      } catch (error) {
+        console.error("Failed to set remote description:", error);
+      }
+    }    
 
     console.log("New peer event added.");
 
