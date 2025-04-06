@@ -132,13 +132,22 @@ const UserStream = ({ adminSessionId }) => {
         
         if (remoteStream) {
           console.log('Received stream:', remoteStream);
+
+          if (videoRef.current.srcObject) {
+            const tracks = videoRef.current.srcObject.getTracks();
+            tracks.forEach(track => track.stop()); // 기존 스트림의 트랙 중지
+          }
+
           videoRef.current.srcObject = remoteStream;
-          
-          videoRef.current.play().then(() => {
-            console.log("Video is playing");
-          }).catch((error) => {
+          videoRef.current.load(); // 비디오 요소를 새로 로드
+          videoRef.current
+          .play()
+          .then(() => {
+            console.log("Video is playing successfully");
+          })
+          .catch((error) => {
             console.error("Error playing the video:", error);
-          });
+          });    
         } else {
           console.error("No remote stream found in ontrack event.");
         }
