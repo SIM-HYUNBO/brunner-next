@@ -153,7 +153,7 @@ const UserStream = ({ adminSessionId }) => {
       if (peerRef.current) {
         peerRef.current.close();
       }
-    };
+    }; 
   }, [adminSessionId]);
 
   return (
