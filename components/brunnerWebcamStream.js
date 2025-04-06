@@ -132,6 +132,16 @@ const UserStream = ({ adminSessionId }) => {
         } else {
           console.error("No remote stream found in ontrack event.");
         }
+
+        // 스트림이 설정되면 play() 호출
+        videoRef.current.onloadedmetadata = () => {
+          remoteVideoElement.play().then(() => {
+            console.log("stream is playing");
+          }).catch((error) => {
+              console.error("stream failed to play, ", error);
+          });
+      };
+
       };
     };
 
@@ -151,9 +161,6 @@ const UserStream = ({ adminSessionId }) => {
   return (
     <div>
       <video ref={videoRef}
-        autoPlay
-        muted
-        controls
         crossOrigin="anonymous"
         playsInline
         width="100%"   // 비디오 크기를 화면에 맞게 설정
