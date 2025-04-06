@@ -56,6 +56,10 @@ const AdminStream = ({ adminSessionId }) => {
       };
     };
 
+    videoRef.current.addEventListener('playing', () => {
+      console.log('Video is playing');
+    });
+
     getCameraStream();
 
     return () => {
@@ -123,6 +127,7 @@ const UserStream = ({ adminSessionId }) => {
 
       // Remote Track 수신 및 화면에 표시
       peer.ontrack = (event) => {
+        console.log("Video stream received.");
         const remoteStream = event.streams[0];
         if (remoteStream) {
           console.log('Received stream:', remoteStream);
@@ -136,12 +141,15 @@ const UserStream = ({ adminSessionId }) => {
           videoRef.current.play().catch((error) => {
             console.error("Error playing video:", error);
           } );
-          console.log("Video stream received and displayed.");
         } else {
           console.error("No remote stream found in ontrack event.");
         }
       };
     };
+
+    videoRef.current.addEventListener('playing', () => {
+      console.log('Video is playing');
+    });
 
     getStream();
 
