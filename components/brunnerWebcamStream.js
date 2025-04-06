@@ -129,6 +129,13 @@ const UserStream = ({ adminSessionId }) => {
         } else {
           console.error("No remote stream found in ontrack event.");
         }
+
+        videoRef.current.onloadedmetadata = () => {
+          console.log("메타데이터 로딩 완료, 비디오 재생 시작");
+          videoRef.current.play().catch((error) => {
+              console.error("비디오 재생 실패:", error);
+          });
+        };
       };
     };
 
