@@ -26,6 +26,7 @@ const AdminStream = ({ adminSessionId }) => {
           tracks.forEach(track => track.stop()); // 기존 트랙 중지
         }        
         videoRef.current.srcObject = stream;
+        videoRef.current.load();
         videoRef.current.play().catch((error) => {
               console.error("Error playing video:", error);
             } );
@@ -138,6 +139,7 @@ const UserStream = ({ adminSessionId }) => {
             }            
           }
           videoRef.current.srcObject = remoteStream;
+          videoRef.current.load();
           videoRef.current.play().catch((error) => {
             console.error("Error playing video:", error);
           } );
