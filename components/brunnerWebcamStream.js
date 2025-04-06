@@ -22,6 +22,9 @@ const AdminStream = ({ adminSessionId }) => {
       const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
       if (videoRef.current) {
         videoRef.current.srcObject = stream;
+        videoRef.current.play().catch((error) => {
+          console.error("Error playing video:", error);
+        } );
       }
       stream.getTracks().forEach((track) => peer.addTrack(track, stream));
       console.log("Local stream added to peer connection");
@@ -61,7 +64,7 @@ const AdminStream = ({ adminSessionId }) => {
   return (
     <div>
       <h1 className="mt-5">관리자 스트림</h1>
-      <video ref={videoRef} autoPlay playsInline></video>
+      <video className='w-full border-2 border-black' ref={videoRef} playsInline></video>
     </div>
   );
 };
@@ -117,11 +120,9 @@ const UserStream = ({ adminSessionId }) => {
 
           if (remoteStream) {
             videoRef.current.srcObject = remoteStream;
-            
             videoRef.current.play().catch((error) => {
-              console.error("Error playing the video:", error);
-            });
-
+              console.error("Error playing video:", error);
+            } );
             console.log("Video stream received and displayed.");
           } else {
             console.error("No remote stream found in ontrack event.");
@@ -142,13 +143,11 @@ const UserStream = ({ adminSessionId }) => {
   return (
     <div>
       <h1 className="mt-5">일반 사용자 스트림</h1>
-      <video
+      <video className='w-full border-2 border-black'
         ref={videoRef}
-        autoPlay
         playsInline
         width="100%"   // 비디오 크기를 화면에 맞게 설정
         height="auto"  // 비디오 크기를 화면에 맞게 설정
-        style={{ border: "2px solid black" }} // 비디오 요소 스타일 (디버깅 용)
       ></video>
     </div>
   );
