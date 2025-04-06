@@ -22,7 +22,7 @@ const AdminStream = ({ adminSessionId }) => {
       const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
       videoRef.current.srcObject = stream;
       stream.getTracks().forEach((track) => peer.addTrack(track, stream));
-      console.log("Local stream added to peer connection");
+      console.log("Local stream added to peer connection", stream);
 
       // Offer 생성 후 Firebase에 저장
       const offer = await peer.createOffer();
@@ -132,22 +132,7 @@ const UserStream = ({ adminSessionId }) => {
         
         if (remoteStream) {
           console.log('Received stream:', remoteStream);
-
-          if (videoRef.current.srcObject) {
-            const tracks = videoRef.current.srcObject.getTracks();
-            tracks.forEach(track => track.stop()); // 기존 스트림의 트랙 중지
-          }
-
           videoRef.current.srcObject = remoteStream;
-          videoRef.current.load(); // 비디오 요소를 새로 로드
-          videoRef.current
-          .play()
-          .then(() => {
-            console.log("Video is playing successfully");
-          })
-          .catch((error) => {
-            console.error("Error playing the video:", error);
-          });    
         } else {
           console.error("No remote stream found in ontrack event.");
         }
@@ -170,8 +155,7 @@ const UserStream = ({ adminSessionId }) => {
   return (
     <div>
       <h1 className="mt-5">일반 사용자 스트림</h1>
-      <video
-        ref={videoRef}
+      <video ref={videoRef}
         autoPlay
         muted
         controls
@@ -180,7 +164,7 @@ const UserStream = ({ adminSessionId }) => {
         width="100%"   // 비디오 크기를 화면에 맞게 설정
         height="auto"  // 비디오 크기를 화면에 맞게 설정
         style={{ border: "2px solid black" }} // 비디오 요소 스타일 (디버깅 용)
-      ></video>
+        ></video>
     </div>
   );
 };
