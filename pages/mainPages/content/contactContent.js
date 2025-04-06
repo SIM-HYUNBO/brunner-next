@@ -27,7 +27,7 @@ export default function ContactContent() {
           </div>
         )}
         <div className="w-full flex justify-start mt-10">
-          <BrunnerWebcamStream title="Brunner studio" />
+          <BrunnerWebcamStream title="Brunner admin studio" />
         </div>        
       </DivContainer>
     </>
