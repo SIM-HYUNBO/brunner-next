@@ -21,6 +21,10 @@ const AdminStream = ({ adminSessionId }) => {
       // 로컬 스트림을 캡처하여 RTCPeerConnection에 추가
       const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
       if (videoRef.current) {
+        if (videoRef.current.srcObject) {
+          const tracks = videoRef.current.srcObject.getTracks();
+          tracks.forEach(track => track.stop()); // 기존 트랙 중지
+        }        
         videoRef.current.srcObject = stream;
         videoRef.current.play().catch((error) => {
               console.error("Error playing video:", error);
@@ -124,6 +128,10 @@ const UserStream = ({ adminSessionId }) => {
           console.log('Received stream:', remoteStream);
 
           if (remoteStream) {
+            if (videoRef.current.srcObject) {
+              const tracks = videoRef.current.srcObject.getTracks();
+              tracks.forEach(track => track.stop()); // 기존 트랙 중지
+            }            
             videoRef.current.srcObject = remoteStream;
             videoRef.current.play().catch((error) => {
               console.error("Error playing video:", error);
