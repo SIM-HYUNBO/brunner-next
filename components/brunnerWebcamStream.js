@@ -124,7 +124,7 @@ const UserStream = ({ adminSessionId }) => {
       peer.ontrack = (event) => {
         console.log("Video stream received.");
         const remoteStream = event.streams[0];
-        console.log("tracks: videoTracks.length");
+        console.log("tracks:", videoTracks.length);
         
         if (remoteStream) {
           console.log('Received stream:', remoteStream);
