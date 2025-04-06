@@ -117,6 +117,11 @@ const UserStream = ({ adminSessionId }) => {
 
           if (remoteStream) {
             videoRef.current.srcObject = remoteStream;
+            
+            videoRef.current.play().catch((error) => {
+              console.error("Error playing the video:", error);
+            });
+
             console.log("Video stream received and displayed.");
           } else {
             console.error("No remote stream found in ontrack event.");
