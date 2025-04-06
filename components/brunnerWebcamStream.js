@@ -20,17 +20,7 @@ const AdminStream = ({ adminSessionId }) => {
 
       // 로컬 스트림을 캡처하여 RTCPeerConnection에 추가
       const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
-      if (videoRef.current) {
-        if (videoRef.current.srcObject) {
-          const tracks = videoRef.current.srcObject.getTracks();
-          tracks.forEach(track => track.stop()); // 기존 트랙 중지
-        }        
-        videoRef.current.srcObject = stream;
-        videoRef.current.load();
-        videoRef.current.play().catch((error) => {
-              console.error("Error playing video:", error);
-            } );
-      }
+      videoRef.current.srcObject = stream;
       stream.getTracks().forEach((track) => peer.addTrack(track, stream));
       console.log("Local stream added to peer connection");
 
@@ -74,6 +64,10 @@ const AdminStream = ({ adminSessionId }) => {
     <div>
       <h1 className="mt-5">관리자 스트림</h1>
       <video ref={videoRef}
+        autoPlay
+        muted
+        controls
+        crossOrigin="anonymous"
         playsInline
         width="100%"   // 비디오 크기를 화면에 맞게 설정
         height="auto"  // 비디오 크기를 화면에 맞게 설정
@@ -138,17 +132,7 @@ const UserStream = ({ adminSessionId }) => {
         
         if (remoteStream) {
           console.log('Received stream:', remoteStream);
-          if (videoRef.current) {
-            if (videoRef.current.srcObject) {
-              const tracks = videoRef.current.srcObject.getTracks();
-              tracks.forEach(track => track.stop()); // 기존 트랙 중지
-            }            
-          }
           videoRef.current.srcObject = remoteStream;
-          videoRef.current.load();
-          videoRef.current.play().catch((error) => {
-            console.error("Error playing video:", error);
-          } );
         } else {
           console.error("No remote stream found in ontrack event.");
         }
@@ -173,6 +157,10 @@ const UserStream = ({ adminSessionId }) => {
       <h1 className="mt-5">일반 사용자 스트림</h1>
       <video
         ref={videoRef}
+        autoPlay
+        muted
+        controls
+        crossOrigin="anonymous"
         playsInline
         width="100%"   // 비디오 크기를 화면에 맞게 설정
         height="auto"  // 비디오 크기를 화면에 맞게 설정
