@@ -124,18 +124,24 @@ const UserStream = ({ adminSessionId }) => {
       peer.ontrack = (event) => {
         const remoteStream = event.streams[0];
         if (remoteStream) {
+          videoRef.current.onloadedmetadata = () => {
+            console.log("메타데이터 로딩 완료, 비디오 재생 시작");
+            videoRef.current.play().catch((error) => {
+                console.error("비디오 재생 실패:", error);
+            });
+            };
+    
           console.log("Video stream received.", remoteStream);
           videoRef.current.srcObject = remoteStream;
         } else {
           console.error("No remote stream found in ontrack event.");
         }
 
-        videoRef.current.onloadedmetadata = () => {
-          console.log("메타데이터 로딩 완료, 비디오 재생 시작");
-          videoRef.current.play().catch((error) => {
-              console.error("비디오 재생 실패:", error);
-          });
-        };
+        if (remoteStream instanceof MediaStream) {
+          console.log("remoteStream은 MediaStream 객체입니다.");
+        } else {
+            console.error("remoteStream이 MediaStream 객체가 아닙니다.");
+        }
       };
     };
 
