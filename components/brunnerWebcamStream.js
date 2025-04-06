@@ -123,6 +123,10 @@ const UserStream = ({ adminSessionId }) => {
       // Remote Track 수신 및 화면에 표시
       peer.ontrack = (event) => {
         const remoteStream = event.streams[0];
+        const tracks = remoteStream.getTracks();
+        console.log("스트림의 트랙 수:", tracks.length);
+        console.log("비디오 트랙:", tracks.filter(track => track.kind === "video"));
+    
         if (remoteStream) {
           console.log("Video stream received.", remoteStream);
           videoRef.current.srcObject = remoteStream;
