@@ -122,13 +122,9 @@ const UserStream = ({ adminSessionId }) => {
 
       // Remote Track 수신 및 화면에 표시
       peer.ontrack = (event) => {
-        console.log("Video stream received.");
         const remoteStream = event.streams[0];
-        const videoTracks = remoteStream.getVideoTracks();
-        console.log("tracks: ", videoTracks.length);
-        
         if (remoteStream) {
-          console.log('Received stream:', remoteStream);
+          console.log("Video stream received.", remoteStream);
           videoRef.current.srcObject = remoteStream;
         } else {
           console.error("No remote stream found in ontrack event.");
