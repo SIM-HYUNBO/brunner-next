@@ -123,23 +123,22 @@ const UserStream = ({ adminSessionId }) => {
 
       // Remote Track 수신 및 화면에 표시
       peer.ontrack = (event) => {
-        if (videoRef.current) {
-          const remoteStream = event.streams[0];
+        const remoteStream = event.streams[0];
+        if (remoteStream) {
           console.log('Received stream:', remoteStream);
-
-          if (remoteStream) {
+          if (videoRef.current) {
             if (videoRef.current.srcObject) {
               const tracks = videoRef.current.srcObject.getTracks();
               tracks.forEach(track => track.stop()); // 기존 트랙 중지
             }            
-            videoRef.current.srcObject = remoteStream;
-            videoRef.current.play().catch((error) => {
-              console.error("Error playing video:", error);
-            } );
-            console.log("Video stream received and displayed.");
-          } else {
-            console.error("No remote stream found in ontrack event.");
           }
+          videoRef.current.srcObject = remoteStream;
+          videoRef.current.play().catch((error) => {
+            console.error("Error playing video:", error);
+          } );
+          console.log("Video stream received and displayed.");
+        } else {
+          console.error("No remote stream found in ontrack event.");
         }
       };
     };
