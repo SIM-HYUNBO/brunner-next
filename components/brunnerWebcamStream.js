@@ -62,7 +62,7 @@ const AdminStream = ({ adminSessionId }) => {
 
   return (
     <div>
-      <h1 className="mt-5">관리자 스트림</h1>
+      <h1 className="mt-5">Brunner Admin studio</h1>
       <video ref={videoRef}
         autoPlay
         muted
@@ -151,7 +151,7 @@ const UserStream = ({ adminSessionId }) => {
 
   return (
     <div>
-      <h1 className="mt-5">일반 사용자 스트림</h1>
+      <h1 className="mt-5">Brunner Admin studio</h1>
       <video ref={videoRef}
         autoPlay
         muted
