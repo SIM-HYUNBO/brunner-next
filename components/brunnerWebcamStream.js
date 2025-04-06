@@ -134,14 +134,12 @@ const UserStream = ({ adminSessionId }) => {
         }
 
         // 스트림이 설정되면 play() 호출
-        videoRef.current.onloadedmetadata = () => {
-          remoteVideoElement.play().then(() => {
-            console.log("stream is playing");
-          }).catch((error) => {
-              console.error("stream failed to play, ", error);
+        videoRef.current.onloadeddata = () => {
+          console.log("첫 번째 비디오 프레임 로드 완료");
+          remoteVideoElement.play().catch((error) => {
+              console.error("비디오 재생 실패:", error);
           });
-      };
-
+        };
       };
     };
 
