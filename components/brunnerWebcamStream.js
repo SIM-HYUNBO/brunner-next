@@ -6,7 +6,7 @@ import { v4 as uuidv4 } from 'uuid';
 
 // 관리자 역할을 위한 컴포넌트
 const AdminStream = ({ adminSessionId }) => {
-  const videoRef = useRef(null);
+  const adminVideoRef = useRef(null);
   const peerRef = useRef(null);
 
   useEffect(() => {
@@ -20,7 +20,7 @@ const AdminStream = ({ adminSessionId }) => {
 
       // 로컬 스트림을 캡처하여 RTCPeerConnection에 추가
       const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
-      videoRef.current.srcObject = stream;
+      adminVideoRef.current.srcObject = stream;
       stream.getTracks().forEach((track) => peer.addTrack(track, stream));
       console.log("Local stream added to peer connection", stream);
 
@@ -47,7 +47,7 @@ const AdminStream = ({ adminSessionId }) => {
       };
     };
 
-    videoRef.current.addEventListener('playing', () => {
+    adminVideoRef.current.addEventListener('playing', () => {
       console.log('Video is playing');
     });
 
@@ -62,7 +62,7 @@ const AdminStream = ({ adminSessionId }) => {
 
   return (
     <div>
-      <video ref={videoRef}
+      <video ref={adminVideoRef}
         autoPlay
         muted
         controls
@@ -77,7 +77,7 @@ const AdminStream = ({ adminSessionId }) => {
 };
 
 const UserStream = ({ adminSessionId }) => {
-  const videoRef = useRef(null);
+  const userVideoRef = useRef(null);
   const peerRef = useRef(null);
 
   useEffect(() => {
@@ -128,13 +128,13 @@ const UserStream = ({ adminSessionId }) => {
     
         if (remoteStream) {
           console.log("Video stream received.", remoteStream);
-          videoRef.current.srcObject = remoteStream;
+          userVideoRef.current.srcObject = remoteStream;
         } else {
           console.error("No remote stream found in ontrack event.");
         }
 
         // 스트림이 설정되면 play() 호출
-        videoRef.current.onloadeddata = () => {
+        userVideoRef.current.onloadeddata = () => {
           console.log("첫 번째 비디오 프레임 로드 완료");
           remoteVideoElement.play().catch((error) => {
               console.error("비디오 재생 실패:", error);
@@ -143,7 +143,7 @@ const UserStream = ({ adminSessionId }) => {
       };
     };
 
-    videoRef.current.addEventListener('playing', () => {
+    userVideoRef.current.addEventListener('playing', () => {
       console.log('Video is playing');
     });
 
@@ -158,7 +158,7 @@ const UserStream = ({ adminSessionId }) => {
 
   return (
     <div>
-      <video ref={videoRef}
+      <video ref={userVideoRef}
         crossOrigin="anonymous"
         playsInline
         width="100%"   // 비디오 크기를 화면에 맞게 설정
