@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import * as userInfo from "@/components/userInfo";
-import { ref, set, onValue } from "firebase/database";
+import { ref, set, onValue, onChildAdded, push , off} from "firebase/database";
 import { database } from "@/components/firebase";
 import { v4 as uuidv4 } from 'uuid';
 
@@ -11,44 +11,49 @@ const AdminStream = ({ adminSessionId }) => {
 
   useEffect(() => {
     const getCameraStream = async () => {
-      let peer = new RTCPeerConnection({
+      const peer = new RTCPeerConnection({
         iceServers: [{ urls: 'stun:stun.l.google.com:19302' }],
         iceTransportPolicy: 'all',
       });
+      
+      peer.onicecandidate = (event) => {
+        if (event.candidate) {
+          console.log("🧊 ICE candidate 발견:", event.candidate);
+          const newCandidateRef = push(ref(database, `webrtc/${adminSessionId}/candidates`));
+          set(newCandidateRef, event.candidate)
+            .then(() => console.log("📡 ICE 후보 Firebase에 저장 완료"))
+            .catch((err) => console.error("❌ ICE 후보 저장 실패:", err));
+        } else {
+          console.log("🎉 ICE 후보 전송 완료");
+        }
+      };
 
       peerRef.current = peer;
 
-      // 로컬 스트림을 캡처하여 RTCPeerConnection에 추가
+      // 🎥 로컬 스트림 연결
       const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
       adminVideoRef.current.srcObject = stream;
       stream.getTracks().forEach((track) => peer.addTrack(track, stream));
-      console.log("Local stream added to peer connection", stream);
+      console.log("✅ Local stream added to peer connection", stream);
 
-      // Offer 생성 후 Firebase에 저장
+      // 📡 Offer 생성 및 Firebase 저장
       const offer = await peer.createOffer();
+      console.log("생성된 SDP:", offer.sdp);
+
       await peer.setLocalDescription(offer);
       await set(ref(database, `webrtc/${adminSessionId}/offer`), {
         type: offer.type,
         sdp: offer.sdp,
       });
-      console.log(`Offer saved to Firebase:\nsessionId:${adminSessionId}\nsdp:${offer.sdp}`);
+      console.log(`✅ Offer saved to Firebase: ${adminSessionId}`);
 
-      // ICE 후보를 Firebase에 저장
-      peer.onicecandidate = async (event) => {
-        if (event.candidate) {
-          await set(ref(database, `webrtc/${adminSessionId}/candidate`), event.candidate.toJSON());
-          console.log('ICE candidate sent to Firebase.');
-        }
-      };
-
-      // ICE 연결 상태 변경 이벤트
       peer.oniceconnectionstatechange = () => {
-        console.log('ICE connection state:', peer.iceConnectionState);
+        console.log('ICE 연결 상태 state:', peer.iceConnectionState);
       };
     };
 
     adminVideoRef.current.addEventListener('playing', () => {
-      console.log('Video is playing');
+      console.log('🎬 Video is playing');
     });
 
     getCameraStream();
@@ -62,16 +67,17 @@ const AdminStream = ({ adminSessionId }) => {
 
   return (
     <div>
-      <video ref={adminVideoRef}
+      <video
+        ref={adminVideoRef}
         autoPlay
         muted
         controls
         crossOrigin="anonymous"
         playsInline
-        width="100%"   // 비디오 크기를 화면에 맞게 설정
-        height="auto"  // 비디오 크기를 화면에 맞게 설정
-        style={{ border: "2px solid black" }} // 비디오 요소 스타일 (디버깅 용)
-        ></video>
+        width="100%"
+        height="auto"
+        style={{ border: '2px solid black' }}
+      />
     </div>
   );
 };
@@ -79,92 +85,141 @@ const AdminStream = ({ adminSessionId }) => {
 const UserStream = ({ adminSessionId }) => {
   const userVideoRef = useRef(null);
   const peerRef = useRef(null);
+  const pendingCandidatesRef = useRef([]); // ICE 후보 대기 저장소
+
+  useEffect(() => {
+    const videoElement = userVideoRef.current;
+
+    if (videoElement) {
+      const handleLoadedData = () => {
+        console.log("✅ 첫 번째 비디오 프레임 로드 완료");
+
+        videoElement.play().catch((err) => {
+          console.error("비디오 재생 실패:", err);
+        });
+      };
+
+      videoElement.addEventListener("loadeddata", handleLoadedData);
+
+      return () => {
+        videoElement.removeEventListener("loadeddata", handleLoadedData);
+      };
+    }
+  }, []);
 
   useEffect(() => {
     const getStream = async () => {
-      let peer = new RTCPeerConnection({
+      const peer = new RTCPeerConnection({
         iceServers: [{ urls: 'stun:stun.l.google.com:19302' }],
         iceTransportPolicy: 'all',
       });
 
       peerRef.current = peer;
 
-      // Firebase에서 관리자의 offer를 감지하고 처리
-      onValue(ref(database, `webrtc/${adminSessionId}/offer`), async (snapshot) => {
+      // 📥 원격 스트림 수신
+      peer.ontrack = (event) => {
+        console.log("📥 ontrack 이벤트 발생", event);
+        const remoteStream = event.streams[0];
+        console.log("📦 stream info:", remoteStream);
+
+        if (remoteStream && userVideoRef.current) {
+          userVideoRef.current.srcObject = remoteStream;
+
+          if (userVideoRef.current.srcObject) {
+            console.log("🎬 비디오의 srcObject 존재함:", userVideoRef.current.srcObject);
+            console.log("📡 스트림 트랙:", userVideoRef.current.srcObject.getTracks());
+          } else {
+            console.warn("❗ 비디오 srcObject가 없음");
+          }
+        } else {
+          console.error("Remote stream 없음.");
+        }
+      };
+
+      peer.oniceconnectionstatechange = () => {
+        console.log("🔁 ICE 연결 상태:", peer.iceConnectionState);
+      };
+
+      // 🔹 ICE 후보 수신 및 보관
+      const candidatesRef = ref(database, `webrtc/${adminSessionId}/candidates`);
+      onChildAdded(candidatesRef, async (snapshot) => {
+        const candidate = snapshot.val();
+        if (!candidate) return;
+
+        if (peer.remoteDescription) {
+          try {
+            await peer.addIceCandidate(new RTCIceCandidate(candidate));
+            console.log("🧊 ICE candidate 즉시 추가 완료");
+          } catch (error) {
+            console.error("❌ ICE candidate 추가 실패:", error);
+          }
+        } else {
+          console.log("⏳ ICE 후보 보관 중:", candidate);
+          pendingCandidatesRef.current.push(candidate);
+        }
+      });
+
+      // 🔹 Offer 수신 → remoteDescription 설정 → answer 생성 및 전송
+      let offerProcessed = false;
+      const offerRef = ref(database, `webrtc/${adminSessionId}/offer`);
+      onValue(offerRef, async (snapshot) => {
+        if (offerProcessed) return;
+        offerProcessed = true;
+
         const offer = snapshot.val();
         if (!offer) return;
 
-        // Offer 수신 후 Remote Description 설정
-        if (peer.signalingState !== 'closed') {
-          await peer.setRemoteDescription(new RTCSessionDescription(offer));
-          console.log("Remote description set successfully.");
-        }
+        await peer.setRemoteDescription(new RTCSessionDescription(offer));
+        console.log("📡 Offer 수신 및 remoteDescription 설정 완료");
 
-        // Answer 생성 후 Firebase에 저장
+        // 🔸 보관된 ICE 후보들 추가
+        for (const candidate of pendingCandidatesRef.current) {
+          try {
+            await peer.addIceCandidate(new RTCIceCandidate(candidate));
+            console.log("🧊 보관된 ICE 후보 추가 완료");
+          } catch (error) {
+            console.error("❌ 보관된 ICE 후보 추가 실패:", error);
+          }
+        }
+        pendingCandidatesRef.current = []; // 클리어
+
         const answer = await peer.createAnswer();
         await peer.setLocalDescription(answer);
+
         await set(ref(database, `webrtc/${adminSessionId}/answer`), {
           type: answer.type,
           sdp: answer.sdp,
         });
-        console.log('Answer created and sent to Firebase.');
+
+        console.log("✅ Answer 생성 및 Firebase 전송 완료");
       });
-
-      // Firebase에서 ICE 후보 감지 후 처리
-      onValue(ref(database, `webrtc/${adminSessionId}/candidate`), async (snapshot) => {
-        const candidate = snapshot.val();
-        if (candidate) {
-          await peer.addIceCandidate(new RTCIceCandidate(candidate));
-          console.log("ICE candidate added successfully.");
-        }
-      });
-
-      // Remote Track 수신 및 화면에 표시
-      peer.ontrack = (event) => {
-        const remoteStream = event.streams[0];
-        const tracks = remoteStream.getTracks();
-        console.log("스트림의 트랙 수:", tracks.length);
-        console.log("비디오 트랙:", tracks.filter(track => track.kind === "video"));
-    
-        if (remoteStream) {
-          console.log("Video stream received.", remoteStream);
-          userVideoRef.current.srcObject = remoteStream;
-        } else {
-          console.error("No remote stream found in ontrack event.");
-        }
-
-        // 스트림이 설정되면 play() 호출
-        userVideoRef.current.onloadeddata = () => {
-          console.log("첫 번째 비디오 프레임 로드 완료");
-          remoteVideoElement.play().catch((error) => {
-              console.error("비디오 재생 실패:", error);
-          });
-        };
-      };
     };
-
-    userVideoRef.current.addEventListener('playing', () => {
-      console.log('Video is playing');
-    });
 
     getStream();
 
+    // 🔹 정리(cleanup)
     return () => {
       if (peerRef.current) {
         peerRef.current.close();
       }
-    }; 
+
+      off(ref(database, `webrtc/${adminSessionId}/offer`));
+      off(ref(database, `webrtc/${adminSessionId}/candidates`));
+    };
   }, [adminSessionId]);
 
   return (
     <div>
-      <video ref={userVideoRef}
-        crossOrigin="anonymous"
+      <video
+        ref={userVideoRef}
         playsInline
-        width="100%"   // 비디오 크기를 화면에 맞게 설정
-        height="auto"  // 비디오 크기를 화면에 맞게 설정
-        style={{ border: "2px solid black" }} // 비디오 요소 스타일 (디버깅 용)
-        ></video>
+        autoPlay
+        muted
+        width="100%"
+        height="auto"
+        crossOrigin="anonymous"
+        style={{ border: '2px solid black' }}
+      />
     </div>
   );
 };
