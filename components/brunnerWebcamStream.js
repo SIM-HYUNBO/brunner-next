@@ -18,9 +18,15 @@ const AdminStream = ({ adminSessionId }) => {
       
       peer.onicecandidate = (event) => {
         if (event.candidate) {
-          console.log("🧊 ICE candidate 발견:", event.candidate);
+          const candidateJSON = {
+            candidate: event.candidate.candidate,
+            sdpMid: event.candidate.sdpMid,
+            sdpMLineIndex: event.candidate.sdpMLineIndex
+          };
+
+          console.log("🧊 ICE candidate 발견:", candidateJSON);
           const newCandidateRef = push(ref(database, `webrtc/${adminSessionId}/candidates`));
-          set(newCandidateRef, event.candidate)
+          set(newCandidateRef, candidateJSON)
             .then(() => console.log("📡 ICE 후보 Firebase에 저장 완료"))
             .catch((err) => console.error("❌ ICE 후보 저장 실패:", err));
         } else {
@@ -86,19 +92,27 @@ const UserStream = ({ adminSessionId }) => {
   const userVideoRef = useRef(null);
   const peerRef = useRef(null);
   const pendingCandidatesRef = useRef([]); // ICE 후보 대기 저장소
+  const streamAssignedRef = useRef(false);
+  
+  const handleLoadedData = () => {
+    console.log("✅ 첫 번째 비디오 프레임 로드 완료");
+
+    videoElement.play().catch((err) => {
+      console.error("비디오 재생 실패:", err);
+    });
+  };
 
   useEffect(() => {
     const videoElement = userVideoRef.current;
 
+    // 🔍 여러 비디오 이벤트 로그 찍기
+    ['loadedmetadata', 'loadeddata', 'canplay', 'canplaythrough', 'play', 'playing', 'error'].forEach(evt => {
+      videoElement.addEventListener(evt, () => {
+        console.log(`🎯 VIDEO EVENT: ${evt}`);
+      });
+    });
+
     if (videoElement) {
-      const handleLoadedData = () => {
-        console.log("✅ 첫 번째 비디오 프레임 로드 완료");
-
-        videoElement.play().catch((err) => {
-          console.error("비디오 재생 실패:", err);
-        });
-      };
-
       videoElement.addEventListener("loadeddata", handleLoadedData);
 
       return () => {
@@ -118,16 +132,38 @@ const UserStream = ({ adminSessionId }) => {
 
       // 📥 원격 스트림 수신
       peer.ontrack = (event) => {
+        if (streamAssignedRef.current) {
+          console.log("🔁 이미 스트림이 설정되어 있음. 무시");
+          return;
+        }
+        
         console.log("📥 ontrack 이벤트 발생", event);
         const remoteStream = event.streams[0];
-        console.log("📦 stream info:", remoteStream);
+        if (!remoteStream) {
+          console.warn("❗ remoteStream 없음");
+          return;
+        }
 
+        const tracks = remoteStream.getTracks();
+        console.log("📦 수신된 트랙들:", tracks);
+
+        tracks.forEach(track => {
+          console.log("🔍 트랙 종류:", track.kind, "상태:", track.readyState, "활성화:", track.enabled);
+        });
+        
         if (remoteStream && userVideoRef.current) {
           userVideoRef.current.srcObject = remoteStream;
+          streamAssignedRef.current = true;
 
           if (userVideoRef.current.srcObject) {
             console.log("🎬 비디오의 srcObject 존재함:", userVideoRef.current.srcObject);
             console.log("📡 스트림 트랙:", userVideoRef.current.srcObject.getTracks());
+
+            userVideoRef.current
+            .play()
+            .then(() => console.log("🎬 비디오 재생 시작됨"))
+            .catch((err) => console.error("❌ 비디오 재생 실패:", err));
+
           } else {
             console.warn("❗ 비디오 srcObject가 없음");
           }
