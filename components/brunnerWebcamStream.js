@@ -327,6 +327,7 @@ const UserStream = ({ adminSessionId }) => {
           userVideoRef.current.srcObject = remoteStream;
             console.log("✅ 비디오 출력 설정됨");
             
+            console.log("✅ 사용자 비디오 재생 시도 ...");
             userVideoRef.current.play().then(() => {
               console.log("✅ 사용자 비디오 재생됨");
             }).catch((err) => {
