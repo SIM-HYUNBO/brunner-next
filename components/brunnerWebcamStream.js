@@ -47,7 +47,20 @@ const AdminStream = () => {
 
       // 📡 피어 연결 설정
       const peer = new RTCPeerConnection({
-        iceServers: [{ urls: "stun:stun.l.google.com:19302" }],
+        iceServers: [{
+          urls: [ "stun:hk-turn1.xirsys.com" ]
+       }, {
+          username: "UDdjy-hiebI7qfJxvEVkG4WE2MDmS-mcY3YykqnJbYhbJRPtzZZYjdgsKaRgCf3XAAAAAGf70-xoYnNpbTA2MDU=",
+          credential: "73dfea7a-1879-11f0-9530-0242ac120004",
+          urls: [
+              "turn:hk-turn1.xirsys.com:80?transport=udp",
+              "turn:hk-turn1.xirsys.com:3478?transport=udp",
+              "turn:hk-turn1.xirsys.com:80?transport=tcp",
+              "turn:hk-turn1.xirsys.com:3478?transport=tcp",
+              "turns:hk-turn1.xirsys.com:443?transport=tcp",
+              "turns:hk-turn1.xirsys.com:5349?transport=tcp"
+          ]
+       }],
       });
       peerRef.current = peer;
 
@@ -202,10 +215,20 @@ const UserStream = ({ adminSessionId }) => {
   const startUserStream = async () => {
     // 1. PeerConnection 객체 생성
     const peer = new RTCPeerConnection({
-      iceServers: [
-        { urls: "stun:stun.l.google.com:19302" },
-        // 필요시 TURN 서버 추가
-      ],
+      iceServers: [{
+        urls: [ "stun:hk-turn1.xirsys.com" ]
+     }, {
+        username: "UDdjy-hiebI7qfJxvEVkG4WE2MDmS-mcY3YykqnJbYhbJRPtzZZYjdgsKaRgCf3XAAAAAGf70-xoYnNpbTA2MDU=",
+        credential: "73dfea7a-1879-11f0-9530-0242ac120004",
+        urls: [
+            "turn:hk-turn1.xirsys.com:80?transport=udp",
+            "turn:hk-turn1.xirsys.com:3478?transport=udp",
+            "turn:hk-turn1.xirsys.com:80?transport=tcp",
+            "turn:hk-turn1.xirsys.com:3478?transport=tcp",
+            "turns:hk-turn1.xirsys.com:443?transport=tcp",
+            "turns:hk-turn1.xirsys.com:5349?transport=tcp"
+        ]
+     }],
     });
 
     peerRef.current = peer;
@@ -251,13 +274,12 @@ const UserStream = ({ adminSessionId }) => {
       console.log("📥 관리자(방송자)의 Offer 수신:", offer);
 
       // 4. 수신한 offer로 remoteDescription 설정
-      try {
-        await peer.setRemoteDescription(new RTCSessionDescription(offer));
-        console.log("✅ remoteDescription 설정 완료");
-      } catch (err) {
-        console.error("❗ remoteDescription 설정 실패:", err);
+      await peer.setRemoteDescription(new RTCSessionDescription(offer)).then(() => {
+        console.log("✅ remoteDescription 설정 성공:", offer);  
+      }).catch((err) => {
+        console.error("❌ remoteDescription 실패:", err);
         return;
-      }
+      });
 
       // 5. Answer 생성
       const answer = await peer.createAnswer();
