@@ -325,27 +325,26 @@ const UserStream = ({ adminSessionId }) => {
       console.log("📥 remoteStream 수신됨:", remoteStream); // 디버깅용 로그 추가
       if (userVideoRef.current && remoteStream) {
         
-        if(!userVideoRef.current.srcObject){
-        
+        if(!userVideoRef.current.srcObject){  
           userVideoRef.current.srcObject = remoteStream;
-            console.log("✅ 비디오 출력 설정됨");
-            
-            console.log("✅ 사용자 비디오 재생 시도 ...");
-            userVideoRef.current.play().then(() => {
-              console.log("✅ 사용자 비디오 재생됨");
-            }).catch((err) => {
-              console.warn("⚠️ 재생 실패", err);
-            });
-          } 
+          console.log("✅ 비디오 출력 설정됨");
+        } 
 
-          remoteStream.getTracks().forEach((track) => {
+        remoteStream.getTracks().forEach((track) => {
             console.log(`🎚️ 트랙 종류: ${track.kind}, 상태: ${track.readyState}, 활성화: ${track.enabled}`);
           });          
       } else {
         console.warn("❗ remoteStream이 없거나 userVideoRef가 유효하지 않습니다.");
       }
-      
     };
+  };
+
+  userVideoRef.current.onloadedmetadata = () => {
+    userVideoRef.current.play().then(() => {
+      console.log("✅ 사용자 비디오 재생됨");
+    }).catch((err) => {
+      console.warn("⚠️ 재생 실패", err);
+    });
   };
 
   useEffect(() => {
