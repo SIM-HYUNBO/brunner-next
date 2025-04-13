@@ -48,7 +48,7 @@ const AdminStream = () => {
       // 📡 피어 연결 설정
       const peer = new RTCPeerConnection({
         iceServers: [{
-          urls: [ "stun:hk-turn1.xirsys.com" ]
+          urls: [ "stun:stun.l.google.com:19302", "stun:hk-turn1.xirsys.com" ]
        }, {
           username: "UDdjy-hiebI7qfJxvEVkG4WE2MDmS-mcY3YykqnJbYhbJRPtzZZYjdgsKaRgCf3XAAAAAGf70-xoYnNpbTA2MDU=",
           credential: "73dfea7a-1879-11f0-9530-0242ac120004",
@@ -216,7 +216,7 @@ const UserStream = ({ adminSessionId }) => {
     // 1. PeerConnection 객체 생성
     const peer = new RTCPeerConnection({
       iceServers: [{
-        urls: [ "stun:hk-turn1.xirsys.com" ]
+        urls: [ "stun:stun.l.google.com:19302", "stun:hk-turn1.xirsys.com" ]
      }, {
         username: "UDdjy-hiebI7qfJxvEVkG4WE2MDmS-mcY3YykqnJbYhbJRPtzZZYjdgsKaRgCf3XAAAAAGf70-xoYnNpbTA2MDU=",
         credential: "73dfea7a-1879-11f0-9530-0242ac120004",
