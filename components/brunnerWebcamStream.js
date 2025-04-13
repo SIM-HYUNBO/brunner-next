@@ -12,20 +12,20 @@ const AdminStream = () => {
   const adminVideoRef = useRef(null);
   const peerRef = useRef(null);
   const pendingCandidates = useRef([]); // ICE 후보 큐
-  const remoteSet = useRef(false);      // remoteDescription 상태 추적
+  const remoteSet = useRef(false); // remoteDescription 상태 추적
 
   useEffect(() => {
     const video = adminVideoRef.current;
     if (!video) return;
-  
+
     const onPlaying = () => console.log("▶️ playing 상태 진입");
     const onPause = () => console.log("⏸️ 영상이 정지됨");
     const onWaiting = () => console.log("⏳ 버퍼링 중...");
-  
+
     video.addEventListener("playing", onPlaying);
     video.addEventListener("pause", onPause);
     video.addEventListener("waiting", onWaiting);
-  
+
     return () => {
       video.removeEventListener("playing", onPlaying);
       video.removeEventListener("pause", onPause);
@@ -35,7 +35,10 @@ const AdminStream = () => {
 
   useEffect(() => {
     const startBroadcast = async () => {
-      const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true,});
+      const stream = await navigator.mediaDevices.getUserMedia({
+        video: true,
+        audio: true,
+      });
 
       // 🎥 로컬 스트림을 비디오 태그에 표시
       if (adminVideoRef.current) {
@@ -44,30 +47,9 @@ const AdminStream = () => {
 
       // 📡 피어 연결 설정
       const peer = new RTCPeerConnection({
-        iceServers: [
-          { urls: "stun:stun.l.google.com:19302" },
-        ],
+        iceServers: [{ urls: "stun:stun.l.google.com:19302" }],
       });
       peerRef.current = peer;
-
-      peer.oniceconnectionstatechange = () => {
-        console.log("🔌 ICE 연결 상태 변경:", peer.iceConnectionState);
-        if (peer.iceConnectionState === "connected") {
-          console.log("✅ ICE 연결 완료");
-        }
-      };
-      
-      peer.onconnectionstatechange = () => {
-        console.log("🌐 Peer 연결 상태 변경:", peer.connectionState);
-      };
-      
-      peer.onsignalingstatechange = () => {
-        console.log("📶 시그널링 상태 변경:", peer.signalingState);
-      };
-      
-      peer.onicegatheringstatechange = () => {
-        console.log("❄️ ICE 후보 수집 상태 변경:", peer.iceGatheringState);
-      };
 
       // 🎙️ 트랙 추가
       stream.getTracks().forEach((track) => {
@@ -154,10 +136,31 @@ const AdminStream = () => {
         });
       });
 
-        // 🔍 ICE 연결 상태 추적
-        peer.oniceconnectionstatechange = () => {
-          console.log("🔌 ICE 연결 상태:", peer.iceConnectionState);
-        };
+      // 🔍 ICE 연결 상태 추적
+      peer.oniceconnectionstatechange = () => {
+        console.log("🔌 ICE 연결 상태:", peer.iceConnectionState);
+        if (peer.iceConnectionState === "connected") {
+          console.log("✅ ICE 연결 완료");
+        }
+      };
+
+      // 🌐 연결 상태 추적
+      peer.onconnectionstatechange = () => {
+        console.log("🌐 연결 상태:", peer.connectionState);
+        if (peer.connectionState === "failed") {
+          console.error("❌ 연결 실패");
+        }
+      };
+
+      // 📶 시그널링 상태 추적
+      peer.onsignalingstatechange = () => {
+        console.log("📶 시그널링 상태 변경:", peer.signalingState);
+      };
+
+      // ❄️ ICE 후보 수집 상태 추적
+      peer.onicegatheringstatechange = () => {
+        console.log("❄️ ICE 후보 수집 상태 변경:", peer.iceGatheringState);
+      };
     };
 
     startBroadcast();
