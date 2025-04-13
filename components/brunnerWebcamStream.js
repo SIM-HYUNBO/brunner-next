@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef, useCallback } from 'react';
 import ReactPlayer from 'react-player';
 import * as userInfo from "@/components/userInfo";
 import { ref, set, onValue, onChildAdded, push , off} from "firebase/database";
@@ -10,7 +10,6 @@ const adminSessionId = "hbsim0605"; // 고정 세션 ID
 // 관리자 역할을 위한 컴포넌트
 const AdminStream = () => {
   const adminVideoRef = useRef(null);
-  const localStreamRef = useRef(null);
   const peerRef = useRef(null);
   const pendingCandidates = useRef([]); // ICE 후보 큐
   const remoteSet = useRef(false);      // remoteDescription 상태 추적
@@ -36,16 +35,12 @@ const AdminStream = () => {
 
   useEffect(() => {
     const startBroadcast = async () => {
-      const stream = await navigator.mediaDevices.getUserMedia({
-        video: true,
-        audio: true,
-      });
+      const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true,});
 
       // 🎥 로컬 스트림을 비디오 태그에 표시
       if (adminVideoRef.current) {
         adminVideoRef.current.srcObject = stream;
       }
-      localStreamRef.current = stream;
 
       // 📡 피어 연결 설정
       const peer = new RTCPeerConnection({
@@ -76,6 +71,7 @@ const AdminStream = () => {
 
       // 🎙️ 트랙 추가
       stream.getTracks().forEach((track) => {
+        console.log(`🎙️ 방송자 track 전송: ${track.kind}, enabled: ${track.enabled}`);
         peer.addTrack(track, stream);
       });
 
@@ -182,11 +178,171 @@ const AdminStream = () => {
 };
 
 const UserStream = ({ adminSessionId }) => {
-  const userVideoRef = useRef(null);
+
   const [isConnected, setIsConnected] = useState(false);
   const peerRef = useRef(null);
-  const localStreamRef = useRef(null);
   const pendingCandidates = useRef([]); // ICE 후보를 임시로 저장할 큐
+
+  const userVideoRef = useRef(null);
+
+  const handleVideoRef = useCallback((node) => {
+    if (node !== null) {
+      userVideoRef.current = node;
+      console.log("✅ video DOM 연결 완료");
+  
+      // video DOM이 준비된 후 실행
+      startUserStream();
+    }
+  }, []);
+
+
+  const startUserStream = async () => {
+    // 1. PeerConnection 객체 생성
+    const peer = new RTCPeerConnection({
+      iceServers: [
+        { urls: "stun:stun.l.google.com:19302" },
+        // 필요시 TURN 서버 추가
+      ],
+    });
+
+    peerRef.current = peer;
+
+    peer.oniceconnectionstatechange = () => {
+      console.log("🔌 ICE 연결 상태 변경:", peer.iceConnectionState);
+    };
+    
+    peer.onconnectionstatechange = () => {
+      console.log("🌐 Peer 연결 상태 변경:", peer.connectionState);
+    };
+    
+    peer.onsignalingstatechange = () => {
+      console.log("📶 시그널링 상태 변경:", peer.signalingState);
+    };
+    
+    peer.onicegatheringstatechange = () => {
+      console.log("❄️ ICE 후보 수집 상태 변경:", peer.iceGatheringState);
+    };
+
+    // 2. ICE 후보 수집 시 Firebase에 전송
+    peer.onicecandidate = (event) => {
+      if (event.candidate) {
+        console.log("🧊 ICE 후보 발견:", event.candidate);
+        const candidateRef = ref(database, `webrtc/${adminSessionId}/viewerCandidates`);
+        set(candidateRef, {
+          candidate: event.candidate.candidate,
+          sdpMid: event.candidate.sdpMid,
+          sdpMLineIndex: event.candidate.sdpMLineIndex,
+          usernameFragment: event.candidate.usernameFragment,
+        });
+      } else {
+        console.log("✅ ICE 후보 수집 완료");
+      }
+    };
+
+    // 3. Firebase에서 관리자(방송자)의 offer를 가져와서 연결
+    const offerRef = ref(database, `webrtc/${adminSessionId}/offer`);
+    onValue(offerRef, async (snapshot) => {
+      const offer = snapshot.val();
+      if (!offer) return;
+
+      console.log("📥 관리자(방송자)의 Offer 수신:", offer);
+
+      // 4. 수신한 offer로 remoteDescription 설정
+      try {
+        await peer.setRemoteDescription(new RTCSessionDescription(offer));
+        console.log("✅ remoteDescription 설정 완료");
+      } catch (err) {
+        console.error("❗ remoteDescription 설정 실패:", err);
+        return;
+      }
+
+      // 5. Answer 생성
+      const answer = await peer.createAnswer();
+      await peer.setLocalDescription(answer);
+
+      // 6. 생성된 answer를 Firebase에 저장
+      set(ref(database, `webrtc/${adminSessionId}/answer`), peer.localDescription);
+
+      // 7. 연결 완료 상태 변경
+      setIsConnected(true);
+
+      // 8. 큐에 저장된 ICE 후보 추가
+      pendingCandidates.current.forEach((candidate) => {
+        const candidateData = {
+          candidate: candidate.candidate,
+          sdpMid: candidate.sdpMid,
+          sdpMLineIndex: candidate.sdpMLineIndex,
+        };
+        peer.addIceCandidate(new RTCIceCandidate(candidateData))
+          .then(() => {
+            console.log("📥 ICE 후보 추가:", candidateData);
+          })
+          .catch(err => {
+            console.error("❗ ICE 후보 추가 실패:", err);
+          });
+      });
+
+      // 9. 큐 초기화
+      pendingCandidates.current = [];
+    });
+
+    // 10. ICE 후보 수신
+    const candidatesRef = ref(database, `webrtc/${adminSessionId}/candidates`);
+    onValue(candidatesRef, async (snapshot) => {
+      const candidates = snapshot.val();
+      if (!candidates) return;
+
+      // ICE 후보가 remoteDescription 설정 전에 도착한 경우 큐에 저장
+      Object.values(candidates).forEach(async (candidate) => {
+        try {
+          const candidateData = {
+            candidate: candidate.candidate,
+            sdpMid: candidate.sdpMid,
+            sdpMLineIndex: candidate.sdpMLineIndex,
+          };
+          
+          if (peer.remoteDescription) {
+            // remoteDescription이 설정된 경우 즉시 add
+            await peer.addIceCandidate(new RTCIceCandidate(candidateData));
+            console.log("📥 ICE 후보 추가:", candidate);
+          } else {
+            // remoteDescription이 아직 설정되지 않은 경우 후보를 큐에 저장
+            pendingCandidates.current.push(candidateData);
+            console.log("⏳ ICE 후보 큐에 저장:", candidate);
+          }
+        } catch (err) {
+          console.error("❗ ICE 후보 추가 실패:", err);
+        }
+      });
+    });
+
+    // 11. 스트림을 받을 준비가 되면 비디오 출력
+    peer.ontrack = (event) => {
+      const remoteStream = event.streams[0];
+      console.log("📥 remoteStream 수신됨:", remoteStream); // 디버깅용 로그 추가
+      if (userVideoRef.current && remoteStream) {
+        
+        if(!userVideoRef.current.srcObject){
+        
+          userVideoRef.current.srcObject = remoteStream;
+            console.log("✅ 비디오 출력 설정됨");
+            
+            userVideoRef.current.play().then(() => {
+              console.log("✅ 사용자 비디오 재생됨");
+            }).catch((err) => {
+              console.warn("⚠️ 재생 실패", err);
+            });
+          } 
+
+          remoteStream.getTracks().forEach((track) => {
+            console.log(`🎚️ 트랙 종류: ${track.kind}, 상태: ${track.readyState}, 활성화: ${track.enabled}`);
+          });          
+      } else {
+        console.warn("❗ remoteStream이 없거나 userVideoRef가 유효하지 않습니다.");
+      }
+      
+    };
+  };
 
   useEffect(() => {
     const video = userVideoRef.current;
@@ -199,158 +355,13 @@ const UserStream = ({ adminSessionId }) => {
     video.addEventListener("playing", onPlaying);
     video.addEventListener("pause", onPause);
     video.addEventListener("waiting", onWaiting);
-  
+    
     return () => {
       video.removeEventListener("playing", onPlaying);
       video.removeEventListener("pause", onPause);
       video.removeEventListener("waiting", onWaiting);
     };
   }, []);
-
-  useEffect(() => {
-    const startUserStream = async () => {
-      // 1. PeerConnection 객체 생성
-      const peer = new RTCPeerConnection({
-        iceServers: [
-          { urls: "stun:stun.l.google.com:19302" },
-          // 필요시 TURN 서버 추가
-        ],
-      });
-
-      peerRef.current = peer;
-
-      peer.oniceconnectionstatechange = () => {
-        console.log("🔌 ICE 연결 상태 변경:", peer.iceConnectionState);
-      };
-      
-      peer.onconnectionstatechange = () => {
-        console.log("🌐 Peer 연결 상태 변경:", peer.connectionState);
-      };
-      
-      peer.onsignalingstatechange = () => {
-        console.log("📶 시그널링 상태 변경:", peer.signalingState);
-      };
-      
-      peer.onicegatheringstatechange = () => {
-        console.log("❄️ ICE 후보 수집 상태 변경:", peer.iceGatheringState);
-      };
-
-      // 2. ICE 후보 수집 시 Firebase에 전송
-      peer.onicecandidate = (event) => {
-        if (event.candidate) {
-          console.log("🧊 ICE 후보 발견:", event.candidate);
-          const candidateRef = ref(database, `webrtc/${adminSessionId}/viewerCandidates`);
-          set(candidateRef, {
-            candidate: event.candidate.candidate,
-            sdpMid: event.candidate.sdpMid,
-            sdpMLineIndex: event.candidate.sdpMLineIndex,
-            usernameFragment: event.candidate.usernameFragment,
-          });
-        } else {
-          console.log("✅ ICE 후보 수집 완료");
-        }
-      };
-
-      // 3. Firebase에서 관리자(방송자)의 offer를 가져와서 연결
-      const offerRef = ref(database, `webrtc/${adminSessionId}/offer`);
-      onValue(offerRef, async (snapshot) => {
-        const offer = snapshot.val();
-        if (!offer) return;
-
-        console.log("📥 관리자(방송자)의 Offer 수신:", offer);
-
-        // 4. 수신한 offer로 remoteDescription 설정
-        try {
-          await peer.setRemoteDescription(new RTCSessionDescription(offer));
-          console.log("✅ remoteDescription 설정 완료");
-        } catch (err) {
-          console.error("❗ remoteDescription 설정 실패:", err);
-          return;
-        }
-
-        // 5. Answer 생성
-        const answer = await peer.createAnswer();
-        await peer.setLocalDescription(answer);
-
-        // 6. 생성된 answer를 Firebase에 저장
-        set(ref(database, `webrtc/${adminSessionId}/answer`), peer.localDescription);
-
-        // 7. 연결 완료 상태 변경
-        setIsConnected(true);
-
-        // 8. 큐에 저장된 ICE 후보 추가
-        pendingCandidates.current.forEach((candidate) => {
-          const candidateData = {
-            candidate: candidate.candidate,
-            sdpMid: candidate.sdpMid,
-            sdpMLineIndex: candidate.sdpMLineIndex,
-          };
-          peer.addIceCandidate(new RTCIceCandidate(candidateData))
-            .then(() => {
-              console.log("📥 ICE 후보 추가:", candidateData);
-            })
-            .catch(err => {
-              console.error("❗ ICE 후보 추가 실패:", err);
-            });
-        });
-
-        // 9. 큐 초기화
-        pendingCandidates.current = [];
-      });
-
-      // 10. ICE 후보 수신
-      const candidatesRef = ref(database, `webrtc/${adminSessionId}/candidates`);
-      onValue(candidatesRef, async (snapshot) => {
-        const candidates = snapshot.val();
-        if (!candidates) return;
-
-        // ICE 후보가 remoteDescription 설정 전에 도착한 경우 큐에 저장
-        Object.values(candidates).forEach(async (candidate) => {
-          try {
-            if (peer.remoteDescription) {
-              // remoteDescription이 설정된 경우 즉시 add
-              const candidateData = {
-                candidate: candidate.candidate,
-                sdpMid: candidate.sdpMid,
-                sdpMLineIndex: candidate.sdpMLineIndex,
-              };
-
-              await peer.addIceCandidate(new RTCIceCandidate(candidateData));
-              console.log("📥 ICE 후보 추가:", candidate);
-            } else {
-              // remoteDescription이 아직 설정되지 않은 경우 후보를 큐에 저장
-              pendingCandidates.current.push(candidateData);
-              console.log("⏳ ICE 후보 큐에 저장:", candidate);
-            }
-          } catch (err) {
-            console.error("❗ ICE 후보 추가 실패:", err);
-          }
-        });
-      });
-
-      // 11. 스트림을 받을 준비가 되면 비디오 출력
-      peer.ontrack = (event) => {
-        const remoteStream = event.streams[0];
-        console.log("📥 remoteStream 수신됨:", remoteStream); // 디버깅용 로그 추가
-        if (userVideoRef.current && remoteStream) {
-
-          userVideoRef.current.srcObject = remoteStream;
-          console.log("✅ 비디오 출력 설정됨");
-
-          remoteStream.getTracks().forEach((track) => {
-            console.log(`🎚️ 트랙 종류: ${track.kind}, 상태: ${track.readyState}, 활성화: ${track.enabled}`);
-          });          
-        } else {
-          console.warn("❗ remoteStream이 없거나 userVideoRef가 유효하지 않습니다.");
-        }
-        
-      };
-    };
-
-    
-
-    startUserStream();
-  }, [adminSessionId]);
 
   useEffect(() => {
     // 비디오 스트림이 설정될 때마다 확인
@@ -363,7 +374,7 @@ const UserStream = ({ adminSessionId }) => {
     <div>
       <h2>🎥 사용자 스트림 (UserStream)</h2>
       <video
-        ref={userVideoRef}
+        ref={handleVideoRef }
         autoPlay
         playsInline
         muted
