@@ -328,6 +328,14 @@ const UserStream = ({ adminSessionId }) => {
         if(!userVideoRef.current.srcObject){  
           userVideoRef.current.srcObject = remoteStream;
           console.log("✅ 비디오 출력 설정됨");
+          
+          userVideoRef.current.onloadedmetadata = () => {
+            userVideoRef.current.play().then(() => {
+              console.log("✅ 사용자 비디오 재생됨");
+            }).catch((err) => {
+              console.warn("⚠️ 재생 실패", err);
+            });
+          };
         } 
 
         remoteStream.getTracks().forEach((track) => {
@@ -337,14 +345,6 @@ const UserStream = ({ adminSessionId }) => {
         console.warn("❗ remoteStream이 없거나 userVideoRef가 유효하지 않습니다.");
       }
     };
-  };
-
-  userVideoRef.current.onloadedmetadata = () => {
-    userVideoRef.current.play().then(() => {
-      console.log("✅ 사용자 비디오 재생됨");
-    }).catch((err) => {
-      console.warn("⚠️ 재생 실패", err);
-    });
   };
 
   useEffect(() => {
