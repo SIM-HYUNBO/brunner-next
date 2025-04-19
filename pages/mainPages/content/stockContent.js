@@ -234,10 +234,10 @@ const StockContent = () => {
         systemCode: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE,
       };
 
-      setLoading(true);
+      // setLoading(true);
       setCurrentTickerStockDataRef(null);
       const jResponse = await RequestServer("POST", JSON.stringify(jRequest));
-      setLoading(false);
+      // setLoading(false);
 
       if (jResponse.error_code === 0) {
         await setTickerListRef(jResponse.tickerList);

@@ -269,8 +269,10 @@ const UserStream = ({ adminSessionId }) => {
     const offerRef = ref(database, `webrtc/${adminSessionId}/offer`);
     onValue(offerRef, async (snapshot) => {
       const offer = snapshot.val();
-      if (!offer) return;
-
+      if (!offer) {
+        
+        return;
+      }
       console.log("📥 관리자(방송자)의 Offer 수신:", offer);
 
       // 4. 수신한 offer로 remoteDescription 설정
