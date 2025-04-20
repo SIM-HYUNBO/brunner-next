@@ -42,8 +42,18 @@ const AutoResizeTextarea = forwardRef(
         value={value}
         onChange={handleChange}
         readOnly={readOnly}
-        className={`resize-none w-full border border-gray-300 ${readOnly ? "dark:bg-slate-800 bg-gray-100 text-slate-400 dark:text-slate-800" : "bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-400 rounded-md p-2 mt-1"
-          }`}
+        className={`
+          w-full 
+          border 
+          border-gray-300 
+          resize-none 
+          rounded-md p-2 mt-1
+          ${readOnly ? 
+            "dark:bg-slate-800 bg-gray-100 text-slate-400 dark:text-slate-800" : 
+            "bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-400"
+          }
+          `
+        }
         rows="10"
       />
     );
