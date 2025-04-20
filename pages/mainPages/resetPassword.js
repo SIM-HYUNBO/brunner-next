@@ -147,8 +147,8 @@ export default function ResetPassword() {
     <>
       <BrunnerMessageBox />
       {loading && (
-        <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-gray-500 bg-opacity-75 z-50">
-          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-gray-900"></div>
+        <div className={`fixed top-0 left-0 w-full h-full flex items-center justify-center bg-gray-500 bg-opacity-75 z-50`}>
+          <div className={`animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-gray-900`}></div>
         </div>
       )}
       <Layout>
@@ -163,17 +163,17 @@ export default function ResetPassword() {
         </Head>
         <BodySection>
           <DivContainer>
-            <div className="w-3/5 pr-0">
-              <h2 className="title-font font-medium text-3xl text-gray-900">
+            <div className={`w-3/5 pr-0`}>
+              <h2 className={`title-font font-medium text-3xl text-gray-900`}>
                 Protect your important information.
               </h2>
-              <p className="mt-2">
+              <p className={`mt-2`}>
                 Enter information to leave or reset password.
               </p>
             </div>
-            <div className="w-full flex flex-col items-start text-left mb-16 mt-5">
-              <div className="w-full">
-                <label htmlFor="id" className="text-gray-400">
+            <div className={`w-full flex flex-col items-start text-left mb-16 mt-5`}>
+              <div className={`w-full`}>
+                <label htmlFor="id" className={`text-gray-400`}>
                   ID
                 </label>
                 <input
@@ -181,11 +181,11 @@ export default function ResetPassword() {
                   id="id"
                   name="Id"
                   onChange={(e) => changeUserIdValue(e)}
-                  className="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"
+                  className={`w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out`}
                 />
                 <label
                   htmlFor="phone-number"
-                  className="text-sm text-gray-400 w-full"
+                  className={`text-sm text-gray-400 w-full`}
                 >
                   Phone Number
                 </label>
@@ -194,67 +194,146 @@ export default function ResetPassword() {
                   id="phone-number"
                   name="Id"
                   onChange={(e) => changePhoneNumberValue(e)}
-                  className="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"
+                  className={`w-full 
+                              bg-white 
+                              rounded 
+                              border 
+                              border-gray-300 
+                              focus:border-indigo-500 
+                              focus:ring-2 
+                              focus:ring-indigo-200 
+                              text-base 
+                              outline-none 
+                              text-gray-700 
+                              px-3 
+                              py-1 
+                              leading-8 
+                              transition-colors 
+                              duration-200 
+                              ease-in-out`}
                 />
-                <label htmlFor="email" className="text-sm text-gray-400 w-full">
+                <label htmlFor="email" className={`text-sm text-gray-400 w-full`}>
                   E-Mail
                 </label>
                 <input
                   type="email"
                   onChange={(e) => changeEMailValue(e)}
-                  className="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"
+                  className={`w-full 
+                              bg-white 
+                              rounded 
+                              border 
+                              border-gray-300 
+                              focus:border-indigo-500 
+                              focus:ring-2 
+                              focus:ring-indigo-200 
+                              text-base 
+                              outline-none 
+                              text-gray-700 
+                              px-3 
+                              py-1 
+                              leading-8 
+                              transition-colors 
+                              duration-200 
+                              ease-in-out`}
                 />
-                <div className="relative w-full">
+                <div className={`relative w-full`}>
                   <button
                     onClick={() => sendEMailAuthCode()}
-                    className="text-white bg-indigo-500 border-0 py-2 px-4 focus:outline-none hover:bg-indigo-600 rounded text-lg mt-2"
+                    className={`text-white bg-indigo-500 border-0 py-2 px-4 focus:outline-none hover:bg-indigo-600 rounded text-lg mt-2`}
                   >
                     Send Code
                   </button>
                 </div>
               </div>
-              <div className="mt-2 w-full">
-                <label htmlFor="email" className="text-sm text-gray-400 w-full">
+              <div className={`mt-2 w-full`}>
+                <label htmlFor="email" className={`text-sm text-gray-400 w-full`}>
                   Authorization Code
                 </label>
                 <input
                   type="text"
-                  className="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 leading-8 transition-colors duration-200 ease-in-out"
+                  className={`w-full 
+                              bg-white 
+                              rounded 
+                              border 
+                              border-gray-300 
+                              focus:border-indigo-500 
+                              focus:ring-2 
+                              focus:ring-indigo-200 
+                              text-base 
+                              outline-none 
+                              text-gray-700 
+                              py-1 
+                              leading-8 
+                              transition-colors 
+                              duration-200 
+                              ease-in-out`}
                   onChange={(e) => changeAuthCode(e)}
                 />
                 <button
                   onClick={() => requestDeleteAccount()}
-                  className="text-white bg-pink-500 border-0 py-2 px-4 focus:outline-none hover:bg-indigo-600 rounded text-lg mt-2"
+                  className={`text-white bg-pink-500 border-0 py-2 px-4 focus:outline-none hover:bg-indigo-600 rounded text-lg mt-2`}
                 >
                   Delete account
                 </button>
               </div>
-              <div className="relative mt-6 w-full">
-                <label htmlFor="new-password" className="text-sm text-gray-400">
+              <div className={`relative mt-6 w-full`}>
+                <label htmlFor="new-password" className={`text-sm text-gray-400`}>
                   New Password
                 </label>
                 <input
                   type="password"
                   id="new-password"
                   name="new-password"
-                  className="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"
+                  className={`w-full 
+                              bg-white 
+                              rounded 
+                              border 
+                              border-gray-300 
+                              focus:border-indigo-500 
+                              focus:ring-2 
+                              focus:ring-indigo-200 
+                              text-base 
+                              outline-none 
+                              text-gray-700 
+                              px-3 
+                              py-1 
+                              leading-8 
+                              transition-colors 
+                              duration-200 
+                              ease-in-out`}
                   onChange={(e) => changePasswordValue(e)}
                 ></input>
                 <label
                   htmlFor="confirm-password"
-                  className="text-sm text-gray-400"
+                  className={`text-sm text-gray-400`}
                 >
                   Confirm Password
                 </label>
                 <input
                   type="password"
-                  className="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"
+                  className={`w-full 
+                              bg-white 
+                              rounded 
+                              border 
+                              border-gray-300 
+                              focus:border-indigo-500 
+                              focus:ring-2 
+                              focus:ring-indigo-200 
+                              text-base 
+                              outline-none 
+                              text-gray-700 
+                              px-3 
+                              py-1 
+                              leading-8 
+                              transition-colors 
+                              duration-200 
+                              ease-in-out`}
                   onChange={(e) => changeConfirmPasswordValue(e)}
                 ></input>
               </div>
               <button
                 onClick={() => requestResetPassword()}
-                className="text-white bg-indigo-500 border-0 py-2 px-4 focus:outline-none hover:bg-indigo-600 rounded text-lg mt-2"
+                className={`text-white bg-indigo-500 border-0 py-2 px-4 focus:outline-none hover:bg-indigo-600 rounded text-lg mt-2`}
               >
                 Reset password
               </button>

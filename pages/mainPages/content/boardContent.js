@@ -298,29 +298,29 @@ function Board(boardInfo) {
   };
 
   return (
-    <div className="w-full max-w-4xl mx-auto">
+    <div className={`w-full max-w-4xl mx-auto`}>
       <BrunnerMessageBox />
       {loading && (
-        <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-gray-500 bg-opacity-75 z-50">
-          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-gray-900"></div>
+        <div className={`fixed top-0 left-0 w-full h-full flex items-center justify-center bg-gray-500 bg-opacity-75 z-50`}>
+          <div className={`animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-gray-900`}></div>
         </div>
       )}
-      <div className="mb-6 flex">
+      <div className={`mb-6 flex`}>
         <textarea
           value={postText}
           onChange={handlePostChange}
           placeholder="Write new post..."
           maxLength="1000"
-          className="w-full p-2 border border-gray-300 rounded-md text-slate-600 dark:text-slate-400"
+          className={`w-full p-2 border border-gray-300 rounded-md text-slate-600 dark:text-slate-400`}
         />
         <button
           onClick={handleAddPost}
-          className="mt-2 px-4 py-2 bg-green-500 text-white rounded-md ml-2 justify-end"
+          className={`mt-2 px-4 py-2 bg-green-500 text-white rounded-md ml-2 justify-end`}
         >
           Post
         </button>
       </div>
-      <div className="post-list">
+      <div className={`post-list`}>
         {posts.map((post) => (
           <BoardContent
             key={post.post_id}
@@ -409,12 +409,12 @@ function BoardContent({
   };
 
   return (
-    <div className="border-b border-gray-300 py-4">
+    <div className={`border-b border-gray-300 py-4`}>
       <BrunnerMessageBox />
       <hr />
       {loading && (
-        <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-gray-500 bg-opacity-75 z-50">
-          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-gray-900"></div>
+        <div className={`fixed top-0 left-0 w-full h-full flex items-center justify-center bg-gray-500 bg-opacity-75 z-50`}>
+          <div className={`animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-gray-900`}></div>
         </div>
       )}
       {isEditingPost ? (
@@ -422,32 +422,32 @@ function BoardContent({
           <textarea
             value={editedPostText}
             onChange={handleEditPostChange}
-            className="w-full p-2 border border-gray-300 rounded-md text-slate-600 dark:text-slate-400"
+            className={`w-full p-2 border border-gray-300 rounded-md text-slate-600 dark:text-slate-400`}
           />
           <button
             onClick={handleEditPost}
-            className="mt-2 px-4 py-2 bg-blue-500 text-slate-400 rounded-md"
+            className={`mt-2 px-4 py-2 bg-blue-500 text-slate-400 rounded-md`}
           >
             Save
           </button>
           <button
             onClick={() => setIsEditingPost(false)}
-            className="mt-2 ml-2 px-4 py-2 bg-gray-500 text-white rounded-md"
+            className={`mt-2 ml-2 px-4 py-2 bg-gray-500 text-white rounded-md`}
           >
             Cancel
           </button>
         </div>
       ) : (
-        <p className="w-full text-left">
-          <strong className="text-left text-sm">{post.create_user_id}</strong>
-          <span className="text-gray-400 ml-2 text-xs">
+        <p className={`w-full text-left`}>
+          <strong className={`text-left text-sm`}>{post.create_user_id}</strong>
+          <span className={`text-gray-400 ml-2 text-xs`}>
             {new Date(post.create_time).toLocaleString()}
           </span>
           <br />
-          <p className="w-full text-left">{post.post_content}</p>
+          <p className={`w-full text-left`}>{post.post_content}</p>
         </p>
       )}
-      <div className="flex mt-2">
+      <div className={`flex mt-2`}>
         {!isEditingPost && (
           <>
             <button
@@ -459,7 +459,7 @@ function BoardContent({
                 }
                 setIsEditingPost(true);
               }}
-              className="mr-2 px-4 py-2 bg-yellow-500 text-white rounded-md"
+              className={`mr-2 px-4 py-2 bg-yellow-500 text-white rounded-md`}
             >
               Edit
             </button>
@@ -472,50 +472,50 @@ function BoardContent({
                 }
                 handleDeletePost();
               }}
-              className="px-4 py-2 bg-red-500 text-white rounded-md"
+              className={`px-4 py-2 bg-red-500 text-white rounded-md`}
             >
               Delete
             </button>
           </>
         )}
       </div>
-      <div className="ml-5 mt-2">
+      <div className={`ml-5 mt-2`}>
         {post.comments?.map((comment, index) => (
-          <div key={index} className="ml-1 mb-2">
+          <div key={index} className={`ml-1 mb-2`}>
             {editingCommentId === comment.comment_id ? (
               <div>
                 <input
                   type="text"
                   value={editedCommentText}
                   onChange={handleEditCommentChange}
-                  className="w-full p-2 border border-gray-300 rounded-md"
+                  className={`w-full p-2 border border-gray-300 rounded-md`}
                 />
                 <button
                   onClick={() => handleEditComment(comment.comment_id)}
-                  className="mt-2 px-4 py-2 bg-blue-500 text-white rounded-md"
+                  className={`mt-2 px-4 py-2 bg-blue-500 text-white rounded-md`}
                 >
                   Save
                 </button>
                 <button
                   onClick={() => setEditingCommentId(null)}
-                  className="mt-2 ml-2 px-4 py-2 bg-gray-500 text-white rounded-md"
+                  className={`mt-2 ml-2 px-4 py-2 bg-gray-500 text-white rounded-md`}
                 >
                   Cancel
                 </button>
               </div>
             ) : (
-              <p className="w-full text-left">
-                <strong className="text-left text-sm">
+              <p className={`w-full text-left`}>
+                <strong className={`text-left text-sm`}>
                   {comment.create_user_id}
                 </strong>
-                <span className="text-gray-400 ml-2 text-xs">
+                <span className={`text-gray-400 ml-2 text-xs`}>
                   {new Date(comment.create_time).toLocaleString()}
                 </span>
                 <br />
-                <p className="w-full text-left">{comment.comment_content}</p>
+                <p className={`w-full text-left`}>{comment.comment_content}</p>
               </p>
             )}
-            <div className="flex mt-1">
+            <div className={`flex mt-1`}>
               {editingCommentId !== comment.comment_id && (
                 <>
                   <button
@@ -528,7 +528,7 @@ function BoardContent({
                       setEditingCommentId(comment.comment_id);
                       setEditedCommentText(comment.comment_content);
                     }}
-                    className="mr-2 px-3 py-1 bg-yellow-500 text-white rounded-md"
+                    className={`mr-2 px-3 py-1 bg-yellow-500 text-white rounded-md`}
                   >
                     Edit
                   </button>
@@ -541,7 +541,7 @@ function BoardContent({
                       }
                       handleDeleteComment(comment.comment_id);
                     }}
-                    className="px-3 py-1 bg-red-500 text-white rounded-md"
+                    className={`px-3 py-1 bg-red-500 text-white rounded-md`}
                   >
                     Delete
                   </button>
@@ -551,17 +551,17 @@ function BoardContent({
           </div>
         ))}
       </div>
-      <div className="flex mt-2">
+      <div className={`flex mt-2`}>
         <input
           type="text"
           value={commentText}
           onChange={handleCommentChange}
           placeholder="Write new comment."
-          className="flex-1 p-2 border border-gray-300 rounded-md text-slate-600 dark:text-slate-400"
+          className={`flex-1 p-2 border border-gray-300 rounded-md text-slate-600 dark:text-slate-400`}
         />
         <button
           onClick={handleAddComment}
-          className="ml-2 px-4 py-2 bg-blue-500 text-white rounded-md"
+          className={`ml-2 px-4 py-2 bg-blue-500 text-white rounded-md`}
         >
           Add...
         </button>

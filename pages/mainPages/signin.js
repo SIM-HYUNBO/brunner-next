@@ -78,8 +78,8 @@ export default function Signin() {
     <>
       <BrunnerMessageBox />
       {loading && (
-        <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-gray-500 bg-opacity-75 z-50">
-          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-gray-900"></div>
+        <div className={`fixed top-0 left-0 w-full h-full flex items-center justify-center bg-gray-500 bg-opacity-75 z-50`}>
+          <div className={`animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-gray-900`}></div>
         </div>
       )}      
       <Layout>
@@ -93,17 +93,17 @@ export default function Signin() {
         </Head>
         <BodySection>
           <DivContainer>
-            <div className="w-full pr-16 flex flex-col items-start text-left mb-16 md:mb-0">
-              <h2 className="title-font sm:text-4xl text-3xl mb-10 font-medium text-green-900">
+            <div className={`w-full pr-16 flex flex-col items-start text-left mb-16 md:mb-0`}>
+              <h2 className={`title-font sm:text-4xl text-3xl mb-10 font-medium text-green-900`}>
                 Sign in
               </h2>
-              <div className="w-full">
-                <p className="leading-relaxed mt-4 mb-5">
+              <div className={`w-full`}>
+                <p className={`leading-relaxed mt-4 mb-5`}>
                   Inut ID and Password.
                 </p>
               </div>
-              <div className="relative mb-4">
-                <label htmlFor="id" className="leading-7 text-sm text-gray-400">
+              <div className={`relative mb-4`}>
+                <label htmlFor="id" className={`leading-7 text-sm text-gray-400`}>
                   ID
                 </label>
                 <input
@@ -112,18 +112,50 @@ export default function Signin() {
                   id="id"
                   name="Id"
                   onChange={changeUserIdValue}
-                  className="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"
+                  className={`w-full 
+                              bg-white 
+                              rounded 
+                              border 
+                              border-gray-300 
+                              focus:border-indigo-500 
+                              focus:ring-2 
+                              focus:ring-indigo-200 
+                              text-base 
+                              outline-none 
+                              text-gray-700 
+                              px-3 
+                              py-1 
+                              leading-8 
+                              transition-colors 
+                              duration-200 
+                              ease-in-out`}
                 />
               </div>
-              <div className="relative mb-4">
+              <div className={`relative mb-4`}>
                 <label
-                  className="leading-7 text-sm text-gray-400"
+                  className={`leading-7 text-sm text-gray-400`}
                   htmlFor="password"
                 >
                   Password
                 </label>
                 <input
-                  className="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"
+                  className={`w-full 
+                              bg-white 
+                              rounded 
+                              border 
+                              border-gray-300 
+                              focus:border-indigo-500 
+                              focus:ring-2 
+                              focus:ring-indigo-200 
+                              text-base 
+                              outline-none 
+                              text-gray-700 
+                              px-3 
+                              py-1 
+                              leading-8 
+                              transition-colors 
+                              duration-200 
+                              ease-in-out`}
                   type="password"
                   id="password"
                   name="password"
@@ -132,25 +164,25 @@ export default function Signin() {
                 />
               </div>
               <button
-                className="text-white bg-indigo-500 border-0 py-2 px-4 focus:outline-none hover:bg-indigo-600 rounded text-lg"
+                className={`text-white bg-indigo-500 border-0 py-2 px-4 focus:outline-none hover:bg-indigo-600 rounded text-lg`}
                 onClick={requestSignIn}
               >
                 Sign in
               </button>
-              <p className="text-xs text-gray-500 mt-10">
+              <p className={`text-xs text-gray-500 mt-10`}>
                 Forgot your password? Reset now.
               </p>
               <button
-                className="text-white bg-indigo-500 border-0 py-2 px-4 focus:outline-none hover:bg-indigo-600 rounded text-lg mt-5"
+                className={`text-white bg-indigo-500 border-0 py-2 px-4 focus:outline-none hover:bg-indigo-600 rounded text-lg mt-5`}
                 onClick={() => router.push("/mainPages/resetPassword")}
               >
                 Reset password
               </button>
-              <p className="text-xs text-gray-500 mt-10">
+              <p className={`text-xs text-gray-500 mt-10`}>
                 You can delete account.
               </p>
               <button
-                className="text-white bg-indigo-500 border-0 py-2 px-4 focus:outline-none hover:bg-indigo-600 rounded text-lg mt-5"
+                className={`text-white bg-indigo-500 border-0 py-2 px-4 focus:outline-none hover:bg-indigo-600 rounded text-lg mt-5`}
                 onClick={() => router.push("/mainPages/resetPassword")}
               >
                 Leave & Delete Account

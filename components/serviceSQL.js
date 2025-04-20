@@ -205,7 +205,16 @@ const ServiceSQL = () => {
     return (
       <button
             onClick={handleNew}
-            className="bg-green-500 text-white py-2 px-4 rounded-md hover:bg-green-600 focus:outline-none focus:ring focus:ring-green-500 focus:ring-opacity-50 ml-2"
+            className={`bg-green-500 
+                        text-white 
+                        py-2 
+                        px-4 
+                        rounded-md 
+                        hover:bg-green-600 
+                        focus:outline-none 
+                        focus:ring focus:ring-green-500 
+                        focus:ring-opacity-50 
+                        ml-2`}
           >
             Clear
           </button>
@@ -214,7 +223,17 @@ const ServiceSQL = () => {
 
   const CreateUpdateButton = () =>{
     return (
-      <button onClick={handleCreateOrUpdate} className="bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50">
+      <button onClick={handleCreateOrUpdate} 
+              className={`bg-blue-500 
+                          text-white 
+                          py-2 
+                          px-4 
+                          rounded-md 
+                          hover:bg-blue-600 
+                          focus:outline-none 
+                          focus:ring-2 
+                          focus:ring-blue-500 
+                          focus:ring-opacity-50`}>
         {currentServiceSQL ? "Update" : "Create"}
       </button>
     )
@@ -253,53 +272,66 @@ const ServiceSQL = () => {
   return (
     <>
       {userInfo?.isAdminUser() && (
-        <div className="p-4">
+        <div className={`p-4`}>
           {loading && (
-          <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-gray-500 bg-opacity-75 z-50">
-            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-gray-900"></div>
+          <div className={`fixed top-0 left-0 w-full h-full flex items-center justify-center bg-gray-500 bg-opacity-75 z-50`}>
+            <div className={`animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-gray-900`}></div>
           </div>
           )}
           <BrunnerMessageBox />
-          <h2 className="text-xl font-bold mb-4">Service SQL Management</h2>
-          <div ref={editPanelRef} className="mb-4">
-            <label className="block mb-2">
-              <span className="text-gray-400">System Code:</span>
+          <h2 className={`text-xl font-bold mb-4`}>Service SQL Management</h2>
+          <div ref={editPanelRef} className={`mb-4`}>
+            <label className={`block mb-2`}>
+              <span className={`text-gray-400`}>System Code:</span>
               <input
                 type="text"
                 name="system_code"
                 value={form.system_code}
                 onChange={handleInputChange}
                 readOnly={!isEditing && !isCreating}
-                className="mt-1 block w-full border border-gray-300 text-gray-800 dark:text-gray-400 dark:bg-slate-800 rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50"
+                className={`mt-1 block w-full border border-gray-300 text-gray-800 dark:text-gray-400 dark:bg-slate-800 rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50`}
                 required
               />
             </label>
-            <label className="block mb-2">
-              <span className="text-gray-400">SQL Name:</span>
+            <label className={`block mb-2`}>
+              <span className={`text-gray-400`}>SQL Name:</span>
               <input
                 type="text"
                 name="sql_name"
                 value={form.sql_name}
                 onChange={handleInputChange}
                 readOnly={!isEditing && !isCreating}
-                className="mt-1 block w-full border border-gray-300 text-gray-800 dark:text-gray-400 dark:bg-slate-800 rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50"
+                className={`mt-1 
+                            block 
+                            w-full 
+                            border 
+                            border-gray-300 
+                            text-gray-800 
+                            dark:text-gray-400 
+                            dark:bg-slate-800 
+                            rounded-md 
+                            shadow-sm 
+                            focus:border-blue-500 
+                            focus:ring 
+                            focus:ring-blue-500 
+                            focus:ring-opacity-50`}
                 required
               />
             </label>
-            <label className="block mb-2">
-              <span className="text-gray-400">SQL Sequence:</span>
+            <label className={`block mb-2`}>
+              <span className={`text-gray-400`}>SQL Sequence:</span>
               <input
                 type="text"
                 name="sql_seq"
                 value={form.sql_seq}
                 onChange={handleInputChange}
                 readOnly={!isEditing && !isCreating}
-                className="mt-1 block w-full border border-gray-300 text-gray-800 dark:text-gray-400 dark:bg-slate-800 rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50"
+                className={`mt-1 block w-full border border-gray-300 text-gray-800 dark:text-gray-400 dark:bg-slate-800 rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50`}
                 required
               />
             </label>
-            <label className="block mb-4">
-              <span className="text-gray-400">SQL Content:</span>
+            <label className={`block mb-4`}>
+              <span className={`text-gray-400`}>SQL Content:</span>
               <AutoResizeTextarea
                 name="sql_content"
                 value={form.sql_content}
@@ -307,34 +339,46 @@ const ServiceSQL = () => {
                 readOnly={!isEditing && !isCreating}
               />
             </label>
-            <div className="">
+            <div className={``}>
               <CreateUpdateButton/>
               <ClearInputButton/>
             </div>
           </div>
-          <h2 className="text-lg font-semibold mb-4">Query List</h2>
+          <h2 className={`text-lg 
+                          font-semibold 
+                          mb-4`}>Query List</h2>
           <button
             onClick={fetchSQLList}
-            className="bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 mt-2"
+            className={`bg-blue-500 
+                        text-white 
+                        px-4 
+                        py-2 
+                        rounded-md 
+                        hover:bg-blue-600 
+                        focus:outline-none 
+                        focus:ring-2 
+                        focus:ring-blue-500 
+                        focus:ring-opacity-50 
+                        mt-2`}
           >
             Refresh
           </button>
-          <table className="w-full bg-white border border-gray-300 mt-2">
+          <table className={`w-full bg-white border border-gray-300 mt-2`}>
             <thead>
               <tr>
-                <th className="border border-gray-300 dark:text-gray-400 dark:bg-slate-800 px-4 py-2">
+                <th className={`border border-gray-300 dark:text-gray-400 dark:bg-slate-800 px-4 py-2`}>
                   System Code
                 </th>
-                <th className="border border-gray-300 dark:text-gray-400 dark:bg-slate-800 px-4 py-2">
+                <th className={`border border-gray-300 dark:text-gray-400 dark:bg-slate-800 px-4 py-2`}>
                   SQL Name
                 </th>
-                <th className="border border-gray-300  dark:text-gray-400 dark:bg-slate-800 px-4 py-2">
+                <th className={`border border-gray-300  dark:text-gray-400 dark:bg-slate-800 px-4 py-2`}>
                   SQL Sequence
                 </th>
-                <th className="border border-gray-300  dark:text-gray-400 dark:bg-slate-800 px-4 py-2">
+                <th className={`border border-gray-300  dark:text-gray-400 dark:bg-slate-800 px-4 py-2`}>
                   SQL Content
                 </th>
-                <th className="border border-gray-300 dark:text-gray-400 dark:bg-slate-800 px-4 py-2">
+                <th className={`border border-gray-300 dark:text-gray-400 dark:bg-slate-800 px-4 py-2`}>
                   Actions
                 </th>
               </tr>
@@ -342,28 +386,46 @@ const ServiceSQL = () => {
             <tbody>
               {queries.map((query) => (
                 <tr key={query.id}>
-                  <td className="border border-gray-300  dark:text-gray-400 dark:bg-slate-800 px-4 py-2">
+                  <td className={`border border-gray-300  dark:text-gray-400 dark:bg-slate-800 px-4 py-2`}>
                     {query.system_code}
                   </td>
-                  <td className="border border-gray-300 dark:text-gray-400 dark:bg-slate-800 px-4 py-2">
+                  <td className={`border border-gray-300 dark:text-gray-400 dark:bg-slate-800 px-4 py-2`}>
                     {query.sql_name}
                   </td>
-                  <td className="border border-gray-300 dark:text-gray-400 dark:bg-slate-800 px-4 py-2">
+                  <td className={`border border-gray-300 dark:text-gray-400 dark:bg-slate-800 px-4 py-2`}>
                     {query.sql_seq}
                   </td>
-                  <td className="border border-gray-300 dark:text-gray-400 dark:bg-slate-800 px-4 py-2">
+                  <td className={`border border-gray-300 dark:text-gray-400 dark:bg-slate-800 px-4 py-2`}>
                     <pre>{query.sql_content}</pre>
                   </td>
-                  <td className="border border-gray-300 dark:text-gray-400 dark:bg-slate-800 px-4 py-2">
+                  <td className={`border border-gray-300 dark:text-gray-400 dark:bg-slate-800 px-4 py-2`}>
                     <button
                       onClick={() => handleEdit(query)}
-                      className="bg-yellow-500 text-white py-1 px-2 rounded-md hover:bg-yellow-600 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-opacity-50"
+                      className={`bg-yellow-500 
+                                  text-white 
+                                  px-2 
+                                  py-1 
+                                  rounded-md 
+                                  hover:bg-yellow-600 
+                                  focus:outline-none 
+                                  focus:ring-2 
+                                  focus:ring-yellow-500 
+                                  focus:ring-opacity-50`}
                     >
                       Edit SQL    
                     </button>
                     <button
                       onClick={() => handleDelete(query)}
-                      className="bg-red-500 text-white py-1 px-2 rounded-md hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50"
+                      className={`bg-red-500 
+                                  text-white 
+                                  px-2 
+                                  py-1 
+                                  rounded-md 
+                                  hover:bg-red-600 
+                                  focus:outline-none 
+                                  focus:ring-2 
+                                  focus:ring-red-500 
+                                  focus:ring-opacity-50`}
                     >
                       Del. SQL
                     </button>
@@ -374,7 +436,17 @@ const ServiceSQL = () => {
           </table>
           <button
             onClick={fetchSQLList}
-            className="bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 mt-2"
+            className={`bg-blue-500 
+                        text-white 
+                        px-4 
+                        py-2 
+                        rounded-md 
+                        hover:bg-blue-600 
+                        focus:outline-none 
+                        focus:ring-2 
+                        focus:ring-blue-500 
+                        focus:ring-opacity-50 
+                        mt-2`}
           >
             Refresh
           </button>

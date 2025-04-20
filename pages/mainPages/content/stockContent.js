@@ -795,11 +795,11 @@ const StockContent = () => {
     }
 
     return (
-      <div className="flex flex-col mt-5 w-full">
+      <div className={`flex flex-col mt-5 w-full`}>
         <RealtimeChart updateCurrentPrice={updateCurrentPrice}></RealtimeChart>
 
         <h2>[{currentTickerRef.current}] in the past {periodValue} {periodUnitRef.current} {Math.abs(currentPriceRef.current - getFirstPrice())}USD {currentPriceRef.current - getFirstPrice() >= 0 ? 'up' : 'down'}</h2>
-        <div className="w-full flex">
+        <div className={`w-full flex`}>
           <input
             className={`text-${getPriceColor()} text-center bg-slate-50 dark:bg-slate-800 border border-slate-400 h-10 w-full`}
             type="text"
@@ -819,7 +819,7 @@ const StockContent = () => {
           />
         </div>
 
-        <ApexCharts className="mt-5"
+        <ApexCharts className={`mt-5`}
           options={chartOptions}
           series={chartOptions.series}
           type="line"
@@ -901,16 +901,16 @@ const StockContent = () => {
 
   const SearchPanel = () => {
     return (
-      <div className="flex:col">
-        <h2 className="title-font sm:text-4xl text-3xl w-full my-10 font-medium text-green-900">
+      <div className={`flex:col`}>
+        <h2 className={`title-font sm:text-4xl text-3xl w-full my-10 font-medium text-green-900`}>
           Stock search
         </h2>
         {/* Span */}
-        <div className="items-start mt-2 dark:text-slate-400 w-full">
+        <div className={`items-start mt-2 dark:text-slate-400 w-full`}>
           <label>Span</label>
           <select
             key={dataIntervalUnitRef.current}
-            className="dark:text-slate-400 ml-2 bg-slate-50 dark:bg-slate-800"
+            className={`dark:text-slate-400 ml-2 bg-slate-50 dark:bg-slate-800`}
             value={dataIntervalUnitRef.current}
             onChange={(e) => setDataIntervalUnitRef(e.target.value)}
           >
@@ -923,11 +923,11 @@ const StockContent = () => {
           </select>
         </div>
         {/* Period */}
-        <div className="items-start mt-2 dark:text-slate-400">
-          <label className="dark:text-slate-400 dark:bg-slate-800">
+        <div className={`items-start mt-2 dark:text-slate-400`}>
+          <label className={`dark:text-slate-400 dark:bg-slate-800`}>
             Period
             <input
-              className="dark:text-slate-400 ml-2 text-center bg-slate-50 dark:bg-slate-800"
+              className={`dark:text-slate-400 ml-2 text-center bg-slate-50 dark:bg-slate-800`}
               type="number"
               value={periodValue}
               onChange={(e) => setPeriodValue(e.target.value)}
@@ -935,7 +935,7 @@ const StockContent = () => {
             />
           </label>
           <select
-            className="ml-2 text-center dark:text-slate-400 bg-slate-50 dark:bg-slate-800"
+            className={`ml-2 text-center dark:text-slate-400 bg-slate-50 dark:bg-slate-800`}
             value={periodUnitRef.current}
             onChange={(e) => setPeriodUnitRef(e.target.value)}
           >
@@ -948,10 +948,10 @@ const StockContent = () => {
           </select>
         </div>
         {/* Recent & Select */}
-        <div className="flex moble:flex-row desktop:flex-row mb-4">
+        <div className={`flex moble:flex-row desktop:flex-row mb-4`}>
           {/* Recent Symbols List */}
-          <div className="w-[30%] h-72 py-10">
-            <p className="text-lg mb-2">Recent...</p>
+          <div className={`w-[30%] h-72 py-10`}>
+            <p className={`text-lg mb-2`}>Recent...</p>
             <ul
               className={`items-start dark:bg-slate-800 dark:text-white bg-slate-50 text-black border border-slate-400 h-full overflow-y-auto`}
             >
@@ -975,13 +975,13 @@ const StockContent = () => {
                   </li>
                 ))
               ) : (
-                <li className="text-gray-500" key="No recent symbols.">No recent symbols.</li>
+                <li className={`text-gray-500" key="No recent symbols.`}>No recent symbols.</li>
               )}
             </ul>
           </div>
           {/* Select Symbols List */}
-          <div className="w-[70%] h-72 py-10">
-            <p className="text-lg mb-2">Select...</p>
+          <div className={`w-[70%] h-72 py-10`}>
+            <p className={`text-lg mb-2`}>Select...</p>
             <ul
               ref={tickerListDOMRef}
               className={`items-start dark:bg-slate-800 dark:text-slate-400 bg-slate-50 border border-slate-400 h-full overflow-y-auto`}
@@ -1001,11 +1001,11 @@ const StockContent = () => {
           </div>
         </div>
         {/* Input Stock Code & Info */}
-        <div className="flex mt-2">
+        <div className={`flex mt-2`}>
           {" "}
           {/* Centered inputs */}
           <input
-            className="text-center bg-slate-50 text-slate-600 dark-text-slate-400 dark:bg-slate-800 border p-2 ml-1 h-10 w-full"
+            className={`text-center bg-slate-50 text-slate-600 dark-text-slate-400 dark:bg-slate-800 border p-2 ml-1 h-10 w-full`}
             type="text"
             value={currentTickerRef.current}
             placeholder="Symbol. ex) AAPL, GOOGL, TSLA ..."
@@ -1025,7 +1025,7 @@ const StockContent = () => {
             onClick={viewDetailInfo}
             src="/detailInfo.png"
             alt="Info"
-            className="h-10 w-10 align-middle"
+            className={`h-10 w-10 align-middle`}
           />
 
           <input
@@ -1044,10 +1044,10 @@ const StockContent = () => {
             }}
             src="/refresh-icon.png" // 이미지 경로를 지정하세요
             alt="Refresh"
-            className="h-8 w-8 ml-1 mt-1 align-middle" // 적절한 크기로 조정
+            className={`h-8 w-8 ml-1 mt-1 align-middle`} // 적절한 크기로 조정
           />
           <select
-            className="dark:text-slate-400 ml-2 bg-slate-50 dark:bg-slate-800"
+            className={`dark:text-slate-400 ml-2 bg-slate-50 dark:bg-slate-800`}
             value={selectedCurrencyRef.current?.currency_code}
             onChange={selectedCurrencyChanged}
           >
@@ -1073,17 +1073,17 @@ const StockContent = () => {
   }
 
   return (
-    <DivContainer className="flex flex-col">
+    <DivContainer className={`flex flex-col`}>
       <BrunnerMessageBox />
       {loading && (
-        <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-gray-500 bg-opacity-75 z-50">
-          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-gray-900"></div>
+        <div className={`fixed top-0 left-0 w-full h-full flex items-center justify-center bg-gray-500 bg-opacity-75 z-50`}>
+          <div className={`animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-gray-900`}></div>
         </div>
       )}
-      <div className="flex flex-col">
-        <SearchPanel className="w-full" />
+      <div className={`flex flex-col`}>
+        <SearchPanel className={`w-full`} />
         {currentTickerStockDataRef.current && (
-          <div className="flex flex-col w-full">
+          <div className={`flex flex-col w-full`}>
             {renderChart()}
           </div>
         )}

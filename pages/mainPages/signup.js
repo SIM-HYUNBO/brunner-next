@@ -103,8 +103,8 @@ export default function Signup() {
     <>
       <BrunnerMessageBox />
       {loading && (
-        <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-gray-500 bg-opacity-75 z-50">
-          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-gray-900"></div>
+        <div className={`fixed top-0 left-0 w-full h-full flex items-center justify-center bg-gray-500 bg-opacity-75 z-50`}>
+          <div className={`animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-gray-900`}></div>
         </div>
       )}
       <Layout>
@@ -119,20 +119,20 @@ export default function Signup() {
         </Head>
         <BodySection>
           <DivContainer>
-            <div className="w-full pr-16 flex flex-col items-start text-left mb-16">
-              <h2 className="title-font text-3xl mb-10 font-medium text-green-900">
+            <div className={`w-full pr-16 flex flex-col items-start text-left mb-16`}>
+              <h2 className={`title-font text-3xl mb-10 font-medium text-green-900`}>
                 Create account
               </h2>
-              <div className="md:pr-16 lg:pr-0 pr-0">
-                <p className="leading-relaxed mt-4  mb-5">
+              <div className={`md:pr-16 lg:pr-0 pr-0`}>
+                <p className={`leading-relaxed mt-4  mb-5`}>
                   Enter your Information.
                 </p>
               </div>
-              <div className="flex flex-wrap w-screen">
-                <div className="relative mb-4 mr-5 w-40 ">
+              <div className={`flex flex-wrap w-screen`}>
+                <div className={`relative mb-4 mr-5 w-40`}>
                   <label
                     htmlFor="id"
-                    className="leading-7 text-sm text-gray-400"
+                    className={`leading-7 text-sm text-gray-400`}
                   >
                     ID
                   </label>
@@ -140,14 +140,14 @@ export default function Signup() {
                     type="text"
                     id="id"
                     name="Id"
-                    className="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"
+                    className={`w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out`}
                     onChange={(e) => changeUserIdValue(e)}
                   />
                 </div>
-                <div className="relative mb-4 mr-5 w-40">
+                <div className={`relative mb-4 mr-5 w-40`}>
                   <label
                     htmlFor="password"
-                    className="leading-7 text-sm text-gray-400"
+                    className={`leading-7 text-sm text-gray-400`}
                   >
                     Password
                   </label>
@@ -155,16 +155,16 @@ export default function Signup() {
                     type="password"
                     id="password"
                     name="password"
-                    className="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"
+                    className={`w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out`}
                     onChange={(e) => changePasswordValue(e)}
                   />
                 </div>
               </div>
-              <div className="flex flex-wrap w-screen">
-                <div className="relative mb-4 mr-5 w-40">
+              <div className={`flex flex-wrap w-screen`}>
+                <div className={`relative mb-4 mr-5 w-40`}>
                   <label
                     htmlFor="name"
-                    className="leading-7 text-sm text-gray-400"
+                    className={`leading-7 text-sm text-gray-400`}
                   >
                     Name
                   </label>
@@ -172,15 +172,15 @@ export default function Signup() {
                     type="text"
                     id="name"
                     name="Name"
-                    className="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"
+                    className={`w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out`}
                     onChange={(e) => changeUserNameValue(e)}
                   />
                 </div>
 
-                <div className="relative mb-4 mr-5 w-40">
+                <div className={`relative mb-4 mr-5 w-40`}>
                   <label
                     htmlFor="phoneNumber"
-                    className="leading-7 text-sm text-gray-400"
+                    className={`leading-7 text-sm text-gray-400`}
                   >
                     Phone Number
                   </label>
@@ -188,15 +188,15 @@ export default function Signup() {
                     type="text"
                     id="phoneNumber"
                     name="PhoneNumber"
-                    className="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"
+                    className={`w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out`}
                     onChange={(e) => changePhoneNumberValue(e)}
                   />
                 </div>
 
-                <div className="relative mb-4 mr-5 w-40">
+                <div className={`relative mb-4 mr-5 w-40`}>
                   <label
                     htmlFor="email"
-                    className="leading-7 text-sm text-gray-400"
+                    className={`leading-7 text-sm text-gray-400`}
                   >
                     E-Mail
                   </label>
@@ -204,15 +204,15 @@ export default function Signup() {
                     type="email"
                     id="phoneNumber"
                     name="PhoneNumber"
-                    className="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"
+                    className={`w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out`}
                     onChange={(e) => changeEMailValue(e)}
                   />
                 </div>
 
-                <div className="relative mb-4 mr-5 w-40">
+                <div className={`relative mb-4 mr-5 w-40`}>
                   <label
                     htmlFor="registerNo"
-                    className="leading-7 text-sm text-gray-400"
+                    className={`leading-7 text-sm text-gray-400`}
                   >
                     Register No
                   </label>
@@ -220,15 +220,15 @@ export default function Signup() {
                     type="text"
                     id="registerNo"
                     name="RegisterNo"
-                    className="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"
+                    className={`w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out`}
                     onChange={(e) => changeRegisterNoValue(e)}
                   />
                 </div>
 
-                <div className="relative mb-4 mr-5 w-96">
+                <div className={`relative mb-4 mr-5 w-96`}>
                   <label
                     htmlFor="id"
-                    className="leading-7 text-sm text-gray-400"
+                    className={`leading-7 text-sm text-gray-400`}
                   >
                     Address
                   </label>
@@ -236,19 +236,19 @@ export default function Signup() {
                     type="text"
                     id="address"
                     name="Address"
-                    className="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"
+                    className={`w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out`}
                     onChange={(e) => changeAddressValue(e)}
                   />
                 </div>
               </div>
               <button
                 onClick={() => requestSignup()}
-                className="text-white bg-indigo-500 max-w-max border-0 py-2 px-4 focus:outline-none hover:bg-indigo-600 rounded text-lg"
+                className={`text-white bg-indigo-500 max-w-max border-0 py-2 px-4 focus:outline-none hover:bg-indigo-600 rounded text-lg`}
               >
                 Signup
               </button>
 
-              <p className="text-xs text-gray-500 mt-3">Nice to meet you.</p>
+              <p className={`text-xs text-gray-500 mt-3`}>Nice to meet you.</p>
             </div>
           </DivContainer>
         </BodySection>

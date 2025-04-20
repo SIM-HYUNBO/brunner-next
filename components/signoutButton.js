@@ -39,7 +39,7 @@ export default function SignoutButton() {
 
       {userInfo.getLoginUserId() && (
         <button
-          className="inline-flex items-center 
+          className={`inline-flex items-center 
                                   boder-0 
                                   py-1 
                                   px-3 
@@ -50,7 +50,7 @@ export default function SignoutButton() {
                                 dark:bg-slate-600
                                 dark:text-yellow-600 
                                 dark:hover:text-yellow-300 
-                                rounded text-base mt-4 md:mt-0"
+                                rounded text-base mt-4 md:mt-0`}
           type="button"
           onClick={async () => {
             const result = await openModal(constants.messages.MESSAGE_SIGNOUT);
