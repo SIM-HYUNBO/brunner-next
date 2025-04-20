@@ -195,7 +195,7 @@ const AdminStream = () => {
 
 const UserStream = ({ adminSessionId }) => {
 
-  const [isConnected, setIsConnected] = useState(false);
+  const [connectionState, setConnectionState] = useState("");
   const peerRef = useRef(null);
   const pendingCandidates = useRef([]); // ICE 후보를 임시로 저장할 큐
 
@@ -235,18 +235,24 @@ const UserStream = ({ adminSessionId }) => {
 
     peer.oniceconnectionstatechange = () => {
       console.log("🔌 ICE 연결 상태 변경:", peer.iceConnectionState);
+      setConnectionState(`Peer Ice Connection ${peer.iceConnectionState}`);
+
+      playVideo();
     };
     
     peer.onconnectionstatechange = () => {
       console.log("🌐 Peer 연결 상태 변경:", peer.connectionState);
+      setConnectionState(`Peer Connection ${peer.connectionState}`);
     };
     
     peer.onsignalingstatechange = () => {
       console.log("📶 시그널링 상태 변경:", peer.signalingState);
+      setConnectionState(`Peer Signal State ${peer.signalingState}`);
     };
     
     peer.onicegatheringstatechange = () => {
       console.log("❄️ ICE 후보 수집 상태 변경:", peer.iceGatheringState);
+      setConnectionState(`Peer Ice Gathering State ${peer.iceGatheringState}`);
     };
 
     // 2. ICE 후보 수집 시 Firebase에 전송
@@ -289,9 +295,6 @@ const UserStream = ({ adminSessionId }) => {
 
       // 6. 생성된 answer를 Firebase에 저장
       set(ref(database, `webrtc/${adminSessionId}/answer`), peer.localDescription);
-
-      // 7. 연결 완료 상태 변경
-      setIsConnected(true);
 
       // 8. 큐에 저장된 ICE 후보 추가
       pendingCandidates.current.forEach((candidate) => {
@@ -352,24 +355,46 @@ const UserStream = ({ adminSessionId }) => {
         if(!userVideoRef.current.srcObject){  
           userVideoRef.current.srcObject = remoteStream;
           console.log("✅ 비디오 출력 설정됨");
+
+          // 비디오가 로드되었을 때 onloadeddata 발생하게 설정
+          userVideoRef.current.onloadeddata = () => {
+            console.log("🎥 비디오 데이터 로드 완료");
+            playVideo();
+          };
           
           userVideoRef.current.onloadedmetadata = () => {
-            userVideoRef.current.play().then(() => {
-              console.log("✅ 사용자 비디오 재생됨");
-            }).catch((err) => {
-              console.warn("⚠️ 재생 실패", err);
-            });
+            playVideo();
           };
         } 
 
         remoteStream.getTracks().forEach((track) => {
             console.log(`🎚️ 트랙 종류: ${track.kind}, 상태: ${track.readyState}, 활성화: ${track.enabled}`);
+            if (track.readyState !== "live") {
+              console.log("⏳ 트랙 준비 중...");
+            } else if (!track.enabled) {
+              console.log("❗ 트랙이 비활성화 상태");
+              track.enabled = true;  // 트랙을 활성화
+            } else {
+              console.log("🎥 트랙이 활성화되고 준비됨");
+            }
           });          
       } else {
         console.warn("❗ remoteStream이 없거나 userVideoRef가 유효하지 않습니다.");
       }
     };
   };
+
+  const playVideo = () => {
+    if (peerRef.current.iceConnectionState === "connected") {
+      if (userVideoRef.current && userVideoRef.current.srcObject) {
+        userVideoRef.current.play().then(() => {
+          setConnectionState("✅ ICE 연결 후 비디오 재생됨");
+        }).catch((err) => {
+          setConnectionState("✅ ICE 연결 후 비디오 재생 실패");
+        });
+      }
+    }
+  }
 
   useEffect(() => {
     const video = userVideoRef.current;
@@ -412,8 +437,7 @@ const UserStream = ({ adminSessionId }) => {
           objectFit: "cover", // 비디오가 화면을 덮도록 설정
         }}
       />
-      {!isConnected && <p>연결 대기 중...</p>}
-      {isConnected && <p>연결 완료! 방송을 보고 있습니다.</p>}  
+      {<p>{connectionState}</p>}  
     </div>
   );
 };
