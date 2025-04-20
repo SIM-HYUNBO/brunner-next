@@ -40,7 +40,7 @@ const BrunnerTable = forwardRef(({
                   type="datetime-local"
                   value={formattedLocalDateTime}
                   readOnly
-                  className="text-center dark:bg-slate-800"
+                  className={`text-center dark:bg-slate-800`}
                 />
               );
             },
@@ -56,20 +56,19 @@ const BrunnerTable = forwardRef(({
         id: "actions",
         headerClassName: 'text-center bg-purple-500 text-purple-100 w-[100px] !important',
         Cell: ({ row }) => (
-          <div className="flex justify-center">
+          <div className={`flex justify-center`}>
             <button
               onClick={() => updateTableData(row)}
-              className="p-2 rounded"
+              className={`p-2 rounded`}
               title="Save"
-            >
-              <img src="/save-icon.png" alt="Save" className="w-6 h-6" />
+            > <img src="/save-icon.png" alt="Save" className={`w-6 h-6`} />
             </button>
             <button
               onClick={() => deleteTableData(row)}
-              className="p-2 rounded"
+              className={`p-2 rounded`}
               title="Delete"
             >
-              <img src="/delete-icon.png" alt="Delete" className="w-6 h-6" />
+              <img src="/delete-icon.png" alt="Delete" className={`w-6 h-6`} />
             </button>
           </div>
         ),
@@ -97,7 +96,7 @@ const BrunnerTable = forwardRef(({
 
   const TableTitleArea = () => {
     return (
-      <h2 className="title-font sm:text-4xl text-3xl w-full my-10 font-medium text-green-900">
+      <h2 className={`title-font sm:text-4xl text-3xl w-full my-10 font-medium text-green-900`}>
         {tableTitle}
       </h2>
     );
@@ -105,10 +104,10 @@ const BrunnerTable = forwardRef(({
 
   const TableConditionArea = () => {
     return (
-      <div className="flex justify-end w-full p-4 bg-gray-100 mt-2">
+      <div className={`flex justify-end w-full p-4 bg-gray-100 mt-2`}>
         <button
           onClick={fetchTableData}
-          className="text-white bg-indigo-500 border-0 py-2 px-6 focus:outline-none hover:bg-indigo-600 rounded text-lg mb-3"
+          className={`text-white bg-indigo-500 border-0 py-2 px-6 focus:outline-none hover:bg-indigo-600 rounded text-lg mb-3`}
         >
           Refresh
         </button>
@@ -139,7 +138,7 @@ const BrunnerTable = forwardRef(({
     );
 
     return (
-      <table {...getTableProps()} className="w-full text-left table-auto mt-2">
+      <table {...getTableProps()} className={`w-full text-left table-auto mt-2`}>
         <thead>
           {headerGroups.map((headerGroup) => (
             <tr {...headerGroup.getHeaderGroupProps()}>
@@ -171,7 +170,13 @@ const BrunnerTable = forwardRef(({
                   return (
                     <td
                       {...cell.getCellProps()}
-                      className={`p-2 border-b text-slate-700 dark:text-slate-400 dark:border-slate-400 ${cell.column.type === 'number' ? 'text-right': 'text-left'}`}
+                      className={`p-2 
+                                  border-b 
+                                  text-slate-700 
+                                  dark:text-slate-400 
+                                  dark:border-slate-400 
+                                  ${cell.column.type === 'number' ? 'text-right': 'text-left'}
+                                  `}
                     >
                       {cell.column.id !== 'actions' && cell.column.editable ? (
                         <EditableCell
@@ -247,11 +252,11 @@ const BrunnerTable = forwardRef(({
 
 
     return (
-      <div className="mb-2 table w-full dark:bg-slate-800 mt-2 p-2">
+      <div className={`mb-2 table w-full dark:bg-slate-800 mt-2 p-2`}>
         {columnHeaders.map((header) => (
           !header.input_hidden && (
-            <div className="flex items-center">
-              <label className="mr-2 dark:text-slate-400">{header.Header}</label>
+            <div className={`flex items-center`}>
+              <label className={`mr-2 dark:text-slate-400`}>{header.Header}</label>
               <input
                 type={header.type}
                 name={header.accessor}
@@ -267,7 +272,7 @@ const BrunnerTable = forwardRef(({
         ))}
         <button
           onClick={() => { addNewTableData(inputValues) }}
-          className="bg-green-500 text-white py-2 px-4 rounded hover:bg-green-600 mt-2"
+          className={`bg-green-500 text-white py-2 px-4 rounded hover:bg-green-600 mt-2`}
           style={{ alignSelf: "flex-end" }}
         >
           Add
@@ -290,7 +295,7 @@ const BrunnerTable = forwardRef(({
   return (
     <>
       <DivContainer>
-        <div className="w-full px-1">
+        <div className={`w-full px-1`}>
           <TableTitleArea />
           <TableConditionArea />
           <TableBodyArea />
