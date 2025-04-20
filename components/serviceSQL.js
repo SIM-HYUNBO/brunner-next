@@ -42,7 +42,7 @@ const AutoResizeTextarea = forwardRef(
         value={value}
         onChange={handleChange}
         readOnly={readOnly}
-        className={`resize-none w-full border border-gray-300 rounded-md p-2 mt-1 ${readOnly ? "bg-gray-100" : ""
+        className={`resize-none w-full border border-gray-300 ${readOnly ? "dark:bg-slate-800 bg-gray-100 text-slate-400 dark:text-slate-800" : "bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-400 rounded-md p-2 mt-1"
           }`}
         rows="10"
       />
@@ -253,43 +253,43 @@ const ServiceSQL = () => {
           <h2 className="text-xl font-bold mb-4">Service SQL Management</h2>
           <div ref={editPanelRef} className="mb-4">
             <label className="block mb-2">
-              <span className="text-gray-700">System Code:</span>
+              <span className="text-gray-400">System Code:</span>
               <input
                 type="text"
                 name="system_code"
                 value={form.system_code}
                 onChange={handleInputChange}
                 readOnly={!isEditing && !isCreating}
-                className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50"
+                className="mt-1 block w-full border border-gray-300 text-gray-800 dark:text-gray-400 dark:bg-slate-800 rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50"
                 required
               />
             </label>
             <label className="block mb-2">
-              <span className="text-gray-700">SQL Name:</span>
+              <span className="text-gray-400">SQL Name:</span>
               <input
                 type="text"
                 name="sql_name"
                 value={form.sql_name}
                 onChange={handleInputChange}
                 readOnly={!isEditing && !isCreating}
-                className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50"
+                className="mt-1 block w-full border border-gray-300 text-gray-800 dark:text-gray-400 dark:bg-slate-800 rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50"
                 required
               />
             </label>
             <label className="block mb-2">
-              <span className="text-gray-700">SQL Sequence:</span>
+              <span className="text-gray-400">SQL Sequence:</span>
               <input
                 type="text"
                 name="sql_seq"
                 value={form.sql_seq}
                 onChange={handleInputChange}
                 readOnly={!isEditing && !isCreating}
-                className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50"
+                className="mt-1 block w-full border border-gray-300 text-gray-800 dark:text-gray-400 dark:bg-slate-800 rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50"
                 required
               />
             </label>
             <label className="block mb-4">
-              <span className="text-gray-700">SQL Content:</span>
+              <span className="text-gray-400">SQL Content:</span>
               <AutoResizeTextarea
                 name="sql_content"
                 value={form.sql_content}
@@ -312,46 +312,50 @@ const ServiceSQL = () => {
           <table className="w-full bg-white border border-gray-300 mt-2">
             <thead>
               <tr>
-                <th className="border border-gray-300 px-4 py-2">
+                <th className="border border-gray-300 dark:text-gray-400 dark:bg-slate-800 px-4 py-2">
                   System Code
                 </th>
-                <th className="border border-gray-300 px-4 py-2">SQL Name</th>
-                <th className="border border-gray-300 px-4 py-2">
+                <th className="border border-gray-300 dark:text-gray-400 dark:bg-slate-800 px-4 py-2">
+                  SQL Name
+                </th>
+                <th className="border border-gray-300  dark:text-gray-400 dark:bg-slate-800 px-4 py-2">
                   SQL Sequence
                 </th>
-                <th className="border border-gray-300 px-4 py-2">
+                <th className="border border-gray-300  dark:text-gray-400 dark:bg-slate-800 px-4 py-2">
                   SQL Content
                 </th>
-                <th className="border border-gray-300 px-4 py-2">Actions</th>
+                <th className="border border-gray-300 dark:text-gray-400 dark:bg-slate-800 px-4 py-2">
+                  Actions
+                </th>
               </tr>
             </thead>
             <tbody>
               {queries.map((query) => (
                 <tr key={query.id}>
-                  <td className="border border-gray-300 px-4 py-2">
+                  <td className="border border-gray-300  dark:text-gray-400 dark:bg-slate-800 px-4 py-2">
                     {query.system_code}
                   </td>
-                  <td className="border border-gray-300 px-4 py-2">
+                  <td className="border border-gray-300 dark:text-gray-400 dark:bg-slate-800 px-4 py-2">
                     {query.sql_name}
                   </td>
-                  <td className="border border-gray-300 px-4 py-2">
+                  <td className="border border-gray-300 dark:text-gray-400 dark:bg-slate-800 px-4 py-2">
                     {query.sql_seq}
                   </td>
-                  <td className="border border-gray-300 px-4 py-2">
+                  <td className="border border-gray-300 dark:text-gray-400 dark:bg-slate-800 px-4 py-2">
                     <pre>{query.sql_content}</pre>
                   </td>
-                  <td className="border border-gray-300 px-4 py-2">
+                  <td className="border border-gray-300 dark:text-gray-400 dark:bg-slate-800 px-4 py-2">
                     <button
                       onClick={() => handleEdit(query)}
                       className="bg-yellow-500 text-white py-1 px-2 rounded-md hover:bg-yellow-600 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-opacity-50"
                     >
-                      Edit
+                      Edit SQL    
                     </button>
                     <button
                       onClick={() => handleDelete(query)}
                       className="bg-red-500 text-white py-1 px-2 rounded-md hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50"
                     >
-                      Delete
+                      Del. SQL
                     </button>
                   </td>
                 </tr>
