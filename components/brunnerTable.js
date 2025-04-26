@@ -104,7 +104,7 @@ const BrunnerTable = forwardRef(({
 
   const TableConditionArea = () => {
     return (
-      <div className={`flex justify-end w-full p-4 bg-gray-100 mt-2`}>
+      <div className={`flex justify-end w-full p-4 bg-gray-100 dark:bg-slate-800  mt-2`}>
         <button
           onClick={fetchTableData}
           className={`text-white bg-indigo-500 border-0 py-2 px-6 focus:outline-none hover:bg-indigo-600 rounded text-lg mb-3`}
