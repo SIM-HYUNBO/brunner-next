@@ -257,15 +257,17 @@ const BrunnerTable = forwardRef(({
       <div className={`mb-2 table w-full dark:bg-slate-800 mt-2 p-2`}>
         {columnHeaders.map((header) => (
           !header.input_hidden && (
-            <div className={`flex items-center`}>
-              <label className={`mr-2 dark:text-slate-400`}>{header.Header}</label>
+            <div key={header.accessor} className="flex items-center mb-2">
+              <label className="w-32 mr-2 text-sm font-medium dark:text-slate-400">
+                {header.Header}
+              </label>
               <input
                 type={header.type}
                 name={header.accessor}
                 value={inputValues[header.accessor]}
                 onChange={(e) => handleInputChange(e, header.accessor)}
                 placeholder={header.Header}
-                className={`mr-3 p-2 border rounded dark:text-slate-400 dark:bg-slate-800 w-full ${
+                className={`p-2 border rounded dark:text-slate-400 dark:bg-slate-800 flex-1 ${
                   header.type === "number" ? "text-right" : "text-left"
                 }`}
               />
