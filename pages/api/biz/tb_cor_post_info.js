@@ -221,4 +221,4 @@ function generateUUID() { // Public Domain/MIT
     });
 }
 
-export { executeService };
+export { executeService, generateUUID };

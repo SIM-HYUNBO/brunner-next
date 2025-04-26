@@ -4,10 +4,11 @@ import logger from "./winston/logger"
 import * as constants from "@/components/constants"
 import * as database from "./biz/database/database"
 import * as tb_cor_sql_info from './biz/tb_cor_sql_info'
-import * as security from './biz/tb_cor_user_mst'
-import * as asset from './biz/tb_cor_income_hist'
-import * as stock from './biz/tb_cor_ticker_info'
-import * as board from './biz/tb_cor_post_info'
+import * as tb_cor_user_mst from './biz/tb_cor_user_mst'
+import * as tb_cor_income_hist from './biz/tb_cor_income_hist'
+import * as tb_cor_ticker_info from './biz/tb_cor_ticker_info'
+import * as tb_cor_post_info from './biz/tb_cor_post_info'
+import * as tb_cor_post_comment_info from './biz/tb_cor_post_comment_info'
 
 async function initialize() {
     var serviceSql = null;
@@ -87,17 +88,17 @@ const executeService = async (method, req) => {
     const commandName = jRequest.commandName;
 
     if (commandName.startsWith('tb_cor_user_mst.')) {
-        jResponse = await security.executeService(req.body._txnId, jRequest);
+        jResponse = await tb_cor_user_mst.executeService(req.body._txnId, jRequest);
     } else if (commandName.startsWith('tb_cor_sql_info.')) {
         jResponse = await tb_cor_sql_info.executeService(req.body._txnId, jRequest);
     } else if (commandName.startsWith('tb_cor_income_hist.')) {
-        jResponse = await asset.executeService(req.body._txnId, jRequest);
+        jResponse = await tb_cor_income_hist.executeService(req.body._txnId, jRequest);
     } else if (commandName.startsWith('tb_cor_ticker_info.')) {
-        jResponse = await stock.executeService(req.body._txnId, jRequest);
+        jResponse = await tb_cor_ticker_info.executeService(req.body._txnId, jRequest);
     } else if (commandName.startsWith('tb_cor_post_info.')) {
-        jResponse = await board.executeService(req.body._txnId, jRequest);
+        jResponse = await tb_cor_post_info.executeService(req.body._txnId, jRequest);
     } else if (commandName.startsWith('tb_cor_post_comment_info.')) {
-        jResponse = await board.executeService(req.body._txnId, jRequest);
+        jResponse = await tb_cor_post_comment_info.executeService(req.body._txnId, jRequest);
     } else {
         jResponse = JSON.stringify({
             error_code: -1,
