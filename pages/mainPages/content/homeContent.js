@@ -41,10 +41,16 @@ export default function HomeContent() {
               </div>
             )}
             <div className={`mt-10`}>
+            <BrunnerVideo
+                url={"https://youtu.be/sftMQKlyG9Y"}
+                title="7% withdrawal after retirement"
+              >
+              </BrunnerVideo>
               <BrunnerVideo
                 url={"https://youtu.be/0j1BdlsL_ew?t=2"}
                 title="The powerful effect of S&P500"
-              ></BrunnerVideo>
+              >
+              </BrunnerVideo>
             </div>
           </div>
         </div>
