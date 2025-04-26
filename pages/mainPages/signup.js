@@ -70,7 +70,7 @@ export default function Signup() {
     var jResponse = null;
 
     try {
-      jRequest.commandName = constants.commands.COMMAND_TB_COR_USER_MST_SIGNUP;
+      jRequest.commandName = constants.commands.COMMAND_SECURITY_SIGNUP;
       jRequest.systemCode = process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE;
       jRequest.userId = userId;
       jRequest.password = password;

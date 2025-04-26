@@ -230,7 +230,7 @@ const StockContent = () => {
   const getTickerList = async () => {
     try {
       const jRequest = {
-        commandName: constants.commands.COMMAND_STOCK_GET_TICKER_LIST,
+        commandName: constants.commands.COMMAND_STOCK_INFO_GET_TICKER_LIST,
         systemCode: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE,
       };
 
@@ -243,7 +243,7 @@ const StockContent = () => {
         await setTickerListRef(jResponse.tickerList);
       } else {
         console.log(
-          `${constants.commands.COMMAND_STOCK_GET_TICKER_LIST}:${JSON.stringify(
+          `${constants.commands.COMMAND_STOCK_INFO_GET_TICKER_LIST}:${JSON.stringify(
             jResponse.error_message
           )}`
         );
@@ -252,7 +252,7 @@ const StockContent = () => {
     } catch (err) {
       setLoading(false);
       openModal(
-        `${constants.commands.COMMAND_STOCK_GET_TICKER_LIST}:${err instanceof Error ? err.message : constants.messages.MESSAGE_UNKNOWN_ERROR
+        `${constants.commands.COMMAND_STOCK_INFO_GET_TICKER_LIST}:${err instanceof Error ? err.message : constants.messages.MESSAGE_UNKNOWN_ERROR
         }`
       );
     }
@@ -291,7 +291,7 @@ const StockContent = () => {
       const timeto = moment().format("YYYY-MM-DD");
 
       const jRequest = {
-        commandName: constants.commands.COMMAND_STOCK_GET_STOCK_INFO,
+        commandName: constants.commands.COMMAND_STOCK_INFO_GET_STOCK_INFO,
         systemCode: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE,
         tickerCode: currentTickerRef.current,
         multiplier: 1,
@@ -333,7 +333,7 @@ const StockContent = () => {
       } else {
         setLoading(false);
         console.log(
-          `${constants.commands.COMMAND_STOCK_GET_STOCK_INFO}: ${JSON.stringify(
+          `${constants.commands.COMMAND_STOCK_INFO_GET_STOCK_INFO}: ${JSON.stringify(
             jResponse.error_message
           )}`
         );
@@ -342,7 +342,7 @@ const StockContent = () => {
     } catch (err) {
       setLoading(false);
       openModal(
-        `${constants.commands.COMMAND_STOCK_GET_STOCK_INFO}:${err instanceof Error ? err.message : constants.messages.MESSAGE_UNKNOWN_ERROR
+        `${constants.commands.COMMAND_STOCK_INFO_GET_STOCK_INFO}:${err instanceof Error ? err.message : constants.messages.MESSAGE_UNKNOWN_ERROR
         }`
       );
     }
@@ -854,7 +854,7 @@ const StockContent = () => {
   const getCurrencyList = async () => {
     try {
       const jRequest = {
-        commandName: constants.commands.COMMAND_STOCK_GET_CURRENCY_LIST,
+        commandName: constants.commands.COMMAND_STOCK_INFO_GET_CURRENCY_LIST,
         systemCode: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE,
       };
 
@@ -866,7 +866,7 @@ const StockContent = () => {
       }
     } catch (err) {
       openModal(
-        `${constants.commands.COMMAND_STOCK_GET_CURRENCY_LIST}:${err instanceof Error ? err.message : constants.messages.MESSAGE_UNKNOWN_ERROR
+        `${constants.commands.COMMAND_STOCK_INFO_GET_CURRENCY_LIST}:${err instanceof Error ? err.message : constants.messages.MESSAGE_UNKNOWN_ERROR
         }`
       );
     }
@@ -875,7 +875,7 @@ const StockContent = () => {
   const setExchangeByCurrency = async () => {
     try {
       const jRequest = {
-        commandName: constants.commands.COMMAND_STOCK_GET_EXCHANGE_BY_CURRENCY,
+        commandName: constants.commands.COMMAND_STOCK_INFO_GET_EXCHANGE_BY_CURRENCY,
         currencyCode: selectedCurrencyRef.current.currency_code
       };
 
@@ -893,7 +893,7 @@ const StockContent = () => {
       }
     } catch (err) {
       openModal(
-        `${constants.commands.COMMAND_STOCK_GET_CURRENCY_LIST}:${err instanceof Error ? err.message : constants.messages.MESSAGE_UNKNOWN_ERROR
+        `${constants.commands.COMMAND_STOCK_INFO_GET_CURRENCY_LIST}:${err instanceof Error ? err.message : constants.messages.MESSAGE_UNKNOWN_ERROR
         }`
       );
     }

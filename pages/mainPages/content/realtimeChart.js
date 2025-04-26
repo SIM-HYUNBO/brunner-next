@@ -255,7 +255,7 @@ const RealtimeChart = ({ updateCurrentPrice }) => {
         prevTickerCode = currentTickerRef.current;
 
         const jRequest = {
-          commandName: constants.commands.COMMAND_STOCK_GET_REALTIME_STOCK_INFO,
+          commandName: constants.commands.COMMAND_STOCK_INFO_GET_REALTIME_STOCK_INFO,
           systemCode: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE,
           tickerCode: currentTickerRef.current,
         };
@@ -292,7 +292,7 @@ const RealtimeChart = ({ updateCurrentPrice }) => {
     try {
       /* 최근 데이터 100개 요청 */
       const jRequest = {
-        commandName: constants.commands.COMMAND_STOCK_GET_LATEST_STOCK_INFO,
+        commandName: constants.commands.COMMAND_STOCK_INFO_GET_LATEST_STOCK_INFO,
         systemCode: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE,
         tickerCode: currentTickerRef.current,
         dataCount: -100,

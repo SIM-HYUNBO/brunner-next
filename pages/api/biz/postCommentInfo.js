@@ -3,21 +3,21 @@
 import logger from "../winston/logger"
 import * as constants from '@/components/constants'
 import * as database from "./database/database"
-import * as db_cor_sql_info from './tb_cor_sql_info'
-import * as tb_cor_post_info from './tb_cor_post_info'
+import * as db_cor_sql_info from './dynamicSql'
+import * as postInfo from './postInfo'
 
 const executeService = async (txnId, jRequest) => {
     var jResponse = {};
 
     try {
         switch (jRequest.commandName) {
-             case constants.commands.COMMAND_TB_COR_POST_COMMENT_INFO_INSERT_ONE:
+             case constants.commands.COMMAND_POST_COMMENT_INFO_INSERT_ONE:
                 jResponse = await insertOne(txnId, jRequest);
                 break;
-            case constants.commands.COMMAND_TB_COR_POST_COMMENT_INFO_UPDATE_ONE:
+            case constants.commands.COMMAND_POST_COMMENT_INFO_UPDATE_ONE:
                 jResponse = await updateOne(txnId, jRequest);
                 break;
-            case constants.commands.COMMAND_TB_COR_POST_COMMENT_INFO_DELETE_ONE:
+            case constants.commands.COMMAND_POST_COMMENT_INFO_DELETE_ONE:
                 jResponse = await deleteOne(txnId, jRequest);
                 break;
             default:
@@ -35,7 +35,7 @@ const insertOne = async (txnId, jRequest) => {
 
     try {
         jResponse.commanaName = jRequest.commandName;
-        var coommentId = tb_cor_post_info.generateUUID();
+        var coommentId = postInfo.generateUUID();
         var sql = null
         sql = await db_cor_sql_info.getSQL00('insert_TB_COR_POST_COMMENT_INFO', 1);
         var insert_TB_COR_POST_COMMENT_INFO_01 = await database.executeSQL(sql,

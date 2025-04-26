@@ -2,9 +2,9 @@
 
 import logger from "../winston/logger"
 import moment from 'moment';
-import * as database from "./database/database"
-import * as tb_cor_sql_info from './tb_cor_sql_info'
 import * as constants from '@/components/constants'
+import * as database from "./database/database"
+import * as dynamicSql from './dynamicSql'
 import * as requestResult from '../requestResult'
 
 const executeService = async (txnId, jRequest) => {
@@ -12,25 +12,25 @@ const executeService = async (txnId, jRequest) => {
 
     try {
         switch (jRequest.commandName) {
-            case constants.commands.COMMAND_STOCK_GET_TICKER_LIST:
+            case constants.commands.COMMAND_STOCK_INFO_GET_TICKER_LIST:
                 jResponse = await getTickerList(txnId, jRequest);
                 break;
             case constants.commands.COMMAND_STOCK_GET_TICKER_INFO:
                 jResponse = await getTickerInfo(txnId, jRequest);
                 break;
-            case constants.commands.COMMAND_STOCK_GET_STOCK_INFO:
+            case constants.commands.COMMAND_STOCK_INFO_GET_STOCK_INFO:
                 jResponse = await getStockInfo(txnId, jRequest);
                 break;
-            case constants.commands.COMMAND_STOCK_GET_LATEST_STOCK_INFO:
+            case constants.commands.COMMAND_STOCK_INFO_GET_LATEST_STOCK_INFO:
                 jResponse = await getLatestStockInfo(txnId, jRequest);
                 break;
-            case constants.commands.COMMAND_STOCK_GET_REALTIME_STOCK_INFO:
+            case constants.commands.COMMAND_STOCK_INFO_GET_REALTIME_STOCK_INFO:
                 jResponse = await getRealtimeStockInfo(txnId, jRequest);
                 break;
-            case constants.commands.COMMAND_STOCK_GET_CURRENCY_LIST:
+            case constants.commands.COMMAND_STOCK_INFO_GET_CURRENCY_LIST:
                 jResponse = await getCurrencyList(txnId, jRequest);
                 break;
-            case constants.commands.COMMAND_STOCK_GET_EXCHANGE_BY_CURRENCY:
+            case constants.commands.COMMAND_STOCK_INFO_GET_EXCHANGE_BY_CURRENCY:
                 jResponse = await getExchangeByCurrency(txnId, jRequest);
                 break;
             default:
@@ -99,7 +99,7 @@ const getStockInfo = async (txnId, jRequest) => {
 
         var searchFlag = true; // 지금 조회를 해야 하는지 여부
 
-        var recentRequestResult = await requestResult.getRequestResult(jRequest.systemCode, constants.commands.COMMAND_STOCK_GET_STOCK_INFO, jRequest.tickerCode, jRequest.multiplier, jRequest.timespan, jRequest.from, jRequest.to, jRequest.adjust, jRequest.sort, '', '', '')
+        var recentRequestResult = await requestResult.getRequestResult(jRequest.systemCode, constants.commands.COMMAND_STOCK_INFO_GET_STOCK_INFO, jRequest.tickerCode, jRequest.multiplier, jRequest.timespan, jRequest.from, jRequest.to, jRequest.adjust, jRequest.sort, '', '', '')
         if (recentRequestResult) {
             searchFlag = false;
             jResponse.stockInfo = JSON.parse(recentRequestResult);
@@ -123,7 +123,7 @@ const getStockInfo = async (txnId, jRequest) => {
                 });
                 jResponse.stockInfo = data.results;
 
-                await requestResult.saveRequestResult(jRequest.systemCode, constants.commands.COMMAND_STOCK_GET_STOCK_INFO, jRequest.tickerCode, jRequest.multiplier, jRequest.timespan, jRequest.from, jRequest.to, jRequest.adjust, jRequest.sort, '', '', '', JSON.stringify(data.results))
+                await requestResult.saveRequestResult(jRequest.systemCode, constants.commands.COMMAND_STOCK_INFO_GET_STOCK_INFO, jRequest.tickerCode, jRequest.multiplier, jRequest.timespan, jRequest.from, jRequest.to, jRequest.adjust, jRequest.sort, '', '', '', JSON.stringify(data.results))
 
                 jResponse.error_code = 0; // exception
                 jResponse.error_message = constants.messages.EMPTY_STRING;
@@ -161,7 +161,7 @@ const getTickerList = async (txnId, jRequest) => {
 
         if (searchFlag) { // 지금 조회를 해야 한다면
             var sql = null
-            sql = await tb_cor_sql_info.getSQL00('select_TB_COR_TICKER_INFO', 1);
+            sql = await dynamicSql.getSQL00('select_TB_COR_TICKER_INFO', 1);
             var select_TB_COR_TICKER_INFO_01 = await database.executeSQL(sql,
                 [
                     jRequest.systemCode
@@ -205,7 +205,7 @@ const getTickerInfo = async (txnId, jRequest) => {
         if (searchFlag) { // 지금 조회를 해야 한다면        
 
             var sql = null
-            sql = await tb_cor_sql_info.getSQL00('select_TB_COR_TICKER_INFO', 2);
+            sql = await dynamicSql.getSQL00('select_TB_COR_TICKER_INFO', 2);
             var select_TB_COR_TICKER_INFO_02 = await database.executeSQL(sql,
                 [
                     jRequest.systemCode,
@@ -291,7 +291,7 @@ const getLatestStockInfo = async (txnId, jRequest) => {
 
         var searchFlag = true; // 지금 조회를 해야 하는지 여부
 
-        var recentRequestResult = await requestResult.getRequestResult(jRequest.systemCode, constants.commands.COMMAND_STOCK_GET_LATEST_STOCK_INFO, jRequest.tickerCode, '', '', from, to, '', '', '', '', '')
+        var recentRequestResult = await requestResult.getRequestResult(jRequest.systemCode, constants.commands.COMMAND_STOCK_INFO_GET_LATEST_STOCK_INFO, jRequest.tickerCode, '', '', from, to, '', '', '', '', '')
 
         var data = null;
         if (recentRequestResult) {
@@ -310,7 +310,7 @@ const getLatestStockInfo = async (txnId, jRequest) => {
 
             data = await response.json();
             if (data.results) {
-                await requestResult.saveRequestResult(jRequest.systemCode, constants.commands.COMMAND_STOCK_GET_LATEST_STOCK_INFO, jRequest.tickerCode, '', '', from, to, '', '', '', '', '', data)
+                await requestResult.saveRequestResult(jRequest.systemCode, constants.commands.COMMAND_STOCK_INFO_GET_LATEST_STOCK_INFO, jRequest.tickerCode, '', '', from, to, '', '', '', '', '', data)
 
                 jResponse.stockInfo = data.results.slice(jRequest.dataCount);
                 jResponse.stockInfo.map((d) => {
@@ -420,7 +420,7 @@ const getCurrencyList = async (txnId, jRequest) => {
         jResponse.systemCode = jRequest.systemCode;
 
         var sql = null
-        sql = await tb_cor_sql_info.getSQL00('select_TB_COR_CURRENCY_MST', 1);
+        sql = await dynamicSql.getSQL00('select_TB_COR_CURRENCY_MST', 1);
         var select_TB_COR_CURRENCY_MST_01 = await database.executeSQL(sql,
             [
                 jRequest.systemCode

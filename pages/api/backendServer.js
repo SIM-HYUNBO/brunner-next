@@ -3,17 +3,17 @@
 import logger from "./winston/logger"
 import * as constants from "@/components/constants"
 import * as database from "./biz/database/database"
-import * as tb_cor_sql_info from './biz/tb_cor_sql_info'
-import * as tb_cor_user_mst from './biz/tb_cor_user_mst'
-import * as tb_cor_income_hist from './biz/tb_cor_income_hist'
-import * as tb_cor_ticker_info from './biz/tb_cor_ticker_info'
-import * as tb_cor_post_info from './biz/tb_cor_post_info'
-import * as tb_cor_post_comment_info from './biz/tb_cor_post_comment_info'
+import * as dynamicSql from './biz/dynamicSql'
+import * as security from './biz/security'
+import * as incomeHistory from './biz/incomeHistory'
+import * as tb_cor_ticker_info from './biz/stockInfo'
+import * as postInfo from './biz/postInfo'
+import * as postCommentInfo from './biz/postCommentInfo'
 
 async function initialize() {
     var serviceSql = null;
     if (!process.serviceSQL)
-        serviceSql = await tb_cor_sql_info.loadAll();
+        serviceSql = await dynamicSql.loadAll();
     else
         serviceSql = process.serviceSQL;
 
@@ -75,7 +75,7 @@ export default async (req, res) => {
 
         res.send(`${JSON.stringify(jResponse)}`);
 
-        if (commandName !== constants.commands.COMMAND_STOCK_GET_REALTIME_STOCK_INFO)
+        if (commandName !== constants.commands.COMMAND_STOCK_INFO_GET_REALTIME_STOCK_INFO)
             await saveTxnHistory(remoteIp, txnId, jRequest, jResponse);
 
         logger.warn(`END TXN ${(!commandName) ? "" : commandName} in ${durationMs} milliseconds.\n response: ${JSON.stringify(jResponse)}\n`)
@@ -87,18 +87,18 @@ const executeService = async (method, req) => {
     var jRequest = method === "GET" ? JSON.parse(req.params.requestJson) : method === "POST" ? req.body : null;
     const commandName = jRequest.commandName;
 
-    if (commandName.startsWith('tb_cor_user_mst.')) {
-        jResponse = await tb_cor_user_mst.executeService(req.body._txnId, jRequest);
-    } else if (commandName.startsWith('tb_cor_sql_info.')) {
-        jResponse = await tb_cor_sql_info.executeService(req.body._txnId, jRequest);
-    } else if (commandName.startsWith('tb_cor_income_hist.')) {
-        jResponse = await tb_cor_income_hist.executeService(req.body._txnId, jRequest);
-    } else if (commandName.startsWith('tb_cor_ticker_info.')) {
+    if (commandName.startsWith('security.')) {
+        jResponse = await security.executeService(req.body._txnId, jRequest);
+    } else if (commandName.startsWith('dynamicSql.')) {
+        jResponse = await dynamicSql.executeService(req.body._txnId, jRequest);
+    } else if (commandName.startsWith('incomeHistory.')) {
+        jResponse = await incomeHistory.executeService(req.body._txnId, jRequest);
+    } else if (commandName.startsWith('stockInfo.')) {
         jResponse = await tb_cor_ticker_info.executeService(req.body._txnId, jRequest);
-    } else if (commandName.startsWith('tb_cor_post_info.')) {
-        jResponse = await tb_cor_post_info.executeService(req.body._txnId, jRequest);
-    } else if (commandName.startsWith('tb_cor_post_comment_info.')) {
-        jResponse = await tb_cor_post_comment_info.executeService(req.body._txnId, jRequest);
+    } else if (commandName.startsWith('postInfo.')) {
+        jResponse = await postInfo.executeService(req.body._txnId, jRequest);
+    } else if (commandName.startsWith('postCommentInfo.')) {
+        jResponse = await postCommentInfo.executeService(req.body._txnId, jRequest);
     } else {
         jResponse = JSON.stringify({
             error_code: -1,
@@ -127,7 +127,7 @@ const generateTxnId = async () => {
 }
 
 const saveTxnHistory = async (remoteIp, txnId, jRequest, jResponse) => {
-    var sql = await tb_cor_sql_info.getSQL00('insert_TB_COR_TXN_HIST', 1);
+    var sql = await dynamicSql.getSQL00('insert_TB_COR_TXN_HIST', 1);
     var insert_TB_COR_TXN_HIST_01 = await database.executeSQL(sql,
         [
             txnId,
@@ -141,7 +141,7 @@ const saveTxnHistory = async (remoteIp, txnId, jRequest, jResponse) => {
     }
     else {
         // 오래된 이력은 여기서 삭제
-        sql = await tb_cor_sql_info.getSQL00('delete_TB_COR_TXN_HIST', 1);
+        sql = await dynamicSql.getSQL00('delete_TB_COR_TXN_HIST', 1);
         var delete_TB_COR_TXN_HIST_01 = await database.executeSQL(sql,
             [
             ]);

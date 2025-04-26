@@ -45,7 +45,7 @@ export default function Signin() {
   const requestSignIn = async () => {
     try {
       const jRequest = {
-        commandName: constants.commands.COMMAND_TB_COR_USER_MST_SIGNIN,
+        commandName: constants.commands.COMMAND_SECURITY_SIGNIN,
         systemCode: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE,
         userId: userId,
         password: password,

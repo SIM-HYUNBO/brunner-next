@@ -68,7 +68,7 @@ export default function ResetPassword() {
     var jResponse = null;
 
     try {
-      jRequest.commandName = constants.commands.COMMAND_TB_COR_USER_MST_SEND_EMAIL_AUTHCODE;
+      jRequest.commandName = constants.commands.COMMAND_SECURITY_SEND_EMAIL_AUTHCODE;
       jRequest.systemCode = process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE;
       jRequest.userId = userId;
       jRequest.phoneNumber = phoneNumber;
@@ -90,7 +90,7 @@ export default function ResetPassword() {
     var jResponse = null;
 
     try {
-      jRequest.commandName = constants.commands.COMMAND_TB_COR_USER_MST_RESET_PASSWORD;
+      jRequest.commandName = constants.commands.COMMAND_SECURITY_RESET_PASSWORD;
       jRequest.systemCode = process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE;
       jRequest.userId = userId;
       jRequest.phoneNumber = phoneNumber;
@@ -119,7 +119,7 @@ export default function ResetPassword() {
     var jResponse = null;
 
     try {
-      jRequest.commandName = constants.commands.COMMAND_TB_COR_USER_MST_DELETE_ACCOUNT;
+      jRequest.commandName = constants.commands.COMMAND_SECURITY_DELETE_ACCOUNT;
       jRequest.systemCode = process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE;
       jRequest.userId = userId;
       jRequest.phoneNumber = phoneNumber;

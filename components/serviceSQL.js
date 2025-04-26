@@ -104,7 +104,7 @@ const ServiceSQL = () => {
     const userId = userInfo.getLoginUserId();
     try {
       const jRequest = {
-        commandName: constants.commands.COMMAND_TB_COR_SQL_INFO_SELECT_ALL,
+        commandName: constants.commands.COMMAND_DYNAMIC_SEQ_SELECT_ALL,
         systemCode: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE,
         userId: userId,
       };
@@ -146,7 +146,7 @@ const ServiceSQL = () => {
         `${form.system_code} ${form.sql_name} ${form.sql_seq} ${form.sql_content}`
       );
 
-      jRequest.commandName = constants.commands.COMMAND_TB_COR_SQL_INFO_UPDATE_ONE;
+      jRequest.commandName = constants.commands.COMMAND_DYNAMIC_SEQ_UPDATE_ONE;
       jRequest.systemCode = form.system_code;
       jRequest.sqlName = form.sql_name;
       jRequest.sqlSeq = form.sql_seq;
@@ -249,7 +249,7 @@ const ServiceSQL = () => {
       var jRequest = {};
       var jResponse = null;
 
-      jRequest.commandName = constants.commands.COMMAND_TB_COR_SQL_INFO_DELETE_ONE;
+      jRequest.commandName = constants.commands.COMMAND_DYNAMIC_SEQ_DELETE_ONE;
       jRequest.systemCode = userQueryItem.system_code;
       jRequest.sqlName = userQueryItem.sql_name;
       jRequest.sqlSeq = userQueryItem.sql_seq;
