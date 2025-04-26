@@ -138,7 +138,8 @@ const BrunnerTable = forwardRef(({
     );
 
     return (
-      <table {...getTableProps()} className={`w-full text-left table-auto mt-2`}>
+      <div className="w-full overflow-x-auto">
+      <table {...getTableProps()} className={`min-w-full w-full text-left table-auto mt-2`}>
         <thead>
           {headerGroups.map((headerGroup) => (
             <tr {...headerGroup.getHeaderGroupProps()}>
@@ -198,6 +199,7 @@ const BrunnerTable = forwardRef(({
           })}
         </tbody>
       </table>
+      </div>
     );
   };
 
