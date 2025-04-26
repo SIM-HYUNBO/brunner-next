@@ -267,9 +267,14 @@ const BrunnerTable = forwardRef(({
                 value={inputValues[header.accessor]}
                 onChange={(e) => handleInputChange(e, header.accessor)}
                 placeholder={header.Header}
-                className={`p-2 border rounded dark:text-slate-400 dark:bg-slate-800 flex-1 ${
-                  header.type === "number" ? "text-right" : "text-left"
-                }`}
+                className={`p-2 
+                            border 
+                            rounded 
+                            dark:text-slate-400 
+                            dark:bg-slate-800 
+                            flex-1 
+                            ${header.type === "number" ? "text-right" : "text-left"}`
+                          }
               />
             </div>
           )
