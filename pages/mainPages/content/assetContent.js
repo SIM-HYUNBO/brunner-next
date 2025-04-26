@@ -54,7 +54,7 @@ export default function AssetContent() {
 
     try {
       const jRequest = {
-        commandName: constants.commands.COMMAND_TB_COR_INCOME_HIST_SELECT_BY_USERID,
+        commandName: constants.commands.COMMAND_INCOME_HISTORY_SELECT_BY_USERID,
         systemCode: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE,
         userId: userId,
       };
@@ -83,7 +83,7 @@ export default function AssetContent() {
 
     try {
       const jRequest = {
-        commandName: constants.commands.COMMAND_TB_COR_INCOME_HIST_UPDATE_ONE,
+        commandName: constants.commands.COMMAND_INCOME_HISTORY_UPDATE_ONE,
         systemCode: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE,
         userId: userId,
         historyId: row.original.history_id,
@@ -118,7 +118,7 @@ export default function AssetContent() {
 
     try {
       const jRequest = {
-        commandName: constants.commands.COMMAND_TB_COR_INCOME_HIST_DELETE_ONE,
+        commandName: constants.commands.COMMAND_INCOME_HISTORY_DELETE_ONE,
         systemCode: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE,
         userId: userId,
         historyId: row.values.history_id,
@@ -155,7 +155,7 @@ export default function AssetContent() {
       }
       
       const jRequest = {
-        commandName: constants.commands.COMMAND_TB_COR_INCOME_HIST_INSERT_ONE,
+        commandName: constants.commands.COMMAND_INCOME_HISTORY_INSERT_ONE,
         systemCode: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE,
         userId: userId,
         ...inputValues,

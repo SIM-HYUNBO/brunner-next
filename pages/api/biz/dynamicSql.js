@@ -3,24 +3,24 @@
 import logger from "../winston/logger"
 import * as constants from '@/components/constants'
 import * as database from './database/database'
-import * as db_cor_sql_info from './tb_cor_sql_info'
+import * as db_cor_sql_info from './dynamicSql'
 
 const executeService = async (txnId, jRequest) => {
   var jResponse = {};
 
   try {
     switch (jRequest.commandName) {
-      case constants.commands.COMMAND_TB_COR_SQL_INFO_SELECT_ALL:
+      case constants.commands.COMMAND_DYNAMIC_SEQ_SELECT_ALL:
         jResponse = await selectAll(txnId, jRequest);
         break;
-      case constants.commands.COMMAND_TB_COR_SQL_INFO_UPDATE_ONE:
+      case constants.commands.COMMAND_DYNAMIC_SEQ_UPDATE_ONE:
         jResponse = await updateOne(txnId, jRequest);
         break;
-      case constants.commands.COMMAND_TB_COR_SQL_INFO_DELETE_ONE:
+      case constants.commands.COMMAND_DYNAMIC_SEQ_DELETE_ONE:
         jResponse = await deleteOne(txnId, jRequest);
         break; 
       default:
-      case constants.commands.COMMAND_TB_COR_SQL_INFO_LOAD_ALL:
+      case constants.commands.COMMAND_DYNAMIC_SEQ_LOAD_ALL:
           jResponse = await loadAll(txnId, jRequest);
           break;
     }

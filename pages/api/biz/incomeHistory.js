@@ -3,23 +3,23 @@
 import logger from "../winston/logger"
 import * as constants from '@/components/constants'
 import * as database from './database/database'
-import * as db_cor_sql_info from './tb_cor_sql_info'
+import * as dynamicSql from './dynamicSql'
 
 const executeService = async (txnId, jRequest) => {
     var jResponse = {};
 
     try {
         switch (jRequest.commandName) {
-            case constants.commands.COMMAND_TB_COR_INCOME_HIST_INSERT_ONE:
+            case constants.commands.COMMAND_INCOME_HISTORY_INSERT_ONE:
                 jResponse = await insertOne(txnId, jRequest);
                 break;
-            case constants.commands.COMMAND_TB_COR_INCOME_HIST_UPDATE_ONE:
+            case constants.commands.COMMAND_INCOME_HISTORY_UPDATE_ONE:
                 jResponse = await updateOne(txnId, jRequest);
                 break;
-            case constants.commands.COMMAND_TB_COR_INCOME_HIST_DELETE_ONE:
+            case constants.commands.COMMAND_INCOME_HISTORY_DELETE_ONE:
                 jResponse = await deleteOne(txnId, jRequest);
                 break;
-            case constants.commands.COMMAND_TB_COR_INCOME_HIST_SELECT_BY_USERID:
+            case constants.commands.COMMAND_INCOME_HISTORY_SELECT_BY_USERID:
                 jResponse = await selectByUserId(txnId, jRequest);
                 break;
             default:
@@ -39,7 +39,7 @@ const insertOne = async (txnId, jRequest) => {
         jResponse.commanaName = jRequest.commandName;
 
         var sql = null
-        sql = await db_cor_sql_info.getSQL00('insert_TB_COR_INCOME_HIST', 1);
+        sql = await dynamicSql.getSQL00('insert_TB_COR_INCOME_HIST', 1);
         var insert_TB_COR_INCOME_HIST_01 = await database.executeSQL(sql,
             [
                 jRequest.systemCode,
@@ -73,7 +73,7 @@ const selectByUserId = async (txnId, jRequest) => {
         jResponse.commanaName = jRequest.commandName;
 
         var sql = null
-        sql = await db_cor_sql_info.getSQL00('select_TB_COR_INCOME_HIST', 1);
+        sql = await dynamicSql.getSQL00('select_TB_COR_INCOME_HIST', 1);
         var select_TB_COR_INCOME_HIST_01 = await database.executeSQL(sql,
             [
                 jRequest.systemCode,
@@ -100,7 +100,7 @@ const deleteOne = async (txnId, jRequest) => {
         jResponse.commanaName = jRequest.commandName;
 
         var sql = null
-        sql = await db_cor_sql_info.getSQL00('delete_TB_COR_INCOME_HIST', 1);
+        sql = await dynamicSql.getSQL00('delete_TB_COR_INCOME_HIST', 1);
         var delete_TB_COR_INCOME_HIST_01 = await database.executeSQL(sql,
             [
                 jRequest.historyId,
@@ -132,7 +132,7 @@ const updateOne = async (txnId, jRequest) => {
         jResponse.commanaName = jRequest.commandName;
 
         var sql = null
-        sql = await db_cor_sql_info.getSQL00('update_TB_COR_INCOME_HIST', 1);
+        sql = await dynamicSql.getSQL00('update_TB_COR_INCOME_HIST', 1);
         var update_TB_COR_INCOME_HIST_01 = await database.executeSQL(sql,
             [
                 jRequest.amount,
