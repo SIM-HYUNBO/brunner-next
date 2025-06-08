@@ -260,7 +260,7 @@ const RealtimeChart = ({ updateCurrentPrice }) => {
           tickerCode: currentTickerRef.current,
         };
 
-        const jResponse = await RequestServer("POST", JSON.stringify(jRequest));
+        const jResponse = await RequestServer("POST", jRequest);
 
         if (jResponse.error_code === 0) {
           if (jResponse.stockInfo.data.t > lastChartData?.t)
@@ -298,7 +298,7 @@ const RealtimeChart = ({ updateCurrentPrice }) => {
         dataCount: -100,
       };
 
-      const jResponse = await RequestServer("POST", JSON.stringify(jRequest));
+      const jResponse = await RequestServer("POST", jRequest);
 
       if (jResponse.error_code === 0) {
         handleNewData(jResponse.stockInfo);

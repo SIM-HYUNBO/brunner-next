@@ -12,7 +12,7 @@ export default async function RequestServer(method, jRequest) {
       headers: {
         "Content-Type": "application/json",
       },
-      body: jRequest
+      body: JSON.stringify(jRequest)
     });
 
     jResponse = res.json();

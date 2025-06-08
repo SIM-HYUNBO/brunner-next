@@ -60,7 +60,7 @@ export default function AssetContent() {
       };
 
       setLoading(true);
-      const jResponse = await RequestServer("POST", JSON.stringify(jRequest));
+      const jResponse = await RequestServer("POST", jRequest);
       setLoading(false);
 
       if (jResponse.error_code === 0) {
@@ -92,7 +92,7 @@ export default function AssetContent() {
       };
 
       setLoading(true);
-      const jResponse = await RequestServer("POST", JSON.stringify(jRequest));
+      const jResponse = await RequestServer("POST", jRequest);
       setLoading(false);
 
       if (jResponse.error_code === 0) {
@@ -125,7 +125,7 @@ export default function AssetContent() {
       };
 
       setLoading(true);
-      const jResponse = await RequestServer("POST", JSON.stringify(jRequest));
+      const jResponse = await RequestServer("POST", jRequest);
       setLoading(false);
 
       if (jResponse.error_code === 0) {
@@ -162,7 +162,7 @@ export default function AssetContent() {
       };
 
       setLoading(true);
-      const jResponse = await RequestServer("POST", JSON.stringify(jRequest));
+      const jResponse = await RequestServer("POST", jRequest);
       setLoading(false);
 
       if (jResponse.error_code === 0) {

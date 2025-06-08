@@ -30,7 +30,7 @@ function Board(boardInfo) {
       jRequest.postInfo = { postType: `TICKER_INFO-${boardType}` }; // 게시판 유형을 TICKER_INFO-{종모코드}로 함
 
       setLoading(true); // 데이터 로딩 시작
-      jResponse = await RequestServer("POST", JSON.stringify(jRequest));
+      jResponse = await RequestServer("POST", jRequest);
       setLoading(false); // 데이터 로딩 끝
 
       if (jResponse.error_code === 0) {
@@ -70,7 +70,7 @@ function Board(boardInfo) {
         jRequest.postInfo = newPost;
 
         setLoading(true);
-        jResponse = await RequestServer("POST", JSON.stringify(jRequest));
+        jResponse = await RequestServer("POST", jRequest);
         setLoading(false);
 
         if (jResponse.error_code === 0) {
@@ -108,7 +108,7 @@ function Board(boardInfo) {
       };
 
       setLoading(true);
-      jResponse = await RequestServer("POST", JSON.stringify(jRequest));
+      jResponse = await RequestServer("POST", jRequest);
       setLoading(false);
 
       if (jResponse.error_code === 0) {
@@ -153,7 +153,7 @@ function Board(boardInfo) {
       };
 
       setLoading(true);
-      jResponse = await RequestServer("POST", JSON.stringify(jRequest));
+      jResponse = await RequestServer("POST", jRequest);
       setLoading(false);
 
       if (jResponse.error_code === 0) {
@@ -186,7 +186,7 @@ function Board(boardInfo) {
         userId: userId ? userId : "anonymous user",
       };
 
-      jResponse = await RequestServer("POST", JSON.stringify(jRequest));
+      jResponse = await RequestServer("POST", jRequest);
 
       if (jResponse.error_code === 0) {
         const updatedPosts = posts.map((post) => {
@@ -231,7 +231,7 @@ function Board(boardInfo) {
         userId: userId ? userId : "anonymous user",
       };
 
-      jResponse = await RequestServer("POST", JSON.stringify(jRequest));
+      jResponse = await RequestServer("POST", jRequest);
 
       if (jResponse.error_code === 0) {
         const updatedPosts = posts.map((post) => {
@@ -276,7 +276,7 @@ function Board(boardInfo) {
         userId: userId ? userId : "anonymous user",
       };
 
-      jResponse = await RequestServer("POST", JSON.stringify(jRequest));
+      jResponse = await RequestServer("POST", jRequest);
 
       if (jResponse.error_code === 0) {
         const updatedPosts = posts.map((post) => {

@@ -81,7 +81,7 @@ export default function Signup() {
       jRequest.address = address;
 
       setLoading(true); // 데이터 로딩 시작
-      jResponse = await RequestServer("POST", JSON.stringify(jRequest));
+      jResponse = await RequestServer("POST", jRequest);
       setLoading(false); // 데이터 로딩 끝
 
       if (jResponse.error_code == 0) {

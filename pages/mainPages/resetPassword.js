@@ -75,7 +75,7 @@ export default function ResetPassword() {
       jRequest.email = email; // 추가
 
       setLoading(true); // 데이터 로딩 시작
-      jResponse = await RequestServer("POST", JSON.stringify(jRequest));
+      jResponse = await RequestServer("POST", jRequest);
       setLoading(false); // 데이터 로딩 끝
       openModal(jResponse.error_message);
     } catch (error) {
@@ -100,7 +100,7 @@ export default function ResetPassword() {
       jRequest.confirmPassword = confirmPassword;
 
       setLoading(true); // 데이터 로딩 시작
-      jResponse = await RequestServer("POST", JSON.stringify(jRequest));
+      jResponse = await RequestServer("POST", jRequest);
       setLoading(false); // 데이터 로딩 끝
       
       const result = await openModal(jResponse.error_message);
@@ -129,7 +129,7 @@ export default function ResetPassword() {
       jRequest.confirmPassword = confirmPassword;
 
       setLoading(true); // 데이터 로딩 시작
-      jResponse = await RequestServer("POST", JSON.stringify(jRequest));
+      jResponse = await RequestServer("POST", jRequest);
       setLoading(false); // 데이터 로딩 끝
       
       const result = await openModal(jResponse.error_message);
