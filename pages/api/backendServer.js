@@ -20,7 +20,7 @@ async function initialize() {
     return serviceSql.size;
 }
 
-var sql_loading = false;
+var isLoadingDynamicSql = false;
 
 export default async (req, res) => {
     var response = null;
@@ -36,12 +36,10 @@ export default async (req, res) => {
     try {
         var loadedSQLSize = 0;
 
-        if (!sql_loading) {
+        if (!isLoadingDynamicSql)
             loadedSQLSize = await initialize();
-        }
-        else {
+        else
             throw Error(constants.messages.MESSAGE_SERVER_NOW_INITIALIZING);
-        }
 
         if (!process.serviceSQL || process.serviceSQL.length == 0) {
             throw Error(constants.messages.MESSAGE_SERVER_NOW_INITIALIZING);
@@ -51,12 +49,14 @@ export default async (req, res) => {
         jRequest = req.method === "GET" ? JSON.parse(req.params.requestJson) : req.method === "POST" ? req.body : null;
         txnId = await generateTxnId();
         commandName = jRequest.commandName;
+        
         logger.warn(`START TXN ${commandName}\n`);
         jRequest._txnId = txnId;
         logger.info(`method:${req.method} from ${remoteIp}\n requestBody:${JSON.stringify(req.body)}\n`);
         startTxnTime = new Date();
-
+        
         response = await executeService(req.method, req);
+        
         if(response && constants.isJsonObject(response))
             jResponse= response;
         else

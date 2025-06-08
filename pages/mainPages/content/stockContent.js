@@ -236,7 +236,7 @@ const StockContent = () => {
 
       // setLoading(true);
       setCurrentTickerStockDataRef(null);
-      const jResponse = await RequestServer("POST", JSON.stringify(jRequest));
+      const jResponse = await RequestServer("POST", jRequest);
       // setLoading(false);
 
       if (jResponse.error_code === 0) {
@@ -306,7 +306,7 @@ const StockContent = () => {
       setCurrentTickerStockDataRef(null);
 
       setLoading(true);
-      const jResponse = await RequestServer("POST", JSON.stringify(jRequest));
+      const jResponse = await RequestServer("POST", jRequest);
       setLoading(false);
 
       if (jResponse.error_code === 0) {
@@ -858,7 +858,7 @@ const StockContent = () => {
         systemCode: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE,
       };
 
-      const jResponse = await RequestServer("POST", JSON.stringify(jRequest));
+      const jResponse = await RequestServer("POST", jRequest);
       if (jResponse.error_code === 0) {
         setCurrencyListRef(jResponse.currencyList);
       } else {
@@ -879,7 +879,7 @@ const StockContent = () => {
         currencyCode: selectedCurrencyRef.current.currency_code
       };
 
-      const jResponse = await RequestServer("POST", JSON.stringify(jRequest));
+      const jResponse = await RequestServer("POST", jRequest);
       if (jResponse.error_code === 0) {
         if (jResponse.exchangeRate.hasOwnProperty(selectedCurrencyRef.current.currency_code) == true) {
           const exchangeRate = jResponse.exchangeRate[selectedCurrencyRef.current.currency_code] / jResponse.exchangeRate['USD']
