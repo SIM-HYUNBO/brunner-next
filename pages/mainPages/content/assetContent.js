@@ -59,9 +59,9 @@ export default function AssetContent() {
         userId: userId,
       };
 
-      setLoading(true);
+      setLoading(true);// 데이터 로딩 시작
       const jResponse = await RequestServer("POST", jRequest);
-      setLoading(false);
+      setLoading(false);// 데이터 로딩 끝
 
       if (jResponse.error_code === 0) {
         return jResponse.incomeHistory;
@@ -91,9 +91,9 @@ export default function AssetContent() {
         comment: row.values.comment,
       };
 
-      setLoading(true);
+      setLoading(true);// 데이터 로딩 시작
       const jResponse = await RequestServer("POST", jRequest);
-      setLoading(false);
+      setLoading(false);// 데이터 로딩 끝
 
       if (jResponse.error_code === 0) {
         openModal("Successfully updated.");
@@ -124,9 +124,9 @@ export default function AssetContent() {
         historyId: row.values.history_id,
       };
 
-      setLoading(true);
+      setLoading(true);// 데이터 로딩 시작
       const jResponse = await RequestServer("POST", jRequest);
-      setLoading(false);
+      setLoading(false);// 데이터 로딩 끝
 
       if (jResponse.error_code === 0) {
         openModal(constants.messages.MESSAGE_SUCCESS_DELETED);
@@ -161,9 +161,9 @@ export default function AssetContent() {
         ...inputValues,
       };
 
-      setLoading(true);
+      setLoading(true);// 데이터 로딩 시작
       const jResponse = await RequestServer("POST", jRequest);
-      setLoading(false);
+      setLoading(false);// 데이터 로딩 끝
 
       if (jResponse.error_code === 0) {
         openModal(constants.messages.MESSAGE_SUCCESS_ADDED);

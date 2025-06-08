@@ -71,7 +71,7 @@ const ServiceSQL = () => {
   const [isCreating, setIsCreating] = useState(false);
 
   const [queries, setQueries] = useState([]);
-  const [form, setForm] = useState({
+  const [sqlInput, setSqlInput] = useState({
     system_code: "",
     sql_name: "",
     sql_seq: "",
@@ -90,13 +90,13 @@ const ServiceSQL = () => {
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     editingServiceSQL = {
-      system_code: name === "system_code" ? value : form.system_code,
-      sql_name: name === "sql_name" ? value : form.sql_name,
-      sql_seq: name === "sql_seq" ? value : form.sql_seq,
-      sql_content: name === "sql_content" ? value : form.sql_content,
+      system_code: name === "system_code" ? value : sqlInput.system_code,
+      sql_name: name === "sql_name" ? value : sqlInput.sql_name,
+      sql_seq: name === "sql_seq" ? value : sqlInput.sql_seq,
+      sql_content: name === "sql_content" ? value : sqlInput.sql_content,
     };
 
-    setForm((prevForm) => editingServiceSQL);
+    setSqlInput((prevForm) => editingServiceSQL);
   };
 
   const fetchSQLList = async () => {
@@ -111,7 +111,7 @@ const ServiceSQL = () => {
 
       setLoading(true); // 데이터 로딩 시작
       const jResponse = await RequestServer("POST", jRequest);
-      setLoading(false);
+      setLoading(false);// 데이터 로딩 끝
 
       if (jResponse.error_code === 0) {
         setQueries(jResponse.data);
@@ -119,7 +119,7 @@ const ServiceSQL = () => {
         openModal(jResponse.error_message);
       }
 
-      setForm({
+      setSqlInput({
         system_code: "",
         sql_name: "",
         sql_seq: "",
@@ -143,14 +143,14 @@ const ServiceSQL = () => {
       var jResponse = null;
 
       console.info(
-        `${form.system_code} ${form.sql_name} ${form.sql_seq} ${form.sql_content}`
+        `${sqlInput.system_code} ${sqlInput.sql_name} ${sqlInput.sql_seq} ${sqlInput.sql_content}`
       );
 
       jRequest.commandName = constants.commands.COMMAND_DYNAMIC_SEQ_UPDATE_ONE;
-      jRequest.systemCode = form.system_code;
-      jRequest.sqlName = form.sql_name;
-      jRequest.sqlSeq = form.sql_seq;
-      jRequest.sqlContent = form.sql_content;
+      jRequest.systemCode = sqlInput.system_code;
+      jRequest.sqlName = sqlInput.sql_name;
+      jRequest.sqlSeq = sqlInput.sql_seq;
+      jRequest.sqlContent = sqlInput.sql_content;
       jRequest.action = isEditing ? "Update" : isCreating ? "Create" : null;
       jRequest.userId = userInfo.getLoginUserId();
 
@@ -169,7 +169,7 @@ const ServiceSQL = () => {
   };
 
   const handleNew = () => {
-    setForm({
+    setSqlInput({
       system_code: "",
       sql_name: "",
       sql_seq: "",
@@ -186,7 +186,7 @@ const ServiceSQL = () => {
 
   // Handle edit action
   const handleEdit = (userQueryItem) => {
-    setForm({
+    setSqlInput({
       system_code: userQueryItem.system_code,
       sql_name: userQueryItem.sql_name,
       sql_seq: userQueryItem.sql_seq,
@@ -256,7 +256,7 @@ const ServiceSQL = () => {
       jRequest.userId = userInfo.getLoginUserId();
 
       setLoading(true); // 데이터 로딩 시작
-      jResponse = await RequestServer("POST", jRequest);
+      jResponse = await RequestServer("POST", jRequest));
       setLoading(false); // 데이터 로딩 끝
 
       if (jResponse.error_code === 0) {
@@ -286,7 +286,7 @@ const ServiceSQL = () => {
               <input
                 type="text"
                 name="system_code"
-                value={form.system_code}
+                value={sqlInput.system_code}
                 onChange={handleInputChange}
                 readOnly={!isEditing && !isCreating}
                 className={`mt-1 block w-full border border-gray-300 text-gray-800 dark:text-gray-400 dark:bg-slate-800 rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50`}
@@ -298,7 +298,7 @@ const ServiceSQL = () => {
               <input
                 type="text"
                 name="sql_name"
-                value={form.sql_name}
+                value={sqlInput.sql_name}
                 onChange={handleInputChange}
                 readOnly={!isEditing && !isCreating}
                 className={`mt-1 
@@ -323,7 +323,7 @@ const ServiceSQL = () => {
               <input
                 type="text"
                 name="sql_seq"
-                value={form.sql_seq}
+                value={sqlInput.sql_seq}
                 onChange={handleInputChange}
                 readOnly={!isEditing && !isCreating}
                 className={`mt-1 block w-full border border-gray-300 text-gray-800 dark:text-gray-400 dark:bg-slate-800 rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50`}
@@ -334,7 +334,7 @@ const ServiceSQL = () => {
               <span className={`text-gray-400`}>SQL Content:</span>
               <AutoResizeTextarea
                 name="sql_content"
-                value={form.sql_content}
+                value={sqlInput.sql_content}
                 onChange={handleInputChange}
                 readOnly={!isEditing && !isCreating}
               />

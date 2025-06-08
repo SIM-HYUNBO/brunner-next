@@ -2,7 +2,7 @@
 import * as constants from '@/components/constants'
 
 export default async function RequestServer(method, jRequest) {
-    let res = null;
+  let res = null;
   let jResponse = null;
   const serverUrl = `/api/backendServer/`;
 
