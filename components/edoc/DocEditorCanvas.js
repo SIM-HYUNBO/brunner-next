@@ -1,23 +1,48 @@
-export default function DocEditorCanvas({ components }) {
+import React from 'react';
+
+export default function DocEditorCanvas({ components, selectedComponentId, onComponentSelect }) {
   return (
     <div className="min-h-[500px] border border-dashed border-gray-400 bg-white p-4 rounded">
       {components.length === 0 && (
         <p className="text-gray-500 text-center mt-20">좌측에서 컴포넌트를 추가하세요.</p>
       )}
       {components.map((comp, idx) => (
-        <DocComponentRenderer key={idx} component={comp} />
+        <DocComponentRenderer
+          key={idx}
+          component={comp}
+          isSelected={selectedComponentId === idx}
+          onSelect={() => onComponentSelect(idx)}
+        />
       ))}
     </div>
   );
 }
 
-function DocComponentRenderer({ component }) {
+function DocComponentRenderer({ component, isSelected, onSelect }) {
+  const baseClass = "mb-3 cursor-pointer";
+  const selectedClass = isSelected ? "border-2 border-blue-500 bg-blue-50 rounded" : "";
+
   switch (component.type) {
     case 'text':
-      return <p className="mb-3">{component.content}</p>;
+      return (
+        <p
+          className={`${baseClass} ${selectedClass}`}
+          onClick={onSelect}
+        >
+          {component.content.split('\n').map((line, idx) => (
+            <React.Fragment key={idx}>
+              {line}
+              <br />
+            </React.Fragment>
+          ))}
+        </p>
+      );
     case 'table':
       return (
-        <table className="mb-3 border border-gray-300">
+        <table
+          className={`${baseClass} ${selectedClass} border border-gray-300`}
+          onClick={onSelect}
+        >
           <tbody>
             {[...Array(component.rows)].map((_, rIdx) => (
               <tr key={rIdx}>
@@ -36,7 +61,10 @@ function DocComponentRenderer({ component }) {
       );
     case 'image':
       return (
-        <div className="mb-3">
+        <div
+          className={`${baseClass} ${selectedClass}`}
+          onClick={onSelect}
+        >
           {component.src ? (
             <img src={component.src} alt="이미지" className="max-w-full h-auto" />
           ) : (
@@ -49,10 +77,11 @@ function DocComponentRenderer({ component }) {
     case 'input':
       return (
         <input
-          className="mb-3 border border-gray-400 rounded px-2 py-1"
+          className={`${baseClass} ${selectedClass} border border-gray-400 rounded px-2 py-1`}
           type="text"
           placeholder={component.placeholder || ''}
           readOnly
+          onClick={onSelect}
         />
       );
     default:
