@@ -6,7 +6,7 @@ import Layout from '@/components/layout'
 import Head from 'next/head'
 import BodySection from '@/components/bodySection'
 
-import DocumentDesignerContainer from '@/components/edoc/DocumentDesignerContainer';
+import EDocDesignerContainer from '@/components/edoc/EDocDesignerContainer';
 
 export default function EDocDesigner() {
   useEffect(() => {
@@ -31,7 +31,7 @@ export default function EDocDesigner() {
         <link></link>
       </Head>
       <BodySection>
-          <DocumentDesignerContainer documentId={documentId} />
+          <EDocDesignerContainer documentId={documentId} />
       </BodySection>
     </Layout>
   );

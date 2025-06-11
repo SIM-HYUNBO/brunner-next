@@ -1,5 +1,5 @@
 import { useRouter } from 'next/router';
-import DocumentDesignerContainer from '@/components/edoc/DocumentDesignerContainer';
+import EDocDesignerContainer from '@/components/edoc/EDocDesignerContainer';
 
 export default function DocumentDesignerPage() {
   const router = useRouter();
@@ -7,5 +7,5 @@ export default function DocumentDesignerPage() {
 
   if (!id) return <div>로딩 중...</div>;
 
-  return <DocumentDesignerContainer documentId={id} />;
+  return <EDocDesignerContainer documentId={id} />;
 }

@@ -1,6 +1,6 @@
 import React from 'react';
 
-export default function DocEditorCanvas({ components, selectedComponentId, onComponentSelect }) {
+export default function EDocEditorCanvas({ components, selectedComponentId, onComponentSelect }) {
   return (
     <div className="min-h-[500px] border border-dashed border-gray-400 bg-white p-4 rounded">
       {components.length === 0 && (

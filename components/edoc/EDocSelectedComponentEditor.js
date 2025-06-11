@@ -1,4 +1,4 @@
-export default function SelectedComponentEditor({ component, onChange }) {
+export default function EDocSelectedComponentEditor({ component, onChange }) {
   if (!component) return null;
 
   const handleChange = (e) => {
