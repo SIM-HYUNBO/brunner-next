@@ -1,6 +1,6 @@
 import React from 'react';
 
-export default function DocComponentRenderer({ component }) {
+export default function EDocComponentRenderer({ component }) {
   switch (component.type) {
     case 'text':
         return (

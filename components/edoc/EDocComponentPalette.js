@@ -1,4 +1,4 @@
-export default function DocComponentPalette({ onAddComponent }) {
+export default function EDocComponentPalette({ onAddComponent }) {
   const components = [
     { id: 'text', name: '일반 텍스트', type: 'text', content: '새 텍스트' },
     { id: 'table', name: '표 (테이블)', type: 'table', rows: 2, cols: 3 },
