@@ -1,40 +1,37 @@
-// components/edoc/TopMenu.js
 import React from 'react';
 
 export default function TopMenu({
   onNewDocument,
   onOpenDocument,
   onSaveDocument,
-  onExportPdf,
+  onExportPdf
 }) {
   return (
-    <div className="flex items-center justify-between bg-white border-b border-gray-300 p-3 shadow-sm">
-      <div className="flex items-center space-x-3">
-        <button
-          className="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600"
-          onClick={onNewDocument}
-        >
-          새 문서
-        </button>
-        <button
-          className="bg-gray-500 text-white px-3 py-1 rounded hover:bg-gray-600"
-          onClick={onOpenDocument}
-        >
-          문서 열기
-        </button>
-        <button
-          className="bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600"
-          onClick={onSaveDocument}
-        >
-          저장
-        </button>
-        <button
-          className="bg-purple-500 text-white px-3 py-1 rounded hover:bg-purple-600"
-          onClick={onExportPdf}
-        >
-          PDF로 출력
-        </button>
-      </div>
+    <div className="w-full bg-white border-b border-gray-300 px-4 py-2 flex items-center space-x-4">
+      <button
+        onClick={onNewDocument}
+        className="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600"
+      >
+        새문서
+      </button>
+      <button
+        onClick={onOpenDocument}
+        className="px-3 py-1 bg-green-500 text-white rounded hover:bg-green-600"
+      >
+        열기
+      </button>
+      <button
+        onClick={onSaveDocument}
+        className="px-3 py-1 bg-yellow-500 text-white rounded hover:bg-yellow-600"
+      >
+        저장
+      </button>
+      <button
+        onClick={onExportPdf}
+        className="px-3 py-1 bg-purple-500 text-white rounded hover:bg-purple-600"
+      >
+        PDF 출력
+      </button>
     </div>
   );
 }
