@@ -1,6 +1,7 @@
 `use strict`
 import Link from "next/link";
 import { isMobile, isTablet, isBrowser } from 'react-device-detect';
+import * as userInfo from "@/components/userInfo";
 
 export default function LeftMenu() {
 
@@ -18,6 +19,23 @@ export default function LeftMenu() {
                         <Link className={`block text-gray-600 dark:text-gray-100 py-2`} href="/mainPages/contact">
                             Contact
                         </Link>
+                        {userInfo.isAdminUser() && (
+                            <>
+                                <Link
+                                    className={`block text-gray-600 dark:text-gray-100 py-2`}
+                                    href="/mainPages/administration"
+                                >
+                                    Administration
+                                </Link>
+                                <Link
+                                    className={`block text-gray-600 dark:text-gray-100 py-2`}
+                                    href="/edocDesigner/EDocDesigner"
+                                >
+                                    Doc. Designer
+                                </Link>
+                            </>
+                        )}
+
                     </ul>
                 </nav>
             </aside>
