@@ -30,40 +30,15 @@ const selectAll = async (txnId, jRequest) => {
         jResponse.commanaName = jRequest.commandName;
         jResponse.userId = jRequest.userId;
 
-        if (!jRequest.postInfo) {
-            jResponse.error_code = -2;
-            jResponse.error_message = `${constants.messages.MESSAGE_REQUIRED_FIELD} [postInfo].`;
-            return jResponse;
-        }
-
-        if (!jRequest.postInfo.postType) {
-            jResponse.error_code = -2;
-            jResponse.error_message = `${constants.messages.MESSAGE_REQUIRED_FIELD} [postType]`;
-            return jResponse;
-        }
 
         var sql = null
-        sql = await dynamicSql.getSQL00('select_TB_COR_POST_INFO', 1);
-        var select_TB_COR_POST_INFO = await database.executeSQL(sql,
+        sql = await dynamicSql.getSQL00('select_TB_DOC_COMPONENT_TEMPLATE', 1);
+        var select_TB_DOC_COMPONENT_TEMPLATE = await database.executeSQL(sql,
             [
-                jRequest.systemCode,
-                jRequest.postInfo.postType
+                jRequest.systemCode
             ]);
 
-        for (var i = 0; i < select_TB_COR_POST_INFO.rows.length; i++) {
-            const comments = [];
-
-            sql = await dynamicSql.getSQL00('select_TB_COR_POST_COMMENT_INFO', 1);
-            var select_TB_COR_POST_COMMENT_INFO = await database.executeSQL(sql,
-                [
-                    jRequest.systemCode,
-                    select_TB_COR_POST_INFO.rows[i].post_id
-                ]);
-
-            select_TB_COR_POST_INFO.rows[i].comments = select_TB_COR_POST_COMMENT_INFO.rows;
-        }
-
-        jResponse.postList = select_TB_COR_POST_INFO.rows;
+        jResponse.templateList = select_TB_DOC_COMPONENT_TEMPLATE.rows;
 
         jResponse.error_code = 0;
         jResponse.error_message = constants.messages.EMPTY_STRING
