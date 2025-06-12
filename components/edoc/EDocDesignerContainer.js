@@ -68,10 +68,30 @@ export default function EDocDesignerContainer({ documentId }) {
   }
 
    function handleAddComponent(component) {
-    setDocumentData((prev) => ({
-      ...prev,
-      components: [...prev.components, component],
-    }));
+  const baseComponent = { ...component };
+
+  // template_json 구조 파악
+  const tpl = component.template_json;
+  console.log("template_json:", component.template_json);
+
+  // defaultProps 우선 적용
+  const defaultProps = tpl.defaultProps || {};
+
+  // runtime_data 자동 생성
+  if (tpl.type === constants.edoc.COMPONENT_TYPE_TABLE) {
+    baseComponent.runtime_data = component.runtime_data;
+  } else if (tpl.type === constants.edoc.COMPONENT_TYPE_TEXT) {
+    baseComponent.runtime_data = { content: tpl.content || "" };
+  } else if (tpl.type === constants.edoc.COMPONENT_TYPE_IMAGE) {
+    baseComponent.runtime_data = { src: tpl.src || "" };
+  } else if (tpl.type === constants.edoc.COMPONENT_TYPE_INPUT) {
+    baseComponent.runtime_data = { value: "" };
+  }
+
+  setDocumentData((prev) => ({
+    ...prev,
+    components: [...prev.components, baseComponent],
+  }));
   }
 
   // 새 문서 생성

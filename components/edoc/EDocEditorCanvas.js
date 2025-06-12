@@ -30,7 +30,7 @@ function DocComponentRenderer({ component, isSelected, onSelect }) {
           className={`${baseClass} ${selectedClass}`}
           onClick={onSelect}
         >
-          {component.content.split('\n').map((line, idx) => (
+          {component.template_json.content.split('\n').map((line, idx) => (
             <React.Fragment key={idx}>
               {line}
               <br />
@@ -39,27 +39,37 @@ function DocComponentRenderer({ component, isSelected, onSelect }) {
         </p>
       );
     case constants.edoc.COMPONENT_TYPE_TABLE:
-      return (
-        <table
-          className={`${baseClass} ${selectedClass} border border-gray-300`}
-          onClick={onSelect}
-        >
-          <tbody>
-            {[...Array(component.rows)].map((_, rIdx) => (
-              <tr key={rIdx}>
-                {[...Array(component.cols)].map((_, cIdx) => (
-                  <td
-                    key={cIdx}
-                    className="border border-gray-300 px-3 py-1 text-center"
-                  >
-                    &nbsp;
-                  </td>
-                ))}
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      );
+      const tableData = component.runtime_data.data || [[]];
+        return (
+          <table
+            className={`${baseClass} ${selectedClass} border border-gray-300`}
+            onClick={onSelect}
+          >
+          <thead>
+            <tr>
+              {component.runtime_data?.columns?.map((col, cIdx) => (
+                <th key={cIdx} className="border border-gray-300 px-3 py-1 bg-gray-100">
+                  {col}
+                </th>
+              ))}
+            </tr>
+          </thead>            
+            <tbody>
+              {tableData.map((row, rIdx) => (
+                <tr key={rIdx}>
+                  {row.map((cell, cIdx) => (
+                    <td
+                      key={cIdx}
+                      className="border border-gray-300 px-4 py-2 text-center min-w-[100px] h-[40px]"
+                    >
+                      {cell}
+                    </td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        );
     case constants.edoc.COMPONENT_TYPE_IMAGE:
       return (
         <div
@@ -78,12 +88,13 @@ function DocComponentRenderer({ component, isSelected, onSelect }) {
     case constants.edoc.COMPONENT_TYPE_INPUT:
       return (
         <input
-          className={`${baseClass} ${selectedClass} border border-gray-400 rounded px-2 py-1`}
-          type="text"
-          placeholder={component.placeholder || ''}
-          readOnly
-          onClick={onSelect}
-        />
+      className="mb-3 border border-gray-400 rounded px-2 py-1"
+      onClick={onSelect}
+      type="text"
+      value={component.runtime_data?.value || ''}  // 수정된 부분
+      placeholder={component.template_json?.placeholder || ''}
+      readOnly
+    />
       );
     default:
       return null;

@@ -3,16 +3,25 @@ import * as constants from "@/components/constants";
 export default function EDocPropertyEditor({ component, onComponentChange }) {
   if (!component) return <p>컴포넌트를 선택하세요.</p>;
 
+  const updateTemplateJson = (key, value) => {
+    const newTemplateJson = {
+      ...component.template_json,
+      [key]: value,
+    };
+    onComponentChange({
+      ...component,
+      template_json: newTemplateJson,
+    });
+  };
+
   switch (component.type) {
     case constants.edoc.COMPONENT_TYPE_TEXT:
       return (
         <div>
           <label>내용 수정:</label>
           <textarea
-            value={component.content}
-            onChange={(e) => {
-              onComponentChange({ ...component, content: e.target.value });
-            }}
+            value={component.template_json?.content || ''}
+            onChange={(e) => updateTemplateJson("content", e.target.value)}
             rows={4}
             className="w-full border border-gray-300 rounded p-2"
           />
@@ -20,46 +29,87 @@ export default function EDocPropertyEditor({ component, onComponentChange }) {
       );
 
     case constants.edoc.COMPONENT_TYPE_TABLE:
+      const updateTableSize = (newRows, newCols) => {
+        const oldData = component.runtime_data?.data || [];
+        const oldColumns = component.runtime_data?.columns || [];
+
+        const newData = Array.from({ length: newRows }, (_, r) =>
+          Array.from({ length: newCols }, (_, c) => oldData[r]?.[c] ?? "")
+        );
+
+        const newColumns = Array.from({ length: newCols }, (_, c) => oldColumns[c] ?? `열 ${c + 1}`);
+
+        onComponentChange({
+          ...component,
+          runtime_data: {
+            rows: newRows,
+            cols: newCols,
+            data: newData,
+            columns: newColumns,
+          }
+        });
+      };
+
+      const handleColumnHeaderChange = (index, value) => {
+        const newColumns = [...(component.runtime_data?.columns || [])];
+        newColumns[index] = value;
+
+        onComponentChange({
+          ...component,
+          runtime_data: {
+            ...component.runtime_data,
+            columns: newColumns,
+          }
+        });
+      };
+
       return (
-        <div>
-          <label>행 수:</label>
-          <input
-            type="number"
-            min={1}
-            value={component.rows}
-            onChange={(e) => {
-              onComponentChange({ ...component, rows: parseInt(e.target.value) || 1 });
-            }}
-            className="w-full border border-gray-300 rounded p-1 mb-2"
-          />
-          <label>열 수:</label>
-          <input
-            type="number"
-            min={1}
-            value={component.cols}
-            onChange={(e) => {
-              onComponentChange({ ...component, cols: parseInt(e.target.value) || 1 });
-            }}
-            className="w-full border border-gray-300 rounded p-1"
-          />
+          <div>
+          <label className="block mt-2 mb-1">행 수:</label>
+            <input
+              type="number"
+              value={component.runtime_data?.rows || 1}
+              onChange={(e) =>
+                updateTableSize(parseInt(e.target.value), component.runtime_data?.cols || 1)
+              }
+            />
+
+            <label className="block mt-2 mb-1">열 수:</label>
+            <input
+              type="number"
+              value={component.runtime_data?.cols || 1}
+              onChange={(e) =>
+                updateTableSize(component.runtime_data?.rows || 1, parseInt(e.target.value))
+              }
+            />
+
+          <label className="block mt-2 mb-1">컬럼 헤더:</label>
+          {(component.runtime_data?.columns || []).map((col, idx) => (
+            <input
+              key={idx}
+              type="text"
+              value={col}
+              onChange={(e) => handleColumnHeaderChange(idx, e.target.value)}
+              className="w-full border border-gray-300 rounded p-1 mb-1"
+              placeholder={`열 ${idx + 1}`}
+            />
+          ))}
         </div>
       );
 
-    case 'image':
+    case constants.edoc.COMPONENT_TYPE_IMAGE:
       return (
         <div>
           <label>이미지 URL:</label>
           <input
             type="text"
-            value={component.src}
-            onChange={(e) => {
-              onComponentChange({ ...component, src: e.target.value });
-            }}
+            value={component.template_json?.src || ''}
+            onChange={(e) => updateTemplateJson("src", e.target.value)}
             className="w-full border border-gray-300 rounded p-2"
           />
-          {component.src && (
+          {component.template_json?.src && (
             <img
-              src={component.src}
+              src={component.template_json.src}
               alt="선택된 이미지"
               className="mt-2 max-w-full h-auto border"
             />
@@ -67,16 +117,14 @@ export default function EDocPropertyEditor({ component, onComponentChange }) {
         </div>
       );
 
-    case 'input':
+    case constants.edoc.COMPONENT_TYPE_INPUT:
       return (
         <div>
-          <label>플레이스홀더:</label>
+          <label>입력값</label>
           <input
             type="text"
-            value={component.placeholder || ''}
-            onChange={(e) => {
-              onComponentChange({ ...component, placeholder: e.target.value });
-            }}
+            value={component.template_json?.placeholder || ''}
+            onChange={(e) => updateTemplateJson("placeholder", e.target.value)}
             className="w-full border border-gray-300 rounded p-2"
           />
         </div>
