@@ -75,17 +75,24 @@ export default function EDocDesignerContainer({ documentId }) {
   console.log("template_json:", component.template_json);
 
   // defaultProps 우선 적용
-  const defaultProps = tpl.defaultProps || {};
+  const defaultRuntimeData = {};
 
   // runtime_data 자동 생성
   if (tpl.type === constants.edoc.COMPONENT_TYPE_TABLE) {
-    baseComponent.runtime_data = component.runtime_data;
+    defaultRuntimeData.cols = 3;
+    defaultRuntimeData.rows = 3;
+    defaultRuntimeData.data = Array.from({ length: 3 }, () => Array(3).fill(""));
+    defaultRuntimeData.columns = ["ColumnHeader1", "ColumnHeader2", "ColumnHeader3"];
+    baseComponent.runtime_data = defaultRuntimeData;
   } else if (tpl.type === constants.edoc.COMPONENT_TYPE_TEXT) {
-    baseComponent.runtime_data = { content: tpl.content || "" };
+    defaultRuntimeData.content = "여기에 텍스트를 입력하세요";
+    baseComponent.runtime_data = defaultRuntimeData;
   } else if (tpl.type === constants.edoc.COMPONENT_TYPE_IMAGE) {
-    baseComponent.runtime_data = { src: tpl.src || "" };
+    defaultRuntimeData.src = "";
+    baseComponent.runtime_data = defaultRuntimeData;
   } else if (tpl.type === constants.edoc.COMPONENT_TYPE_INPUT) {
-    baseComponent.runtime_data = { value: "" };
+    defaultRuntimeData.placeholder = "값을 입력하세요";
+    baseComponent.runtime_data = defaultRuntimeData;
   }
 
   setDocumentData((prev) => ({

@@ -18,7 +18,7 @@ export default function EDocPropertyEditor({ component, onComponentChange }) {
     case constants.edoc.COMPONENT_TYPE_TEXT:
       return (
         <div>
-          <label>내용 수정:</label>
+          <label>표시할 텍스트:</label>
           <textarea
             value={component.template_json?.content || ''}
             onChange={(e) => updateTemplateJson("content", e.target.value)}
@@ -37,7 +37,7 @@ export default function EDocPropertyEditor({ component, onComponentChange }) {
           Array.from({ length: newCols }, (_, c) => oldData[r]?.[c] ?? "")
         );
 
-        const newColumns = Array.from({ length: newCols }, (_, c) => oldColumns[c] ?? `열 ${c + 1}`);
+        const newColumns = Array.from({ length: newCols }, (_, c) => oldColumns[c] ?? `ColumnHeader ${c + 1}`);
 
         onComponentChange({
           ...component,
