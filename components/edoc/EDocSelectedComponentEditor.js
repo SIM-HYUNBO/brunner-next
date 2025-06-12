@@ -1,3 +1,6 @@
+import React from 'react';
+import * as constants from '@/components/constants'
+
 export default function EDocSelectedComponentEditor({ component, onChange }) {
   if (!component) return null;
 
@@ -11,7 +14,7 @@ export default function EDocSelectedComponentEditor({ component, onChange }) {
   return (
     <div className="space-y-4">
       {/* 공통 속성: content */}
-      {component.type === 'text' && (
+      {component.type === constants.edoc.COMPONENT_TYPE_TEXT && (
         <div>
           <label className="block text-sm mb-1">텍스트 내용</label>
           <input
@@ -22,7 +25,7 @@ export default function EDocSelectedComponentEditor({ component, onChange }) {
           />
         </div>
       )}
-      {component.type === 'table' && (
+      {component.type === constants.edoc.COMPONENT_TYPE_TABLE && (
         <div>
           <label className="block text-sm mb-1">행 수</label>
           <input
@@ -42,7 +45,7 @@ export default function EDocSelectedComponentEditor({ component, onChange }) {
           />
         </div>
       )}
-      {component.type === 'image' && (
+      {component.type === constants.edoc.COMPONENT_TYPE_IMAGE && (
         <div>
           <label className="block text-sm mb-1">이미지 URL</label>
           <input
@@ -53,7 +56,7 @@ export default function EDocSelectedComponentEditor({ component, onChange }) {
           />
         </div>
       )}
-      {component.type === 'input' && (
+      {component.type === constants.edoc.COMPONENT_TYPE_INPUT && (
         <div>
           <label className="block text-sm mb-1">플레이스홀더</label>
           <input

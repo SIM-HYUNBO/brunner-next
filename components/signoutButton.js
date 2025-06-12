@@ -8,8 +8,8 @@ import * as constants from "@/components/constants";
 import * as userInfo from "@/components/userInfo";
 
 export default function SignoutButton() {
-  const { BrunnerMessageBox, openModal } = useModal();
   const router = useRouter();
+  const { BrunnerMessageBox, openModal } = useModal();
   const [loading, setLoading] = useState(false);
   
   const requestSignout = async () => {

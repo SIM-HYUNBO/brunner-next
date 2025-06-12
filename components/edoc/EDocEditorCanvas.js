@@ -1,4 +1,5 @@
 import React from 'react';
+import * as constants from '@/components/constants'
 
 export default function EDocEditorCanvas({ components, selectedComponentId, onComponentSelect }) {
   return (
@@ -23,7 +24,7 @@ function DocComponentRenderer({ component, isSelected, onSelect }) {
   const selectedClass = isSelected ? "border-2 border-blue-500 bg-blue-50 rounded" : "";
 
   switch (component.type) {
-    case 'text':
+    case constants.edoc.COMPONENT_TYPE_TEXT:
       return (
         <p
           className={`${baseClass} ${selectedClass}`}
@@ -37,7 +38,7 @@ function DocComponentRenderer({ component, isSelected, onSelect }) {
           ))}
         </p>
       );
-    case 'table':
+    case constants.edoc.COMPONENT_TYPE_TABLE:
       return (
         <table
           className={`${baseClass} ${selectedClass} border border-gray-300`}
@@ -59,7 +60,7 @@ function DocComponentRenderer({ component, isSelected, onSelect }) {
           </tbody>
         </table>
       );
-    case 'image':
+    case constants.edoc.COMPONENT_TYPE_IMAGE:
       return (
         <div
           className={`${baseClass} ${selectedClass}`}
@@ -74,7 +75,7 @@ function DocComponentRenderer({ component, isSelected, onSelect }) {
           )}
         </div>
       );
-    case 'input':
+    case constants.edoc.COMPONENT_TYPE_INPUT:
       return (
         <input
           className={`${baseClass} ${selectedClass} border border-gray-400 rounded px-2 py-1`}

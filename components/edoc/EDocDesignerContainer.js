@@ -1,16 +1,51 @@
+
 import { useState, useEffect } from 'react';
+import * as constants from "@/components/constants";
+import * as userInfo from "@/components/userInfo";
+import { useModal } from "@/components/brunnerMessageBox";
+import RequestServer from "@/components/requestServer";
+
 import EDocComponentPalette from './EDocComponentPalette';
 import EDocEditorCanvas from './EDocEditorCanvas';
 import EDocTopMenu from './EDocTopMenu'; // 상단 메뉴 컴포넌트 추가
+import EDocPropertyEditor from './EDocPropertyEditor';  // 경로는 상황에 맞게 조정
 
 export default function EDocDesignerContainer({ documentId }) {
+  const { BrunnerMessageBox, openModal } = useModal();
+  const [loading, setLoading] = useState(false);
+
+
   const [documentData, setDocumentData] = useState({
     id: documentId || null,
     title: '신규 기록서',
     components: [],
   });
 
+  const [componentTemplates, setComponentTemplates] = useState([]);
   const [selectedComponentId, setSelectedComponentId] = useState(null);
+
+  useEffect(() => {
+    // 서버에서 템플릿 목록 불러오기
+    async function fetchTemplates() {
+    const jRequest = {
+      commandName: constants.commands.COMMAND_EDOC_COMPONENT_TEMPLATES_SELECT_ALL,
+      systemCode: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE,
+      userId: userInfo?.userId,
+    };
+    var jResponse = null;
+
+    setLoading(true); // 데이터 로딩 시작
+    jResponse = await RequestServer("POST", jRequest);
+    setLoading(false); // 데이터 로딩 끝
+
+    if (jResponse.error_code === 0) {
+      setComponentTemplates(jResponse.templateList);
+    } else openModal(jResponse.error_message);
+  }
+  
+  fetchTemplates();
+
+  }, []);
 
   useEffect(() => {
     if (documentId) {
@@ -18,15 +53,18 @@ export default function EDocDesignerContainer({ documentId }) {
     }
   }, [documentId]);
 
-  function handleAddComponent(component) {
-    setDocumentData((prev) => ({
-      ...prev,
-      components: [...prev.components, component],
-    }));
-  }
-
   function handleComponentSelect(idx) {
     setSelectedComponentId(idx);
+  }
+
+  function handleComponentChange(updatedComponent) {
+  if (selectedComponentId === null) return;
+
+  setDocumentData((prev) => {
+    const newComponents = [...prev.components];
+    newComponents[selectedComponentId] = updatedComponent;
+    return { ...prev, components: newComponents };
+  });
   }
 
    function handleAddComponent(component) {
@@ -101,152 +139,49 @@ export default function EDocDesignerContainer({ documentId }) {
   };
 
   // 선택된 컴포넌트 데이터
-  const selectedComponent = selectedComponentId !== null ? documentData.components[selectedComponentId] : null;
-
-  // 속성창 UI 예시
-  function renderProperties() {
-  if (!selectedComponent) return <p>컴포넌트를 선택하세요.</p>;
-
-  switch (selectedComponent.type) {
-    case 'text':
-      return (
-        <div>
-          <label>내용 수정:</label>
-          <textarea
-            value={selectedComponent.content}
-            onChange={(e) => {
-              const newContent = e.target.value;
-              setDocumentData((prev) => {
-                const newComponents = [...prev.components];
-                newComponents[selectedComponentId] = {
-                  ...newComponents[selectedComponentId],
-                  content: newContent,
-                };
-                return { ...prev, components: newComponents };
-              });
-            }}
-            rows={4}
-            className="w-full border border-gray-300 rounded p-2"
-          />
-        </div>
-      );
-
-    case 'table':
-      return (
-        <div>
-          <label>행 수:</label>
-          <input
-            type="number"
-            min={1}
-            value={selectedComponent.rows}
-            onChange={(e) => {
-              const rows = parseInt(e.target.value) || 1;
-              setDocumentData((prev) => {
-                const newComponents = [...prev.components];
-                newComponents[selectedComponentId] = { ...newComponents[selectedComponentId], rows };
-                return { ...prev, components: newComponents };
-              });
-            }}
-            className="w-full border border-gray-300 rounded p-1 mb-2"
-          />
-          <label>열 수:</label>
-          <input
-            type="number"
-            min={1}
-            value={selectedComponent.cols}
-            onChange={(e) => {
-              const cols = parseInt(e.target.value) || 1;
-              setDocumentData((prev) => {
-                const newComponents = [...prev.components];
-                newComponents[selectedComponentId] = { ...newComponents[selectedComponentId], cols };
-                return { ...prev, components: newComponents };
-              });
-            }}
-            className="w-full border border-gray-300 rounded p-1"
-          />
-        </div>
-      );
-
-    case 'image':
-      return (
-        <div>
-          <label>이미지 URL:</label>
-          <input
-            type="text"
-            value={selectedComponent.src}
-            onChange={(e) => {
-              const src = e.target.value;
-              setDocumentData((prev) => {
-                const newComponents = [...prev.components];
-                newComponents[selectedComponentId] = { ...newComponents[selectedComponentId], src };
-                return { ...prev, components: newComponents };
-              });
-            }}
-            className="w-full border border-gray-300 rounded p-2"
-          />
-          {selectedComponent.src && (
-            <img
-              src={selectedComponent.src}
-              alt="선택된 이미지"
-              className="mt-2 max-w-full h-auto border"
-            />
-          )}
-        </div>
-      );
-
-    case 'input':
-      return (
-        <div>
-          <label>플레이스홀더:</label>
-          <input
-            type="text"
-            value={selectedComponent.placeholder || ''}
-            onChange={(e) => {
-              const placeholder = e.target.value;
-              setDocumentData((prev) => {
-                const newComponents = [...prev.components];
-                newComponents[selectedComponentId] = { ...newComponents[selectedComponentId], placeholder };
-                return { ...prev, components: newComponents };
-              });
-            }}
-            className="w-full border border-gray-300 rounded p-2"
-          />
-        </div>
-      );
-
-    default:
-      return <p>속성 편집이 지원되지 않는 컴포넌트입니다.</p>;
-  }
-}
+const selectedComponent = selectedComponentId !== null ? documentData.components[selectedComponentId] : null;
 
   return (
-    <div className="flex h-screen bg-gray-100">
-      <aside className="w-60 bg-white border-r border-gray-300 p-4 overflow-y-auto">
-        <h2 className="text-lg font-semibold mb-4">컴포넌트 템플릿</h2>
-        <EDocComponentPalette onAddComponent={handleAddComponent} />
-      </aside>
+    <>
+      {loading && (
+        <div className={`fixed top-0 left-0 w-full h-full flex items-center justify-center bg-gray-500 bg-opacity-75 z-50`}>
+          <div className={`animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-gray-900`}></div>
+        </div>
+      )}
+      <div className="flex h-screen bg-gray-100">
+        <aside className="w-60 bg-white border-r border-gray-300 p-4 overflow-y-auto">
+          <h2 className="text-lg font-semibold mb-4">컴포넌트 템플릿</h2>
+          <EDocComponentPalette
+            templates={componentTemplates}
+            onAddComponent={handleAddComponent}
+          />
+        </aside>
 
-      <main className="flex-1 p-6 overflow-auto">
-      <EDocTopMenu         
-        onNewDocument={handleNewDocument}
-        onOpenDocument={handleOpenDocument}
-        onSaveDocument={handleSaveDocument}
-        onExportPdf={handleExportPdf} 
-        documentData={documentData} 
-        setDocumentData={setDocumentData} />
-        
-        <h1 className="text-2xl font-bold mb-6">{documentData.title}</h1>
-        <EDocEditorCanvas
-          components={documentData.components}
-          selectedComponentId={selectedComponentId}
-          onComponentSelect={handleComponentSelect}
-        />
-      </main>
+        <main className="flex-1 p-6 overflow-auto">
+          <EDocTopMenu         
+            onNewDocument={handleNewDocument}
+            onOpenDocument={handleOpenDocument}
+            onSaveDocument={handleSaveDocument}
+            onExportPdf={handleExportPdf} 
+            documentData={documentData} 
+            setDocumentData={setDocumentData} />
+          
+          <h1 className="text-2xl font-bold mb-6">{documentData.title}</h1>
+          <EDocEditorCanvas
+            components={documentData.components}
+            selectedComponentId={selectedComponentId}
+            onComponentSelect={handleComponentSelect}
+          />
+        </main>
 
-      <aside className="w-80 bg-white border-l border-gray-300 p-4 hidden md:block">
-        <h2 className="text-lg font-semibold mb-4">속성창</h2>
-        {renderProperties()}
-      </aside>
-    </div>
+        <aside className="w-80 bg-white border-l border-gray-300 p-4 hidden md:block">
+          <h2 className="text-lg font-semibold mb-4">속성창</h2>
+          <EDocPropertyEditor 
+            component={selectedComponent} 
+            onComponentChange={handleComponentChange} 
+          />
+        </aside>
+      </div>
+    </>
   );
 }

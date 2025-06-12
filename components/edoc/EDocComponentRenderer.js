@@ -1,8 +1,9 @@
 import React from 'react';
+import * as constants from '@/components/constants'
 
 export default function EDocComponentRenderer({ component }) {
   switch (component.type) {
-    case 'text':
+    case constants.edoc.COMPONENT_TYPE_TEXT:
         return (
     <p className="mb-3">
       {component.content.split('\n').map((line, idx) => (
@@ -13,7 +14,7 @@ export default function EDocComponentRenderer({ component }) {
       ))}
     </p>
   );
-    case 'table':
+    case constants.edoc.COMPONENT_TYPE_TABLE:
       return (
         <table className="mb-3 border border-gray-300">
           <tbody>
@@ -32,7 +33,7 @@ export default function EDocComponentRenderer({ component }) {
           </tbody>
         </table>
       );
-    case 'image':
+    case constants.edoc.COMPONENT_TYPE_IMAGE:
       return (
         <div className="mb-3">
           {component.src ? (
@@ -44,7 +45,7 @@ export default function EDocComponentRenderer({ component }) {
           )}
         </div>
       );
-    case 'input':
+    case constants.edoc.COMPONENT_TYPE_INPUT:
       return (
         <input
           className="mb-3 border border-gray-400 rounded px-2 py-1"
