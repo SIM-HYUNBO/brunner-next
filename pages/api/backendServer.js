@@ -9,6 +9,7 @@ import * as incomeHistory from './biz/incomeHistory'
 import * as tb_cor_ticker_info from './biz/stockInfo'
 import * as postInfo from './biz/postInfo'
 import * as postCommentInfo from './biz/postCommentInfo'
+import * as edocComponentTemplate from './biz/edocComponentTemplate'
 
 async function initialize() {
     var serviceSql = null;
@@ -99,6 +100,8 @@ const executeService = async (method, req) => {
         jResponse = await postInfo.executeService(req.body._txnId, jRequest);
     } else if (commandName.startsWith('postCommentInfo.')) {
         jResponse = await postCommentInfo.executeService(req.body._txnId, jRequest);
+    } else if (commandName.startsWith('edocComponentTemplate.')) {
+        jResponse = await edocComponentTemplate.executeService(req.body._txnId, jRequest);
     } else {
         jResponse = JSON.stringify({
             error_code: -1,

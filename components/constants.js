@@ -58,4 +58,13 @@ export const commands = {
     COMMAND_STOCK_INFO_GET_STOCK_INFO : `stockInfo.getStockInfo`,
     COMMAND_STOCK_GET_TICKER_INFO : `stockInfo.getTickerInfo`,
     COMMAND_STOCK_INFO_GET_TICKER_LIST : `stockInfo.getTickerList`,
+
+    COMMAND_EDOC_COMPONENT_TEMPLATES_SELECT_ALL : `edocComponentTemplate.selectAll`,
 }  
+
+export const edoc = {
+    COMPONENT_TYPE_TEXT : `text`,
+    COMPONENT_TYPE_TABLE : `table`,
+    COMPONENT_TYPE_IMAGE : `image`, 
+    COMPONENT_TYPE_INPUT : `input`,
+}
