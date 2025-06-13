@@ -6,14 +6,14 @@ import * as constants from "@/components/constants";
 export default function EDocPropertyEditor({ component, onComponentChange }) {
   if (!component) return <p>컴포넌트를 선택하세요.</p>;
 
-  const updateTemplateJson = (key, value) => {
-    const newTemplateJson = {
-      ...component.template_json,
+  const updateRuntimeData = (key, value) => {
+    const newRuntimeData = {
+      ...component.runtime_data,
       [key]: value,
     };
     onComponentChange({
       ...component,
-      template_json: newTemplateJson,
+      runtime_data: newRuntimeData,
     });
   };
 
@@ -23,16 +23,16 @@ export default function EDocPropertyEditor({ component, onComponentChange }) {
         <div>
           <label>표시할 텍스트:</label>
           <textarea
-            value={component.template_json?.content || ''}
-            onChange={(e) => updateTemplateJson("content", e.target.value)}
+            value={component.runtime_data?.content || ''}
+            onChange={(e) => updateRuntimeData("content", e.target.value)}
             rows={4}
             className="w-full border border-gray-300 rounded p-2"
           />
 
           <label>정렬:</label>
           <select
-            value={component.template_json?.textAlign || 'left'}
-            onChange={(e) => updateTemplateJson("textAlign", e.target.value)}
+            value={component.runtime_data?.textAlign || 'left'}
+            onChange={(e) => updateRuntimeData("textAlign", e.target.value)}
             className="w-full border border-gray-300 rounded p-2 mb-2"
           >
             <option value="left">왼쪽</option>
@@ -117,13 +117,13 @@ export default function EDocPropertyEditor({ component, onComponentChange }) {
           <label>이미지 URL:</label>
           <input
             type="text"
-            value={component.template_json?.src || ''}
-            onChange={(e) => updateTemplateJson("src", e.target.value)}
+            value={component.runtime_data?.src || ''}
+            onChange={(e) => updateRuntimeData("src", e.target.value)}
             className="w-full border border-gray-300 rounded p-2"
           />
-          {component.template_json?.src && (
+          {component.runtime_data?.src && (
             <img
-              src={component.template_json.src}
+              src={component.runtime_data.src}
               alt="선택된 이미지"
               className="mt-2 max-w-full h-auto border"
             />
@@ -137,15 +137,15 @@ export default function EDocPropertyEditor({ component, onComponentChange }) {
           <label>입력값</label>
           <input
             type="text"
-            value={component.template_json?.placeholder || ''}
-            onChange={(e) => updateTemplateJson("placeholder", e.target.value)}
+            value={component.runtime_data?.placeholder || ''}
+            onChange={(e) => updateRuntimeData("placeholder", e.target.value)}
             className="w-full border border-gray-300 rounded p-2"
           />
 
           <label>정렬:</label>
           <select
-            value={component.template_json?.textAlign || 'left'}
-            onChange={(e) => updateTemplateJson("textAlign", e.target.value)}
+            value={component.runtime_data?.textAlign || 'left'}
+            onChange={(e) => updateRuntimeData("textAlign", e.target.value)}
             className="w-full border border-gray-300 rounded p-2 mb-2"
           >
             <option value="left">왼쪽</option>
