@@ -27,7 +27,7 @@ export default function EDocEditorCanvas({ components, selectedComponentId, onCo
 function DocComponentRenderer({ component, isSelected, onSelect }) {
   const baseClass = "mb-3 cursor-pointer";
   const selectedClass = isSelected ? "border-2 border-blue-500 bg-blue-50 rounded" : "";
-  const alignmentClass = {left: "text-left", center: "text-center", right: "text-right",}[component.template_json?.textAlign || "left"];
+  const alignmentClass = {left: "text-left", center: "text-center", right: "text-right",}[component.runtime_data?.textAlign || "left"];
 
   switch (component.type) {
     case constants.edoc.COMPONENT_TYPE_TEXT:
@@ -36,7 +36,7 @@ function DocComponentRenderer({ component, isSelected, onSelect }) {
           className={`${baseClass} ${selectedClass} ${alignmentClass}`}
           onClick={onSelect}
         >
-          {component.template_json.content.split('\n').map((line, idx) => (
+          {component.runtime_data.content.split('\n').map((line, idx) => (
             <React.Fragment key={idx}>
               {line}
               <br />
@@ -98,7 +98,7 @@ function DocComponentRenderer({ component, isSelected, onSelect }) {
       onClick={onSelect}
       type="text"
       value={component.runtime_data?.value || ''}  // 수정된 부분
-      placeholder={component.template_json?.placeholder || ''}
+      placeholder={component.runtime_data?.placeholder || ''}
       readOnly
     />
       );

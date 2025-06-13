@@ -1,9 +1,9 @@
 `use strict`
 
-import logger from "../winston/logger"
+import logger from "../../winston/logger"
 import * as constants from '@/components/constants'
-import * as database from "./database/database"
-import * as dynamicSql from './dynamicSql'
+import * as database from "../database/database"
+import * as dynamicSql from '../dynamicSql'
 
 const executeService = async (txnId, jRequest) => {
     var jResponse = {};

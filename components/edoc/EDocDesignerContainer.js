@@ -22,7 +22,8 @@ export default function EDocDesignerContainer({ documentId }) {
 
   const [documentData, setDocumentData] = useState({
     id: documentId || null,
-    title: '신규 기록서',
+    title: 'new document',
+    description: '신규 기록서',
     components: [],
   });
 
@@ -67,15 +68,17 @@ export default function EDocDesignerContainer({ documentId }) {
 
   setDocumentData((prev) => {
     const newComponents = [...prev.components];
+    if (selectedComponentId === null || selectedComponentId < 0) return;
     newComponents[selectedComponentId] = updatedComponent;
     return { ...prev, components: newComponents };
   });
   }
 
+  
+
    function handleAddComponent(component) {
   const baseComponent = { ...component };
 
-  // template_json 구조 파악
   const tpl = component.template_json;
   console.log("template_json:", component.template_json);
 
@@ -84,14 +87,14 @@ export default function EDocDesignerContainer({ documentId }) {
   switch (tpl.type) {
     case constants.edoc.COMPONENT_TYPE_TEXT:
       defaultRuntimeData.content = "여기에 텍스트를 입력하세요";
-      defaultRuntimeData.textAlign = "right"; // 기본 정렬
+      defaultRuntimeData.textAlign = "left"; // 기본 정렬
       break;
     case constants.edoc.COMPONENT_TYPE_IMAGE:
       defaultRuntimeData.src = "";
       break;
     case constants.edoc.COMPONENT_TYPE_INPUT:
       defaultRuntimeData.placeholder = "값을 입력하세요";
-      defaultRuntimeData.textAlign = "right"; // 기본 정렬
+      defaultRuntimeData.textAlign = "left"; // 기본 정렬
       break;
     case constants.edoc.COMPONENT_TYPE_TABLE:
       defaultRuntimeData.cols = 3;
@@ -120,50 +123,58 @@ export default function EDocDesignerContainer({ documentId }) {
     ) {
       setDocumentData({
         id: null,
-        title: '신규 기록서',
+        title: 'new document',
+        description: '신규 기록서',
         components: [],
       });
     }
   };
 
   // 문서 열기 (예시: prompt로 문서 ID 입력받기)
-  const handleOpenDocument = () => {
+  const handleOpenDocument = async () => {
     const id = window.prompt('열 문서 ID를 입력하세요');
     if (id) {
-      // 실제로는 라우팅하거나 상태를 변경해서 로드하도록 해야 함
-      // 여기선 간단히 fetch 후 setDocumentData 호출해도 됨
-      fetch(`/api/documents/${id}`)
-        .then((res) => {
-          if (!res.ok) throw new Error('문서 로드 실패');
-          return res.json();
-        })
-        .then((data) => setDocumentData(data))
-        .catch(() => alert('해당 문서를 찾을 수 없습니다.'));
+      try{
+      const jRequest = {
+        commandName: constants.commands.COMMAND_EDOC_DOCUMENT_SELECT_ONE,
+        systemCode: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE,
+        userId: userInfo.getLoginUserId(),
+        documentId: id
+      };
+      var jResponse = null;
+
+      setLoading(true); // 데이터 로딩 시작
+      jResponse = await RequestServer("POST", jRequest);
+      setLoading(false); // 데이터 로딩 끝
+
+      if (jResponse.error_code === 0) {
+        setDocumentData(jResponse.documentData); // 상태에 저장
+
+      } else openModal(jResponse.error_message);
+    }
+    catch(e){}
     }
   };
 
   // 문서 저장 (예시: POST or PUT 호출)
-  const handleSaveDocument = () => {
-    // 저장 API 호출 예시 (id 유무에 따라 create/update)
-    const method = documentData.id ? 'PUT' : 'POST';
-    const url = documentData.id
-      ? `/api/documents/${documentData.id}`
-      : '/api/documents';
+  const handleSaveDocument = async () => {
 
-    fetch(url, {
-      method,
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(documentData),
-    })
-      .then((res) => {
-        if (!res.ok) throw new Error('저장 실패');
-        return res.json();
-      })
-      .then((savedData) => {
-        alert('문서가 저장되었습니다.');
-        setDocumentData(savedData); // 저장 후 서버에서 리턴한 최신 데이터로 갱신
-      })
-      .catch(() => alert('문서 저장 중 오류가 발생했습니다.'));
+    const jRequest = {
+      commandName: constants.commands.COMMAND_EDOC_DOCUMENT_UPSERT_ONE,
+      systemCode: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE,
+      userId: userInfo.getLoginUserId(),
+      documentData: documentData
+    };
+    var jResponse = null;
+
+    setLoading(true); // 데이터 로딩 시작
+    jResponse = await RequestServer("POST", jRequest);
+    setLoading(false); // 데이터 로딩 끝
+
+    if (jResponse.error_code === 0) {
+      openModal(constants.messages.MESSAGE_SUCCESS_SAVED);
+      setDocumentData(jResponse.documentData);
+    } else openModal(jResponse.error_message);
   };
 
   // PDF 출력 (예시: 새 창으로 PDF 뷰어 열기)
@@ -203,7 +214,7 @@ const selectedComponent = selectedComponentId !== null ? documentData.components
             documentData={documentData} 
             setDocumentData={setDocumentData} />
           
-          <h1 className="text-2xl font-bold mb-6">{documentData.title}</h1>
+          <h1 className="text-2xl font-bold mb-6">{documentData.title} : {documentData.id}</h1>
           <EDocEditorCanvas
             components={documentData.components}
             selectedComponentId={selectedComponentId}

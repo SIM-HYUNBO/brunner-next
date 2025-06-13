@@ -8,8 +8,10 @@ export const messages = {
     EMPTY_STRING : '',
     MESSAGE_DATABASE_FAILED : `Database failed.`,
     MESSAGE_DELETE_ITEM : `Delete this item?`,
+    MESSAGE_FAILE_TO_SAVE : `Failed to save.`,
     MESSAGE_INPUT_STOCK_SYMBOL : `Select or Input a stock symbol.`,
     MESSAGE_INVALIED_NUMBER_AMOUNT : `Invalid number or amount.`,
+    MESSAGE_NO_DATA_FOUND : `No data found.`,
     MESSAGE_NO_PERMISSION : `You do not have permission`,
     MESSAGE_REQUIRED_FIELD : `The field value is required.`,
     MESSAGE_SERVER_NOT_CONNECTTED : `cannot connect to seerver`,
@@ -19,14 +21,14 @@ export const messages = {
     MESSAGE_SIGNOUT : `Do you want to signout now?`,
     MESSAGE_SUCCESS_ADDED : `Successfully added.`,
     MESSAGE_SUCCESS_DELETED : `Successfully deleted.`,
-    MESSAGE_UNKNOWN_ERROR : `Unknown error occured.`,
     MESSAGE_SUCCESS_SAVED : `Successfully saved.`,
-    MESSAGE_SUCCESS_SIGNUP : `successfully signed up.`
+    MESSAGE_SUCCESS_SIGNUP : `successfully signed up.`,
+    MESSAGE_UNKNOWN_ERROR : `Unknown error occured.`,
 }
 
 export const commands = {
     COMMAND_DYNAMIC_SEQ_SELECT_ALL : `dynamicSql.selectAll`,
-    COMMAND_DYNAMIC_SEQ_UPDATE_ONE : `tdynamicSql.updateOne`,
+    COMMAND_DYNAMIC_SEQ_UPDATE_ONE : `dynamicSql.updateOne`,
     COMMAND_DYNAMIC_SEQ_DELETE_ONE : `dynamicSql.deleteOne`,
     COMMAND_DYNAMIC_SEQ_LOAD_ALL : `dynamicSql.loadAll`, 
 
@@ -60,6 +62,8 @@ export const commands = {
     COMMAND_STOCK_INFO_GET_TICKER_LIST : `stockInfo.getTickerList`,
 
     COMMAND_EDOC_COMPONENT_TEMPLATES_SELECT_ALL : `edocComponentTemplate.selectAll`,
+    COMMAND_EDOC_DOCUMENT_UPSERT_ONE : `edocDocument.upsertOne`,
+    COMMAND_EDOC_DOCUMENT_SELECT_ONE : `edocDocument.selectOne`,
 }  
 
 export const edoc = {
