@@ -8,11 +8,11 @@ import * as constants from '@/components/constants'
  */
 export default function EDocEditorCanvas({ components, selectedComponentId, onComponentSelect }) {
   return (
-    <div className="min-h-[500px] border border-dashed border-gray-400 bg-white p-4 rounded">
-      {components.length === 0 && (
+    <div id="editor-canvas" className="min-h-[500px] border border-dashed border-gray-400 bg-white p-4 rounded">
+      {((!components) || components.length === 0) && (
         <p className="text-gray-500 text-center mt-20">좌측에서 컴포넌트를 추가하세요.</p>
       )}
-      {components.map((comp, idx) => (
+      {(components) && components.map((comp, idx) => (
         <DocComponentRenderer
           key={idx}
           component={comp}

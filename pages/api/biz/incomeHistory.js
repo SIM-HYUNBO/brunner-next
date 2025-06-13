@@ -39,8 +39,8 @@ const insertOne = async (txnId, jRequest) => {
         jResponse.commanaName = jRequest.commandName;
 
         var sql = null
-        sql = await dynamicSql.getSQL00('insert_TB_COR_INCOME_HIST', 1);
-        var insert_TB_COR_INCOME_HIST_01 = await database.executeSQL(sql,
+        sql = await dynamicSql.getSQL00('insert_TB_STK_INCOME_HIST', 1);
+        var insert_TB_STK_INCOME_HIST_01 = await database.executeSQL(sql,
             [
                 jRequest.systemCode,
                 jRequest.userId,
@@ -48,7 +48,7 @@ const insertOne = async (txnId, jRequest) => {
                 jRequest.comment
             ]);
 
-        if (insert_TB_COR_INCOME_HIST_01.rowCount == 1) {
+        if (insert_TB_STK_INCOME_HIST_01.rowCount == 1) {
             jResponse.error_code = 0;
             jResponse.error_message = constants.messages.EMPTY_STRING;
         }
@@ -73,14 +73,14 @@ const selectByUserId = async (txnId, jRequest) => {
         jResponse.commanaName = jRequest.commandName;
 
         var sql = null
-        sql = await dynamicSql.getSQL00('select_TB_COR_INCOME_HIST', 1);
-        var select_TB_COR_INCOME_HIST_01 = await database.executeSQL(sql,
+        sql = await dynamicSql.getSQL00('select_TB_STK_INCOME_HIST', 1);
+        var select_TB_STK_INCOME_HIST_01 = await database.executeSQL(sql,
             [
                 jRequest.systemCode,
                 jRequest.userId
             ]);
 
-        jResponse.incomeHistory = select_TB_COR_INCOME_HIST_01.rows;
+        jResponse.incomeHistory = select_TB_STK_INCOME_HIST_01.rows;
 
         jResponse.error_code = 0;
         jResponse.error_message = constants.messages.EMPTY_STRING;
@@ -100,15 +100,15 @@ const deleteOne = async (txnId, jRequest) => {
         jResponse.commanaName = jRequest.commandName;
 
         var sql = null
-        sql = await dynamicSql.getSQL00('delete_TB_COR_INCOME_HIST', 1);
-        var delete_TB_COR_INCOME_HIST_01 = await database.executeSQL(sql,
+        sql = await dynamicSql.getSQL00('delete_TB_STK_INCOME_HIST', 1);
+        var delete_TB_STK_INCOME_HIST_01 = await database.executeSQL(sql,
             [
                 jRequest.historyId,
                 jRequest.systemCode,
                 jRequest.userId
             ]);
 
-        if (delete_TB_COR_INCOME_HIST_01.rowCount === 1) {
+        if (delete_TB_STK_INCOME_HIST_01.rowCount === 1) {
             jResponse.error_code = 0;
             jResponse.error_message = constants.messages.EMPTY_STRING;
         }
@@ -132,8 +132,8 @@ const updateOne = async (txnId, jRequest) => {
         jResponse.commanaName = jRequest.commandName;
 
         var sql = null
-        sql = await dynamicSql.getSQL00('update_TB_COR_INCOME_HIST', 1);
-        var update_TB_COR_INCOME_HIST_01 = await database.executeSQL(sql,
+        sql = await dynamicSql.getSQL00('update_TB_STK_INCOME_HIST', 1);
+        var update_TB_STK_INCOME_HIST_01 = await database.executeSQL(sql,
             [
                 jRequest.amount,
                 jRequest.comment,
@@ -141,7 +141,7 @@ const updateOne = async (txnId, jRequest) => {
                 jRequest.historyId
             ]);
 
-        if (update_TB_COR_INCOME_HIST_01.rowCount === 1) {
+        if (update_TB_STK_INCOME_HIST_01.rowCount === 1) {
             jResponse.error_code = 0;
             jResponse.error_message = constants.messages.EMPTY_STRING;
         }

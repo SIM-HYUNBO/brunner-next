@@ -161,13 +161,13 @@ const getTickerList = async (txnId, jRequest) => {
 
         if (searchFlag) { // 지금 조회를 해야 한다면
             var sql = null
-            sql = await dynamicSql.getSQL00('select_TB_COR_TICKER_INFO', 1);
-            var select_TB_COR_TICKER_INFO_01 = await database.executeSQL(sql,
+            sql = await dynamicSql.getSQL00('select_TB_STK_TICKER_INFO', 1);
+            var select_TB_STK_TICKER_INFO_01 = await database.executeSQL(sql,
                 [
                     jRequest.systemCode
                 ]);
 
-            jResponse.tickerList = select_TB_COR_TICKER_INFO_01.rows;
+            jResponse.tickerList = select_TB_STK_TICKER_INFO_01.rows;
 
             recentSearch_getTickerList = {};
             recentSearch_getTickerList.searchTime = new Date();
@@ -205,20 +205,20 @@ const getTickerInfo = async (txnId, jRequest) => {
         if (searchFlag) { // 지금 조회를 해야 한다면        
 
             var sql = null
-            sql = await dynamicSql.getSQL00('select_TB_COR_TICKER_INFO', 2);
-            var select_TB_COR_TICKER_INFO_02 = await database.executeSQL(sql,
+            sql = await dynamicSql.getSQL00('select_TB_STK_TICKER_INFO', 2);
+            var select_TB_STK_TICKER_INFO_02 = await database.executeSQL(sql,
                 [
                     jRequest.systemCode,
                     jRequest.tickerCode,
                 ]);
 
-            if (select_TB_COR_TICKER_INFO_02.rowCount === 1) {
-                logger.info(`RESULT:\n${JSON.stringify(select_TB_COR_TICKER_INFO_02.rows[0])}\n`);
+            if (select_TB_STK_TICKER_INFO_02.rowCount === 1) {
+                logger.info(`RESULT:\n${JSON.stringify(select_TB_STK_TICKER_INFO_02.rows[0])}\n`);
 
                 jResponse.tickerInfo = {}; 5
-                jResponse.tickerInfo.tickerDesc = select_TB_COR_TICKER_INFO_02.rows[0].ticker_desc;
+                jResponse.tickerInfo.tickerDesc = select_TB_STK_TICKER_INFO_02.rows[0].ticker_desc;
             }
-            else if (select_TB_COR_TICKER_INFO_02.rowCount <= 0) {
+            else if (select_TB_STK_TICKER_INFO_02.rowCount <= 0) {
                 jResponse.error_code = -1;
                 jResponse.error_message = `The ticker info not exist.`;
                 return jResponse;
@@ -420,13 +420,13 @@ const getCurrencyList = async (txnId, jRequest) => {
         jResponse.systemCode = jRequest.systemCode;
 
         var sql = null
-        sql = await dynamicSql.getSQL00('select_TB_COR_CURRENCY_MST', 1);
-        var select_TB_COR_CURRENCY_MST_01 = await database.executeSQL(sql,
+        sql = await dynamicSql.getSQL00('select_TB_STK_CURRENCY_MST', 1);
+        var select_TB_STK_CURRENCY_MST_01 = await database.executeSQL(sql,
             [
                 jRequest.systemCode
             ]);
 
-        jResponse.currencyList = select_TB_COR_CURRENCY_MST_01.rows;
+        jResponse.currencyList = select_TB_STK_CURRENCY_MST_01.rows;
         jResponse.error_code = 0;
         jResponse.error_message = constants.messages.EMPTY_STRING;
     } catch (e) {

@@ -19,8 +19,8 @@ export const getRequestResult = async (
   condition10
 ) => {
   var sql = null;
-  sql = await dynamicSql.getSQL00("select_TB_COR_REQUEST_RESULT", 1);
-  var select_TB_COR_REQUEST_RESULT_01 = await database.executeSQL(sql, [
+  sql = await dynamicSql.getSQL00("select_TB_STK_REQUEST_RESULT", 1);
+  var select_TB_STK_REQUEST_RESULT_01 = await database.executeSQL(sql, [
     systemCode,
     apiName,
     condition1,
@@ -35,8 +35,8 @@ export const getRequestResult = async (
     condition10,
   ]);
 
-  if (select_TB_COR_REQUEST_RESULT_01.rows.length > 0)
-    return select_TB_COR_REQUEST_RESULT_01.rows[0].request_result;
+  if (select_TB_STK_REQUEST_RESULT_01.rows.length > 0)
+    return select_TB_STK_REQUEST_RESULT_01.rows[0].request_result;
   else return null;
 };
 
@@ -56,8 +56,8 @@ export const saveRequestResult = async (
   requestResult
 ) => {
   var sql = null;
-  sql = await dynamicSql.getSQL00("insert_TB_COR_REQUEST_RESULT", 1);
-  var insert_TB_COR_REQUEST_RESULT_01 = await database.executeSQL(sql, [
+  sql = await dynamicSql.getSQL00("insert_TB_STK_REQUEST_RESULT", 1);
+  var insert_TB_STK_REQUEST_RESULT_01 = await database.executeSQL(sql, [
     systemCode,
     apiName,
     condition1,
@@ -73,7 +73,7 @@ export const saveRequestResult = async (
     requestResult
   ]);
 
-  return insert_TB_COR_REQUEST_RESULT_01.rowCount;
+  return insert_TB_STK_REQUEST_RESULT_01.rowCount;
 };
 
 export const deleteRequestResult = async (
@@ -81,11 +81,11 @@ export const deleteRequestResult = async (
   condition5
 ) => {
   var sql = null;
-  sql = await dynamicSql.getSQL00("delete_TB_COR_REQUEST_RESULT", 1);
-  var delete_TB_COR_REQUEST_RESULT_01 = await database.executeSQL(sql, [
+  sql = await dynamicSql.getSQL00("delete_TB_STK_REQUEST_RESULT", 1);
+  var delete_TB_STK_REQUEST_RESULT_01 = await database.executeSQL(sql, [
     systemCode,
     condition5
   ]);
 
-  return delete_TB_COR_REQUEST_RESULT_01.rowCount;
+  return delete_TB_STK_REQUEST_RESULT_01.rowCount;
 };

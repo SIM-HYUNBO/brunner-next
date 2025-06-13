@@ -9,6 +9,7 @@ export default function EDocDesignerTopMenu({
   onNewDocument,
   onOpenDocument,
   onSaveDocument,
+  onDeleteDocument,
   onExportPdf
 }) {
   return (
@@ -30,6 +31,12 @@ export default function EDocDesignerTopMenu({
         className="px-3 py-1 bg-yellow-500 text-white rounded hover:bg-yellow-600"
       >
         저장
+      </button>
+      <button
+        onClick={onDeleteDocument}
+        className="px-3 py-1 bg-yellow-500 text-white rounded hover:bg-yellow-600"
+      >
+        삭제
       </button>
       <button
         onClick={onExportPdf}
