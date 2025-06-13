@@ -1,6 +1,11 @@
 import React from 'react';
 import * as constants from '@/components/constants'
 
+/**
+ * EDocEditorCanvas.js
+ * EDoc 편집기 캔버스 컴포넌트
+ * 컴포넌트들을 렌더링하고 선택된 컴포넌트를 강조 표시
+ */
 export default function EDocEditorCanvas({ components, selectedComponentId, onComponentSelect }) {
   return (
     <div className="min-h-[500px] border border-dashed border-gray-400 bg-white p-4 rounded">
@@ -22,12 +27,13 @@ export default function EDocEditorCanvas({ components, selectedComponentId, onCo
 function DocComponentRenderer({ component, isSelected, onSelect }) {
   const baseClass = "mb-3 cursor-pointer";
   const selectedClass = isSelected ? "border-2 border-blue-500 bg-blue-50 rounded" : "";
+  const alignmentClass = {left: "text-left", center: "text-center", right: "text-right",}[component.template_json?.textAlign || "left"];
 
   switch (component.type) {
     case constants.edoc.COMPONENT_TYPE_TEXT:
       return (
         <p
-          className={`${baseClass} ${selectedClass}`}
+          className={`${baseClass} ${selectedClass} ${alignmentClass}`}
           onClick={onSelect}
         >
           {component.template_json.content.split('\n').map((line, idx) => (
@@ -88,7 +94,7 @@ function DocComponentRenderer({ component, isSelected, onSelect }) {
     case constants.edoc.COMPONENT_TYPE_INPUT:
       return (
         <input
-      className="mb-3 border border-gray-400 rounded px-2 py-1"
+      className={`w-full mb-3 border border-gray-400 rounded px-2 py-1 ${alignmentClass}`}
       onClick={onSelect}
       type="text"
       value={component.runtime_data?.value || ''}  // 수정된 부분
