@@ -9,6 +9,9 @@ import EDocComponentPalette from './EDocComponentPalette';
 import EDocEditorCanvas from './EDocEditorCanvas';
 import EDocDesignerTopMenu from './EDocDesignerTopMenu'; // 상단 메뉴 컴포넌트 추가
 import EDocPropertyEditor from './EDocPropertyEditor';  // 경로는 상황에 맞게 조정
+import { opendir } from 'fs';
+import html2canvas from 'html2canvas';
+import jsPDF from 'jspdf';
 
 /**
  * EDocDesignerContainer.js
@@ -55,7 +58,7 @@ export default function EDocDesignerContainer({ documentId }) {
 
   useEffect(() => {
     if (documentId) {
-      // 서버에서 문서 불러오기 (생략)
+      openDocumentById(documentId);
     }
   }, [documentId]);
 
@@ -117,16 +120,16 @@ export default function EDocDesignerContainer({ documentId }) {
   // 새 문서 생성
   const handleNewDocument = () => {
     if (
-      window.confirm(
-        '현재 작업 중인 문서가 저장되지 않을 수 있습니다. 새 문서를 생성하시겠습니까?'
-      )
+      window.confirm('현재 작업 중인 문서가 저장되지 않을 수 있습니다. 새 문서를 생성하시겠습니까?')
     ) {
-      setDocumentData({
-        id: null,
-        title: 'new document',
-        description: '신규 기록서',
-        components: [],
-      });
+        const title = window.prompt('새문서 이름을 입력하세요');
+        // You may want to use the title variable here, e.g., setDocumentData({ ... title })
+        setDocumentData({
+          id: null,
+          title: title || 'new document',
+          description: '신규 기록서',
+          components: [],
+        });
     }
   };
 
@@ -134,27 +137,31 @@ export default function EDocDesignerContainer({ documentId }) {
   const handleOpenDocument = async () => {
     const id = window.prompt('열 문서 ID를 입력하세요');
     if (id) {
-      try{
-      const jRequest = {
-        commandName: constants.commands.COMMAND_EDOC_DOCUMENT_SELECT_ONE,
-        systemCode: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE,
-        userId: userInfo.getLoginUserId(),
-        documentId: id
-      };
-      var jResponse = null;
-
-      setLoading(true); // 데이터 로딩 시작
-      jResponse = await RequestServer("POST", jRequest);
-      setLoading(false); // 데이터 로딩 끝
-
-      if (jResponse.error_code === 0) {
-        setDocumentData(jResponse.documentData); // 상태에 저장
-
-      } else openModal(jResponse.error_message);
+      openDocumentById(id);
+    };
     }
-    catch(e){}
-    }
-  };
+
+    const openDocumentById = async (id) => {
+          try{
+          const jRequest = {
+            commandName: constants.commands.COMMAND_EDOC_DOCUMENT_SELECT_ONE,
+            systemCode: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE,
+            userId: userInfo.getLoginUserId(),
+            documentId: id
+          };
+          var jResponse = null;
+
+          setLoading(true); // 데이터 로딩 시작
+          jResponse = await RequestServer("POST", jRequest);
+          setLoading(false); // 데이터 로딩 끝
+
+          if (jResponse.error_code === 0) {
+            setDocumentData(jResponse.documentData ? jResponse.documentData : {}); // 상태에 저장
+
+          } else openModal(jResponse.error_message);
+        }
+        catch(e){}
+        }  
 
   // 문서 저장 (예시: POST or PUT 호출)
   const handleSaveDocument = async () => {
@@ -177,14 +184,73 @@ export default function EDocDesignerContainer({ documentId }) {
     } else openModal(jResponse.error_message);
   };
 
+  // 문서 삭제
+  const handleDeleteDocument = async () => {
+
+    const jRequest = {
+      commandName: constants.commands.COMMAND_EDOC_DOCUMENT_DELETE_ONE,
+      systemCode: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE,
+      userId: userInfo.getLoginUserId(),
+      documentId: documentData.id
+    };
+    var jResponse = null;
+
+    setLoading(true); // 데이터 로딩 시작
+    jResponse = await RequestServer("POST", jRequest);
+    setLoading(false); // 데이터 로딩 끝
+
+    if (jResponse.error_code === 0) {
+      openModal(constants.messages.MESSAGE_SUCCESS_DELETED);
+      setDocumentData({
+          id: null,
+          title: 'new document',
+          description: '신규 기록서',
+          components: [],
+        });
+    } else openModal(jResponse.error_message);
+  };  
+
   // PDF 출력 (예시: 새 창으로 PDF 뷰어 열기)
-  const handleExportPdf = () => {
-    if (!documentData.id) {
-      alert('저장된 문서만 PDF로 출력할 수 있습니다.');
-      return;
+  const handleExportPdf = async () => {
+  const element = document.getElementById("editor-canvas"); // 캔버스 영역 선택
+  if (!element) {
+    alert("캔버스를 찾을 수 없습니다.");
+    return;
+  }
+
+  const canvas = await html2canvas(element, {
+    scale: 2, // 해상도 향상
+    useCORS: true,
+  });
+
+  const imgData = canvas.toDataURL('image/png');
+  const pdf = new jsPDF({
+    orientation: 'portrait',
+    unit: 'mm',
+    format: 'a4',
+  });
+
+  const pageWidth = pdf.internal.pageSize.getWidth();
+  const pageHeight = pdf.internal.pageSize.getHeight();
+  const imgProps = pdf.getImageProperties(imgData);
+
+  const pdfWidth = pageWidth;
+  const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+
+  // 여러 페이지 분할 지원
+  let position = 0;
+  if (pdfHeight < pageHeight) {
+    pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+  } else {
+    while (position < pdfHeight) {
+      pdf.addImage(imgData, 'PNG', 0, -position, pdfWidth, pdfHeight);
+      position += pageHeight;
+      if (position < pdfHeight) pdf.addPage();
     }
-    window.open(`/api/documents/${documentData.id}/export-pdf`, '_blank');
-  };
+  }
+
+  pdf.save(`${documentData.title || 'document'}_${documentData.id}.pdf`);
+};
 
   // 선택된 컴포넌트 데이터
 const selectedComponent = selectedComponentId !== null ? documentData.components[selectedComponentId] : null;
@@ -210,11 +276,12 @@ const selectedComponent = selectedComponentId !== null ? documentData.components
             onNewDocument={handleNewDocument}
             onOpenDocument={handleOpenDocument}
             onSaveDocument={handleSaveDocument}
+            onDeleteDocument={handleDeleteDocument} 
             onExportPdf={handleExportPdf} 
             documentData={documentData} 
             setDocumentData={setDocumentData} />
           
-          <h1 className="text-2xl font-bold mb-6">{documentData.title} : {documentData.id}</h1>
+          {(documentData) && <h1 className="text-2xl font-bold mb-6">{documentData.title ? documentData.title : ""} : {documentData.id}</h1>}
           <EDocEditorCanvas
             components={documentData.components}
             selectedComponentId={selectedComponentId}

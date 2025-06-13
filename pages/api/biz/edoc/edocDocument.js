@@ -16,6 +16,9 @@ const executeService = async (txnId, jRequest) => {
             case constants.commands.COMMAND_EDOC_DOCUMENT_SELECT_ONE:
                 jResponse = await selectOne(txnId, jRequest);
                 break;
+            case constants.commands.COMMAND_EDOC_DOCUMENT_DELETE_ONE:
+                jResponse = await deleteOne(txnId, jRequest);
+                break;
             default:
                 break;
         }
@@ -199,18 +202,52 @@ const selectOne = async (txnId, jRequest) => {
     } catch (e) {
         logger.error(e);
         jResponse.error_code = -1; // exception
+        jResponse.error_message = e.message;
+    } finally {
+        return jResponse;
+    }
+};
+
+const deleteOne = async (txnId, jRequest) => {
+    var jResponse = {};
+    var isInsert = null; 
+    
+    try {
+        jResponse.commanaName = jRequest.commandName;
+
+        if (!jRequest.documentId) {  
+            jResponse.error_code = -2;
+            jResponse.error_message = `${constants.messages.MESSAGE_REQUIRED_FIELD} [documentId]`;
+            return jResponse;
+        }
+        
+        // insert TB_DOC_DOCUMENT
+        var sql = null
+        sql = await dynamicSql.getSQL00('delete_TB_DOC_DOCUMENT', 1);
+        var delete_TB_DOC_DOCUMENT = await database.executeSQL(sql,
+        [
+                jRequest.systemCode,
+                jRequest.documentId     
+        ]);
+
+        sql = await dynamicSql.getSQL00('delete_TB_DOC_DOCUMENT_COMPONENT_MAP_BY_DOCUMENT_ID', 1);
+        
+        var delete_TB_DOC_DOCUMENT_COMPONENT_MAP_BY_DOCUMENT_ID = await database.executeSQL(sql,
+        [
+                jRequest.systemCode,
+                jRequest.documentId     
+        ]);
+
+        jResponse.error_code = 0;
+        jResponse.error_message = constants.messages.MESSAGE_SUCCESS_DELETED;
+        jResponse.documentData = jRequest.documentData; // return saved document data
+    } catch (e) {
+        logger.error(e);
+        jResponse.error_code = -1; // exception
         jResponse.error_message = e.message
     } finally {
         return jResponse;
     }
 };
 
-function generateUUID() { // Public Domain/MIT
-    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
-        const r = Math.random() * 16 | 0;
-        const v = c === 'x' ? r : (r & 0x3 | 0x8);
-        return v.toString(16);
-    });
-}
-
-export { executeService, generateUUID };
+export { executeService };
