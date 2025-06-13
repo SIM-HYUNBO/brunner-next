@@ -1,6 +1,11 @@
 import React from 'react';
 
-export default function EDocTopMenu({
+/**
+ * EDocTopMenu.js
+ * EDoc 상단 메뉴 컴포넌트
+ * 새문서, 열기, 저장, PDF 출력 버튼을 포함
+ */
+export default function EDocDesignerTopMenu({
   onNewDocument,
   onOpenDocument,
   onSaveDocument,

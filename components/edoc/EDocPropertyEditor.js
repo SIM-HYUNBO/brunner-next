@@ -1,5 +1,8 @@
 import * as constants from "@/components/constants";
-
+/*
+ * EDocPropertyEditor.js
+ * EDoc 컴포넌트의 속성을 편집하는 컴포넌트
+ */
 export default function EDocPropertyEditor({ component, onComponentChange }) {
   if (!component) return <p>컴포넌트를 선택하세요.</p>;
 
@@ -25,6 +28,17 @@ export default function EDocPropertyEditor({ component, onComponentChange }) {
             rows={4}
             className="w-full border border-gray-300 rounded p-2"
           />
+
+          <label>정렬:</label>
+          <select
+            value={component.template_json?.textAlign || 'left'}
+            onChange={(e) => updateTemplateJson("textAlign", e.target.value)}
+            className="w-full border border-gray-300 rounded p-2 mb-2"
+          >
+            <option value="left">왼쪽</option>
+            <option value="center">가운데</option>
+            <option value="right">오른쪽</option>
+          </select>          
         </div>
       );
 
@@ -127,6 +141,17 @@ export default function EDocPropertyEditor({ component, onComponentChange }) {
             onChange={(e) => updateTemplateJson("placeholder", e.target.value)}
             className="w-full border border-gray-300 rounded p-2"
           />
+
+          <label>정렬:</label>
+          <select
+            value={component.template_json?.textAlign || 'left'}
+            onChange={(e) => updateTemplateJson("textAlign", e.target.value)}
+            className="w-full border border-gray-300 rounded p-2 mb-2"
+          >
+            <option value="left">왼쪽</option>
+            <option value="center">가운데</option>
+            <option value="right">오른쪽</option>
+          </select>
         </div>
       );
 

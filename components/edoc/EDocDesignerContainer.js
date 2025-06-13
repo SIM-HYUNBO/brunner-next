@@ -7,9 +7,14 @@ import RequestServer from "@/components/requestServer";
 
 import EDocComponentPalette from './EDocComponentPalette';
 import EDocEditorCanvas from './EDocEditorCanvas';
-import EDocTopMenu from './EDocTopMenu'; // 상단 메뉴 컴포넌트 추가
+import EDocDesignerTopMenu from './EDocDesignerTopMenu'; // 상단 메뉴 컴포넌트 추가
 import EDocPropertyEditor from './EDocPropertyEditor';  // 경로는 상황에 맞게 조정
 
+/**
+ * EDocDesignerContainer.js
+ * EDoc 디자이너 컨테이너 컴포넌트
+ * 문서 편집 및 컴포넌트 관리 기능을 포함
+ */
 export default function EDocDesignerContainer({ documentId }) {
   const { BrunnerMessageBox, openModal } = useModal();
   const [loading, setLoading] = useState(false);
@@ -74,27 +79,32 @@ export default function EDocDesignerContainer({ documentId }) {
   const tpl = component.template_json;
   console.log("template_json:", component.template_json);
 
-  // defaultProps 우선 적용
+  // 초기 runtime_data 자동 생성
   const defaultRuntimeData = {};
-
-  // runtime_data 자동 생성
-  if (tpl.type === constants.edoc.COMPONENT_TYPE_TABLE) {
-    defaultRuntimeData.cols = 3;
-    defaultRuntimeData.rows = 3;
-    defaultRuntimeData.data = Array.from({ length: 3 }, () => Array(3).fill(""));
-    defaultRuntimeData.columns = ["ColumnHeader1", "ColumnHeader2", "ColumnHeader3"];
-    baseComponent.runtime_data = defaultRuntimeData;
-  } else if (tpl.type === constants.edoc.COMPONENT_TYPE_TEXT) {
-    defaultRuntimeData.content = "여기에 텍스트를 입력하세요";
-    baseComponent.runtime_data = defaultRuntimeData;
-  } else if (tpl.type === constants.edoc.COMPONENT_TYPE_IMAGE) {
-    defaultRuntimeData.src = "";
-    baseComponent.runtime_data = defaultRuntimeData;
-  } else if (tpl.type === constants.edoc.COMPONENT_TYPE_INPUT) {
-    defaultRuntimeData.placeholder = "값을 입력하세요";
-    baseComponent.runtime_data = defaultRuntimeData;
+  switch (tpl.type) {
+    case constants.edoc.COMPONENT_TYPE_TEXT:
+      defaultRuntimeData.content = "여기에 텍스트를 입력하세요";
+      defaultRuntimeData.textAlign = "right"; // 기본 정렬
+      break;
+    case constants.edoc.COMPONENT_TYPE_IMAGE:
+      defaultRuntimeData.src = "";
+      break;
+    case constants.edoc.COMPONENT_TYPE_INPUT:
+      defaultRuntimeData.placeholder = "값을 입력하세요";
+      defaultRuntimeData.textAlign = "right"; // 기본 정렬
+      break;
+    case constants.edoc.COMPONENT_TYPE_TABLE:
+      defaultRuntimeData.cols = 3;
+      defaultRuntimeData.rows = 3;
+      defaultRuntimeData.data = Array.from({ length: 3 }, () => Array(3).fill(""));
+      defaultRuntimeData.columns = ["ColumnHeader1", "ColumnHeader2", "ColumnHeader3"];
+      break;
+    // 다른 타입에 대한 기본값 추가 가능
+    default:
+      break;
   }
-
+  baseComponent.runtime_data = defaultRuntimeData;
+  
   setDocumentData((prev) => ({
     ...prev,
     components: [...prev.components, baseComponent],
@@ -185,7 +195,7 @@ const selectedComponent = selectedComponentId !== null ? documentData.components
         </aside>
 
         <main className="flex-1 p-6 overflow-auto">
-          <EDocTopMenu         
+          <EDocDesignerTopMenu         
             onNewDocument={handleNewDocument}
             onOpenDocument={handleOpenDocument}
             onSaveDocument={handleSaveDocument}
