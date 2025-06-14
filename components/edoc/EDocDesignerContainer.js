@@ -212,14 +212,18 @@ export default function EDocDesignerContainer({ documentId }) {
 
   // PDF 출력 (예시: 새 창으로 PDF 뷰어 열기)
   const handleExportPdf = async () => {
-  const element = document.getElementById("editor-canvas"); // 캔버스 영역 선택
+  const element = document.getElementById("editor-canvas"); // 캡처 대상
   if (!element) {
     alert("캔버스를 찾을 수 없습니다.");
     return;
   }
 
+  setLoading(true); // 데이터 로딩 시작
+
+  await waitForImagesLoaded(element); // 이미지 로딩 완료 대기
+
   const canvas = await html2canvas(element, {
-    scale: 2, // 해상도 향상
+    scale: 2,
     useCORS: true,
   });
 
@@ -237,7 +241,6 @@ export default function EDocDesignerContainer({ documentId }) {
   const pdfWidth = pageWidth;
   const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
 
-  // 여러 페이지 분할 지원
   let position = 0;
   if (pdfHeight < pageHeight) {
     pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
@@ -250,7 +253,22 @@ export default function EDocDesignerContainer({ documentId }) {
   }
 
   pdf.save(`${documentData.title || 'document'}_${documentData.id}.pdf`);
+    setLoading(false); // 데이터 로딩 시작
+
 };
+
+async function waitForImagesLoaded(container) {
+  const imgs = container.querySelectorAll("img");
+  await Promise.all(
+    Array.from(imgs).map((img) => {
+      if (img.complete && img.naturalWidth !== 0) return Promise.resolve();
+      return new Promise((resolve) => {
+        img.onload = () => resolve();
+        img.onerror = () => resolve(); // 에러도 일단 진행
+      });
+    })
+  );
+}
 
   // 선택된 컴포넌트 데이터
 const selectedComponent = selectedComponentId !== null ? documentData.components[selectedComponentId] : null;
