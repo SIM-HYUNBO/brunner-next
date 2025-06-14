@@ -72,4 +72,5 @@ export const edoc = {
     COMPONENT_TYPE_TABLE : `table`,
     COMPONENT_TYPE_IMAGE : `image`, 
     COMPONENT_TYPE_INPUT : `input`,
+    COMPONENT_TYPE_CHECKLIST : "checklist",
 }

@@ -11,6 +11,7 @@ export default function EDocPropertyEditor({ component, onComponentChange }) {
       ...component.runtime_data,
       [key]: value,
     };
+    
     onComponentChange({
       ...component,
       runtime_data: newRuntimeData,
@@ -46,11 +47,9 @@ export default function EDocPropertyEditor({ component, onComponentChange }) {
       const updateTableSize = (newRows, newCols) => {
         const oldData = component.runtime_data?.data || [];
         const oldColumns = component.runtime_data?.columns || [];
-
         const newData = Array.from({ length: newRows }, (_, r) =>
           Array.from({ length: newCols }, (_, c) => oldData[r]?.[c] ?? "")
         );
-
         const newColumns = Array.from({ length: newCols }, (_, c) =>
           oldColumns[c] ?? { header: `ColumnHeader ${c + 1}`, width: "auto" }
         );
@@ -227,6 +226,78 @@ export default function EDocPropertyEditor({ component, onComponentChange }) {
         </div>
       );
 
+    case constants.edoc.COMPONENT_TYPE_CHECKLIST:
+      const items = component.runtime_data?.items || [
+        { checked: false, label: "항목 1" },
+        { checked: false, label: "항목 2" },
+        { checked: false, label: "항목 3" },
+      ];
+
+      const handleItemCountChange = (newCount) => {
+        let count = Math.max(1, newCount); // 최소 1개 보장
+        const newItems = [...items];
+
+        if (newItems.length > count) {
+          newItems.length = count; // 자르기
+        } else {
+          while (newItems.length < count) {
+            newItems.push({
+              checked: false,
+              label: `항목 ${newItems.length + 1}` // 기본값을 직접 value로 설정
+            });
+          }
+        }
+
+        onComponentChange({
+          ...component,
+          runtime_data: {
+            ...component.runtime_data,
+            items: newItems,
+          },
+        });
+      };
+
+      const handleItemLabelChange = (index, newLabel) => {
+        const newItems = [...items];
+        newItems[index] = {
+          ...newItems[index],
+          label: newLabel,
+        };
+
+        onComponentChange({
+          ...component,
+          runtime_data: {
+            ...component.runtime_data,
+            items: newItems,
+          },
+        });
+      };
+
+      return (
+        <div>
+          <label className="block mb-1">체크리스트 항목 수:</label>
+          <input
+            type="number"
+            min={1}
+            value={items.length}
+            onChange={(e) => handleItemCountChange(parseInt(e.target.value))}
+            className="w-full border border-gray-300 rounded p-2 mb-3"
+          />
+
+          <label className="block mb-1">항목 이름 수정:</label>
+          {items.map((item, idx) => (
+            <div key={idx} className="flex items-center gap-2 mb-2">
+              <span className="text-gray-500">{idx + 1}.</span>
+              <input
+                type="text"
+                value={item.label}
+                onChange={(e) => handleItemLabelChange(idx, e.target.value)}
+                className="flex-1 border border-gray-300 rounded p-2"
+              />
+            </div>
+          ))}
+        </div>
+      );
     default:
       return <p>속성 편집이 지원되지 않는 컴포넌트입니다.</p>;
   }
