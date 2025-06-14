@@ -191,6 +191,8 @@ export default function EDocEditorCanvas({
 }
 
 function DocComponentRenderer({ component, isSelected, onSelect, onRuntimeDataChange }) {
+  const defaultLineHeight = 'h-8'; // 기본 줄 높이 설정
+  const defaultCellHeight = 'h-10 py-2'; // 테이블 셀 높이 설정
   const baseClass = 'w-full cursor-pointer';
   const selectedClass = isSelected
       ? 'outline outline-2 outline-blue-500 rounded bg-blue-50'
@@ -204,10 +206,12 @@ function DocComponentRenderer({ component, isSelected, onSelect, onRuntimeDataCh
   switch (component.type) {
     case constants.edoc.COMPONENT_TYPE_TEXT:
       return (
-        <p className={`${baseClass} ${selectedClass} ${alignmentClass}`} onClick={(e) => {
-    e.stopPropagation();
-    onSelect();
-  }}>
+        <p 
+          className={`${baseClass} ${selectedClass} ${alignmentClass} ${defaultLineHeight}`} 
+          onClick={(e) => {
+            e.stopPropagation();
+            onSelect();
+          }}>
           {component.runtime_data.content.split('\n').map((line, idx) => (
             <React.Fragment key={idx}>
               {line}
@@ -215,6 +219,21 @@ function DocComponentRenderer({ component, isSelected, onSelect, onRuntimeDataCh
             </React.Fragment>
           ))}
         </p>
+      );
+
+    case constants.edoc.COMPONENT_TYPE_INPUT:
+      return (
+        <input
+          className={`${baseClass} ${selectedClass} ${alignmentClass} ${defaultLineHeight}`}
+          onClick={(e) => {
+            e.stopPropagation();
+            onSelect();
+          }}
+          type="text"
+          value={component.runtime_data?.value || ''}
+          placeholder={component.runtime_data?.placeholder || ''}
+          // readOnly
+        />
       );
 
     case constants.edoc.COMPONENT_TYPE_TABLE:
@@ -251,7 +270,7 @@ function DocComponentRenderer({ component, isSelected, onSelect, onRuntimeDataCh
               {row.map((cell, cIdx) => (
                 <td
                   key={cIdx}
-                  className="border border-gray-300 px-4 py-2 text-center min-w-[100px] h-[40px]"
+                  className={`border border-gray-300 text-center align-middle min-w-[100px] ${defaultCellHeight}`}
                   style={{ width: columns[cIdx]?.width || 'auto' }}
                 >
                   {isSelected ? (
@@ -285,21 +304,6 @@ function DocComponentRenderer({ component, isSelected, onSelect, onRuntimeDataCh
             <div className="w-full h-24 bg-gray-200 flex items-center justify-center text-gray-500">이미지 없음</div>
           )}
         </div>
-      );
-
-    case constants.edoc.COMPONENT_TYPE_INPUT:
-      return (
-        <input
-          className={`${baseClass} ${selectedClass} ${alignmentClass}`}
-          onClick={(e) => {
-    e.stopPropagation();
-    onSelect();
-  }}
-          type="text"
-          value={component.runtime_data?.value || ''}
-          placeholder={component.runtime_data?.placeholder || ''}
-          readOnly
-        />
       );
 
     case constants.edoc.COMPONENT_TYPE_CHECKLIST:
