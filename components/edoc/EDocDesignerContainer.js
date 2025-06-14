@@ -269,25 +269,12 @@ function handleDeleteComponent() {
   setSelectedComponentId(null);
 }
 
-const onTableCellChange = (rowIndex, colIndex, newValue) => {
-  if (selectedComponentId === null) return;
-
-  setDocumentData(prev => {
-    const components = [...prev.components];
-    const comp = { ...components[selectedComponentId] };
-
-    // runtime_data와 data 배열 복사 (불변성 유지)
-    const newData = comp.runtime_data.data.map((row, rIdx) =>
-      row.map((cell, cIdx) => (rIdx === rowIndex && cIdx === colIndex ? newValue : cell))
-    );
-
-    comp.runtime_data = {
-      ...comp.runtime_data,
-      data: newData,
-    };
-
-    components[selectedComponentId] = comp;
-    return { ...prev, components };
+// 1. handleUpdateComponent 함수 추가
+const handleUpdateComponent = (selectedComponentId, updatedComponent) => {
+  setDocumentData((prev) => {
+    const newComponents = [...prev.components];
+    newComponents[selectedComponentId] = updatedComponent;
+    return { ...prev, components: newComponents };
   });
 };
 
@@ -332,6 +319,7 @@ const onTableCellChange = (rowIndex, colIndex, newValue) => {
             onMoveUp= {handleMoveComponentUp}
             onMoveDown={handleMoveComponentDown}
             onDeleteComponent={handleDeleteComponent}
+            onUpdateComponent={(updatedComponent) => handleUpdateComponent(selectedComponentId, updatedComponent[selectedComponentId])} 
           />
         </main>
 

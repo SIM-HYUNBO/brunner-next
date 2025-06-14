@@ -6,7 +6,29 @@ import * as constants from '@/components/constants';
  * EDoc 편집기 캔버스 컴포넌트
  * 컴포넌트들을 렌더링하고 선택된 컴포넌트를 강조 표시
  */
-export default function EDocEditorCanvas({ components, selectedComponentId, onComponentSelect, onDeleteComponent, onMoveUp, onMoveDown }) {
+export default function EDocEditorCanvas({
+  components,
+  selectedComponentId,
+  onComponentSelect,
+  onDeleteComponent,
+  onMoveUp,
+  onMoveDown,
+  onUpdateComponent, // 🔹 새롭게 전달받을 prop
+}) {
+  const handleTableCellChange = (componentIdx, rowIdx, colIdx, value) => {
+    const updated = [...components];
+    const data = [...updated[componentIdx].runtime_data.data];
+    data[rowIdx][colIdx] = value;
+    updated[componentIdx] = {
+      ...updated[componentIdx],
+      runtime_data: {
+        ...updated[componentIdx].runtime_data,
+        data,
+      },
+    };
+    onUpdateComponent(updated);
+  };
+
   return (
     <div id="editor-canvas" className="min-h-[500px] border border-dashed border-gray-400 bg-white p-4 rounded">
       {(!components || components.length === 0) && (
@@ -15,7 +37,7 @@ export default function EDocEditorCanvas({ components, selectedComponentId, onCo
       {components &&
         components.map((comp, idx) => (
           <div key={idx} className="relative group mb-4 border border-transparent rounded hover:border-gray-300 p-1">
-            {/* 위/아래 이동 버튼 */}
+            {/* 위/아래 이동/삭제 버튼은 그대로 유지 */}
             <div className="absolute -left-8 top-1/2 transform -translate-y-1/2 flex flex-col space-y-1 opacity-0 group-hover:opacity-100 transition">
               <button
                 className="text-xs bg-white border rounded shadow px-1 hover:bg-gray-100 disabled:opacity-30"
@@ -46,6 +68,8 @@ export default function EDocEditorCanvas({ components, selectedComponentId, onCo
               component={comp}
               isSelected={selectedComponentId === idx}
               onSelect={() => onComponentSelect(idx)}
+              onTableCellChange={(rowIdx, colIdx, value) =>  handleTableCellChange(idx, rowIdx, colIdx, value)
+  }
             />
           </div>
         ))}
@@ -76,52 +100,62 @@ function DocComponentRenderer({ component, isSelected, onSelect, onTableCellChan
       );
 
     case constants.edoc.COMPONENT_TYPE_TABLE:
-      // 깊은 복사하여 불변성 유지
-      const tableData = component.runtime_data?.data?.length
-        ? component.runtime_data.data.map(row => [...row])
-        : Array(3).fill('').map(() => '');
+    // runtime_data.data가 배열인지 확인하고 깊은 복사, 없으면 3x3 빈 데이터 생성
+    const tableData = Array.isArray(component.runtime_data?.data) && component.runtime_data.data.length > 0
+      ? component.runtime_data.data.map(row => [...row])
+      : Array.from({ length: 3 }, () => Array(3).fill(''));
 
-      // columns도 복사
-      const columns = component.runtime_data?.columns?.length
-        ? component.runtime_data.columns.map(col => ({ ...col }))
-        : tableData[0]?.map((_, idx) => ({ header: `열 ${idx + 1}`, width: 'auto' })) || [];
+    // columns가 문자열 배열이면 객체 배열로 변환, 기본값 생성
+    const columns = Array.isArray(component.runtime_data?.columns) && component.runtime_data.columns.length > 0
+      ? component.runtime_data.columns.map(col =>
+          typeof col === 'string' ? { header: col, width: 'auto' } : { ...col }
+        )
+      : Array(tableData[0]?.length || 3).fill(null).map((_, idx) => ({ header: `열 ${idx + 1}`, width: 'auto' }));
 
-      return (
-        <table
-          className={`${baseClass} ${selectedClass} border border-gray-300`}
-          onClick={onSelect}
-          style={{ width: component.runtime_data?.width || '100%' }}
-        >
-          <thead>
-            <tr>
-              {columns.map((col, cIdx) => (
-                <th
+    return (
+      <table
+        className={`${baseClass} ${selectedClass} border border-gray-300`}
+        onClick={onSelect}
+        style={{ width: component.runtime_data?.width || '100%' }}
+      >
+        <thead>
+          <tr>
+            {columns.map((col, cIdx) => (
+              <th
+                key={cIdx}
+                className="border border-gray-300 px-3 py-1 bg-gray-100"
+                style={{ width: col.width || 'auto' }}
+              >
+                {col.header || `열 ${cIdx + 1}`}
+              </th>
+            ))}
+          </tr>
+        </thead>
+        <tbody>
+          {tableData.map((row, rIdx) => (
+            <tr key={rIdx}>
+              {row.map((cell, cIdx) => (
+                <td
                   key={cIdx}
-                  className="border border-gray-300 px-3 py-1 bg-gray-100"
-                  style={{ width: col.width || 'auto' }}
+                  className="border border-gray-300 px-4 py-2 text-center min-w-[100px] h-[40px]"
+                  style={{ width: columns[cIdx]?.width || 'auto' }}
                 >
-                  {col.header || `열 ${cIdx + 1}`}
-                </th>
+                  {isSelected ? (
+                    <input
+                      className="w-full text-center border-none bg-transparent focus:outline-none"
+                      value={cell}
+                      onChange={(e) => onTableCellChange?.(rIdx, cIdx, e.target.value)}
+                    />
+                  ) : (
+                    cell
+                  )}
+                </td>
               ))}
             </tr>
-          </thead>
-          <tbody>
-            {tableData.map((row, rIdx) => (
-              <tr key={rIdx}>
-                {row.map((cell, cIdx) => (
-                  <td
-                    key={cIdx}
-                    className="border border-gray-300 px-4 py-2 text-center min-w-[100px] h-[40px]"
-                    style={{ width: columns[cIdx]?.width || 'auto' }}
-                  >
-                    {cell}
-                  </td>
-                ))}
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      );
+          ))}
+        </tbody>
+      </table>
+    );
 
     case constants.edoc.COMPONENT_TYPE_IMAGE:
       const imageAlign = {
