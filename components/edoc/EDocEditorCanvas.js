@@ -123,8 +123,7 @@ function DocComponentRenderer({ component, isSelected, onSelect, onTableCellChan
             {columns.map((col, cIdx) => (
               <th
                 key={cIdx}
-                className="border border-gray-300 px-3 py-1 bg-gray-100"
-                style={{ width: col.width || 'auto' }}
+                className={`border border-gray-300 bg-gray-100 text-center align-middle p-2 ${col.width ? `w-[${col.width}]` : ''}`}
               >
                 {col.header || `열 ${cIdx + 1}`}
               </th>
