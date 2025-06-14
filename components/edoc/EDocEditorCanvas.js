@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import * as constants from '@/components/constants';
 
 /**
@@ -15,6 +15,20 @@ export default function EDocEditorCanvas({
   onMoveDown,
   onUpdateComponent, // 🔹 새롭게 전달받을 prop
 }) {
+    useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') {
+        onComponentSelect(null);
+         // 🔹 포커스 해제
+        if (document.activeElement instanceof HTMLElement) {
+          document.activeElement.blur();
+        }
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [onComponentSelect]);
+  
   const handleTableCellChange = (componentIdx, rowIdx, colIdx, value) => {
     const updated = [...components];
     const data = [...updated[componentIdx].runtime_data.data];
@@ -30,7 +44,11 @@ export default function EDocEditorCanvas({
   };
 
   return (
-    <div id="editor-canvas" className="min-h-[500px] border border-dashed border-gray-400 bg-white p-4 rounded">
+    <div id="editor-canvas" 
+        className="min-h-[500px] border border-dashed border-gray-400 bg-white p-4 rounded"
+        onClick={() => onComponentSelect(null)} // ← 빈 공간 클릭 시 선택 해제
+    >
+        
       {(!components || components.length === 0) && (
         <p className="text-gray-500 text-center mt-20">좌측에서 컴포넌트를 추가하세요.</p>
       )}
@@ -78,18 +96,23 @@ export default function EDocEditorCanvas({
 }
 
 function DocComponentRenderer({ component, isSelected, onSelect, onTableCellChange }) {
-  const baseClass = 'cursor-pointer';
-  const selectedClass = isSelected ? 'border-2 border-blue-500 bg-blue-50 rounded' : '';
+  const baseClass = 'w-full cursor-pointer';
+  const selectedClass = isSelected
+      ? 'outline outline-2 outline-blue-500 rounded bg-blue-50'
+      : '';
   const alignmentClass = {
     left: 'text-left',
     center: 'text-center',
     right: 'text-right',
   }[component.runtime_data?.textAlign || 'left'];
-
+    
   switch (component.type) {
     case constants.edoc.COMPONENT_TYPE_TEXT:
       return (
-        <p className={`${baseClass} ${selectedClass} ${alignmentClass}`} onClick={onSelect}>
+        <p className={`${baseClass} ${selectedClass} ${alignmentClass}`} onClick={(e) => {
+    e.stopPropagation();
+    onSelect();
+  }}>
           {component.runtime_data.content.split('\n').map((line, idx) => (
             <React.Fragment key={idx}>
               {line}
@@ -115,7 +138,10 @@ function DocComponentRenderer({ component, isSelected, onSelect, onTableCellChan
     return (
       <table
         className={`${baseClass} ${selectedClass} border border-gray-300`}
-        onClick={onSelect}
+        onClick={(e) => {
+    e.stopPropagation();
+    onSelect();
+  }}
         style={{ width: component.runtime_data?.width || '100%' }}
       >
         <thead>
@@ -164,7 +190,10 @@ function DocComponentRenderer({ component, isSelected, onSelect, onTableCellChan
       }[component.runtime_data?.textAlign || 'left'];
 
       return (
-        <div className={`${baseClass} ${selectedClass} ${imageAlign}`} onClick={onSelect}>
+        <div className={`${baseClass} ${selectedClass} ${imageAlign}`} onClick={(e) => {
+    e.stopPropagation();
+    onSelect();
+  }}>
           {component.runtime_data?.src ? (
             <img src={component.runtime_data.src} alt="이미지" className="inline-block max-w-full h-auto" />
           ) : (
@@ -176,8 +205,11 @@ function DocComponentRenderer({ component, isSelected, onSelect, onTableCellChan
     case constants.edoc.COMPONENT_TYPE_INPUT:
       return (
         <input
-          className={`w-full h-10 border-none rounded bg-transparent ${alignmentClass}`}
-          onClick={onSelect}
+          className={`${baseClass} ${selectedClass} ${alignmentClass}`}
+          onClick={(e) => {
+    e.stopPropagation();
+    onSelect();
+  }}
           type="text"
           value={component.runtime_data?.value || ''}
           placeholder={component.runtime_data?.placeholder || ''}
