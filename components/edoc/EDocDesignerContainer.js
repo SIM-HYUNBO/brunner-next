@@ -87,6 +87,10 @@ const handleComponentChange = (updatedComponent) => {
         defaultRuntimeData.data = Array.from({ length: 3 }, () => Array(3).fill(""));
         defaultRuntimeData.columns = ["ColumnHeader1", "ColumnHeader2", "ColumnHeader3"];
         break;
+      case constants.edoc.COMPONENT_TYPE_CHECKLIST:
+        defaultRuntimeData.itemCount = 3;
+        defaultRuntimeData.items = Array.from({ length: 3 }, (_, i) => ({ label: `항목 ${i + 1}`, checked: false}));
+        break;
       default:
         break;
     }

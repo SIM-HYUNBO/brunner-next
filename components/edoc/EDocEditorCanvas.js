@@ -29,17 +29,59 @@ export default function EDocEditorCanvas({
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [onComponentSelect]);
   
-  const handleTableCellChange = (componentIdx, rowIdx, colIdx, value) => {
+  const handleRuntimeDataChange = (componentIdx, newRuntimeData) => {
     const updated = [...components];
-    const data = [...updated[componentIdx].runtime_data.data];
-    data[rowIdx][colIdx] = value;
+    const component = updated[componentIdx];
+
+    // 분기 처리: 컴포넌트 타입별로 runtime_data 갱신 방법이 다름
+    // let newRuntimeData = { ...component.runtime_data };
+
+    switch (component.type) {
+      case constants.edoc.COMPONENT_TYPE_TABLE:
+        if (
+          typeof newRuntimeData.rowIdx === 'number' &&
+          typeof newRuntimeData.colIdx === 'number'
+        ) {
+          const data = [...(component.runtime_data?.data || [])];
+          data[newRuntimeData.rowIdx][newRuntimeData.colIdx] = newRuntimeData.value;
+          newRuntimeData = { ...newRuntimeData, data };
+        }
+        break;
+
+      case constants.edoc.COMPONENT_TYPE_TEXT:
+        if (typeof newRuntimeData.content === 'string') {
+          newRuntimeData = { ...newRuntimeData, content: newRuntimeData.content };
+        }
+        break;
+
+      case constants.edoc.COMPONENT_TYPE_INPUT:
+        if (typeof newRuntimeData.value === 'string') {
+          newRuntimeData = { ...newRuntimeData, value: newRuntimeData.value };
+        }
+        break;
+
+      case constants.edoc.COMPONENT_TYPE_CHECKLIST:
+          if (Array.isArray(newRuntimeData.items)) {
+          newRuntimeData = { ...newRuntimeData, items: newRuntimeData.items };
+        }
+        break;
+
+      case constants.edoc.COMPONENT_TYPE_IMAGE:
+        if (typeof newRuntimeData.src === 'string') {
+          newRuntimeData = { ...newRuntimeData, src: newRuntimeData.src };
+        }
+        break;
+
+      default:
+        // 기타: 전체 runtime_data 덮어쓰기
+        newRuntimeData = { ...newRuntimeData, ...newRuntimeData };
+    }
+
     updated[componentIdx] = {
-      ...updated[componentIdx],
-      runtime_data: {
-        ...updated[componentIdx].runtime_data,
-        data,
-      },
+      ...component,
+      runtime_data: newRuntimeData,
     };
+
     onUpdateComponent(updated);
   };
 
@@ -86,8 +128,61 @@ export default function EDocEditorCanvas({
               component={comp}
               isSelected={selectedComponentId === idx}
               onSelect={() => onComponentSelect(idx)}
-              onTableCellChange={(rowIdx, colIdx, value) =>  handleTableCellChange(idx, rowIdx, colIdx, value)
-  }
+              onRuntimeDataChange={(...args) => {
+                const current = components[idx];
+
+                let newRuntimeData = current.runtime_data;
+
+                switch (current.type) {
+                  case constants.edoc.COMPONENT_TYPE_TABLE: {
+                    const [rowIdx, colIdx, value] = args;
+                    const updatedData = [...current.runtime_data.data];
+                    updatedData[rowIdx][colIdx] = value;
+                    newRuntimeData = {
+                      ...current.runtime_data,
+                      data: updatedData,
+                    };
+                    break;
+                  }
+
+                  case constants.edoc.COMPONENT_TYPE_CHECKLIST: {
+                    const [itemIdx, checked] = args;
+                    const updatedItems = [...current.runtime_data.items];
+                    updatedItems[itemIdx] = {
+                      ...updatedItems[itemIdx],
+                      checked,
+                    };
+                    newRuntimeData = {
+                      ...current.runtime_data,
+                      items: updatedItems,
+                    };
+                    break;
+                  }
+
+                  case constants.edoc.COMPONENT_TYPE_INPUT: {
+                    const [value] = args;
+                    newRuntimeData = {
+                      ...current.runtime_data,
+                      value,
+                    };
+                    break;
+                  }
+
+                  case constants.edoc.COMPONENT_TYPE_TEXT: {
+                    const [content] = args;
+                    newRuntimeData = {
+                      ...current.runtime_data,
+                      content,
+                    };
+                    break;
+                  }
+
+                  default:
+                    return;
+                }
+
+                handleRuntimeDataChange(idx, newRuntimeData);
+              }}
             />
           </div>
         ))}
@@ -95,7 +190,7 @@ export default function EDocEditorCanvas({
   );
 }
 
-function DocComponentRenderer({ component, isSelected, onSelect, onTableCellChange }) {
+function DocComponentRenderer({ component, isSelected, onSelect, onRuntimeDataChange }) {
   const baseClass = 'w-full cursor-pointer';
   const selectedClass = isSelected
       ? 'outline outline-2 outline-blue-500 rounded bg-blue-50'
@@ -124,25 +219,19 @@ function DocComponentRenderer({ component, isSelected, onSelect, onTableCellChan
 
     case constants.edoc.COMPONENT_TYPE_TABLE:
     // runtime_data.data가 배열인지 확인하고 깊은 복사, 없으면 3x3 빈 데이터 생성
-    const tableData = Array.isArray(component.runtime_data?.data) && component.runtime_data.data.length > 0
-      ? component.runtime_data.data.map(row => [...row])
-      : Array.from({ length: 3 }, () => Array(3).fill(''));
+    const tableData = Array.isArray(component.runtime_data?.data) && component.runtime_data.data.length > 0 ? 
+    component.runtime_data.data.map(row => [...row]): 
+    Array.from({ length: 3 }, () => Array(3).fill(''));
 
     // columns가 문자열 배열이면 객체 배열로 변환, 기본값 생성
-    const columns = Array.isArray(component.runtime_data?.columns) && component.runtime_data.columns.length > 0
-      ? component.runtime_data.columns.map(col =>
-          typeof col === 'string' ? { header: col, width: 'auto' } : { ...col }
-        )
-      : Array(tableData[0]?.length || 3).fill(null).map((_, idx) => ({ header: `열 ${idx + 1}`, width: 'auto' }));
+    const columns = Array.isArray(component.runtime_data?.columns) && component.runtime_data.columns.length > 0 ? 
+    component.runtime_data.columns.map(col => typeof col === 'string' ? { header: col, width: 'auto' } : { ...col }): 
+    Array(tableData[0]?.length || 3).fill(null).map((_, idx) => ({ header: `열 ${idx + 1}`, width: 'auto' }));
 
     return (
-      <table
-        className={`${baseClass} ${selectedClass} border border-gray-300`}
-        onClick={(e) => {
-    e.stopPropagation();
-    onSelect();
-  }}
-        style={{ width: component.runtime_data?.width || '100%' }}
+      <table className={`${baseClass} ${selectedClass} border border-gray-300`} 
+             onClick={(e) => { e.stopPropagation();onSelect();}}
+             style={{ width: component.runtime_data?.width || '100%' }}
       >
         <thead>
           <tr>
@@ -169,7 +258,7 @@ function DocComponentRenderer({ component, isSelected, onSelect, onTableCellChan
                     <input
                       className="w-full text-center border-none bg-transparent focus:outline-none"
                       value={cell}
-                      onChange={(e) => onTableCellChange?.(rIdx, cIdx, e.target.value)}
+                      onChange={(e) => onRuntimeDataChange?.(rIdx, cIdx, e.target.value)}
                     />
                   ) : (
                     cell
@@ -183,11 +272,7 @@ function DocComponentRenderer({ component, isSelected, onSelect, onTableCellChan
     );
 
     case constants.edoc.COMPONENT_TYPE_IMAGE:
-      const imageAlign = {
-        left: 'text-left',
-        center: 'text-center',
-        right: 'text-right',
-      }[component.runtime_data?.textAlign || 'left'];
+      const imageAlign = {left: 'text-left', center: 'text-center', right: 'text-right',}[component.runtime_data?.textAlign || 'left'];
 
       return (
         <div className={`${baseClass} ${selectedClass} ${imageAlign}`} onClick={(e) => {
@@ -217,6 +302,24 @@ function DocComponentRenderer({ component, isSelected, onSelect, onTableCellChan
         />
       );
 
+    case constants.edoc.COMPONENT_TYPE_CHECKLIST:
+      return (
+        <div
+          className={`p-2 rounded border ${isSelected ? 'border-blue-500 bg-blue-50' : 'border-transparent'} cursor-pointer`}
+          onClick={(e) => { e.stopPropagation(); onSelect(); }}>
+          {(component.runtime_data?.items || []).map((item, i) => (
+            <label key={i} className="flex items-center space-x-2 mb-1">
+              <input
+                type="checkbox"
+                checked={item.checked}
+                onChange={(e) => onRuntimeDataChange?.(i, e.target.checked)}
+              />
+              <span>{item.label}</span>
+            </label>
+          ))}
+        </div>
+      );
+    
     default:
       return null;
   }
