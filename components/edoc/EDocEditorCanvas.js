@@ -45,37 +45,45 @@ function DocComponentRenderer({ component, isSelected, onSelect }) {
         </p>
       );
     case constants.edoc.COMPONENT_TYPE_TABLE:
-      const tableData = component.runtime_data.data || [[]];
-        return (
-          <table
-            className={`${baseClass} ${selectedClass} border border-gray-300`}
-            onClick={onSelect}
-          >
+      const tableData = component.runtime_data?.data || [[]];
+      const columns = component.runtime_data?.columns || [];
+
+      return (
+        <table
+          className={`${baseClass} ${selectedClass} border border-gray-300`}
+          onClick={onSelect}
+          style={{ width: component.runtime_data?.width || '100%' }}
+        >
           <thead>
             <tr>
-              {component.runtime_data?.columns?.map((col, cIdx) => (
-                <th key={cIdx} className="border border-gray-300 px-3 py-1 bg-gray-100">
-                  {col}
+              {columns.map((col, cIdx) => (
+                <th
+                  key={cIdx}
+                  className="border border-gray-300 px-3 py-1 bg-gray-100"
+                  style={{ width: col.width || 'auto' }}
+                >
+                  {col.header || `열 ${cIdx + 1}`}
                 </th>
               ))}
             </tr>
-          </thead>            
-            <tbody>
-              {tableData.map((row, rIdx) => (
-                <tr key={rIdx}>
-                  {row.map((cell, cIdx) => (
-                    <td
-                      key={cIdx}
-                      className="border border-gray-300 px-4 py-2 text-center min-w-[100px] h-[40px]"
-                    >
-                      {cell}
-                    </td>
-                  ))}
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        );
+          </thead>
+          <tbody>
+            {tableData.map((row, rIdx) => (
+              <tr key={rIdx}>
+                {row.map((cell, cIdx) => (
+                  <td
+                    key={cIdx}
+                    className="border border-gray-300 px-4 py-2 text-center min-w-[100px] h-[40px]"
+                    style={{ width: columns[cIdx]?.width || 'auto' }}
+                  >
+                    {cell}
+                  </td>
+                ))}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      );
     case constants.edoc.COMPONENT_TYPE_IMAGE:
       return (
         <div

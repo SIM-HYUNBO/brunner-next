@@ -51,11 +51,14 @@ export default function EDocPropertyEditor({ component, onComponentChange }) {
           Array.from({ length: newCols }, (_, c) => oldData[r]?.[c] ?? "")
         );
 
-        const newColumns = Array.from({ length: newCols }, (_, c) => oldColumns[c] ?? `ColumnHeader ${c + 1}`);
+        const newColumns = Array.from({ length: newCols }, (_, c) =>
+          oldColumns[c] ?? { header: `ColumnHeader ${c + 1}`, width: "auto" }
+        );
 
         onComponentChange({
           ...component,
           runtime_data: {
+            ...component.runtime_data,
             rows: newRows,
             cols: newCols,
             data: newData,
@@ -66,8 +69,25 @@ export default function EDocPropertyEditor({ component, onComponentChange }) {
 
       const handleColumnHeaderChange = (index, value) => {
         const newColumns = [...(component.runtime_data?.columns || [])];
-        newColumns[index] = value;
+        newColumns[index] = {
+          ...newColumns[index],
+          header: value,
+        };
+        onComponentChange({
+          ...component,
+          runtime_data: {
+            ...component.runtime_data,
+            columns: newColumns,
+          }
+        });
+      };
 
+      const handleColumnWidthChange = (index, value) => {
+        const newColumns = [...(component.runtime_data?.columns || [])];
+        newColumns[index] = {
+          ...newColumns[index],
+          width: value,
+        };
         onComponentChange({
           ...component,
           runtime_data: {
@@ -78,35 +98,56 @@ export default function EDocPropertyEditor({ component, onComponentChange }) {
       };
 
       return (
-          <div>
+        <div>
+          <label className="block mt-2 mb-1">테이블 전체 폭 (예: 100%, 800px):</label>
+          <input
+            type="text"
+            value={component.runtime_data?.width || ''}
+            onChange={(e) => updateRuntimeData("width", e.target.value)}
+            className="w-full border border-gray-300 rounded p-1 mb-2"
+            placeholder="예: 100%, 800px"
+          />
+
           <label className="block mt-2 mb-1">행 수:</label>
-            <input
-              type="number"
-              value={component.runtime_data?.rows || 1}
-              onChange={(e) =>
-                updateTableSize(parseInt(e.target.value), component.runtime_data?.cols || 1)
-              }
-            />
+          <input
+            type="number"
+            value={component.runtime_data?.rows || 1}
+            onChange={(e) =>
+              updateTableSize(parseInt(e.target.value), component.runtime_data?.cols || 1)
+            }
+            className="w-full border border-gray-300 rounded p-1"
+          />
 
-            <label className="block mt-2 mb-1">열 수:</label>
-            <input
-              type="number"
-              value={component.runtime_data?.cols || 1}
-              onChange={(e) =>
-                updateTableSize(component.runtime_data?.rows || 1, parseInt(e.target.value))
-              }
-            />
+          <label className="block mt-2 mb-1">열 수:</label>
+          <input
+            type="number"
+            value={component.runtime_data?.cols || 1}
+            onChange={(e) =>
+              updateTableSize(component.runtime_data?.rows || 1, parseInt(e.target.value))
+            }
+            className="w-full border border-gray-300 rounded p-1"
+          />
 
-          <label className="block mt-2 mb-1">컬럼 헤더:</label>
+          <label className="block mt-3 mb-1">컬럼 설정:</label>
           {(component.runtime_data?.columns || []).map((col, idx) => (
-            <input
-              key={idx}
-              type="text"
-              value={col}
-              onChange={(e) => handleColumnHeaderChange(idx, e.target.value)}
-              className="w-full border border-gray-300 rounded p-1 mb-1"
-              placeholder={`열 ${idx + 1}`}
-            />
+            <div key={idx} className="mb-2">
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  value={col.header || ""}
+                  onChange={(e) => handleColumnHeaderChange(idx, e.target.value)}
+                  className="w-1/2 border border-gray-300 rounded p-1"
+                  placeholder={`헤더 ${idx + 1}`}
+                />
+                <input
+                  type="text"
+                  value={col.width || ""}
+                  onChange={(e) => handleColumnWidthChange(idx, e.target.value)}
+                  className="w-1/2 border border-gray-300 rounded p-1"
+                  placeholder={`폭 (예: 100px, 20%)`}
+                />
+              </div>
+            </div>
           ))}
         </div>
       );
