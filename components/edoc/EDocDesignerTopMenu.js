@@ -24,26 +24,26 @@ export default function EDocDesignerTopMenu({
         onClick={onOpenDocument}
         className="px-3 py-1 bg-green-500 text-white rounded hover:bg-green-600"
       >
-        열기
+        문서 열기
       </button>
       <button
         onClick={onSaveDocument}
         className="px-3 py-1 bg-yellow-500 text-white rounded hover:bg-yellow-600"
       >
-        저장
+        문서 저장
       </button>
       <button
         onClick={onDeleteDocument}
         className="px-3 py-1 bg-yellow-500 text-white rounded hover:bg-yellow-600"
       >
-        삭제
+        문서 삭제
       </button>
       <button
         onClick={onExportPdf}
         className="px-3 py-1 bg-purple-500 text-white rounded hover:bg-purple-600"
       >
         PDF 출력
-      </button>
+      </button>     
     </div>
   );
 }
