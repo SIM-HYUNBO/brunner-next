@@ -153,15 +153,46 @@ export default function EDocPropertyEditor({ component, onComponentChange }) {
       );
 
     case constants.edoc.COMPONENT_TYPE_IMAGE:
+      const handleFileChange = (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          updateRuntimeData("src", reader.result); // Base64로 저장
+        };
+        reader.readAsDataURL(file);
+      };
+
       return (
         <div>
-          <label>이미지 URL:</label>
+          <label>이미지 URL 또는 업로드:</label>
           <input
             type="text"
             value={component.runtime_data?.src || ''}
             onChange={(e) => updateRuntimeData("src", e.target.value)}
-            className="w-full border border-gray-300 rounded p-2"
+            className="w-full border border-gray-300 rounded p-2 mb-2"
+            placeholder="직접 입력하거나 아래에서 업로드하세요"
           />
+
+          <input
+            type="file"
+            accept="image/*"
+            onChange={handleFileChange}
+            className="mb-2"
+          />
+
+          <label className="block mt-2">정렬:</label>
+          <select
+            value={component.runtime_data?.textAlign || 'left'}
+            onChange={(e) => updateRuntimeData("textAlign", e.target.value)}
+            className="w-full border border-gray-300 rounded p-2 mb-2"
+          >
+            <option value="left">왼쪽</option>
+            <option value="center">가운데</option>
+            <option value="right">오른쪽</option>
+          </select>
+
           {component.runtime_data?.src && (
             <img
               src={component.runtime_data.src}

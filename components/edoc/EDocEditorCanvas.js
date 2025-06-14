@@ -85,13 +85,19 @@ function DocComponentRenderer({ component, isSelected, onSelect }) {
         </table>
       );
     case constants.edoc.COMPONENT_TYPE_IMAGE:
+      const imageAlign = {
+        left: "text-left",
+        center: "text-center",
+        right: "text-right",
+      }[component.runtime_data?.textAlign || "left"];
+
       return (
         <div
-          className={`${baseClass} ${selectedClass}`}
+          className={`${baseClass} ${selectedClass} ${imageAlign}`}
           onClick={onSelect}
         >
-          {component.src ? (
-            <img src={component.src} alt="이미지" className="max-w-full h-auto" />
+          {component.runtime_data?.src ? (
+            <img src={component.runtime_data.src} alt="이미지" className="inline-block max-w-full h-auto" />
           ) : (
             <div className="w-full h-24 bg-gray-200 flex items-center justify-center text-gray-500">
               이미지 없음
@@ -102,13 +108,13 @@ function DocComponentRenderer({ component, isSelected, onSelect }) {
     case constants.edoc.COMPONENT_TYPE_INPUT:
       return (
         <input
-      className={`w-full mb-3 border border-gray-400 rounded px-2 py-1 ${alignmentClass}`}
-      onClick={onSelect}
-      type="text"
-      value={component.runtime_data?.value || ''}  // 수정된 부분
-      placeholder={component.runtime_data?.placeholder || ''}
-      readOnly
-    />
+          className={`w-full h-10 mb-3 border border-none rounded ${alignmentClass}`}
+          onClick={onSelect}
+          type="text"
+          value={component.runtime_data?.value || ''}  // 수정된 부분
+          placeholder={component.runtime_data?.placeholder || ''}
+          readOnly
+        />
       );
     default:
       return null;
