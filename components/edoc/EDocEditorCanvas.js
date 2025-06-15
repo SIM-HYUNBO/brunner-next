@@ -197,7 +197,7 @@ function DocComponentRenderer({
     case constants.edoc.COMPONENT_TYPE_TEXT:
       return (
         <p 
-          className={`${baseClass} ${selectedClass} ${alignmentClass} ${defaultLineHeight}`} 
+          className={`${baseClass} ${selectedClass} ${alignmentClass} ${defaultLineHeight} whitespace-pre-wrap h-auto overflow-visible`} 
           onClick={(e) => {
             e.stopPropagation();
             onSelect();
