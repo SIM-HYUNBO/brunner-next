@@ -25,8 +25,10 @@ export default function EDocDesignerContainer({ documentId }) {
 
   const [componentTemplates, setComponentTemplates] = useState([]);
   const [selectedComponentId, setSelectedComponentId] = useState(null);
+  const selectedComponent = selectedComponentId !== null ? documentData.components[selectedComponentId] : null;
 
   useEffect(() => {
+    // 컴포넌트 템플릿을 서버에서 가져옵니다.
     async function fetchTemplates() {
       const jRequest = {
         commandName: constants.commands.COMMAND_EDOC_COMPONENT_TEMPLATES_SELECT_ALL,
@@ -54,15 +56,15 @@ export default function EDocDesignerContainer({ documentId }) {
     setSelectedComponentId(idx);
   };
 
-const handleComponentChange = (updatedComponent) => {
-  if (selectedComponentId === null) return;
+  const handleComponentChange = (updatedComponent) => {
+    if (selectedComponentId === null) return;
 
-  setDocumentData((prev) => {
-    const newComponents = [...prev.components];
-    newComponents[selectedComponentId] = updatedComponent; // ✅ 전체 컴포넌트 객체여야 함
-    return { ...prev, components: newComponents };
-  });
-};
+    setDocumentData((prev) => {
+      const newComponents = [...prev.components];
+      newComponents[selectedComponentId] = updatedComponent; // ✅ 전체 컴포넌트 객체여야 함
+      return { ...prev, components: newComponents };
+    });
+  };
 
   const handleAddComponent = (component) => {
     const baseComponent = { ...component };
@@ -231,59 +233,56 @@ const handleComponentChange = (updatedComponent) => {
     );
   };
 
-  function handleMoveComponentUp() {
-  if (selectedComponentId === null || selectedComponentId <= 0) return;
+  const handleMoveComponentUp = () =>{
+    if (selectedComponentId === null || selectedComponentId <= 0) return;
 
-  setDocumentData(prev => {
-    const components = [...prev.components];
-    [components[selectedComponentId - 1], components[selectedComponentId]] =
-      [components[selectedComponentId], components[selectedComponentId - 1]];
-    return { ...prev, components };
-  });
+    setDocumentData(prev => {
+      const components = [...prev.components];
+      [components[selectedComponentId - 1], components[selectedComponentId]] =
+        [components[selectedComponentId], components[selectedComponentId - 1]];
+      return { ...prev, components };
+    });
 
-  setSelectedComponentId(prev => prev - 1);
-}
+    setSelectedComponentId(prev => prev - 1);
+  }
 
-function handleMoveComponentDown() {
-  if (
-    selectedComponentId === null ||
-    selectedComponentId >= documentData.components.length - 1
-  ) return;
+  const handleMoveComponentDown = () =>{
+    if (
+      selectedComponentId === null ||
+      selectedComponentId >= documentData.components.length - 1
+    ) return;
 
-  setDocumentData(prev => {
-    const components = [...prev.components];
-    [components[selectedComponentId + 1], components[selectedComponentId]] =
-      [components[selectedComponentId], components[selectedComponentId + 1]];
-    return { ...prev, components };
-  });
+    setDocumentData(prev => {
+      const components = [...prev.components];
+      [components[selectedComponentId + 1], components[selectedComponentId]] =
+        [components[selectedComponentId], components[selectedComponentId + 1]];
+      return { ...prev, components };
+    });
 
-  setSelectedComponentId(prev => prev + 1);
-}
+    setSelectedComponentId(prev => prev + 1);
+  }
 
-function handleDeleteComponent() {
-  if (selectedComponentId === null) return;
+  const handleDeleteComponent = () => {
+    if (selectedComponentId === null) return;
 
-  setDocumentData((prev) => {
-    const components = [...prev.components];
-    components.splice(selectedComponentId, 1); // 선택된 index의 항목 제거
-    return { ...prev, components };
-  });
+    setDocumentData((prev) => {
+      const components = [...prev.components];
+      components.splice(selectedComponentId, 1); // 선택된 index의 항목 제거
+      return { ...prev, components };
+    });
 
-  // 선택 초기화 또는 다음 컴포넌트로 선택 이동
-  setSelectedComponentId(null);
-}
+    // 선택 초기화 또는 다음 컴포넌트로 선택 이동
+    setSelectedComponentId(null);
+  }
 
-// 1. handleUpdateComponent 함수 추가
-const handleUpdateComponent = (selectedComponentId, updatedComponent) => {
-  setDocumentData((prev) => {
-    const newComponents = [...prev.components];
-    newComponents[selectedComponentId] = updatedComponent;
-    return { ...prev, components: newComponents };
-  });
-};
+  const handleUpdateComponent = (selectedComponentId, updatedComponent) => {
+    setDocumentData((prev) => {
+      const newComponents = [...prev.components];
+      newComponents[selectedComponentId] = updatedComponent;
+      return { ...prev, components: newComponents };
+    });
+  };
 
-  const selectedComponent = selectedComponentId !== null ? documentData.components[selectedComponentId] : null;
-    
   return (
     <>
       {loading && (
