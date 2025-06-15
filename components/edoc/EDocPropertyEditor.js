@@ -42,7 +42,6 @@ export default function EDocPropertyEditor({ component, onComponentChange }) {
           </select>          
         </div>
       );
-
     case constants.edoc.COMPONENT_TYPE_TABLE:
       const updateTableSize = (newRows, newCols) => {
         const oldData = component.runtime_data?.data || [];
@@ -150,7 +149,6 @@ export default function EDocPropertyEditor({ component, onComponentChange }) {
           ))}
         </div>
       );
-
     case constants.edoc.COMPONENT_TYPE_IMAGE:
       const handleFileChange = (e) => {
         const file = e.target.files[0];
@@ -201,7 +199,6 @@ export default function EDocPropertyEditor({ component, onComponentChange }) {
           )}
         </div>
       );
-
     case constants.edoc.COMPONENT_TYPE_INPUT:
       return (
         <div>
@@ -225,7 +222,6 @@ export default function EDocPropertyEditor({ component, onComponentChange }) {
           </select>
         </div>
       );
-
     case constants.edoc.COMPONENT_TYPE_CHECKLIST:
       const items = component.runtime_data?.items || [
         { checked: false, label: "항목 1" },
