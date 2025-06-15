@@ -15,11 +15,11 @@ export default function EDocEditorCanvas({
   onMoveDown,
   onUpdateComponent, // 🔹 새롭게 전달받을 prop
 }) {
-    useEffect(() => {
+  useEffect(() => {
     const handleKeyDown = (e) => {
       if (e.key === 'Escape') {
         onComponentSelect(null);
-         // 🔹 포커스 해제
+        // 🔹 포커스 해제
         if (document.activeElement instanceof HTMLElement) {
           document.activeElement.blur();
         }
@@ -47,31 +47,26 @@ export default function EDocEditorCanvas({
           newRuntimeData = { ...newRuntimeData, data };
         }
         break;
-
       case constants.edoc.COMPONENT_TYPE_TEXT:
         if (typeof newRuntimeData.content === 'string') {
           newRuntimeData = { ...newRuntimeData, content: newRuntimeData.content };
         }
         break;
-
       case constants.edoc.COMPONENT_TYPE_INPUT:
         if (typeof newRuntimeData.value === 'string') {
           newRuntimeData = { ...newRuntimeData, value: newRuntimeData.value };
         }
         break;
-
       case constants.edoc.COMPONENT_TYPE_CHECKLIST:
           if (Array.isArray(newRuntimeData.items)) {
           newRuntimeData = { ...newRuntimeData, items: newRuntimeData.items };
         }
         break;
-
       case constants.edoc.COMPONENT_TYPE_IMAGE:
         if (typeof newRuntimeData.src === 'string') {
           newRuntimeData = { ...newRuntimeData, src: newRuntimeData.src };
         }
         break;
-
       default:
         // 기타: 전체 runtime_data 덮어쓰기
         newRuntimeData = { ...newRuntimeData, ...newRuntimeData };
@@ -190,18 +185,17 @@ export default function EDocEditorCanvas({
   );
 }
 
-function DocComponentRenderer({ component, isSelected, onSelect, onRuntimeDataChange }) {
+function DocComponentRenderer({ 
+  component, 
+  isSelected, 
+  onSelect, 
+  onRuntimeDataChange 
+}) {
   const defaultLineHeight = 'h-8'; // 기본 줄 높이 설정
   const defaultCellHeight = 'h-10 py-2'; // 테이블 셀 높이 설정
   const baseClass = 'w-full cursor-pointer';
-  const selectedClass = isSelected
-      ? 'outline outline-2 outline-blue-500 rounded bg-blue-50'
-      : '';
-  const alignmentClass = {
-    left: 'text-left',
-    center: 'text-center',
-    right: 'text-right',
-  }[component.runtime_data?.textAlign || 'left'];
+  const selectedClass = isSelected ? 'outline outline-2 outline-blue-500 rounded bg-blue-50' : '';
+  const alignmentClass = { left: 'text-left', center: 'text-center', right: 'text-right'}[component.runtime_data?.textAlign || 'left'];
     
   switch (component.type) {
     case constants.edoc.COMPONENT_TYPE_TEXT:
@@ -220,7 +214,6 @@ function DocComponentRenderer({ component, isSelected, onSelect, onRuntimeDataCh
           ))}
         </p>
       );
-
     case constants.edoc.COMPONENT_TYPE_INPUT:
       return (
         <input
@@ -235,77 +228,74 @@ function DocComponentRenderer({ component, isSelected, onSelect, onRuntimeDataCh
           // readOnly
         />
       );
-
     case constants.edoc.COMPONENT_TYPE_TABLE:
-    // runtime_data.data가 배열인지 확인하고 깊은 복사, 없으면 3x3 빈 데이터 생성
-    const tableData = Array.isArray(component.runtime_data?.data) && component.runtime_data.data.length > 0 ? 
-    component.runtime_data.data.map(row => [...row]): 
-    Array.from({ length: 3 }, () => Array(3).fill(''));
+      // runtime_data.data가 배열인지 확인하고 깊은 복사, 없으면 3x3 빈 데이터 생성
+      const tableData = Array.isArray(component.runtime_data?.data) && component.runtime_data.data.length > 0 ? 
+      component.runtime_data.data.map(row => [...row]): 
+      Array.from({ length: 3 }, () => Array(3).fill(''));
 
-    // columns가 문자열 배열이면 객체 배열로 변환, 기본값 생성
-    const columns = Array.isArray(component.runtime_data?.columns) && component.runtime_data.columns.length > 0 ? 
-    component.runtime_data.columns.map(col => typeof col === 'string' ? { header: col, width: 'auto' } : { ...col }): 
-    Array(tableData[0]?.length || 3).fill(null).map((_, idx) => ({ header: `열 ${idx + 1}`, width: 'auto' }));
+      // columns가 문자열 배열이면 객체 배열로 변환, 기본값 생성
+      const columns = Array.isArray(component.runtime_data?.columns) && component.runtime_data.columns.length > 0 ? 
+      component.runtime_data.columns.map(col => typeof col === 'string' ? { header: col, width: 'auto' } : { ...col }): 
+      Array(tableData[0]?.length || 3).fill(null).map((_, idx) => ({ header: `열 ${idx + 1}`, width: 'auto' }));
 
-    return (
-      <table className={`${baseClass} ${selectedClass} border border-gray-300`} 
-             onClick={(e) => { e.stopPropagation();onSelect();}}
-             style={{ width: component.runtime_data?.width || '100%' }}
-      >
-        <thead>
-          <tr>
-            {columns.map((col, cIdx) => (
-              <th
-                key={cIdx}
-                className={`border border-gray-300 bg-gray-100 text-center align-middle p-2 ${col.width ? `w-[${col.width}]` : ''}`}
-              >
-                {col.header || `열 ${cIdx + 1}`}
-              </th>
-            ))}
-          </tr>
-        </thead>
-        <tbody>
-          {tableData.map((row, rIdx) => (
-            <tr key={rIdx}>
-              {row.map((cell, cIdx) => (
-                <td
+      return (
+        <table className={`${baseClass} ${selectedClass} border border-gray-300`} 
+              onClick={(e) => { e.stopPropagation();onSelect();}}
+              style={{ width: component.runtime_data?.width || '100%' }}
+        >
+          <thead>
+            <tr>
+              {columns.map((col, cIdx) => (
+                <th
                   key={cIdx}
-                  className={`border border-gray-300 text-center align-middle min-w-[100px] ${defaultCellHeight}`}
-                  style={{ width: columns[cIdx]?.width || 'auto' }}
+                  className={`border border-gray-300 bg-gray-100 text-center align-middle p-2 ${col.width ? `w-[${col.width}]` : ''}`}
                 >
-                  {isSelected ? (
-                    <input
-                      className="w-full text-center border-none bg-transparent focus:outline-none"
-                      value={cell}
-                      onChange={(e) => onRuntimeDataChange?.(rIdx, cIdx, e.target.value)}
-                    />
-                  ) : (
-                    cell
-                  )}
-                </td>
+                  {col.header || `열 ${cIdx + 1}`}
+                </th>
               ))}
             </tr>
-          ))}
-        </tbody>
-      </table>
-    );
-
+          </thead>
+          <tbody>
+            {tableData.map((row, rIdx) => (
+              <tr key={rIdx}>
+                {row.map((cell, cIdx) => (
+                  <td
+                    key={cIdx}
+                    className={`border border-gray-300 text-center align-middle min-w-[100px] ${defaultCellHeight}`}
+                    style={{ width: columns[cIdx]?.width || 'auto' }}
+                  >
+                    {isSelected ? (
+                      <input
+                        className="w-full text-center border-none bg-transparent focus:outline-none"
+                        value={cell}
+                        onChange={(e) => onRuntimeDataChange?.(rIdx, cIdx, e.target.value)}
+                      />
+                    ) : (
+                      cell
+                    )}
+                  </td>
+                ))}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      );
     case constants.edoc.COMPONENT_TYPE_IMAGE:
       const imageAlign = {left: 'text-left', center: 'text-center', right: 'text-right',}[component.runtime_data?.textAlign || 'left'];
 
       return (
         <div className={`${baseClass} ${selectedClass} ${imageAlign}`} onClick={(e) => {
-    e.stopPropagation();
-    onSelect();
-  }}>
-          {component.runtime_data?.src ? (
-            <img src={component.runtime_data.src} alt="이미지" className="inline-block max-w-full h-auto" />
-          ) : (
-            <div className="w-full h-24 bg-gray-200 flex items-center justify-center text-gray-500">이미지 없음</div>
-          )}
+          e.stopPropagation();
+          onSelect();
+          }}>
+            {component.runtime_data?.src ? (
+              <img src={component.runtime_data.src} alt="이미지" className="inline-block max-w-full h-auto" />
+            ) : (
+              <div className="w-full h-24 bg-gray-200 flex items-center justify-center text-gray-500">이미지 없음</div>
+            )}
         </div>
       );
-
     case constants.edoc.COMPONENT_TYPE_CHECKLIST:
       return (
         <div
@@ -322,8 +312,7 @@ function DocComponentRenderer({ component, isSelected, onSelect, onRuntimeDataCh
             </label>
           ))}
         </div>
-      );
-    
+      );    
     default:
       return null;
   }
