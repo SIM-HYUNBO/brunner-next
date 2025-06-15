@@ -246,8 +246,8 @@ export default function EDocPropertyEditor({ component, onComponentChange }) {
           <label>입력값</label>
           <input
             type="text"
-            value={component.runtime_data?.placeholder || ''}
-            onChange={(e) => updateRuntimeData("placeholder", e.target.value)}
+            value={component.runtime_data?.value || ''}
+            onChange={(e) => updateRuntimeData("value", e.target.value)}
             className="w-full border border-gray-300 rounded p-2"
           />
 
