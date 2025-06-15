@@ -77,7 +77,7 @@ export default function EDocEditorCanvas({
       runtime_data: newRuntimeData,
     };
 
-    onUpdateComponent(updated);
+    onUpdateComponent(componentIdx, updated[componentIdx]);
   };
 
   return (
@@ -129,7 +129,23 @@ export default function EDocEditorCanvas({
                 let newRuntimeData = current.runtime_data;
 
                 switch (current.type) {
-                  case constants.edoc.COMPONENT_TYPE_TABLE: {
+                  case constants.edoc.COMPONENT_TYPE_TEXT: {
+                    const [content] = args;
+                    newRuntimeData = {
+                      ...current.runtime_data,
+                      content,
+                    };
+                    break;
+                  }
+                  case constants.edoc.COMPONENT_TYPE_INPUT: {
+                    const [value] = args;
+                    newRuntimeData = {
+                      ...current.runtime_data,
+                      value,
+                    };
+                    break;
+                  }
+                  case constants.edoc.COMPONENT_TYPE_TABLE: { // 테이블 컴포넌트 셀 값 변경 (args : rowIndex, columnIndex, e.target.value)
                     const [rowIdx, colIdx, value] = args;
                     const updatedData = [...current.runtime_data.data];
                     updatedData[rowIdx][colIdx] = value;
@@ -139,8 +155,7 @@ export default function EDocEditorCanvas({
                     };
                     break;
                   }
-
-                  case constants.edoc.COMPONENT_TYPE_CHECKLIST: {
+                  case constants.edoc.COMPONENT_TYPE_CHECKLIST: { // 체크리스트 컴포넌트 아이템 체크 상태 변경 (args : checkItemIndex, e.target.checked)
                     const [itemIdx, checked] = args;
                     const updatedItems = [...current.runtime_data.items];
                     updatedItems[itemIdx] = {
@@ -153,25 +168,6 @@ export default function EDocEditorCanvas({
                     };
                     break;
                   }
-
-                  case constants.edoc.COMPONENT_TYPE_INPUT: {
-                    const [value] = args;
-                    newRuntimeData = {
-                      ...current.runtime_data,
-                      value,
-                    };
-                    break;
-                  }
-
-                  case constants.edoc.COMPONENT_TYPE_TEXT: {
-                    const [content] = args;
-                    newRuntimeData = {
-                      ...current.runtime_data,
-                      content,
-                    };
-                    break;
-                  }
-
                   default:
                     return;
                 }
@@ -257,19 +253,19 @@ function DocComponentRenderer({
             </tr>
           </thead>
           <tbody>
-            {tableData.map((row, rIdx) => (
-              <tr key={rIdx}>
-                {row.map((cell, cIdx) => (
+            {tableData.map((row, rowIndex) => (
+              <tr key={rowIndex}>
+                {row.map((cell, columnIndex) => (
                   <td
-                    key={cIdx}
+                    key={columnIndex}
                     className={`border border-gray-300 text-center align-middle min-w-[100px] ${defaultCellHeight}`}
-                    style={{ width: columns[cIdx]?.width || 'auto' }}
+                    style={{ width: columns[columnIndex]?.width || 'auto' }}
                   >
                     {isSelected ? (
                       <input
                         className="w-full text-center border-none bg-transparent focus:outline-none"
                         value={cell}
-                        onChange={(e) => onRuntimeDataChange?.(rIdx, cIdx, e.target.value)}
+                        onChange={(e) => onRuntimeDataChange?.(rowIndex, columnIndex, e.target.value)} // 테이블 셀 값 변경
                       />
                     ) : (
                       cell
@@ -301,12 +297,12 @@ function DocComponentRenderer({
         <div
           className={`p-2 rounded border ${isSelected ? 'border-blue-500 bg-blue-50' : 'border-transparent'} cursor-pointer`}
           onClick={(e) => { e.stopPropagation(); onSelect(); }}>
-          {(component.runtime_data?.items || []).map((item, i) => (
-            <label key={i} className="flex items-center space-x-2 mb-1">
+          {(component.runtime_data?.items || []).map((item, checkItemIndex) => (
+            <label key={checkItemIndex} className="flex items-center space-x-2 mb-1">
               <input
                 type="checkbox"
                 checked={item.checked}
-                onChange={(e) => onRuntimeDataChange?.(i, e.target.checked)}
+                onChange={(e) => onRuntimeDataChange?.(checkItemIndex, e.target.checked)} // 체크리스트 아이템 체크 상태 변경
               />
               <span>{item.label}</span>
             </label>

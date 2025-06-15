@@ -18,10 +18,27 @@ export default function EDocPropertyEditor({ component, onComponentChange }) {
     });
   };
 
+  const updateRuntimeDataAll = (newRuntimeData) => {
+    onComponentChange({
+      ...component,
+      runtime_data: {
+        ...newRuntimeData,
+      },
+    });
+  };
+
   switch (component.type) {
     case constants.edoc.COMPONENT_TYPE_TEXT:
       return (
         <div>
+          <label>Binding Key:</label>
+          <input
+            type="text"
+            value={component.runtime_data?.bindingKey || ''}
+            onChange={(e) => updateRuntimeData("bindingKey", e.target.value)}
+            className="w-full border border-gray-300 rounded p-2 mb-2"
+          />
+
           <label>표시할 텍스트:</label>
           <textarea
             value={component.runtime_data?.content || ''}
@@ -97,6 +114,14 @@ export default function EDocPropertyEditor({ component, onComponentChange }) {
 
       return (
         <div>
+          <label>Binding Key:</label>
+          <input
+            type="text"
+            value={component.runtime_data?.bindingKey || ''}
+            onChange={(e) => updateRuntimeData("bindingKey", e.target.value)}
+            className="w-full border border-gray-300 rounded p-2 mb-2"
+          />
+
           <label className="block mt-2 mb-1">테이블 전체 폭 (예: 100%, 800px):</label>
           <input
             type="text"
@@ -163,6 +188,14 @@ export default function EDocPropertyEditor({ component, onComponentChange }) {
 
       return (
         <div>
+          <label>Binding Key:</label>
+          <input
+            type="text"
+            value={component.runtime_data?.bindingKey || ''}
+            onChange={(e) => updateRuntimeData("bindingKey", e.target.value)}
+            className="w-full border border-gray-300 rounded p-2 mb-2"
+          />
+
           <label>이미지 URL 또는 업로드:</label>
           <input
             type="text"
@@ -202,6 +235,14 @@ export default function EDocPropertyEditor({ component, onComponentChange }) {
     case constants.edoc.COMPONENT_TYPE_INPUT:
       return (
         <div>
+          <label>Binding Key:</label>
+          <input
+            type="text"
+            value={component.runtime_data?.bindingKey || ''}
+            onChange={(e) => updateRuntimeData("bindingKey", e.target.value)}
+            className="w-full border border-gray-300 rounded p-2 mb-2"
+          />
+
           <label>입력값</label>
           <input
             type="text"
@@ -244,13 +285,12 @@ export default function EDocPropertyEditor({ component, onComponentChange }) {
           }
         }
 
-        onComponentChange({
-          ...component,
-          runtime_data: {
+        updateRuntimeDataAll({
             ...component.runtime_data,
+            itemCount:newItems.length,
             items: newItems,
-          },
-        });
+          });
+
       };
 
       const handleItemLabelChange = (index, newLabel) => {
@@ -260,17 +300,19 @@ export default function EDocPropertyEditor({ component, onComponentChange }) {
           label: newLabel,
         };
 
-        onComponentChange({
-          ...component,
-          runtime_data: {
-            ...component.runtime_data,
-            items: newItems,
-          },
-        });
+        updateRuntimeData("items", newItems);
       };
 
       return (
         <div>
+          <label>Binding Key:</label>
+          <input
+            type="text"
+            value={component.runtime_data?.bindingKey || ''}
+            onChange={(e) => updateRuntimeData("bindingKey", e.target.value)}
+            className="w-full border border-gray-300 rounded p-2 mb-2"
+          />
+
           <label className="block mb-1">체크리스트 항목 수:</label>
           <input
             type="number"

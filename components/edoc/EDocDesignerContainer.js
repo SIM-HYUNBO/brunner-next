@@ -275,13 +275,34 @@ export default function EDocDesignerContainer({ documentId }) {
     setSelectedComponentId(null);
   }
 
-  const handleUpdateComponent = (selectedComponentId, updatedComponent) => {
+  const handleUpdateComponent = (selectedComponentIdX, updatedComponent) => {
     setDocumentData((prev) => {
       const newComponents = [...prev.components];
-      newComponents[selectedComponentId] = updatedComponent;
+      newComponents[selectedComponentIdX] = updatedComponent;
       return { ...prev, components: newComponents };
     });
   };
+
+  const getRuntimeDataByBindingKey = (components, bindingKey) => {
+    if (!Array.isArray(components) || !bindingKey) return null;
+
+    const comp = components.find(
+      (c) => c.runtime_data?.bindingKey === bindingKey
+    );
+    return comp ? comp.runtime_data : null;
+  }
+
+  const getDocumentRuntimeData = (components) => {
+    if (!Array.isArray(components)) return {};
+
+    return components.reduce((acc, comp) => {
+      const bindingKey = comp.runtime_data?.bindingKey;
+      if (bindingKey) {
+        acc[bindingKey] = comp.runtime_data;
+      }
+      return acc;
+    }, {});
+  }
 
   return (
     <>
@@ -322,7 +343,9 @@ export default function EDocDesignerContainer({ documentId }) {
             onMoveUp= {handleMoveComponentUp}
             onMoveDown={handleMoveComponentDown}
             onDeleteComponent={handleDeleteComponent}
-            onUpdateComponent={(updatedComponent) => handleUpdateComponent(selectedComponentId, updatedComponent[selectedComponentId])} 
+            onUpdateComponent={(componentIdx, updatedComponent) => { 
+              handleUpdateComponent(componentIdx, updatedComponent);
+            }} 
           />
         </main>
 
