@@ -75,23 +75,28 @@ export default function EDocDesignerContainer({ documentId }) {
       case constants.edoc.COMPONENT_TYPE_TEXT:
         defaultRuntimeData.content = "여기에 텍스트를 입력하세요";
         defaultRuntimeData.textAlign = "left";
+        defaultRuntimeData.forceNewLine = false;
         break;
       case constants.edoc.COMPONENT_TYPE_IMAGE:
         defaultRuntimeData.src = "";
+        defaultRuntimeData.forceNewLine = false;
         break;
       case constants.edoc.COMPONENT_TYPE_INPUT:
         defaultRuntimeData.placeholder = "값을 입력하세요";
         defaultRuntimeData.textAlign = "left";
+        defaultRuntimeData.forceNewLine = false;
         break;
       case constants.edoc.COMPONENT_TYPE_TABLE:
         defaultRuntimeData.cols = 3;
         defaultRuntimeData.rows = 3;
         defaultRuntimeData.data = Array.from({ length: 3 }, () => Array(3).fill(""));
         defaultRuntimeData.columns = ["ColumnHeader1", "ColumnHeader2", "ColumnHeader3"];
+        defaultRuntimeData.forceNewLine = false;
         break;
       case constants.edoc.COMPONENT_TYPE_CHECKLIST:
         defaultRuntimeData.itemCount = 3;
         defaultRuntimeData.items = Array.from({ length: 3 }, (_, i) => ({ label: `항목 ${i + 1}`, checked: false}));
+        defaultRuntimeData.forceNewLine = false;
         break;
       default:
         break;
