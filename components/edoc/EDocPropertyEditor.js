@@ -125,7 +125,7 @@ export default function EDocPropertyEditor({ component, onComponentChange }) {
           <label className="block mt-2 mb-1">테이블 전체 폭 (예: 100%, 800px):</label>
           <input
             type="text"
-            value={component.runtime_data?.width || ''}
+            value={component.runtime_data?.width || 'auto'}
             onChange={(e) => updateRuntimeData("width", e.target.value)}
             className="w-full border border-gray-300 rounded p-1 mb-2"
             placeholder="예: 100%, 800px"
