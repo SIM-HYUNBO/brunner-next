@@ -11,7 +11,7 @@ export default function EDocPropertyEditor({ component, onComponentChange }) {
       ...component.runtime_data,
       [key]: value,
     };
-    
+
     onComponentChange({
       ...component,
       runtime_data: newRuntimeData,
@@ -27,6 +27,32 @@ export default function EDocPropertyEditor({ component, onComponentChange }) {
     });
   };
 
+  const renderWidthInput = () => (
+    <>
+      <label className="block mt-2 mb-1">폭 (예: 100%, 400px):</label>
+      <input
+        type="text"
+        value={component.runtime_data?.width || 'auto'}
+        onChange={(e) => updateRuntimeData("width", e.target.value)}
+        className="w-full border border-gray-300 rounded p-2 mb-2"
+      />
+    </>
+  );
+
+  const renderForceNewLineToggle = () => (
+    <div className="mt-2 mb-2">
+      <label className="inline-flex items-center">
+        <input
+          type="checkbox"
+          checked={!!component.runtime_data?.forceNewLine}
+          onChange={(e) => updateRuntimeData("forceNewLine", e.target.checked)}
+          className="mr-2"
+        />
+        다음줄에 표시
+      </label>
+    </div>
+  );
+
   switch (component.type) {
     case constants.edoc.COMPONENT_TYPE_TEXT:
       return (
@@ -38,6 +64,9 @@ export default function EDocPropertyEditor({ component, onComponentChange }) {
             onChange={(e) => updateRuntimeData("bindingKey", e.target.value)}
             className="w-full border border-gray-300 rounded p-2 mb-2"
           />
+
+          {renderWidthInput()}
+          {renderForceNewLineToggle()}
 
           <label>표시할 텍스트:</label>
           <textarea
@@ -56,9 +85,10 @@ export default function EDocPropertyEditor({ component, onComponentChange }) {
             <option value="left">왼쪽</option>
             <option value="center">가운데</option>
             <option value="right">오른쪽</option>
-          </select>          
+          </select>
         </div>
       );
+
     case constants.edoc.COMPONENT_TYPE_TABLE:
       const updateTableSize = (newRows, newCols) => {
         const oldData = component.runtime_data?.data || [];
@@ -88,13 +118,7 @@ export default function EDocPropertyEditor({ component, onComponentChange }) {
           ...newColumns[index],
           header: value,
         };
-        onComponentChange({
-          ...component,
-          runtime_data: {
-            ...component.runtime_data,
-            columns: newColumns,
-          }
-        });
+        updateRuntimeData("columns", newColumns);
       };
 
       const handleColumnWidthChange = (index, value) => {
@@ -103,13 +127,7 @@ export default function EDocPropertyEditor({ component, onComponentChange }) {
           ...newColumns[index],
           width: value,
         };
-        onComponentChange({
-          ...component,
-          runtime_data: {
-            ...component.runtime_data,
-            columns: newColumns,
-          }
-        });
+        updateRuntimeData("columns", newColumns);
       };
 
       return (
@@ -122,14 +140,8 @@ export default function EDocPropertyEditor({ component, onComponentChange }) {
             className="w-full border border-gray-300 rounded p-2 mb-2"
           />
 
-          <label className="block mt-2 mb-1">테이블 전체 폭 (예: 100%, 800px):</label>
-          <input
-            type="text"
-            value={component.runtime_data?.width || 'auto'}
-            onChange={(e) => updateRuntimeData("width", e.target.value)}
-            className="w-full border border-gray-300 rounded p-1 mb-2"
-            placeholder="예: 100%, 800px"
-          />
+          {renderWidthInput()}
+          {renderForceNewLineToggle()}
 
           <label className="block mt-2 mb-1">행 수:</label>
           <input
@@ -174,64 +186,7 @@ export default function EDocPropertyEditor({ component, onComponentChange }) {
           ))}
         </div>
       );
-    case constants.edoc.COMPONENT_TYPE_IMAGE:
-      const handleFileChange = (e) => {
-        const file = e.target.files[0];
-        if (!file) return;
 
-        const reader = new FileReader();
-        reader.onloadend = () => {
-          updateRuntimeData("src", reader.result); // Base64로 저장
-        };
-        reader.readAsDataURL(file);
-      };
-
-      return (
-        <div>
-          <label>Binding Key:</label>
-          <input
-            type="text"
-            value={component.runtime_data?.bindingKey || ''}
-            onChange={(e) => updateRuntimeData("bindingKey", e.target.value)}
-            className="w-full border border-gray-300 rounded p-2 mb-2"
-          />
-
-          <label>이미지 URL 또는 업로드:</label>
-          <input
-            type="text"
-            value={component.runtime_data?.src || ''}
-            onChange={(e) => updateRuntimeData("src", e.target.value)}
-            className="w-full border border-gray-300 rounded p-2 mb-2"
-            placeholder="직접 입력하거나 아래에서 업로드하세요"
-          />
-
-          <input
-            type="file"
-            accept="image/*"
-            onChange={handleFileChange}
-            className="mb-2"
-          />
-
-          <label className="block mt-2">정렬:</label>
-          <select
-            value={component.runtime_data?.textAlign || 'left'}
-            onChange={(e) => updateRuntimeData("textAlign", e.target.value)}
-            className="w-full border border-gray-300 rounded p-2 mb-2"
-          >
-            <option value="left">왼쪽</option>
-            <option value="center">가운데</option>
-            <option value="right">오른쪽</option>
-          </select>
-
-          {component.runtime_data?.src && (
-            <img
-              src={component.runtime_data.src}
-              alt="선택된 이미지"
-              className="mt-2 max-w-full h-auto border"
-            />
-          )}
-        </div>
-      );
     case constants.edoc.COMPONENT_TYPE_INPUT:
       return (
         <div>
@@ -243,66 +198,20 @@ export default function EDocPropertyEditor({ component, onComponentChange }) {
             className="w-full border border-gray-300 rounded p-2 mb-2"
           />
 
-          <label>입력값</label>
+          {renderWidthInput()}
+          {renderForceNewLineToggle()}
+
+          <label>placeholder 텍스트:</label>
           <input
             type="text"
-            value={component.runtime_data?.value || ''}
-            onChange={(e) => updateRuntimeData("value", e.target.value)}
-            className="w-full border border-gray-300 rounded p-2"
-          />
-
-          <label>정렬:</label>
-          <select
-            value={component.runtime_data?.textAlign || 'left'}
-            onChange={(e) => updateRuntimeData("textAlign", e.target.value)}
+            value={component.runtime_data?.placeholder || ''}
+            onChange={(e) => updateRuntimeData("placeholder", e.target.value)}
             className="w-full border border-gray-300 rounded p-2 mb-2"
-          >
-            <option value="left">왼쪽</option>
-            <option value="center">가운데</option>
-            <option value="right">오른쪽</option>
-          </select>
+          />
         </div>
       );
-    case constants.edoc.COMPONENT_TYPE_CHECKLIST:
-      const items = component.runtime_data?.items || [
-        { checked: false, label: "항목 1" },
-        { checked: false, label: "항목 2" },
-        { checked: false, label: "항목 3" },
-      ];
 
-      const handleItemCountChange = (newCount) => {
-        let count = Math.max(1, newCount); // 최소 1개 보장
-        const newItems = [...items];
-
-        if (newItems.length > count) {
-          newItems.length = count; // 자르기
-        } else {
-          while (newItems.length < count) {
-            newItems.push({
-              checked: false,
-              label: `항목 ${newItems.length + 1}` // 기본값을 직접 value로 설정
-            });
-          }
-        }
-
-        updateRuntimeDataAll({
-            ...component.runtime_data,
-            itemCount:newItems.length,
-            items: newItems,
-          });
-
-      };
-
-      const handleItemLabelChange = (index, newLabel) => {
-        const newItems = [...items];
-        newItems[index] = {
-          ...newItems[index],
-          label: newLabel,
-        };
-
-        updateRuntimeData("items", newItems);
-      };
-
+    case constants.edoc.COMPONENT_TYPE_CHECK:
       return (
         <div>
           <label>Binding Key:</label>
@@ -313,30 +222,61 @@ export default function EDocPropertyEditor({ component, onComponentChange }) {
             className="w-full border border-gray-300 rounded p-2 mb-2"
           />
 
-          <label className="block mb-1">체크리스트 항목 수:</label>
-          <input
-            type="number"
-            min={1}
-            value={items.length}
-            onChange={(e) => handleItemCountChange(parseInt(e.target.value))}
-            className="w-full border border-gray-300 rounded p-2 mb-3"
-          />
+          {renderWidthInput()}
+          {renderForceNewLineToggle()}
 
-          <label className="block mb-1">항목 이름 수정:</label>
-          {items.map((item, idx) => (
-            <div key={idx} className="flex items-center gap-2 mb-2">
-              <span className="text-gray-500">{idx + 1}.</span>
-              <input
-                type="text"
-                value={item.label}
-                onChange={(e) => handleItemLabelChange(idx, e.target.value)}
-                className="flex-1 border border-gray-300 rounded p-2"
-              />
-            </div>
-          ))}
+          <label>체크박스 라벨:</label>
+          <input
+            type="text"
+            value={component.runtime_data?.label || ''}
+            onChange={(e) => updateRuntimeData("label", e.target.value)}
+            className="w-full border border-gray-300 rounded p-2 mb-2"
+          />
         </div>
       );
-    default:
-      return <p>속성 편집이 지원되지 않는 컴포넌트입니다.</p>;
+
+    case constants.edoc.COMPONENT_TYPE_IMAGE:
+      return (
+        <div>
+          <label>이미지 URL:</label>
+          <input
+            type="text"
+            value={component.runtime_data?.src || ''}
+            onChange={(e) => updateRuntimeData("src", e.target.value)}
+            className="w-full border border-gray-300 rounded p-2 mb-2"
+          />
+
+          {renderWidthInput()}
+          {renderForceNewLineToggle()}
+        </div>
+      );      
+
+    case constants.edoc.COMPONENT_TYPE_CHECKLIST:
+      return (
+        <div>
+          <label>Binding Key:</label>
+          <input
+            type="text"
+            value={component.runtime_data?.bindingKey || ''}
+            onChange={(e) => updateRuntimeData("bindingKey", e.target.value)}
+            className="w-full border border-gray-300 rounded p-2 mb-2"
+          />
+
+          {renderWidthInput()}
+          {renderForceNewLineToggle()}
+
+          <label>항목 목록 (쉼표로 구분):</label>
+          <input
+            type="text"
+            value={component.runtime_data?.items?.join(", ") || ""}
+            onChange={(e) =>
+              updateRuntimeData("items", e.target.value.split(",").map((item) => item.trim()))
+            }
+            className="w-full border border-gray-300 rounded p-2 mb-2"
+          />
+        </div>
+      );      
+      default:
+        return <p>속성 편집이 지원되지 않는 컴포넌트입니다.</p>;
   }
 }
