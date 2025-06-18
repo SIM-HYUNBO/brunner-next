@@ -1,11 +1,6 @@
-import React, {useEffect} from 'react';
+import React, { useEffect } from 'react';
 import * as constants from '@/components/constants';
 
-/**
- * EDocEditorCanvas.js
- * EDoc 편집기 캔버스 컴포넌트
- * 컴포넌트들을 렌더링하고 선택된 컴포넌트를 강조 표시
- */
 export default function EDocEditorCanvas({
   components,
   selectedComponentId,
@@ -13,13 +8,12 @@ export default function EDocEditorCanvas({
   onDeleteComponent,
   onMoveUp,
   onMoveDown,
-  onUpdateComponent, // 🔹 새롭게 전달받을 prop
+  onUpdateComponent,
 }) {
   useEffect(() => {
     const handleKeyDown = (e) => {
       if (e.key === 'Escape') {
         onComponentSelect(null);
-        // 🔹 포커스 해제
         if (document.activeElement instanceof HTMLElement) {
           document.activeElement.blur();
         }
@@ -28,181 +22,132 @@ export default function EDocEditorCanvas({
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [onComponentSelect]);
-  
-  const handleRuntimeDataChange = (componentIdx, newRuntimeData) => {
-    const updated = [...components];
-    const component = updated[componentIdx];
 
-    // 분기 처리: 컴포넌트 타입별로 runtime_data 갱신 방법이 다름
-    // let newRuntimeData = { ...component.runtime_data };
+  const handleRuntimeDataChange = (componentIdx, newData) => {
+    const component = components[componentIdx];
+    const updated = [...components];
+    const currentData = component.runtime_data || {};
+
+    let newRuntimeData = { ...currentData };
 
     switch (component.type) {
-      case constants.edoc.COMPONENT_TYPE_TABLE:
-        if (
-          typeof newRuntimeData.rowIdx === 'number' &&
-          typeof newRuntimeData.colIdx === 'number'
-        ) {
-          const data = [...(component.runtime_data?.data || [])];
-          data[newRuntimeData.rowIdx][newRuntimeData.colIdx] = newRuntimeData.value;
-          newRuntimeData = { ...newRuntimeData, data };
-        }
-        break;
       case constants.edoc.COMPONENT_TYPE_TEXT:
-        if (typeof newRuntimeData.content === 'string') {
-          newRuntimeData = { ...newRuntimeData, content: newRuntimeData.content };
-        }
+        newRuntimeData.content = newData;
         break;
       case constants.edoc.COMPONENT_TYPE_INPUT:
-        if (typeof newRuntimeData.value === 'string') {
-          newRuntimeData = { ...newRuntimeData, value: newRuntimeData.value };
+        newRuntimeData.value = newData;
+        break;
+      case constants.edoc.COMPONENT_TYPE_TABLE: {
+        const [rowIdx, colIdx, value] = newData;
+        const data = [...(currentData.data || [])];
+        if (data[rowIdx]) {
+          data[rowIdx][colIdx] = value;
+          newRuntimeData.data = data;
         }
         break;
-      case constants.edoc.COMPONENT_TYPE_CHECKLIST:
-          if (Array.isArray(newRuntimeData.items)) {
-          newRuntimeData = { ...newRuntimeData, items: newRuntimeData.items };
+      }
+      case constants.edoc.COMPONENT_TYPE_CHECKLIST: {
+        const [itemIdx, checked] = newData;
+        const items = [...(currentData.items || [])];
+        if (items[itemIdx]) {
+          items[itemIdx] = { ...items[itemIdx], checked };
+          newRuntimeData.items = items;
         }
         break;
+      }
       case constants.edoc.COMPONENT_TYPE_IMAGE:
-        if (typeof newRuntimeData.src === 'string') {
-          newRuntimeData = { ...newRuntimeData, src: newRuntimeData.src };
-        }
+        newRuntimeData.src = newData;
         break;
       default:
-        // 기타: 전체 runtime_data 덮어쓰기
-        newRuntimeData = { ...newRuntimeData, ...newRuntimeData };
+        newRuntimeData = { ...currentData, ...newData };
     }
 
     updated[componentIdx] = {
       ...component,
       runtime_data: newRuntimeData,
     };
-
     onUpdateComponent(componentIdx, updated[componentIdx]);
   };
 
   return (
-    <div id="editor-canvas" 
-        className="min-h-[500px] border border-dashed border-gray-400 bg-white p-4 rounded"
-        onClick={() => onComponentSelect(null)} // ← 빈 공간 클릭 시 선택 해제
+    <div
+      id="editor-canvas"
+      className="min-h-[500px] border border-dashed border-gray-400 bg-white p-4 rounded"
+      onClick={() => onComponentSelect(null)}
     >
-        
       {(!components || components.length === 0) && (
         <p className="text-gray-500 text-center mt-20">좌측에서 컴포넌트를 추가하세요.</p>
       )}
-      {components &&
-        components.map((comp, idx) => (
-          <div key={idx} className="relative group mb-4 border border-transparent rounded hover:border-gray-300 p-1">
-            {/* 위/아래 이동/삭제 버튼은 그대로 유지 */}
-            <div className="absolute -left-8 top-1/2 transform -translate-y-1/2 flex flex-col space-y-1 opacity-0 group-hover:opacity-100 transition">
-              <button
-                className="text-xs bg-white border rounded shadow px-1 hover:bg-gray-100 disabled:opacity-30"
-                onClick={() => onMoveUp(idx)}
-                disabled={idx === 0}
-                title="위로 이동"
-              >
-                ↑
-              </button>
-              <button
-                className="text-xs bg-white border rounded shadow px-1 hover:bg-gray-100 disabled:opacity-30"
-                onClick={() => onMoveDown(idx)}
-                disabled={idx === components.length - 1}
-                title="아래로 이동"
-              >
-                ↓
-              </button>
-              <button
-                onClick={() => onDeleteComponent(idx)}
-                disabled={selectedComponentId === null}
-                title="삭제"
-              >
-                🗑
-              </button>
-            </div>
-
-            <DocComponentRenderer
-              component={comp}
-              isSelected={selectedComponentId === idx}
-              onSelect={() => onComponentSelect(idx)}
-              onRuntimeDataChange={(...args) => {
-                const current = components[idx];
-
-                let newRuntimeData = current.runtime_data;
-
-                switch (current.type) {
-                  case constants.edoc.COMPONENT_TYPE_TEXT: {
-                    const [content] = args;
-                    newRuntimeData = {
-                      ...current.runtime_data,
-                      content,
-                    };
-                    break;
-                  }
-                  case constants.edoc.COMPONENT_TYPE_INPUT: {
-                    const [value] = args;
-                    newRuntimeData = {
-                      ...current.runtime_data,
-                      value,
-                    };
-                    break;
-                  }
-                  case constants.edoc.COMPONENT_TYPE_TABLE: { // 테이블 컴포넌트 셀 값 변경 (args : rowIndex, columnIndex, e.target.value)
-                    const [rowIdx, colIdx, value] = args;
-                    const updatedData = [...current.runtime_data.data];
-                    updatedData[rowIdx][colIdx] = value;
-                    newRuntimeData = {
-                      ...current.runtime_data,
-                      data: updatedData,
-                    };
-                    break;
-                  }
-                  case constants.edoc.COMPONENT_TYPE_CHECKLIST: { // 체크리스트 컴포넌트 아이템 체크 상태 변경 (args : checkItemIndex, e.target.checked)
-                    const [itemIdx, checked] = args;
-                    const updatedItems = [...current.runtime_data.items];
-                    updatedItems[itemIdx] = {
-                      ...updatedItems[itemIdx],
-                      checked,
-                    };
-                    newRuntimeData = {
-                      ...current.runtime_data,
-                      items: updatedItems,
-                    };
-                    break;
-                  }
-                  default:
-                    return;
-                }
-
-                handleRuntimeDataChange(idx, newRuntimeData);
-              }}
-            />
+      {components.map((comp, idx) => (
+        <div
+          key={idx}
+          className="relative group mb-4 border border-transparent rounded hover:border-gray-300 p-1 w-fit"
+        >
+          {/* 툴버튼 영역 */}
+          <div className="absolute -left-8 top-1/2 transform -translate-y-1/2 flex flex-col space-y-1 opacity-0 group-hover:opacity-100 transition">
+            <button
+              className="text-xs bg-white border rounded shadow px-1 hover:bg-gray-100 disabled:opacity-30"
+              onClick={() => onMoveUp(idx)}
+              disabled={idx === 0}
+              title="위로 이동"
+            >
+              ↑
+            </button>
+            <button
+              className="text-xs bg-white border rounded shadow px-1 hover:bg-gray-100 disabled:opacity-30"
+              onClick={() => onMoveDown(idx)}
+              disabled={idx === components.length - 1}
+              title="아래로 이동"
+            >
+              ↓
+            </button>
+            <button
+              onClick={() => onDeleteComponent(idx)}
+              disabled={selectedComponentId === null}
+              title="삭제"
+            >
+              🗑
+            </button>
           </div>
-        ))}
+
+          <DocComponentRenderer
+            component={comp}
+            isSelected={selectedComponentId === idx}
+            onSelect={() => onComponentSelect(idx)}
+            onRuntimeDataChange={(...args) => handleRuntimeDataChange(idx, args.length === 1 ? args[0] : args)}
+          />
+        </div>
+      ))}
     </div>
   );
 }
 
-function DocComponentRenderer({ 
-  component, 
-  isSelected, 
-  onSelect, 
-  onRuntimeDataChange 
-}) {
-  const defaultLineHeight = 'h-8'; // 기본 줄 높이 설정
-  const defaultCellHeight = 'h-10 py-2'; // 테이블 셀 높이 설정
-  const baseClass = 'w-full cursor-pointer';
+function DocComponentRenderer({ component, isSelected, onSelect, onRuntimeDataChange }) {
   const selectedClass = isSelected ? 'outline outline-2 outline-blue-500 rounded bg-blue-50' : '';
-  const alignmentClass = { left: 'text-left', center: 'text-center', right: 'text-right'}[component.runtime_data?.textAlign || 'left'];
-    
+  const alignmentClass = {
+    left: 'text-left',
+    center: 'text-center',
+    right: 'text-right',
+  }[component.runtime_data?.textAlign || 'left'];
+  const style = {
+  width: component.runtime_data?.width || 'auto',
+  height: component.runtime_data?.height || 'auto',
+};
+
+  const handleComponentClick = (e) => {
+    e.stopPropagation();
+    onSelect();
+  };
+
   switch (component.type) {
     case constants.edoc.COMPONENT_TYPE_TEXT:
       return (
-        <p 
-          className={`${baseClass} ${selectedClass} ${alignmentClass} ${defaultLineHeight} whitespace-pre-wrap h-auto overflow-visible`} 
-          onClick={(e) => {
-            e.stopPropagation();
-            onSelect();
-          }}>
-          {component.runtime_data.content.split('\n').map((line, idx) => (
+        <p
+          className={`${selectedClass} ${alignmentClass} h-auto whitespace-pre-wrap overflow-visible cursor-pointer`}
+          style={style}
+          onClick={handleComponentClick}
+        >
+          {(component.runtime_data?.content || '').split('\n').map((line, idx) => (
             <React.Fragment key={idx}>
               {line}
               <br />
@@ -210,44 +155,50 @@ function DocComponentRenderer({
           ))}
         </p>
       );
+
     case constants.edoc.COMPONENT_TYPE_INPUT:
       return (
         <input
-          className={`${baseClass} ${selectedClass} ${alignmentClass} ${defaultLineHeight}`}
-          onClick={(e) => {
-            e.stopPropagation();
-            onSelect();
-          }}
           type="text"
+          className={`${selectedClass} ${alignmentClass} h-8 cursor-pointer`}
+          style={style}
           value={component.runtime_data?.value || ''}
           placeholder={component.runtime_data?.placeholder || ''}
-          // readOnly
+          onClick={handleComponentClick}
+          onChange={(e) => onRuntimeDataChange(e.target.value)}
         />
       );
-    case constants.edoc.COMPONENT_TYPE_TABLE:
-      // runtime_data.data가 배열인지 확인하고 깊은 복사, 없으면 3x3 빈 데이터 생성
-      const tableData = Array.isArray(component.runtime_data?.data) && component.runtime_data.data.length > 0 ? 
-      component.runtime_data.data.map(row => [...row]): 
-      Array.from({ length: 3 }, () => Array(3).fill(''));
 
-      // columns가 문자열 배열이면 객체 배열로 변환, 기본값 생성
-      const columns = Array.isArray(component.runtime_data?.columns) && component.runtime_data.columns.length > 0 ? 
-      component.runtime_data.columns.map(col => typeof col === 'string' ? { header: col, width: 'auto' } : { ...col }): 
-      Array(tableData[0]?.length || 3).fill(null).map((_, idx) => ({ header: `열 ${idx + 1}`, width: 'auto' }));
+    case constants.edoc.COMPONENT_TYPE_TABLE: {
+      const tableData =
+        Array.isArray(component.runtime_data?.data) && component.runtime_data.data.length > 0
+          ? component.runtime_data.data
+          : Array.from({ length: 3 }, () => Array(3).fill(''));
+
+      const columns =
+        Array.isArray(component.runtime_data?.columns) && component.runtime_data.columns.length > 0
+          ? component.runtime_data.columns.map((col) =>
+              typeof col === 'string' ? { header: col, width: 'auto' } : col
+            )
+          : Array(tableData[0]?.length || 3)
+              .fill(null)
+              .map((_, idx) => ({ header: `열 ${idx + 1}`, width: 'auto' }));
 
       return (
-        <table className={`${baseClass} ${selectedClass} border border-gray-300`} 
-              onClick={(e) => { e.stopPropagation();onSelect();}}
-              style={{ width: component.runtime_data?.width || '100%' }}
+        <table
+          className={`${selectedClass} border border-gray-300 cursor-pointer`}
+          style={style}
+          onClick={handleComponentClick}
         >
           <thead>
             <tr>
               {columns.map((col, cIdx) => (
                 <th
                   key={cIdx}
-                  className={`border border-gray-300 bg-gray-100 text-center align-middle p-2 ${col.width ? `w-[${col.width}]` : ''}`}
+                  className="border border-gray-300 bg-gray-100 text-center p-2"
+                  style={{ width: col.width || 'auto' }}
                 >
-                  {col.header || `열 ${cIdx + 1}`}
+                  {col.header}
                 </th>
               ))}
             </tr>
@@ -258,14 +209,16 @@ function DocComponentRenderer({
                 {row.map((cell, columnIndex) => (
                   <td
                     key={columnIndex}
-                    className={`border border-gray-300 text-center align-middle min-w-[100px] ${defaultCellHeight}`}
+                    className="border border-gray-300 text-center min-w-[100px] h-10 py-2"
                     style={{ width: columns[columnIndex]?.width || 'auto' }}
                   >
                     {isSelected ? (
                       <input
                         className="w-full text-center border-none bg-transparent focus:outline-none"
                         value={cell}
-                        onChange={(e) => onRuntimeDataChange?.(rowIndex, columnIndex, e.target.value)} // 테이블 셀 값 변경
+                        onChange={(e) =>
+                          onRuntimeDataChange(rowIndex, columnIndex, e.target.value)
+                        }
                       />
                     ) : (
                       cell
@@ -277,38 +230,49 @@ function DocComponentRenderer({
           </tbody>
         </table>
       );
-    case constants.edoc.COMPONENT_TYPE_IMAGE:
-      const imageAlign = {left: 'text-left', center: 'text-center', right: 'text-right',}[component.runtime_data?.textAlign || 'left'];
+    }
 
+    case constants.edoc.COMPONENT_TYPE_IMAGE:
       return (
-        <div className={`${baseClass} ${selectedClass} ${imageAlign}`} onClick={(e) => {
-          e.stopPropagation();
-          onSelect();
-          }}>
-            {component.runtime_data?.src ? (
-              <img src={component.runtime_data.src} alt="이미지" className="inline-block max-w-full h-auto" />
-            ) : (
-              <div className="w-full h-24 bg-gray-200 flex items-center justify-center text-gray-500">이미지 없음</div>
-            )}
+        <div
+          className={`${selectedClass} ${alignmentClass} cursor-pointer`}
+          style={style}
+          onClick={handleComponentClick}
+        >
+          {component.runtime_data?.src ? (
+            <img
+              src={component.runtime_data.src}
+              alt="이미지"
+              className="inline-block max-w-full h-auto"
+            />
+          ) : (
+            <div className="w-full h-24 bg-gray-200 flex items-center justify-center text-gray-500">
+              이미지 없음
+            </div>
+          )}
         </div>
       );
+
     case constants.edoc.COMPONENT_TYPE_CHECKLIST:
       return (
         <div
-          className={`p-2 rounded border ${isSelected ? 'border-blue-500 bg-blue-50' : 'border-transparent'} cursor-pointer`}
-          onClick={(e) => { e.stopPropagation(); onSelect(); }}>
-          {(component.runtime_data?.items || []).map((item, checkItemIndex) => (
-            <label key={checkItemIndex} className="flex items-center space-x-2 mb-1">
+          className={`${selectedClass} border ${isSelected ? 'border-blue-500 bg-blue-50' : 'border-transparent'} p-2 cursor-pointer`}
+          style={style}
+          onClick={handleComponentClick}
+        >
+          {(component.runtime_data?.items || []).map((item, idx) => (
+            <label key={idx} className="flex items-center space-x-2 mb-1">
               <input
                 type="checkbox"
                 checked={item.checked}
-                onChange={(e) => onRuntimeDataChange?.(checkItemIndex, e.target.checked)} // 체크리스트 아이템 체크 상태 변경
+                onChange={(e) => onRuntimeDataChange(idx, e.target.checked)}
               />
               <span>{item.label}</span>
             </label>
           ))}
         </div>
-      );    
+      );
+
     default:
       return null;
   }
