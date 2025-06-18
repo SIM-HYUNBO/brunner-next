@@ -27,7 +27,6 @@ export default function EDocEditorCanvas({
     const component = components[componentIdx];
     const updated = [...components];
     const currentData = component.runtime_data || {};
-
     let newRuntimeData = { ...currentData };
 
     switch (component.type) {
@@ -69,53 +68,80 @@ export default function EDocEditorCanvas({
     onUpdateComponent(componentIdx, updated[componentIdx]);
   };
 
+  // 가로 배치 로직 (우측으로), forceNewLine 적용
+  const layoutRows = [];
+  let currentRow = [];
+  let remainingWidth = 100;
+
+  components.forEach((comp, idx) => {
+    const compWidth = parseInt(comp.runtime_data?.width || '100');
+    const forceNewLine = comp.runtime_data?.forceNewLine;
+
+    if (forceNewLine || remainingWidth - compWidth < 0) {
+      if (currentRow.length > 0) layoutRows.push(currentRow);
+      currentRow = [{ comp, idx }];
+      remainingWidth = 100 - compWidth;
+    } else {
+      currentRow.push({ comp, idx });
+      remainingWidth -= compWidth;
+    }
+  });
+  if (currentRow.length > 0) layoutRows.push(currentRow);
+
   return (
     <div
       id="editor-canvas"
-      className="min-h-[500px] border border-dashed border-gray-400 bg-white p-4 rounded"
+      className="min-h-[500px] border border-dashed border-gray-400 bg-white p-4 rounded w-full"
       onClick={() => onComponentSelect(null)}
     >
       {(!components || components.length === 0) && (
         <p className="text-gray-500 text-center mt-20">좌측에서 컴포넌트를 추가하세요.</p>
       )}
-      {components.map((comp, idx) => (
-        <div
-          key={idx}
-          className="relative group mb-4 border border-transparent rounded hover:border-gray-300 p-1 w-fit"
-        >
-          {/* 툴버튼 영역 */}
-          <div className="absolute -left-8 top-1/2 transform -translate-y-1/2 flex flex-col space-y-1 opacity-0 group-hover:opacity-100 transition">
-            <button
-              className="text-xs bg-white border rounded shadow px-1 hover:bg-gray-100 disabled:opacity-30"
-              onClick={() => onMoveUp(idx)}
-              disabled={idx === 0}
-              title="위로 이동"
+      {layoutRows.map((row, rowIdx) => (
+        <div key={rowIdx} className="flex flex-row flex-wrap gap-2 mb-4">
+          {row.map(({ comp, idx }) => (
+            <div
+              key={idx}
+              className="relative group border border-transparent rounded hover:border-gray-300 p-1"
+              style={{ width: comp.runtime_data?.width || 'auto' }}
             >
-              ↑
-            </button>
-            <button
-              className="text-xs bg-white border rounded shadow px-1 hover:bg-gray-100 disabled:opacity-30"
-              onClick={() => onMoveDown(idx)}
-              disabled={idx === components.length - 1}
-              title="아래로 이동"
-            >
-              ↓
-            </button>
-            <button
-              onClick={() => onDeleteComponent(idx)}
-              disabled={selectedComponentId === null}
-              title="삭제"
-            >
-              🗑
-            </button>
-          </div>
+              {/* 툴버튼 */}
+              <div className="absolute -left-8 top-1/2 transform -translate-y-1/2 flex flex-col space-y-1 opacity-0 group-hover:opacity-100 transition">
+                <button
+                  className="text-xs bg-white border rounded shadow px-1 hover:bg-gray-100 disabled:opacity-30"
+                  onClick={() => onMoveUp(idx)}
+                  disabled={idx === 0}
+                  title="위로 이동"
+                >
+                  ↑
+                </button>
+                <button
+                  className="text-xs bg-white border rounded shadow px-1 hover:bg-gray-100 disabled:opacity-30"
+                  onClick={() => onMoveDown(idx)}
+                  disabled={idx === components.length - 1}
+                  title="아래로 이동"
+                >
+                  ↓
+                </button>
+                <button
+                  onClick={() => onDeleteComponent(idx)}
+                  disabled={selectedComponentId === null}
+                  title="삭제"
+                >
+                  🗑
+                </button>
+              </div>
 
-          <DocComponentRenderer
-            component={comp}
-            isSelected={selectedComponentId === idx}
-            onSelect={() => onComponentSelect(idx)}
-            onRuntimeDataChange={(...args) => handleRuntimeDataChange(idx, args.length === 1 ? args[0] : args)}
-          />
+              <DocComponentRenderer
+                component={comp}
+                isSelected={selectedComponentId === idx}
+                onSelect={() => onComponentSelect(idx)}
+                onRuntimeDataChange={(...args) =>
+                  handleRuntimeDataChange(idx, args.length === 1 ? args[0] : args)
+                }
+              />
+            </div>
+          ))}
         </div>
       ))}
     </div>
@@ -129,10 +155,12 @@ function DocComponentRenderer({ component, isSelected, onSelect, onRuntimeDataCh
     center: 'text-center',
     right: 'text-right',
   }[component.runtime_data?.textAlign || 'left'];
+
+  // 내부 컴포넌트는 폭 auto로 고정, 높이만 설정 가능
   const style = {
-  width: component.runtime_data?.width || 'auto',
-  height: component.runtime_data?.height || 'auto',
-};
+    width: 'auto',
+    height: component.runtime_data?.height || 'auto',
+  };
 
   const handleComponentClick = (e) => {
     e.stopPropagation();
@@ -143,7 +171,7 @@ function DocComponentRenderer({ component, isSelected, onSelect, onRuntimeDataCh
     case constants.edoc.COMPONENT_TYPE_TEXT:
       return (
         <p
-          className={`${selectedClass} ${alignmentClass} h-auto whitespace-pre-wrap overflow-visible cursor-pointer`}
+          className={`${selectedClass} ${alignmentClass} whitespace-pre-wrap overflow-visible cursor-pointer`}
           style={style}
           onClick={handleComponentClick}
         >
@@ -161,7 +189,7 @@ function DocComponentRenderer({ component, isSelected, onSelect, onRuntimeDataCh
         <input
           type="text"
           className={`${selectedClass} ${alignmentClass} h-8 cursor-pointer`}
-          style={style}
+          style={{ width: '100%', height: style.height }}
           value={component.runtime_data?.value || ''}
           placeholder={component.runtime_data?.placeholder || ''}
           onClick={handleComponentClick}
@@ -187,7 +215,12 @@ function DocComponentRenderer({ component, isSelected, onSelect, onRuntimeDataCh
       return (
         <table
           className={`${selectedClass} border border-gray-300 cursor-pointer`}
-          style={style}
+          style={{
+            ...style,
+            tableLayout: 'fixed',
+            width: 'auto',
+            height: style.height,
+          }}
           onClick={handleComponentClick}
         >
           <thead>
@@ -196,7 +229,14 @@ function DocComponentRenderer({ component, isSelected, onSelect, onRuntimeDataCh
                 <th
                   key={cIdx}
                   className="border border-gray-300 bg-gray-100 text-center p-2"
-                  style={{ width: col.width || 'auto' }}
+                  style={{
+                    width: col.width || 'auto',
+                    minWidth: col.width || 100,
+                    height: 40,
+                    overflow: 'hidden',
+                    whiteSpace: 'nowrap',
+                    textOverflow: 'ellipsis',
+                  }}
                 >
                   {col.header}
                 </th>
@@ -209,16 +249,37 @@ function DocComponentRenderer({ component, isSelected, onSelect, onRuntimeDataCh
                 {row.map((cell, columnIndex) => (
                   <td
                     key={columnIndex}
-                    className="border border-gray-300 text-center min-w-[100px] h-10 py-2"
-                    style={{ width: columns[columnIndex]?.width || 'auto' }}
+                    className="border border-gray-300 text-center"
+                    style={{
+                      width: columns[columnIndex]?.width || 'auto',
+                      minWidth: columns[columnIndex]?.width || 100,
+                      height: 40,
+                      padding: 0,                  // td의 padding 제거해서 input이 꽉차도록
+                      overflow: 'hidden',
+                      whiteSpace: 'nowrap',
+                      textOverflow: 'ellipsis',
+                      boxSizing: 'border-box',    // td도 border-box 적용
+                    }}
                   >
                     {isSelected ? (
                       <input
-                        className="w-full text-center border-none bg-transparent focus:outline-none"
+                        className="w-full h-full"
                         value={cell}
                         onChange={(e) =>
-                          onRuntimeDataChange(rowIndex, columnIndex, e.target.value)
+                          onRuntimeDataChange([rowIndex, columnIndex, e.target.value])
                         }
+                        style={{
+                          width: '100%',
+                          height: '100%',
+                          boxSizing: 'border-box',
+                          padding: '4px',           // 적당한 padding 유지
+                          margin: 0,
+                          border: '1px solid #3b82f6', // 파란 테두리
+                          backgroundColor: 'white',
+                          textAlign: 'center',
+                          outline: 'none',
+                          display: 'block',          // inline 요소 문제 방지
+                        }}
                       />
                     ) : (
                       cell
@@ -265,7 +326,7 @@ function DocComponentRenderer({ component, isSelected, onSelect, onRuntimeDataCh
               <input
                 type="checkbox"
                 checked={item.checked}
-                onChange={(e) => onRuntimeDataChange(idx, e.target.checked)}
+                onChange={(e) => onRuntimeDataChange([idx, e.target.checked])}
               />
               <span>{item.label}</span>
             </label>
@@ -277,3 +338,4 @@ function DocComponentRenderer({ component, isSelected, onSelect, onRuntimeDataCh
       return null;
   }
 }
+
