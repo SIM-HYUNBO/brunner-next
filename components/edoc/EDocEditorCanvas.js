@@ -74,18 +74,22 @@ export default function EDocEditorCanvas({
   let remainingWidth = 100;
 
   components.forEach((comp, idx) => {
-    const compWidth = parseInt(comp.runtime_data?.width || '100');
-    const forceNewLine = comp.runtime_data?.forceNewLine;
+  const compWidth = parseInt(comp.runtime_data?.width || '100');
+  // 수정 전
+  // const forceNewLine = comp.runtime_data?.forceNewLine === true;
 
-    if (forceNewLine || remainingWidth - compWidth < 0) {
-      if (currentRow.length > 0) layoutRows.push(currentRow);
-      currentRow = [{ comp, idx }];
-      remainingWidth = 100 - compWidth;
-    } else {
-      currentRow.push({ comp, idx });
-      remainingWidth -= compWidth;
-    }
-  });
+  // 수정 후
+  const forceNewLine = comp.runtime_data?.forceNewLine ?? false;
+
+  if (forceNewLine || remainingWidth - compWidth < 0) {
+    if (currentRow.length > 0) layoutRows.push(currentRow);
+    currentRow = [{ comp, idx }];
+    remainingWidth = 100 - compWidth;
+  } else {
+    currentRow.push({ comp, idx });
+    remainingWidth -= compWidth;
+  }
+});
   if (currentRow.length > 0) layoutRows.push(currentRow);
 
   return (
@@ -328,7 +332,7 @@ function DocComponentRenderer({ component, isSelected, onSelect, onRuntimeDataCh
                 checked={item.checked}
                 onChange={(e) => onRuntimeDataChange([idx, e.target.checked])}
               />
-              <span>{item.label}</span>
+              <span>{item.label || `항목 ${idx + 1}`}</span>
             </label>
           ))}
         </div>
