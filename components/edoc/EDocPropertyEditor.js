@@ -57,7 +57,7 @@ export default function EDocPropertyEditor({ component, onComponentChange }) {
     <>
       <label>문서 내 정렬 (배치):</label>
       <select
-        value={component.runtime_data?.positionAlign || 'left'}
+        value={component.runtime_data?.positionAlign || 'left'}qk
         onChange={(e) => updateRuntimeData("positionAlign", e.target.value)}
         className="w-full border border-gray-300 rounded p-2 mb-2"
       >

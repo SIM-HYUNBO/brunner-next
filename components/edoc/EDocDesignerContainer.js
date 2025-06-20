@@ -287,21 +287,43 @@ export default function EDocDesignerContainer({ documentId }) {
     });
   };
 
-  const handleUpdateAllComponentAlign = (newAlign) => {
-  setDocumentData(prev => {
-    const updatedComponents = prev.components.map(comp => ({
-      ...comp,
-      runtime_data: {
-        ...comp.runtime_data,
-        positionAlign: newAlign
+  
+  const getRuntimeDataByBindingKey = (components, bindingKey) => {
+    if (!Array.isArray(components) || !bindingKey) return null;
+
+    const comp = components.find(
+      (c) => c.runtime_data?.bindingKey === bindingKey
+    );
+    return comp ? comp.runtime_data : null;
+  }
+
+  const getDocumentRuntimeData = (components) => {
+    if (!Array.isArray(components)) return {};
+
+    return components.reduce((acc, comp) => {
+      const bindingKey = comp.runtime_data?.bindingKey;
+      if (bindingKey) {
+        acc[bindingKey] = comp.runtime_data;
       }
-    }));
-    return {
-      ...prev,
-      components: updatedComponents
-    };
-  });
-};
+      return acc;
+    }, {});
+  }
+
+  const handleUpdateAllComponentAlign = (newAlign) => {
+    setDocumentData(prev => {
+      const updatedComponents = prev.components.map(comp => ({
+        ...comp,
+        runtime_data: {
+          ...comp.runtime_data,
+          positionAlign: newAlign
+        }
+      }));
+      return {
+        ...prev,
+        components: updatedComponents
+      };
+    });
+  };
 
   return (
     <>
