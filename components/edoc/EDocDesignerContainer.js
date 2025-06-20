@@ -177,11 +177,6 @@ export default function EDocDesignerContainer({ documentId }) {
       openModal(constants.messages.MESSAGE_SUCCESS_SAVED);
       setDocumentData(jResponse.documentData);
     } else openModal(jResponse.error_message);
-
-    var tableData = bindingData().V_Table;
-    var checkListData = bindingData().V_CheckList;
-    
-    console.log(checkListData);
   };
 
   const handleDeleteDocument = async () => {
@@ -304,6 +299,9 @@ export default function EDocDesignerContainer({ documentId }) {
     }, {});
   }
 
+  var tableData = bindingData().V_Table;
+  var checkListData = bindingData().V_CheckList;   
+  console.log(checkListData);
 
   return (
     <>
