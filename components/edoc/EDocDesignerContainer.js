@@ -8,6 +8,7 @@ import EDocComponentPalette from './EDocComponentPalette';
 import EDocEditorCanvas from './EDocEditorCanvas';
 import EDocDesignerTopMenu from './EDocDesignerTopMenu';
 import EDocPropertyEditor from './EDocPropertyEditor';
+import EDocDocumentPropertyEditor from './EDocDocumentPropertyEditor';
 
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
@@ -21,6 +22,12 @@ export default function EDocDesignerContainer({ documentId }) {
     title: 'new document',
     description: '신규 기록서',
     components: [],
+    runtime_data: {
+      padding: 24,
+      alignment: "center",
+      backgroundColor: "#ffffff",
+      pageSize: "A4"
+    }
   });
 
   const [componentTemplates, setComponentTemplates] = useState([]);
@@ -28,7 +35,6 @@ export default function EDocDesignerContainer({ documentId }) {
   const selectedComponent = selectedComponentId !== null ? documentData.components[selectedComponentId] : null;
 
   useEffect(() => {
-    // 컴포넌트 템플릿을 서버에서 가져옵니다.
     async function fetchTemplates() {
       const jRequest = {
         commandName: constants.commands.COMMAND_EDOC_COMPONENT_TEMPLATES_SELECT_ALL,
@@ -61,7 +67,7 @@ export default function EDocDesignerContainer({ documentId }) {
 
     setDocumentData((prev) => {
       const newComponents = [...prev.components];
-      newComponents[selectedComponentId] = updatedComponent; // ✅ 전체 컴포넌트 객체여야 함
+      newComponents[selectedComponentId] = updatedComponent;
       return { ...prev, components: newComponents };
     });
   };
@@ -69,34 +75,41 @@ export default function EDocDesignerContainer({ documentId }) {
   const handleAddComponent = (component) => {
     const baseComponent = { ...component };
     const tpl = component.template_json;
-
-    const defaultRuntimeData = {};
+    const defaultRuntimeData = {
+      width: '100%', // 기본 폭 지정
+      height: '',
+      forceNewLine: false
+    };
     switch (tpl.type) {
       case constants.edoc.COMPONENT_TYPE_TEXT:
         defaultRuntimeData.content = "여기에 텍스트를 입력하세요";
         defaultRuntimeData.textAlign = "left";
-        defaultRuntimeData.forceNewLine = false;
+        defaultRuntimeData.positionAlign = "left";
         break;
       case constants.edoc.COMPONENT_TYPE_IMAGE:
         defaultRuntimeData.src = "";
-        defaultRuntimeData.forceNewLine = false;
+        defaultRuntimeData.positionAlign = "left";
         break;
       case constants.edoc.COMPONENT_TYPE_INPUT:
         defaultRuntimeData.placeholder = "값을 입력하세요";
         defaultRuntimeData.textAlign = "left";
-        defaultRuntimeData.forceNewLine = false;
+        defaultRuntimeData.positionAlign = "left";
         break;
       case constants.edoc.COMPONENT_TYPE_TABLE:
         defaultRuntimeData.cols = 3;
         defaultRuntimeData.rows = 3;
         defaultRuntimeData.data = Array.from({ length: 3 }, () => Array(3).fill(""));
-        defaultRuntimeData.columns = ["ColumnHeader1", "ColumnHeader2", "ColumnHeader3"];
-        defaultRuntimeData.forceNewLine = false;
+        defaultRuntimeData.columns = [
+          { width: "33%", header: "ColumnHeader1" },
+          { width: "200px", header: "ColumnHeader2" },
+          { width: "auto", header: "ColumnHeader3" }
+        ];
+        defaultRuntimeData.positionAlign = "left";
         break;
       case constants.edoc.COMPONENT_TYPE_CHECKLIST:
         defaultRuntimeData.itemCount = 3;
         defaultRuntimeData.items = Array.from({ length: 3 }, (_, i) => ({ label: `항목 ${i + 1}`, checked: false}));
-        defaultRuntimeData.forceNewLine = false;
+        defaultRuntimeData.positionAlign = "left";
         break;
       default:
         break;
@@ -117,36 +130,35 @@ export default function EDocDesignerContainer({ documentId }) {
         title: title || 'new document',
         description: '신규 기록서',
         components: [],
+        runtime_data: {
+          padding: 24,
+          alignment: "center",
+          backgroundColor: "#ffffff",
+          pageSize: "A4"
+        }
       });
     }
   };
 
   const handleOpenDocument = async () => {
     const id = window.prompt('열 문서 ID를 입력하세요');
-    if (id) {
-      openDocumentById(id);
-    }
+    if (id) openDocumentById(id);
   };
 
   const openDocumentById = async (id) => {
-    try {
-      const jRequest = {
-        commandName: constants.commands.COMMAND_EDOC_DOCUMENT_SELECT_ONE,
-        systemCode: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE,
-        userId: userInfo.getLoginUserId(),
-        documentId: id
-      };
+    const jRequest = {
+      commandName: constants.commands.COMMAND_EDOC_DOCUMENT_SELECT_ONE,
+      systemCode: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE,
+      userId: userInfo.getLoginUserId(),
+      documentId: id
+    };
+    setLoading(true);
+    const jResponse = await RequestServer("POST", jRequest);
+    setLoading(false);
 
-      setLoading(true);
-      const jResponse = await RequestServer("POST", jRequest);
-      setLoading(false);
-
-      if (jResponse.error_code === 0) {
-        setDocumentData(jResponse.documentData || {});
-      } else openModal(jResponse.error_message);
-    } catch (e) {
-      console.error(e);
-    }
+    if (jResponse.error_code === 0) {
+      setDocumentData(jResponse.documentData || {});
+    } else openModal(jResponse.error_message);
   };
 
   const handleSaveDocument = async () => {
@@ -186,30 +198,30 @@ export default function EDocDesignerContainer({ documentId }) {
         title: 'new document',
         description: '신규 기록서',
         components: [],
+        runtime_data: {
+          padding: 24,
+          alignment: "center",
+          backgroundColor: "#ffffff",
+          pageSize: "A4"
+        }
       });
     } else openModal(jResponse.error_message);
   };
 
   const handleExportPdf = async () => {
     const element = document.getElementById("editor-canvas");
-    if (!element) {
-      alert("캔버스를 찾을 수 없습니다.");
-      return;
-    }
+    if (!element) return alert("캔버스를 찾을 수 없습니다.");
 
     setLoading(true);
     await waitForImagesLoaded(element);
-
     const canvas = await html2canvas(element, { scale: 2, useCORS: true });
     const imgData = canvas.toDataURL('image/png');
     const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
-
     const pageWidth = pdf.internal.pageSize.getWidth();
     const pageHeight = pdf.internal.pageSize.getHeight();
     const imgProps = pdf.getImageProperties(imgData);
     const pdfWidth = pageWidth;
     const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
-
     let position = 0;
     if (pdfHeight < pageHeight) {
       pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
@@ -220,7 +232,6 @@ export default function EDocDesignerContainer({ documentId }) {
         if (position < pdfHeight) pdf.addPage();
       }
     }
-
     pdf.save(`${documentData.title || 'document'}_${documentData.id}.pdf`);
     setLoading(false);
   };
@@ -238,45 +249,33 @@ export default function EDocDesignerContainer({ documentId }) {
     );
   };
 
-  const handleMoveComponentUp = () =>{
+  const handleMoveComponentUp = () => {
     if (selectedComponentId === null || selectedComponentId <= 0) return;
-
     setDocumentData(prev => {
       const components = [...prev.components];
-      [components[selectedComponentId - 1], components[selectedComponentId]] =
-        [components[selectedComponentId], components[selectedComponentId - 1]];
+      [components[selectedComponentId - 1], components[selectedComponentId]] = [components[selectedComponentId], components[selectedComponentId - 1]];
       return { ...prev, components };
     });
-
     setSelectedComponentId(prev => prev - 1);
   }
 
-  const handleMoveComponentDown = () =>{
-    if (
-      selectedComponentId === null ||
-      selectedComponentId >= documentData.components.length - 1
-    ) return;
-
+  const handleMoveComponentDown = () => {
+    if (selectedComponentId === null || selectedComponentId >= documentData.components.length - 1) return;
     setDocumentData(prev => {
       const components = [...prev.components];
-      [components[selectedComponentId + 1], components[selectedComponentId]] =
-        [components[selectedComponentId], components[selectedComponentId + 1]];
+      [components[selectedComponentId + 1], components[selectedComponentId]] = [components[selectedComponentId], components[selectedComponentId + 1]];
       return { ...prev, components };
     });
-
     setSelectedComponentId(prev => prev + 1);
   }
 
   const handleDeleteComponent = () => {
     if (selectedComponentId === null) return;
-
     setDocumentData((prev) => {
       const components = [...prev.components];
-      components.splice(selectedComponentId, 1); // 선택된 index의 항목 제거
+      components.splice(selectedComponentId, 1);
       return { ...prev, components };
     });
-
-    // 선택 초기화 또는 다음 컴포넌트로 선택 이동
     setSelectedComponentId(null);
   }
 
@@ -288,26 +287,21 @@ export default function EDocDesignerContainer({ documentId }) {
     });
   };
 
-  const getRuntimeDataByBindingKey = (components, bindingKey) => {
-    if (!Array.isArray(components) || !bindingKey) return null;
-
-    const comp = components.find(
-      (c) => c.runtime_data?.bindingKey === bindingKey
-    );
-    return comp ? comp.runtime_data : null;
-  }
-
-  const getDocumentRuntimeData = (components) => {
-    if (!Array.isArray(components)) return {};
-
-    return components.reduce((acc, comp) => {
-      const bindingKey = comp.runtime_data?.bindingKey;
-      if (bindingKey) {
-        acc[bindingKey] = comp.runtime_data;
+  const handleUpdateAllComponentAlign = (newAlign) => {
+  setDocumentData(prev => {
+    const updatedComponents = prev.components.map(comp => ({
+      ...comp,
+      runtime_data: {
+        ...comp.runtime_data,
+        positionAlign: newAlign
       }
-      return acc;
-    }, {});
-  }
+    }));
+    return {
+      ...prev,
+      components: updatedComponents
+    };
+  });
+};
 
   return (
     <>
@@ -348,18 +342,48 @@ export default function EDocDesignerContainer({ documentId }) {
             onMoveUp= {handleMoveComponentUp}
             onMoveDown={handleMoveComponentDown}
             onDeleteComponent={handleDeleteComponent}
-            onUpdateComponent={(componentIdx, updatedComponent) => { 
-              handleUpdateComponent(componentIdx, updatedComponent);
-            }} 
+            onUpdateComponent={handleUpdateComponent}
+            documentRuntimeData={documentData.runtime_data}
           />
         </main>
 
         <aside className="w-80 bg-white border-l border-gray-300 p-4 hidden md:block">
           <h2 className="text-lg font-semibold mb-4">속성창</h2>
-          <EDocPropertyEditor
-            component={selectedComponent}
-            onComponentChange={handleComponentChange}
-          />
+          {selectedComponent ? (
+            <EDocPropertyEditor
+              component={selectedComponent}
+              onComponentChange={handleComponentChange}
+            />
+          ) : (
+            <EDocDocumentPropertyEditor
+              runtimeData={documentData.runtime_data || {}}
+              onChange={(updatedRuntimeData) => {
+                setDocumentData(prev => {
+                  // 정렬이 변경되었는지 확인
+                  const prevAlign = prev.runtime_data?.positionAlign;
+                  const newAlign = updatedRuntimeData.positionAlign;
+                  const needUpdateAlign = prevAlign !== newAlign;
+
+                  // 컴포넌트 정렬도 업데이트
+                  const updatedComponents = needUpdateAlign
+                    ? prev.components.map((comp) => ({
+                        ...comp,
+                        runtime_data: {
+                          ...comp.runtime_data,
+                          positionAlign: newAlign,
+                        },
+                      }))
+                    : prev.components;
+
+                  return {
+                    ...prev,
+                    runtime_data: updatedRuntimeData,
+                    components: updatedComponents,
+                  };
+                });
+              }}
+            />
+          )}
         </aside>
       </div>
     </>

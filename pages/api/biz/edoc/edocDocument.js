@@ -76,7 +76,8 @@ const upsertOne = async (txnId, jRequest) => {
                     jRequest.documentData.title,
                     jRequest.documentData.description,
                     1, // version
-                    jRequest.userId // user id     
+                    jRequest.userId, // user id 
+                    jRequest.documentData.runtime_data
                 ]);
 
             if (insert_TB_DOC_DOCUMENT.rowCount != 1) {
@@ -95,7 +96,8 @@ const upsertOne = async (txnId, jRequest) => {
                     jRequest.documentData.id,
                     jRequest.documentData.title,
                     jRequest.documentData.description,
-                    jRequest.userId
+                    jRequest.userId,
+                    jRequest.documentData.runtime_data
                 ]);
 
             if (update_TB_DOC_DOCUMENT.rowCount != 1) {
