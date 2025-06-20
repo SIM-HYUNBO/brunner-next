@@ -245,6 +245,13 @@ export default function EDocPropertyEditor({ component, onComponentChange }) {
     case constants.edoc.COMPONENT_TYPE_IMAGE:
       return (
         <div>
+          <label>Binding Key:</label>
+          <input
+            type="text"
+            value={component.runtime_data?.bindingKey || ''}
+            onChange={(e) => updateRuntimeData("bindingKey", e.target.value)}
+            className="w-full border border-gray-300 rounded p-2 mb-2"
+          />          
           <label>이미지 URL:</label>
           <input
             type="text"
