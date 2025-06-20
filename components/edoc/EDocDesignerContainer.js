@@ -177,6 +177,11 @@ export default function EDocDesignerContainer({ documentId }) {
       openModal(constants.messages.MESSAGE_SUCCESS_SAVED);
       setDocumentData(jResponse.documentData);
     } else openModal(jResponse.error_message);
+
+    var tableData = bindingData().V_Table;
+    var checkListData = bindingData().V_CheckList;
+    
+    console.log(checkListData);
   };
 
   const handleDeleteDocument = async () => {
@@ -287,20 +292,10 @@ export default function EDocDesignerContainer({ documentId }) {
     });
   };
 
-  
-  const getRuntimeDataByBindingKey = (components, bindingKey) => {
-    if (!Array.isArray(components) || !bindingKey) return null;
+  const bindingData = () => {
+    if (!Array.isArray(documentData.components)) return {};
 
-    const comp = components.find(
-      (c) => c.runtime_data?.bindingKey === bindingKey
-    );
-    return comp ? comp.runtime_data : null;
-  }
-
-  const getDocumentRuntimeData = (components) => {
-    if (!Array.isArray(components)) return {};
-
-    return components.reduce((acc, comp) => {
+    return documentData.components.reduce((acc, comp) => {
       const bindingKey = comp.runtime_data?.bindingKey;
       if (bindingKey) {
         acc[bindingKey] = comp.runtime_data;
@@ -309,21 +304,6 @@ export default function EDocDesignerContainer({ documentId }) {
     }, {});
   }
 
-  const handleUpdateAllComponentAlign = (newAlign) => {
-    setDocumentData(prev => {
-      const updatedComponents = prev.components.map(comp => ({
-        ...comp,
-        runtime_data: {
-          ...comp.runtime_data,
-          positionAlign: newAlign
-        }
-      }));
-      return {
-        ...prev,
-        components: updatedComponents
-      };
-    });
-  };
 
   return (
     <>
@@ -386,7 +366,7 @@ export default function EDocDesignerContainer({ documentId }) {
                   const newAlign = updatedRuntimeData.positionAlign;
                   const needUpdateAlign = prevAlign !== newAlign;
 
-                  // 컴포넌트 정렬도 업데이트
+                  // 모든 컴포넌트 정렬도 업데이트
                   const updatedComponents = needUpdateAlign
                     ? prev.components.map((comp) => ({
                         ...comp,

@@ -55,7 +55,7 @@ export default function EDocPropertyEditor({ component, onComponentChange }) {
 
   const renderPositionAlignSelect = () => (
     <>
-      <label>문서 내 정렬 (배치):</label>
+      <label>정렬:</label>
       <select
         value={component.runtime_data?.positionAlign || 'left'}qk
         onChange={(e) => updateRuntimeData("positionAlign", e.target.value)}
@@ -84,14 +84,6 @@ export default function EDocPropertyEditor({ component, onComponentChange }) {
           {renderForceNewLineToggle()}
           {renderPositionAlignSelect()}
 
-          <label>표시할 텍스트:</label>
-          <textarea
-            value={component.runtime_data?.content || ''}
-            onChange={(e) => updateRuntimeData("content", e.target.value)}
-            rows={4}
-            className="w-full border border-gray-300 rounded p-2"
-          />
-
           <label>내용 정렬:</label>
           <select
             value={component.runtime_data?.textAlign || 'left'}
@@ -102,6 +94,14 @@ export default function EDocPropertyEditor({ component, onComponentChange }) {
             <option value="center">가운데</option>
             <option value="right">오른쪽</option>
           </select>
+
+          <label>표시할 텍스트:</label>
+          <textarea
+            value={component.runtime_data?.content || ''}
+            onChange={(e) => updateRuntimeData("content", e.target.value)}
+            rows={4}
+            className="w-full border border-gray-300 rounded p-2"
+          />
         </div>
       );
 
