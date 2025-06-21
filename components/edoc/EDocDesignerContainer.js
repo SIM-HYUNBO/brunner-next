@@ -78,7 +78,7 @@ export default function EDocDesignerContainer({ documentId }) {
     const defaultRuntimeData = {
       width: '100%', // 기본 폭 지정
       height: '',
-      forceNewLine: false
+      forceNewLine: true
     };
     switch (tpl.type) {
       case constants.edoc.COMPONENT_TYPE_TEXT:
