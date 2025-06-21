@@ -70,36 +70,37 @@ export default function EDocEditorCanvas({
     onUpdateComponent(componentIdx, updated[componentIdx]);
   };
 
-  const layoutRows = [];
-  let currentRow = [];
-  let remainingWidth = 100;
   const padding = documentRuntimeData?.padding ?? 24;
-
-  components.forEach((comp, idx) => {
-    let compWidth = 100;
-    if (typeof comp.runtime_data?.width === 'string' && comp.runtime_data.width.endsWith('%')) {
-      compWidth = parseInt(comp.runtime_data.width);
-    } else if (typeof comp.runtime_data?.width === 'number') {
-      compWidth = comp.runtime_data.width;
-    }
-    const forceNewLine = comp.runtime_data?.forceNewLine ?? false;
-
-    if (forceNewLine || remainingWidth - compWidth < 0) {
-      if (currentRow.length > 0) layoutRows.push(currentRow);
-      currentRow = [{ comp, idx }];
-      remainingWidth = 100 - compWidth;
-    } else {
-      currentRow.push({ comp, idx });
-      remainingWidth -= compWidth;
-    }
-  });
-  if (currentRow.length > 0) layoutRows.push(currentRow);
-
   const justifyMap = {
     left: 'flex-start',
     center: 'center',
     right: 'flex-end',
   };
+
+  // 🔧 컴포넌트를 줄 단위로 나누기
+  const rows = [];
+  let currentRow = [];
+  let currentRowWidth = 0;
+
+  components.forEach((comp, idx) => {
+    const width =
+      typeof comp.runtime_data?.width === 'string'
+        ? parseInt(comp.runtime_data.width)
+        : comp.runtime_data?.width ?? 100;
+
+    const forceNewLine = comp.runtime_data?.forceNewLine ?? false;
+
+    if (forceNewLine || currentRowWidth + width > 100) {
+      if (currentRow.length > 0) rows.push(currentRow);
+      currentRow = [];
+      currentRowWidth = 0;
+    }
+
+    currentRow.push({ comp, idx, width });
+    currentRowWidth += width;
+  });
+
+  if (currentRow.length > 0) rows.push(currentRow);
 
   return (
     <div
@@ -111,28 +112,36 @@ export default function EDocEditorCanvas({
         backgroundColor: documentRuntimeData?.backgroundColor || '#ffffff',
         display: 'flex',
         flexDirection: 'column',
+        gap: '1rem',
       }}
     >
       {(!components || components.length === 0) && (
-        <p className="text-gray-500 text-center mt-20">좌측에서 컴포넌트를 추가하세요.</p>
+        <p className="text-gray-500 text-center mt-20">
+          좌측에서 컴포넌트를 추가하세요.
+        </p>
       )}
 
-      {layoutRows.map((row, rowIdx) => (
-        <div key={rowIdx} className="flex flex-wrap gap-2 mb-4 w-full">
-          {row.map(({ comp, idx }) => {
-            const positionAlign = comp.runtime_data?.positionAlign || 'left';
-            const justifyContent = justifyMap[positionAlign] || 'flex-start';
-            const componentWidth =
-              typeof comp.runtime_data?.width === 'string'
-                ? comp.runtime_data.width
-                : `${comp.runtime_data?.width ?? 100}%`;
+      {/* 🔧 줄 단위 렌더링 + 정렬 */}
+      {rows.map((row, rowIdx) => {
+        const positionAlign =
+          documentRuntimeData?.positionAlign ?? 'left';
+        const justifyContent = justifyMap[positionAlign];
 
-            return (
-              <div
-                key={idx}
-                style={{ display: 'flex', justifyContent, width: '100%' }}
-              >
+        return (
+          <div
+            key={rowIdx}
+            className="flex w-full mb-2 gap-2"
+            style={{ justifyContent }}
+          >
+            {row.map(({ comp, idx, width }) => {
+              const componentWidth =
+                typeof comp.runtime_data?.width === 'string'
+                  ? comp.runtime_data.width
+                  : `${width}%`;
+
+              return (
                 <div
+                  key={idx}
                   className="relative group p-1 border border-transparent rounded hover:border-gray-300"
                   style={{ width: componentWidth }}
                 >
@@ -173,11 +182,11 @@ export default function EDocEditorCanvas({
                     documentRuntimeData={documentRuntimeData}
                   />
                 </div>
-              </div>
-            );
-          })}
-        </div>
-      ))}
+              );
+            })}
+          </div>
+        );
+      })}
     </div>
   );
 }
