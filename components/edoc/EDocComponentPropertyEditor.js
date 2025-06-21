@@ -68,7 +68,8 @@ export default function EDocPropertyEditor({ component, onComponentChange }) {
     </>
   );
 
-  switch (component.type) {
+  const renderComponentProperty = (component) => {
+    switch (component.type) {
     case constants.edoc.COMPONENT_TYPE_TEXT:
       return (
         <div>
@@ -355,4 +356,7 @@ export default function EDocPropertyEditor({ component, onComponentChange }) {
     default:
       return <p>속성 편집이 지원되지 않는 컴포넌트입니다.</p>;
   }
+  }
+
+  return renderComponentProperty(component);
 }
