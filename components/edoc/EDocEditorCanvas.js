@@ -123,64 +123,64 @@ export default function EDocEditorCanvas({
 
       {/* 🔧 줄 단위 렌더링 + 정렬 */}
       {rows.map((row, rowIdx) => {
-        const positionAlign =
-          documentRuntimeData?.positionAlign ?? 'left';
-        const justifyContent = justifyMap[positionAlign];
-
         return (
-          <div
-            key={rowIdx}
-            className="flex w-full mb-2 gap-2"
-            style={{ justifyContent }}
-          >
+          <div key={rowIdx} className="flex flex-col w-full gap-2">
             {row.map(({ comp, idx, width }) => {
               const componentWidth =
                 typeof comp.runtime_data?.width === 'string'
                   ? comp.runtime_data.width
                   : `${width}%`;
 
+              const align = comp.runtime_data?.positionAlign || 'left';
+              const justifyContent = justifyMap[align];
+
               return (
                 <div
                   key={idx}
-                  className="relative group p-1 border border-transparent rounded hover:border-gray-300"
-                  style={{ width: componentWidth }}
+                  className="flex"
+                  style={{ justifyContent }}
                 >
-                  {/* 툴버튼 */}
-                  <div className="absolute -left-8 top-1/2 transform -translate-y-1/2 flex flex-col space-y-1 opacity-0 group-hover:opacity-100 transition">
-                    <button
-                      className="text-xs bg-white border rounded shadow px-1 hover:bg-gray-100 disabled:opacity-30"
-                      onClick={() => onMoveUp(idx)}
-                      disabled={idx === 0}
-                      title="위로 이동"
-                    >
-                      ↑
-                    </button>
-                    <button
-                      className="text-xs bg-white border rounded shadow px-1 hover:bg-gray-100 disabled:opacity-30"
-                      onClick={() => onMoveDown(idx)}
-                      disabled={idx === components.length - 1}
-                      title="아래로 이동"
-                    >
-                      ↓
-                    </button>
-                    <button
-                      onClick={() => onDeleteComponent(idx)}
-                      disabled={selectedComponentId === null}
-                      title="삭제"
-                    >
-                      🗑
-                    </button>
-                  </div>
+                  <div
+                    className="relative group p-1 border border-transparent rounded hover:border-gray-300"
+                    style={{ width: componentWidth }}
+                  >
+                    {/* 툴 버튼 */}
+                    <div className="absolute -left-8 top-1/2 transform -translate-y-1/2 flex flex-col space-y-1 opacity-0 group-hover:opacity-100 transition">
+                      <button
+                        className="text-xs bg-white border rounded shadow px-1 hover:bg-gray-100 disabled:opacity-30"
+                        onClick={() => onMoveUp(idx)}
+                        disabled={idx === 0}
+                        title="위로 이동"
+                      >
+                        ↑
+                      </button>
+                      <button
+                        className="text-xs bg-white border rounded shadow px-1 hover:bg-gray-100 disabled:opacity-30"
+                        onClick={() => onMoveDown(idx)}
+                        disabled={idx === components.length - 1}
+                        title="아래로 이동"
+                      >
+                        ↓
+                      </button>
+                      <button
+                        onClick={() => onDeleteComponent(idx)}
+                        disabled={selectedComponentId === null}
+                        title="삭제"
+                      >
+                        🗑
+                      </button>
+                    </div>
 
-                  <DocComponentRenderer
-                    component={comp}
-                    isSelected={selectedComponentId === idx}
-                    onSelect={() => onComponentSelect(idx)}
-                    onRuntimeDataChange={(...args) =>
-                      handleRuntimeDataChange(idx, args.length === 1 ? args[0] : args)
-                    }
-                    documentRuntimeData={documentRuntimeData}
-                  />
+                    <DocComponentRenderer
+                      component={comp}
+                      isSelected={selectedComponentId === idx}
+                      onSelect={() => onComponentSelect(idx)}
+                      onRuntimeDataChange={(...args) =>
+                        handleRuntimeDataChange(idx, args.length === 1 ? args[0] : args)
+                      }
+                      documentRuntimeData={documentRuntimeData}
+                    />
+                  </div>
                 </div>
               );
             })}
