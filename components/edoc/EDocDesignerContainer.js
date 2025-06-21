@@ -13,6 +13,12 @@ import EDocDocumentPropertyEditor from './EDocDocumentPropertyEditor';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
 
+import * as InputComponent from "@/components/edoc/edocComponent/edocComponent_Input";
+import * as TextComponent from "@/components/edoc/edocComponent/edocComponent_Text";
+import * as ImageComponent from "@/components/edoc/edocComponent/edocComponent_Image";
+import * as TableComponent from "@/components/edoc/edocComponent/edocComponent_Table";
+import * as CheckListComponent from "@/components/edoc/edocComponent/edocComponent_CheckList";
+
 export default function EDocDesignerContainer({ documentId }) {
   const { BrunnerMessageBox, openModal } = useModal();
   const [loading, setLoading] = useState(false);
@@ -74,47 +80,25 @@ export default function EDocDesignerContainer({ documentId }) {
 
   const handleAddComponent = (component) => {
     const baseComponent = { ...component };
-    const tpl = component.template_json;
-    const defaultRuntimeData = {
-      width: '100%', // 기본 폭 지정
-      height: '',
-      forceNewLine: true
-    };
-    switch (tpl.type) {
+    switch (component.template_json.type) {
       case constants.edoc.COMPONENT_TYPE_TEXT:
-        defaultRuntimeData.content = "여기에 텍스트를 입력하세요";
-        defaultRuntimeData.textAlign = "left";
-        defaultRuntimeData.positionAlign = "left";
+        baseComponent.runtime_data = TextComponent.defaultRuntimeData(baseComponent);
         break;
       case constants.edoc.COMPONENT_TYPE_IMAGE:
-        defaultRuntimeData.src = "";
-        defaultRuntimeData.positionAlign = "left";
+        baseComponent.runtime_data = ImageComponent.defaultRuntimeData(baseComponent);
         break;
       case constants.edoc.COMPONENT_TYPE_INPUT:
-        defaultRuntimeData.placeholder = "값을 입력하세요";
-        defaultRuntimeData.textAlign = "left";
-        defaultRuntimeData.positionAlign = "left";
+        baseComponent.runtime_data = InputComponent.defaultRuntimeData(baseComponent);
         break;
       case constants.edoc.COMPONENT_TYPE_TABLE:
-        defaultRuntimeData.cols = 3;
-        defaultRuntimeData.rows = 3;
-        defaultRuntimeData.data = Array.from({ length: 3 }, () => Array(3).fill(""));
-        defaultRuntimeData.columns = [
-          { width: "33%", header: "ColumnHeader1" },
-          { width: "200px", header: "ColumnHeader2" },
-          { width: "auto", header: "ColumnHeader3" }
-        ];
-        defaultRuntimeData.positionAlign = "left";
+        baseComponent.runtime_data = TableComponent.defaultRuntimeData(baseComponent);
         break;
       case constants.edoc.COMPONENT_TYPE_CHECKLIST:
-        defaultRuntimeData.itemCount = 3;
-        defaultRuntimeData.items = Array.from({ length: 3 }, (_, i) => ({ label: `항목 ${i + 1}`, checked: false}));
-        defaultRuntimeData.positionAlign = "left";
+        baseComponent.runtime_data = CheckListComponent.defaultRuntimeData(baseComponent);
         break;
       default:
         break;
     }
-    baseComponent.runtime_data = defaultRuntimeData;
 
     setDocumentData((prev) => ({
       ...prev,
