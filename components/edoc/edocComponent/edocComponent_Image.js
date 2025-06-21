@@ -1,0 +1,83 @@
+export default function renderProperty({ component, renderWidthInput,  renderForceNewLineToggle, renderPositionAlignSelect, updateRuntimeData}) {
+  const renderComponentProperty = (component) => {
+  return (
+    <div>
+      <label>Binding Key:</label>
+      <input
+        type="text"
+        value={component.runtime_data?.bindingKey || ''}
+        onChange={(e) => updateRuntimeData("bindingKey", e.target.value)}
+        className="w-full border border-gray-300 rounded p-2 mb-2"
+      />          
+      <label>이미지 URL:</label>
+      <input
+        type="text"
+        value={component.runtime_data?.src || ''}
+        onChange={(e) => updateRuntimeData("src", e.target.value)}
+        className="w-full border border-gray-300 rounded p-2 mb-2"
+      />
+
+      {renderWidthInput()}
+      {renderForceNewLineToggle()}
+      {renderPositionAlignSelect()}
+    </div>
+  );
+  }
+
+  return renderComponentProperty(component);
+}
+
+export const renderComponent = ({component, handleComponentClick, selectedClass, alignmentClass, textAlign, onRuntimeDataChange}) => {
+  const style = {
+    width: '100%',
+    height: component.runtime_data?.height || 'auto',
+    textAlign, // 텍스트 정렬 적용
+  };
+
+  return (
+    <div
+      className={`${selectedClass} cursor-pointer`}
+      onClick={handleComponentClick}
+      style={{
+        width:`100%`,
+      }}
+    >
+      {component.runtime_data?.src ? (
+        <img
+          src={component.runtime_data.src}
+          alt="이미지"
+          className="inline-block h-auto"
+          style={{
+            width: '100%',
+            maxWidth: '100%',
+          }}
+        />
+      ) : (
+        <div className="w-full h-24 bg-gray-200 flex items-center justify-center text-gray-500">
+          이미지 없음
+        </div>
+      )}
+    </div>
+  );
+}
+
+export const defaultRuntimeData = () => {
+  var defaultRuntimeData = {
+      width: 'auto', // 기본 폭 지정
+      height: '',
+      forceNewLine: true
+    };
+
+    defaultRuntimeData.src = "";
+    defaultRuntimeData.positionAlign = "left";
+    return defaultRuntimeData;
+  }
+
+export const getNewRuntimeData = (component, newData) => {
+  const currentData = component.runtime_data || {};
+  let newRuntimeData = { ...currentData };
+
+  newRuntimeData.src = newData;
+
+  return newRuntimeData;
+}
