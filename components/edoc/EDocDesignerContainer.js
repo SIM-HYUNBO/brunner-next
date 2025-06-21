@@ -7,7 +7,7 @@ import RequestServer from "@/components/requestServer";
 import EDocComponentPalette from './EDocComponentPalette';
 import EDocEditorCanvas from './EDocEditorCanvas';
 import EDocDesignerTopMenu from './EDocDesignerTopMenu';
-import EDocPropertyEditor from './EDocPropertyEditor';
+import EDocPropertyEditor from './EDocComponentPropertyEditor';
 import EDocDocumentPropertyEditor from './EDocDocumentPropertyEditor';
 
 import html2canvas from 'html2canvas';
