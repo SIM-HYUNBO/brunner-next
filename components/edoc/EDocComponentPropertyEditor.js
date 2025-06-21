@@ -18,15 +18,6 @@ export default function EDocPropertyEditor({ component, onComponentChange }) {
     });
   };
 
-  const updateRuntimeDataAll = (newRuntimeData) => {
-    onComponentChange({
-      ...component,
-      runtime_data: {
-        ...newRuntimeData,
-      },
-    });
-  };
-
   const renderWidthInput = () => (
     <>
       <label className="block mt-2 mb-1">폭 (예: 100%, 400px):</label>
