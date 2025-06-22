@@ -1,3 +1,5 @@
+`use strict`
+
 import { useState, useEffect } from 'react';
 import * as constants from "@/components/constants";
 import * as userInfo from "@/components/userInfo";

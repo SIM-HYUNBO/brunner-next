@@ -1,3 +1,5 @@
+`use strict`
+
 import React, { useEffect, useState, useRef, useCallback } from 'react';
 import ReactPlayer from 'react-player';
 import * as userInfo from "@/components/userInfo";

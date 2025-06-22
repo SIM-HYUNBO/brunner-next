@@ -1,3 +1,5 @@
+`use strict`
+
 import React, { useState, useEffect, useRef, useImperativeHandle, forwardRef } from "react";
 import { useTable, useSortBy } from "react-table";
 import DivContainer from "@/components/divContainer";
