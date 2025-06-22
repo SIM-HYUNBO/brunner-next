@@ -1,4 +1,23 @@
-export default function renderProperty({ component, renderWidthInput,  renderForceNewLineToggle, renderPositionAlignSelect, updateRuntimeData}) {
+
+import React from 'react';
+
+export const initDefaultRuntimeData = (defaultRuntimeData) => {
+  defaultRuntimeData.placeholder = "값을 입력하세요";
+  defaultRuntimeData.textAlign = "left";
+  defaultRuntimeData.positionAlign = "left";
+  return defaultRuntimeData;
+}
+
+export const getNewRuntimeData = (component, newData) => {
+  const currentData = component.runtime_data || {};
+  let newRuntimeData = { ...currentData };
+
+  newRuntimeData.value = newData;
+
+  return newRuntimeData;
+}
+
+export function renderProperty({ component, renderWidthInput,  renderForceNewLineToggle, renderPositionAlignSelect, updateRuntimeData}) {
   const renderComponentProperty = (component) => {
     return (
       <div>
@@ -41,7 +60,7 @@ export default function renderProperty({ component, renderWidthInput,  renderFor
 
 export const renderComponent = ({component, handleComponentClick, selectedClass, alignmentClass, textAlign, onRuntimeDataChange}) => {
   const style = {
-    width: '100%',
+    width: component.runtime_data?.width || 'auto',
     height: component.runtime_data?.height || 'auto',
     textAlign, // 텍스트 정렬 적용
   };
@@ -57,26 +76,4 @@ export const renderComponent = ({component, handleComponentClick, selectedClass,
       onChange={(e) => onRuntimeDataChange(e.target.value)}
     />
   );
-}
-
-export const defaultRuntimeData = () => {
-  var defaultRuntimeData = {
-      width: 'auto', // 기본 폭 지정
-      height: '',
-      forceNewLine: true
-    };
-
-  defaultRuntimeData.placeholder = "값을 입력하세요";
-  defaultRuntimeData.textAlign = "left";
-  defaultRuntimeData.positionAlign = "left";
-  return defaultRuntimeData;
-}
-
-export const getNewRuntimeData = (component, newData) => {
-  const currentData = component.runtime_data || {};
-  let newRuntimeData = { ...currentData };
-
-  newRuntimeData.value = newData;
-
-  return newRuntimeData;
 }
