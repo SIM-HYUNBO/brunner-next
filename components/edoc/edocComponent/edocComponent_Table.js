@@ -121,38 +121,54 @@ export function renderProperty(component, updateRuntimeData, {
           />
 
           <label className="block mt-3 mb-1">컬럼 설정:</label>
-            {(component.runtime_data?.columns || []).map((col, idx) => (
-              <div key={idx} className="mb-2">
-                <div className="flex gap-2 mb-1">
-                  <input
-                    type="text"
-                    value={col.header || ""}
-                    onChange={(e) => handleColumnHeaderChange(idx, e.target.value)}
-                    className="w-1/2 border border-gray-300 rounded p-1"
-                    placeholder={`헤더 ${idx + 1}`}
-                  />
-                  <input
-                    type="text"
-                    value={col.width || ""}
-                    onChange={(e) => handleColumnWidthChange(idx, e.target.value)}
-                    className="w-1/2 border border-gray-300 rounded p-1"
-                    placeholder={`폭 (예: 100px, 20%)`}
-                  />
-                </div>
-                <div className="flex gap-2">
-                  {/* <label className="text-sm pt-1 w-16">정렬:</label> */}
-                  <select
-                    value={col.align || "center"}
-                    onChange={(e) => handleColumnAlignChange(idx, e.target.value)}
-                    className="w-full border border-gray-300 rounded p-1"
-                  >
-                    <option value="left">왼쪽</option>
-                    <option value="center">가운데</option>
-                    <option value="right">오른쪽</option>
-                  </select>
-                </div>
-              </div>
-            ))}
+          {(component.runtime_data?.columns || []).map((col, idx) => (
+            <div key={idx} className="flex gap-2 mb-2 items-center">
+              <input
+                type="text"
+                value={col.header || ""}
+                onChange={(e) => {
+                  const newColumns = [...(component.runtime_data?.columns || [])];
+                  newColumns[idx] = {
+                    ...newColumns[idx],
+                    header: e.target.value,
+                  };
+                  updateRuntimeData("columns", newColumns);
+                }}
+                className="w-1/3 border border-gray-300 rounded p-1"
+                placeholder={`헤더 ${idx + 1}`}
+              />
+              <input
+                type="text"
+                value={col.width || ""}
+                onChange={(e) => {
+                  const newColumns = [...(component.runtime_data?.columns || [])];
+                  newColumns[idx] = {
+                    ...newColumns[idx],
+                    width: e.target.value,
+                  };
+                  updateRuntimeData("columns", newColumns);
+                }}
+                className="w-1/3 border border-gray-300 rounded p-1"
+                placeholder="폭 (예: 100px, 20%)"
+              />
+              <select
+                value={col.align || "center"}
+                onChange={(e) => {
+                  const newColumns = [...(component.runtime_data?.columns || [])];
+                  newColumns[idx] = {
+                    ...newColumns[idx],
+                    align: e.target.value,
+                  };
+                  updateRuntimeData("columns", newColumns);
+                }}
+                className="w-1/3 border border-gray-300 rounded p-1"
+              >
+                <option value="left">왼쪽</option>
+                <option value="center">가운데</option>
+                <option value="right">오른쪽</option>
+              </select>
+            </div>
+          ))}
         </div>
       );
   }
