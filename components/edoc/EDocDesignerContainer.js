@@ -261,12 +261,12 @@ export default function EDocDesignerContainer({ documentId }) {
     setSelectedComponentId(null);
   }
 
-  const handleUpdateComponent = (selectedComponentIdX, updatedComponent) => {
+  const handleUpdateComponent = (updatedComponent) => {
     if (selectedComponentId === null) return;
 
     setDocumentData((prev) => {
       const newComponents = [...prev.components];
-      newComponents[selectedComponentIdX] = updatedComponent;
+      newComponents[selectedComponentId] = updatedComponent;
       return { ...prev, components: newComponents };
     });
   };
