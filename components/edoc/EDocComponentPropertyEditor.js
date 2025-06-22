@@ -12,7 +12,7 @@ import * as CheckListComponent from "@/components/edoc/edocComponent/edocCompone
  * EDocPropertyEditor.js
  * EDoc 컴포넌트의 속성을 편집하는 컴포넌트
  */
-export default function EDocPropertyEditor({ component, onComponentChange }) {
+export default function EDocComponentPropertyEditor({ component, handleUpdateComponent }) {
   if (!component) return <p>컴포넌트를 선택하세요.</p>;
 
   const updateRuntimeData = (key, value) => {
@@ -21,13 +21,13 @@ export default function EDocPropertyEditor({ component, onComponentChange }) {
       [key]: value,
     };
 
-    onComponentChange({
+    handleUpdateComponent({
       ...component,
       runtime_data: newRuntimeData,
     });
   };
 
-  const renderWidthInput = () => (
+  const renderWidthProperty = () => (
     <>
       <label className="block mt-2 mb-1">폭 (예: 100%, 400px):</label>
       <input
@@ -39,7 +39,7 @@ export default function EDocPropertyEditor({ component, onComponentChange }) {
     </>
   );
 
-  const renderForceNewLineToggle = () => (
+  const renderForceNewLineProperty = () => (
     <div className="mt-2 mb-2">
       <label className="inline-flex items-center">
         <input
@@ -53,7 +53,7 @@ export default function EDocPropertyEditor({ component, onComponentChange }) {
     </div>
   );
 
-  const renderPositionAlignSelect = () => (
+  const renderPositionAlignProperty = () => (
     <>
       <label>정렬:</label>
       <select
@@ -71,15 +71,36 @@ export default function EDocPropertyEditor({ component, onComponentChange }) {
   const renderComponentProperty = (component) => {
     switch (component.type) {
       case constants.edoc.COMPONENT_TYPE_TEXT:
-        return TextComponent.renderProperty({component, renderWidthInput, renderForceNewLineToggle, renderPositionAlignSelect, updateRuntimeData});
+        return TextComponent.renderProperty(
+                                            component, 
+                                            updateRuntimeData, 
+                                            {
+                                              renderWidthProperty, 
+                                              renderForceNewLineProperty, 
+                                              renderPositionAlignProperty
+                                            });
       case constants.edoc.COMPONENT_TYPE_TABLE:
-        return TableComponent.renderProperty({component, renderWidthInput, renderForceNewLineToggle, renderPositionAlignSelect, updateRuntimeData});
+        return TableComponent.renderProperty(component, updateRuntimeData, {
+          renderWidthProperty, 
+          renderForceNewLineProperty, 
+          renderPositionAlignProperty});
       case constants.edoc.COMPONENT_TYPE_INPUT:
-        return InputComponent.renderProperty({component, renderWidthInput, renderForceNewLineToggle, renderPositionAlignSelect, updateRuntimeData});
+        return InputComponent.renderProperty(component, updateRuntimeData, {
+          renderWidthProperty, 
+          renderForceNewLineProperty, 
+          renderPositionAlignProperty});
+
       case constants.edoc.COMPONENT_TYPE_IMAGE:
-        return ImageComponent.renderProperty({component, renderWidthInput, renderForceNewLineToggle, renderPositionAlignSelect, updateRuntimeData});
+        return ImageComponent.renderProperty(component, updateRuntimeData, {
+          renderWidthProperty, 
+          renderForceNewLineProperty, 
+          renderPositionAlignProperty});
       case constants.edoc.COMPONENT_TYPE_CHECKLIST:
-        return CheckListComponent.renderProperty({component, renderWidthInput, renderForceNewLineToggle, renderPositionAlignSelect, updateRuntimeData});
+        return CheckListComponent.renderProperty(component, updateRuntimeData, {
+          renderWidthProperty, 
+          renderForceNewLineProperty, 
+          renderPositionAlignProperty});
+
       default:
         return <p>속성 편집이 지원되지 않는 컴포넌트입니다.</p>;
     }

@@ -3,6 +3,7 @@
 import React from 'react';
 
 export const initDefaultRuntimeData = (defaultRuntimeData) => {
+  
   defaultRuntimeData.itemCount = 3;
   defaultRuntimeData.items = Array.from({ length: 3 }, (_, i) => ({ label: `항목 ${i + 1}`, checked: false}));
   defaultRuntimeData.positionAlign = "left";
@@ -11,6 +12,7 @@ export const initDefaultRuntimeData = (defaultRuntimeData) => {
 }
 
 export const getNewRuntimeData = (component, newData) => {
+
   const currentData = component.runtime_data || {};
   let newRuntimeData = { ...currentData };
   const [itemIdx, checked] = newData;
@@ -23,31 +25,30 @@ export const getNewRuntimeData = (component, newData) => {
   return newRuntimeData;
 }
 
-export function renderProperty({ component, renderWidthInput, renderForceNewLineToggle, renderPositionAlignSelect, updateRuntimeData}) {
+export function renderProperty(component, updateRuntimeData, {
+  renderWidthProperty, 
+  renderForceNewLineProperty, 
+  renderPositionAlignProperty}
+) {
   
   const renderComponentProperty = (component) => {
-
     const items = component.runtime_data?.items || [];
-
     const updateItemLabel = (idx, newLabel) => {
       const newItems = items.map((item, i) =>
         i === idx ? { ...item, label: newLabel } : item
       );
       updateRuntimeData("items", newItems);
     };
-
     const toggleItemChecked = (idx) => {
       const newItems = items.map((item, i) =>
         i === idx ? { ...item, checked: !item.checked } : item
       );
       updateRuntimeData("items", newItems);
     };
-
     const addItem = () => {
       const newItems = [...items, { label: `항목 ${items.length + 1}`, checked: false }];
       updateRuntimeData("items", newItems);
     };
-
     const removeItem = (idx) => {
       const newItems = items.filter((_, i) => i !== idx);
       updateRuntimeData("items", newItems);
@@ -63,9 +64,9 @@ export function renderProperty({ component, renderWidthInput, renderForceNewLine
           className="w-full border border-gray-300 rounded p-2 mb-2"
         />
 
-        {renderWidthInput()}
-        {renderForceNewLineToggle()}
-        {renderPositionAlignSelect()}
+        {renderWidthProperty()}
+        {renderForceNewLineProperty()}
+        {renderPositionAlignProperty()}
 
         <label>내용 정렬:</label>
         <select
@@ -116,7 +117,11 @@ export function renderProperty({ component, renderWidthInput, renderForceNewLine
   return renderComponentProperty(component);
 }
 
-export const renderComponent = ({component, handleComponentClick, selectedClass, alignmentClass, textAlign, onRuntimeDataChange}) => {
+export const renderComponent = (component, handleComponentClick, onRuntimeDataChange, {
+  selectedClass, 
+  alignmentClass, 
+  textAlign}) => {
+  
   const style = {
     width: '100%',
     height: component.runtime_data?.height || 'auto',
@@ -128,10 +133,8 @@ export const renderComponent = ({component, handleComponentClick, selectedClass,
     center: 'center',
     right: 'flex-end',
   };
-  const justifyContent =
-    justifyMap[
-      component.runtime_data?.textAlign || 'left'
-    ];
+
+  const justifyContent = justifyMap[ component.runtime_data?.textAlign || 'left'];
 
   return (
     <div

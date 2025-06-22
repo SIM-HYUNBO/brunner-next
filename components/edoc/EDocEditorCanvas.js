@@ -52,7 +52,7 @@ export default function EDocEditorCanvas({
     return rows;
   };
 
-  const handleRuntimeDataChange = (componentIdx, newData) => {
+  const updateRuntimeData = (componentIdx, newData) => {
     const component = components[componentIdx];
     const currentData = component.runtime_data || {};
     let newRuntimeData = null;
@@ -202,7 +202,7 @@ export default function EDocEditorCanvas({
                 isSelected={selectedComponentId === compIdx}
                 onSelect={() => onComponentSelect(compIdx)}
                 onRuntimeDataChange={(...args) =>
-                  handleRuntimeDataChange(compIdx, args.length === 1 ? args[0] : args)
+                  updateRuntimeData(compIdx, args.length === 1 ? args[0] : args)
                 }
                 documentRuntimeData={documentRuntimeData}
               />

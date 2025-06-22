@@ -18,7 +18,11 @@ export const getNewRuntimeData = (component, newData) => {
   return newRuntimeData;
 }
 
-export function renderProperty({ component, renderWidthInput,  renderForceNewLineToggle, renderPositionAlignSelect, updateRuntimeData}) {
+export function renderProperty(component, updateRuntimeData, {
+  renderWidthProperty, 
+  renderForceNewLineProperty, 
+  renderPositionAlignProperty}
+) {
   const renderComponentProperty = (component) => {
     return (
       <div>
@@ -30,9 +34,9 @@ export function renderProperty({ component, renderWidthInput,  renderForceNewLin
           className="w-full border border-gray-300 rounded p-2 mb-2"
         />
 
-        {renderWidthInput()}
-        {renderForceNewLineToggle()}
-        {renderPositionAlignSelect()}
+        {renderWidthProperty()}
+        {renderForceNewLineProperty()}
+        {renderPositionAlignProperty()}
 
         <label>텍스트:</label>
         <input
@@ -59,7 +63,10 @@ export function renderProperty({ component, renderWidthInput,  renderForceNewLin
   return renderComponentProperty(component);
 }
 
-export const renderComponent = ({component, handleComponentClick, selectedClass, alignmentClass, textAlign, onRuntimeDataChange}) => {
+export const renderComponent = (component, handleComponentClick, onRuntimeDataChange, {
+  selectedClass, 
+  alignmentClass, 
+  textAlign}) => {
   const style = {
     width: '100%',
     height: component.runtime_data?.height || 'auto',

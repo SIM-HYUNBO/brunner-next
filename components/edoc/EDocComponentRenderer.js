@@ -33,23 +33,23 @@ export default function DocComponentRenderer({
   };
 
   const renderComponent = (component) => {
-    const param = {component, handleComponentClick, selectedClass, alignmentClass, textAlign, onRuntimeDataChange};
+    const param = {selectedClass, alignmentClass, textAlign};
 
     switch (component.type) {
       case constants.edoc.COMPONENT_TYPE_TEXT:
-        return TextComponent.renderComponent(param);
+        return TextComponent.renderComponent(component, handleComponentClick, onRuntimeDataChange, param);
 
       case constants.edoc.COMPONENT_TYPE_INPUT:
-        return InputComponent.renderComponent(param);
+        return InputComponent.renderComponent(component, handleComponentClick, onRuntimeDataChange, param);
 
       case constants.edoc.COMPONENT_TYPE_IMAGE:
-        return ImageComponent.renderComponent(param);
+        return ImageComponent.renderComponent(component, handleComponentClick, onRuntimeDataChange, param);
 
       case constants.edoc.COMPONENT_TYPE_TABLE:
-        return TableComponent.renderComponent(param);
+        return TableComponent.renderComponent(component, handleComponentClick, onRuntimeDataChange, param);
 
       case constants.edoc.COMPONENT_TYPE_CHECKLIST:
-        return CheckListComponent.renderComponent(param);
+        return CheckListComponent.renderComponent(component, handleComponentClick, onRuntimeDataChange, param);
 
       default:
         return null;

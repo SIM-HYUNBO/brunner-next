@@ -9,7 +9,7 @@ import RequestServer from "@/components/requestServer";
 import EDocComponentPalette from './EDocComponentPalette';
 import EDocEditorCanvas from './EDocEditorCanvas';
 import EDocDesignerTopMenu from './EDocDesignerTopMenu';
-import EDocPropertyEditor from './EDocComponentPropertyEditor';
+import EDocComponentPropertyEditor from './EDocComponentPropertyEditor';
 import EDocDocumentPropertyEditor from './EDocDocumentPropertyEditor';
 
 import html2canvas from 'html2canvas';
@@ -68,16 +68,6 @@ export default function EDocDesignerContainer({ documentId }) {
 
   const handleComponentSelect = (idx) => {
     setSelectedComponentId(idx);
-  };
-
-  const handleComponentChange = (updatedComponent) => {
-    if (selectedComponentId === null) return;
-
-    setDocumentData((prev) => {
-      const newComponents = [...prev.components];
-      newComponents[selectedComponentId] = updatedComponent;
-      return { ...prev, components: newComponents };
-    });
   };
 
   const handleAddComponent = (component) => {
@@ -272,6 +262,8 @@ export default function EDocDesignerContainer({ documentId }) {
   }
 
   const handleUpdateComponent = (selectedComponentIdX, updatedComponent) => {
+    if (selectedComponentId === null) return;
+
     setDocumentData((prev) => {
       const newComponents = [...prev.components];
       newComponents[selectedComponentIdX] = updatedComponent;
@@ -342,9 +334,9 @@ export default function EDocDesignerContainer({ documentId }) {
         <aside className="w-80 bg-white border-l border-gray-300 p-4 hidden md:block">
           <h2 className="text-lg font-semibold mb-4">속성창</h2>
           {selectedComponent ? (
-            <EDocPropertyEditor
+            <EDocComponentPropertyEditor
               component={selectedComponent}
-              onComponentChange={handleComponentChange}
+              handleUpdateComponent={handleUpdateComponent}
             />
           ) : (
             <EDocDocumentPropertyEditor
