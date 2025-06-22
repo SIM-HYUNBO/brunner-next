@@ -1,4 +1,32 @@
-export default function renderProperty({ component, renderWidthInput,  renderForceNewLineToggle, renderPositionAlignSelect, updateRuntimeData}) {
+import React from 'react';
+
+export const initDefaultRuntimeData = (defaultRuntimeData) => {
+  defaultRuntimeData.cols = 3;
+  defaultRuntimeData.rows = 3;
+  defaultRuntimeData.data = Array.from({ length: 3 }, () => Array(3).fill(""));
+  defaultRuntimeData.columns = [
+    { width: "33%", header: "ColumnHeader1" },
+    { width: "200px", header: "ColumnHeader2" },
+    { width: "auto", header: "ColumnHeader3" }
+  ];
+  defaultRuntimeData.positionAlign = "left";
+  return defaultRuntimeData;
+}
+
+export const getNewRuntimeData = (component, newData) => {
+  const currentData = component.runtime_data || {};
+  let newRuntimeData = { ...currentData };
+  const [rowIdx, colIdx, value] = newData;
+  const data = [...(currentData.data || [])];
+  
+  if (data[rowIdx]) {
+    data[rowIdx][colIdx] = value;
+    newRuntimeData.data = data;
+  }
+  return newRuntimeData;
+}
+
+export function renderProperty({ component, renderWidthInput,  renderForceNewLineToggle, renderPositionAlignSelect, updateRuntimeData}) {
 
   const renderComponentProperty = (component) => {
       const updateTableSize = (newRows, newCols) => {
@@ -105,9 +133,10 @@ export default function renderProperty({ component, renderWidthInput,  renderFor
   return renderComponentProperty(component);
 }
 
+
 export const renderComponent = ({component, handleComponentClick, selectedClass, alignmentClass, textAlign, onRuntimeDataChange}) => {
   const style = {
-    width: '100%',
+    width: component.runtime_data?.width || 'auto',
     height: component.runtime_data?.height || 'auto',
     textAlign, // 텍스트 정렬 적용
   };
@@ -117,7 +146,7 @@ export const renderComponent = ({component, handleComponentClick, selectedClass,
 
   return (
     <table
-      className={`${selectedClass} border border-gray-400 w-full table-auto`}
+      className={`${selectedClass} ${alignmentClass} border border-gray-400 w-full table-auto`}
       style={{
         ...style,
         borderCollapse: 'collapse',
@@ -157,37 +186,4 @@ export const renderComponent = ({component, handleComponentClick, selectedClass,
       </tbody>
     </table>
   );
-}
-
-export const defaultRuntimeData = () => {
-  var defaultRuntimeData = {
-      width: 'auto', // 기본 폭 지정
-      height: '',
-      forceNewLine: true
-    };
-
-  defaultRuntimeData.cols = 3;
-  defaultRuntimeData.rows = 3;
-  defaultRuntimeData.data = Array.from({ length: 3 }, () => Array(3).fill(""));
-  defaultRuntimeData.columns = [
-    { width: "33%", header: "ColumnHeader1" },
-    { width: "200px", header: "ColumnHeader2" },
-    { width: "auto", header: "ColumnHeader3" }
-  ];
-  defaultRuntimeData.positionAlign = "left";
-  return defaultRuntimeData;
-}
-
-export const getNewRuntimeData = (component, newData) => {
-  const currentData = component.runtime_data || {};
-  let newRuntimeData = { ...currentData };
-
-  const [rowIdx, colIdx, value] = newData;
-  const data = [...(currentData.data || [])];
-  if (data[rowIdx]) {
-    data[rowIdx][colIdx] = value;
-    newRuntimeData.data = data;
-  }
-
-  return newRuntimeData;
 }

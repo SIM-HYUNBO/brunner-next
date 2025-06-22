@@ -1,4 +1,25 @@
-export default function renderProperty({ component, renderWidthInput,  renderForceNewLineToggle, renderPositionAlignSelect, updateRuntimeData}) {
+export const initDefaultRuntimeData = (defaultRuntimeData) => {
+  defaultRuntimeData.itemCount = 3;
+  defaultRuntimeData.items = Array.from({ length: 3 }, (_, i) => ({ label: `항목 ${i + 1}`, checked: false}));
+  defaultRuntimeData.positionAlign = "left";
+  
+  return defaultRuntimeData;
+}
+
+export const getNewRuntimeData = (component, newData) => {
+  const currentData = component.runtime_data || {};
+  let newRuntimeData = { ...currentData };
+  const [itemIdx, checked] = newData;
+  const items = [...(currentData.items || [])];
+  
+  if (items[itemIdx]) {
+    items[itemIdx] = { ...items[itemIdx], checked };
+    newRuntimeData.items = items;
+  }
+  return newRuntimeData;
+}
+
+export function renderProperty({ component, renderWidthInput, renderForceNewLineToggle, renderPositionAlignSelect, updateRuntimeData}) {
   
   const renderComponentProperty = (component) => {
 
@@ -93,7 +114,7 @@ export default function renderProperty({ component, renderWidthInput,  renderFor
 
 export const renderComponent = ({component, handleComponentClick, selectedClass, alignmentClass, textAlign, onRuntimeDataChange}) => {
   const style = {
-    width: '100%',
+    width: component.runtime_data?.width || 'auto',
     height: component.runtime_data?.height || 'auto',
     textAlign, // 텍스트 정렬 적용
   };
@@ -110,7 +131,7 @@ export const renderComponent = ({component, handleComponentClick, selectedClass,
 
   return (
     <div
-      className={`${selectedClass} border p-2 cursor-pointer flex flex-col`}
+      className={`${selectedClass} ${alignmentClass} border p-2 cursor-pointer flex flex-col`}
       style={{
         ...style,
         justifyContent,
@@ -134,30 +155,4 @@ export const renderComponent = ({component, handleComponentClick, selectedClass,
       ))}
     </div>
   );
-}
-
-export const defaultRuntimeData = () => {
-  var defaultRuntimeData = {
-      width: 'auto', // 기본 폭 지정
-      height: '',
-      forceNewLine: true
-    };
-
-    defaultRuntimeData.itemCount = 3;
-    defaultRuntimeData.items = Array.from({ length: 3 }, (_, i) => ({ label: `항목 ${i + 1}`, checked: false}));
-    defaultRuntimeData.positionAlign = "left";
-    return defaultRuntimeData;
-  }
-
-export const getNewRuntimeData = (component, newData) => {
-  const currentData = component.runtime_data || {};
-  let newRuntimeData = { ...currentData };
-  const [itemIdx, checked] = newData;
-  const items = [...(currentData.items || [])];
-  
-  if (items[itemIdx]) {
-    items[itemIdx] = { ...items[itemIdx], checked };
-    newRuntimeData.items = items;
-  }
-  return newRuntimeData;
 }

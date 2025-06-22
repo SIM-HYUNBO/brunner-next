@@ -80,21 +80,27 @@ export default function EDocDesignerContainer({ documentId }) {
 
   const handleAddComponent = (component) => {
     const baseComponent = { ...component };
+    var defaultRuntimeData = {
+        width: 'auto', // 기본 폭 지정
+        height: '',
+        forceNewLine: true
+      };
+
     switch (component.template_json.type) {
       case constants.edoc.COMPONENT_TYPE_TEXT:
-        baseComponent.runtime_data = TextComponent.defaultRuntimeData(baseComponent);
+        baseComponent.runtime_data = TextComponent.initDefaultRuntimeData(defaultRuntimeData);
         break;
       case constants.edoc.COMPONENT_TYPE_IMAGE:
-        baseComponent.runtime_data = ImageComponent.defaultRuntimeData(baseComponent);
+        baseComponent.runtime_data = ImageComponent.initDefaultRuntimeData(defaultRuntimeData);
         break;
       case constants.edoc.COMPONENT_TYPE_INPUT:
-        baseComponent.runtime_data = InputComponent.defaultRuntimeData(baseComponent);
+        baseComponent.runtime_data = InputComponent.initDefaultRuntimeData(defaultRuntimeData);
         break;
       case constants.edoc.COMPONENT_TYPE_TABLE:
-        baseComponent.runtime_data = TableComponent.defaultRuntimeData(baseComponent);
+        baseComponent.runtime_data = TableComponent.initDefaultRuntimeData(defaultRuntimeData);
         break;
       case constants.edoc.COMPONENT_TYPE_CHECKLIST:
-        baseComponent.runtime_data = CheckListComponent.defaultRuntimeData(baseComponent);
+        baseComponent.runtime_data = CheckListComponent.initDefaultRuntimeData(defaultRuntimeData);
         break;
       default:
         break;
