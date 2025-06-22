@@ -5,9 +5,9 @@ export const initDefaultRuntimeData = (defaultRuntimeData) => {
   defaultRuntimeData.rows = 3;
   defaultRuntimeData.data = Array.from({ length: 3 }, () => Array(3).fill(""));
   defaultRuntimeData.columns = [
-    { width: "33%", header: "ColumnHeader1" },
-    { width: "200px", header: "ColumnHeader2" },
-    { width: "auto", header: "ColumnHeader3" }
+    { width: "33%", header: "ColumnHeader1", align: "center" },
+    { width: "200px", header: "ColumnHeader2", align: "center" },
+    { width: "auto", header: "ColumnHeader3", align: "center" }
   ];
   defaultRuntimeData.positionAlign = "left";
   return defaultRuntimeData;
@@ -69,6 +69,15 @@ export function renderProperty({ component, renderWidthInput,  renderForceNewLin
         updateRuntimeData("columns", newColumns);
       };
 
+      const handleColumnAlignChange = (index, value) => {
+        const newColumns = [...(component.runtime_data?.columns || [])];
+        newColumns[index] = {
+          ...newColumns[index],
+          align: value,
+        };
+        updateRuntimeData("columns", newColumns);
+      };
+
       return (
         <div>
           <label>Binding Key:</label>
@@ -106,26 +115,38 @@ export function renderProperty({ component, renderWidthInput,  renderForceNewLin
           />
 
           <label className="block mt-3 mb-1">컬럼 설정:</label>
-          {(component.runtime_data?.columns || []).map((col, idx) => (
-            <div key={idx} className="mb-2">
-              <div className="flex gap-2">
-                <input
-                  type="text"
-                  value={component.runtime_data?.columns[idx].header || ""}
-                  onChange={(e) => handleColumnHeaderChange(idx, e.target.value)}
-                  className="w-1/2 border border-gray-300 rounded p-1"
-                  placeholder={`헤더 ${idx + 1}`}
-                />
-                <input
-                  type="text"
-                  value={component.runtime_data?.columns[idx].width || ""}
-                  onChange={(e) => handleColumnWidthChange(idx, e.target.value)}
-                  className="w-1/2 border border-gray-300 rounded p-1"
-                  placeholder={`폭 (예: 100px, 20%)`}
-                />
+            {(component.runtime_data?.columns || []).map((col, idx) => (
+              <div key={idx} className="mb-2">
+                <div className="flex gap-2 mb-1">
+                  <input
+                    type="text"
+                    value={col.header || ""}
+                    onChange={(e) => handleColumnHeaderChange(idx, e.target.value)}
+                    className="w-1/2 border border-gray-300 rounded p-1"
+                    placeholder={`헤더 ${idx + 1}`}
+                  />
+                  <input
+                    type="text"
+                    value={col.width || ""}
+                    onChange={(e) => handleColumnWidthChange(idx, e.target.value)}
+                    className="w-1/2 border border-gray-300 rounded p-1"
+                    placeholder={`폭 (예: 100px, 20%)`}
+                  />
+                </div>
+                <div className="flex gap-2">
+                  {/* <label className="text-sm pt-1 w-16">정렬:</label> */}
+                  <select
+                    value={col.align || "center"}
+                    onChange={(e) => handleColumnAlignChange(idx, e.target.value)}
+                    className="w-full border border-gray-300 rounded p-1"
+                  >
+                    <option value="left">왼쪽</option>
+                    <option value="center">가운데</option>
+                    <option value="right">오른쪽</option>
+                  </select>
+                </div>
               </div>
-            </div>
-          ))}
+            ))}
         </div>
       );
   }
@@ -136,7 +157,7 @@ export function renderProperty({ component, renderWidthInput,  renderForceNewLin
 
 export const renderComponent = ({component, handleComponentClick, selectedClass, alignmentClass, textAlign, onRuntimeDataChange}) => {
   const style = {
-    width: component.runtime_data?.width || 'auto',
+    width: '100%',
     height: component.runtime_data?.height || 'auto',
     textAlign, // 텍스트 정렬 적용
   };
@@ -174,6 +195,7 @@ export const renderComponent = ({component, handleComponentClick, selectedClass,
                 <input
                   type="text"
                   className="w-full border-none p-0"
+                  style={{ textAlign: columns[colIdx].align || "center" }}
                   value={row[colIdx] || ''}
                   onChange={(e) =>
                     onRuntimeDataChange([rowIdx, colIdx, e.target.value])

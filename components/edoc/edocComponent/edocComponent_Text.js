@@ -60,7 +60,7 @@ export function renderProperty({component, renderWidthInput,  renderForceNewLine
 
 export const renderComponent = ({component, handleComponentClick, selectedClass, alignmentClass, textAlign, onRuntimeDataChange}) => {
   const style = {
-    width: component.runtime_data?.width || 'auto',
+    width: '100%',
     height: component.runtime_data?.height || 'auto',
     textAlign, // 텍스트 정렬 적용
   };
