@@ -134,7 +134,7 @@ export function renderProperty(component, updateRuntimeData, {
                   };
                   updateRuntimeData("columns", newColumns);
                 }}
-                className="w-1/3 border border-gray-300 rounded p-1"
+                className="w-1/2 border border-gray-300 rounded p-1"
                 placeholder={`헤더 ${idx + 1}`}
               />
               <input
@@ -148,7 +148,7 @@ export function renderProperty(component, updateRuntimeData, {
                   };
                   updateRuntimeData("columns", newColumns);
                 }}
-                className="w-1/3 border border-gray-300 rounded p-1"
+                className="w-1/4 border border-gray-300 rounded p-1"
                 placeholder="폭 (예: 100px, 20%)"
               />
               <select
@@ -161,7 +161,7 @@ export function renderProperty(component, updateRuntimeData, {
                   };
                   updateRuntimeData("columns", newColumns);
                 }}
-                className="w-1/3 border border-gray-300 rounded p-1"
+                className="w-1/4 border border-gray-300 rounded p-1"
               >
                 <option value="left">왼쪽</option>
                 <option value="center">가운데</option>
