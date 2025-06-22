@@ -1,3 +1,7 @@
+`use strict`
+
+import React from 'react';
+
 export const initDefaultRuntimeData = (defaultRuntimeData) => {
   defaultRuntimeData.itemCount = 3;
   defaultRuntimeData.items = Array.from({ length: 3 }, (_, i) => ({ label: `항목 ${i + 1}`, checked: false}));

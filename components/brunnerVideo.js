@@ -1,3 +1,5 @@
+`use strict`
+
 import dynamic from 'next/dynamic';
 import { useState, useEffect, useRef } from 'react';
 

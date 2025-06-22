@@ -1,3 +1,5 @@
+`use strict`
+
 import React, { useEffect } from 'react';
 import * as constants from '@/components/constants';
 import DocComponentRenderer from '@/components/edoc/EDocComponentRenderer';

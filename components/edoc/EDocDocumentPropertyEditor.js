@@ -1,3 +1,5 @@
+`use strict`
+
 export default function EDocDocumentPropertyEditor({ runtimeData, onChange }) {
   if (!runtimeData) return <p>문서 속성 데이터를 불러오세요.</p>;
 

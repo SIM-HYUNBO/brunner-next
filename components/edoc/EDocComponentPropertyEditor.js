@@ -1,3 +1,5 @@
+`use strict`
+
 import * as constants from "@/components/constants";
 
 import * as TextComponent from "@/components/edoc/edocComponent/edocComponent_Text";

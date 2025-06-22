@@ -1,3 +1,5 @@
+`use strict`
+
 import React from 'react';
 
 export const initDefaultRuntimeData = (defaultRuntimeData) => {
@@ -153,7 +155,6 @@ export function renderProperty({ component, renderWidthInput,  renderForceNewLin
 
   return renderComponentProperty(component);
 }
-
 
 export const renderComponent = ({component, handleComponentClick, selectedClass, alignmentClass, textAlign, onRuntimeDataChange}) => {
   const style = {
