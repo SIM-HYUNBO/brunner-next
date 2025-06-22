@@ -7,9 +7,9 @@ export const initDefaultRuntimeData = (defaultRuntimeData) => {
   defaultRuntimeData.rows = 3;
   defaultRuntimeData.data = Array.from({ length: 3 }, () => Array(3).fill(""));
   defaultRuntimeData.columns = [
-    { width: "33%", header: "ColumnHeader1", align: "center" },
-    { width: "200px", header: "ColumnHeader2", align: "center" },
-    { width: "auto", header: "ColumnHeader3", align: "center" }
+    { width: "33%", header: "Header1", align: "center" },
+    { width: "200px", header: "Header2", align: "center" },
+    { width: "auto", header: "Header3", align: "center" }
   ];
   defaultRuntimeData.positionAlign = "left";
   return defaultRuntimeData;
@@ -148,7 +148,7 @@ export function renderProperty(component, updateRuntimeData, {
                   };
                   updateRuntimeData("columns", newColumns);
                 }}
-                className="w-1/4 border border-gray-300 rounded p-1"
+                className="w-1/5 border border-gray-300 rounded p-1"
                 placeholder="폭 (예: 100px, 20%)"
               />
               <select
@@ -161,7 +161,7 @@ export function renderProperty(component, updateRuntimeData, {
                   };
                   updateRuntimeData("columns", newColumns);
                 }}
-                className="w-1/4 border border-gray-300 rounded p-1"
+                className="w-2/5 border border-gray-300 rounded p-1"
               >
                 <option value="left">왼쪽</option>
                 <option value="center">가운데</option>
