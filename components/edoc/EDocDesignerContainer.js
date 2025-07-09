@@ -305,7 +305,7 @@ const [showDocumentListModal, setShowDocumentListModal] = useState(false);
 function EDocDocumentListModal({ documents, onSelect, onClose }) {
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white rounded-lg p-6 w-96 max-h-[80vh] overflow-y-auto">
+      <div className="bg-white rounded-lg p-6 w-180 max-h-[80vh] overflow-y-auto">
         <h2 className="text-xl font-bold mb-4">문서 목록</h2>
         <ul>
           {documents.map((doc) => (
