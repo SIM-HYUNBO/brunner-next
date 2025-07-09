@@ -65,6 +65,7 @@ export const commands = {
     COMMAND_EDOC_DOCUMENT_UPSERT_ONE : `edocDocument.upsertOne`,
     COMMAND_EDOC_DOCUMENT_SELECT_ONE : `edocDocument.selectOne`,
     COMMAND_EDOC_DOCUMENT_DELETE_ONE : `edocDocument.deleteOne`,
+    COMMAND_EDOC_DOCUMENT_SELECT_ALL : "edocDocument.slectAll",
 }  
 
 export const edoc = {

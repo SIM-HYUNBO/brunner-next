@@ -42,6 +42,9 @@ export default function EDocDesignerContainer({ documentId }) {
   const [selectedComponentId, setSelectedComponentId] = useState(null);
   const selectedComponent = selectedComponentId !== null ? documentData.components[selectedComponentId] : null;
 
+const [documentList, setDocumentList] = useState([]);
+const [showDocumentListModal, setShowDocumentListModal] = useState(false);
+
   useEffect(() => {
     async function fetchTemplates() {
       const jRequest = {
@@ -122,10 +125,22 @@ export default function EDocDesignerContainer({ documentId }) {
     }
   };
 
-  const handleOpenDocument = async () => {
-    const id = window.prompt('열 문서 ID를 입력하세요');
-    if (id) openDocumentById(id);
+ const handleOpenDocument = async () => {
+  const jRequest = {
+    commandName: constants.commands.COMMAND_EDOC_DOCUMENT_SELECT_ALL,
+    systemCode: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE,
+    userId: userInfo.getLoginUserId(),
   };
+
+  setLoading(true);
+  const jResponse = await RequestServer("POST", jRequest);
+  setLoading(false);
+
+  if (jResponse.error_code === 0) {
+    setDocumentList(jResponse.documentList);
+    setShowDocumentListModal(true);
+  } else openModal(jResponse.error_message);
+};
 
   const openDocumentById = async (id) => {
     const jRequest = {
@@ -287,6 +302,33 @@ export default function EDocDesignerContainer({ documentId }) {
   var checkListData = bindingData().V_CheckList;   
   console.log(checkListData);
 
+function EDocDocumentListModal({ documents, onSelect, onClose }) {
+  return (
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+      <div className="bg-white rounded-lg p-6 w-96 max-h-[80vh] overflow-y-auto">
+        <h2 className="text-xl font-bold mb-4">문서 목록</h2>
+        <ul>
+          {documents.map((doc) => (
+            <li
+              key={doc.id}
+              className="p-2 border-b hover:bg-gray-100 cursor-pointer"
+              onClick={() => onSelect(doc.id)}
+            >
+              📄 {doc.title} ({doc.id})
+            </li>
+          ))}
+        </ul>
+        <button
+          className="mt-4 px-4 py-2 bg-gray-300 rounded"
+          onClick={onClose}
+        >
+          닫기
+        </button>
+      </div>
+    </div>
+  );
+}
+
   return (
     <>
       {loading && (
@@ -370,6 +412,16 @@ export default function EDocDesignerContainer({ documentId }) {
           )}
         </aside>
       </div>
+      {showDocumentListModal && (
+      <EDocDocumentListModal
+        documents={documentList}
+        onSelect={(id) => {
+          openDocumentById(id);
+          setShowDocumentListModal(false);
+        }}
+        onClose={() => setShowDocumentListModal(false)}
+      />
+    )}
     </>
   );
 }

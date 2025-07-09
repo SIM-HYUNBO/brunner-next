@@ -147,7 +147,11 @@ export default function EDocEditorCanvas({
       <div
         key={rowIdx}
         className="flex w-full mb-2 gap-2"
-        style={{ justifyContent, flexWrap: 'nowrap' }}
+        style={{
+        minWidth: "800px",    // 문서 최소 폭 (원하는 값)
+        width: "fit-content", // 내부 내용만큼 크기
+        overflow: "visible",  // 내부 요소가 나가면 부모가 스크롤되도록
+      }}
       >
         {row.map((compIdx, idx) => {
           const comp = comps[compIdx];
@@ -217,7 +221,7 @@ export default function EDocEditorCanvas({
   return (
     <div
       id="editor-canvas"
-      className="min-h-[500px] border border-dashed border-gray-400 p-4 rounded w-full"
+      className="min-h-[500px] border border-dashed border-gray-400 p-4 rounded w-full  overflow-auto"
       onClick={() => onComponentSelect(null)}
       style={{
         padding: documentRuntimeData?.padding ?? 24,

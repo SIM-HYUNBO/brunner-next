@@ -19,6 +19,9 @@ const executeService = async (txnId, jRequest) => {
             case constants.commands.COMMAND_EDOC_DOCUMENT_DELETE_ONE:
                 jResponse = await deleteOne(txnId, jRequest);
                 break;
+            case constants.commands.COMMAND_EDOC_DOCUMENT_SELECT_ALL:
+                jResponse = await selectAll(txnId, jRequest);
+                break;
             default:
                 break;
         }
@@ -243,6 +246,33 @@ const deleteOne = async (txnId, jRequest) => {
         jResponse.error_code = 0;
         jResponse.error_message = constants.messages.MESSAGE_SUCCESS_DELETED;
         jResponse.documentData = jRequest.documentData; // return saved document data
+    } catch (e) {
+        logger.error(e);
+        jResponse.error_code = -1; // exception
+        jResponse.error_message = e.message
+    } finally {
+        return jResponse;
+    }
+};
+
+const selectAll = async (txnId, jRequest) => {
+    var jResponse = {};
+    
+    try {
+        jResponse.commanaName = jRequest.commandName;
+        
+        // select TB_DOC_DOCUMENT
+        var sql = null
+        sql = await dynamicSql.getSQL00('select_TB_DOC_DOCUMENT', 2);
+        var select_TB_DOC_DOCUMENT = await database.executeSQL(sql,
+            [
+                jRequest.systemCode   
+            ]);
+
+        jResponse.documentList = select_TB_DOC_DOCUMENT.rows;
+
+        jResponse.error_code = 0;
+        jResponse.error_message = constants.messages.EMPTY_STRING
     } catch (e) {
         logger.error(e);
         jResponse.error_code = -1; // exception
