@@ -4,7 +4,7 @@ import logger from "../winston/logger"
 import * as constants from '@/components/constants'
 import * as database from "./database/database"
 import * as db_cor_sql_info from './dynamicSql'
-import * as postInfo from './postInfo'
+import * as commonFunctions from '@/components/commonFunctions'
 
 const executeService = async (txnId, jRequest) => {
     var jResponse = {};
@@ -35,7 +35,7 @@ const insertOne = async (txnId, jRequest) => {
 
     try {
         jResponse.commanaName = jRequest.commandName;
-        var coommentId = postInfo.generateUUID();
+        var coommentId = commonFunctions.generateUUID();
         var sql = null
         sql = await db_cor_sql_info.getSQL00('insert_TB_COR_POST_COMMENT_INFO', 1);
         var insert_TB_COR_POST_COMMENT_INFO_01 = await database.executeSQL(sql,

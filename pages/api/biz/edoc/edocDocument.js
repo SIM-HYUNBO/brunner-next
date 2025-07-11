@@ -4,6 +4,7 @@ import logger from "../../winston/logger"
 import * as constants from '@/components/constants'
 import * as database from "../database/database"
 import * as dynamicSql from '../dynamicSql'
+import * as commonFunctions from '@/components/commonFunctions'
 
 const executeService = async (txnId, jRequest) => {
     var jResponse = {};
@@ -47,7 +48,7 @@ const upsertOne = async (txnId, jRequest) => {
         }
         
         if (!jRequest.documentData.id) {
-            jRequest.documentData.id = generateUUID();
+            jRequest.documentData.id = commonFunctions.generateUUID();
 
             if (!jRequest.documentData.title)
                 jRequest.documentData.title ="new document";
