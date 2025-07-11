@@ -29,7 +29,7 @@ export default function LeftMenu() {
                                 </Link>
                                 <Link
                                     className={`block text-gray-600 dark:text-gray-100 py-2`}
-                                    href="/edocDesigner/EDocDesigner"
+                                    href="/edocDesigner/edocDesigner"
                                 >
                                     Doc. Designer
                                 </Link>
