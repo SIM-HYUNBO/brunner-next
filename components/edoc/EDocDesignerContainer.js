@@ -177,6 +177,10 @@ const [showDocumentListModal, setShowDocumentListModal] = useState(false);
   };
 
   const handleDeleteDocument = async () => {
+    const result = await openModal(constants.messages.MESSAGE_DELETE_ITEM);
+    if (!result) 
+      return;
+
     const jRequest = {
       commandName: constants.commands.COMMAND_EDOC_DOCUMENT_DELETE_ONE,
       systemCode: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE,
@@ -331,6 +335,7 @@ function EDocDocumentListModal({ documents, onSelect, onClose }) {
 
   return (
     <>
+    <BrunnerMessageBox />
       {loading && (
         <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-gray-500 bg-opacity-75 z-50">
           <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-gray-900"></div>
