@@ -19,11 +19,14 @@ export default function EDocEditorCanvas({
   onMoveDown,
   onUpdateComponent,
   documentRuntimeData,
+  isViewerMode = false,
 }) {
   useEffect(() => {
     const handleKeyDown = (e) => {
       if (e.key === 'Escape') {
-        onComponentSelect(null);
+        if (!isViewerMode && typeof onComponentSelect === 'function') {
+              onComponentSelect(null);
+            }
         if (document.activeElement instanceof HTMLElement) {
           document.activeElement.blur();
         }
@@ -105,13 +108,17 @@ export default function EDocEditorCanvas({
           const insertPos = prevRow[prevRow.length - 1] + 1;
           newList.splice(insertPos, 0, updatedComponent);
 
-          onUpdateComponent(insertPos, newList[insertPos]);
+          if (typeof onUpdateComponent === 'function') {
+            onUpdateComponent(newList[insertPos]);
+          }
           return;
         }
       }
     }
 
-    onUpdateComponent(componentIdx, updatedComponent);
+    if (typeof onUpdateComponent === 'function') {
+      onUpdateComponent(updatedComponent);
+    }
   };
 
   const justifyMap = {
@@ -149,8 +156,8 @@ export default function EDocEditorCanvas({
         className="flex w-full mb-2 gap-2"
         style={{
         minWidth: "800px",    // 문서 최소 폭 (원하는 값)
-        width: "fit-content", // 내부 내용만큼 크기
         overflow: "visible",  // 내부 요소가 나가면 부모가 스크롤되도록
+        justifyContent: justifyContent, // 👉 이거 추가!
       }}
       >
         {row.map((compIdx, idx) => {
@@ -169,48 +176,63 @@ export default function EDocEditorCanvas({
           };
 
           return (
-            <div
+          <div
               key={compIdx}
-              className="relative group p-1 border border-transparent rounded hover:border-gray-300"
+              className={`relative group p-1 rounded ${
+                isViewerMode ? ''
+                  : selectedComponentId === compIdx
+                    ? 'border-2 border-blue-500'
+                    : 'border border-transparent hover:border-gray-300'
+              }`}
               style={style}
             >
-              {/* 툴버튼 */}
-              <div className="absolute -left-8 top-1/2 transform -translate-y-1/2 flex flex-col space-y-1 opacity-0 group-hover:opacity-100 transition">
-                <button
-                  className="text-xs bg-white border rounded shadow px-1 hover:bg-gray-100 disabled:opacity-30"
-                  onClick={() => onMoveUp(compIdx)}
-                  disabled={compIdx === 0}
-                  title="위로 이동"
-                >
-                  ↑
-                </button>
-                <button
-                  className="text-xs bg-white border rounded shadow px-1 hover:bg-gray-100 disabled:opacity-30"
-                  onClick={() => onMoveDown(compIdx)}
-                  disabled={compIdx === comps.length - 1}
-                  title="아래로 이동"
-                >
-                  ↓
-                </button>
-                <button
-                  onClick={() => onDeleteComponent(compIdx)}
-                  disabled={selectedComponentId === null}
-                  title="삭제"
-                >
-                  🗑
-                </button>
-              </div>
-
-              <DocComponentRenderer
-                component={comp}
-                isSelected={selectedComponentId === compIdx}
-                onSelect={() => onComponentSelect(compIdx)}
-                onRuntimeDataChange={(...args) =>
-                  updateRuntimeData(compIdx, args.length === 1 ? args[0] : args)
-                }
-                documentRuntimeData={documentRuntimeData}
-              />
+            {/* 툴버튼 */}
+            {!isViewerMode && (
+            <div className="absolute -left-8 top-1/2 transform -translate-y-1/2 flex flex-col space-y-1 opacity-0 group-hover:opacity-100 transition">
+              <button
+                className="text-xs bg-white border rounded shadow px-1 hover:bg-gray-100 disabled:opacity-30"
+                onClick={() => onMoveUp(compIdx)}
+                disabled={compIdx === 0}
+                title="위로 이동"
+              >
+                ↑
+              </button>
+              <button
+                className="text-xs bg-white border rounded shadow px-1 hover:bg-gray-100 disabled:opacity-30"
+                onClick={() => onMoveDown(compIdx)}
+                disabled={compIdx === comps.length - 1}
+                title="아래로 이동"
+              >
+                ↓
+              </button>
+              <button
+                onClick={() => {
+                  if (typeof onDeleteComponent === 'function') {
+                    onDeleteComponent(compIdx);
+                  }
+                }}
+                disabled={selectedComponentId === null}
+                title="삭제"
+              >
+                🗑
+              </button>
             </div>
+            )}
+              
+            <DocComponentRenderer
+              component={comp}
+              isSelected={!isViewerMode && selectedComponentId === compIdx}
+              onSelect={() => { 
+                if (!isViewerMode && typeof onComponentSelect === 'function') {
+                  onComponentSelect(compIdx);
+                }
+              }}
+              onRuntimeDataChange={(...args) =>
+                updateRuntimeData(compIdx, args.length === 1 ? args[0] : args)
+              }
+              documentRuntimeData={documentRuntimeData}
+            />
+          </div>
           );
         })}
       </div>
@@ -221,8 +243,14 @@ export default function EDocEditorCanvas({
   return (
     <div
       id="editor-canvas"
-      className="min-h-[500px] border border-dashed border-gray-400 p-4 rounded w-full  overflow-auto"
-      onClick={() => onComponentSelect(null)}
+      className={`min-h-[500px] p-4 rounded w-full overflow-auto ${
+        isViewerMode ? '' : 'border border-dashed border-gray-400'
+      }`}
+      onClick={() => {
+        if (!isViewerMode && typeof onComponentSelect === 'function') {
+          onComponentSelect(null);
+        }
+      }}
       style={{
         padding: documentRuntimeData?.padding ?? 24,
         backgroundColor: documentRuntimeData?.backgroundColor || '#ffffff',
