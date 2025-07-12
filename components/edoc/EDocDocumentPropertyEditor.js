@@ -15,9 +15,9 @@ export default function EDocDocumentPropertyEditor({ runtimeData, onChange }) {
       <label>여백 (padding, px):</label>
       <input
         type="number"
-        value={runtimeData.padding || 24}
+        value={runtimeData.padding ?? 24}
         onChange={(e) =>
-          updateProperty('padding', parseInt(e.target.value) || 24)
+          updateProperty('padding', parseInt(e.target.value) ?? 24)
         }
         className="w-full border border-gray-300 rounded p-2 mb-3"
       />

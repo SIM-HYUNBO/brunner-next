@@ -209,33 +209,79 @@ const [showDocumentListModal, setShowDocumentListModal] = useState(false);
     } else openModal(jResponse.error_message);
   };
 
-  const handleExportPdf = async () => {
-    const element = document.getElementById("editor-canvas");
-    if (!element) return alert("캔버스를 찾을 수 없습니다.");
+const handleExportPdf = async () => {
+  const element = document.getElementById("editor-canvas");
+  if (!element) return alert("캔버스를 찾을 수 없습니다.");
 
-    setLoading(true);
-    await waitForImagesLoaded(element);
-    const canvas = await html2canvas(element, { scale: 2, useCORS: true });
-    const imgData = canvas.toDataURL('image/png');
+  setLoading(true);
+  await waitForImagesLoaded(element);
+
+  try {
+    // scale 낮추기 (예: 1.5 또는 1)
+    const canvas = await html2canvas(element, { scale: 1.5, useCORS: false });
+
+    // 캔버스 크기 체크 (필요시 축소)
+    if (canvas.width > 5000 || canvas.height > 5000) {
+      console.warn("캔버스 크기 너무 큼:", canvas.width, canvas.height);
+      // 필요하면 여기서 canvas 크기 줄이기 구현 가능
+    }
+
+    // PNG 대신 JPEG 사용해보기 (용량과 호환성 향상)
+    const imgData = canvas.toDataURL('image/jpeg', 1.0);
+
     const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
     const pageWidth = pdf.internal.pageSize.getWidth();
     const pageHeight = pdf.internal.pageSize.getHeight();
-    const imgProps = pdf.getImageProperties(imgData);
+
+    const pxToMm = (px) => (px * 25.4) / 96;
+
+    const canvasWidth = canvas.width;
+    const canvasHeight = canvas.height;
+
     const pdfWidth = pageWidth;
-    const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
-    let position = 0;
-    if (pdfHeight < pageHeight) {
-      pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
-    } else {
-      while (position < pdfHeight) {
-        pdf.addImage(imgData, 'PNG', 0, -position, pdfWidth, pdfHeight);
-        position += pageHeight;
-        if (position < pdfHeight) pdf.addPage();
-      }
+    const scale = pdfWidth / pxToMm(canvasWidth);
+    const pdfHeight = pxToMm(canvasHeight) * scale;
+
+    let renderedHeight = 0;
+
+    while (renderedHeight < pdfHeight) {
+      const remainingHeight = pdfHeight - renderedHeight;
+      const renderHeight = Math.min(pageHeight, remainingHeight);
+      const sourceHeightPx = Math.floor((renderHeight / scale) * (96 / 25.4));
+
+      const pageCanvas = document.createElement('canvas');
+      pageCanvas.width = canvasWidth;
+      pageCanvas.height = sourceHeightPx;
+
+      const ctx = pageCanvas.getContext('2d');
+      ctx.drawImage(
+        canvas,
+        0,
+        Math.floor(renderedHeight / scale * (96 / 25.4)),
+        canvasWidth,
+        sourceHeightPx,
+        0,
+        0,
+        canvasWidth,
+        sourceHeightPx
+      );
+
+      const pageImgData = pageCanvas.toDataURL('image/jpeg', 1.0);
+
+      if (renderedHeight > 0) pdf.addPage();
+      pdf.addImage(pageImgData, 'JPEG', 0, 0, pdfWidth, renderHeight);
+
+      renderedHeight += renderHeight;
     }
+
     pdf.save(`${documentData.title || 'document'}_${documentData.id}.pdf`);
+  } catch (error) {
+    console.error("PDF 변환 중 오류 발생:", error);
+    alert("PDF 변환 중 오류가 발생했습니다.");
+  } finally {
     setLoading(false);
-  };
+  }
+};
 
   const waitForImagesLoaded = async (container) => {
     const imgs = container.querySelectorAll("img");
