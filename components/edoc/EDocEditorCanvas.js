@@ -1,4 +1,4 @@
-`use strict`
+'use strict'
 
 import React, { useEffect } from 'react';
 import * as constants from '@/components/constants';
@@ -25,8 +25,8 @@ export default function EDocEditorCanvas({
     const handleKeyDown = (e) => {
       if (e.key === 'Escape') {
         if (!isViewerMode && typeof onComponentSelect === 'function') {
-              onComponentSelect(null);
-            }
+          onComponentSelect(null);
+        }
         if (document.activeElement instanceof HTMLElement) {
           document.activeElement.blur();
         }
@@ -36,14 +36,29 @@ export default function EDocEditorCanvas({
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [onComponentSelect]);
 
-  // forceNewLine === true 기준으로 행 나누기
+  // ✅ getPageDimensionsPx만 사용!
+  function getPageDimensionsPx(pageSize) {
+    switch (pageSize) {
+      case "A3":
+        return { width: 1123, height: 1587 }; // 297mm x 420mm @ 96dpi
+      case "Letter":
+        return { width: 816, height: 1056 }; // 8.5in x 11in @ 96dpi
+      case "A4":
+      default:
+        return { width: 794, height: 1123 }; // 210mm x 297mm @ 96dpi
+    }
+  }
+
+  const { width: pageWidthPx, height: pageHeightPx } = getPageDimensionsPx(
+    documentRuntimeData?.pageSize || "A4"
+  );
+
   const splitIntoRows = (comps) => {
     const rows = [];
     let currentRow = [];
 
     comps.forEach((comp, idx) => {
       const forceNewLine = comp.runtime_data?.forceNewLine ?? false;
-
       if (forceNewLine && currentRow.length > 0) {
         rows.push(currentRow);
         currentRow = [];
@@ -67,14 +82,12 @@ export default function EDocEditorCanvas({
       case constants.edoc.COMPONENT_TYPE_INPUT:
         newRuntimeData = InputComponent.getNewRuntimeData(component, newData);
         break;
-      case constants.edoc.COMPONENT_TYPE_TABLE: {
+      case constants.edoc.COMPONENT_TYPE_TABLE:
         newRuntimeData = TableComponent.getNewRuntimeData(component, newData);
         break;
-      }
-      case constants.edoc.COMPONENT_TYPE_CHECKLIST: {
+      case constants.edoc.COMPONENT_TYPE_CHECKLIST:
         newRuntimeData = CheckListComponent.getNewRuntimeData(component, newData);
         break;
-      }
       case constants.edoc.COMPONENT_TYPE_IMAGE:
         newRuntimeData = ImageComponent.getNewRuntimeData(component, newData);
         break;
@@ -87,27 +100,23 @@ export default function EDocEditorCanvas({
       runtime_data: newRuntimeData,
     };
 
-    // forceNewLine 변경 시 줄 이동 처리 (이전 행 우측으로 붙이기)
     const wasNewLine = currentData.forceNewLine === true;
     const isNewLine = newRuntimeData.forceNewLine === true;
 
     if (wasNewLine && !isNewLine) {
       const rows = splitIntoRows(components);
       const currentRowIdx = rows.findIndex((row) => row.includes(componentIdx));
-
       if (currentRowIdx > 0) {
         const prevRow = rows[currentRowIdx - 1];
         const prevRowWidth = prevRow.reduce((sum, i) => {
           return sum + parseInt(components[i].runtime_data?.width ?? 100);
         }, 0);
         const currWidth = parseInt(newRuntimeData.width ?? 100);
-
         if (prevRowWidth + currWidth <= 100) {
           const newList = [...components];
           newList.splice(componentIdx, 1);
           const insertPos = prevRow[prevRow.length - 1] + 1;
           newList.splice(insertPos, 0, updatedComponent);
-
           if (typeof onUpdateComponent === 'function') {
             onUpdateComponent(newList[insertPos]);
           }
@@ -128,144 +137,114 @@ export default function EDocEditorCanvas({
   };
 
   const renderComponents = () => {
-  // 컴포넌트 리스트 복사 및 첫 컴포넌트 forceNewLine 강제 적용
-  const comps = components.length > 0
-    ? [
-        {
-          ...components[0],
-          runtime_data: {
-            ...components[0].runtime_data,
-            forceNewLine: true,
+    const comps = components.length > 0
+      ? [
+          {
+            ...components[0],
+            runtime_data: {
+              ...components[0].runtime_data,
+              forceNewLine: true,
+            },
           },
-        },
-        ...components.slice(1),
-      ]
-    : [];
+          ...components.slice(1),
+        ]
+      : [];
 
-  const rows = splitIntoRows(comps);
+    const rows = splitIntoRows(comps);
 
-  return rows.map((row, rowIdx) => {
-    // 행 전체 정렬은 첫 번째 forceNewLine 컴포넌트의 positionAlign 사용
-    const firstCompInRow = comps[row[0]];
-    const rowAlign = firstCompInRow.runtime_data?.positionAlign || documentRuntimeData?.positionAlign || 'left';
-    const justifyContent = justifyMap[rowAlign] || 'flex-start';
+    return rows.map((row, rowIdx) => {
+      const firstCompInRow = comps[row[0]];
+      const rowAlign = firstCompInRow.runtime_data?.positionAlign || documentRuntimeData?.positionAlign || 'left';
+      const justifyContent = justifyMap[rowAlign] || 'flex-start';
 
-    return (
-      <div
-        key={rowIdx}
-        className="flex w-full mb-2 gap-2"
-        style={{
-        minWidth: "800px",    // 문서 최소 폭 (원하는 값)
-        overflow: "visible",  // 내부 요소가 나가면 부모가 스크롤되도록
-        justifyContent: justifyContent, // 👉 이거 추가!
-      }}
-      >
-        {row.map((compIdx, idx) => {
-          const comp = comps[compIdx];
-          const forceNewLine = comp.runtime_data?.forceNewLine ?? false;
+      return (
+        <div
+          key={rowIdx}
+          className="flex mb-2 gap-2"
+          style={{
+            maxWidth: `calc(${pageWidthPx}px - ${documentRuntimeData?.padding ?? 24 * 2}px)`,
+            justifyContent: justifyContent,
+            overflow: "hidden",
+          }}
+        >
+          {row.map((compIdx, idx) => {
+            const comp = comps[compIdx];
+            const forceNewLine = comp.runtime_data?.forceNewLine ?? false;
+            const widthRaw = comp.runtime_data?.width;
+            const componentWidth = typeof widthRaw === 'string' ? widthRaw : `${parseInt(widthRaw ?? 100)}%`;
 
-          const widthRaw = comp.runtime_data?.width;
-          const componentWidth =
-            typeof widthRaw === 'string' ? widthRaw : `${parseInt(widthRaw ?? 100)}%`;
+            const style = {
+              width: componentWidth,
+              marginLeft: idx === 0 ? 0 : forceNewLine ? 0 : '4px',
+              flexGrow: 0,
+              flexShrink: 0,
+            };
 
-          const style = {
-            width: componentWidth,
-            marginLeft: idx === 0 ? 0 : forceNewLine ? 0 : '4px',
-            flexGrow: 0,
-            flexShrink: 0,
-          };
-
-          return (
-          <div
-              key={compIdx}
-              className={`relative group p-1 rounded ${
-                isViewerMode ? ''
-                  : selectedComponentId === compIdx
-                    ? 'border-2 border-blue-500'
-                    : 'border border-transparent hover:border-gray-300'
-              }`}
-              style={style}
-            >
-            {/* 툴버튼 */}
-            {!isViewerMode && (
-            <div className="absolute -left-8 top-1/2 transform -translate-y-1/2 flex flex-col space-y-1 opacity-0 group-hover:opacity-100 transition">
-              <button
-                className="text-xs bg-white border rounded shadow px-1 hover:bg-gray-100 disabled:opacity-30"
-                onClick={() => onMoveUp(compIdx)}
-                disabled={compIdx === 0}
-                title="위로 이동"
+            return (
+              <div
+                key={compIdx}
+                className={`relative group p-1 rounded ${
+                  isViewerMode ? ''
+                    : selectedComponentId === compIdx
+                      ? 'border-2 border-blue-500'
+                      : 'border border-transparent hover:border-gray-300'
+                }`}
+                style={style}
               >
-                ↑
-              </button>
-              <button
-                className="text-xs bg-white border rounded shadow px-1 hover:bg-gray-100 disabled:opacity-30"
-                onClick={() => onMoveDown(compIdx)}
-                disabled={compIdx === comps.length - 1}
-                title="아래로 이동"
-              >
-                ↓
-              </button>
-              <button
-                onClick={() => {
-                  if (typeof onDeleteComponent === 'function') {
-                    onDeleteComponent(compIdx);
+                {!isViewerMode && (
+                  <div className="absolute -left-8 top-1/2 transform -translate-y-1/2 flex flex-col space-y-1 opacity-0 group-hover:opacity-100 transition">
+                    <button onClick={() => onMoveUp(compIdx)} disabled={compIdx === 0}>↑</button>
+                    <button onClick={() => onMoveDown(compIdx)} disabled={compIdx === comps.length - 1}>↓</button>
+                    <button onClick={() => typeof onDeleteComponent === 'function' && onDeleteComponent(compIdx)}>🗑</button>
+                  </div>
+                )}
+                <DocComponentRenderer
+                  component={comp}
+                  isSelected={!isViewerMode && selectedComponentId === compIdx}
+                  onSelect={() => !isViewerMode && typeof onComponentSelect === 'function' && onComponentSelect(compIdx)}
+                  onRuntimeDataChange={(...args) =>
+                    updateRuntimeData(compIdx, args.length === 1 ? args[0] : args)
                   }
-                }}
-                disabled={selectedComponentId === null}
-                title="삭제"
-              >
-                🗑
-              </button>
-            </div>
-            )}
-              
-            <DocComponentRenderer
-              component={comp}
-              isSelected={!isViewerMode && selectedComponentId === compIdx}
-              onSelect={() => { 
-                if (!isViewerMode && typeof onComponentSelect === 'function') {
-                  onComponentSelect(compIdx);
-                }
-              }}
-              onRuntimeDataChange={(...args) =>
-                updateRuntimeData(compIdx, args.length === 1 ? args[0] : args)
-              }
-              documentRuntimeData={documentRuntimeData}
-            />
-          </div>
-          );
-        })}
-      </div>
-    );
-  });
-};
+                  documentRuntimeData={documentRuntimeData}
+                />
+              </div>
+            );
+          })}
+        </div>
+      );
+    });
+  };
+
+  const paddingPx = documentRuntimeData?.padding ?? 24;
 
   return (
-    <div
-      id="editor-canvas"
-      className={`min-h-[500px] p-4 rounded w-full overflow-auto ${
-        isViewerMode ? '' : 'border border-dashed border-gray-400'
-      }`}
-      onClick={() => {
-        if (!isViewerMode && typeof onComponentSelect === 'function') {
-          onComponentSelect(null);
-        }
-      }}
-      style={{
-        padding: documentRuntimeData?.padding ?? 24,
-        backgroundColor: documentRuntimeData?.backgroundColor || '#ffffff',
-        display: 'flex',
-        flexDirection: 'column',
-        gap: '1rem',
-      }}
-    >
-      {components?.length === 0 ? (
-        <p className="text-gray-500 text-center mt-20">
-          좌측에서 컴포넌트를 추가하세요.
-        </p>
-      ) : (
-        renderComponents()
-      )}
+    <div className="overflow-auto flex justify-center p-8 bg-gray-100">
+      <div
+        id="editor-canvas"
+        className="relative border-2 border-dashed border-gray-400 bg-white"
+        style={{
+          width: `${pageWidthPx}px`,
+          minHeight: `${pageHeightPx}px`,
+          padding: `${documentRuntimeData?.padding ?? 48}px`, // ← 여기!
+          display: "flex",
+          flexDirection: "column",
+          gap: "1rem",
+          boxSizing: "border-box", // ← 기본값이지만 안전하게 명시
+        }}
+        onClick={() => {
+          if (!isViewerMode && typeof onComponentSelect === 'function') {
+            onComponentSelect(null);
+          }
+        }}
+      >
+        {components?.length === 0 ? (
+          <p className="text-gray-500 text-center mt-20">
+            좌측에서 컴포넌트를 추가하세요.
+          </p>
+        ) : (
+          renderComponents()
+        )}
+      </div>
     </div>
   );
 }
