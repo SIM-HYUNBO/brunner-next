@@ -5,6 +5,15 @@ import React from 'react';
 export const initDefaultRuntimeData = (defaultRuntimeData) => {
   defaultRuntimeData.src = "";
   defaultRuntimeData.positionAlign = "left";
+  
+  // font 관련 기본 설정
+  defaultRuntimeData.fontFamily = "Arial";
+  defaultRuntimeData.fontSize = 12;
+  defaultRuntimeData.underline = false;
+  defaultRuntimeData.fontColor =  "#000000";
+  defaultRuntimeData.backgroundColor = "#ffffff";
+  defaultRuntimeData.fontWeight = "normal";
+    
   return defaultRuntimeData;
 }
 

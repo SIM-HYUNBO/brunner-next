@@ -7,6 +7,15 @@ export const initDefaultRuntimeData = (defaultRuntimeData) => {
   defaultRuntimeData.placeholder = "값을 입력하세요";
   defaultRuntimeData.textAlign = "left";
   defaultRuntimeData.positionAlign = "left";
+  
+  // font 관련 기본 설정
+  defaultRuntimeData.fontFamily = "Arial";
+  defaultRuntimeData.fontSize = 12;
+  defaultRuntimeData.underline = false;
+  defaultRuntimeData.fontColor =  "#000000";
+  defaultRuntimeData.backgroundColor = "#ffffff";
+  defaultRuntimeData.fontWeight = "normal";
+    
   return defaultRuntimeData;
 }
 
