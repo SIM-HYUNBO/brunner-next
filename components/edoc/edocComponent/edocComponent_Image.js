@@ -22,26 +22,47 @@ export const getNewRuntimeData = (component, key, value) => {
 }
 
 export function renderProperty(component, updateRuntimeData, {
-  renderWidthProperty, 
-  renderForceNewLineProperty, 
-  renderPositionAlignProperty}
-) {
-  const renderComponentProperty = (component) => {
-    return (
+  renderWidthProperty,
+  renderForceNewLineProperty,
+  renderPositionAlignProperty
+}) {
+
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      updateRuntimeData("src", reader.result); // Base64 저장!
+    };
+    reader.readAsDataURL(file);
+  };
+
+  return (
     <div>
-      <label>Binding Key:</label>
+      <label className="block mb-1">Binding Key:</label>
       <input
         type="text"
         value={component.runtime_data?.bindingKey || ''}
         onChange={(e) => updateRuntimeData("bindingKey", e.target.value)}
         className="w-full border border-gray-300 rounded p-2 mb-2"
-      />          
-      <label>이미지 URL:</label>
+      />
+
+      <label className="block mb-1">이미지 URL:</label>
       <input
         type="text"
         value={component.runtime_data?.src || ''}
-        onChange={(e) => updateRuntimeData("src", e.target.value)}
-        className="w-full border border-gray-300 rounded p-2 mb-2"
+        readOnly // 👉 직접 입력 불가!
+        placeholder="파일을 선택하면 자동으로 채워집니다"
+        className="w-full border border-gray-300 rounded p-2 mb-2 bg-gray-100 cursor-not-allowed"
+      />
+
+      <label className="block mb-1">로컬 이미지 선택:</label>
+      <input
+        type="file"
+        accept="image/*"
+        onChange={handleFileChange}
+        className="w-full mb-4"
       />
 
       {renderWidthProperty()}
@@ -49,9 +70,6 @@ export function renderProperty(component, updateRuntimeData, {
       {renderPositionAlignProperty()}
     </div>
   );
-  }
-
-  return renderComponentProperty(component);
 }
 
 export const renderComponent = (component, handleComponentClick, onRuntimeDataChange, {
