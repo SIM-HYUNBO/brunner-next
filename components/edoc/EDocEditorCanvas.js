@@ -104,7 +104,7 @@ export default function EDocEditorCanvas({
     };
 
     if (typeof onUpdateComponent === 'function') {
-      onUpdateComponent(componentIdx, updatedComponent);
+      onUpdateComponent(updatedComponent);
     }
   };
 
