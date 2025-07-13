@@ -74,14 +74,31 @@ export function renderProperty(component, updateRuntimeData, {
   return renderComponentProperty(component);
 }
 
-export const renderComponent = (component, handleComponentClick, onRuntimeDataChange, {
-  selectedClass, 
-  alignmentClass, 
-  textAlign}) => {
+export const renderComponent = (
+  component,
+  handleComponentClick,
+  onRuntimeDataChange,
+  { selectedClass, alignmentClass, textAlign }
+) => {
+  const {
+    fontFamily,
+    fontSize,
+    fontWeight,
+    underline,
+    fontColor,
+    backgroundColor,
+  } = component.runtime_data || {};
+
   const style = {
-    width: '100%',
-    height: component.runtime_data?.height || 'auto',
+    width: "100%",
+    height: component.runtime_data?.height || "auto",
     textAlign, // 텍스트 정렬 적용
+    fontFamily: fontFamily || "Arial",
+    fontSize: fontSize ? `${fontSize}px` : "12px",
+    fontWeight: fontWeight || "normal",
+    textDecoration: underline ? "underline" : "none",
+    color: fontColor || "#000000",
+    backgroundColor: backgroundColor || "transparent",
   };
 
   return (
@@ -90,7 +107,7 @@ export const renderComponent = (component, handleComponentClick, onRuntimeDataCh
       style={style}
       onClick={handleComponentClick}
     >
-      {(component.runtime_data?.content || '').split('\n').map((line, idx) => (
+      {(component.runtime_data?.content || "").split("\n").map((line, idx) => (
         <React.Fragment key={idx}>
           {line}
           <br />
@@ -98,4 +115,4 @@ export const renderComponent = (component, handleComponentClick, onRuntimeDataCh
       ))}
     </p>
   );
-}
+};

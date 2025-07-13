@@ -73,25 +73,32 @@ export function renderProperty(component, updateRuntimeData, {
   return renderComponentProperty(component);
 }
 
-export const renderComponent = (component, handleComponentClick, onRuntimeDataChange, {
-  selectedClass, 
-  alignmentClass, 
-  textAlign}) => {
+export const renderComponent = (
+  component,
+  handleComponentClick,
+  onRuntimeDataChange,
+  { selectedClass, alignmentClass, textAlign }
+) => {
   const style = {
     width: '100%',
     height: component.runtime_data?.height || 'auto',
-    textAlign, // 텍스트 정렬 적용
+    textAlign,
+    fontFamily: component.runtime_data?.fontFamily || 'Arial',
+    fontSize: component.runtime_data?.fontSize ? `${component.runtime_data.fontSize}px` : '14px',
+    fontWeight: component.runtime_data?.fontWeight || 'normal',
+    color: component.runtime_data?.fontColor || '#000000',
+    backgroundColor: component.runtime_data?.backgroundColor || 'transparent',
   };
 
   return (
     <input
       type="text"
       className={`${selectedClass} ${alignmentClass} h-8 cursor-pointer`}
-      style={{ ...style }}
+      style={style}
       value={component.runtime_data?.value || ''}
       placeholder={component.runtime_data?.placeholder || ''}
       onClick={handleComponentClick}
       onChange={(e) => onRuntimeDataChange(e.target.value)}
     />
   );
-}
+};

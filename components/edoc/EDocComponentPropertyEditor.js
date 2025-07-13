@@ -16,15 +16,24 @@ export default function EDocComponentPropertyEditor({ component, handleUpdateCom
   if (!component) return <p>컴포넌트를 선택하세요.</p>;
 
   const updateRuntimeData = (key, value) => {
-    const newRuntimeData = {
-      ...component.runtime_data,
-      [key]: value,
-    };
+    if(key === 'runtime_data'){
+      // 전체 runtime_data 교체
+      handleUpdateComponent({
+        ...component,
+        runtime_data: value,
+      });
+    }
+    else{
+       const newRuntimeData = {
+          ...component.runtime_data,
+          [key]: value,
+        };
 
-    handleUpdateComponent({
-      ...component,
-      runtime_data: newRuntimeData,
-    });
+        handleUpdateComponent({
+          ...component,
+          runtime_data: newRuntimeData,
+        });   
+    }
   };
 
   const renderWidthProperty = () => (
@@ -57,7 +66,7 @@ export default function EDocComponentPropertyEditor({ component, handleUpdateCom
     <>
       <label>정렬:</label>
       <select
-        value={component.runtime_data?.positionAlign || 'left'}qk
+        value={component.runtime_data?.positionAlign || 'left'}
         onChange={(e) => updateRuntimeData("positionAlign", e.target.value)}
         className="w-full border border-gray-300 rounded p-2 mb-2"
       >
