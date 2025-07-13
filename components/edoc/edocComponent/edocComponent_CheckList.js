@@ -1,6 +1,7 @@
 `use strict`
 
 import React from 'react';
+import EDocTextStyleEditor from "@/components/edoc/EDocTextStyleEditor";
 
 export const initDefaultRuntimeData = (defaultRuntimeData) => {
   
@@ -8,6 +9,14 @@ export const initDefaultRuntimeData = (defaultRuntimeData) => {
   defaultRuntimeData.items = Array.from({ length: 3 }, (_, i) => ({ label: `항목 ${i + 1}`, checked: false}));
   defaultRuntimeData.positionAlign = "left";
   
+  // font 관련 기본 설정
+  defaultRuntimeData.fontFamily = "Arial";
+  defaultRuntimeData.fontSize = 12;
+  defaultRuntimeData.underline = false;
+  defaultRuntimeData.fontColor =  "#000000";
+  defaultRuntimeData.backgroundColor = "#ffffff";
+  defaultRuntimeData.fontWeight = "normal";
+
   return defaultRuntimeData;
 }
 
@@ -68,6 +77,20 @@ export function renderProperty(component, updateRuntimeData, {
         {renderForceNewLineProperty()}
         {renderPositionAlignProperty()}
 
+        <EDocTextStyleEditor
+          fontFamily={component.runtime_data?.fontFamily || 'Arial'}
+          fontSize={component.runtime_data?.fontSize || 12}
+          fontWeight={component.runtime_data?.fontWeight || 'normal'}
+          underline={component.runtime_data?.underline || false}
+          fontColor={component.runtime_data?.fontColor || '#000000'}
+          backgroundColor={component.runtime_data?.backgroundColor || '#ffffff'}
+          onChange={(updatedProps) => {
+            Object.entries(updatedProps).forEach(([key, value]) => {
+              updateRuntimeData(key, value);
+            });
+          }}
+        />
+
         <label>내용 정렬:</label>
         <select
           value={component.runtime_data?.textAlign || 'left'}
@@ -117,15 +140,28 @@ export function renderProperty(component, updateRuntimeData, {
   return renderComponentProperty(component);
 }
 
-export const renderComponent = (component, handleComponentClick, onRuntimeDataChange, {
-  selectedClass, 
-  alignmentClass, 
-  textAlign}) => {
-  
+export const renderComponent = (
+  component,
+  handleComponentClick,
+  onRuntimeDataChange,
+  {
+    selectedClass,
+    alignmentClass,
+    textAlign
+  }
+) => {
   const style = {
     width: '100%',
     height: component.runtime_data?.height || 'auto',
-    textAlign, // 텍스트 정렬 적용
+    textAlign, // 외부에서 전달되는 textAlign
+    fontFamily: component.runtime_data?.fontFamily || 'inherit',
+    fontSize: component.runtime_data?.fontSize
+      ? `${component.runtime_data.fontSize}px`
+      : 'inherit',
+    fontWeight: component.runtime_data?.fontWeight || 'normal',
+    color: component.runtime_data?.fontColor || '#000000',
+    backgroundColor: component.runtime_data?.backgroundColor || 'transparent',
+    textDecoration: component.runtime_data?.underline ? 'underline' : 'none',
   };
 
   const justifyMap = {
@@ -134,7 +170,7 @@ export const renderComponent = (component, handleComponentClick, onRuntimeDataCh
     right: 'flex-end',
   };
 
-  const justifyContent = justifyMap[ component.runtime_data?.textAlign || 'left'];
+  const justifyContent = justifyMap[component.runtime_data?.textAlign || 'left'];
 
   return (
     <div
@@ -150,16 +186,33 @@ export const renderComponent = (component, handleComponentClick, onRuntimeDataCh
         <label
           key={idx}
           className="flex items-center space-x-2 mb-1"
-          style={{ justifyContent }}
+          style={{
+            justifyContent,
+            fontFamily: style.fontFamily,
+            fontSize: style.fontSize,
+            fontWeight: style.fontWeight,
+            color: style.color,
+            textDecoration: style.textDecoration,
+          }}
         >
           <input
             type="checkbox"
             checked={item.checked}
             onChange={(e) => onRuntimeDataChange([idx, e.target.checked])}
           />
-          <span>{item.label || `항목 ${idx + 1}`}</span>
+          <span
+            style={{
+              fontFamily: style.fontFamily,
+              fontSize: style.fontSize,
+              fontWeight: style.fontWeight,
+              color: style.color,
+              textDecoration: style.textDecoration,
+            }}
+          >
+            {item.label || `항목 ${idx + 1}`}
+          </span>
         </label>
       ))}
     </div>
   );
-}
+};
