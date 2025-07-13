@@ -64,14 +64,7 @@ export default function EDocDesignerContainer({ documentId }) {
       pageSize: "A4"
     }
   });
-
-  const [componentTemplates, setComponentTemplates] = useState([]);
-  const [selectedComponentId, setSelectedComponentId] = useState(null);
-  const selectedComponent = selectedComponentId !== null ? documentData.components[selectedComponentId] : null;
-
-  const [documentList, setDocumentList] = useState([]);
-  const [showDocumentListModal, setShowDocumentListModal] = useState(false);
-
+  
   const [pages, setPages] = useState([
     {
       id: 'page-1',
@@ -82,8 +75,13 @@ export default function EDocDesignerContainer({ documentId }) {
       }
     }
   ]);
-
   const [currentPageIdx, setCurrentPageIdx] = useState(0);
+
+  const [componentTemplates, setComponentTemplates] = useState([]);
+  const [selectedComponentId, setSelectedComponentId] = useState(null);
+  
+  const [documentList, setDocumentList] = useState([]);
+  const [showDocumentListModal, setShowDocumentListModal] = useState(false);
 
   const handleAddPage = () => {
     setPages((prevPages) => {
@@ -172,11 +170,11 @@ export default function EDocDesignerContainer({ documentId }) {
   const handleNewDocument = () => {
     if (window.confirm('현재 작업 중인 문서가 저장되지 않을 수 있습니다. 새 문서를 생성하시겠습니까?')) {
       const title = window.prompt('새문서 이름을 입력하세요');
+
       setDocumentData({
         id: null,
         title: title || 'new document',
         description: '신규 기록서',
-        components: [],
         runtime_data: {
           padding: 24,
           alignment: "center",
@@ -184,6 +182,24 @@ export default function EDocDesignerContainer({ documentId }) {
           pageSize: "A4"
         }
       });
+
+      // 📌 실제 렌더링 상태 pages도 초기화!
+      setPages([
+        {
+          id: 'page-1',
+          components: [],
+          runtime_data: {
+            pageSize: 'A4',
+            padding: 24,
+          },
+        },
+      ]);
+
+      // 📌 현재 페이지 인덱스도 초기화!
+      setCurrentPageIdx(0);
+
+      // 선택된 컴포넌트도 초기화!
+      setSelectedComponentId(null);
     }
   };
 
@@ -204,39 +220,80 @@ export default function EDocDesignerContainer({ documentId }) {
     } else openModal(jResponse.error_message);
   };
 
-  const openDocumentById = async (id) => {
-    const jRequest = {
-      commandName: constants.commands.COMMAND_EDOC_DOCUMENT_SELECT_ONE,
-      systemCode: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE,
-      userId: userInfo.getLoginUserId(),
-      documentId: id
-    };
-    setLoading(true);
-    const jResponse = await RequestServer("POST", jRequest);
-    setLoading(false);
-
-    if (jResponse.error_code === 0) {
-      setDocumentData(jResponse.documentData || {});
-    } else openModal(jResponse.error_message);
+const openDocumentById = async (id) => {
+  const jRequest = {
+    commandName: constants.commands.COMMAND_EDOC_DOCUMENT_SELECT_ONE,
+    systemCode: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE,
+    userId: userInfo.getLoginUserId(),
+    documentId: id,
   };
 
-  const handleSaveDocument = async () => {
-    const jRequest = {
-      commandName: constants.commands.COMMAND_EDOC_DOCUMENT_UPSERT_ONE,
-      systemCode: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE,
-      userId: userInfo.getLoginUserId(),
-      documentData: documentData
-    };
+  setLoading(true);
+  const jResponse = await RequestServer("POST", jRequest);
+  setLoading(false);
 
-    setLoading(true);
-    const jResponse = await RequestServer("POST", jRequest);
-    setLoading(false);
+  if (jResponse.error_code === 0) {
+    const loadedDocument = jResponse.documentData || {};
 
-    if (jResponse.error_code === 0) {
-      openModal(constants.messages.MESSAGE_SUCCESS_SAVED);
-      setDocumentData(jResponse.documentData);
-    } else openModal(jResponse.error_message);
+    setDocumentData(loadedDocument);
+
+    // 📌 실제 pages 상태도 DB에서 가져온 components로 재구성!
+    setPages([
+      {
+        id: 'page-1',
+        components: loadedDocument.components || [],
+        runtime_data: {
+          pageSize: loadedDocument.runtime_data?.pageSize || 'A4',
+          padding: loadedDocument.runtime_data?.padding || 24,
+        },
+      },
+    ]);
+
+    setCurrentPageIdx(0);
+    setSelectedComponentId(null);
+  } else openModal(jResponse.error_message);
+};
+
+const handleSaveDocument = async () => {
+  const jRequest = {
+    commandName: constants.commands.COMMAND_EDOC_DOCUMENT_UPSERT_ONE,
+    systemCode: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE,
+    userId: userInfo.getLoginUserId(),
+    documentData: {
+      ...documentData,
+      // 저장할 때 pages의 첫 페이지 components로 맞춤!
+      components: pages[currentPageIdx]?.components || [],
+    },
   };
+
+  setLoading(true);
+  const jResponse = await RequestServer("POST", jRequest);
+  setLoading(false);
+
+  if (jResponse.error_code === 0) {
+    openModal(constants.messages.MESSAGE_SUCCESS_SAVED);
+
+    const savedDoc = jResponse.documentData;
+
+    setDocumentData(savedDoc);
+
+    // 저장 후에도 다시 pages 재동기화!
+    setPages([
+      {
+        id: 'page-1',
+        components: savedDoc.components || [],
+        runtime_data: {
+          pageSize: savedDoc.runtime_data?.pageSize || 'A4',
+          padding: savedDoc.runtime_data?.padding || 24,
+        },
+      },
+    ]);
+
+    setCurrentPageIdx(0);
+    setSelectedComponentId(null);
+
+  } else openModal(jResponse.error_message);
+};
 
   const handleDeleteDocument = async () => {
     const result = await openModal(constants.messages.MESSAGE_DELETE_ITEM);
@@ -358,42 +415,52 @@ export default function EDocDesignerContainer({ documentId }) {
   };
 
   const handleMoveComponentUp = () => {
-    if (selectedComponentId === null || selectedComponentId <= 0) return;
-    setDocumentData(prev => {
-      const components = [...prev.components];
-      [components[selectedComponentId - 1], components[selectedComponentId]] = [components[selectedComponentId], components[selectedComponentId - 1]];
-      return { ...prev, components };
-    });
-    setSelectedComponentId(prev => prev - 1);
-  }
+  if (selectedComponentId === null || selectedComponentId <= 0) return;
+
+  setPages(prevPages => {
+    const newPages = [...prevPages];
+    const comps = [...newPages[currentPageIdx].components];
+    [comps[selectedComponentId - 1], comps[selectedComponentId]] = [comps[selectedComponentId], comps[selectedComponentId - 1]];
+    newPages[currentPageIdx].components = comps;
+    return newPages;
+  });
+  setSelectedComponentId(prev => prev - 1);
+}
 
   const handleMoveComponentDown = () => {
-    if (selectedComponentId === null || selectedComponentId >= documentData.components.length - 1) return;
-    setDocumentData(prev => {
-      const components = [...prev.components];
-      [components[selectedComponentId + 1], components[selectedComponentId]] = [components[selectedComponentId], components[selectedComponentId + 1]];
-      return { ...prev, components };
-    });
-    setSelectedComponentId(prev => prev + 1);
-  }
+  const comps = pages[currentPageIdx].components;
+  if (selectedComponentId === null || selectedComponentId >= comps.length - 1) return;
 
-  const handleDeleteComponent = () => {
-    if (selectedComponentId === null) return;
-    setDocumentData((prev) => {
-      const components = [...prev.components];
-      components.splice(selectedComponentId, 1);
-      return { ...prev, components };
-    });
-    setSelectedComponentId(null);
-  }
+  setPages(prevPages => {
+    const newPages = [...prevPages];
+    const comps = [...newPages[currentPageIdx].components];
+    [comps[selectedComponentId + 1], comps[selectedComponentId]] = [comps[selectedComponentId], comps[selectedComponentId + 1]];
+    newPages[currentPageIdx].components = comps;
+    return newPages;
+  });
+  setSelectedComponentId(prev => prev + 1);
+};
+
+ const handleDeleteComponent = () => {
+  if (selectedComponentId === null) return;
+
+  setPages(prevPages => {
+    const newPages = [...prevPages];
+    const comps = [...newPages[currentPageIdx].components];
+    comps.splice(selectedComponentId, 1);
+    newPages[currentPageIdx].components = comps;
+    return newPages;
+  });
+  setSelectedComponentId(null);
+};
 
   const handleUpdateComponent = (updatedComponent) => {
     if (selectedComponentId === null) return;
 
-    setDocumentData((prev) => {
-      const newComponents = [...prev.components];
-      newComponents[selectedComponentId] = updatedComponent;
-      return { ...prev, components: newComponents };
+    setPages(prevPages => {
+      const newPages = [...prevPages];
+      newPages[currentPageIdx].components[selectedComponentId] = updatedComponent;
+      return newPages;
     });
   };
 
@@ -505,9 +572,9 @@ function EDocDocumentListModal({ documents, onSelect, onClose }) {
 
       <aside className="w-80 bg-white border-l border-gray-300 p-4 hidden md:block">
         <h2 className="text-lg font-semibold mb-4">속성창</h2>
-        {selectedComponent ? (
+        {pages[currentPageIdx].components[selectedComponentId] ? (
           <EDocComponentPropertyEditor
-            component={selectedComponent}
+            component={pages[currentPageIdx].components[selectedComponentId]}
             handleUpdateComponent={handleUpdateComponent}
           />
         ) : (

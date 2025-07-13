@@ -8,13 +8,8 @@ export const initDefaultRuntimeData = (defaultRuntimeData) => {
   return defaultRuntimeData;
 }
 
-export const getNewRuntimeData = (component, newData) => {
-  const currentData = component.runtime_data || {};
-  let newRuntimeData = { ...currentData };
-
-  newRuntimeData.src = newData;
-
-  return newRuntimeData;
+export const getNewRuntimeData = (component, key, value) => {
+  return { ...component.runtime_data, [key]: value };
 }
 
 export function renderProperty(component, updateRuntimeData, {

@@ -1,6 +1,7 @@
 `use strict`
 
 import React from 'react';
+import EDocTextStyleEditor from "@/components/edoc/EDocTextStyleEditor";
 
 export const initDefaultRuntimeData = (defaultRuntimeData) => {
   defaultRuntimeData.placeholder = "값을 입력하세요";
@@ -9,13 +10,8 @@ export const initDefaultRuntimeData = (defaultRuntimeData) => {
   return defaultRuntimeData;
 }
 
-export const getNewRuntimeData = (component, newData) => {
-  const currentData = component.runtime_data || {};
-  let newRuntimeData = { ...currentData };
-
-  newRuntimeData.value = newData;
-
-  return newRuntimeData;
+export const getNewRuntimeData = (component, key, value) => {
+  return { ...component.runtime_data, [key]: value };
 }
 
 export function renderProperty(component, updateRuntimeData, {
@@ -37,6 +33,20 @@ export function renderProperty(component, updateRuntimeData, {
         {renderWidthProperty()}
         {renderForceNewLineProperty()}
         {renderPositionAlignProperty()}
+
+        <EDocTextStyleEditor
+          fontFamily={component.runtime_data?.fontFamily || 'Arial'}
+          fontSize={component.runtime_data?.fontSize || 12}
+          fontWeight={component.runtime_data?.fontWeight || 'normal'}
+          underline={component.runtime_data?.underline || false}
+          fontColor={component.runtime_data?.fontColor || '#000000'}
+          backgroundColor={component.runtime_data?.backgroundColor || '#ffffff'}
+          onChange={(updatedProps) => {
+            Object.entries(updatedProps).forEach(([key, value]) => {
+              updateRuntimeData(key, value);
+            });
+          }}
+        />
 
         <label>텍스트:</label>
         <input

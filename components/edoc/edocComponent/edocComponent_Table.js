@@ -1,6 +1,7 @@
 'use strict'
 
 import React from 'react';
+import EDocTextStyleEditor from "@/components/edoc/EDocTextStyleEditor";
 
 /**
  * 초기 RuntimeData 생성
@@ -70,6 +71,20 @@ export function renderProperty(component, updateRuntimeData, {
       {renderWidthProperty()}
       {renderForceNewLineProperty()}
       {renderPositionAlignProperty()}
+
+      <EDocTextStyleEditor
+        fontFamily={component.runtime_data?.fontFamily || 'Arial'}
+        fontSize={component.runtime_data?.fontSize || 12}
+        fontWeight={component.runtime_data?.fontWeight || 'normal'}
+        underline={component.runtime_data?.underline || false}
+        fontColor={component.runtime_data?.fontColor || '#000000'}
+        backgroundColor={component.runtime_data?.backgroundColor || '#ffffff'}
+        onChange={(updatedProps) => {
+          Object.entries(updatedProps).forEach(([key, value]) => {
+            updateRuntimeData(key, value);
+          });
+        }}
+      />      
 
       <label className="block mt-2 mb-1">행 수:</label>
       <input
