@@ -22,28 +22,7 @@ import * as TableComponent from "@/components/edoc/edocComponent/edocComponent_T
 import * as CheckListComponent from "@/components/edoc/edocComponent/edocComponent_CheckList";
 
 export default function EDocDesignerContainer({ documentId }) {
-  const { BrunnerMessageBox, openModal } = useModal();
-  const [loading, setLoading] = useState(false);
-
-  const [documentData, setDocumentData] = useState({
-    id: documentId || null,
-    title: 'new document',
-    description: '신규 기록서',
-    components: [],
-    runtime_data: {
-      padding: 24,
-      alignment: "center",
-      backgroundColor: "#ffffff",
-      pageSize: "A4"
-    }
-  });
-
-  const [componentTemplates, setComponentTemplates] = useState([]);
-  const [selectedComponentId, setSelectedComponentId] = useState(null);
-  const selectedComponent = selectedComponentId !== null ? documentData.components[selectedComponentId] : null;
-
-const [documentList, setDocumentList] = useState([]);
-const [showDocumentListModal, setShowDocumentListModal] = useState(false);
+  const [isExportingPdf, setIsExportingPdf] = useState(false);
 
   useEffect(() => {
     async function fetchTemplates() {
@@ -69,6 +48,84 @@ const [showDocumentListModal, setShowDocumentListModal] = useState(false);
     }
   }, [documentId]);
 
+
+  const { BrunnerMessageBox, openModal } = useModal();
+  const [loading, setLoading] = useState(false);
+
+  const [documentData, setDocumentData] = useState({
+    id: documentId || null,
+    title: 'new document',
+    description: '신규 기록서',
+    components: [],
+    runtime_data: {
+      padding: 24,
+      alignment: "center",
+      backgroundColor: "#ffffff",
+      pageSize: "A4"
+    }
+  });
+
+  const [componentTemplates, setComponentTemplates] = useState([]);
+  const [selectedComponentId, setSelectedComponentId] = useState(null);
+  const selectedComponent = selectedComponentId !== null ? documentData.components[selectedComponentId] : null;
+
+  const [documentList, setDocumentList] = useState([]);
+  const [showDocumentListModal, setShowDocumentListModal] = useState(false);
+
+  const [pages, setPages] = useState([
+    {
+      id: 'page-1',
+      components: [],
+      runtime_data: {
+        pageSize: 'A4',
+        padding: 24,
+      }
+    }
+  ]);
+
+  const [currentPageIdx, setCurrentPageIdx] = useState(0);
+
+  const handleAddPage = () => {
+    setPages((prevPages) => {
+      const newPageId = `page-${prevPages.length + 1}`;
+      const newPage = {
+        id: newPageId,
+        components: [],
+        runtime_data: { pageSize: 'A4', padding: 24 }
+      };
+      return [...prevPages, newPage];
+    });
+    setCurrentPageIdx(pages.length); // 새 페이지로 이동
+  };
+
+  const handleDeleteCurrentPage = async () => {
+    if (pages.length === 1) {
+      openModal(constants.messages.MESSAGE_MINIUM_PAGE_COUNT);
+          return;
+    }
+
+    const confirm =await openModal(`The index ${currentPageIdx + 1}, ${constants.messages.MESSAGE_DELETE_SELECTED_PAGE}`);
+      if (!confirm) 
+        return;
+
+    setPages(prevPages => {
+      const newPages = [...prevPages];
+      newPages.splice(currentPageIdx, 1);
+
+      // 현재 페이지 idx 보정: 삭제 후 0으로 가거나 이전 페이지로 가기
+      const newCurrent = currentPageIdx > 0 ? currentPageIdx - 1 : 0;
+      setCurrentPageIdx(newCurrent);
+
+      return newPages;
+    });
+  };
+
+  const updatePageComponent = (pageIdx, componentIdx, updated) => {
+    const newPages = [...pages];
+    newPages[pageIdx].components[componentIdx] = updated;
+    setPages(newPages);
+  };
+
   const handleComponentSelect = (idx) => {
     setSelectedComponentId(idx);
   };
@@ -76,10 +133,10 @@ const [showDocumentListModal, setShowDocumentListModal] = useState(false);
   const handleAddComponent = (component) => {
     const baseComponent = { ...component };
     var defaultRuntimeData = {
-        width: 'auto', // 기본 폭 지정
-        height: '',
-        forceNewLine: true
-      };
+      width: 'auto', // 기본 폭 지정
+      height: '',
+      forceNewLine: true,
+    };
 
     switch (component.template_json.type) {
       case constants.edoc.COMPONENT_TYPE_TEXT:
@@ -101,10 +158,15 @@ const [showDocumentListModal, setShowDocumentListModal] = useState(false);
         break;
     }
 
-    setDocumentData((prev) => ({
-      ...prev,
-      components: [...prev.components, baseComponent],
-    }));
+    setPages((prevPages) => {
+      const newPages = [...prevPages];
+      // 현재 페이지 idx가 전역으로 관리되어야 하며, 여기선 currentPageIdx를 참조한다고 가정
+      newPages[currentPageIdx].components = [
+        ...newPages[currentPageIdx].components,
+        baseComponent,
+      ];
+      return newPages;
+    });
   };
 
   const handleNewDocument = () => {
@@ -125,22 +187,22 @@ const [showDocumentListModal, setShowDocumentListModal] = useState(false);
     }
   };
 
- const handleOpenDocument = async () => {
-  const jRequest = {
-    commandName: constants.commands.COMMAND_EDOC_DOCUMENT_SELECT_ALL,
-    systemCode: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE,
-    userId: userInfo.getLoginUserId(),
+  const handleOpenDocument = async () => {
+    const jRequest = {
+      commandName: constants.commands.COMMAND_EDOC_DOCUMENT_SELECT_ALL,
+      systemCode: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE,
+      userId: userInfo.getLoginUserId(),
+    };
+
+    setLoading(true);
+    const jResponse = await RequestServer("POST", jRequest);
+    setLoading(false);
+
+    if (jResponse.error_code === 0) {
+      setDocumentList(jResponse.documentList);
+      setShowDocumentListModal(true);
+    } else openModal(jResponse.error_message);
   };
-
-  setLoading(true);
-  const jResponse = await RequestServer("POST", jRequest);
-  setLoading(false);
-
-  if (jResponse.error_code === 0) {
-    setDocumentList(jResponse.documentList);
-    setShowDocumentListModal(true);
-  } else openModal(jResponse.error_message);
-};
 
   const openDocumentById = async (id) => {
     const jRequest = {
@@ -209,79 +271,78 @@ const [showDocumentListModal, setShowDocumentListModal] = useState(false);
     } else openModal(jResponse.error_message);
   };
 
-const handleExportPdf = async () => {
-  const element = document.getElementById("editor-canvas");
-  if (!element) return alert("캔버스를 찾을 수 없습니다.");
-
-  setLoading(true);
-  await waitForImagesLoaded(element);
-
-  try {
-    // scale 낮추기 (예: 1.5 또는 1)
-    const canvas = await html2canvas(element, { scale: 1.5, useCORS: false });
-
-    // 캔버스 크기 체크 (필요시 축소)
-    if (canvas.width > 5000 || canvas.height > 5000) {
-      console.warn("캔버스 크기 너무 큼:", canvas.width, canvas.height);
-      // 필요하면 여기서 canvas 크기 줄이기 구현 가능
-    }
-
-    // PNG 대신 JPEG 사용해보기 (용량과 호환성 향상)
-    const imgData = canvas.toDataURL('image/jpeg', 1.0);
-
+  const handleExportPdf = async () => {
+    setLoading(true);
+    setIsExportingPdf(true);
     const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+
+    const pxToMm = (px) => (px * 25.4) / 96;
     const pageWidth = pdf.internal.pageSize.getWidth();
     const pageHeight = pdf.internal.pageSize.getHeight();
 
-    const pxToMm = (px) => (px * 25.4) / 96;
+    try {
+      for (let i = 0; i < pages.length; i++) {
+        const page = pages[i];
+        const element = document.getElementById(`editor-canvas-${page.id}`);
+        if (!element) {
+          console.warn(`페이지 ${i + 1} 캔버스를 찾을 수 없습니다.`);
+          continue;
+        }
 
-    const canvasWidth = canvas.width;
-    const canvasHeight = canvas.height;
+        await waitForImagesLoaded(element);
 
-    const pdfWidth = pageWidth;
-    const scale = pdfWidth / pxToMm(canvasWidth);
-    const pdfHeight = pxToMm(canvasHeight) * scale;
+        const canvas = await html2canvas(element, { scale: 1.5, useCORS: false });
+        const imgData = canvas.toDataURL('image/jpeg', 1.0);
 
-    let renderedHeight = 0;
+        const canvasWidth = canvas.width;
+        const canvasHeight = canvas.height;
 
-    while (renderedHeight < pdfHeight) {
-      const remainingHeight = pdfHeight - renderedHeight;
-      const renderHeight = Math.min(pageHeight, remainingHeight);
-      const sourceHeightPx = Math.floor((renderHeight / scale) * (96 / 25.4));
+        const pdfWidth = pageWidth;
+        const scale = pdfWidth / pxToMm(canvasWidth);
+        const pdfHeight = pxToMm(canvasHeight) * scale;
 
-      const pageCanvas = document.createElement('canvas');
-      pageCanvas.width = canvasWidth;
-      pageCanvas.height = sourceHeightPx;
+        let renderedHeight = 0;
 
-      const ctx = pageCanvas.getContext('2d');
-      ctx.drawImage(
-        canvas,
-        0,
-        Math.floor(renderedHeight / scale * (96 / 25.4)),
-        canvasWidth,
-        sourceHeightPx,
-        0,
-        0,
-        canvasWidth,
-        sourceHeightPx
-      );
+        while (renderedHeight < pdfHeight) {
+          const remainingHeight = pdfHeight - renderedHeight;
+          const renderHeight = Math.min(pageHeight, remainingHeight);
+          const sourceHeightPx = Math.floor((renderHeight / scale) * (96 / 25.4));
 
-      const pageImgData = pageCanvas.toDataURL('image/jpeg', 1.0);
+          const pageCanvas = document.createElement('canvas');
+          pageCanvas.width = canvasWidth;
+          pageCanvas.height = sourceHeightPx;
 
-      if (renderedHeight > 0) pdf.addPage();
-      pdf.addImage(pageImgData, 'JPEG', 0, 0, pdfWidth, renderHeight);
+          const ctx = pageCanvas.getContext('2d');
+          ctx.drawImage(
+            canvas,
+            0,
+            Math.floor(renderedHeight / scale * (96 / 25.4)),
+            canvasWidth,
+            sourceHeightPx,
+            0,
+            0,
+            canvasWidth,
+            sourceHeightPx
+          );
 
-      renderedHeight += renderHeight;
+          const pageImgData = pageCanvas.toDataURL('image/jpeg', 1.0);
+
+          if (i > 0 || renderedHeight > 0) pdf.addPage();
+          pdf.addImage(pageImgData, 'JPEG', 0, 0, pdfWidth, renderHeight);
+
+          renderedHeight += renderHeight;
+        }
+      }
+
+      pdf.save(`${documentData.title || 'document'}_${documentData.id}.pdf`);
+    } catch (error) {
+      console.error("PDF 변환 오류:", error);
+      alert("PDF 변환 중 오류가 발생했습니다.");
+    } finally {
+      setIsExportingPdf(false);
+      setLoading(false);
     }
-
-    pdf.save(`${documentData.title || 'document'}_${documentData.id}.pdf`);
-  } catch (error) {
-    console.error("PDF 변환 중 오류 발생:", error);
-    alert("PDF 변환 중 오류가 발생했습니다.");
-  } finally {
-    setLoading(false);
-  }
-};
+  };
 
   const waitForImagesLoaded = async (container) => {
     const imgs = container.querySelectorAll("img");
@@ -380,90 +441,107 @@ function EDocDocumentListModal({ documents, onSelect, onClose }) {
 }
 
   return (
-    <>
+  <>
     <BrunnerMessageBox />
-      {loading && (
-        <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-gray-500 bg-opacity-75 z-50">
-          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-gray-900"></div>
-        </div>
-      )}
+    {loading && (
+      <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-gray-500 bg-opacity-75 z-50">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-gray-900"></div>
+      </div>
+    )}
 
-      <div className="flex h-screen bg-gray-100">
-        <aside className="w-60 bg-white border-r border-gray-300 p-4 overflow-y-auto">
-          <h2 className="text-lg font-semibold mb-4">컴포넌트 템플릿</h2>
-          <EDocComponentPalette
-            templates={componentTemplates}
-            onAddComponent={handleAddComponent}
-          />
-        </aside>
+    <div className="flex h-screen bg-gray-100">
+      <aside className="w-60 bg-white border-r border-gray-300 p-4 overflow-y-auto">
+        <h2 className="text-lg font-semibold mb-4">컴포넌트 템플릿</h2>
+        <EDocComponentPalette
+          templates={componentTemplates}
+          onAddComponent={handleAddComponent}
+        />
+      </aside>
 
-        <main className="flex-1 p-6 overflow-auto">
+      <main className="flex-1 flex flex-col p-6 overflow-auto">
+        <div className="sticky top-0 z-50 bg-white shadow mb-4">
           <EDocDesignerTopMenu
             onNewDocument={handleNewDocument}
             onOpenDocument={handleOpenDocument}
             onSaveDocument={handleSaveDocument}
             onDeleteDocument={handleDeleteDocument}
+            onAddPage={handleAddPage}
+            onDeleteCurrentPage={handleDeleteCurrentPage}
             onExportPdf={handleExportPdf}
             documentData={documentData}
             setDocumentData={setDocumentData}
           />
-          {documentData && (
-            <h1 className="text-2xl font-bold mb-6">
-              {documentData.title || ''} : {documentData.id}
-            </h1>
-          )}
-          <EDocEditorCanvas
-            components={documentData.components}
-            selectedComponentId={selectedComponentId}
-            onComponentSelect={handleComponentSelect}
-            onMoveUp= {handleMoveComponentUp}
-            onMoveDown={handleMoveComponentDown}
-            onDeleteComponent={handleDeleteComponent}
-            onUpdateComponent={handleUpdateComponent}
-            documentRuntimeData={documentData.runtime_data}
+        </div>
+
+        {documentData && (
+          <h1 className="text-2xl font-bold mb-6">
+            {documentData.title || ''} : {documentData.id}
+          </h1>
+        )}
+
+        <div className="flex-1 overflow-auto">
+          {pages.map((page, idx) => (
+             <div key={page.id} className="border rounded shadow relative">
+                <div className="absolute top-2 left-2 bg-blue-500 text-white text-xs rounded z-10 select-none">
+                   p{idx + 1}
+                </div>
+                <EDocEditorCanvas
+                  key={page.id}
+                  page={page}
+                  isSelected={idx === currentPageIdx}
+                  onSelect={() => setCurrentPageIdx(idx)}
+                  selectedComponentId={selectedComponentId}
+                  onComponentSelect={handleComponentSelect}
+                  onMoveUp={handleMoveComponentUp}
+                  onMoveDown={handleMoveComponentDown}
+                  onDeleteComponent={handleDeleteComponent}
+                  onUpdateComponent={handleUpdateComponent}
+                  isViewerMode={isExportingPdf}
+                />
+            </div>
+          ))}
+        </div>
+      </main>
+
+      <aside className="w-80 bg-white border-l border-gray-300 p-4 hidden md:block">
+        <h2 className="text-lg font-semibold mb-4">속성창</h2>
+        {selectedComponent ? (
+          <EDocComponentPropertyEditor
+            component={selectedComponent}
+            handleUpdateComponent={handleUpdateComponent}
           />
-        </main>
+        ) : (
+          <EDocDocumentPropertyEditor
+            runtimeData={documentData.runtime_data || {}}
+            onChange={(updatedRuntimeData) => {
+              setDocumentData(prev => {
+                const prevAlign = prev.runtime_data?.positionAlign;
+                const newAlign = updatedRuntimeData.positionAlign;
+                const needUpdateAlign = prevAlign !== newAlign;
 
-        <aside className="w-80 bg-white border-l border-gray-300 p-4 hidden md:block">
-          <h2 className="text-lg font-semibold mb-4">속성창</h2>
-          {selectedComponent ? (
-            <EDocComponentPropertyEditor
-              component={selectedComponent}
-              handleUpdateComponent={handleUpdateComponent}
-            />
-          ) : (
-            <EDocDocumentPropertyEditor
-              runtimeData={documentData.runtime_data || {}}
-              onChange={(updatedRuntimeData) => {
-                setDocumentData(prev => {
-                  // 정렬이 변경되었는지 확인
-                  const prevAlign = prev.runtime_data?.positionAlign;
-                  const newAlign = updatedRuntimeData.positionAlign;
-                  const needUpdateAlign = prevAlign !== newAlign;
+                const updatedComponents = needUpdateAlign
+                  ? prev.components.map((comp) => ({
+                      ...comp,
+                      runtime_data: {
+                        ...comp.runtime_data,
+                        positionAlign: newAlign,
+                      },
+                    }))
+                  : prev.components;
 
-                  // 모든 컴포넌트 정렬도 업데이트
-                  const updatedComponents = needUpdateAlign
-                    ? prev.components.map((comp) => ({
-                        ...comp,
-                        runtime_data: {
-                          ...comp.runtime_data,
-                          positionAlign: newAlign,
-                        },
-                      }))
-                    : prev.components;
+                return {
+                  ...prev,
+                  runtime_data: updatedRuntimeData,
+                  components: updatedComponents,
+                };
+              });
+            }}
+          />
+        )}
+      </aside>
+    </div>
 
-                  return {
-                    ...prev,
-                    runtime_data: updatedRuntimeData,
-                    components: updatedComponents,
-                  };
-                });
-              }}
-            />
-          )}
-        </aside>
-      </div>
-      {showDocumentListModal && (
+    {showDocumentListModal && (
       <EDocDocumentListModal
         documents={documentList}
         onSelect={(id) => {
@@ -473,6 +551,5 @@ function EDocDocumentListModal({ documents, onSelect, onClose }) {
         onClose={() => setShowDocumentListModal(false)}
       />
     )}
-    </>
-  );
-}
+  </>
+)}

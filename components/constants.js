@@ -16,7 +16,7 @@ export const messages = {
     MESSAGE_REQUIRED_FIELD : `The field value is required.`,
     MESSAGE_SERVER_NOT_CONNECTTED : `cannot connect to seerver`,
     MESSAGE_SERVER_NOT_SUPPORTED_MODULE : `not supported module`,
-    MESSAGE_SERVER_NOW_INITIALIZING : "Server is now initializing...",
+    MESSAGE_SERVER_NOW_INITIALIZING : `Server is now initializing...`,
     MESSAGE_SERVER_SQL_NOT_LOADED : `Service SQL not loaded.`,
     MESSAGE_SIGNOUT : `Do you want to signout now?`,
     MESSAGE_SUCCESS_ADDED : `Successfully added.`,
@@ -24,6 +24,8 @@ export const messages = {
     MESSAGE_SUCCESS_SAVED : `Successfully saved.`,
     MESSAGE_SUCCESS_SIGNUP : `successfully signed up.`,
     MESSAGE_UNKNOWN_ERROR : `Unknown error occured.`,
+    MESSAGE_MINIUM_PAGE_COUNT : `Minimum page count is 1.`,
+    MESSAGE_DELETE_SELECTED_PAGE : `Do you want to delete current selected page?`,
 }
 
 export const commands = {
@@ -65,7 +67,7 @@ export const commands = {
     COMMAND_EDOC_DOCUMENT_UPSERT_ONE : `edocDocument.upsertOne`,
     COMMAND_EDOC_DOCUMENT_SELECT_ONE : `edocDocument.selectOne`,
     COMMAND_EDOC_DOCUMENT_DELETE_ONE : `edocDocument.deleteOne`,
-    COMMAND_EDOC_DOCUMENT_SELECT_ALL : "edocDocument.slectAll",
+    COMMAND_EDOC_DOCUMENT_SELECT_ALL : `edocDocument.slectAll`,
 }  
 
 export const edoc = {
@@ -73,5 +75,5 @@ export const edoc = {
     COMPONENT_TYPE_TABLE : `table`,
     COMPONENT_TYPE_IMAGE : `image`, 
     COMPONENT_TYPE_INPUT : `input`,
-    COMPONENT_TYPE_CHECKLIST : "checklist",
+    COMPONENT_TYPE_CHECKLIST : `checklist`,
 }
