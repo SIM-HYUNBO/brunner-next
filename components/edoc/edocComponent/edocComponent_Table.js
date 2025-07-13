@@ -25,10 +25,11 @@ export const initDefaultRuntimeData = (defaultRuntimeData) => {
 export const getNewRuntimeData = (component, [rowIdx, colIdx, value]) => {
   const currentData = component.runtime_data || {};
   let newRuntimeData = { ...currentData };
-
-  if (newRuntimeData?.data[rowIdx]) {
-    newRuntimeData.data[rowIdx][colIdx] = value;
+  
+  if (newRuntimeData?.data && newRuntimeData.data[rowIdx]) {
+      newRuntimeData.data[rowIdx][colIdx] = value;
   }
+
   return newRuntimeData;
 };
 
@@ -52,10 +53,16 @@ export function renderProperty(component, updateRuntimeData, {
       oldColumns[c] ?? { header: `ColumnHeader ${c + 1}`, width: "auto" }
     );
 
-    updateRuntimeData("rows", newRows);
-    updateRuntimeData("cols", newCols);
-    updateRuntimeData("data", newData);
-    updateRuntimeData("columns", newColumns);
+    // 한 번에 runtime_data 객체를 만들어 전달!
+    const newRuntimeData = {
+      ...component.runtime_data,
+      rows: newRows,
+      cols: newCols,
+      data: newData,
+      columns: newColumns,
+    };
+
+    updateRuntimeData('runtime_data', newRuntimeData);
   };
 
   return (
@@ -164,6 +171,12 @@ export const renderComponent = (component, handleComponentClick, updateRuntimeDa
     width: '100%',
     height: component.runtime_data?.height || 'auto',
     textAlign,
+    fontFamily: component.runtime_data?.fontFamily || 'inherit',
+    fontSize: component.runtime_data?.fontSize ? `${component.runtime_data.fontSize}px` : 'inherit',
+    fontWeight: component.runtime_data?.fontWeight || 'normal',
+    color: component.runtime_data?.fontColor || 'inherit',
+    backgroundColor: component.runtime_data?.backgroundColor || 'transparent',
+    textDecoration: component.runtime_data?.underline ? 'underline' : 'none',
   };
 
   const rows = component.runtime_data?.data || [];
@@ -175,16 +188,26 @@ export const renderComponent = (component, handleComponentClick, updateRuntimeDa
       style={{
         ...style,
         borderCollapse: 'collapse',
+        tableLayout: 'fixed', // 고정 테이블 레이아웃 적용
+        width: '100%', // 고정폭 필요
       }}
       onClick={handleComponentClick}
     >
+      <colgroup>
+        {columns.map((col, colIdx) => (
+          <col
+            key={colIdx}
+            style={{ width: col.width || 'auto' }}
+          />
+        ))}
+      </colgroup>
       <thead>
         <tr>
           {columns.map((col, colIdx) => (
             <th
               key={colIdx}
               className="border border-gray-300 px-2 py-1 bg-gray-100 text-center"
-              style={{ width: col.width || 'auto' }}
+              // width는 colgroup에서 지정하므로 따로 줄 필요 없음
             >
               {col.header}
             </th>
@@ -195,20 +218,43 @@ export const renderComponent = (component, handleComponentClick, updateRuntimeDa
         {rows.map((row, rowIdx) => (
           <tr key={rowIdx}>
             {columns.map((col, colIdx) => (
-              <td key={colIdx} className="border border-gray-300 px-2 py-1">
+              <td
+                key={colIdx}
+                className="border border-gray-300 px-2 py-1"
+                style={{ 
+                  textAlign: col.align || "center",
+                  fontFamily: style.fontFamily,
+                  fontSize: style.fontSize,
+                  fontWeight: style.fontWeight,
+                  color: style.color,
+                  backgroundColor: style.backgroundColor,
+                  textDecoration: style.textDecoration,
+                  overflow: 'hidden', // 넘침 방지
+                  whiteSpace: 'nowrap', // 줄 바꿈 방지
+                  textOverflow: 'ellipsis', // 말줄임 표시
+                }}
+              >
                 <input
                   type="text"
                   className="w-full border-none p-0"
-                  style={{ textAlign: col.align || "center" }}
+                  style={{ 
+                    textAlign: col.align || "center",
+                    fontFamily: style.fontFamily,
+                    fontSize: style.fontSize,
+                    fontWeight: style.fontWeight,
+                    color: style.color,
+                    backgroundColor: 'transparent', // input 내부 배경 없애기
+                    textDecoration: style.textDecoration,
+                  }}
                   value={row[colIdx] || ''}
                   onChange={(e) => {
-                    const newData = getNewRuntimeData(component, [rowIdx, colIdx, e.target.value]);
-                    updateRuntimeData("data", newData.data);
+                    const updatedRuntimeData = getNewRuntimeData(component, [rowIdx, colIdx, e.target.value]);
+                    updateRuntimeData("data", updatedRuntimeData.data);
                   }}
                 />
               </td>
             ))}
-          </tr>
+          </tr> 
         ))}
       </tbody>
     </table>

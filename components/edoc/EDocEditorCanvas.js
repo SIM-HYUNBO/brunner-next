@@ -136,52 +136,79 @@ export default function EDocEditorCanvas({
       const justifyContent = justifyMap[rowAlign] || 'flex-start';
 
       return (
-        <div
-          key={rowIdx}
-          className="flex mb-2 gap-2"
-          style={{
-            maxWidth: `calc(${pageWidthPx}px - ${runtime_data?.padding ?? 24 * 2}px)`,
-            justifyContent,
-            overflow: "hidden",
-          }}
-        >
-          {row.map((compIdx) => {
-            const comp = comps[compIdx];
-            const widthRaw = comp.runtime_data?.width;
-            const componentWidth = typeof widthRaw === 'string' ? widthRaw : `${parseInt(widthRaw ?? 100)}%`;
-
-            return (
               <div
-                key={compIdx}
-                className={`relative group p-1 rounded ${
-                  isViewerMode
-                    ? ''
-                    : selectedComponentId === compIdx
-                    ? 'border-2 border-blue-500'
-                    : 'border border-transparent hover:border-gray-300'
-                }`}
-                style={{ width: componentWidth }}
+                key={rowIdx}
+                className="flex mb-2 gap-2"
+                style={{
+                  maxWidth: `calc(${pageWidthPx}px - ${runtime_data?.padding ?? 24 * 2}px)`,
+                  justifyContent,
+                  overflow: "hidden",
+                }}
               >
-                {!isViewerMode && (
-                  <div className="absolute -left-8 top-1/2 transform -translate-y-1/2 flex flex-col space-y-1 opacity-0 group-hover:opacity-100 transition">
-                    <button onClick={() => onMoveUp(compIdx)} disabled={compIdx === 0}>↑</button>
-                    <button onClick={() => onMoveDown(compIdx)} disabled={compIdx === comps.length - 1}>↓</button>
-                    <button onClick={() => onDeleteComponent(compIdx)}>🗑</button>
-                  </div>
-                )}
-                <DocComponentRenderer
-                  component={comp}
-                  isSelected={!isViewerMode && selectedComponentId === compIdx}
-                  onSelect={() => !isViewerMode && onComponentSelect(compIdx)}
-                  onRuntimeDataChange={(...args) =>
-                    updateRuntimeData(compIdx, args.length === 1 ? args[0] : args)
-                  }
-                  documentRuntimeData={runtime_data}
-                />
-              </div>
-            );
-          })}
-        </div>
+              {row.map((compIdx) => {
+                const comp = comps[compIdx];
+                const widthRaw = comp.runtime_data?.width;
+                const componentWidth = typeof widthRaw === 'string' ? widthRaw : `${parseInt(widthRaw ?? 100)}%`;
+
+                return (
+                  <div
+                    key={compIdx}
+                    className={`relative group rounded ${
+                      isViewerMode
+                        ? ''
+                        : selectedComponentId === compIdx
+                          ? 'border-2 border-blue-500'
+                          : 'border border-transparent hover:border-gray-300'
+                    }`}
+                    style={{ width: componentWidth }}
+                  >
+                  {!isViewerMode && selectedComponentId === compIdx && (
+                  <div className="absolute opacity-40 left-0 top-1/2 -translate-y-1/2 flex flex-col space-y-1 pointer-events-auto text-xs bg-white border rounded shadow px-2 py-1">
+                  <button
+                    onClick={() => onMoveUp(compIdx)}
+                    disabled={compIdx === 0}
+                    className="hover:bg-gray-100 text-sm px-1 py-0.5 transition-opacity duration-200"
+                    style={{ width: '16px', height: '20px', opacity:1 }}
+                    onMouseEnter={e => (e.currentTarget.style.opacity = 1)}
+                    onMouseLeave={e => (e.currentTarget.style.opacity = 1)}
+                  >
+                    ↑
+                  </button>
+                  <button
+                    onClick={() => onMoveDown(compIdx)}
+                    disabled={compIdx === comps.length - 1}
+                    className="hover:bg-gray-100  text-sm px-1 py-0.5 transition-opacity duration-200"
+                    style={{ width: '16px', height: '20px', opacity: 1 }}
+                    onMouseEnter={e => (e.currentTarget.style.opacity = 1)}
+                    onMouseLeave={e => (e.currentTarget.style.opacity = 1)}
+                  >
+                    ↓
+                  </button>
+                  <button
+                    onClick={() => onDeleteComponent(compIdx)}
+                    className="hover:bg-gray-100 text-red-600 text-sm px-1 py-0.5 transition-opacity duration-200"
+                    style={{ width: '16px', height: '20px', opacity: 1}}
+                    onMouseEnter={e => (e.currentTarget.style.opacity = 1)}
+                    onMouseLeave={e => (e.currentTarget.style.opacity = 1)}
+                  >
+                    🗑
+                  </button>
+                </div>
+            )}
+
+            <DocComponentRenderer
+              component={comp}
+              isSelected={!isViewerMode && selectedComponentId === compIdx}
+              onSelect={() => !isViewerMode && onComponentSelect(compIdx)}
+              onRuntimeDataChange={(...args) =>
+                updateRuntimeData(compIdx, args.length === 1 ? args[0] : args)
+              }
+              documentRuntimeData={runtime_data}
+            />
+          </div>
+          );
+        })}
+      </div>
       );
     });
   };

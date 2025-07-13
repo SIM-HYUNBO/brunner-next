@@ -16,12 +16,12 @@ export default function EDocComponentPalette({ templates, onAddComponent }) {
       {templates.map((template) => (
         <button
           key={template.id}
-          className="w-full text-left p-2 rounded border border-gray-300 hover:bg-gray-50"
+          className="w-full text-left rounded border border-gray-300 hover:bg-gray-50"
           onClick={() => {
             onAddComponent(template);
           }}
         >
-          {template.name} ({template.type})
+          {template.name}({template.type})
         </button>
       ))}
     </div>

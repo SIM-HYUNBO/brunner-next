@@ -556,7 +556,7 @@ function EDocDocumentListModal({ documents, onSelect, onClose }) {
                   key={page.id}
                   page={page}
                   isSelected={idx === currentPageIdx}
-                  onSelect={() => setCurrentPageIdx(idx)}
+                  onSelect={() => { setCurrentPageIdx(idx); setSelectedComponentId(null); }}
                   selectedComponentId={selectedComponentId}
                   onComponentSelect={handleComponentSelect}
                   onMoveUp={handleMoveComponentUp}
@@ -570,7 +570,9 @@ function EDocDocumentListModal({ documents, onSelect, onClose }) {
         </div>
       </main>
 
-      <aside className="w-80 bg-white border-l border-gray-300 p-4 hidden md:block">
+      <aside 
+      className="w-80 h-full bg-white border-l border-gray-300 p-4 hidden md:block overflow-y-auto"
+      >
         <h2 className="text-lg font-semibold mb-4">속성창</h2>
         {pages[currentPageIdx].components[selectedComponentId] ? (
           <EDocComponentPropertyEditor
