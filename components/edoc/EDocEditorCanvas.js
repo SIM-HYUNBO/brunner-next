@@ -11,16 +11,19 @@ import * as TableComponent from "@/components/edoc/edocComponent/edocComponent_T
 import * as CheckListComponent from "@/components/edoc/edocComponent/edocComponent_CheckList";
 
 export default function EDocEditorCanvas({
-  components,
+  page,                  // ✅ 단일 페이지
+  isSelected,            // ✅ 현재 페이지 선택 상태
+  onSelect,              // ✅ 페이지 클릭 시 실행
   selectedComponentId,
   onComponentSelect,
   onDeleteComponent,
   onMoveUp,
   onMoveDown,
   onUpdateComponent,
-  documentRuntimeData,
   isViewerMode = false,
 }) {
+  const { components, runtime_data } = page;
+
   useEffect(() => {
     const handleKeyDown = (e) => {
       if (e.key === 'Escape') {
@@ -36,21 +39,20 @@ export default function EDocEditorCanvas({
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [onComponentSelect]);
 
-  // ✅ getPageDimensionsPx만 사용!
   function getPageDimensionsPx(pageSize) {
     switch (pageSize) {
       case "A3":
-        return { width: 1123, height: 1587 }; // 297mm x 420mm @ 96dpi
+        return { width: 1123, height: 1587 };
       case "Letter":
-        return { width: 816, height: 1056 }; // 8.5in x 11in @ 96dpi
+        return { width: 816, height: 1056 };
       case "A4":
       default:
-        return { width: 794, height: 1123 }; // 210mm x 297mm @ 96dpi
+        return { width: 794, height: 1123 };
     }
   }
 
   const { width: pageWidthPx, height: pageHeightPx } = getPageDimensionsPx(
-    documentRuntimeData?.pageSize || "A4"
+    runtime_data?.pageSize || "A4"
   );
 
   const splitIntoRows = (comps) => {
@@ -75,6 +77,7 @@ export default function EDocEditorCanvas({
     const currentData = component.runtime_data || {};
     let newRuntimeData = null;
 
+    // 이 부분은 그대로 유지
     switch (component.type) {
       case constants.edoc.COMPONENT_TYPE_TEXT:
         newRuntimeData = TextComponent.getNewRuntimeData(component, newData);
@@ -100,33 +103,8 @@ export default function EDocEditorCanvas({
       runtime_data: newRuntimeData,
     };
 
-    const wasNewLine = currentData.forceNewLine === true;
-    const isNewLine = newRuntimeData.forceNewLine === true;
-
-    if (wasNewLine && !isNewLine) {
-      const rows = splitIntoRows(components);
-      const currentRowIdx = rows.findIndex((row) => row.includes(componentIdx));
-      if (currentRowIdx > 0) {
-        const prevRow = rows[currentRowIdx - 1];
-        const prevRowWidth = prevRow.reduce((sum, i) => {
-          return sum + parseInt(components[i].runtime_data?.width ?? 100);
-        }, 0);
-        const currWidth = parseInt(newRuntimeData.width ?? 100);
-        if (prevRowWidth + currWidth <= 100) {
-          const newList = [...components];
-          newList.splice(componentIdx, 1);
-          const insertPos = prevRow[prevRow.length - 1] + 1;
-          newList.splice(insertPos, 0, updatedComponent);
-          if (typeof onUpdateComponent === 'function') {
-            onUpdateComponent(newList[insertPos]);
-          }
-          return;
-        }
-      }
-    }
-
     if (typeof onUpdateComponent === 'function') {
-      onUpdateComponent(updatedComponent);
+      onUpdateComponent(componentIdx, updatedComponent);
     }
   };
 
@@ -154,7 +132,7 @@ export default function EDocEditorCanvas({
 
     return rows.map((row, rowIdx) => {
       const firstCompInRow = comps[row[0]];
-      const rowAlign = firstCompInRow.runtime_data?.positionAlign || documentRuntimeData?.positionAlign || 'left';
+      const rowAlign = firstCompInRow.runtime_data?.positionAlign || runtime_data?.positionAlign || 'left';
       const justifyContent = justifyMap[rowAlign] || 'flex-start';
 
       return (
@@ -162,50 +140,43 @@ export default function EDocEditorCanvas({
           key={rowIdx}
           className="flex mb-2 gap-2"
           style={{
-            maxWidth: `calc(${pageWidthPx}px - ${documentRuntimeData?.padding ?? 24 * 2}px)`,
-            justifyContent: justifyContent,
+            maxWidth: `calc(${pageWidthPx}px - ${runtime_data?.padding ?? 24 * 2}px)`,
+            justifyContent,
             overflow: "hidden",
           }}
         >
-          {row.map((compIdx, idx) => {
+          {row.map((compIdx) => {
             const comp = comps[compIdx];
-            const forceNewLine = comp.runtime_data?.forceNewLine ?? false;
             const widthRaw = comp.runtime_data?.width;
             const componentWidth = typeof widthRaw === 'string' ? widthRaw : `${parseInt(widthRaw ?? 100)}%`;
-
-            const style = {
-              width: componentWidth,
-              marginLeft: idx === 0 ? 0 : forceNewLine ? 0 : '4px',
-              flexGrow: 0,
-              flexShrink: 0,
-            };
 
             return (
               <div
                 key={compIdx}
                 className={`relative group p-1 rounded ${
-                  isViewerMode ? ''
+                  isViewerMode
+                    ? ''
                     : selectedComponentId === compIdx
-                      ? 'border-2 border-blue-500'
-                      : 'border border-transparent hover:border-gray-300'
+                    ? 'border-2 border-blue-500'
+                    : 'border border-transparent hover:border-gray-300'
                 }`}
-                style={style}
+                style={{ width: componentWidth }}
               >
                 {!isViewerMode && (
                   <div className="absolute -left-8 top-1/2 transform -translate-y-1/2 flex flex-col space-y-1 opacity-0 group-hover:opacity-100 transition">
                     <button onClick={() => onMoveUp(compIdx)} disabled={compIdx === 0}>↑</button>
                     <button onClick={() => onMoveDown(compIdx)} disabled={compIdx === comps.length - 1}>↓</button>
-                    <button onClick={() => typeof onDeleteComponent === 'function' && onDeleteComponent(compIdx)}>🗑</button>
+                    <button onClick={() => onDeleteComponent(compIdx)}>🗑</button>
                   </div>
                 )}
                 <DocComponentRenderer
                   component={comp}
                   isSelected={!isViewerMode && selectedComponentId === compIdx}
-                  onSelect={() => !isViewerMode && typeof onComponentSelect === 'function' && onComponentSelect(compIdx)}
+                  onSelect={() => !isViewerMode && onComponentSelect(compIdx)}
                   onRuntimeDataChange={(...args) =>
                     updateRuntimeData(compIdx, args.length === 1 ? args[0] : args)
                   }
-                  documentRuntimeData={documentRuntimeData}
+                  documentRuntimeData={runtime_data}
                 />
               </div>
             );
@@ -215,32 +186,28 @@ export default function EDocEditorCanvas({
     });
   };
 
-  const paddingPx = documentRuntimeData?.padding ?? 24;
-
   return (
     <div className="overflow-auto flex justify-center p-8 bg-gray-100">
       <div
-        id="editor-canvas"
-        className="relative border-2 border-dashed border-gray-400 bg-white"
+        id={`editor-canvas-${page.id}`}
+        className={`relative border-4 ${isSelected ? 'border-blue-500' : 'border-gray-400'} bg-white cursor-pointer`}
         style={{
           width: `${pageWidthPx}px`,
           minHeight: `${pageHeightPx}px`,
-          padding: `${documentRuntimeData?.padding ?? 48}px`, // ← 여기!
+          padding: `${runtime_data?.padding ?? 48}px`,
           display: "flex",
           flexDirection: "column",
           gap: "1rem",
-          boxSizing: "border-box", // ← 기본값이지만 안전하게 명시
+          boxSizing: "border-box",
         }}
-        onClick={() => {
-          if (!isViewerMode && typeof onComponentSelect === 'function') {
-            onComponentSelect(null);
-          }
-        }}
+        onClick={onSelect} // ✅ 클릭 시 현재 페이지 선택
       >
         {components?.length === 0 ? (
+          isViewerMode ? null : (
           <p className="text-gray-500 text-center mt-20">
             좌측에서 컴포넌트를 추가하세요.
           </p>
+        )
         ) : (
           renderComponents()
         )}
