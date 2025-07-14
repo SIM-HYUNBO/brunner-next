@@ -245,22 +245,30 @@ const openDocumentById = async (id) => {
 
     setDocumentData(loadedDocument);
 
-    // 📌 실제 pages 상태도 DB에서 가져온 components로 재구성!
-    setPages([
-      {
-        id: 'page-1',
-        components: loadedDocument.components || [],
-        runtime_data: {
-          pageSize: loadedDocument.runtime_data?.pageSize || 'A4',
-          padding: loadedDocument.runtime_data?.padding || 24,
+    // ✅ DB에서 불러온 pages를 그대로 사용
+    if (Array.isArray(loadedDocument.pages) && loadedDocument.pages.length > 0) {
+      setPages(loadedDocument.pages);
+    } else {
+      // fallback: pages가 없으면 components로 한 페이지 만들어줌
+      setPages([
+        {
+          id: 'page-1',
+          components: loadedDocument.components || [],
+          runtime_data: {
+            pageSize: loadedDocument.runtime_data?.pageSize || 'A4',
+            padding: loadedDocument.runtime_data?.padding || 24,
+          },
         },
-      },
-    ]);
+      ]);
+    }
 
     setCurrentPageIdx(0);
     setSelectedComponentId(null);
-  } else openModal(jResponse.error_message);
+  } else {
+    openModal(jResponse.error_message);
+  }
 };
+
 
 const handleSaveDocument = async () => {
   const jRequest = {
@@ -269,8 +277,7 @@ const handleSaveDocument = async () => {
     userId: userInfo.getLoginUserId(),
     documentData: {
       ...documentData,
-      // 저장할 때 pages의 첫 페이지 components로 맞춤!
-      components: pages[currentPageIdx]?.components || [],
+      pages, // 전체 pages 배열을 통째로 보내기
     },
   };
 
@@ -280,27 +287,23 @@ const handleSaveDocument = async () => {
 
   if (jResponse.error_code === 0) {
     openModal(constants.messages.MESSAGE_SUCCESS_SAVED);
+    setDocumentData(jResponse.documentData);
 
-    const savedDoc = jResponse.documentData;
-
-    setDocumentData(savedDoc);
-
-    // 저장 후에도 다시 pages 재동기화!
-    setPages([
+    // 서버에서 받은 pages 배열로 복원
+    setPages(jResponse.documentData.pages || [
       {
         id: 'page-1',
-        components: savedDoc.components || [],
+        components: jResponse.documentData.components || [],
         runtime_data: {
-          pageSize: savedDoc.runtime_data?.pageSize || 'A4',
-          padding: savedDoc.runtime_data?.padding || 24,
+          pageSize: jResponse.documentData.runtime_data?.pageSize || 'A4',
+          padding: jResponse.documentData.runtime_data?.padding || 24,
         },
-      },
+      }
     ]);
-
     setCurrentPageIdx(0);
-    setSelectedComponentId(null);
-
-  } else openModal(jResponse.error_message);
+  } else {
+    openModal(jResponse.error_message);
+  }
 };
 
   const handleDeleteDocument = async () => {
