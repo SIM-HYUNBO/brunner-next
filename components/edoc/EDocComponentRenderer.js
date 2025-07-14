@@ -7,6 +7,7 @@ import * as InputComponent from "@/components/edoc/edocComponent/edocComponent_I
 import * as ImageComponent from "@/components/edoc/edocComponent/edocComponent_Image";
 import * as TableComponent from "@/components/edoc/edocComponent/edocComponent_Table";
 import * as CheckListComponent from "@/components/edoc/edocComponent/edocComponent_CheckList";
+import * as ButtonComponent from "@/components/edoc/edocComponent/edocComponent_Button";
 
 export default function DocComponentRenderer({
   component,
@@ -14,7 +15,9 @@ export default function DocComponentRenderer({
   onSelect,
   onRuntimeDataChange,
   documentRuntimeData,
+  mode  
 }) {
+  
   const selectedClass = isSelected
     ? 'outline outline-2 outline-blue-500 rounded bg-blue-50'
     : '';
@@ -33,7 +36,8 @@ export default function DocComponentRenderer({
   };
 
   const renderComponent = (component) => {
-    const param = {selectedClass, alignmentClass, textAlign};
+    const isDesignMode = mode === "design";
+    const param = {selectedClass, alignmentClass, textAlign, isDesignMode};
 
     switch (component.type) {
       case constants.edoc.COMPONENT_TYPE_TEXT:
@@ -50,6 +54,9 @@ export default function DocComponentRenderer({
 
       case constants.edoc.COMPONENT_TYPE_CHECKLIST:
         return CheckListComponent.renderComponent(component, handleComponentClick, onRuntimeDataChange, param);
+
+      case constants.edoc.COMPONENT_TYPE_BUTTON:
+        return ButtonComponent.renderComponent(component, handleComponentClick, onRuntimeDataChange, param);
 
       default:
         return null;

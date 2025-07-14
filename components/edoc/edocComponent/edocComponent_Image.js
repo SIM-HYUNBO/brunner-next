@@ -72,10 +72,12 @@ export function renderProperty(component, updateRuntimeData, {
   );
 }
 
-export const renderComponent = (component, handleComponentClick, onRuntimeDataChange, {
-  selectedClass, 
-  alignmentClass, 
-  textAlign}) => {
+export const renderComponent = (
+  component, 
+  handleComponentClick, 
+  onRuntimeDataChange, 
+  { selectedClass, alignmentClass, textAlign, isDesignMode}
+) => {
   const style = {
     width: '100%',
     height: component.runtime_data?.height || 'auto',

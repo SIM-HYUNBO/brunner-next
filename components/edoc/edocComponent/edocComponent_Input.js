@@ -85,8 +85,8 @@ export function renderProperty(component, updateRuntimeData, {
 export const renderComponent = (
   component,
   handleComponentClick,
-  onRuntimeDataChange,
-  { selectedClass, alignmentClass, textAlign }
+  onRuntimeDataChange, 
+  { selectedClass, alignmentClass, textAlign, isDesignMode}
 ) => {
   const style = {
     width: '100%',

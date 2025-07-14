@@ -20,9 +20,14 @@ import * as TextComponent from "@/components/edoc/edocComponent/edocComponent_Te
 import * as ImageComponent from "@/components/edoc/edocComponent/edocComponent_Image";
 import * as TableComponent from "@/components/edoc/edocComponent/edocComponent_Table";
 import * as CheckListComponent from "@/components/edoc/edocComponent/edocComponent_CheckList";
+import * as ButtonComponent from "@/components/edoc/edocComponent/edocComponent_Button";
 
 export default function EDocDesignerContainer({ documentId }) {
   const [isExportingPdf, setIsExportingPdf] = useState(false);
+  const [mode, setMode] = useState("design"); // "design" or "runtime"
+    const toggleMode = () => {
+    setMode((prev) => (prev === "design" ? "runtime" : "design"));
+  };
 
   useEffect(() => {
     async function fetchTemplates() {
@@ -151,6 +156,9 @@ export default function EDocDesignerContainer({ documentId }) {
         break;
       case constants.edoc.COMPONENT_TYPE_CHECKLIST:
         baseComponent.runtime_data = CheckListComponent.initDefaultRuntimeData(defaultRuntimeData);
+        break;
+      case constants.edoc.COMPONENT_TYPE_BUTTON:
+        baseComponent.runtime_data = ButtonComponent.initDefaultRuntimeData(defaultRuntimeData);
         break;
       default:
         break;
@@ -518,6 +526,9 @@ function EDocDocumentListModal({ documents, onSelect, onClose }) {
 
     <div className="flex h-screen bg-gray-100">
       <aside className="w-60 bg-white border-r border-gray-300 p-4 overflow-y-auto">
+        <button className="text-lg font-semibold mb-4" onClick={toggleMode}>
+          {mode === "design" ? "To Runtime Mode" : "To Design Mode"}
+        </button>        
         <h2 className="text-lg font-semibold mb-4">컴포넌트 템플릿</h2>
         <EDocComponentPalette
           templates={componentTemplates}
@@ -564,6 +575,7 @@ function EDocDocumentListModal({ documents, onSelect, onClose }) {
                   onDeleteComponent={handleDeleteComponent}
                   onUpdateComponent={handleUpdateComponent}
                   isViewerMode={isExportingPdf}
+                  mode={mode} // ✅ 부모가 내려줌!
                 />
             </div>
           ))}
