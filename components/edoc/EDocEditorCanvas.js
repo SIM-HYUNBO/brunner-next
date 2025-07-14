@@ -21,6 +21,7 @@ export default function EDocEditorCanvas({
   onMoveDown,
   onUpdateComponent,
   isViewerMode = false,
+  mode// design | runtime
 }) {
   const { components, runtime_data } = page;
 
@@ -204,6 +205,7 @@ export default function EDocEditorCanvas({
                 updateRuntimeData(compIdx, args.length === 1 ? args[0] : args)
               }
               documentRuntimeData={runtime_data}
+              mode={mode}
             />
           </div>
           );

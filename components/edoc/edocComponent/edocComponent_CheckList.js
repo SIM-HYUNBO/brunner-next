@@ -144,11 +144,7 @@ export const renderComponent = (
   component,
   handleComponentClick,
   onRuntimeDataChange,
-  {
-    selectedClass,
-    alignmentClass,
-    textAlign
-  }
+  { selectedClass, alignmentClass, textAlign, isDesignMode }
 ) => {
   const style = {
     width: '100%',

@@ -7,6 +7,7 @@ import * as InputComponent from "@/components/edoc/edocComponent/edocComponent_I
 import * as ImageComponent from "@/components/edoc/edocComponent/edocComponent_Image";
 import * as TableComponent from "@/components/edoc/edocComponent/edocComponent_Table";
 import * as CheckListComponent from "@/components/edoc/edocComponent/edocComponent_CheckList";
+import * as ButtonComponent from "@/components/edoc/edocComponent/edocComponent_Button";
 
 /*
  * EDocPropertyEditor.js
@@ -106,6 +107,11 @@ export default function EDocComponentPropertyEditor({ component, handleUpdateCom
           renderPositionAlignProperty});
       case constants.edoc.COMPONENT_TYPE_CHECKLIST:
         return CheckListComponent.renderProperty(component, updateRuntimeData, {
+          renderWidthProperty, 
+          renderForceNewLineProperty, 
+          renderPositionAlignProperty});
+      case constants.edoc.COMPONENT_TYPE_BUTTON:
+        return ButtonComponent.renderProperty(component, updateRuntimeData, {
           renderWidthProperty, 
           renderForceNewLineProperty, 
           renderPositionAlignProperty});

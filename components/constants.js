@@ -26,6 +26,10 @@ export const messages = {
     MESSAGE_UNKNOWN_ERROR : `Unknown error occured.`,
     MESSAGE_MINIUM_PAGE_COUNT : `Minimum page count is 1.`,
     MESSAGE_DELETE_SELECTED_PAGE : `Do you want to delete current selected page?`,
+    MESSAGE_NOT_SUPPORTED_API_METHOD : `지원하지 않는 API 메소드입니다. POST 또는 GET만 사용 가능합니다.`,  
+    MESSAGE_NOT_SET_API_ENDPOINT : `API Endpoint가 설정되지 않았습니다.`,
+    MESSAGE_SUCCESS_REQUESTED : `서비스 요청을 성공했습니다!`,
+    MESSAGE_FAILED_REQUESTED : `서비스 요청을 실패 했습니다.`
 }
 
 export const commands = {
@@ -76,4 +80,5 @@ export const edoc = {
     COMPONENT_TYPE_IMAGE : `image`, 
     COMPONENT_TYPE_INPUT : `input`,
     COMPONENT_TYPE_CHECKLIST : `checklist`,
+    COMPONENT_TYPE_BUTTON : `button`,
 }
