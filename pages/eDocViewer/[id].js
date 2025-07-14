@@ -1,4 +1,3 @@
-// pages/eDocViewer/[id].js
 'use client';
 
 import { useRouter } from 'next/router';
@@ -16,6 +15,7 @@ export default function EDocViewerPage() {
 
   const [loading, setLoading] = useState(false);
   const [documentData, setDocumentData] = useState(null);
+  const [pages, setPages] = useState([]);
 
   useEffect(() => {
     if (!id) return;
@@ -24,7 +24,7 @@ export default function EDocViewerPage() {
       const jRequest = {
         commandName: constants.commands.COMMAND_EDOC_DOCUMENT_SELECT_ONE,
         systemCode: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE,
-        userId: userInfo.getLoginUserId?.() || '', // 로그인 안 해도 열람 가능하다면 '' 로 처리
+        userId: userInfo.getLoginUserId?.() || '',
         documentId: id
       };
 
@@ -33,7 +33,18 @@ export default function EDocViewerPage() {
       setLoading(false);
 
       if (jResponse.error_code === 0) {
-        setDocumentData(jResponse.documentData || {});
+        const doc = jResponse.documentData || {};
+
+        setDocumentData(doc);
+
+        // ✅ 다중 페이지 구성 (예시: DB에 페이지별로 저장되어 있다고 가정)
+        setPages(doc.pages || [
+          {
+            id: 'page-1',
+            components: doc.components || [],
+            runtime_data: doc.runtime_data || {}
+          }
+        ]);
       } else {
         alert(jResponse.error_message);
       }
@@ -51,18 +62,34 @@ export default function EDocViewerPage() {
   }
 
   if (!documentData) {
-    return <div className="flex h-screen items-center justify-center">문서를 불러오는 중입니다...</div>;
+    return (
+      <div className="flex h-screen items-center justify-center">
+        문서를 불러오는 중입니다...
+      </div>
+    );
   }
 
   return (
     <main className="min-h-screen bg-gray-100 p-8 overflow-auto">
-      <h1 className="text-2xl font-bold mb-6">{documentData.title} (ID: {documentData.id})</h1>
+      <h1 className="text-2xl font-bold mb-6">
+        {documentData.title} (ID: {documentData.id})
+      </h1>
 
-      <EDocEditorCanvas
-        components={documentData.components}
-        documentRuntimeData={documentData.runtime_data}
-        isViewerMode={true} // 읽기 전용
-      />
+      <div className="space-y-12">
+        {pages.map((page) => (
+          <div
+            key={page.id}
+            id={`viewer-canvas-${page.id}`}
+            className="border rounded shadow p-6 bg-white"
+          >
+            <EDocEditorCanvas
+              page={page}
+              isViewerMode={true}
+              mode="runtime" // ✅ 실행모드
+            />
+          </div>
+        ))}
+      </div>
     </main>
   );
 }

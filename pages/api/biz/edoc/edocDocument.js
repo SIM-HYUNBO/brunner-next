@@ -81,7 +81,8 @@ const upsertOne = async (txnId, jRequest) => {
                     jRequest.documentData.description,
                     1, // version
                     jRequest.userId, // user id 
-                    jRequest.documentData.runtime_data
+                    jRequest.documentData.runtime_data,
+                    JSON.stringify(jRequest.documentData.pages || [])
                 ]);
 
             if (insert_TB_DOC_DOCUMENT.rowCount != 1) {
@@ -101,7 +102,8 @@ const upsertOne = async (txnId, jRequest) => {
                     jRequest.documentData.title,
                     jRequest.documentData.description,
                     jRequest.userId,
-                    jRequest.documentData.runtime_data
+                    JSON.stringify(jRequest.documentData.runtime_data || {}),
+                    JSON.stringify(jRequest.documentData.pages || [])
                 ]);
 
             if (update_TB_DOC_DOCUMENT.rowCount != 1) {
@@ -152,66 +154,72 @@ const upsertOne = async (txnId, jRequest) => {
 };
 
 const selectOne = async (txnId, jRequest) => {
-    var jResponse = {};
-    
-    try {
-        jResponse.commanaName = jRequest.commandName;
-        
-        if (!jRequest.documentId) {
-            jResponse.error_code = -2;
-            jResponse.error_message = `${constants.messages.MESSAGE_REQUIRED_FIELD} [documentData.id]`;
-            return jResponse;
-        }
+  const jResponse = {};
 
-        // insert TB_DOC_DOCUMENT
-        var sql = null
-        sql = await dynamicSql.getSQL00('select_TB_DOC_DOCUMENT', 1);
-        var select_TB_DOC_DOCUMENT = await database.executeSQL(sql,
-            [
-                jRequest.systemCode,
-                jRequest.documentId     
-            ]);
+  try {
+    jResponse.commandName = jRequest.commandName;
 
-        if (select_TB_DOC_DOCUMENT.rowCount < 1) {
-            jResponse.error_code = 0;
-            jResponse.error_message = constants.messages.MESSAGE_NO_DATA_FOUND;
-            return jResponse;
-        }
-
-        var documentData = {};
-        documentData.id = select_TB_DOC_DOCUMENT.rows[0].id;
-        documentData.title = select_TB_DOC_DOCUMENT.rows[0].title;
-        documentData.description = select_TB_DOC_DOCUMENT.rows[0].description;
-        documentData.components = [];
-                   // delete existing components
-        sql = await dynamicSql.getSQL00('select_TB_DOC_DOCUMENT_COMPONENT_MAP_BY_DOCUMENT_ID', 1);
-        var select_TB_DOC_DOCUMENT_COMPONENT_MAP_BY_DOCUMENT_ID = await database.executeSQL(sql,
-            [
-                jRequest.systemCode,
-                jRequest.documentId
-            ]);
-
-        select_TB_DOC_DOCUMENT_COMPONENT_MAP_BY_DOCUMENT_ID.rows.forEach(row => {       
-            var component = {};
-            component.id = row.component_template_id;
-            component.type = row.template_json.type;
-            component.position = row.position;
-            component.template_json = row.template_json;
-            component.runtime_data = row.runtime_data;
-            documentData.components.push(component);
-        }
-        );
-        
-        jResponse.documentData = documentData; // return saved document data    
-        jResponse.error_code = 0;
-        jResponse.error_message = constants.messages.EMPTY_STRING; 
-    } catch (e) {
-        logger.error(e);
-        jResponse.error_code = -1; // exception
-        jResponse.error_message = e.message;
-    } finally {
-        return jResponse;
+    if (!jRequest.documentId) {
+      jResponse.error_code = -2;
+      jResponse.error_message = `${constants.messages.MESSAGE_REQUIRED_FIELD} [documentData.id]`;
+      return jResponse;
     }
+
+    // 1️⃣ TB_DOC_DOCUMENT에서 pages 컬럼 포함해서 가져오기
+    let sql = await dynamicSql.getSQL00('select_TB_DOC_DOCUMENT', 1);
+    const select_TB_DOC_DOCUMENT = await database.executeSQL(sql, [
+      jRequest.systemCode,
+      jRequest.documentId
+    ]);
+
+    if (select_TB_DOC_DOCUMENT.rowCount < 1) {
+      jResponse.error_code = 0;
+      jResponse.error_message = constants.messages.MESSAGE_NO_DATA_FOUND;
+      return jResponse;
+    }
+
+    const row = select_TB_DOC_DOCUMENT.rows[0];
+
+    const documentData = {
+      id: row.id,
+      title: row.title,
+      description: row.description,
+      runtime_data: row.runtime_data,
+      pages: row.pages || [], // ✅ 저장된 pages 컬럼 추가!
+      components: [] // 하위 호환용 — 필요 없으면 제거 가능
+    };
+
+    // 2️⃣ 추가로: components 쿼리 (필요하면)
+    sql = await dynamicSql.getSQL00(
+      'select_TB_DOC_DOCUMENT_COMPONENT_MAP_BY_DOCUMENT_ID',
+      1
+    );
+    const select_TB_DOC_DOCUMENT_COMPONENT_MAP_BY_DOCUMENT_ID =
+      await database.executeSQL(sql, [
+        jRequest.systemCode,
+        jRequest.documentId
+      ]);
+
+    select_TB_DOC_DOCUMENT_COMPONENT_MAP_BY_DOCUMENT_ID.rows.forEach(row => {
+      documentData.components.push({
+        id: row.component_template_id,
+        type: row.template_json.type,
+        position: row.position,
+        template_json: row.template_json,
+        runtime_data: row.runtime_data
+      });
+    });
+
+    jResponse.documentData = documentData;
+    jResponse.error_code = 0;
+    jResponse.error_message = constants.messages.EMPTY_STRING;
+  } catch (e) {
+    logger.error(e);
+    jResponse.error_code = -1;
+    jResponse.error_message = e.message;
+  } finally {
+    return jResponse;
+  }
 };
 
 const deleteOne = async (txnId, jRequest) => {
