@@ -29,15 +29,22 @@ export const initDefaultRuntimeData = (defaultRuntimeData) => {
 };
 
 export const getBindingValue = (component) => {
-  if (!component.runtime_data?.bindingKey) {
-    return null;
+  if (!component?.runtime_data?.bindingKey) return null;
+
+  const { data, columns } = component.runtime_data;
+
+  if (!Array.isArray(data) || !Array.isArray(columns)) {
+    return [];
   }
-  return { cols: component.runtime_data?.cols, 
-           rows: component.runtime_data?.rows, 
-           data: component.runtime_data?.data,
-           columns: component.runtime_data?.columns || []
-          } || null;
-}
+
+  return data.map((row) => {
+    const rowObj = {};
+    columns.forEach((colKey, idx) => {
+      rowObj[colKey.header] = row[idx] ?? null;
+    });
+    return rowObj;
+  });
+};
 
 /**
  * 셀 데이터 변경
