@@ -11,7 +11,7 @@ export const initDefaultRuntimeData = (defaultRuntimeData) => {
   defaultRuntimeData.buttonText = "버튼";
   defaultRuntimeData.apiEndpoint = "/api/backendServer/";
   defaultRuntimeData.apiMethod = "POST";
-  defaultRuntimeData.commandName = ""; // ✅ commandName 기본값
+  defaultRuntimeData.commandName = "eDoc.{CommandName}"; // ✅ commandName 기본값
   defaultRuntimeData.buttonColor = "#4F46E5";
   defaultRuntimeData.textColor = "#FFFFFF";
   defaultRuntimeData.padding = "10px 20px";
@@ -143,10 +143,10 @@ export const renderComponent = (
 
     try {
       const jRequest = {
-        commandName, // ✅ 런타임에서 설정한 값
+        commandName: `edocCustom.${commandName}`, // ✅ 런타임에서 설정한 값
         systemCode: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE,
         userId: userInfo.getLoginUserId(),
-        runtimeData: component.runtime_data,
+        runtimeData: component.runtime_data, // 버튼의 런타임 데이터를 전달하면 안됨
       };
 
       setLoading(true);
@@ -154,7 +154,7 @@ export const renderComponent = (
       setLoading(false);
 
       if (jResponse.error_code === 0) {
-        openModal(constants.messages.MESSAGE_SUCCESS_SAVED);
+        openModal(constants.messages.MESSAGE_SUCCESS_FINISHED);
         // 필요하다면 후속처리
       } else {
         openModal(jResponse.error_message);
