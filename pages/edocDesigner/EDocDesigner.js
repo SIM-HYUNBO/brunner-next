@@ -6,7 +6,7 @@ import Layout from '@/components/layout'
 import Head from 'next/head'
 import BodySection from '@/components/bodySection'
 
-import EDocDesignerContainer from '@/components/edoc/EDocDesignerContainer';
+import EDocDesignerContainer from '@/components/eDoc/eDocDesignerContainer';
 
 export default function EDocDesigner() {
   useEffect(() => {

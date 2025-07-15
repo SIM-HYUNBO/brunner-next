@@ -1,6 +1,6 @@
 `use strict`;
 
-import RequestServer from "./requestServer";
+import RequestServer from "@/components/requestServer";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { useModal } from "@/components/brunnerMessageBox";

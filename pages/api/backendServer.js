@@ -88,6 +88,13 @@ const executeService = async (method, req) => {
     var jResponse = null;
     var jRequest = method === "GET" ? JSON.parse(req.params.requestJson) : method === "POST" ? req.body : null;
     const commandName = jRequest.commandName;
+    if (!commandName) {
+        jResponse = JSON.stringify({
+            error_code: -1,
+            error_message: `${constants.messages.MESSAGE_SERVER_NO_COMMAND_NAME}\n${constants.messages.MESSAGE_SERVER_NOT_SUPPORTED_MODULE}`
+        })
+        return jResponse;            
+    }
 
     if (commandName.startsWith('security.')) {
         jResponse = await security.executeService(req.body._txnId, jRequest);

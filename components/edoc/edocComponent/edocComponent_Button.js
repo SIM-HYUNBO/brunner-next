@@ -1,14 +1,14 @@
 'use strict'
 
-
 import { React, useState } from 'react';
 import * as constants from '@/components/constants';
 import { useModal } from "@/components/brunnerMessageBox";
+import RequestServer from "@/components/requestServer";
 
 // ✅ 기본 런타임 데이터 초기화
 export const initDefaultRuntimeData = (defaultRuntimeData) => {
   defaultRuntimeData.buttonText = "버튼";
-  defaultRuntimeData.apiEndpoint = "/api/submit";
+  defaultRuntimeData.apiEndpoint = "/api/backendServer/";
   defaultRuntimeData.apiMethod = "POST";
   defaultRuntimeData.buttonColor = "#4F46E5"; // 기본 파란색
   defaultRuntimeData.textColor = "#FFFFFF";   // 흰색 글씨
@@ -128,25 +128,20 @@ export const renderComponent = (
     }   
 
     try {
-      const response = await fetch(apiEndpoint, {
-        method: apiMethod || "POST",
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        // 예시 payload: 현재 컴포넌트의 데이터 전송
-        body: JSON.stringify({ data: component.runtime_data }),
-      });
+      var jRequest = component.runtime_data;
+      var jResponse = {};
 
-      if (!response.ok) {
-        throw new Error(`${constants.messages.MESSAGE_FAILED_REQUESTED}: ${response.status}`);
-      }
+      setLoading(true); // 데이터 로딩 시작
+      jResponse = await RequestServer(apiMethod || "POST", jRequest, apiEndpoint);
+      setLoading(false); // 데이터 로딩 끝
 
-      const result = await response.json();
-      console.log(constants.messages.MESSAGE_SUCCESS_REQUESTED, result);
-      openModal(constants.messages.MESSAGE_SUCCESS_REQUESTED);
+      if (jResponse.error_code === 0) {
+        openModal(constants.messages.MESSAGE_SUCCESS_SAVED);
+        fetchSQLList();
+      } else openModal(jResponse.error_message);
     } catch (error) {
-      console.error(error);
-      openModal(`${error.message}`);
+      openModal(error.message);
+      console.error(`message:${error.message}\n stack:${error.stack}\n`);
     }
   };
 

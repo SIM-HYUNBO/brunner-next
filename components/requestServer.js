@@ -1,10 +1,9 @@
 'use strict'
 import * as constants from '@/components/constants'
 
-export default async function RequestServer(method, jRequest) {
+export default async function RequestServer(method, jRequest, serverUrl = `/api/backendServer/`) {
   let res = null;
   let jResponse = null;
-  const serverUrl = `/api/backendServer/`;
 
   try {
     res = await fetch(serverUrl, {
