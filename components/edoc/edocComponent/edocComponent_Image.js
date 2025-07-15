@@ -17,6 +17,15 @@ export const initDefaultRuntimeData = (defaultRuntimeData) => {
   return defaultRuntimeData;
 }
 
+export const getBindingValue = (component) => {
+  if (!component.runtime_data?.bindingKey) {
+    return null;
+  }
+  // 이미지 컴포넌트는 src 속성을 사용하므로, bindingKey와
+  // runtime_data.src를 통해 이미지 URL을 가져옵니다.
+  return component.runtime_data?.src || null;
+}
+
 export const getNewRuntimeData = (component, key, value) => {
   return { ...component.runtime_data, [key]: value };
 }
