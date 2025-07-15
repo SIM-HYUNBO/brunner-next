@@ -72,7 +72,7 @@ export const useModal = () => {
                     <p className={`text-lg 
                                    dark:text-gray-200 
                                    text-center 
-                                   mb-4`}>
+                                   mb-4 whitespace-pre-line`}>
                         {isObject(modalContent.message) ? JSON.stringify(modalContent.message) : modalContent.message}
                     </p>
                     <div className={`flex justify-center`}>
