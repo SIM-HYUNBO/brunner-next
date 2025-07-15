@@ -88,9 +88,8 @@ export default function EDocViewerPage() {
         <DivContainer>
           <div className={`w-full desktop:w-2/3 items-start text-left`}>
             <h2 className={`title-font sm:text-4xl text-3xl mb-10 font-medium text-green-900`}>
-              We are here for you always.
+              {`${documentData.title}`}
             </h2>
-            <GoverningMessage governingMessage={`${documentData.title} (ID: ${documentData.id})`} />
             <main className="min-h-screen bg-gray-100 p-8 overflow-auto">
               <div className="space-y-12">
                 {pages.map((page) => (

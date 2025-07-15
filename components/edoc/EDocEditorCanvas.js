@@ -143,7 +143,7 @@ export default function EDocEditorCanvas({
                 style={{
                   maxWidth: `calc(${pageWidthPx}px - ${runtime_data?.padding ?? 24 * 2}px)`,
                   justifyContent,
-                  overflow: "hidden",
+                  // overflow: "hidden",
                 }}
               >
               {row.map((compIdx) => {
@@ -164,7 +164,7 @@ export default function EDocEditorCanvas({
                     style={{ width: componentWidth }}
                   >
                   {!isViewerMode && selectedComponentId === compIdx && (
-                  <div className="absolute opacity-40 left-0 top-1/2 -translate-y-1/2 flex flex-col space-y-1 pointer-events-auto text-xs bg-white border rounded shadow px-2 py-1">
+                  <div className="opacity-40 left-0 top-1/2 -translate-y-1/2 flex flex-col space-y-1 pointer-events-auto text-xs bg-white border rounded shadow px-2 py-1">
                   <button
                     onClick={() => onMoveUp(compIdx)}
                     disabled={compIdx === 0}

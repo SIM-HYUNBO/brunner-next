@@ -191,7 +191,7 @@ export const renderComponent = (
 
   const rows = component.runtime_data?.data || [];
   const columns = component.runtime_data?.columns || [];
-
+  
   return (
     <table
       className={`${selectedClass} ${alignmentClass} border border-gray-400 w-full table-auto`}
@@ -230,38 +230,35 @@ export const renderComponent = (
             {columns.map((col, colIdx) => (
               <td
                 key={colIdx}
-                className="border border-gray-300 px-2 py-1"
-                style={{ 
+                className="border border-gray-300"
+                style={{
+                  verticalAlign: 'middle',
+                  height: '40px',
                   textAlign: col.align || "center",
-                  fontFamily: style.fontFamily,
-                  fontSize: style.fontSize,
-                  fontWeight: style.fontWeight,
-                  color: style.color,
-                  backgroundColor: style.backgroundColor,
-                  textDecoration: style.textDecoration,
-                  overflow: 'hidden', // 넘침 방지
-                  whiteSpace: 'nowrap', // 줄 바꿈 방지
-                  textOverflow: 'ellipsis', // 말줄임 표시
                 }}
               >
-                <input
-                  type="text"
-                  className="w-full border-none p-0"
-                  style={{ 
-                    textAlign: col.align || "center",
-                    fontFamily: style.fontFamily,
-                    fontSize: style.fontSize,
-                    fontWeight: style.fontWeight,
-                    color: style.color,
-                    backgroundColor: 'transparent', // input 내부 배경 없애기
-                    textDecoration: style.textDecoration,
-                  }}
-                  value={row[colIdx] || ''}
-                  onChange={(e) => {
-                    const updatedRuntimeData = getNewRuntimeData(component, [rowIdx, colIdx, e.target.value]);
-                    updateRuntimeData("data", updatedRuntimeData.data);
-                  }}
-                />
+              <input
+                    type="text"
+                    className="w-full border-none"
+                    style={{
+                      display: 'block',
+                      width: '100%',
+                      boxSizing: 'border-box',
+                      height: '100%',
+                      textAlign: col.align || "center",
+                      fontFamily: style.fontFamily,
+                      fontSize: style.fontSize,
+                      fontWeight: style.fontWeight,
+                      color: style.color,
+                      backgroundColor: 'transparent',
+                      textDecoration: style.textDecoration,
+                    }}
+                    value={row[colIdx] || ''}
+                    onChange={(e) => {
+                      const updatedRuntimeData = getNewRuntimeData(component, [rowIdx, colIdx, e.target.value]);
+                      updateRuntimeData("data", updatedRuntimeData.data);
+                    }}
+                  />
               </td>
             ))}
           </tr> 

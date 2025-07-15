@@ -563,7 +563,7 @@ function EDocDocumentListModal({ documents, onSelect, onClose }) {
         <div className="flex-1 overflow-auto">
           {pages.map((page, idx) => (
              <div key={page.id} className="border rounded shadow relative">
-                <div className="absolute top-2 left-2 bg-blue-500 text-white text-xs rounded z-10 select-none">
+                <div className="top-2 left-2 bg-blue-500 text-white text-xs rounded z-10 select-none">
                    p{idx + 1}
                 </div>
                 <EDocEditorCanvas
