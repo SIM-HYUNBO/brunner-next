@@ -154,14 +154,13 @@ export const renderComponent = (
       setLoading(false);
 
       if (jResponse.error_code === 0) {
-        openModal(constants.messages.MESSAGE_SUCCESS_FINISHED);
+        openModal(`${constants.messages.MESSAGE_SUCCESS_FINISHED}\n[${commandName}].`);
         // 필요하다면 후속처리
       } else {
         openModal(jResponse.error_message);
       }
     } catch (error) {
-      openModal(error.message);
-      console.error(`message:${error.message}\n stack:${error.stack}\n`);
+      openModal(`message:${error.message}\n stack:${error.stack}\n`);
     }
   };
 
