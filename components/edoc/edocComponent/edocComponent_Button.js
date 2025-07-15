@@ -4,26 +4,27 @@ import { React, useState } from 'react';
 import * as constants from '@/components/constants';
 import { useModal } from "@/components/brunnerMessageBox";
 import RequestServer from "@/components/requestServer";
+import * as userInfo from "@/components/userInfo";
 
-// ✅ 기본 런타임 데이터 초기화
+// ✅ 기본 런타임 데이터 초기화 — commandName 추가
 export const initDefaultRuntimeData = (defaultRuntimeData) => {
   defaultRuntimeData.buttonText = "버튼";
   defaultRuntimeData.apiEndpoint = "/api/backendServer/";
   defaultRuntimeData.apiMethod = "POST";
-  defaultRuntimeData.buttonColor = "#4F46E5"; // 기본 파란색
-  defaultRuntimeData.textColor = "#FFFFFF";   // 흰색 글씨
+  defaultRuntimeData.commandName = ""; // ✅ commandName 기본값
+  defaultRuntimeData.buttonColor = "#4F46E5";
+  defaultRuntimeData.textColor = "#FFFFFF";
   defaultRuntimeData.padding = "10px 20px";
   defaultRuntimeData.borderRadius = "6px";
   return defaultRuntimeData;
 };
-
 
 // ✅ 런타임 데이터 업데이트 유틸
 export const getNewRuntimeData = (component, key, value) => {
   return { ...component.runtime_data, [key]: value };
 };
 
-// ✅ 속성 편집 UI 렌더링
+// ✅ 속성 편집 UI — commandName 입력 추가
 export function renderProperty(component, updateRuntimeData) {
   return (
     <div>
@@ -52,6 +53,14 @@ export function renderProperty(component, updateRuntimeData) {
         <option value="POST">POST</option>
         <option value="GET">GET</option>
       </select>
+
+      <label>Command Name:</label> {/* ✅ 추가 */}
+      <input
+        type="text"
+        value={component.runtime_data?.commandName || ''}
+        onChange={(e) => updateRuntimeData("commandName", e.target.value)}
+        className="w-full border border-gray-300 rounded p-2 mb-2"
+      />
 
       <label>버튼 색상:</label>
       <input
@@ -97,11 +106,12 @@ export const renderComponent = (
 ) => {
   const [loading, setLoading] = useState(false);
   const { BrunnerMessageBox, openModal } = useModal();
-  
+
   const {
     buttonText,
     apiEndpoint,
     apiMethod,
+    commandName, // ✅
     buttonColor,
     textColor,
     padding,
@@ -118,27 +128,37 @@ export const renderComponent = (
   };
 
   const handleClick = async () => {
-    if(apiMethod && !["GET", "POST"].includes(apiMethod.toUpperCase())) {
-      openModal (constants.messages.MESSAGE_NOT_SUPPORTED_API_METHOD);
+    if (apiMethod && !["GET", "POST"].includes(apiMethod.toUpperCase())) {
+      openModal(constants.messages.MESSAGE_NOT_SUPPORTED_API_METHOD);
       return;
     }
-    if(!apiEndpoint) {
+    if (!apiEndpoint) {
       openModal(constants.messages.MESSAGE_NOT_SET_API_ENDPOINT);
       return;
-    }   
+    }
+    if (!commandName) {
+      openModal("commandName을 설정해주세요."); // ✅
+      return;
+    }
 
     try {
-      var jRequest = component.runtime_data;
-      var jResponse = {};
+      const jRequest = {
+        commandName, // ✅ 런타임에서 설정한 값
+        systemCode: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE,
+        userId: userInfo.getLoginUserId(),
+        runtimeData: component.runtime_data,
+      };
 
-      setLoading(true); // 데이터 로딩 시작
-      jResponse = await RequestServer(apiMethod || "POST", jRequest, apiEndpoint);
-      setLoading(false); // 데이터 로딩 끝
+      setLoading(true);
+      const jResponse = await RequestServer(apiMethod || "POST", jRequest, apiEndpoint);
+      setLoading(false);
 
       if (jResponse.error_code === 0) {
         openModal(constants.messages.MESSAGE_SUCCESS_SAVED);
-        fetchSQLList();
-      } else openModal(jResponse.error_message);
+        // 필요하다면 후속처리
+      } else {
+        openModal(jResponse.error_message);
+      }
     } catch (error) {
       openModal(error.message);
       console.error(`message:${error.message}\n stack:${error.stack}\n`);
@@ -147,22 +167,22 @@ export const renderComponent = (
 
   return (
     <>
-    <BrunnerMessageBox />
-    <button
-      className={`${selectedClass} ${alignmentClass}`}
-      style={style}
-      onClick={(e) => {
-        e.stopPropagation();
+      <BrunnerMessageBox />
+      <button
+        className={`${selectedClass} ${alignmentClass}`}
+        style={style}
+        onClick={(e) => {
+          e.stopPropagation();
 
-        if (isDesignMode) {
-          handleComponentClick(e);  // 디자인 모드에만 선택 처리
-        } else {
-          handleClick(); 
-        }
-      }}
-    >
-      {buttonText || "버튼"}
-    </button>
+          if (isDesignMode) {
+            handleComponentClick(e);
+          } else {
+            handleClick();
+          }
+        }}
+      >
+        {buttonText || "버튼"}
+      </button>
     </>
   );
 };
