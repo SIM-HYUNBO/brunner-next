@@ -19,6 +19,13 @@ export const initDefaultRuntimeData = (defaultRuntimeData) => {
   return defaultRuntimeData;
 }
 
+export const getBindingValue = (component) => {
+  if (!component.runtime_data?.bindingKey) {
+    return null;
+  }
+  return component.runtime_data?.value || null;
+}
+
 export const getNewRuntimeData = (component, key, value) => {
   return { ...component.runtime_data, [key]: value };
 }

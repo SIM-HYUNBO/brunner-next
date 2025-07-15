@@ -28,6 +28,17 @@ export const initDefaultRuntimeData = (defaultRuntimeData) => {
   return defaultRuntimeData;
 };
 
+export const getBindingValue = (component) => {
+  if (!component.runtime_data?.bindingKey) {
+    return null;
+  }
+  return { cols: component.runtime_data?.cols, 
+           rows: component.runtime_data?.rows, 
+           data: component.runtime_data?.data,
+           columns: component.runtime_data?.columns || []
+          } || null;
+}
+
 /**
  * 셀 데이터 변경
  */
