@@ -9,6 +9,7 @@ import * as TextComponent from "@/components/eDoc/edocComponent/edocComponent_Te
 import * as ImageComponent from "@/components/eDoc/edocComponent/edocComponent_Image";
 import * as TableComponent from "@/components/eDoc/edocComponent/edocComponent_Table";
 import * as CheckListComponent from "@/components/eDoc/edocComponent/edocComponent_CheckList";
+import { bind } from 'tls';
 
 export default function EDocEditorCanvas({
   page,                  // ✅ 단일 페이지
@@ -21,7 +22,8 @@ export default function EDocEditorCanvas({
   onMoveDown,
   onUpdateComponent,
   isViewerMode = false,
-  mode// design | runtime
+  mode,// design | runtime
+  bindingData
 }) {
   const { components, runtime_data } = page;
 
@@ -206,6 +208,7 @@ export default function EDocEditorCanvas({
               }
               documentRuntimeData={runtime_data}
               mode={mode}
+              bindingData={bindingData}
             />
           </div>
           );
