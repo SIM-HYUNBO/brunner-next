@@ -217,7 +217,11 @@ export const renderComponent = (
             <th
               key={colIdx}
               className="border border-gray-300 px-2 py-1 bg-gray-100 text-center"
-              // width는 colgroup에서 지정하므로 따로 줄 필요 없음
+              style={{
+                  verticalAlign: 'middle',
+                  height: '40px',
+                  textAlign: col.align || "center",
+                }}
             >
               {col.header}
             </th>
