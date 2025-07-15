@@ -1,7 +1,7 @@
 `use strict`
 
 import React from 'react';
-import EDocTextStyleEditor from "@/components/edoc/EDocTextStyleEditor";
+import EDocTextStyleEditor from "@/components/eDoc/eDocTextStyleEditor";
 
 export const initDefaultRuntimeData = (defaultRuntimeData) => {
   defaultRuntimeData.content = "여기에 텍스트를 입력하세요";

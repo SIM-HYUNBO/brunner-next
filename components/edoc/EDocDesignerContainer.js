@@ -6,21 +6,21 @@ import * as userInfo from "@/components/userInfo";
 import { useModal } from "@/components/brunnerMessageBox";
 import RequestServer from "@/components/requestServer";
 
-import EDocComponentPalette from './EDocComponentPalette';
-import EDocEditorCanvas from './EDocEditorCanvas';
-import EDocDesignerTopMenu from './EDocDesignerTopMenu';
-import EDocComponentPropertyEditor from './EDocComponentPropertyEditor';
-import EDocDocumentPropertyEditor from './EDocDocumentPropertyEditor';
+import EDocComponentPalette from './eDocComponentPalette';
+import EDocEditorCanvas from './eDocEditorCanvas';
+import EDocDesignerTopMenu from './eDocDesignerTopMenu';
+import EDocComponentPropertyEditor from './eDocComponentPropertyEditor';
+import EDocDocumentPropertyEditor from './eDocDocumentPropertyEditor';
 
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
 
-import * as InputComponent from "@/components/edoc/edocComponent/edocComponent_Input";
-import * as TextComponent from "@/components/edoc/edocComponent/edocComponent_Text";
-import * as ImageComponent from "@/components/edoc/edocComponent/edocComponent_Image";
-import * as TableComponent from "@/components/edoc/edocComponent/edocComponent_Table";
-import * as CheckListComponent from "@/components/edoc/edocComponent/edocComponent_CheckList";
-import * as ButtonComponent from "@/components/edoc/edocComponent/edocComponent_Button";
+import * as InputComponent from "@/components/eDoc/edocComponent/edocComponent_Input";
+import * as TextComponent from "@/components/eDoc/edocComponent/edocComponent_Text";
+import * as ImageComponent from "@/components/eDoc/edocComponent/edocComponent_Image";
+import * as TableComponent from "@/components/eDoc/edocComponent/edocComponent_Table";
+import * as CheckListComponent from "@/components/eDoc/edocComponent/edocComponent_CheckList";
+import * as ButtonComponent from "@/components/eDoc/edocComponent/edocComponent_Button";
 
 export default function EDocDesignerContainer({ documentId }) {
   const [isExportingPdf, setIsExportingPdf] = useState(false);

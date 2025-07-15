@@ -1,5 +1,5 @@
 import { useRouter } from 'next/router';
-import EDocDesignerContainer from '@/components/edoc/EDocDesignerContainer';
+import EDocDesignerContainer from '@/components/eDoc/eDocDesignerContainer';
 
 export default function DocumentDesignerPage() {
   const router = useRouter();

@@ -2,13 +2,13 @@
 
 import React, { useEffect } from 'react';
 import * as constants from '@/components/constants';
-import DocComponentRenderer from '@/components/edoc/EDocComponentRenderer';
+import DocComponentRenderer from '@/components/eDoc/eDocComponentRenderer';
 
-import * as InputComponent from "@/components/edoc/edocComponent/edocComponent_Input";
-import * as TextComponent from "@/components/edoc/edocComponent/edocComponent_Text";
-import * as ImageComponent from "@/components/edoc/edocComponent/edocComponent_Image";
-import * as TableComponent from "@/components/edoc/edocComponent/edocComponent_Table";
-import * as CheckListComponent from "@/components/edoc/edocComponent/edocComponent_CheckList";
+import * as InputComponent from "@/components/eDoc/edocComponent/edocComponent_Input";
+import * as TextComponent from "@/components/eDoc/edocComponent/edocComponent_Text";
+import * as ImageComponent from "@/components/eDoc/edocComponent/edocComponent_Image";
+import * as TableComponent from "@/components/eDoc/edocComponent/edocComponent_Table";
+import * as CheckListComponent from "@/components/eDoc/edocComponent/edocComponent_CheckList";
 
 export default function EDocEditorCanvas({
   page,                  // ✅ 단일 페이지
