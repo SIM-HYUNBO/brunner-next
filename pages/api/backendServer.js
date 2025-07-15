@@ -11,6 +11,7 @@ import * as postInfo from './biz/postInfo'
 import * as postCommentInfo from './biz/postCommentInfo'
 import * as edocComponentTemplate from './biz/edoc/edocComponentTemplate'
 import * as edocDocument from './biz/edoc/edocDocument'
+import * as edocCustom from './biz/edoc/edocCustom'
 
 async function initialize() {
     var serviceSql = null;
@@ -112,6 +113,8 @@ const executeService = async (method, req) => {
         jResponse = await edocComponentTemplate.executeService(req.body._txnId, jRequest);
     } else if (commandName.startsWith('edocDocument.')) {
         jResponse = await edocDocument.executeService(req.body._txnId, jRequest);
+    } else if (commandName.startsWith('edocCustom.')) {
+        jResponse = await edocCustom.executeService(req.body._txnId, jRequest);
     } else {
         jResponse = JSON.stringify({
             error_code: -1,
