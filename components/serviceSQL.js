@@ -131,7 +131,6 @@ const ServiceSQL = () => {
     } catch (error) {
       setLoading(false); // 데이터 로딩 끝
       openModal(error.message);
-      console.error(`message:${error.message}\n stack:${error.stack}\n`);
     }
   };
 

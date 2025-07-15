@@ -11,6 +11,7 @@ import EDocEditorCanvas from './eDocEditorCanvas';
 import EDocDesignerTopMenu from './eDocDesignerTopMenu';
 import EDocComponentPropertyEditor from './eDocComponentPropertyEditor';
 import EDocDocumentPropertyEditor from './eDocDocumentPropertyEditor';
+import * as commonFunctions from '@/components/commonFunctions';
 
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
@@ -563,7 +564,8 @@ function EDocDocumentListModal({ documents, onSelect, onClose }) {
                   onUpdateComponent={handleUpdateComponent}
                   isViewerMode={isExportingPdf}
                   mode={mode} // ✅ 부모가 내려줌!
-                  bindingData={bindingData}
+                  bindingData={commonFunctions.bindingData}
+                  documentData={documentData}
                 />
             </div>
           ))}
@@ -622,42 +624,3 @@ function EDocDocumentListModal({ documents, onSelect, onClose }) {
     )}
   </>
 )}
-
-export const bindingData = () => {
-  if (!Array.isArray(documentData.pages)) return {};
-
-  return documentData.pages.reduce((acc, page) => {
-    if (!Array.isArray(page.components)) return acc;
-
-    page.components.forEach(comp => {
-      let value = null;
-      let bindingKey = comp.runtime_data.bindingKey;
-      if (bindingKey) {    
-        switch (comp.type) {
-          case constants.edoc.COMPONENT_TYPE_TEXT:
-            value = TextComponent.getBindingValue(comp);
-            break;
-          case constants.edoc.COMPONENT_TYPE_INPUT:
-            value = InputComponent.getBindingValue(comp);
-            break;
-          case constants.edoc.COMPONENT_TYPE_IMAGE:
-            value = ImageComponent.getBindingValue(comp);
-            break;
-          case constants.edoc.COMPONENT_TYPE_TABLE:
-            value = TableComponent.getBindingValue(comp);
-            break;
-          case constants.edoc.COMPONENT_TYPE_CHECKLIST:
-            value = CheckListComponent.getBindingValue(comp);
-            break;
-          case constants.edoc.COMPONENT_TYPE_BUTTON:
-            value = ButtonComponent.getBindingValue(comp);
-            break;
-          default:
-            break;
-        }
-        acc[bindingKey] = value;
-      }
-    });
-    return acc;
-  }, {});
-};

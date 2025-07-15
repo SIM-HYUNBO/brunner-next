@@ -25,7 +25,6 @@ const executeService = async (txnId, jRequest) => {
           break;
     }
   } catch (error) {
-    logger.error(`message:${error.message}\n stack:${error.stack}\n`);
     jResponse.error_message = error.message;
   } finally {
     return jResponse;

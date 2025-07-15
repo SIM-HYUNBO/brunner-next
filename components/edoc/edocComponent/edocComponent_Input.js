@@ -93,7 +93,7 @@ export const renderComponent = (
   component,
   handleComponentClick,
   onRuntimeDataChange, 
-  { selectedClass, alignmentClass, textAlign, isDesignMode}
+  { selectedClass, alignmentClass, textAlign, isDesignMode, bindingData, documentData }
 ) => {
   const style = {
     width: '100%',

@@ -1,5 +1,13 @@
 `use strict`
 
+import * as constants from '@/components/constants';
+import * as InputComponent from "@/components/eDoc/edocComponent/edocComponent_Input";
+import * as TextComponent from "@/components/eDoc/edocComponent/edocComponent_Text";
+import * as ImageComponent from "@/components/eDoc/edocComponent/edocComponent_Image";
+import * as TableComponent from "@/components/eDoc/edocComponent/edocComponent_Table";
+import * as CheckListComponent from "@/components/eDoc/edocComponent/edocComponent_CheckList";
+import * as ButtonComponent from "@/components/eDoc/edocComponent/edocComponent_Button";
+
 export function generateUUID() { // Public Domain/MIT
     return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
         const r = Math.random() * 16 | 0;
@@ -7,3 +15,42 @@ export function generateUUID() { // Public Domain/MIT
         return v.toString(16);
     });
 }
+
+export const bindingData = (documentData) => {
+  if (!Array.isArray(documentData.pages)) return {};
+
+  return documentData.pages.reduce((acc, page) => {
+    if (!Array.isArray(page.components)) return acc;
+
+    page.components.forEach(comp => {
+      let value = null;
+      let bindingKey = comp.runtime_data.bindingKey;
+      if (bindingKey) {    
+        switch (comp.type) {
+          case constants.edoc.COMPONENT_TYPE_TEXT:
+            value = TextComponent.getBindingValue(comp);
+            break;
+          case constants.edoc.COMPONENT_TYPE_INPUT:
+            value = InputComponent.getBindingValue(comp);
+            break;
+          case constants.edoc.COMPONENT_TYPE_IMAGE:
+            value = ImageComponent.getBindingValue(comp);
+            break;
+          case constants.edoc.COMPONENT_TYPE_TABLE:
+            value = TableComponent.getBindingValue(comp);
+            break;
+          case constants.edoc.COMPONENT_TYPE_CHECKLIST:
+            value = CheckListComponent.getBindingValue(comp);
+            break;
+          case constants.edoc.COMPONENT_TYPE_BUTTON:
+            value = ButtonComponent.getBindingValue(comp);
+            break;
+          default:
+            break;
+        }
+        acc[bindingKey] = value;
+      }
+    });
+    return acc;
+  }, {});
+};

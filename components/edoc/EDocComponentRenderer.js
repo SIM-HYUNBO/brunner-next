@@ -16,7 +16,8 @@ export default function DocComponentRenderer({
   onRuntimeDataChange,
   documentRuntimeData,
   mode,
-  bindingData  
+  bindingData,
+  documentData 
 }) {
   
   const selectedClass = isSelected
@@ -38,7 +39,7 @@ export default function DocComponentRenderer({
 
   const renderComponent = (component) => {
     const isDesignMode = mode === "design";
-    const param = {selectedClass, alignmentClass, textAlign, isDesignMode, bindingData};
+    const param = {selectedClass, alignmentClass, textAlign, isDesignMode, bindingData, documentData};
 
     switch (component.type) {
       case constants.edoc.COMPONENT_TYPE_TEXT:
