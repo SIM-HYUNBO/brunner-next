@@ -12,6 +12,7 @@ import * as userInfo from "@/components/userInfo";
 import RequestServer from "@/components/requestServer";
 import DivContainer from "@/components/divContainer";
 import EDocEditorCanvas from '@/components/eDoc/eDocEditorCanvas';
+import * as commonFunctions from '@/components/commonFunctions';
 
 export default function EDocViewerPage() {
   const router = useRouter();
@@ -41,14 +42,18 @@ export default function EDocViewerPage() {
 
         setDocumentData(doc);
 
-        // ✅ 다중 페이지 구성 (예시: DB에 페이지별로 저장되어 있다고 가정)
-        setPages(doc.pages || [
+        const safePages = (doc.pages || [
           {
             id: 'page-1',
             components: doc.components || [],
             runtime_data: doc.runtime_data || {}
           }
-        ]);
+        ]).map(page => ({
+          ...page,
+          documentData: doc   // ✅ 여기서 안전하게 붙임
+        }));
+
+        setPages(safePages);
       } else {
         alert(jResponse.error_message);
       }
@@ -72,45 +77,6 @@ export default function EDocViewerPage() {
       </div>
     );
   }
-
-  const bindingData = () => {
-    if (!Array.isArray(documentData.pages)) return {};
-
-    return documentData.pages.reduce((acc, page) => {
-      if (!Array.isArray(page.components)) return acc;
-
-    page.components.forEach(comp => {
-      let value = null;
-      let bindingKey = comp.runtime_data.bindingKey;
-      if (bindingKey) {    
-        switch (comp.type) {
-          case constants.edoc.COMPONENT_TYPE_TEXT:
-            value = TextComponent.getBindingValue(comp);
-            break;
-          case constants.edoc.COMPONENT_TYPE_INPUT:
-            value = InputComponent.getBindingValue(comp);
-            break;
-          case constants.edoc.COMPONENT_TYPE_IMAGE:
-            value = ImageComponent.getBindingValue(comp);
-            break;
-          case constants.edoc.COMPONENT_TYPE_TABLE:
-            value = TableComponent.getBindingValue(comp);
-            break;
-          case constants.edoc.COMPONENT_TYPE_CHECKLIST:
-            value = CheckListComponent.getBindingValue(comp);
-            break;
-          case constants.edoc.COMPONENT_TYPE_BUTTON:
-            value = ButtonComponent.getBindingValue(comp);
-            break;
-          default:
-            break;
-        }
-        acc[bindingKey] = value;
-      }
-    });
-    return acc;
-    }, {});
-  };
 
   return (
     <Layout>
@@ -139,7 +105,8 @@ export default function EDocViewerPage() {
                       page={page}
                       isViewerMode={true}
                       mode="runtime" // ✅ 실행모드
-                      bindingData={bindingData}
+                      bindingData={commonFunctions.bindingData}
+                      documentData={page.documentData}
                     />
                   </div>
                 ))}

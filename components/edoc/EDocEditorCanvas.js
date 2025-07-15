@@ -23,7 +23,8 @@ export default function EDocEditorCanvas({
   onUpdateComponent,
   isViewerMode = false,
   mode,// design | runtime
-  bindingData
+  bindingData,
+  documentData
 }) {
   const { components, runtime_data } = page;
 
@@ -209,6 +210,7 @@ export default function EDocEditorCanvas({
               documentRuntimeData={runtime_data}
               mode={mode}
               bindingData={bindingData}
+              documentData={documentData}
             />
           </div>
           );
