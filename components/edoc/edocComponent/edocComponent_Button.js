@@ -102,7 +102,7 @@ export const renderComponent = (
   component,
   handleComponentClick,
   onRuntimeDataChange,
-  { selectedClass, alignmentClass, textAlign, isDesignMode }
+  { selectedClass, alignmentClass, textAlign, isDesignMode, bindingData }
 ) => {
   const [loading, setLoading] = useState(false);
   const { BrunnerMessageBox, openModal } = useModal();
@@ -146,7 +146,7 @@ export const renderComponent = (
         commandName: `edocCustom.${commandName}`, // ✅ 런타임에서 설정한 값
         systemCode: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE,
         userId: userInfo.getLoginUserId(),
-        runtimeData: component.runtime_data, // 버튼의 런타임 데이터를 전달하면 안됨
+        bindingData: bindingData(), // 버튼의 런타임 데이터를 전달하면 안됨
       };
 
       setLoading(true);

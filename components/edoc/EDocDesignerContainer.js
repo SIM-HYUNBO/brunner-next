@@ -452,7 +452,7 @@ const handleSaveDocument = async () => {
   setSelectedComponentId(prev => prev + 1);
 };
 
- const handleDeleteComponent = () => {
+const handleDeleteComponent = () => {
   if (selectedComponentId === null) return;
 
   setPages(prevPages => {
@@ -465,31 +465,15 @@ const handleSaveDocument = async () => {
   setSelectedComponentId(null);
 };
 
-  const handleUpdateComponent = (updatedComponent) => {
-    if (selectedComponentId === null) return;
+const handleUpdateComponent = (updatedComponent) => {
+  if (selectedComponentId === null) return;
 
-    setPages(prevPages => {
-      const newPages = [...prevPages];
-      newPages[currentPageIdx].components[selectedComponentId] = updatedComponent;
-      return newPages;
-    });
-  };
-
-  const bindingData = () => {
-    if (!Array.isArray(documentData.components)) return {};
-
-    return documentData.components.reduce((acc, comp) => {
-      const bindingKey = comp.runtime_data?.bindingKey;
-      if (bindingKey) {
-        acc[bindingKey] = comp.runtime_data;
-      }
-      return acc;
-    }, {});
-  }
-
-  var tableData = bindingData().V_Table;
-  var checkListData = bindingData().V_CheckList;   
-  console.log(checkListData);
+  setPages(prevPages => {
+    const newPages = [...prevPages];
+    newPages[currentPageIdx].components[selectedComponentId] = updatedComponent;
+    return newPages;
+  });
+};
 
 function EDocDocumentListModal({ documents, onSelect, onClose }) {
   return (
@@ -579,6 +563,7 @@ function EDocDocumentListModal({ documents, onSelect, onClose }) {
                   onUpdateComponent={handleUpdateComponent}
                   isViewerMode={isExportingPdf}
                   mode={mode} // ✅ 부모가 내려줌!
+                  bindingData={bindingData}
                 />
             </div>
           ))}
@@ -637,3 +622,42 @@ function EDocDocumentListModal({ documents, onSelect, onClose }) {
     )}
   </>
 )}
+
+export const bindingData = () => {
+  if (!Array.isArray(documentData.pages)) return {};
+
+  return documentData.pages.reduce((acc, page) => {
+    if (!Array.isArray(page.components)) return acc;
+
+    page.components.forEach(comp => {
+      let value = null;
+      let bindingKey = comp.runtime_data.bindingKey;
+      if (bindingKey) {    
+        switch (comp.type) {
+          case constants.edoc.COMPONENT_TYPE_TEXT:
+            value = TextComponent.getBindingValue(comp);
+            break;
+          case constants.edoc.COMPONENT_TYPE_INPUT:
+            value = InputComponent.getBindingValue(comp);
+            break;
+          case constants.edoc.COMPONENT_TYPE_IMAGE:
+            value = ImageComponent.getBindingValue(comp);
+            break;
+          case constants.edoc.COMPONENT_TYPE_TABLE:
+            value = TableComponent.getBindingValue(comp);
+            break;
+          case constants.edoc.COMPONENT_TYPE_CHECKLIST:
+            value = CheckListComponent.getBindingValue(comp);
+            break;
+          case constants.edoc.COMPONENT_TYPE_BUTTON:
+            value = ButtonComponent.getBindingValue(comp);
+            break;
+          default:
+            break;
+        }
+        acc[bindingKey] = value;
+      }
+    });
+    return acc;
+  }, {});
+};

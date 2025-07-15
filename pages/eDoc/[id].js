@@ -11,8 +11,6 @@ import * as constants from "@/components/constants";
 import * as userInfo from "@/components/userInfo";
 import RequestServer from "@/components/requestServer";
 import DivContainer from "@/components/divContainer";
-import GoverningMessage from "@/components/governingMessage";
-
 import EDocEditorCanvas from '@/components/eDoc/eDocEditorCanvas';
 
 export default function EDocViewerPage() {
@@ -75,6 +73,45 @@ export default function EDocViewerPage() {
     );
   }
 
+  const bindingData = () => {
+    if (!Array.isArray(documentData.pages)) return {};
+
+    return documentData.pages.reduce((acc, page) => {
+      if (!Array.isArray(page.components)) return acc;
+
+    page.components.forEach(comp => {
+      let value = null;
+      let bindingKey = comp.runtime_data.bindingKey;
+      if (bindingKey) {    
+        switch (comp.type) {
+          case constants.edoc.COMPONENT_TYPE_TEXT:
+            value = TextComponent.getBindingValue(comp);
+            break;
+          case constants.edoc.COMPONENT_TYPE_INPUT:
+            value = InputComponent.getBindingValue(comp);
+            break;
+          case constants.edoc.COMPONENT_TYPE_IMAGE:
+            value = ImageComponent.getBindingValue(comp);
+            break;
+          case constants.edoc.COMPONENT_TYPE_TABLE:
+            value = TableComponent.getBindingValue(comp);
+            break;
+          case constants.edoc.COMPONENT_TYPE_CHECKLIST:
+            value = CheckListComponent.getBindingValue(comp);
+            break;
+          case constants.edoc.COMPONENT_TYPE_BUTTON:
+            value = ButtonComponent.getBindingValue(comp);
+            break;
+          default:
+            break;
+        }
+        acc[bindingKey] = value;
+      }
+    });
+    return acc;
+    }, {});
+  };
+
   return (
     <Layout>
       <Head>
@@ -102,6 +139,7 @@ export default function EDocViewerPage() {
                       page={page}
                       isViewerMode={true}
                       mode="runtime" // ✅ 실행모드
+                      bindingData={bindingData}
                     />
                   </div>
                 ))}
