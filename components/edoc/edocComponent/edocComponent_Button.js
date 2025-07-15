@@ -146,7 +146,7 @@ export const renderComponent = (
         commandName: `edocCustom.${commandName}`, // ✅ 런타임에서 설정한 값
         systemCode: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE,
         userId: userInfo.getLoginUserId(),
-        bindingData: bindingData(documentData), // 버튼의 런타임 데이터를 전달하면 안됨
+        bindingData: bindingData(documentData), // 문서내 바인딩 데이터 추출해서 전송
       };
 
       setLoading(true);
