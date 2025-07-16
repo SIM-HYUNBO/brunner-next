@@ -6,6 +6,101 @@ import { useModal } from "@/components/brunnerMessageBox";
 import RequestServer from "@/components/requestServer";
 import * as userInfo from "@/components/userInfo";
 
+// ✅ 실제 버튼 렌더링
+const RenderComponent = (props) => {
+  const {
+    component,
+    handleComponentClick,
+    onRuntimeDataChange,
+    selectedClass, 
+    alignmentClass, 
+    textAlign, 
+    isDesignMode,   
+    bindingData, 
+    documentData 
+  } = props;
+  const { BrunnerMessageBox, openModal } = useModal();
+  const [loading, setLoading] = useState(false);
+
+  const {
+    buttonText,
+    apiEndpoint,
+    apiMethod,
+    buttonColor,
+    textColor,
+    padding,
+    borderRadius,
+  } = component.runtime_data || {};
+
+  const style = {
+    backgroundColor: buttonColor || "#4F46E5",
+    color: textColor || "#FFFFFF",
+    padding: padding || "10px 20px",
+    border: "none",
+    borderRadius: borderRadius || "6px",
+    cursor: "pointer",
+  };
+
+  const handleClick = async (comp) => {
+  if (comp.runtime_data?.apiMethod && !["GET", "POST"].includes(comp.runtime_data?.apiMethod.toUpperCase())) {
+    await openModal(constants.messages.MESSAGE_NOT_SUPPORTED_API_METHOD);
+    return;
+  }
+  if (!comp.runtime_data?.apiEndpoint) {
+    await openModal(constants.messages.MESSAGE_NOT_SET_API_ENDPOINT);
+    return;
+  }
+  if (!comp.runtime_data?.commandName) {
+    await openModal("commandName을 설정해주세요."); // ✅
+    return;
+  }
+
+  try {
+    const jRequest = {
+      commandName: component.runtime_data?.commandName, // ✅ 런타임에서 설정한 값
+      systemCode: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE,
+      userId: userInfo.getLoginUserId(),
+      bindingData: bindingData(documentData), // 문서내 바인딩 데이터 추출해서 전송
+    };
+
+    setLoading(true);
+    const jResponse = await RequestServer(apiMethod || "POST", jRequest, apiEndpoint);
+    setLoading(false);
+
+    if (jResponse.error_code === 0) {
+      await openModal(`${constants.messages.MESSAGE_SUCCESS_FINISHED}\n[${comp.runtime_data?.commandName}].`);
+      // 필요하다면 후속처리
+    } else {
+      await openModal(jResponse.error_message);
+    }
+  } catch (error) {
+    await openModal(`message:${error.message}`);
+  }
+};
+
+
+  return (
+    <>
+    <BrunnerMessageBox />
+      <button
+        className={`${selectedClass} ${alignmentClass}`}
+        style={style}
+        onClick={(e) => {
+          e.stopPropagation();
+
+          if (isDesignMode) {
+            handleComponentClick(e);
+          } else {
+            handleClick(component);
+          }
+        }}
+      >
+        {buttonText || "버튼"}
+      </button>
+    </>
+  );
+};
+
 // ✅ 기본 런타임 데이터 초기화 — commandName 추가
 export const initDefaultRuntimeData = (defaultRuntimeData) => {
   defaultRuntimeData.buttonText = "버튼";
@@ -28,6 +123,7 @@ export const getNewRuntimeData = (component, key, value) => {
 export function renderProperty(component, updateRuntimeData) {
 
   return (
+    
     <div>
       <label>버튼 텍스트:</label>
       <input
@@ -98,96 +194,4 @@ export function renderProperty(component, updateRuntimeData) {
   );
 }
 
-// ✅ 실제 버튼 렌더링
-export default function RenderComponent (props) {
-  const {
-    component,
-    handleComponentClick,
-    onRuntimeDataChange,
-    selectedClass, 
-    alignmentClass, 
-    textAlign, 
-    isDesignMode, 
-    bindingData, 
-    documentData 
-  } = props;
-  const { BrunnerMessageBox, openModal } = useModal();
-  const [loading, setLoading] = useState(false);
-
-  const {
-    buttonText,
-    apiEndpoint,
-    apiMethod,
-    buttonColor,
-    textColor,
-    padding,
-    borderRadius,
-  } = component.runtime_data || {};
-
-  const style = {
-    backgroundColor: buttonColor || "#4F46E5",
-    color: textColor || "#FFFFFF",
-    padding: padding || "10px 20px",
-    border: "none",
-    borderRadius: borderRadius || "6px",
-    cursor: "pointer",
-  };
-
-  const handleClick = async (comp) => {
-  if (comp.runtime_data?.apiMethod && !["GET", "POST"].includes(comp.runtime_data?.apiMethod.toUpperCase())) {
-    openModal(constants.messages.MESSAGE_NOT_SUPPORTED_API_METHOD);
-    return;
-  }
-  if (!comp.runtime_data?.apiEndpoint) {
-    openModal(constants.messages.MESSAGE_NOT_SET_API_ENDPOINT);
-    return;
-  }
-  if (!comp.runtime_data?.commandName) {
-    openModal("commandName을 설정해주세요."); // ✅
-    return;
-  }
-
-  try {
-    const jRequest = {
-      commandName: component.runtime_data?.commandName, // ✅ 런타임에서 설정한 값
-      systemCode: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE,
-      userId: userInfo.getLoginUserId(),
-      bindingData: bindingData(documentData), // 문서내 바인딩 데이터 추출해서 전송
-    };
-
-    setLoading(true);
-    const jResponse = await RequestServer(apiMethod || "POST", jRequest, apiEndpoint);
-    setLoading(false);
-
-    if (jResponse.error_code === 0) {
-      openModal(`${constants.messages.MESSAGE_SUCCESS_FINISHED}\n[${comp.runtime_data?.commandName}].`);
-      // 필요하다면 후속처리
-    } else {
-      openModal(jResponse.error_message);
-    }
-  } catch (error) {
-    openModal(`message:${error.message}`);
-  }
-};
-
-
-  return (
-    <>
-      <button
-        className={`${selectedClass} ${alignmentClass}`}
-        style={style}
-        onClick={(e) => {
-          e.stopPropagation();
-
-          if (isDesignMode) {
-            handleComponentClick(e);
-          } else {
-            handleClick(component);
-          }
-        }}
-      >
-        {buttonText || "버튼"}
-      </button>
-    </>
-  );
-};
+export default RenderComponent;

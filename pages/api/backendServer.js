@@ -113,7 +113,7 @@ const executeService = async (method, req) => {
         jResponse = await edocComponentTemplate.executeService(req.body._txnId, jRequest);
     } else if (commandName.startsWith('edocDocument.')) {
         jResponse = await edocDocument.executeService(req.body._txnId, jRequest);
-    } else if (commandName.startsWith('edocCustom.')) {
+    } else if (commandName.startsWith('eDoc.')) {
         jResponse = await edocCustom.executeService(req.body._txnId, jRequest);
     } else {
         jResponse = JSON.stringify({
