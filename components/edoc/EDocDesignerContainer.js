@@ -23,7 +23,7 @@ import * as TableComponent from "@/components/eDoc/edocComponent/edocComponent_T
 import * as CheckListComponent from "@/components/eDoc/edocComponent/edocComponent_CheckList";
 import * as ButtonComponent from "@/components/eDoc/edocComponent/edocComponent_Button";
 
-export default function EDocDesignerContainer({ documentId, triggerMenuReload }) {
+export default function EDocDesignerContainer({ documentId, triggerLeftMenuReload }) {
   const [isExportingPdf, setIsExportingPdf] = useState(false);
   const [mode, setMode] = useState("design"); // "design" or "runtime"
     const toggleMode = () => {
@@ -287,8 +287,8 @@ const handleSaveDocument = async () => {
   setLoading(false);
 
   if (jResponse.error_code === 0) {
-    if (triggerMenuReload) {
-       triggerMenuReload(); // ✅ LeftMenu 새로고침 트리거
+    if (triggerLeftMenuReload) {
+       triggerLeftMenuReload(); // ✅ LeftMenu 새로고침 트리거
     }
 
     openModal(constants.messages.MESSAGE_SUCCESS_SAVED);
@@ -328,9 +328,9 @@ const handleSaveDocument = async () => {
     setLoading(false);
 
     if (jResponse.error_code === 0) {
-          if (triggerMenuReload) {
-       triggerMenuReload(); // ✅ LeftMenu 새로고침 트리거
-    }
+      if (triggerLeftMenuReload) {
+        triggerLeftMenuReload(); // ✅ LeftMenu 새로고침 트리거
+      }
     
       openModal(constants.messages.MESSAGE_SUCCESS_DELETED);
       setDocumentData({
