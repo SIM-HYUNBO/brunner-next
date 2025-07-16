@@ -33,11 +33,7 @@ export const getNewRuntimeData = (component, { key, value }) => {
   };
 };
 
-export function renderProperty(component, updateRuntimeData, {
-  renderWidthProperty,
-  renderForceNewLineProperty,
-  renderPositionAlignProperty
-}) {
+export function renderProperty(component,  updateRuntimeData, renderWidthProperty, renderForceNewLineProperty, renderPositionAlignProperty) {
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];

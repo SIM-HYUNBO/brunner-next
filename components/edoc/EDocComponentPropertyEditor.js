@@ -81,48 +81,17 @@ export default function EDocComponentPropertyEditor({ component, handleUpdateCom
   const renderComponentProperty = (component) => {
     switch (component.type) {
       case constants.edoc.COMPONENT_TYPE_TEXT:
-        return TextComponent.renderProperty(component, 
-          updateRuntimeDataByPropertyEeditor, 
-          renderWidthPropertyByPropertyEditor, 
-          renderForceNewLinePropertyByPropertyEditor, 
-          renderPositionAlignPropertyByPropertyEditor
-                                            );
+        return TextComponent.renderProperty(component, updateRuntimeDataByPropertyEeditor, renderWidthPropertyByPropertyEditor, renderForceNewLinePropertyByPropertyEditor, renderPositionAlignPropertyByPropertyEditor);
       case constants.edoc.COMPONENT_TYPE_TABLE:
-        return TableComponent.renderProperty(component, 
-          updateRuntimeDataByPropertyEeditor, 
-          renderWidthPropertyByPropertyEditor, 
-          renderForceNewLinePropertyByPropertyEditor, 
-          renderPositionAlignPropertyByPropertyEditor
-        );
+        return TableComponent.renderProperty(component, updateRuntimeDataByPropertyEeditor, renderWidthPropertyByPropertyEditor, renderForceNewLinePropertyByPropertyEditor, renderPositionAlignPropertyByPropertyEditor);
       case constants.edoc.COMPONENT_TYPE_INPUT:
-        return InputComponent.renderProperty(component, 
-          updateRuntimeDataByPropertyEeditor, 
-          renderWidthPropertyByPropertyEditor, 
-          renderForceNewLinePropertyByPropertyEditor, 
-          renderPositionAlignPropertyByPropertyEditor
-        );
-
+        return InputComponent.renderProperty(component,  updateRuntimeDataByPropertyEeditor, renderWidthPropertyByPropertyEditor, renderForceNewLinePropertyByPropertyEditor, renderPositionAlignPropertyByPropertyEditor);
       case constants.edoc.COMPONENT_TYPE_IMAGE:
-        return ImageComponent.renderProperty(component, 
-          updateRuntimeDataByPropertyEeditor, 
-          renderWidthPropertyByPropertyEditor, 
-          renderForceNewLinePropertyByPropertyEditor, 
-          renderPositionAlignPropertyByPropertyEditor
-        );
+        return ImageComponent.renderProperty(component, updateRuntimeDataByPropertyEeditor, renderWidthPropertyByPropertyEditor, renderForceNewLinePropertyByPropertyEditor, renderPositionAlignPropertyByPropertyEditor);
       case constants.edoc.COMPONENT_TYPE_CHECKLIST:
-        return CheckListComponent.renderProperty(component, 
-          updateRuntimeDataByPropertyEeditor,
-          renderWidthPropertyByPropertyEditor, 
-          renderForceNewLinePropertyByPropertyEditor, 
-          renderPositionAlignPropertyByPropertyEditor
-        );
+        return CheckListComponent.renderProperty(component, updateRuntimeDataByPropertyEeditor,renderWidthPropertyByPropertyEditor, renderForceNewLinePropertyByPropertyEditor, renderPositionAlignPropertyByPropertyEditor);
       case constants.edoc.COMPONENT_TYPE_BUTTON:
-        return ButtonComponent.renderProperty(component, 
-          updateRuntimeDataByPropertyEeditor,
-          renderWidthPropertyByPropertyEditor,
-          renderForceNewLinePropertyByPropertyEditor,
-          renderPositionAlignPropertyByPropertyEditor
-        );
+        return ButtonComponent.renderProperty(component, updateRuntimeDataByPropertyEeditor,renderWidthPropertyByPropertyEditor,renderForceNewLinePropertyByPropertyEditor,renderPositionAlignPropertyByPropertyEditor);
 
       default:
         return <p>속성 편집이 지원되지 않는 컴포넌트입니다.</p>;
