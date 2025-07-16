@@ -39,7 +39,7 @@ export default function Layout({ children }) {
         <main>
           {React.Children.map(children, child =>
             React.isValidElement(child)
-              ? React.cloneElement(child, { triggerMenuReload: () => setReloadSignal(prev => prev + 1) })
+              ? React.cloneElement(child, { triggerLeftMenuReload: () => setReloadSignal(prev => prev + 1) })
               : child
           )}
         </main>
