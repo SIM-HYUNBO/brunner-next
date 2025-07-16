@@ -1,10 +1,15 @@
-`use strict`
+'use strict'
 
-export default function EDocDocumentPropertyEditor({ runtimeData, onChange }) {
+export default function EDocDocumentPropertyEditor({
+  title,
+  runtimeData,
+  onChangeTitle,
+  onChangeRuntimeData,
+}) {
   if (!runtimeData) return <p>문서 속성 데이터를 불러오세요.</p>;
 
   const updateProperty = (key, value) => {
-    onChange({
+    onChangeRuntimeData({
       ...runtimeData,
       [key]: value,
     });
@@ -12,6 +17,17 @@ export default function EDocDocumentPropertyEditor({ runtimeData, onChange }) {
 
   return (
     <div>
+      {/* ✅ 제목은 별도로 */}
+      <label>문서 제목 (title):</label>
+      <input
+        type="text"
+        value={title || ''}
+        onChange={(e) => onChangeTitle(e.target.value)}
+        className="w-full border border-gray-300 rounded p-2 mb-3"
+        placeholder="문서 제목 입력"
+      />
+
+      {/* 나머지는 그대로 runtimeData */}
       <label>여백 (padding, px):</label>
       <input
         type="number"

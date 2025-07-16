@@ -583,7 +583,11 @@ function EDocDocumentListModal({ documents, onSelect, onClose }) {
           />
         ) : (
           <EDocDocumentPropertyEditor
+            title={documentData.title || ''}
             runtimeData={documentData.runtime_data || {}}
+            onChangeTitle={(newTitle) => {
+              setDocumentData(prev => ({  ...prev, title: newTitle }));
+            }} 
             onChange={(updatedRuntimeData) => {
               setDocumentData(prev => {
                 const prevAlign = prev.runtime_data?.positionAlign;

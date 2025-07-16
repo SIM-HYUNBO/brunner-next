@@ -83,7 +83,8 @@ const upsertOne = async (txnId, jRequest) => {
         1, // version
         jRequest.userId,
         JSON.stringify(jRequest.documentData.runtime_data || {}),
-        JSON.stringify(jRequest.documentData.pages || [])
+        JSON.stringify(jRequest.documentData.pages || []),
+        `/edoc/${jRequest.documentData.id}`, // document_url
       ]);
 
       if (insertResult.rowCount !== 1) {
@@ -214,7 +215,8 @@ const selectAll = async (txnId, jRequest) => {
         sql = await dynamicSql.getSQL00('select_TB_DOC_DOCUMENT', 2);
         var select_TB_DOC_DOCUMENT = await database.executeSQL(sql,
             [
-                jRequest.systemCode   
+                jRequest.systemCode,
+                jRequest.userId   
             ]);
 
         jResponse.documentList = select_TB_DOC_DOCUMENT.rows;
