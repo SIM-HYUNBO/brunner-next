@@ -1,13 +1,11 @@
-'use strict';
-
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { isMobile } from 'react-device-detect';
-import * as userInfo from "@/components/userInfo";
-import { useEffect, useState } from "react";
 import * as constants from "@/components/constants";
+import * as userInfo from "@/components/userInfo";
 import RequestServer from "@/components/requestServer";
 
-export default function LeftMenu() {
+export default function LeftMenu({ reloadSignal }) {
   const [documentList, setDocumentList] = useState([]);
 
   useEffect(() => {
@@ -28,7 +26,7 @@ export default function LeftMenu() {
     };
 
     fetchUserDocuments();
-  }, []);
+  }, [reloadSignal]);  // reloadSignal이 바뀌면 다시 호출
 
   return (
     <>
@@ -46,44 +44,37 @@ export default function LeftMenu() {
                 Contact
               </Link>
 
-              {userInfo.isAdminUser() && (
-                <>
-                  <Link
-                    className={`block text-gray-600 dark:text-gray-100 py-2`}
-                    href="/mainPages/administration"
-                  >
-                    Administration
-                  </Link>
-                </>
-              )}
+              {/* 기타 메뉴들 */}
 
               <hr className="my-4 border-gray-400" />
 
-              <Link
-                className={`block text-gray-600 dark:text-gray-100 py-2`}
-                href="/eDoc/eDocDesigner"
-              >
+              <Link className={`block text-gray-600 dark:text-gray-100 py-2`} href="/eDoc/eDocDesigner">
                 Document Designer
               </Link>
-                <li className="text-gray-500 dark:text-gray-300 py-1">My Documents</li>
-              {/* ✅ 사용자 문서 목록 */}
-              {documentList.length > 0 && (
-                <>
-                  {documentList.map((doc) => (
-                    <Link
-                      key={doc.id}
-                      className={`block text-gray-600 dark:text-gray-100 py-2`}
-                      href={doc.menu_path}
-                    >
-                      {doc.title}
-                    </Link>
-                  ))}
-                </>
-              )}
+              <li className="text-gray-500 dark:text-gray-300 py-1">My Documents</li>
+
+              {documentList.length > 0 && documentList.map((doc) => (
+                doc.menu_path ? (
+                  <Link
+                    key={doc.id}
+                    className="block text-gray-600 dark:text-gray-100 py-2"
+                    href={doc.menu_path}
+                  >
+                    {doc.title}
+                  </Link>
+                ) : (
+                  <span
+                    key={doc.id}
+                    className="block text-gray-600 dark:text-gray-100 py-2"
+                  >
+                    {doc.title}
+                  </span>
+                )
+              ))}
             </ul>
           </nav>
         </aside>
       )}
     </>
   );
-};
+}
