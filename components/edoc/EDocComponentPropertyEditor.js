@@ -43,7 +43,7 @@ export default function EDocComponentPropertyEditor({ component, handleUpdateCom
       <input
         type="text"
         value={component.runtime_data?.width || '100%'}
-        onChange={(e) => updateRuntimeData("width", e.target.value)}
+        onChange={(e) => updateRuntimeDataByPropertyEeditor("width", e.target.value)}
         className="w-full border border-gray-300 rounded p-2 mb-2"
       />
     </>
@@ -55,7 +55,7 @@ export default function EDocComponentPropertyEditor({ component, handleUpdateCom
         <input
           type="checkbox"
           checked={!!component.runtime_data?.forceNewLine}
-          onChange={(e) => updateRuntimeData("forceNewLine", e.target.checked)}
+          onChange={(e) => updateRuntimeDataByPropertyEeditor("forceNewLine", e.target.checked)}
           className="mr-2"
         />
         다음줄에 표시
@@ -68,7 +68,7 @@ export default function EDocComponentPropertyEditor({ component, handleUpdateCom
       <label>정렬:</label>
       <select
         value={component.runtime_data?.positionAlign || 'left'}
-        onChange={(e) => updateRuntimeData("positionAlign", e.target.value)}
+        onChange={(e) => updateRuntimeDataByPropertyEeditor("positionAlign", e.target.value)}
         className="w-full border border-gray-300 rounded p-2 mb-2"
       >
         <option value="left">왼쪽</option>
