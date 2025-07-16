@@ -84,7 +84,7 @@ const upsertOne = async (txnId, jRequest) => {
         jRequest.userId,
         JSON.stringify(jRequest.documentData.runtime_data || {}),
         JSON.stringify(jRequest.documentData.pages || []),
-        `/edoc/${jRequest.documentData.id}`, // document_url
+        `/eDoc/${jRequest.documentData.id}`, // document_url
       ]);
 
       if (insertResult.rowCount !== 1) {
@@ -102,7 +102,8 @@ const upsertOne = async (txnId, jRequest) => {
         jRequest.documentData.description,
         jRequest.userId,
         JSON.stringify(jRequest.documentData.runtime_data || {}),
-        JSON.stringify(jRequest.documentData.pages || [])
+        JSON.stringify(jRequest.documentData.pages || []),
+        `/eDoc/${jRequest.documentData.id}`, // document_url
       ]);
 
       if (updateResult.rowCount !== 1) {
@@ -157,7 +158,8 @@ const selectOne = async (txnId, jRequest) => {
       title: row.title,
       description: row.description,
       runtime_data: row.runtime_data,
-      pages: row.pages || []
+      pages: row.pages || [],
+      menu_path: row.menu_path, // 메뉴 경로
       // ✅ components는 pages에 이미 포함되므로 제거!
     };
 

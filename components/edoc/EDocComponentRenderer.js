@@ -2,12 +2,12 @@
 
 import * as constants from '@/components/constants';
 
-import * as TextComponent from "@/components/eDoc/edocComponent/edocComponent_Text";
-import * as InputComponent from "@/components/eDoc/edocComponent/edocComponent_Input";
-import * as ImageComponent from "@/components/eDoc/edocComponent/edocComponent_Image";
-import * as TableComponent from "@/components/eDoc/edocComponent/edocComponent_Table";
-import * as CheckListComponent from "@/components/eDoc/edocComponent/edocComponent_CheckList";
-import * as ButtonComponent from "@/components/eDoc/edocComponent/edocComponent_Button";
+import TextComponent from "@/components/eDoc/edocComponent/edocComponent_Text";
+import InputComponent from "@/components/eDoc/edocComponent/edocComponent_Input";
+import ImageComponent from "@/components/eDoc/edocComponent/edocComponent_Image";
+import TableComponent from "@/components/eDoc/edocComponent/edocComponent_Table";
+import CheckListComponent from "@/components/eDoc/edocComponent/edocComponent_CheckList";
+import ButtonComponent from "@/components/eDoc/edocComponent/edocComponent_Button";
 
 export default function DocComponentRenderer({
   component,
@@ -37,33 +37,32 @@ export default function DocComponentRenderer({
     onSelect();
   };
 
-  const renderComponent = (component) => {
-    const isDesignMode = mode === "design";
-    const param = {selectedClass, alignmentClass, textAlign, isDesignMode, bindingData, documentData};
+  const renderProps = {
+    component,
+    handleComponentClick,
+    onRuntimeDataChange,
+    selectedClass,
+    alignmentClass,
+    textAlign,
+    isDesignMode: mode === "design",
+    bindingData,
+    documentData,
+  };
 
-    switch (component.type) {
-      case constants.edoc.COMPONENT_TYPE_TEXT:
-        return TextComponent.renderComponent(component, handleComponentClick, onRuntimeDataChange, param);
-
-      case constants.edoc.COMPONENT_TYPE_INPUT:
-        return InputComponent.renderComponent(component, handleComponentClick, onRuntimeDataChange, param);
-
-      case constants.edoc.COMPONENT_TYPE_IMAGE:
-        return ImageComponent.renderComponent(component, handleComponentClick, onRuntimeDataChange, param);
-
-      case constants.edoc.COMPONENT_TYPE_TABLE:
-        return TableComponent.renderComponent(component, handleComponentClick, onRuntimeDataChange, param);
-
-      case constants.edoc.COMPONENT_TYPE_CHECKLIST:
-        return CheckListComponent.renderComponent(component, handleComponentClick, onRuntimeDataChange, param);
-
-      case constants.edoc.COMPONENT_TYPE_BUTTON:
-        return ButtonComponent.renderComponent(component, handleComponentClick, onRuntimeDataChange, param);
-
-      default:
-        return null;
-    }    
-  }
-
-  return renderComponent(component);
+switch (component.type) {
+  case constants.edoc.COMPONENT_TYPE_TEXT:
+    return <TextComponent {...renderProps} />;
+  case constants.edoc.COMPONENT_TYPE_INPUT:
+    return <InputComponent {...renderProps} />;
+  case constants.edoc.COMPONENT_TYPE_IMAGE:
+    return <ImageComponent {...renderProps} />;
+  case constants.edoc.COMPONENT_TYPE_TABLE:
+    return <TableComponent {...renderProps} />;
+  case constants.edoc.COMPONENT_TYPE_CHECKLIST:
+    return <CheckListComponent {...renderProps} />;
+  case constants.edoc.COMPONENT_TYPE_BUTTON:
+    return <ButtonComponent {...renderProps} />;
+  default:
+    return null;
+}
 }

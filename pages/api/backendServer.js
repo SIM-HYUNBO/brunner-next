@@ -9,9 +9,9 @@ import * as incomeHistory from './biz/incomeHistory'
 import * as tb_cor_ticker_info from './biz/stockInfo'
 import * as postInfo from './biz/postInfo'
 import * as postCommentInfo from './biz/postCommentInfo'
-import * as edocComponentTemplate from './biz/edoc/edocComponentTemplate'
-import * as edocDocument from './biz/edoc/edocDocument'
-import * as edocCustom from './biz/edoc/edocCustom'
+import * as edocComponentTemplate from './biz/eDoc/edocComponentTemplate'
+import * as edocDocument from './biz/eDoc/edocDocument'
+import * as edocCustom from './biz/eDoc/edocCustom'
 
 async function initialize() {
     var serviceSql = null;
