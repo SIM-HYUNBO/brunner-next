@@ -49,25 +49,31 @@ export const getBindingValue = (component) => {
 /**
  * 셀 데이터 변경
  */
-export const getNewRuntimeData = (component, [rowIdx, colIdx, value]) => {
+export const getNewRuntimeData = (component, rowIdx, colIdx, newValue) => {
   const currentData = component.runtime_data || {};
-  let newRuntimeData = { ...currentData };
-  
-  if (newRuntimeData?.data && newRuntimeData.data[rowIdx]) {
-      newRuntimeData.data[rowIdx][colIdx] = value;
+  const oldData = Array.isArray(currentData.data) ? currentData.data : [];
+  // 2차원 배열 깊은 복사
+  const newData = oldData.map(row => Array.isArray(row) ? [...row] : []);
+  // 값 변경
+  if (newData[rowIdx] && typeof colIdx === "number") {
+    newData[rowIdx][colIdx] = newValue;
   }
-
-  return newRuntimeData;
+  // 새로운 객체 반환
+  return {
+    ...currentData,
+    data: newData,
+  };
 };
 
 /**
  * 속성 편집 렌더링
  */
-export function renderProperty(component, updateRuntimeData, {
+export function renderProperty(
+  component, 
+  updateRuntimeData,
   renderWidthProperty,
   renderForceNewLineProperty,
-  renderPositionAlignProperty,
-}) {
+  renderPositionAlignProperty) {
 
   const updateTableSize = (newRows, newCols) => {
     const oldData = component.runtime_data?.data || [];
@@ -191,7 +197,7 @@ export function renderProperty(component, updateRuntimeData, {
  */
 export default function RenderComponent (props) {
   const {
-    component,
+    component: comp,
     handleComponentClick,
     onRuntimeDataChange,
     selectedClass, 
@@ -204,18 +210,18 @@ export default function RenderComponent (props) {
   
   const style = {
     width: '100%',
-    height: component.runtime_data?.height || 'auto',
+    height: comp.runtime_data?.height || 'auto',
     textAlign,
-    fontFamily: component.runtime_data?.fontFamily || 'inherit',
-    fontSize: component.runtime_data?.fontSize ? `${component.runtime_data.fontSize}px` : 'inherit',
-    fontWeight: component.runtime_data?.fontWeight || 'normal',
-    color: component.runtime_data?.fontColor || 'inherit',
-    backgroundColor: component.runtime_data?.backgroundColor || 'transparent',
-    textDecoration: component.runtime_data?.underline ? 'underline' : 'none',
+    fontFamily: comp.runtime_data?.fontFamily || 'inherit',
+    fontSize: comp.runtime_data?.fontSize ? `${comp.runtime_data.fontSize}px` : 'inherit',
+    fontWeight: comp.runtime_data?.fontWeight || 'normal',
+    color: comp.runtime_data?.fontColor || 'inherit',
+    backgroundColor: comp.runtime_data?.backgroundColor || 'transparent',
+    textDecoration: comp.runtime_data?.underline ? 'underline' : 'none',
   };
 
-  const rows = component.runtime_data?.data || [];
-  const columns = component.runtime_data?.columns || [];
+  const rows = comp.runtime_data?.data || [];
+  const columns = comp.runtime_data?.columns || [];
   
   return (
     <table
@@ -284,8 +290,11 @@ export default function RenderComponent (props) {
                     }}
                     value={row[colIdx] || ''}
                     onChange={(e) => {
-                      const updatedRuntimeData = getNewRuntimeData(component, [rowIdx, colIdx, e.target.value]);
-                      updateRuntimeData("data", updatedRuntimeData.data);
+                      const updatedRuntimeData = getNewRuntimeData(comp, rowIdx, colIdx, e.target.value);
+                        onRuntimeDataChange({
+                        ...comp,
+                        runtime_data: updatedRuntimeData
+                      });
                     }}
                   />
               </td>
