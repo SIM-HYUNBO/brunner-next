@@ -26,9 +26,12 @@ export const getBindingValue = (component) => {
   return component.runtime_data?.src || null;
 }
 
-export const getNewRuntimeData = (component, key, value) => {
-  return { ...component.runtime_data, [key]: value };
-}
+export const getNewRuntimeData = (component, { key, value }) => {
+  return {
+    ...(component.runtime_data || {}),
+    [key]: value
+  };
+};
 
 export function renderProperty(component, updateRuntimeData, {
   renderWidthProperty,

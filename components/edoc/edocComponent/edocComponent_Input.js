@@ -26,14 +26,18 @@ export const getBindingValue = (component) => {
   return component.runtime_data?.value || null;
 }
 
-export const getNewRuntimeData = (component, key, value) => {
-  return { ...component.runtime_data, [key]: value };
-}
+export const getNewRuntimeData = (component, { key, value }) => {
+  return {
+    ...(component.runtime_data || {}),
+    [key]: value
+  };
+};
 
-export function renderProperty(component, updateRuntimeData, {
+export function renderProperty(component, 
+  updateRuntimeData, 
   renderWidthProperty, 
   renderForceNewLineProperty, 
-  renderPositionAlignProperty}
+  renderPositionAlignProperty
 ) {
   const renderComponentProperty = (component) => {
     return (

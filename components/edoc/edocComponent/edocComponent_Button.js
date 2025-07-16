@@ -119,8 +119,11 @@ export const initDefaultRuntimeData = (defaultRuntimeData) => {
 };
 
 // ✅ 런타임 데이터 업데이트 유틸
-export const getNewRuntimeData = (component, key, value) => {
-  return { ...component.runtime_data, [key]: value };
+export const getNewRuntimeData = (component, { key, value }) => {
+  return {
+    ...(component.runtime_data || {}),
+    [key]: value
+  };
 };
 
 // ✅ 속성 편집 UI — commandName 입력 추가
