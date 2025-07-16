@@ -33,12 +33,7 @@ export const getNewRuntimeData = (component, { key, value }) => {
   };
 };
 
-export function renderProperty(component, 
-  updateRuntimeData, 
-  renderWidthProperty, 
-  renderForceNewLineProperty, 
-  renderPositionAlignProperty
-) {
+export function renderProperty(component, updateRuntimeData, renderWidthProperty, renderForceNewLineProperty, renderPositionAlignProperty) {
   const renderComponentProperty = (component) => {
     return (
       <div>

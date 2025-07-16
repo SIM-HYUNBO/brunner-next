@@ -127,7 +127,7 @@ export const getNewRuntimeData = (component, { key, value }) => {
 };
 
 // ✅ 속성 편집 UI — commandName 입력 추가
-export function renderProperty(component, updateRuntimeData) {
+export function renderProperty(component, updateRuntimeData, renderWidthProperty, renderForceNewLineProperty, renderPositionAlignProperty) {
 
   return (
     

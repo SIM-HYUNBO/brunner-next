@@ -41,11 +41,7 @@ export const getNewRuntimeData = (component, newData) => {
   return newRuntimeData;
 }
 
-export function renderProperty(component, updateRuntimeData, {
-  renderWidthProperty, 
-  renderForceNewLineProperty, 
-  renderPositionAlignProperty}
-) {
+export function renderProperty(component, updateRuntimeData, renderWidthProperty, renderForceNewLineProperty, renderPositionAlignProperty) {
   
   const renderComponentProperty = (component) => {
     const items = component.runtime_data?.items || [];

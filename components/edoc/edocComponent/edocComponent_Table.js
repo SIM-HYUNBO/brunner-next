@@ -68,12 +68,7 @@ export const getNewRuntimeData = (component, rowIdx, colIdx, newValue) => {
 /**
  * 속성 편집 렌더링
  */
-export function renderProperty(
-  component, 
-  updateRuntimeData,
-  renderWidthProperty,
-  renderForceNewLineProperty,
-  renderPositionAlignProperty) {
+export function renderProperty(component, updateRuntimeData, renderWidthProperty, renderForceNewLineProperty, renderPositionAlignProperty) {
 
   const updateTableSize = (newRows, newCols) => {
     const oldData = component.runtime_data?.data || [];
