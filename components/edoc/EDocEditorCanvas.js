@@ -118,7 +118,7 @@ export default function EDocEditorCanvas({
     right: 'flex-end',
   };
 
-  const renderComponents = () => {
+  const RenderComponents = () => {
     const comps = components.length > 0
       ? [
           {
@@ -243,7 +243,7 @@ export default function EDocEditorCanvas({
           </p>
         )
         ) : (
-          renderComponents()
+          RenderComponents()
         )}
       </div>
     </div>

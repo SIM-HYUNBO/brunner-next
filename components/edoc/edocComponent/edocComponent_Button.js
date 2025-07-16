@@ -26,6 +26,7 @@ export const getNewRuntimeData = (component, key, value) => {
 
 // ✅ 속성 편집 UI — commandName 입력 추가
 export function renderProperty(component, updateRuntimeData) {
+
   return (
     <div>
       <label>버튼 텍스트:</label>
@@ -57,7 +58,7 @@ export function renderProperty(component, updateRuntimeData) {
       <label>Command Name:</label> {/* ✅ 추가 */}
       <input
         type="text"
-        value={component.runtime_data?.commandName || ''}
+        placeholder={component.runtime_data?.commandName || ''}
         onChange={(e) => updateRuntimeData("commandName", e.target.value)}
         className="w-full border border-gray-300 rounded p-2 mb-2"
       />
@@ -98,20 +99,25 @@ export function renderProperty(component, updateRuntimeData) {
 }
 
 // ✅ 실제 버튼 렌더링
-export const renderComponent = (
-  component,
-  handleComponentClick,
-  onRuntimeDataChange,
-  { selectedClass, alignmentClass, textAlign, isDesignMode, bindingData, documentData }
-) => {
-  const [loading, setLoading] = useState(false);
+export default function RenderComponent (props) {
+  const {
+    component,
+    handleComponentClick,
+    onRuntimeDataChange,
+    selectedClass, 
+    alignmentClass, 
+    textAlign, 
+    isDesignMode, 
+    bindingData, 
+    documentData 
+  } = props;
   const { BrunnerMessageBox, openModal } = useModal();
+  const [loading, setLoading] = useState(false);
 
   const {
     buttonText,
     apiEndpoint,
     apiMethod,
-    commandName, // ✅
     buttonColor,
     textColor,
     padding,
@@ -127,46 +133,46 @@ export const renderComponent = (
     cursor: "pointer",
   };
 
-  const handleClick = async () => {
-    if (apiMethod && !["GET", "POST"].includes(apiMethod.toUpperCase())) {
-      openModal(constants.messages.MESSAGE_NOT_SUPPORTED_API_METHOD);
-      return;
-    }
-    if (!apiEndpoint) {
-      openModal(constants.messages.MESSAGE_NOT_SET_API_ENDPOINT);
-      return;
-    }
-    if (!commandName) {
-      openModal("commandName을 설정해주세요."); // ✅
-      return;
-    }
+  const handleClick = async (comp) => {
+  if (comp.runtime_data?.apiMethod && !["GET", "POST"].includes(comp.runtime_data?.apiMethod.toUpperCase())) {
+    openModal(constants.messages.MESSAGE_NOT_SUPPORTED_API_METHOD);
+    return;
+  }
+  if (!comp.runtime_data?.apiEndpoint) {
+    openModal(constants.messages.MESSAGE_NOT_SET_API_ENDPOINT);
+    return;
+  }
+  if (!comp.runtime_data?.commandName) {
+    openModal("commandName을 설정해주세요."); // ✅
+    return;
+  }
 
-    try {
-      const jRequest = {
-        commandName: `edocCustom.${commandName}`, // ✅ 런타임에서 설정한 값
-        systemCode: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE,
-        userId: userInfo.getLoginUserId(),
-        bindingData: bindingData(documentData), // 문서내 바인딩 데이터 추출해서 전송
-      };
+  try {
+    const jRequest = {
+      commandName: component.runtime_data?.commandName, // ✅ 런타임에서 설정한 값
+      systemCode: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE,
+      userId: userInfo.getLoginUserId(),
+      bindingData: bindingData(documentData), // 문서내 바인딩 데이터 추출해서 전송
+    };
 
-      setLoading(true);
-      const jResponse = await RequestServer(apiMethod || "POST", jRequest, apiEndpoint);
-      setLoading(false);
+    setLoading(true);
+    const jResponse = await RequestServer(apiMethod || "POST", jRequest, apiEndpoint);
+    setLoading(false);
 
-      if (jResponse.error_code === 0) {
-        openModal(`${constants.messages.MESSAGE_SUCCESS_FINISHED}\n[${commandName}].`);
-        // 필요하다면 후속처리
-      } else {
-        openModal(jResponse.error_message);
-      }
-    } catch (error) {
-      openModal(`message:${error.message}`);
+    if (jResponse.error_code === 0) {
+      openModal(`${constants.messages.MESSAGE_SUCCESS_FINISHED}\n[${comp.runtime_data?.commandName}].`);
+      // 필요하다면 후속처리
+    } else {
+      openModal(jResponse.error_message);
     }
-  };
+  } catch (error) {
+    openModal(`message:${error.message}`);
+  }
+};
+
 
   return (
     <>
-      <BrunnerMessageBox />
       <button
         className={`${selectedClass} ${alignmentClass}`}
         style={style}
@@ -176,7 +182,7 @@ export const renderComponent = (
           if (isDesignMode) {
             handleComponentClick(e);
           } else {
-            handleClick();
+            handleClick(component);
           }
         }}
       >

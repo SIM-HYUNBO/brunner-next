@@ -89,13 +89,21 @@ export function renderProperty(component, updateRuntimeData, {
   return renderComponentProperty(component);
 }
 
-export const renderComponent = (
-  component,
-  handleComponentClick,
-  onRuntimeDataChange,
-  { selectedClass, alignmentClass, textAlign, isDesignMode, bindingData, documentData }
-) => {
+export default function RenderComponent (props) {
   const {
+    component,
+    handleComponentClick,
+    onRuntimeDataChange,
+    selectedClass, 
+    alignmentClass, 
+    textAlign, 
+    isDesignMode, 
+    bindingData, 
+    documentData 
+  } = props;
+
+  const {
+    // font 관련 속성들
     fontFamily,
     fontSize,
     fontWeight,

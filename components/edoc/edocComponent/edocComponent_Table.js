@@ -189,12 +189,19 @@ export function renderProperty(component, updateRuntimeData, {
 /**
  * 컴포넌트 렌더링
  */
-export const renderComponent = (
-  component, 
-  handleComponentClick, 
-  updateRuntimeData, 
-  { selectedClass, alignmentClass, textAlign, isDesignMode, bindingData, documentData }
-) => {
+export default function RenderComponent (props) {
+  const {
+    component,
+    handleComponentClick,
+    onRuntimeDataChange,
+    selectedClass, 
+    alignmentClass, 
+    textAlign, 
+    isDesignMode, 
+    bindingData, 
+    documentData 
+  } = props;
+  
   const style = {
     width: '100%',
     height: component.runtime_data?.height || 'auto',

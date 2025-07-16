@@ -54,34 +54,32 @@ export default function LeftMenu() {
                   >
                     Administration
                   </Link>
-
-                  <hr className="my-4 border-gray-400" />
-
-                  <Link
-                    className={`block text-gray-600 dark:text-gray-100 py-2`}
-                    href="/eDoc/eDocDesigner"
-                  >
-                    Document Designer
-                  </Link>
-                  {/* ✅ 사용자 문서 목록 */}
-                  {documentList.length > 0 && (
-                    <>
-                      <li className="text-gray-500 dark:text-gray-300 py-1">My Documents</li>
-                      {documentList.map((doc) => (
-                        <Link
-                          key={doc.id}
-                          className={`block text-gray-600 dark:text-gray-100 py-2`}
-                          href={doc.menu_path}
-                        >
-                          {doc.title}
-                        </Link>
-                      ))}
-                    </>
-                  )}
-
                 </>
               )}
 
+              <hr className="my-4 border-gray-400" />
+
+              <Link
+                className={`block text-gray-600 dark:text-gray-100 py-2`}
+                href="/eDoc/eDocDesigner"
+              >
+                Document Designer
+              </Link>
+                <li className="text-gray-500 dark:text-gray-300 py-1">My Documents</li>
+              {/* ✅ 사용자 문서 목록 */}
+              {documentList.length > 0 && (
+                <>
+                  {documentList.map((doc) => (
+                    <Link
+                      key={doc.id}
+                      className={`block text-gray-600 dark:text-gray-100 py-2`}
+                      href={doc.menu_path}
+                    >
+                      {doc.title}
+                    </Link>
+                  ))}
+                </>
+              )}
             </ul>
           </nav>
         </aside>
