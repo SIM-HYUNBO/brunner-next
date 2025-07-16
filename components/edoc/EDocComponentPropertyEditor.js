@@ -81,7 +81,7 @@ export default function EDocComponentPropertyEditor({ component, handleUpdateCom
   const renderComponentProperty = (component) => {
     switch (component.type) {
       case constants.edoc.COMPONENT_TYPE_TEXT:
-        return TextComponent.renderProperty(omponent, 
+        return TextComponent.renderProperty(component, 
           updateRuntimeDataByPropertyEeditor, 
           renderWidthPropertyByPropertyEditor, 
           renderForceNewLinePropertyByPropertyEditor, 
