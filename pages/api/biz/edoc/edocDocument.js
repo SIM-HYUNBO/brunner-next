@@ -84,7 +84,7 @@ const upsertOne = async (txnId, jRequest) => {
         jRequest.userId,
         JSON.stringify(jRequest.documentData.runtime_data || {}),
         JSON.stringify(jRequest.documentData.pages || []),
-        `/eDoc/${jRequest.documentData.id}`, // document_url
+        JSON.stringify(jRequest.documentData.menu_path || null),
       ]);
 
       if (insertResult.rowCount !== 1) {
@@ -103,7 +103,7 @@ const upsertOne = async (txnId, jRequest) => {
         jRequest.userId,
         JSON.stringify(jRequest.documentData.runtime_data || {}),
         JSON.stringify(jRequest.documentData.pages || []),
-        `/eDoc/${jRequest.documentData.id}`, // document_url
+        JSON.stringify(jRequest.documentData.menu_path || null),
       ]);
 
       if (updateResult.rowCount !== 1) {

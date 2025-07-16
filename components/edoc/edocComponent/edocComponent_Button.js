@@ -42,22 +42,26 @@ const RenderComponent = (props) => {
   };
 
   const handleClick = async (comp) => {
-  if (comp.runtime_data?.apiMethod && !["GET", "POST"].includes(comp.runtime_data?.apiMethod.toUpperCase())) {
-    await openModal(constants.messages.MESSAGE_NOT_SUPPORTED_API_METHOD);
+    const runtimeData = comp.runtime_data;
+  if (!runtimeData || 
+      !runtimeData?.apiMethod || 
+      !["GET", "POST"].includes(runtimeData?.apiMethod.toUpperCase())
+    ) {
+    openModal(constants.messages.MESSAGE_NOT_SUPPORTED_API_METHOD);
     return;
   }
-  if (!comp.runtime_data?.apiEndpoint) {
-    await openModal(constants.messages.MESSAGE_NOT_SET_API_ENDPOINT);
+  if (!runtimeData?.apiEndpoint) {
+    openModal(constants.messages.MESSAGE_NOT_SET_API_ENDPOINT);
     return;
   }
-  if (!comp.runtime_data?.commandName) {
-    await openModal("commandName을 설정해주세요."); // ✅
+  if (!runtimeData?.commandName) {
+    openModal(`${constants.messages.MESSAGE_REQUIRED_FIELD} [commandName]`);
     return;
   }
 
   try {
     const jRequest = {
-      commandName: component.runtime_data?.commandName, // ✅ 런타임에서 설정한 값
+      commandName: runtimeData?.commandName, // ✅ 런타임에서 설정한 값
       systemCode: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE,
       userId: userInfo.getLoginUserId(),
       bindingData: bindingData(documentData), // 문서내 바인딩 데이터 추출해서 전송
@@ -68,7 +72,7 @@ const RenderComponent = (props) => {
     setLoading(false);
 
     if (jResponse.error_code === 0) {
-      await openModal(`${constants.messages.MESSAGE_SUCCESS_FINISHED}\n[${comp.runtime_data?.commandName}].`);
+      await openModal(`${constants.messages.MESSAGE_SUCCESS_FINISHED}\n[${runtimeData?.commandName}].`);
       // 필요하다면 후속처리
     } else {
       await openModal(jResponse.error_message);
@@ -106,7 +110,7 @@ export const initDefaultRuntimeData = (defaultRuntimeData) => {
   defaultRuntimeData.buttonText = "버튼";
   defaultRuntimeData.apiEndpoint = "/api/backendServer/";
   defaultRuntimeData.apiMethod = "POST";
-  defaultRuntimeData.commandName = "eDoc.{CommandName}"; // ✅ commandName 기본값
+  defaultRuntimeData.commandName = ""
   defaultRuntimeData.buttonColor = "#4F46E5";
   defaultRuntimeData.textColor = "#FFFFFF";
   defaultRuntimeData.padding = "10px 20px";
