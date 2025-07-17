@@ -83,4 +83,5 @@ export const edoc = {
     COMPONENT_TYPE_INPUT : `input`,
     COMPONENT_TYPE_CHECKLIST : `checklist`,
     COMPONENT_TYPE_BUTTON : `button`,
+    COMPONENT_TYPE_VIDEO : `video`,    
 }

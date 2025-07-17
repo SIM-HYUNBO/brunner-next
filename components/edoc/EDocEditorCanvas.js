@@ -81,27 +81,6 @@ export default function EDocEditorCanvas({
     const currentData = component.runtime_data || {};
     let newRuntimeData = newData.runtime_data;
 
-    // // 이 부분은 그대로 유지
-    // switch (component.type) {
-    //   case constants.edoc.COMPONENT_TYPE_TEXT:
-    //     newRuntimeData = TextComponent.getNewRuntimeData(component, newData);
-    //     break;
-    //   case constants.edoc.COMPONENT_TYPE_INPUT:
-    //     newRuntimeData = InputComponent.getNewRuntimeData(component, newData);
-    //     break;
-    //   case constants.edoc.COMPONENT_TYPE_TABLE:
-    //     newRuntimeData = TableComponent.getNewRuntimeData(component, newData);
-    //     break;
-    //   case constants.edoc.COMPONENT_TYPE_CHECKLIST:
-    //     newRuntimeData = CheckListComponent.getNewRuntimeData(component, newData);
-    //     break;
-    //   case constants.edoc.COMPONENT_TYPE_IMAGE:
-    //     newRuntimeData = ImageComponent.getNewRuntimeData(component, newData);
-    //     break;
-    //   default:
-    //     newRuntimeData = { ...currentData, ...newData };
-    // }
-
     const updatedComponent = {
       ...component,
       runtime_data: newRuntimeData,

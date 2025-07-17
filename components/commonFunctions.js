@@ -7,6 +7,7 @@ import * as ImageComponent from "@/components/eDoc/edocComponent/edocComponent_I
 import * as TableComponent from "@/components/eDoc/edocComponent/edocComponent_Table";
 import * as CheckListComponent from "@/components/eDoc/edocComponent/edocComponent_CheckList";
 import * as ButtonComponent from "@/components/eDoc/edocComponent/edocComponent_Button";
+import * as VideoComponent from "@/components/eDoc/edocComponent/edocComponent_Video";
 
 export function generateUUID() { // Public Domain/MIT
     return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
@@ -44,6 +45,9 @@ export const bindingData = (documentData) => {
             break;
           case constants.edoc.COMPONENT_TYPE_BUTTON:
             value = ButtonComponent.getBindingValue(comp);
+            break;
+          case constants.edoc.COMPONENT_TYPE_VIDEO:
+            value = VideoComponent.getBindingValue(comp);
             break;
           default:
             break;
