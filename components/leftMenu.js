@@ -53,24 +53,20 @@ export default function LeftMenu({ reloadSignal }) {
               </Link>
               <li className="text-gray-500 dark:text-gray-300 py-1">My Documents</li>
 
-              {documentList.length > 0 && documentList.map((doc) => (
-                doc.menu_path ? (
+              {documentList.length > 0 && documentList.map((doc) => {
+                // menu_path가 없으면 기본값으로 `/edocument/{id}`
+                const menuPath = doc.menu_path || `/edocument/${doc.id}`;
+
+                return (
                   <Link
                     key={doc.id}
+                    href={menuPath}
                     className="block text-gray-600 dark:text-gray-100 py-2"
-                    href={doc.menu_path}
                   >
                     {doc.title}
                   </Link>
-                ) : (
-                  <span
-                    key={doc.id}
-                    className="block text-gray-600 dark:text-gray-100 py-2"
-                  >
-                    {doc.title}
-                  </span>
-                )
-              ))}
+                );
+              })}
             </ul>
           </nav>
         </aside>
