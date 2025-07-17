@@ -6,7 +6,7 @@ import { useTheme } from 'next-themes';
 import Layout from '@/components/layout';
 import Head from 'next/head';
 import BodySection from '@/components/bodySection';
-import EDocContent from './content/edocContent';
+import EDocContent from './content/eDocContent';
 
 export default function EDocument() {
   const { theme, setTheme } = useTheme();
