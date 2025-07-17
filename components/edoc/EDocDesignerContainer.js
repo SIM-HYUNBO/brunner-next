@@ -22,6 +22,7 @@ import * as ImageComponent from "@/components/eDoc/edocComponent/edocComponent_I
 import * as TableComponent from "@/components/eDoc/edocComponent/edocComponent_Table";
 import * as CheckListComponent from "@/components/eDoc/edocComponent/edocComponent_CheckList";
 import * as ButtonComponent from "@/components/eDoc/edocComponent/edocComponent_Button";
+import * as VideoComponent from "@/components/eDoc/edocComponent/edocComponent_Video";
 
 export default function EDocDesignerContainer({ documentId, triggerLeftMenuReload }) {
   const [isExportingPdf, setIsExportingPdf] = useState(false);
@@ -160,6 +161,9 @@ export default function EDocDesignerContainer({ documentId, triggerLeftMenuReloa
         break;
       case constants.edoc.COMPONENT_TYPE_BUTTON:
         baseComponent.runtime_data = ButtonComponent.initDefaultRuntimeData(defaultRuntimeData);
+        break;
+      case constants.edoc.COMPONENT_TYPE_VIDEO:
+        baseComponent.runtime_data = VideoComponent.initDefaultRuntimeData(defaultRuntimeData);
         break;
       default:
         break;

@@ -1,0 +1,188 @@
+'use strict';
+
+import React, { useState, useEffect, useRef } from 'react';
+import dynamic from 'next/dynamic';
+
+const ReactPlayer = dynamic(() => import('react-player'), { ssr: false });
+
+/**
+ * 기본 runtime_data 초기화
+ */
+export const initDefaultRuntimeData = (defaultRuntimeData) => {
+  defaultRuntimeData.url = '';
+  defaultRuntimeData.title = '영상 제목';
+  defaultRuntimeData.originalWidth = 640;
+  defaultRuntimeData.originalHeight = 360;
+  return defaultRuntimeData;
+};
+
+/**
+ * 바인딩 값 가져오기 (URL 바인딩 등)
+ */
+export const getBindingValue = (component) => {
+  if (!component.runtime_data?.bindingKey) {
+    return null;
+  }
+  return component.runtime_data?.url || null;
+};
+
+/**
+ * runtime_data 갱신하기
+ */
+export const getNewRuntimeData = (component, { key, value }) => {
+  return {
+    ...(component.runtime_data || {}),
+    [key]: value,
+  };
+};
+
+/**
+ * 속성 편집기
+ */
+export function renderProperty(
+  component,
+  updateRuntimeData,
+  renderWidthProperty,
+  renderForceNewLineProperty,
+  renderPositionAlignProperty
+) {
+  const renderComponentProperty = () => {
+    return (
+      <div>
+        <label>Binding Key:</label>
+        <input
+          type="text"
+          value={component.runtime_data?.bindingKey || ''}
+          onChange={(e) => updateRuntimeData('bindingKey', e.target.value)}
+          className="w-full border border-gray-300 rounded p-2 mb-2"
+        />
+
+        {renderWidthProperty && renderWidthProperty()}
+        {renderForceNewLineProperty && renderForceNewLineProperty()}
+        {renderPositionAlignProperty && renderPositionAlignProperty()}
+
+        <label>영상 제목:</label>
+        <input
+          type="text"
+          value={component.runtime_data?.title || ''}
+          onChange={(e) => updateRuntimeData('title', e.target.value)}
+          className="w-full border border-gray-300 rounded p-2 mb-2"
+        />
+
+        <label>영상 URL:</label>
+        <input
+          type="text"
+          value={component.runtime_data?.url || ''}
+          onChange={(e) => updateRuntimeData('url', e.target.value)}
+          className="w-full border border-gray-300 rounded p-2 mb-2"
+        />
+
+        <label>원본 가로 크기(px):</label>
+        <input
+          type="number"
+          value={component.runtime_data?.originalWidth || 640}
+          onChange={(e) =>
+            updateRuntimeData('originalWidth', parseInt(e.target.value, 10))
+          }
+          className="w-full border border-gray-300 rounded p-2 mb-2"
+        />
+
+        <label>원본 세로 크기(px):</label>
+        <input
+          type="number"
+          value={component.runtime_data?.originalHeight || 360}
+          onChange={(e) =>
+            updateRuntimeData('originalHeight', parseInt(e.target.value, 10))
+          }
+          className="w-full border border-gray-300 rounded p-2 mb-2"
+        />
+      </div>
+    );
+  };
+
+  return renderComponentProperty(component);
+}
+
+/**
+ * 런타임/디자인 렌더링
+ */
+export default function RenderComponent(props) {
+  const {
+    component,
+    handleComponentClick,
+    onRuntimeDataChange,
+    selectedClass,
+    alignmentClass,
+    textAlign,
+    isDesignMode,
+    bindingData,
+    documentData,
+  } = props;
+
+  const {
+    title = '영상 제목',
+    url = '',
+    originalWidth = 640,
+    originalHeight = 360,
+  } = component.runtime_data || {};
+
+  const [size, setSize] = useState({
+    width: originalWidth,
+    height: originalHeight,
+  });
+
+  const containerRef = useRef(null);
+
+  useEffect(() => {
+    const updateSize = () => {
+      if (containerRef.current) {
+        const containerWidth = containerRef.current.clientWidth;
+        const newWidth = Math.min(containerWidth, originalWidth);
+        const aspectRatio = originalWidth / originalHeight;
+        const newHeight = Math.round(newWidth / aspectRatio);
+
+        setSize({
+          width: newWidth,
+          height: newHeight,
+        });
+      }
+    };
+
+    const resizeObserver = new ResizeObserver(updateSize);
+    if (containerRef.current) {
+      resizeObserver.observe(containerRef.current);
+    }
+
+    return () => {
+      if (containerRef.current) {
+        resizeObserver.unobserve(containerRef.current);
+      }
+    };
+  }, [originalWidth, originalHeight]);
+
+  return (
+    <div
+      ref={containerRef}
+      className={`${selectedClass} ${alignmentClass} cursor-pointer`}
+      onClick={(e) => {
+        e.stopPropagation();
+        handleComponentClick?.(component);
+      }}
+    >
+      <p className="text-start mb-1 text-gray-800 w-full">{title}</p>
+      <div className="relative" style={{ width: size.width, height: size.height }}>
+        <ReactPlayer
+          url={url}
+          controls
+          width="100%"
+          height="100%"
+          className="w-full h-full rounded-lg"
+        />
+      </div>
+
+      {isDesignMode && (
+        <div className="absolute top-0 left-0 w-full h-full border-2 border-dashed border-blue-500 pointer-events-none"></div>
+      )}
+    </div>
+  );
+}

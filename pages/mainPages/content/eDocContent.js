@@ -74,40 +74,27 @@ export default function EDocContent({ documentId }) {
   return (
     <>
       <DivContainer className={`flex-row desktop:flex-col`}>
-        {/* <div className={`w-full desktop:w-2/3 items-start text-left`}>
-          <h2
-            className={`title-font 
-                       text-3xl 
-                       mb-10 
-                       font-medium 
-                       text-green-900`}
-          >
-            Document ID: {documentId}
-          </h2> */}
-          <GoverningMessage governingMessage={`Document ID: ${documentId}`} />
-          <div className={`w-full desktop:w-2/3 items-start text-left`}>
-            <main className="min-h-screen bg-gray-100 p-8 overflow-auto">
-              <div className="space-y-12">
-                {pages.map((page) => (
-                  <div
-                    key={page.id}
-                    id={`viewer-canvas-${page.id}`}
-                    className="border rounded shadow p-6 bg-white"
-                  >
-                    <EDocEditorCanvas
-                      page={page}
-                      isViewerMode={true}
-                      mode="runtime" // ✅ 실행모드
-                      bindingData={commonFunctions.bindingData}
-                      documentData={page.documentData}
-                    />
-                  </div>
-                ))}
-              </div>
-            </main>
-
-          </div>
-
+        <div className={`w-full desktop:w-2/3 items-start text-left`}>
+          <main className="min-h-screen bg-gray-100 p-8 overflow-auto">
+            <div className="space-y-12">
+              {pages.map((page) => (
+                <div
+                  key={page.id}
+                  id={`viewer-canvas-${page.id}`}
+                  className="border rounded shadow p-6 bg-white"
+                >
+                  <EDocEditorCanvas
+                    page={page}
+                    isViewerMode={true}
+                    mode="runtime" // ✅ 실행모드
+                    bindingData={commonFunctions.bindingData}
+                    documentData={page.documentData}
+                  />
+                </div>
+              ))}
+            </div>
+          </main>
+        </div>
         {/* </div> */}
         {!isMobile && (
           <div className={`items-center`}>
