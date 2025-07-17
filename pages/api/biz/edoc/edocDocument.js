@@ -84,7 +84,7 @@ const upsertOne = async (txnId, jRequest) => {
         jRequest.userId,
         JSON.stringify(jRequest.documentData.runtime_data || {}),
         JSON.stringify(jRequest.documentData.pages || []),
-        '/eDoc/' +  jRequest.documentData.id, // menu_path는 항상 고정
+        '/edocument?documentId=' +  jRequest.documentData.id, // menu_path는 항상 고정
       ]);
 
       if (insertResult.rowCount !== 1) {
@@ -103,7 +103,7 @@ const upsertOne = async (txnId, jRequest) => {
         jRequest.userId,
         JSON.stringify(jRequest.documentData.runtime_data || {}),
         JSON.stringify(jRequest.documentData.pages || []),
-        '/eDoc/' +  jRequest.documentData.id
+        '/edocument?documentId=' +  jRequest.documentData.id
       ]);
 
       if (updateResult.rowCount !== 1) {
