@@ -103,7 +103,7 @@ const upsertOne = async (txnId, jRequest) => {
         jRequest.userId,
         JSON.stringify(jRequest.documentData.runtime_data || {}),
         JSON.stringify(jRequest.documentData.pages || []),
-        '/eDocument?documentId=' +  jRequest.documentData.id
+        '/mainPages/eDocument?documentId=' +  jRequest.documentData.id
       ]);
 
       if (updateResult.rowCount !== 1) {
