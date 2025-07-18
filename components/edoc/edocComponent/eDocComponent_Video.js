@@ -2,8 +2,7 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import dynamic from 'next/dynamic';
-
-const ReactPlayer = dynamic(() => import('react-player'), { ssr: false });
+import BrunnerVideo from "@/components/brunnerVideo";
 
 /**
  * 기본 runtime_data 초기화
@@ -169,20 +168,13 @@ export default function RenderComponent(props) {
         handleComponentClick?.(component);
       }}
     >
-      <p className="text-start mb-1 text-gray-800 w-full">{title}</p>
-      <div className="relative" style={{ width: size.width, height: size.height }}>
-        <ReactPlayer
-          url={url}
-          controls
-          width="100%"
-          height="100%"
-          className="w-full h-full rounded-lg"
-        />
-      </div>
-
-      {isDesignMode && (
-        <div className="absolute top-0 left-0 w-full h-full border-2 border-dashed border-blue-500 pointer-events-none"></div>
-      )}
+    <BrunnerVideo
+      url={url}
+      title={title}
+      width="800px" // 100%
+      height="450px" // 100%
+      className={`mt-5`}
+    ></BrunnerVideo>
     </div>
   );
 }
