@@ -39,35 +39,36 @@ export default function Header() {
   };
 
   return (
-    <>
-      <header className={`text-gray-600 body-font mb-10`}>
-        <DivContainer>
-          <Link
-            className={`flex title-font font-medium items-center text-gray-900 mb-4 md:mb-0`}
-            href="/"
-          >
-            <Image
-              src="/brunnerLogo.png"
-              height={100}
-              width={100}
-              alt="brunner logo"
-              priority="true"
-            />
-          </Link>
-          <Link
-            className={`flex title-font font-medium items-center text-gray-900 mb-4 md:mb-0`}
-            href="/"
-          >
-            <h1 className={`title-font sm:text-4xl text-3xl m-5 font-medium text-orange-900`}>
-              Brunner
-              {/* <br className={`hidden lg:inline-block" /> */}
-            </h1>
-          </Link>
-          <div className={`flex flex-wrap items-center justify-center md:justify-end`}>
-            {topMenu()}
-          </div>
-        </DivContainer>
-      </header>
-    </>
+  <>
+    <header className={`text-gray-600 body-font mb-10`}>
+      <DivContainer>
+        <Link
+          className={`flex title-font font-medium items-center text-gray-900 mb-4 md:mb-0`}
+          href="/"
+        >
+          <Image
+            src="/brunnerLogo.png"
+            height={100}
+            width={100}
+            alt="brunner logo"
+            priority="true"
+          />
+        </Link>
+        <Link
+          className={`flex title-font font-medium items-center text-gray-900 mb-4 md:mb-0`}
+          href="/"
+        >
+          <h1 className={`title-font sm:text-4xl text-3xl m-5 font-medium text-orange-900`}>
+            Brunner
+          </h1>
+        </Link>
+        {/* flex-grow로 왼쪽 공간을 채우고, topMenu를 우측 끝으로 */}
+        <div className="flex-1"></div>
+        <div className={`flex flex-wrap items-center justify-end`}>
+          {topMenu()}
+        </div>
+      </DivContainer>
+    </header>
+  </>
   );
 }
