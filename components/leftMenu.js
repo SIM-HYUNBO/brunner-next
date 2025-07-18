@@ -40,9 +40,6 @@ export default function LeftMenu({ reloadSignal }) {
               <Link className={`block text-gray-600 dark:text-gray-100 py-2`} href="/eDoc/eDocDesigner">
                 Page Designer
               </Link>
-              <Link className={`block text-gray-600 dark:text-gray-100 py-2`} href="/mainPages/contact">
-                Contact
-              </Link>
 
               {/* 기타 메뉴들 */}
 
