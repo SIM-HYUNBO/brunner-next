@@ -4,6 +4,19 @@ export function isJsonObject(obj) {
     return obj && typeof obj === 'object' && !Array.isArray(obj);
 }
 
+export const modulePrefix = {
+    edoc: `edoc`,
+    security: `security`,
+    dynamicSql: `dynamicSql`,
+    incomeHistory: `incomeHistory`,
+    stockInfo: `stockInfo`,
+    postInfo: `postInfo`,
+    postCommentInfo: `postCommentInfo`,
+    edocComponentTemplate: `edocComponentTemplate`,
+    edocDocument: `edocDocument`,
+    edocCustom: `edocCustom`,
+}
+
 export const messages = {    
     EMPTY_STRING : '',
     MESSAGE_DATABASE_FAILED : `Database failed.`,
@@ -77,11 +90,11 @@ export const commands = {
 }  
 
 export const edoc = {
-    COMPONENT_TYPE_TEXT : `text`,
-    COMPONENT_TYPE_TABLE : `table`,
-    COMPONENT_TYPE_IMAGE : `image`, 
-    COMPONENT_TYPE_INPUT : `input`,
-    COMPONENT_TYPE_CHECKLIST : `checklist`,
-    COMPONENT_TYPE_BUTTON : `button`,
-    COMPONENT_TYPE_VIDEO : `video`,    
+    EDOC_COMPONENT_TYPE_TEXT : `text`,
+    EDOC_COMPONENT_TYPE_TABLE : `table`,
+    EDOC_COMPONENT_TYPE_IMAGE : `image`, 
+    EDOC_COMPONENT_TYPE_INPUT : `input`,
+    EDOC_COMPONENT_TYPE_CHECKLIST : `checklist`,
+    EDOC_COMPONENT_TYPE_BUTTON : `button`,
+    EDOC_COMPONENT_TYPE_VIDEO : `video`,    
 }

@@ -61,7 +61,7 @@ const RenderComponent = (props) => {
 
   try {
     const jRequest = {
-      commandName: `eDoc.${runtimeData?.commandName}`, // ✅ 런타임에서 설정한 값
+      commandName: `${constants.modulePrefix.edocCustom}.${runtimeData?.commandName}`, // ✅ 런타임에서 설정한 값
       systemCode: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE,
       userId: userInfo.getLoginUserId(),
       bindingData: bindingData(documentData), // 문서내 바인딩 데이터 추출해서 전송
@@ -162,6 +162,7 @@ export function renderProperty(component, updateRuntimeData, renderWidthProperty
       <input
         type="text"
         placeholder={component.runtime_data?.commandName || ''}
+        value={component.runtime_data?.commandName || ''}
         onChange={(e) => updateRuntimeData("commandName", e.target.value)}
         className="w-full border border-gray-300 rounded p-2 mb-2"
       />

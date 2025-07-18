@@ -28,25 +28,25 @@ export const bindingData = (documentData) => {
       let bindingKey = comp.runtime_data.bindingKey;
       if (bindingKey) {    
         switch (comp.type) {
-          case constants.edoc.COMPONENT_TYPE_TEXT:
+          case constants.edoc.EDOC_COMPONENT_TYPE_TEXT:
             value = TextComponent.getBindingValue(comp);
             break;
-          case constants.edoc.COMPONENT_TYPE_INPUT:
+          case constants.edoc.EDOC_COMPONENT_TYPE_INPUT:
             value = InputComponent.getBindingValue(comp);
             break;
-          case constants.edoc.COMPONENT_TYPE_IMAGE:
+          case constants.edoc.EDOC_COMPONENT_TYPE_IMAGE:
             value = ImageComponent.getBindingValue(comp);
             break;
-          case constants.edoc.COMPONENT_TYPE_TABLE:
+          case constants.edoc.EDOC_COMPONENT_TYPE_TABLE:
             value = TableComponent.getBindingValue(comp);
             break;
-          case constants.edoc.COMPONENT_TYPE_CHECKLIST:
+          case constants.edoc.EDOC_COMPONENT_TYPE_CHECKLIST:
             value = CheckListComponent.getBindingValue(comp);
             break;
-          case constants.edoc.COMPONENT_TYPE_BUTTON:
+          case constants.edoc.EDOC_COMPONENT_TYPE_BUTTON:
             value = ButtonComponent.getBindingValue(comp);
             break;
-          case constants.edoc.COMPONENT_TYPE_VIDEO:
+          case constants.edoc.EDOC_COMPONENT_TYPE_VIDEO:
             value = VideoComponent.getBindingValue(comp);
             break;
           default:
