@@ -17,13 +17,10 @@ export default function HomeContent() {
       <DivContainer className={`flex-row`}>
         <div className={`w-full desktop:w-2/3 items-start text-left`}>
           <h2 className={`title-font sm:text-4xl text-3xl mb-10 font-medium text-green-900`}>
-            Asset management
+            사이트 제목
           </h2>
-          <GoverningMessage governingMessage={"The key to success in wealth and the stock market is ... \n consistent market participation and smart management.\n\nManage your assets well and stay engaged in the stock market by using Brunner-Next.\n"} />
+          <GoverningMessage governingMessage={"사용자가 직접 만드는 사이트\n"} />
           <div className={`flex flex-col`}>
-            <div className={`dark:text-slate-400 mb-2`}>
-              Enjoy using Brunner in a safer and more convenient way.
-            </div>
             {!userInfo.isLogin() && (
               <div>
                 <button
@@ -40,18 +37,6 @@ export default function HomeContent() {
                 </button>
               </div>
             )}
-            <div className={`mt-10`}>
-            <BrunnerVideo
-                url={"https://youtu.be/sftMQKlyG9Y"}
-                title="7% withdrawal after retirement"
-              >
-              </BrunnerVideo>
-              <BrunnerVideo
-                url={"https://youtu.be/0j1BdlsL_ew?t=2"}
-                title="The powerful effect of S&P500"
-              >
-              </BrunnerVideo>
-            </div>
           </div>
         </div>
         {!isMobile && (

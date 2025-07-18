@@ -46,7 +46,7 @@ export default function Home() {
       </Head>
       <BodySection>
         <HomeContent></HomeContent>
-        <StockContent></StockContent>
+        {/* <StockContent></StockContent> */}
       </BodySection>
     </Layout>
   )
