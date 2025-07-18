@@ -5,8 +5,6 @@ import * as constants from "@/components/constants"
 import * as database from "./biz/database/database"
 import * as dynamicSql from './biz/dynamicSql'
 import * as security from './biz/security'
-import * as incomeHistory from './biz/incomeHistory'
-import * as tb_cor_ticker_info from './biz/stockInfo'
 import * as postInfo from './biz/postInfo'
 import * as postCommentInfo from './biz/postCommentInfo'
 import * as edocComponentTemplate from './biz/eDoc/edocComponentTemplate'
@@ -101,10 +99,6 @@ const executeService = async (method, req) => {
         jResponse = await security.executeService(req.body._txnId, jRequest);
     } else if (commandName.startsWith(`${constants.modulePrefix.dynamicSql}.`)) {
         jResponse = await dynamicSql.executeService(req.body._txnId, jRequest);
-    } else if (commandName.startsWith(`${constants.modulePrefix.incomeHistory}.`)) {
-        jResponse = await incomeHistory.executeService(req.body._txnId, jRequest);
-    } else if (commandName.startsWith(`${constants.modulePrefix.stockInfo}.`)) {
-        jResponse = await tb_cor_ticker_info.executeService(req.body._txnId, jRequest);
     } else if (commandName.startsWith(`${constants.modulePrefix.postInfo}.`)) {
         jResponse = await postInfo.executeService(req.body._txnId, jRequest);
     } else if (commandName.startsWith(`${constants.modulePrefix.postCommentInfo}.`)) {

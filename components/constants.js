@@ -8,8 +8,6 @@ export const modulePrefix = {
     edoc: `edoc`,
     security: `security`,
     dynamicSql: `dynamicSql`,
-    incomeHistory: `incomeHistory`,
-    stockInfo: `stockInfo`,
     postInfo: `postInfo`,
     postCommentInfo: `postCommentInfo`,
     edocComponentTemplate: `edocComponentTemplate`,
