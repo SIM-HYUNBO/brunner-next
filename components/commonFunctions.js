@@ -17,6 +17,7 @@ export function generateUUID() { // Public Domain/MIT
     });
 }
 
+// Bind data from documentData to a simpler object
 export const bindingData = (documentData) => {
   if (!Array.isArray(documentData.pages)) return {};
 
