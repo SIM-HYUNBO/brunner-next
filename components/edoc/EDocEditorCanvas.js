@@ -146,7 +146,7 @@ export default function EDocEditorCanvas({
                     style={{ width: componentWidth }}
                   >
                   {!isViewerMode && selectedComponentId === compIdx && (
-                  <div className="opacity-40 left-0 top-1/2 -translate-y-1/2 flex flex-col space-y-1 pointer-events-auto text-xs bg-white border rounded shadow px-2 py-1">
+                  <div className="opacity-80 left-0 top-1/2 -translate-y-1/2 flex flex-row pointer-events-auto text-xs bg-white border rounded shadow items-center justify-center gap-1 absolute z-10">
                   <button
                     onClick={() => onMoveUp(compIdx)}
                     disabled={compIdx === 0}
