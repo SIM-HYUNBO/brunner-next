@@ -8,6 +8,36 @@ import DivContainer from "@/components/divContainer";
 export default function Header() {
   const UserInfo = userInfo.default;
 
+  const topMenu = () => {
+    return (
+      <nav className={`md:ml-auto flex flex-wrap items-center text-base justify-center`}>
+        <Link
+          className={`mr-5 text-gray-600 dark:text-gray-100 hover:text-gray-400`}
+          href="/mainPages/contact"
+        >
+          Contact
+        </Link>
+        {userInfo.isAdminUser() && (
+          <Link
+            className={`mr-5 text-gray-600 dark:text-gray-100 hover:text-gray-400`}
+            href="/mainPages/administration"
+          >
+            Administration
+          </Link>
+        )}
+        <Link href="/" className={`ml-4 flex items-center`}>
+          <Image
+            src="/homeIcon.png"
+            height={24}
+            width={24}
+            alt="home icon"
+          />
+        </Link>
+        <UserInfo />
+      </nav>
+    );
+  };
+
   return (
     <>
       <header className={`text-gray-600 body-font mb-10`}>
@@ -33,37 +63,9 @@ export default function Header() {
               {/* <br className={`hidden lg:inline-block" /> */}
             </h1>
           </Link>
-          <nav className={`md:ml-auto flex flex-wrap items-center text-base justify-center`}>
-            <Link
-              className={`mr-5 text-gray-600 dark:text-gray-100 hover:text-gray-400`}
-              href="/mainPages/clips"
-            >
-              Clips
-            </Link>
-            <Link
-              className={`mr-5 text-gray-600 dark:text-gray-100 hover:text-gray-400`}
-              href="/mainPages/contact"
-            >
-              Contact
-            </Link>
-            {userInfo.isAdminUser() && (
-              <Link
-                className={`mr-5 text-gray-600 dark:text-gray-100 hover:text-gray-400`}
-                href="/mainPages/administration"
-              >
-                Administration
-              </Link>
-            )}
-            <Link href="/" className={`ml-4 flex items-center`}>
-              <Image
-                src="/homeIcon.png"
-                height={24}
-                width={24}
-                alt="home icon"
-              />
-            </Link>
-            <UserInfo />
-          </nav>
+          <div className={`flex flex-wrap items-center justify-center md:justify-end`}>
+            {topMenu()}
+          </div>
         </DivContainer>
       </header>
     </>

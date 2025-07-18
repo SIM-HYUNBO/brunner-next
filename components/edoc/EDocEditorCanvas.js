@@ -200,21 +200,27 @@ export default function EDocEditorCanvas({
   };
 
   return (
-    <div className="overflow-auto flex justify-center p-8 bg-gray-100">
-      <div
-        id={`editor-canvas-${page.id}`}
-        className={`relative border-4 ${isSelected ? 'border-blue-500' : 'border-gray-400'} bg-white cursor-pointer`}
-        style={{
-          width: `${pageWidthPx}px`,
-          minHeight: `${pageHeightPx}px`,
-          padding: `${runtime_data?.padding ?? 48}px`,
-          display: "flex",
-          flexDirection: "column",
-          gap: "1rem",
-          boxSizing: "border-box",
-        }}
-        onClick={onSelect} // ✅ 클릭 시 현재 페이지 선택
-      >
+    // <div className="overflow-auto flex justify-center p-8 bg-gray-100">
+    <div
+      id={`editor-canvas-${page.id}`}
+      className={
+        [
+          "relative",
+          mode === "design"
+      ? `bg-white cursor-pointer border border-dashed border-black` // ✅ 검은색 가는 점선
+      : "bg-white cursor-pointer",
+    "flex flex-col gap-4",
+          // Tailwind에서 직접 지원하지 않는 width/height/padding은 아래에서 처리
+        ].join(" ")
+      }
+      style={{
+        width: `${pageWidthPx}px`,
+        minHeight: `${pageHeightPx}px`,
+        padding: `${runtime_data?.padding ?? 48}px`,
+        boxSizing: "border-box",
+      }}
+      onClick={onSelect}
+    >
         {components?.length === 0 ? (
           isViewerMode ? null : (
           <p className="text-gray-500 text-center mt-20">
@@ -225,6 +231,6 @@ export default function EDocEditorCanvas({
           RenderComponents()
         )}
       </div>
-    </div>
+    // </div>
   );
 }

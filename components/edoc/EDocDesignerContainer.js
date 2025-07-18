@@ -536,7 +536,7 @@ function EDocDocumentListModal({ documents, onSelect, onClose }) {
         />
       </aside>
 
-      <main className="flex-1 flex flex-col p-6 overflow-auto">
+      <main className="flex-1 flex flex-col p-0 overflow-auto">
         <div className="sticky top-0 z-50 bg-white shadow mb-4">
           <EDocDesignerTopMenu
             onNewDocument={handleNewDocument}
@@ -559,26 +559,33 @@ function EDocDocumentListModal({ documents, onSelect, onClose }) {
 
         <div className="flex-1 overflow-auto">
           {pages.map((page, idx) => (
-             <div key={page.id} className="border rounded shadow relative">
-                <div className="top-2 left-2 bg-blue-500 text-white text-xs rounded z-10 select-none text-center">
-                   p{idx + 1}
-                </div>
-                <EDocEditorCanvas
-                  key={page.id}
-                  page={page}
-                  isSelected={idx === currentPageIdx}
-                  onSelect={() => { setCurrentPageIdx(idx); setSelectedComponentId(null); }}
-                  selectedComponentId={selectedComponentId}
-                  onComponentSelect={handleComponentSelect}
-                  onMoveUp={handleMoveComponentUp}
-                  onMoveDown={handleMoveComponentDown}
-                  onDeleteComponent={handleDeleteComponent}
-                  onUpdateComponent={handleUpdateComponent}
-                  isViewerMode={isExportingPdf}
-                  mode={mode} // ✅ 부모가 내려줌!
-                  bindingData={commonFunctions.bindingData}
-                  documentData={documentData}
-                />
+            <div
+              key={page.id}
+              className="relative w-fit mx-auto border border-dashed border-gray-400" // ✅ 점선 경계 추가
+              style={{ boxSizing: "border-box" }}
+            >
+              <div
+                className="absolute top-2 left-2 bg-gray-200 text-gray-600 text-xs rounded z-10 select-none text-center px-2 py-1"
+                style={{ pointerEvents: "none" }}
+              >
+                p{idx + 1}
+              </div>
+              <EDocEditorCanvas
+                key={page.id}
+                page={page}
+                isSelected={idx === currentPageIdx}
+                onSelect={() => { setCurrentPageIdx(idx); setSelectedComponentId(null); }}
+                selectedComponentId={selectedComponentId}
+                onComponentSelect={handleComponentSelect}
+                onMoveUp={handleMoveComponentUp}
+                onMoveDown={handleMoveComponentDown}
+                onDeleteComponent={handleDeleteComponent}
+                onUpdateComponent={handleUpdateComponent}
+                isViewerMode={isExportingPdf}
+                mode={mode}
+                bindingData={commonFunctions.bindingData}
+                documentData={documentData}
+              />
             </div>
           ))}
         </div>
