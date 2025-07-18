@@ -15,6 +15,7 @@ import * as edocCustom from './biz/eDoc/edocCustom'
 
 async function initialize() {
     var serviceSql = null;
+
     if (!process.serviceSQL)
         serviceSql = await dynamicSql.loadAll();
     else
@@ -86,40 +87,37 @@ export default async (req, res) => {
 }
 
 const executeService = async (method, req) => {
-    var jResponse = null;
+    var jResponse = {};
     var jRequest = method === "GET" ? JSON.parse(req.params.requestJson) : method === "POST" ? req.body : null;
     const commandName = jRequest.commandName;
+    
     if (!commandName) {
-        jResponse = JSON.stringify({
-            error_code: -1,
-            error_message: `${constants.messages.MESSAGE_SERVER_NO_COMMAND_NAME}\n${constants.messages.MESSAGE_SERVER_NOT_SUPPORTED_MODULE}`
-        })
-        return jResponse;            
+        jResponse.error_code = -1;
+        jResponse.error_message = `${constants.messages.MESSAGE_SERVER_NO_COMMAND_NAME}\n${constants.messages.MESSAGE_SERVER_NOT_SUPPORTED_MODULE}`;
+        return jResponse;
     }
 
-    if (commandName.startsWith('security.')) {
+    if (commandName.startsWith(`${constants.modulePrefix.security}.`)) {
         jResponse = await security.executeService(req.body._txnId, jRequest);
-    } else if (commandName.startsWith('dynamicSql.')) {
+    } else if (commandName.startsWith(`${constants.modulePrefix.dynamicSql}.`)) {
         jResponse = await dynamicSql.executeService(req.body._txnId, jRequest);
-    } else if (commandName.startsWith('incomeHistory.')) {
+    } else if (commandName.startsWith(`${constants.modulePrefix.incomeHistory}.`)) {
         jResponse = await incomeHistory.executeService(req.body._txnId, jRequest);
-    } else if (commandName.startsWith('stockInfo.')) {
+    } else if (commandName.startsWith(`${constants.modulePrefix.stockInfo}.`)) {
         jResponse = await tb_cor_ticker_info.executeService(req.body._txnId, jRequest);
-    } else if (commandName.startsWith('postInfo.')) {
+    } else if (commandName.startsWith(`${constants.modulePrefix.postInfo}.`)) {
         jResponse = await postInfo.executeService(req.body._txnId, jRequest);
-    } else if (commandName.startsWith('postCommentInfo.')) {
+    } else if (commandName.startsWith(`${constants.modulePrefix.postCommentInfo}.`)) {
         jResponse = await postCommentInfo.executeService(req.body._txnId, jRequest);
-    } else if (commandName.startsWith('edocComponentTemplate.')) {
+    } else if (commandName.startsWith(`${constants.modulePrefix.edocComponentTemplate}.`)) {
         jResponse = await edocComponentTemplate.executeService(req.body._txnId, jRequest);
-    } else if (commandName.startsWith('edocDocument.')) {
+    } else if (commandName.startsWith(`${constants.modulePrefix.edocDocument}.`)) {
         jResponse = await edocDocument.executeService(req.body._txnId, jRequest);
-    } else if (commandName.startsWith('eDoc.')) {
+    } else if (commandName.startsWith(`${constants.modulePrefix.edocCustom}.`)) {
         jResponse = await edocCustom.executeService(req.body._txnId, jRequest);
     } else {
-        jResponse = JSON.stringify({
-            error_code: -1,
-            error_message: `[${commandName}] ${constants.messages.MESSAGE_SERVER_NOT_SUPPORTED_MODULE}`
-        })
+        jResponse.error_code = -1;
+        jResponse.error_message = `[${commandName}] ${constants.messages.MESSAGE_SERVER_NOT_SUPPORTED_MODULE}`;
     }
     return jResponse;
 }

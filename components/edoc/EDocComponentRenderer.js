@@ -53,19 +53,19 @@ export default function DocComponentRenderer({
   };
 
 switch (component.type) {
-  case constants.edoc.COMPONENT_TYPE_TEXT:
+  case constants.edoc.EDOC_COMPONENT_TYPE_TEXT:
     return <TextComponent {...renderProps} />;
-  case constants.edoc.COMPONENT_TYPE_INPUT:
+  case constants.edoc.EDOC_COMPONENT_TYPE_INPUT:
     return <InputComponent {...renderProps} />;
-  case constants.edoc.COMPONENT_TYPE_IMAGE:
+  case constants.edoc.EDOC_COMPONENT_TYPE_IMAGE:
     return <ImageComponent {...renderProps} />;
-  case constants.edoc.COMPONENT_TYPE_TABLE:
+  case constants.edoc.EDOC_COMPONENT_TYPE_TABLE:
     return <TableComponent {...renderProps} />;
-  case constants.edoc.COMPONENT_TYPE_CHECKLIST:
+  case constants.edoc.EDOC_COMPONENT_TYPE_CHECKLIST:
     return <CheckListComponent {...renderProps} />;
-  case constants.edoc.COMPONENT_TYPE_BUTTON:
+  case constants.edoc.EDOC_COMPONENT_TYPE_BUTTON:
     return <ButtonComponent {...renderProps} />;
-  case constants.edoc.COMPONENT_TYPE_VIDEO:
+  case constants.edoc.EDOC_COMPONENT_TYPE_VIDEO:
     return <VideoComponent {...renderProps} />;
   default:
     return null;

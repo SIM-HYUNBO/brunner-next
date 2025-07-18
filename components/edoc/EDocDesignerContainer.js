@@ -144,25 +144,25 @@ export default function EDocDesignerContainer({ documentId, triggerLeftMenuReloa
     };
 
     switch (component.template_json.type) {
-      case constants.edoc.COMPONENT_TYPE_TEXT:
+      case constants.edoc.EDOC_COMPONENT_TYPE_TEXT:
         baseComponent.runtime_data = TextComponent.initDefaultRuntimeData(defaultRuntimeData);
         break;
-      case constants.edoc.COMPONENT_TYPE_IMAGE:
+      case constants.edoc.EDOC_COMPONENT_TYPE_IMAGE:
         baseComponent.runtime_data = ImageComponent.initDefaultRuntimeData(defaultRuntimeData);
         break;
-      case constants.edoc.COMPONENT_TYPE_INPUT:
+      case constants.edoc.EDOC_COMPONENT_TYPE_INPUT:
         baseComponent.runtime_data = InputComponent.initDefaultRuntimeData(defaultRuntimeData);
         break;
-      case constants.edoc.COMPONENT_TYPE_TABLE:
+      case constants.edoc.EDOC_COMPONENT_TYPE_TABLE:
         baseComponent.runtime_data = TableComponent.initDefaultRuntimeData(defaultRuntimeData);
         break;
-      case constants.edoc.COMPONENT_TYPE_CHECKLIST:
+      case constants.edoc.EDOC_COMPONENT_TYPE_CHECKLIST:
         baseComponent.runtime_data = CheckListComponent.initDefaultRuntimeData(defaultRuntimeData);
         break;
-      case constants.edoc.COMPONENT_TYPE_BUTTON:
+      case constants.edoc.EDOC_COMPONENT_TYPE_BUTTON:
         baseComponent.runtime_data = ButtonComponent.initDefaultRuntimeData(defaultRuntimeData);
         break;
-      case constants.edoc.COMPONENT_TYPE_VIDEO:
+      case constants.edoc.EDOC_COMPONENT_TYPE_VIDEO:
         baseComponent.runtime_data = VideoComponent.initDefaultRuntimeData(defaultRuntimeData);
         break;
       default:
