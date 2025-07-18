@@ -5,7 +5,7 @@ import Image from "next/image";
 import * as userInfo from "@/components/userInfo";
 import DivContainer from "@/components/divContainer";
 
-export default function Header() {
+export default function Header({ triggerLeftMenuReload }) {
   const UserInfo = userInfo.default;
 
   const topMenu = () => {
@@ -33,9 +33,14 @@ export default function Header() {
             alt="home icon"
           />
         </Link>
-        <UserInfo />
+        <UserInfo handleLogout={handleLogout} />
       </nav>
     );
+  };
+
+  const handleLogout = () => {
+    if (triggerLeftMenuReload) triggerLeftMenuReload();
+    // 추가로 페이지 이동 등 필요시 처리
   };
 
   return (
