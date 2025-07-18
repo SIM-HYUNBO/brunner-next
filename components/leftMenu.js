@@ -37,9 +37,6 @@ export default function LeftMenu({ reloadSignal }) {
               <Link className={`block text-gray-600 dark:text-gray-100 py-2`} href="/">
                 Home
               </Link>
-              <Link className={`block text-gray-600 dark:text-gray-100 py-2`} href="/mainPages/clips">
-                Clips
-              </Link>
               <Link className={`block text-gray-600 dark:text-gray-100 py-2`} href="/mainPages/contact">
                 Contact
               </Link>
