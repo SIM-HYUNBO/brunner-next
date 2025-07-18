@@ -49,9 +49,9 @@ export default function LeftMenu({ reloadSignal }) {
               <hr className="my-4 border-gray-400" />
 
               <Link className={`block text-gray-600 dark:text-gray-100 py-2`} href="/eDoc/eDocDesigner">
-                Document Designer
+                Page Designer
               </Link>
-              <li className="text-gray-500 dark:text-gray-300 py-1">My Documents</li>
+              <li className="text-gray-500 dark:text-gray-300 py-1">My Page</li>
 
               {documentList.length > 0 && documentList.map((doc) => {
                 // menu_path가 없으면 기본값으로 `/edocument/{id}`
