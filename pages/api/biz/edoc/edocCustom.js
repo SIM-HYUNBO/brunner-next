@@ -11,9 +11,15 @@ import * as commonFunctions from '@/components/commonFunctions'
 
 const executeService = async (txnId, jRequest) => {
     var jResponse = {};
+    let cmd = jRequest.commandName;
 
+    // 커스텀 서비스의 경우, 내부용 모듈 접두사 (eDocCustom.)를 제거한다.
+    if (cmd.startsWith(`${constants.modulePrefix.edocCustom}.`)) {
+        cmd = cmd.slice(constants.modulePrefix.edocCustom.length + 1);
+    }
+    
     try {
-        switch (jRequest.commandName) {
+        switch (cmd) {
             default:
                 break;
         }
