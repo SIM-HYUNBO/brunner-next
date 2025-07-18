@@ -6,32 +6,23 @@ import * as userInfo from "@/components/userInfo";
 import { useModal } from "@/components/brunnerMessageBox";
 import * as constants from "@/components/constants";
 
-function Board(boardInfo) {
-
+function BrunnerBoard({ boardType }) {
   const [loading, setLoading] = useState(false);
   const { BrunnerMessageBox, openModal } = useModal();
-
   const [posts, setPosts] = useState([]);
   const [postText, setPostText] = useState("");
-  const [boardType, setTickerCode] = useState(boardInfo.boardType);
 
-  useEffect(() => {
-    fetchPosts();
-  }, []);
-
-  // 1. 게시글 목록 조회
+  // 게시글 목록 조회
   const fetchPosts = async () => {
-    var jRequest = {};
-    var jResponse = null;
-
     try {
-      jRequest.commandName = constants.commands.COMMAND_POST_INFO_SELECT_ALL;
-      jRequest.systemCode = process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE;
-      jRequest.postInfo = { postType: `TICKER_INFO-${boardType}` }; // 게시판 유형을 TICKER_INFO-{종모코드}로 함
-
-      setLoading(true); // 데이터 로딩 시작
-      jResponse = await RequestServer("POST", jRequest);
-      setLoading(false); // 데이터 로딩 끝
+      const jRequest = {
+        commandName: constants.commands.COMMAND_POST_INFO_SELECT_ALL,
+        systemCode: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE,
+        postInfo: { postType: boardType }
+      };
+      setLoading(true);
+      const jResponse = await RequestServer("POST", jRequest);
+      setLoading(false);
 
       if (jResponse.error_code === 0) {
         setPosts(jResponse.postList);
@@ -39,11 +30,16 @@ function Board(boardInfo) {
         openModal(jResponse.error_message);
       }
     } catch (error) {
-      setLoading(false); // 데이터 로딩 끝
+      setLoading(false);
       openModal(error.message);
-      console.error(`message:${error.message}\n stack:${error.stack}\n`);
     }
   };
+
+  useEffect(() => {
+    if (boardType) {
+      fetchPosts();
+    }
+  }, [boardType]);
 
   const handlePostChange = (e) => {
     setPostText(e.target.value);
@@ -57,12 +53,12 @@ function Board(boardInfo) {
         var jResponse = null;
 
         const userId = userInfo.getLoginUserId();
-        const postType = `TICKER_INFO-${boardType}`;
+        const postType = `${boardType}`;
 
         const newPost = {
           postType: postType,
           content: postText,
-          userId: userId ? userId : "anonymous user",
+          userId: userId,
         };
 
         jRequest.commandName = constants.commands.COMMAND_POST_INFO_INSERT_ONE;
@@ -104,7 +100,7 @@ function Board(boardInfo) {
       jRequest.postInfo = {
         postId: postId,
         content: newContent,
-        userId: userId ? userId : "anonymous user",
+        userId: userId,
       };
 
       setLoading(true);// 데이터 로딩 시작
@@ -117,7 +113,7 @@ function Board(boardInfo) {
             ? {
               ...post,
               post_content: newContent,
-              update_user_id: userId ? userId : "anonymous user",
+              update_user_id: userId,
             }
             : post
         );
@@ -149,7 +145,7 @@ function Board(boardInfo) {
 
       jRequest.postInfo = {
         postId: postId,
-        userId: userId ? userId : "anonymous user",
+        userId: userId,
       };
 
       setLoading(true);// 데이터 로딩 시작작
@@ -183,7 +179,7 @@ function Board(boardInfo) {
       jRequest.commentInfo = {
         postId: postId,
         content: commentText,
-        userId: userId ? userId : "anonymous user",
+        userId: userId,
       };
 
       jResponse = await RequestServer("POST", jRequest);
@@ -228,7 +224,7 @@ function Board(boardInfo) {
         postId: postId,
         commentId: commentId,
         content: newContent,
-        userId: userId ? userId : "anonymous user",
+        userId: userId,
       };
 
       jResponse = await RequestServer("POST", jRequest);
@@ -273,7 +269,7 @@ function Board(boardInfo) {
       jRequest.commentInfo = {
         postId: postId,
         commentId: commentId,
-        userId: userId ? userId : "anonymous user",
+        userId: userId,
       };
 
       jResponse = await RequestServer("POST", jRequest);
@@ -570,4 +566,4 @@ function BoardContent({
   );
 }
 
-export default Board;
+export default BrunnerBoard;

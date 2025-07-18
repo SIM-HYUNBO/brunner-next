@@ -4,10 +4,9 @@ import HomeContentAnimation from "./content-animation/homeContentAnimation";
 import { useRouter } from "next/router";
 import * as userInfo from "@/components/userInfo";
 import DivContainer from "@/components/divContainer";
-import BrunnerVideo from "@/components/brunnerVideo";
 import { isMobile, isTablet, isBrowser } from "react-device-detect";
 import GoverningMessage from "@/components/governingMessage";
-
+import BrunnerBoard from "@/components/brunnerBoard";
 
 export default function HomeContent() {
   const router = useRouter();
@@ -38,6 +37,10 @@ export default function HomeContent() {
               </div>
             )}
           </div>
+          <div className={`flex space-x-4 border w-full h-full text-align-left mt-10 readonly`}>
+            <BrunnerBoard boardType={'MAIN_TALK'} />
+          </div>
+
         </div>
         {!isMobile && (
           <div className={`items-center`}>
