@@ -38,13 +38,7 @@ export const getNewRuntimeData = (component, { key, value }) => {
 /**
  * 속성 편집기
  */
-export function renderProperty(
-  component,
-  updateRuntimeData,
-  renderWidthProperty,
-  renderForceNewLineProperty,
-  renderPositionAlignProperty
-) {
+export function renderProperty( component, updateRuntimeData, renderWidthProperty, renderForceNewLineProperty, renderPositionAlignProperty) {
   const renderComponentProperty = () => {
     return (
       <div>
@@ -55,10 +49,6 @@ export function renderProperty(
           onChange={(e) => updateRuntimeData('bindingKey', e.target.value)}
           className="w-full border border-gray-300 rounded p-2 mb-2"
         />
-
-        {renderWidthProperty && renderWidthProperty()}
-        {renderForceNewLineProperty && renderForceNewLineProperty()}
-        {renderPositionAlignProperty && renderPositionAlignProperty()}
 
         <label>영상 제목:</label>
         <input
@@ -95,6 +85,11 @@ export function renderProperty(
           }
           className="w-full border border-gray-300 rounded p-2 mb-2"
         />
+        
+        {renderWidthProperty && renderWidthProperty()}
+        {renderForceNewLineProperty && renderForceNewLineProperty()}
+        {renderPositionAlignProperty && renderPositionAlignProperty()}
+
       </div>
     );
   };

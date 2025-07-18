@@ -44,25 +44,7 @@ export function renderProperty(component, updateRuntimeData, renderWidthProperty
           onChange={(e) => updateRuntimeData("bindingKey", e.target.value)}
           className="w-full border border-gray-300 rounded p-2 mb-2"
         />
-
-        {renderWidthProperty()}
-        {renderForceNewLineProperty()}
-        {renderPositionAlignProperty()}
-
-        <EDocTextStyleEditor
-          fontFamily={component.runtime_data?.fontFamily || 'Arial'}
-          fontSize={component.runtime_data?.fontSize || 12}
-          fontWeight={component.runtime_data?.fontWeight || 'normal'}
-          underline={component.runtime_data?.underline || false}
-          fontColor={component.runtime_data?.fontColor || '#000000'}
-          backgroundColor={component.runtime_data?.backgroundColor || '#ffffff'}
-          onChange={(updatedProps) => {
-            Object.entries(updatedProps).forEach(([key, value]) => {
-              updateRuntimeData(key, value);
-            });
-          }}
-        />
-
+        
         <label>텍스트:</label>
         <input
           type="text"
@@ -81,6 +63,24 @@ export function renderProperty(component, updateRuntimeData, renderWidthProperty
           <option value="center">가운데</option>
           <option value="right">오른쪽</option>
         </select>
+
+        {renderWidthProperty()}
+        {renderForceNewLineProperty()}
+        {renderPositionAlignProperty()}
+
+        <EDocTextStyleEditor
+          fontFamily={component.runtime_data?.fontFamily || 'Arial'}
+          fontSize={component.runtime_data?.fontSize || 12}
+          fontWeight={component.runtime_data?.fontWeight || 'normal'}
+          underline={component.runtime_data?.underline || false}
+          fontColor={component.runtime_data?.fontColor || '#000000'}
+          backgroundColor={component.runtime_data?.backgroundColor || '#ffffff'}
+          onChange={(updatedProps) => {
+            Object.entries(updatedProps).forEach(([key, value]) => {
+              updateRuntimeData(key, value);
+            });
+          }}
+        />
       </div>
     );
   }

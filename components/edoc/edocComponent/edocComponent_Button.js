@@ -72,7 +72,10 @@ const RenderComponent = (props) => {
     setLoading(false);
 
     if (jResponse.error_code === 0) {
-      await openModal(`${constants.messages.MESSAGE_SUCCESS_FINISHED}\n[${runtimeData?.commandName}].`);
+      await openModal(`${jResponse.error_message
+
+
+      }].`);
       // 필요하다면 후속처리
     } else {
       await openModal(jResponse.error_message);
@@ -128,78 +131,86 @@ export const getNewRuntimeData = (component, { key, value }) => {
 
 // ✅ 속성 편집 UI — commandName 입력 추가
 export function renderProperty(component, updateRuntimeData, renderWidthProperty, renderForceNewLineProperty, renderPositionAlignProperty) {
+  const renderComponentProperty = (component) => {
+    return (
+      
+      <div>
+        <label>버튼 텍스트:</label>
+        <input
+          type="text"
+          value={component.runtime_data?.buttonText || ''}
+          onChange={(e) => updateRuntimeData("buttonText", e.target.value)}
+          className="w-full border border-gray-300 rounded p-2 mb-2"
+        />
 
-  return (
-    
-    <div>
-      <label>버튼 텍스트:</label>
-      <input
-        type="text"
-        value={component.runtime_data?.buttonText || ''}
-        onChange={(e) => updateRuntimeData("buttonText", e.target.value)}
-        className="w-full border border-gray-300 rounded p-2 mb-2"
-      />
+        <label>API Endpoint:</label>
+        <input
+          type="text"
+          value={component.runtime_data?.apiEndpoint || ''}
+          onChange={(e) => updateRuntimeData("apiEndpoint", e.target.value)}
+          className="w-full border border-gray-300 rounded p-2 mb-2"
+        />
 
-      <label>API Endpoint:</label>
-      <input
-        type="text"
-        value={component.runtime_data?.apiEndpoint || ''}
-        onChange={(e) => updateRuntimeData("apiEndpoint", e.target.value)}
-        className="w-full border border-gray-300 rounded p-2 mb-2"
-      />
+        <label>API Method:</label>
+        <select
+          value={component.runtime_data?.apiMethod || 'POST'}
+          onChange={(e) => updateRuntimeData("apiMethod", e.target.value)}
+          className="w-full border border-gray-300 rounded p-2 mb-2"
+        >
+          <option value="POST">POST</option>
+          <option value="GET">GET</option>
+        </select>
 
-      <label>API Method:</label>
-      <select
-        value={component.runtime_data?.apiMethod || 'POST'}
-        onChange={(e) => updateRuntimeData("apiMethod", e.target.value)}
-        className="w-full border border-gray-300 rounded p-2 mb-2"
-      >
-        <option value="POST">POST</option>
-        <option value="GET">GET</option>
-      </select>
+        <label>Command Name:</label> {/* ✅ 추가 */}
+        <input
+          type="text"
+          placeholder={component.runtime_data?.commandName || ''}
+          value={component.runtime_data?.commandName || ''}
+          onChange={(e) => updateRuntimeData("commandName", e.target.value)}
+          className="w-full border border-gray-300 rounded p-2 mb-2"
+        />
 
-      <label>Command Name:</label> {/* ✅ 추가 */}
-      <input
-        type="text"
-        placeholder={component.runtime_data?.commandName || ''}
-        value={component.runtime_data?.commandName || ''}
-        onChange={(e) => updateRuntimeData("commandName", e.target.value)}
-        className="w-full border border-gray-300 rounded p-2 mb-2"
-      />
+        {/* 폭, 줄바꿈, 위치정렬 속성 */}
+        {renderWidthProperty()}
+        {renderForceNewLineProperty()}
+        {renderPositionAlignProperty()}
 
-      <label>버튼 색상:</label>
-      <input
-        type="color"
-        value={component.runtime_data?.buttonColor || '#4F46E5'}
-        onChange={(e) => updateRuntimeData("buttonColor", e.target.value)}
-        className="w-full border border-gray-300 rounded p-2 mb-2"
-      />
+        <label>버튼 색상:</label>
+        <input
+          type="color"
+          value={component.runtime_data?.buttonColor || '#4F46E5'}
+          onChange={(e) => updateRuntimeData("buttonColor", e.target.value)}
+          className="w-full border border-gray-300 rounded p-2 mb-2"
+        />
 
-      <label>글자 색상:</label>
-      <input
-        type="color"
-        value={component.runtime_data?.textColor || '#FFFFFF'}
-        onChange={(e) => updateRuntimeData("textColor", e.target.value)}
-        className="w-full border border-gray-300 rounded p-2 mb-2"
-      />
+        <label>글자 색상:</label>
+        <input
+          type="color"
+          value={component.runtime_data?.textColor || '#FFFFFF'}
+          onChange={(e) => updateRuntimeData("textColor", e.target.value)}
+          className="w-full border border-gray-300 rounded p-2 mb-2"
+        />
 
-      <label>Padding:</label>
-      <input
-        type="text"
-        value={component.runtime_data?.padding || '10px 20px'}
-        onChange={(e) => updateRuntimeData("padding", e.target.value)}
-        className="w-full border border-gray-300 rounded p-2 mb-2"
-      />
+        <label>Padding:</label>
+        <input
+          type="text"
+          value={component.runtime_data?.padding || '10px 20px'}
+          onChange={(e) => updateRuntimeData("padding", e.target.value)}
+          className="w-full border border-gray-300 rounded p-2 mb-2"
+        />
 
-      <label>Border Radius:</label>
-      <input
-        type="text"
-        value={component.runtime_data?.borderRadius || '6px'}
-        onChange={(e) => updateRuntimeData("borderRadius", e.target.value)}
-        className="w-full border border-gray-300 rounded p-2 mb-2"
-      />
-    </div>
-  );
+        <label>Border Radius:</label>
+        <input
+          type="text"
+          value={component.runtime_data?.borderRadius || '6px'}
+          onChange={(e) => updateRuntimeData("borderRadius", e.target.value)}
+          className="w-full border border-gray-300 rounded p-2 mb-2"
+        />
+      </div>
+    );
+  };
+
+  return renderComponentProperty(component);
 }
 
 export default RenderComponent;

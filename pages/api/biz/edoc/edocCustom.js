@@ -26,7 +26,7 @@ const executeService = async (txnId, jRequest) => {
 
         jResponse = {
             error_code: 0,
-            error_message: `The service ${jRequest.commandName} executed.`
+            error_message: `The custom service [${cmd}] executed.`
         };
 
     } catch (error) {
