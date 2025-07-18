@@ -4,7 +4,7 @@ import React from 'react';
 import EDocTextStyleEditor from "@/components/eDoc/eDocTextStyleEditor";
 
 export const initDefaultRuntimeData = (defaultRuntimeData) => {
-  defaultRuntimeData.content = "여기에 텍스트를 입력하세요";
+  defaultRuntimeData.content = "여기에 텍스트를 설정하세요";
   defaultRuntimeData.textAlign = "left";
   defaultRuntimeData.positionAlign = "left";
 
@@ -45,6 +45,14 @@ export function renderProperty(component, updateRuntimeData, renderWidthProperty
             className="w-full border border-gray-300 rounded p-2 mb-2"
           />
 
+          <label>텍스트:</label>
+          <textarea
+            value={component.runtime_data?.content || ''}
+            onChange={(e) => updateRuntimeData("content", e.target.value)}
+            rows={4}
+            className="w-full border border-gray-300 rounded p-2"
+          />
+
           <label>내용 정렬:</label>
           <select
             value={component.runtime_data?.textAlign || 'left'}
@@ -55,14 +63,6 @@ export function renderProperty(component, updateRuntimeData, renderWidthProperty
             <option value="center">가운데</option>
             <option value="right">오른쪽</option>
           </select>
-
-          <label>텍스트:</label>
-          <textarea
-            value={component.runtime_data?.content || ''}
-            onChange={(e) => updateRuntimeData("content", e.target.value)}
-            rows={4}
-            className="w-full border border-gray-300 rounded p-2"
-          />
 
           {renderWidthProperty()}
           {renderForceNewLineProperty()}
