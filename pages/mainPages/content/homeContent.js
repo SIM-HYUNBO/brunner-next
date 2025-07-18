@@ -19,7 +19,7 @@ export default function HomeContent() {
           <h2 className={`title-font sm:text-4xl text-3xl mb-10 font-medium text-green-900`}>
             DIY Site
           </h2>
-          <GoverningMessage governingMessage={"사용자가 직접 만드는 사이트입니다.. \n무료 가입 후 페이지 디자이너로 직접 페이지를 만들어보세요.\n"} />
+          <GoverningMessage governingMessage={"Brunner는 사용자가 직접 만드는 사이트입니다.. \n무료 가입 후 페이지 디자이너로 직접 페이지를 만들어보세요.\n"} />
           <div className={`flex flex-col`}>
             {!userInfo.isLogin() && (
               <div>
