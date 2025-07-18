@@ -4,7 +4,7 @@ import React from 'react';
 import EDocTextStyleEditor from "@/components/eDoc/eDocTextStyleEditor";
 
 export const initDefaultRuntimeData = (defaultRuntimeData) => {
-  defaultRuntimeData.placeholder = "값을 입력하세요";
+  defaultRuntimeData.placeholder = "여기에 값을 입력하세요";
   defaultRuntimeData.textAlign = "left";
   defaultRuntimeData.positionAlign = "left";
   
@@ -45,7 +45,7 @@ export function renderProperty(component, updateRuntimeData, renderWidthProperty
           className="w-full border border-gray-300 rounded p-2 mb-2"
         />
         
-        <label>텍스트:</label>
+        <label>입력값:</label>
         <input
           type="text"
           value={component.runtime_data?.value || ''}
