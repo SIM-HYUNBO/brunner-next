@@ -26,9 +26,9 @@ export default function ContactContent() {
             {<ContactContentAnimation width={300} height={300} />}
           </div>
         )}
-        <div className={`w-full flex justify-start mt-10`}>
+        {/* <div className={`w-full flex justify-start mt-10`}>
           <BrunnerWebcamStream title="Brunner admin studio" />
-        </div>        
+        </div>         */}
       </DivContainer>
     </>
   );
