@@ -73,36 +73,25 @@ export default function EDocContent({ documentId }) {
 
   return (
     <>
-      <DivContainer className={`flex-row desktop:flex-col`}>
-        <div className={`w-full desktop:w-2/3 items-start text-left`}>
-          <main className="min-h-screen bg-gray-100 p-8 overflow-auto">
-            <div className="space-y-12">
-              {pages.map((page) => (
-                <div
-                  key={page.id}
-                  id={`viewer-canvas-${page.id}`}
-                  className="border rounded shadow p-6 bg-white"
-                >
-                  <EDocEditorCanvas
-                    page={page}
-                    isViewerMode={true}
-                    mode="runtime" // ✅ 실행모드
-                    bindingData={commonFunctions.bindingData}
-                    documentData={page.documentData}
-                  />
-                </div>
-              ))}
-            </div>
-          </main>
-        </div>
-        {/* </div> */}
-        {!isMobile && (
-          <div className={`items-center`}>
-            {/* {<ClipsContentAnimation />} */}
-          </div>
-        )}
-      </DivContainer>
-    </>
+  <DivContainer className="flex-row desktop:flex-col">
+    {pages.map((page) => (
+        <EDocEditorCanvas
+          page={page}
+          isViewerMode={true}
+          mode="runtime"
+          bindingData={commonFunctions.bindingData}
+          documentData={page.documentData}
+          style={{ width: "100%", minWidth: 0, overflow: "visible" }} // ✅ 스타일 props로 전달
+        />
+    ))}
+
+    {!isMobile && (
+      <div className="items-center">
+        {/* {<ClipsContentAnimation />} */}
+      </div>
+    )}
+  </DivContainer>
+</>
 
   );
 }
