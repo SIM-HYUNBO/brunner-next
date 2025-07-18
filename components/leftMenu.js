@@ -37,6 +37,9 @@ export default function LeftMenu({ reloadSignal }) {
               <Link className={`block text-gray-600 dark:text-gray-100 py-2`} href="/">
                 Home
               </Link>
+              <Link className={`block text-gray-600 dark:text-gray-100 py-2`} href="/eDoc/eDocDesigner">
+                Page Designer
+              </Link>
               <Link className={`block text-gray-600 dark:text-gray-100 py-2`} href="/mainPages/contact">
                 Contact
               </Link>
@@ -45,9 +48,7 @@ export default function LeftMenu({ reloadSignal }) {
 
               <hr className="my-4 border-gray-400" />
 
-              <Link className={`block text-gray-600 dark:text-gray-100 py-2`} href="/eDoc/eDocDesigner">
-                Page Designer
-              </Link>
+
               <li className="text-gray-500 dark:text-gray-300 py-1">My Page</li>
 
               {documentList.length > 0 && documentList.map((doc) => {
