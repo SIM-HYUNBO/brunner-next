@@ -55,7 +55,7 @@ export default function LeftMenu({ reloadSignal }) {
 
               {documentList.length > 0 && documentList.map((doc) => {
                 // menu_path가 없으면 기본값으로 `/edocument/{id}`
-                const menuPath = doc.menu_path || `/edocument/${doc.id}`;
+                const menuPath = doc.menu_path || `mainPages/edocument/${doc.id}`;
 
                 return (
                   <Link
