@@ -58,11 +58,6 @@ export const commands = {
     COMMAND_SECURITY_SIGNUP : `security.signup`,
     COMMAND_SECURITY_SIGNIN : `security.signin`,
 
-    COMMAND_INCOME_HISTORY_INSERT_ONE : `incomeHistory.insertOne`,
-    COMMAND_INCOME_HISTORY_DELETE_ONE : `incomeHistory.deleteOne`,
-    COMMAND_INCOME_HISTORY_SELECT_BY_USERID : `incomeHistory.selectByUserId`,
-    COMMAND_INCOME_HISTORY_UPDATE_ONE : `incomeHistory.updateOne`,
-
     COMMAND_POST_INFO_INSERT_ONE : `postInfo.insertOne`,
     COMMAND_POST_INFO_UPDATE_ONE : `postInfo.updateOne`,
     COMMAND_POST_INFO_DELETE_ONE : `postInfo.deleteOne`,
@@ -71,14 +66,6 @@ export const commands = {
     COMMAND_POST_COMMENT_INFO_INSERT_ONE : `postCommentInfo.insertOne`,
     COMMAND_POST_COMMENT_INFO_UPDATE_ONE : `postCommentInfo.updateOne`,
     COMMAND_POST_COMMENT_INFO_DELETE_ONE : `postCommentInfo.deleteOne`,
-
-    COMMAND_STOCK_INFO_GET_CURRENCY_LIST : `stockInfo.getCurrencyList`,
-    COMMAND_STOCK_INFO_GET_EXCHANGE_BY_CURRENCY : `stockInfo.getExchangeByCurrency`,
-    COMMAND_STOCK_INFO_GET_LATEST_STOCK_INFO : `stockInfo.getLatestStockInfo`,
-    COMMAND_STOCK_INFO_GET_REALTIME_STOCK_INFO : `stockInfo.getRealtimeStockInfo`,
-    COMMAND_STOCK_INFO_GET_STOCK_INFO : `stockInfo.getStockInfo`,
-    COMMAND_STOCK_GET_TICKER_INFO : `stockInfo.getTickerInfo`,
-    COMMAND_STOCK_INFO_GET_TICKER_LIST : `stockInfo.getTickerList`,
 
     COMMAND_EDOC_COMPONENT_TEMPLATES_SELECT_ALL : `edocComponentTemplate.selectAll`,
     COMMAND_EDOC_DOCUMENT_UPSERT_ONE : `edocDocument.upsertOne`,

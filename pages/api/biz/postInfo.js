@@ -90,8 +90,15 @@ const insertOne = async (txnId, jRequest) => {
     var jResponse = {};
 
     try {
-        var postId = generateUUID();
+        var postId = commonFunctions.generateUUID();
         jResponse.commanaName = jRequest.commandName;
+
+        if (!jRequest.postInfo.userId) {
+            jResponse.error_code = -2;
+            jResponse.error_message = `${constants.messages.MESSAGE_REQUIRED_FIELD} [userId].`;
+            return jResponse;
+        }
+
 
         var sql = null
         sql = await dynamicSql.getSQL00('insert_TB_COR_POST_INFO', 1);
