@@ -76,35 +76,6 @@ export function renderProperty(component, updateRuntimeData, renderWidthProperty
           className="w-full border border-gray-300 rounded p-2 mb-2"
         />
 
-        {renderWidthProperty()}
-        {renderForceNewLineProperty()}
-        {renderPositionAlignProperty()}
-
-        <EDocTextStyleEditor
-          fontFamily={component.runtime_data?.fontFamily || 'Arial'}
-          fontSize={component.runtime_data?.fontSize || 12}
-          fontWeight={component.runtime_data?.fontWeight || 'normal'}
-          underline={component.runtime_data?.underline || false}
-          fontColor={component.runtime_data?.fontColor || '#000000'}
-          backgroundColor={component.runtime_data?.backgroundColor || '#ffffff'}
-          onChange={(updatedProps) => {
-            Object.entries(updatedProps).forEach(([key, value]) => {
-              updateRuntimeData(key, value);
-            });
-          }}
-        />
-
-        <label>내용 정렬:</label>
-        <select
-          value={component.runtime_data?.textAlign || 'left'}
-          onChange={(e) => updateRuntimeData("textAlign", e.target.value)}
-          className="w-full border border-gray-300 rounded p-2 mb-2"
-        >
-          <option value="left">왼쪽</option>
-          <option value="center">가운데</option>
-          <option value="right">오른쪽</option>
-        </select>
-
         <label className="block mb-2">항목 목록:</label>
         {items.map((item, idx) => (
           <div key={idx} className="flex items-center mb-1 gap-2">
@@ -136,6 +107,36 @@ export function renderProperty(component, updateRuntimeData, renderWidthProperty
         >
           항목 추가
         </button>
+
+        {renderWidthProperty()}
+        {renderForceNewLineProperty()}
+        {renderPositionAlignProperty()}
+
+        <EDocTextStyleEditor
+          fontFamily={component.runtime_data?.fontFamily || 'Arial'}
+          fontSize={component.runtime_data?.fontSize || 12}
+          fontWeight={component.runtime_data?.fontWeight || 'normal'}
+          underline={component.runtime_data?.underline || false}
+          fontColor={component.runtime_data?.fontColor || '#000000'}
+          backgroundColor={component.runtime_data?.backgroundColor || '#ffffff'}
+          onChange={(updatedProps) => {
+            Object.entries(updatedProps).forEach(([key, value]) => {
+              updateRuntimeData(key, value);
+            });
+          }}
+        />
+
+        <label>내용 정렬:</label>
+        <select
+          value={component.runtime_data?.textAlign || 'left'}
+          onChange={(e) => updateRuntimeData("textAlign", e.target.value)}
+          className="w-full border border-gray-300 rounded p-2 mb-2"
+        >
+          <option value="left">왼쪽</option>
+          <option value="center">가운데</option>
+          <option value="right">오른쪽</option>
+        </select>
+
       </div>
     );
   }
