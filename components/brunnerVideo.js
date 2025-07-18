@@ -44,16 +44,16 @@ const BrunnerVideo = ({ title, url, className, originalWidth = 640, originalHeig
 
     return (
         <div className={className} ref={containerRef}>
-            <p className={`text-start mb-1 text-gray-800 w-full`}>{title}</p>
-            <div className={`relative`} style={{ width: size.width, height: size.height }}>
-                <ReactPlayer
-                    url={url}
-                    controls={true}
-                    width="100%"
-                    height="100%"
-                    className={`w-full h-full rounded-lg`}
-                />
-            </div>
+        <p className={`text-center mb-1 text-gray-800 w-full`}>{title}</p>
+        <div className={`relative`} style={{ width: size.width, height: size.height }}>
+            <ReactPlayer
+                url={url}
+                controls={true}
+                width="100%"
+                height="100%"
+                className={`w-full h-full rounded-lg`}
+            />
+        </div>
         </div>
     );
 };
