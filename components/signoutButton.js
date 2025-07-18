@@ -7,7 +7,7 @@ import { useModal } from "@/components/brunnerMessageBox";
 import * as constants from "@/components/constants";
 import * as userInfo from "@/components/userInfo";
 
-export default function SignoutButton() {
+export default function SignoutButton({ handleLogout }) {
   const router = useRouter();
   const { BrunnerMessageBox, openModal } = useModal();
   const [loading, setLoading] = useState(false);
@@ -28,6 +28,8 @@ export default function SignoutButton() {
     if (jResponse.error_code == 0) {
       process.env.userInfo = null;
       router.push("/");
+      handleLogout();
+
     } else {
       openModal(result.error_message);
     }
@@ -54,8 +56,9 @@ export default function SignoutButton() {
           type="button"
           onClick={async () => {
             const result = await openModal(constants.messages.MESSAGE_SIGNOUT);
-            if (result) 
+            if (result) {
               requestSignout();
+            }
           }}
         >
         <svg

@@ -4,7 +4,7 @@ import SignoutButton from "./signoutButton";
 import DarkModeToggleButton from "./darkModeToggleButton";
 import { useState, useEffect } from 'react';
 
-export default function UserInfo() {
+export default function UserInfo({ handleLogout }) {
   useEffect(() => {
     getLoginName();
   }, []);
@@ -15,7 +15,7 @@ export default function UserInfo() {
       <div className={`mr-1 ml-1 inline-block align-middle`}>
         {getLoginName()}
       </div>
-      <SignoutButton />
+      <SignoutButton handleLogout={handleLogout} />
     </div>
   );
 }

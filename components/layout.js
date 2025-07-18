@@ -35,7 +35,7 @@ export default function Layout({ children }) {
       <LeftMenu reloadSignal={reloadSignal} />
 
       <div className="px-2 w-full desktop:w-3/4 ml-5">
-        <Header />
+        <Header triggerLeftMenuReload={() => setReloadSignal(prev => prev + 1)} />
         <main>
           {React.Children.map(children, child =>
             React.isValidElement(child)
