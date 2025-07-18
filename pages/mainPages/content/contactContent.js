@@ -5,8 +5,6 @@ import DivContainer from "@/components/divContainer";
 import { isMobile, isTablet, isBrowser } from "react-device-detect";
 import GoverningMessage from "@/components/governingMessage";
 
-import BrunnerWebcamStream from '@/components/brunnerWebcamStream';
-
 export default function ContactContent() {
   
   return (

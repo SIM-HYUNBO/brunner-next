@@ -7,7 +7,6 @@ import React from 'react';
 import { useEffect } from 'react'
 import Script from 'next/script';
 import HomeContent from '@/pages/mainPages/content/homeContent'
-import StockContent from '@/pages/mainPages/content/stockContent'
 
 
 // Home 페이지
