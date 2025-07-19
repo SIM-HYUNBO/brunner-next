@@ -146,7 +146,7 @@ export function renderProperty(component, updateRuntimeData, renderWidthProperty
         <label>API Endpoint:</label>
         <input
           type="text"
-          placeholder="localhost:3000/api/backendServer/" 
+          placeholder="http://localhost:3000/api/backendServer/" 
           value={component.runtime_data?.apiEndpoint || ''}
           onChange={(e) => updateRuntimeData("apiEndpoint", e.target.value)}
           className="w-full border border-gray-300 rounded p-2 mb-2"
