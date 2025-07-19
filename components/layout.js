@@ -33,25 +33,24 @@ export default function Layout({ children, reloadSignal, triggerLeftMenuReload }
 
   return (
     <div className="flex bg-primary justify-center">
-      {/* ✅ LeftMenu 그대로 */}
       <LeftMenu
         documentList={documentList}
         reloadSignal={reloadSignal}
       />
 
-      {/* ✅ 오른쪽 영역 */}
-      <DivContainer>
-        {/* ✅ Header */}
+      <DivContainer className="flex flex-col w-full">
         <Header triggerLeftMenuReload={triggerLeftMenuReload} />
 
-        {/* ✅ main 제거 & 그냥 children */}
-        {React.Children.map(children, child =>
-          React.isValidElement(child)
-            ? React.cloneElement(child, { triggerLeftMenuReload })
-            : child
-        )}
-      <Footer />
+        <main className="pt-16 flex-grow">
+          {React.Children.map(children, child =>
+            React.isValidElement(child)
+              ? React.cloneElement(child, { triggerLeftMenuReload })
+              : child
+          )}
+        </main>
+
+        <Footer />
       </DivContainer>
-      </div>
+    </div>
   );
 }
