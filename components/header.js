@@ -112,40 +112,26 @@ export default function Header({ triggerLeftMenuReload }) {
   }, []);
 
   return (
-    <header className="sticky top-0 left-0 right-0 w-full z-50 bg-white dark:bg-slate-800 text-gray-600 dark:text-white body-font mb-24">
-      <DivContainer className="flex items-center w-full max-w-full relative">
+    <header className="sticky top-0 left-0 right-0 w-full z-50 bg-white dark:bg-slate-800 text-gray-600 dark:text-white body-font md:w-full">
+      <DivContainer className="flex items-center w-full max-w-full">
         {/* 로고 */}
-        <Link
-          className="flex title-font font-medium items-center text-gray-900 mb-4 md:mb-0"
-          href="/"
-        >
-          <Image
-            src="/brunnerLogo.png"
-            height={100}
-            width={100}
-            alt="brunner logo"
-            priority={true}
-          />
+        <Link href="/" className="flex title-font font-medium items-center text-gray-900 mb-4 md:mb-0">
+          <Image src="/brunnerLogo.png" height={100} width={100} alt="brunner logo" priority />
         </Link>
 
         {/* 문서 제목 */}
-        <Link
-          className="flex title-font font-medium items-center text-gray-900 mb-4 md:mb-0"
-          href="/"
-        >
-          <h1 className="title-font sm:text-4xl text-3xl m-5 font-medium text-orange-900">
-            Brunner
-          </h1>
+        <Link href="/" className="flex title-font font-medium items-center text-gray-900 mb-4 md:mb-0">
+          <h1 className="title-font sm:text-4xl text-3xl m-5 font-medium text-orange-900">Brunner</h1>
         </Link>
 
-        <div className="flex-1"></div>
+        <div className="flex-1" />
 
         {/* 모바일 햄버거 메뉴 */}
         <div className="md:hidden absolute top-4 right-4">
           {mobileDropdownMenu()}
         </div>
 
-        {/* PC용 메뉴 */}
+        {/* PC 메뉴 */}
         <div className="hidden md:flex flex-wrap items-center justify-end">
           {topMenu()}
         </div>
