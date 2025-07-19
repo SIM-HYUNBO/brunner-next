@@ -20,7 +20,7 @@ import * as InputComponent from "@/components/eDoc/edocComponent/edocComponent_I
 import * as TextComponent from "@/components/eDoc/edocComponent/edocComponent_Text";
 import * as ImageComponent from "@/components/eDoc/edocComponent/edocComponent_Image";
 import * as TableComponent from "@/components/eDoc/edocComponent/edocComponent_Table";
-import * as CheckListComponent from "@/components/eDoc/edocComponent/edocComponent_CheckList";
+import * as CheckListComponent from "@/components/eDoc/eDocComponent/eDocComponent_CheckList";
 import * as ButtonComponent from "@/components/eDoc/eDocComponent/eDocComponent_Button";
 import * as VideoComponent from "@/components/eDoc/edocComponent/edocComponent_Video";
 
