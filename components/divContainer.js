@@ -1,11 +1,11 @@
 `use strict`
 
-const DivContainer = ({ children }) => {
-    return (
-        <div className={`container`}>
-            {children}
-        </div>
-    );
+const DivContainer = ({ children, className = "" }) => {
+  return (
+    <div className={`container ${className}`}>
+      {children}
+    </div>
+  );
 }
 
 export default DivContainer;
