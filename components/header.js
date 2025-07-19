@@ -57,46 +57,47 @@ export default function Header({ triggerLeftMenuReload }) {
           aria-label="Menu"
         >
         <svg
-          width="28"
-          height="28"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          className="text-gray-700 dark:text-gray-100"
-        >
-          <line x1="4" y1="6" x2="20" y2="6" />
-          <line x1="4" y1="12" x2="20" y2="12" />
-          <line x1="4" y1="18" x2="20" y2="18" />
-        </svg>
+        width="28"
+        height="28"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        className="text-gray-700 dark:text-gray-100"
+      >
+        <line x1="4" y1="6" x2="20" y2="6" />
+        <line x1="4" y1="12" x2="20" y2="12" />
+        <line x1="4" y1="18" x2="20" y2="18" />
+      </svg>
         </button>
         {mobileMenuOpen && (
-        <div className="fixed top-20 left-0 right-0 w-full max-w-md mx-auto bg-white shadow-lg rounded z-50 overflow-y-auto max-h-[80vh]">
-          {leftMenuItems.map((item, idx) =>
-            item.type === "divider" ? (
-              <hr key={idx} className="my-2 border-gray-300" />
-            ) : item.type === "section" ? (
-              <div key={idx} className="px-4 py-2 text-gray-500">{item.label}</div>
-            ) : (
-              <Link
-                key={item.href + idx}
-                href={item.href}
-                className="block px-4 py-2 text-gray-700 hover:bg-gray-100"
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                {item.label}
-              </Link>
-            )
-          )}
-          <Link href="/mainPages/contact" className="block px-4 py-2 text-gray-700 hover:bg-gray-100">Contact</Link>
-          {userInfo.isAdminUser() && (
-            <Link href="/mainPages/administration" className="block px-4 py-2 text-gray-700 hover:bg-gray-100">Administration</Link>
-          )}
-          <UserInfo handleLogout={handleLogout} />
-        </div>
-      )}
+          <div className="absolute right-4 mt-2 w-64 bg-white shadow-lg rounded z-50">
+            {leftMenuItems.map((item, idx) =>
+              item.type === "divider" ? (
+                <hr key={idx} className="my-2 border-gray-300" />
+              ) : item.type === "section" ? (
+                <div key={idx} className="px-4 py-2 text-gray-500">{item.label}</div>
+              ) : (
+                <Link
+                  key={item.href + idx}
+                  href={item.href}
+                  className="block px-4 py-2 text-gray-700 hover:bg-gray-100"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  {item.label}
+                </Link>
+              )
+            )}
+            {/* 기존 topMenu의 Contact, Administration 등도 추가 */}
+            <Link href="/mainPages/contact" className="block px-4 py-2 text-gray-700 hover:bg-gray-100">Contact</Link>
+            {userInfo.isAdminUser() && (
+              <Link href="/mainPages/administration" className="block px-4 py-2 text-gray-700 hover:bg-gray-100">Administration</Link>
+            )}
+            <UserInfo handleLogout={handleLogout} />
+          </div>
+        )}
       </div>
     );
 
