@@ -95,36 +95,36 @@ export default function Header({ triggerLeftMenuReload }) {
   return (
     <>
       <header className={`text-gray-600 body-font mb-10`}>
-        <DivContainer>
-          <Link
-            className={`flex title-font font-medium items-center text-gray-900 mb-4 md:mb-0`}
-            href="/"
-          >
-            <Image
-              src="/brunnerLogo.png"
-              height={100}
-              width={100}
-              alt="brunner logo"
-              priority="true"
-            />
-          </Link>
-          <Link
-            className={`flex title-font font-medium items-center text-gray-900 mb-4 md:mb-0`}
-            href="/"
-          >
-            <h1 className={`title-font sm:text-4xl text-3xl m-5 font-medium text-orange-900`}>
-              Brunner
-            </h1>
-          </Link>
-          <div className="flex-1"></div>
-          {/* 모바일: 햄버거 메뉴 버튼만 보이게 */}
-          <div className="flex items-center">
-            <div className="md:hidden">{mobileDropdownMenu()}</div>
-            <div className="hidden md:flex flex-wrap items-center justify-end">
-              {topMenu()}
-            </div>
-          </div>
-        </DivContainer>
+        <DivContainer className="flex items-center">
+  <Link
+    className={`flex title-font font-medium items-center text-gray-900 mb-4 md:mb-0`}
+    href="/"
+  >
+    <Image
+      src="/brunnerLogo.png"
+      height={100}
+      width={100}
+      alt="brunner logo"
+      priority="true"
+    />
+  </Link>
+  <Link
+    className={`flex title-font font-medium items-center text-gray-900 mb-4 md:mb-0`}
+    href="/"
+  >
+    <h1 className={`title-font sm:text-4xl text-3xl m-5 font-medium text-orange-900`}>
+      Brunner
+    </h1>
+  </Link>
+  <div className="flex-1"></div>
+  {/* 우측에 메뉴 버튼/네비게이션 */}
+  <div className="flex items-center">
+    <div className="md:hidden">{mobileDropdownMenu()}</div>
+    <div className="hidden md:flex flex-wrap items-center justify-end">
+      {topMenu()}
+    </div>
+  </div>
+</DivContainer>
       </header>
     </>
   );
