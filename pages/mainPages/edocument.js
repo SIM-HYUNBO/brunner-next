@@ -46,12 +46,12 @@ export default function EDocument() {
         <meta rel="icon" href="/brunnerLogo.png"></meta>
       </Head>
       <BodySection>
-        <div className="flex flex-row md:flex-row items-start gap-4 md:gap-8">
-          {/* 모바일에서만 보이는 제목 */}
-          <h2 className="block md:hidden text-2xl font-bold mb-4">문서 제목</h2>
-          {/* 데스크탑에서만 보이는 제목 */}
-          <h2 className="hidden md:block text-2xl font-bold mb-4">문서 제목</h2>
-          {/* 문서 내용 컴포넌트 */}    
+        {/* 모바일에서만 보이는 제목 */}
+        <h2 className="block md:hidden text-2xl font-bold mb-4 w-full">문서 제목</h2>
+        {/* 데스크탑에서만 보이는 제목 */}
+        <h2 className="hidden md:block text-2xl font-bold mb-4 w-full md:w-auto">문서 제목</h2>
+        {/* 문서 내용 컴포넌트 */}
+        <div className="w-full">
           <EDocContent documentId={documentId} />
         </div>
       </BodySection>
