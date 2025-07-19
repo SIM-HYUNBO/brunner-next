@@ -3,14 +3,7 @@
 import React, { useEffect } from 'react';
 import * as constants from '@/components/constants';
 import DocComponentRenderer from '@/components/eDoc/eDocComponentRenderer';
-
-import * as InputComponent from "@/components/eDoc/edocComponent/edocComponent_Input";
-import * as TextComponent from "@/components/eDoc/edocComponent/edocComponent_Text";
-import * as ImageComponent from "@/components/eDoc/edocComponent/edocComponent_Image";
-import * as TableComponent from "@/components/eDoc/edocComponent/edocComponent_Table";
-import * as CheckListComponent from "@/components/eDoc/eDocComponent/eDocComponent_CheckList";
-import { bind } from 'tls';
-
+-
 export default function EDocEditorCanvas({
   page,                  // ✅ 단일 페이지
   isSelected,            // ✅ 현재 페이지 선택 상태

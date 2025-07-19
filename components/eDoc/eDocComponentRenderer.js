@@ -2,13 +2,13 @@
 
 import * as constants from '@/components/constants';
 
-import TextComponent from "@/components/eDoc/edocComponent/edocComponent_Text";
-import InputComponent from "@/components/eDoc/edocComponent/edocComponent_Input";
-import ImageComponent from "@/components/eDoc/edocComponent/edocComponent_Image";
-import TableComponent from "@/components/eDoc/edocComponent/edocComponent_Table";
+import TextComponent from "@/components/eDoc/eDocComponent/eDocComponent_Text";
+import InputComponent from "@/components/eDoc/eDocComponent/eDocComponent_Input";
+import ImageComponent from "@/components/eDoc/eDocComponent/eDocComponent_Image";
+import TableComponent from "@/components/eDoc/eDocComponent/eDocComponent_Table";
 import CheckListComponent from "@/components/eDoc/eDocComponent/eDocComponent_CheckList";
 import ButtonComponent from "@/components/eDoc/eDocComponent/eDocComponent_Button";
-import VideoComponent from "@/components/eDoc/edocComponent/edocComponent_Video";
+import VideoComponent from "@/components/eDoc/eDocComponent/eDocComponent_Video";
 
 export default function DocComponentRenderer({
   component,
