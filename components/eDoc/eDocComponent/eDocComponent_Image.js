@@ -2,6 +2,7 @@
 
 import React from 'react';
 
+
 export const initDefaultRuntimeData = (defaultRuntimeData) => {
   defaultRuntimeData.src = "";
   defaultRuntimeData.positionAlign = "left";
