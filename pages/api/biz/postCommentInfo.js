@@ -63,7 +63,7 @@ const insertOne = async (txnId, jRequest) => {
         }
         else {
             jResponse.error_code = -1;
-            jResponse.error_message = "Failed to create comment.";
+            jResponse.error_message = constants.messages.FAILED_TO_INSERT;
 
         }
     } catch (e) {
@@ -145,7 +145,7 @@ const deleteOne = async (txnId, jRequest) => {
         }
         else {
             jResponse.error_code = -1;
-            jResponse.error_message = `Fail to delete comment.`;
+            jResponse.error_message = constants.messages.FAILED_TO_DELETE;
             return jResponse;
         }
     }
