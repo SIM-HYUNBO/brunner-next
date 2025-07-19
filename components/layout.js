@@ -32,13 +32,14 @@ export default function Layout({ children, reloadSignal, triggerLeftMenuReload }
   }, [reloadSignal]);
 
   return (
-    <div className="flex bg-primary justify-center">
+    <div className="flex flex-col md:flex-row min-h-screen bg-primary justify-center">
       <LeftMenu
+        className="w-full md:w-64"
         documentList={documentList}
         reloadSignal={reloadSignal}
       />
 
-      <DivContainer className="flex flex-col w-full">
+      <DivContainer className="flex flex-col flex-1 w-full">
         <Header triggerLeftMenuReload={triggerLeftMenuReload} />
 
         <main className="pt-16 flex-grow">
