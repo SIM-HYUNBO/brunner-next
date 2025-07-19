@@ -132,7 +132,7 @@ export default function Header({ triggerLeftMenuReload }) {
         </Link>
         <div className="flex-1"></div>
         {/* 우측에 메뉴 버튼/네비게이션 */}
-        <div className="flex items-center">
+        <div className="flex items-center  ml-auto">
           <div className="md:hidden">{mobileDropdownMenu()}</div>
           <div className="hidden md:flex flex-wrap items-center justify-end">
             {topMenu()}
