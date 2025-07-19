@@ -93,7 +93,7 @@ export default function Header({ triggerLeftMenuReload }) {
       getLeftMenuItems().then(setLeftMenuItems);
     }, []);
 
-    return (
+  return (
     <>
       <header className={`text-gray-600 body-font mb-10`}>
         <DivContainer>
@@ -117,14 +117,16 @@ export default function Header({ triggerLeftMenuReload }) {
               Brunner
             </h1>
           </Link>
-          {/* flex-grow로 왼쪽 공간을 채우고, topMenu를 우측 끝으로 */}
           <div className="flex-1"></div>
-          {/* 모바일: 햄버거, 데스크탑: 기존 메뉴 */}
-          <div className={`flex flex-wrap items-center justify-end`}>
-            {topMenu()}
+          {/* 모바일: 햄버거 메뉴 버튼만 보이게 */}
+          <div className="flex items-center">
+            <div className="md:hidden">{mobileDropdownMenu()}</div>
+            <div className="hidden md:flex flex-wrap items-center justify-end">
+              {topMenu()}
+            </div>
           </div>
         </DivContainer>
       </header>
     </>
-    );
-  }
+  );
+}
