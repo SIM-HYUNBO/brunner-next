@@ -1,13 +1,13 @@
 `use strict`
 
 import * as constants from './constants';
-import * as InputComponent from "./component/eDoc/eDocComponent/eDocComponent_Input";
-import * as TextComponent from "./component/eDoc/eDocComponent/eDocComponent_Text";
-import * as ImageComponent from "./component/eDoc/eDocComponent/eDocComponent_Image";
-import * as TableComponent from "./component/eDoc/eDocComponent/eDocComponent_Table";
-import * as CheckListComponent from "./component/eDoc/eDocComponent/eDocComponent_CheckList";
-import * as ButtonComponent from "./component/eDoc/eDocComponent/eDocComponent_Button";
-import * as VideoComponent from "./component/eDoc/eDocComponent/eDocComponent_Video";
+import * as InputComponent from "./eDoc/eDocComponent/eDocComponent_Input";
+import * as TextComponent from "./eDoc/eDocComponent/eDocComponent_Text";
+import * as ImageComponent from "./eDoc/eDocComponent/eDocComponent_Image";
+import * as TableComponent from "./eDoc/eDocComponent/eDocComponent_Table";
+import * as CheckListComponent from "./eDoc/eDocComponent/eDocComponent_CheckList";
+import * as ButtonComponent from "./eDoc/eDocComponent/eDocComponent_Button";
+import * as VideoComponent from "./eDoc/eDocComponent/eDocComponent_Video";
 
 export function generateUUID() { // Public Domain/MIT
     return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
