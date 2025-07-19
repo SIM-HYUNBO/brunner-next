@@ -35,7 +35,6 @@ export default function Header({ triggerLeftMenuReload }) {
             alt="home icon"
           />
         </Link>
-        {mobileDropdownMenu()}
 
         <UserInfo handleLogout={handleLogout} />
       </nav>
