@@ -39,7 +39,7 @@ export default function EDocDesignerContainer({ documentId, triggerLeftMenuReloa
         userId: userInfo?.userId,
       };
       setLoading(true);
-      const jResponse = await RequestServer("POST", jRequest);
+      const jResponse = await RequestServer(jRequest);
       setLoading(false);
 
       if (jResponse.error_code === 0) {
@@ -62,7 +62,8 @@ export default function EDocDesignerContainer({ documentId, triggerLeftMenuReloa
   const [documentData, setDocumentData] = useState({
     id: documentId || null,
     title: 'new document',
-    description: '신규 기록서',
+    description: '신규 전자 문서',
+    isPublic: false,
     components: [],
     runtime_data: {
       padding: 24,
@@ -218,13 +219,13 @@ export default function EDocDesignerContainer({ documentId, triggerLeftMenuReloa
 
   const handleOpenDocument = async () => {
     const jRequest = {
-      commandName: constants.commands.COMMAND_EDOC_DOCUMENT_SELECT_ALL,
+      commandName: constants.commands.COMMAND_EDOC_USER_DOCUMENT_SELECT_ALL,
       systemCode: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE,
       userId: userInfo.getLoginUserId(),
     };
 
     setLoading(true);
-    const jResponse = await RequestServer("POST", jRequest);
+    const jResponse = await RequestServer(jRequest);
     setLoading(false);
 
     if (jResponse.error_code === 0) {
@@ -242,7 +243,7 @@ const openDocumentById = async (id) => {
   };
 
   setLoading(true);
-  const jResponse = await RequestServer("POST", jRequest);
+  const jResponse = await RequestServer(jRequest);
   setLoading(false);
 
   if (jResponse.error_code === 0) {
@@ -287,7 +288,7 @@ const handleSaveDocument = async () => {
   };
 
   setLoading(true);
-  const jResponse = await RequestServer("POST", jRequest);
+  const jResponse = await RequestServer(jRequest);
   setLoading(false);
 
   if (jResponse.error_code === 0) {
@@ -328,7 +329,7 @@ const handleSaveDocument = async () => {
     };
 
     setLoading(true);
-    const jResponse = await RequestServer("POST", jRequest);
+    const jResponse = await RequestServer(jRequest);
     setLoading(false);
 
     if (jResponse.error_code === 0) {
@@ -607,7 +608,7 @@ function EDocDocumentListModal({ documents, onSelect, onClose }) {
             onChangeTitle={(newTitle) => {
               setDocumentData(prev => ({  ...prev, title: newTitle }));
             }} 
-            onChange={(updatedRuntimeData) => {
+            onChangeRuntimeData={(updatedRuntimeData) => {
               setDocumentData(prev => {
                 const prevAlign = prev.runtime_data?.positionAlign;
                 const newAlign = updatedRuntimeData.positionAlign;

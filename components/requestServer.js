@@ -1,7 +1,7 @@
 'use strict'
 import * as constants from '@/components/constants'
 
-export default async function RequestServer(method, jRequest, serverUrl = `/api/backendServer/`) {
+export default async function RequestServer(jRequest, method = 'POST', serverUrl = `/api/backendServer/`) {
   let res = null;
   let jResponse = null;
 

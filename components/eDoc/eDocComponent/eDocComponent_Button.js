@@ -68,7 +68,7 @@ const RenderComponent = (props) => {
     };
 
     setLoading(true);
-    const jResponse = await RequestServer(apiMethod || "POST", jRequest, apiEndpoint);
+    const jResponse = await RequestServer(jRequest, apiMethod, apiEndpoint);
     setLoading(false);
 
     if (jResponse.error_code === 0) {
