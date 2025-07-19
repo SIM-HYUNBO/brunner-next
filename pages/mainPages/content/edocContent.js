@@ -27,7 +27,7 @@ export default function EDocContent({ documentId }) {
       };
 
       setLoading(true);
-      const jResponse = await RequestServer("POST", jRequest);
+      const jResponse = await RequestServer(jRequest);
       setLoading(false);
 
       if (jResponse.error_code === 0) {

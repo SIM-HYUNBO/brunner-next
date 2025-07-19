@@ -12,11 +12,11 @@ export default function Layout({ children }) {
 
   const reloadLeftMenu = async () => {
     const jRequest = {
-      commandName: constants.commands.COMMAND_EDOC_DOCUMENT_SELECT_ALL,
+      commandName: constants.commands.COMMAND_EDOC_USER_DOCUMENT_SELECT_ALL,
       systemCode: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE,
       userId: userInfo.getLoginUserId(),
     };
-    const jResponse = await RequestServer("POST", jRequest);
+    const jResponse = await RequestServer(jRequest);
 
     if (jResponse.error_code === 0) {
       setDocumentList(jResponse.documentList || []);

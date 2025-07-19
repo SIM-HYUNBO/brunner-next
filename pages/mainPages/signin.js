@@ -52,7 +52,7 @@ export default function Signin() {
       };
 
       setLoading(true); // 데이터 로딩 시작
-      const jResponse = await RequestServer("POST", jRequest);
+      const jResponse = await RequestServer(jRequest);
       setLoading(false); // 데이터 로딩 끝
 
       if (jResponse.error_code === 0) {

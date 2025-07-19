@@ -30,7 +30,7 @@ export const messages = {
     MESSAGE_NO_DATA_FOUND : `No data found.`,
     MESSAGE_NO_PERMISSION : `You do not have permission`,
     MESSAGE_REQUIRED_FIELD : `The field value is required.`,
-    MESSAGE_SERVER_NOT_CONNECTTED : `cannot connect to seerver`,
+    MESSAGE_SERVER_NOT_CONNECTTED : `cannot connect to server`,
     MESSAGE_SERVER_NOT_SUPPORTED_MODULE : `Not supported module`,
     MESSAGE_SERVER_NOW_INITIALIZING : `Server is now initializing...`,
     MESSAGE_SERVER_NO_COMMAND_NAME : `No commandName provided in request.`,
@@ -71,7 +71,8 @@ export const commands = {
     COMMAND_EDOC_DOCUMENT_UPSERT_ONE : `edocDocument.upsertOne`,
     COMMAND_EDOC_DOCUMENT_SELECT_ONE : `edocDocument.selectOne`,
     COMMAND_EDOC_DOCUMENT_DELETE_ONE : `edocDocument.deleteOne`,
-    COMMAND_EDOC_DOCUMENT_SELECT_ALL : `edocDocument.slectAll`,    
+    COMMAND_EDOC_USER_DOCUMENT_SELECT_ALL : `edocDocument.slectUserAll`,    
+    COMMAND_EDOC_ADMIN_DOCUMENT_SELECT_ALL : `edocDocument.slectAdminAll`,    
 }  
 
 export const edoc = {

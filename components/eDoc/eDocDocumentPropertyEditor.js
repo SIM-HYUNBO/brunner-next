@@ -26,6 +26,16 @@ export default function EDocDocumentPropertyEditor({
         className="w-full border border-gray-300 rounded p-2 mb-3"
         placeholder="문서 제목 입력"
       />
+      
+      <label className="flex items-center mb-3">
+        <input
+          type="checkbox"
+          checked={!!runtimeData.isPublic}
+          onChange={e => updateProperty('isPublic', e.target.checked)}
+          className="mr-2"
+        />
+        공용 문서 여부
+      </label>
 
       {/* 나머지는 그대로 runtimeData */}
       <label>여백 (padding, px):</label>

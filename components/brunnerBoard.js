@@ -21,7 +21,7 @@ function BrunnerBoard({ boardType }) {
         postInfo: { postType: boardType }
       };
       setLoading(true);
-      const jResponse = await RequestServer("POST", jRequest);
+      const jResponse = await RequestServer(jRequest);
       setLoading(false);
 
       if (jResponse.error_code === 0) {
@@ -66,7 +66,7 @@ function BrunnerBoard({ boardType }) {
         jRequest.postInfo = newPost;
 
         setLoading(true);// 데이터 로딩 시작
-        jResponse = await RequestServer("POST", jRequest);
+        jResponse = await RequestServer(jRequest);
         setLoading(false);// 데이터 로딩 끝
 
         if (jResponse.error_code === 0) {
@@ -104,7 +104,7 @@ function BrunnerBoard({ boardType }) {
       };
 
       setLoading(true);// 데이터 로딩 시작
-      jResponse = await RequestServer("POST", jRequest);
+      jResponse = await RequestServer(jRequest);
       setLoading(false);// 데이터 로딩 끝
 
       if (jResponse.error_code === 0) {
@@ -149,7 +149,7 @@ function BrunnerBoard({ boardType }) {
       };
 
       setLoading(true);// 데이터 로딩 시작작
-      jResponse = await RequestServer("POST", jRequest);
+      jResponse = await RequestServer(jRequest);
       setLoading(false);// 데이터 로딩 끝
 
       if (jResponse.error_code === 0) {
@@ -182,7 +182,7 @@ function BrunnerBoard({ boardType }) {
         userId: userId,
       };
 
-      jResponse = await RequestServer("POST", jRequest);
+      jResponse = await RequestServer(jRequest);
 
       if (jResponse.error_code === 0) {
         const updatedPosts = posts.map((post) => {
@@ -227,7 +227,7 @@ function BrunnerBoard({ boardType }) {
         userId: userId,
       };
 
-      jResponse = await RequestServer("POST", jRequest);
+      jResponse = await RequestServer(jRequest);
 
       if (jResponse.error_code === 0) {
         const updatedPosts = posts.map((post) => {
@@ -272,7 +272,7 @@ function BrunnerBoard({ boardType }) {
         userId: userId,
       };
 
-      jResponse = await RequestServer("POST", jRequest);
+      jResponse = await RequestServer(jRequest);
 
       if (jResponse.error_code === 0) {
         const updatedPosts = posts.map((post) => {

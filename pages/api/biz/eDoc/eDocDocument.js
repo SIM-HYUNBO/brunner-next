@@ -20,8 +20,11 @@ const executeService = async (txnId, jRequest) => {
             case constants.commands.COMMAND_EDOC_DOCUMENT_DELETE_ONE:
                 jResponse = await deleteOne(txnId, jRequest);
                 break;
-            case constants.commands.COMMAND_EDOC_DOCUMENT_SELECT_ALL:
-                jResponse = await selectAll(txnId, jRequest);
+            case constants.commands.COMMAND_EDOC_USER_DOCUMENT_SELECT_ALL: // user all documents
+                jResponse = await selectUserAll(txnId, jRequest);
+                break;
+            case constants.commands.COMMAND_EDOC_ADMIN_DOCUMENT_SELECT_ALL: // admin & public documents
+                jResponse = await selectAdminAll(txnId, jRequest);
                 break;
             default:
                 break;
@@ -206,7 +209,7 @@ const deleteOne = async (txnId, jRequest) => {
   }
 };
 
-const selectAll = async (txnId, jRequest) => {
+const selectUserAll = async (txnId, jRequest) => {
     var jResponse = {};
     
     try {
@@ -219,6 +222,34 @@ const selectAll = async (txnId, jRequest) => {
             [
                 jRequest.systemCode,
                 jRequest.userId   
+            ]);
+
+        jResponse.documentList = select_TB_DOC_DOCUMENT.rows;
+
+        jResponse.error_code = 0;
+        jResponse.error_message = constants.messages.EMPTY_STRING
+    } catch (e) {
+        logger.error(e);
+        jResponse.error_code = -1; // exception
+        jResponse.error_message = e.message
+    } finally {
+        return jResponse;
+    }
+};
+
+// 관리자가 작성한 공용문서 전체 목록 조회
+const selectAdminAll = async (txnId, jRequest) => {
+    var jResponse = {};
+    
+    try {
+        jResponse.commanaName = jRequest.commandName;
+        
+        // select TB_DOC_DOCUMENT
+        var sql = null
+        sql = await dynamicSql.getSQL00('select_TB_DOC_DOCUMENT', 3);
+        var select_TB_DOC_DOCUMENT = await database.executeSQL(sql,
+            [
+                jRequest.systemCode,
             ]);
 
         jResponse.documentList = select_TB_DOC_DOCUMENT.rows;

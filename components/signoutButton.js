@@ -22,7 +22,7 @@ export default function SignoutButton({ handleLogout }) {
     jRequest.userId = userInfo?.USER_ID;
 
     setLoading(true); // 데이터 로딩 시작
-    jResponse = await RequestServer("POST", jRequest);
+    jResponse = await RequestServer(jRequest);
     setLoading(false); // 데이터 로딩 끝
 
     if (jResponse.error_code == 0) {
