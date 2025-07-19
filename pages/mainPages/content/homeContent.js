@@ -18,7 +18,7 @@ export default function HomeContent() {
           <h2 className={`title-font sm:text-4xl text-3xl mb-10 font-medium text-green-900`}>
             Pelagos Voyager
           </h2>
-          <GoverningMessage governingMessage={"생각과 기록을 연결하고 디지털 기록의 바다를 항해하는 항해자 \n무료 가입 후 페이지 디자이너로 직접 페이지를 만들어보세요.\n"} />
+          <GoverningMessage governingMessage={"우리의 생각은 무한히 많고 시시각각 변합니다. \n 그래서 생각은 기록으로 남기고 보전해야 합니다. \n 무한한 디지털 기록의 바다를 항해하는 항해자에게 등대가 되겠습니다. \n\n무료 가입 후 페이지 디자이너로 직접 페이지를 만들어보세요.\n"} />
           <div className={`flex flex-col`}>
             {!userInfo.isLogin() && (
               <div>

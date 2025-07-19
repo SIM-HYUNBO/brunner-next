@@ -6,9 +6,8 @@ import RequestServer from "@/components/requestServer";
 import * as constants from "@/components/constants";
 import * as userInfo from "@/components/userInfo";
 
-export default function Layout({ children }) {
+export default function Layout({ children, reloadSignal, triggerLeftMenuReload }) {
   const [documentList, setDocumentList] = useState([]);
-  const [reloadSignal, setReloadSignal] = useState(0);
 
   const reloadLeftMenu = async () => {
     const jRequest = {
@@ -25,21 +24,22 @@ export default function Layout({ children }) {
     }
   };
 
+  // ✅ 의존성에 props로 전달받은 reloadSignal 사용
   useEffect(() => {
     reloadLeftMenu();
-  }, []);
+  }, [reloadSignal]);
 
   return (
     <div className="flex bg-primary min-h-screen justify-center">
-      {/* reloadSignal만 넘김 */}
-      <LeftMenu reloadSignal={reloadSignal} />
+      <LeftMenu documentList={documentList} 
+                reloadSignal={reloadSignal} />
 
       <div className="px-2 w-full desktop:w-3/4 ml-5">
-        <Header triggerLeftMenuReload={() => setReloadSignal(prev => prev + 1)} />
+        <Header triggerLeftMenuReload={triggerLeftMenuReload} />
         <main>
           {React.Children.map(children, child =>
             React.isValidElement(child)
-              ? React.cloneElement(child, { triggerLeftMenuReload: () => setReloadSignal(prev => prev + 1) })
+              ? React.cloneElement(child, { triggerLeftMenuReload })
               : child
           )}
         </main>
