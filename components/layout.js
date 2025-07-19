@@ -39,7 +39,7 @@ export default function Layout({ children, reloadSignal, triggerLeftMenuReload }
         reloadSignal={reloadSignal}
       />
 
-      <DivContainer className="flex flex-col flex-1 w-full">
+      <DivContainer className="flex flex-col w-full">
         <Header triggerLeftMenuReload={triggerLeftMenuReload} />
 
         <main className="pt-16 flex-grow">
