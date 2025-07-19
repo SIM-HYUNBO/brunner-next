@@ -46,7 +46,7 @@ export default function EDocument() {
         <meta rel="icon" href="/brunnerLogo.png"></meta>
       </Head>
       <BodySection>
-        <div className="w-full">
+        <div className="w-full pt-28">
           <EDocContent documentId={documentId} />
         </div>
       </BodySection>
