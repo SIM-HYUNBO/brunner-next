@@ -16,13 +16,13 @@ import * as commonFunctions from '@/components/commonFunctions';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
 
-import * as InputComponent from "@/components/eDoc/edocComponent/edocComponent_Input";
-import * as TextComponent from "@/components/eDoc/edocComponent/edocComponent_Text";
-import * as ImageComponent from "@/components/eDoc/edocComponent/edocComponent_Image";
-import * as TableComponent from "@/components/eDoc/edocComponent/edocComponent_Table";
+import * as InputComponent from "@/components/eDoc/eDocComponent/eDocComponent_Input";
+import * as TextComponent from "@/components/eDoc/eDocComponent/eDocComponent_Text";
+import * as ImageComponent from "@/components/eDoc/eDocComponent/eDocComponent_Image";
+import * as TableComponent from "@/components/eDoc/eDocComponent/eDocComponent_Table";
 import * as CheckListComponent from "@/components/eDoc/eDocComponent/eDocComponent_CheckList";
 import * as ButtonComponent from "@/components/eDoc/eDocComponent/eDocComponent_Button";
-import * as VideoComponent from "@/components/eDoc/edocComponent/edocComponent_Video";
+import * as VideoComponent from "@/components/eDoc/eDocComponent/eDocComponent_Video";
 
 export default function EDocDesignerContainer({ documentId, triggerLeftMenuReload }) {
   const [isExportingPdf, setIsExportingPdf] = useState(false);
