@@ -198,7 +198,6 @@ export default function EDocEditorCanvas({
   };
 
   return (
-    // <div className="overflow-auto flex justify-center p-8 bg-gray-100">
     <div
       id={`editor-canvas-${page.id}`}
       className={
