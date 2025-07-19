@@ -16,7 +16,7 @@ export default function LeftMenu({ reloadSignal }) {
   return (
     <>
       {!isMobile && (
-        <aside className={`dark:bg-slate-800 px-2 pt-32 w-48 desktop:px-4 desktop:pt-32 desktop:w-48`}>
+        <aside className={`dark:bg-slate-800 pt-32 w-48 desktop:pt-32 desktop:w-48`}>
           <nav className={`fixed`}>
             <ul>
              {leftMenuItems.map((item, idx) =>

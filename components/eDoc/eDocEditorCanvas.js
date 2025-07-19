@@ -197,37 +197,33 @@ export default function EDocEditorCanvas({
     });
   };
 
-  return (
-    <div
-      id={`editor-canvas-${page.id}`}
-      className={
-        [
-          "relative",
-          mode === "design"
-      ? `bg-white cursor-pointer border border-dashed border-black` // ✅ 검은색 가는 점선
-      : "bg-white cursor-pointer",
-    "flex flex-col gap-4",
-          // Tailwind에서 직접 지원하지 않는 width/height/padding은 아래에서 처리
-        ].join(" ")
-      }
-      style={{
-        width: `${pageWidthPx}px`,
-        minHeight: `${pageHeightPx}px`,
-        padding: `${runtime_data?.padding ?? 48}px`,
-        boxSizing: "border-box",
-      }}
-      onClick={onSelect}
-    >
-        {components?.length === 0 ? (
-          isViewerMode ? null : (
-          <p className="text-gray-500 text-center mt-20">
-            좌측에서 컴포넌트를 추가하세요.
-          </p>
-        )
-        ) : (
-          RenderComponents()
-        )}
-      </div>
-    // </div>
-  );
+return (
+  <div
+    id={`editor-canvas-${page.id}`}
+    className={[
+      "relative",
+      mode === "design"
+        ? "bg-white dark:bg-slate-800 cursor-pointer border border-dashed border-black dark:border-slate-500"
+        : "bg-white dark:bg-slate-800 cursor-pointer",
+      "flex flex-col gap-4",
+    ].join(" ")}
+    style={{
+      width: `${pageWidthPx}px`,
+      minHeight: `${pageHeightPx}px`,
+      padding: `${runtime_data?.padding ?? 48}px`,
+      boxSizing: "border-box",
+    }}
+    onClick={onSelect}
+  >
+    {components?.length === 0 ? (
+      isViewerMode ? null : (
+        <p className="text-gray-500 dark:text-slate-300 text-center mt-20">
+          좌측에서 컴포넌트를 추가하세요.
+        </p>
+      )
+    ) : (
+      RenderComponents()
+    )}
+  </div>
+);
 }

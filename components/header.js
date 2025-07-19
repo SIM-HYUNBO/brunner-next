@@ -112,7 +112,7 @@ export default function Header({ triggerLeftMenuReload }) {
   }, []);
 
   return (
-    <header className="sticky top-0 left-0 right-0 w-full z-50 bg-white text-gray-600 body-font mb-10">
+    <header className="sticky top-0 left-0 right-0 w-full z-50 bg-white dark:bg-slate-800 text-gray-600 dark:text-white body-font mb-24">
       <DivContainer className="flex items-center w-full max-w-full relative">
         {/* 로고 */}
         <Link

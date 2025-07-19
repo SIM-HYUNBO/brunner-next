@@ -374,154 +374,156 @@ export default function EDocDesignerContainer({ documentId, triggerLeftMenuReloa
   };
 
   // 레이아웃 JSX
-  return (
-    <>
-      {loading && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40 text-white text-xl font-bold">
-          Loading...
-        </div>
-      )}
-      {/* 상단 메뉴 */}
-      <EDocDesignerTopMenu
-        mode={mode}
-        toggleMode={toggleMode}
-        onNewDocument={handleNewDocument}
-        onOpenDocument={handleOpenDocument}
-        onSaveDocument={handleSaveDocument}
-        onDeleteDocument={handleDeleteDocument}
-        onAddPage={handleAddPage}
-        onDeleteCurrentPage={handleDeleteCurrentPage}
-        onExportPdf={handleExportPdf}
-        currentPageIdx={currentPageIdx}
-        totalPageCount={pages.length}
-        setCurrentPageIdx={setCurrentPageIdx}
-      />
-      <div className="flex h-screen bg-gray-100">
-        {/* 왼쪽 팔레트 */}
-        <aside className="w-40 bg-white border-r border-gray-300 p-4">
-          <h2 className="font-bold mb-3">컴포넌트 팔레트</h2>
-          <EDocComponentPalette
-            templates={componentTemplates}
-            onAddComponent={handleAddComponent}
-          />
-        </aside>
+return (
+  <>
+    {loading && (
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40 text-white text-xl font-bold">
+        Loading...
+      </div>
+    )}
 
-        {/* 가운데 편집영역 + 오른쪽 속성창 */}
-        <div className="flex flex-1 overflow-hidden">
-          {/* 편집 캔버스 */}
-          <main className="flex-grow p-4 bg-white edoc-designer-canvas">
-            {documentData && (
-              <h1 className="text-2xl font-bold mb-6">
-                {documentData.title || ''} : {documentData.id}
-              </h1>
-            )}
+    {/* 상단 메뉴 */}
+    <EDocDesignerTopMenu
+      mode={mode}
+      toggleMode={toggleMode}
+      onNewDocument={handleNewDocument}
+      onOpenDocument={handleOpenDocument}
+      onSaveDocument={handleSaveDocument}
+      onDeleteDocument={handleDeleteDocument}
+      onAddPage={handleAddPage}
+      onDeleteCurrentPage={handleDeleteCurrentPage}
+      onExportPdf={handleExportPdf}
+      currentPageIdx={currentPageIdx}
+      totalPageCount={pages.length}
+      setCurrentPageIdx={setCurrentPageIdx}
+    />
 
-            {pages.map((page, idx) => (
+    <div className="flex h-screen bg-slate-100 dark:bg-slate-800">
+      {/* 왼쪽 팔레트 */}
+      <aside className="w-40 bg-white dark:bg-slate-700 border-r border-slate-300 dark:border-slate-500 p-4">
+        <h2 className="font-bold mb-3 text-slate-800 dark:text-slate-100">컴포넌트 팔레트</h2>
+        <EDocComponentPalette
+          templates={componentTemplates}
+          onAddComponent={handleAddComponent}
+        />
+      </aside>
+
+      {/* 가운데 편집영역 + 오른쪽 속성창 */}
+      <div className="flex flex-1 overflow-hidden">
+        {/* 편집 캔버스 */}
+        <main className="flex-grow p-4 bg-white dark:bg-slate-900 edoc-designer-canvas">
+          {documentData && (
+            <h1 className="text-2xl font-bold mb-6 text-slate-800 dark:text-slate-100">
+              {documentData.title || ''} : {documentData.id}
+            </h1>
+          )}
+
+          {pages.map((page, idx) => (
+            <div
+              key={page.id}
+              className={`relative w-fit mx-auto border border-dashed border-slate-400 dark:border-slate-500 mb-8 ${
+                idx === currentPageIdx ? 'outline outline-2 outline-blue-400' : ''
+              }`}
+              style={{ boxSizing: 'border-box' }}
+              onClick={() => { setCurrentPageIdx(idx); setSelectedComponentId(null); }}
+            >
               <div
-                key={page.id}
-                className={`relative w-fit mx-auto border border-dashed border-gray-400 mb-8 ${
-                  idx === currentPageIdx ? 'outline outline-2 outline-blue-400' : ''
-                }`}
-                style={{ boxSizing: 'border-box' }}
-                onClick={() => { setCurrentPageIdx(idx); setSelectedComponentId(null); }}
+                className="absolute top-2 left-2 bg-slate-200 dark:bg-slate-600 text-slate-600 dark:text-slate-200 text-xs rounded px-2 py-1 select-none pointer-events-none z-10"
               >
-                <div
-                  className="absolute top-2 left-2 bg-gray-200 text-gray-600 text-xs rounded px-2 py-1 select-none pointer-events-none z-10"
-                >
-                  p{idx + 1}
-                </div>
-
-                <EDocEditorCanvas
-                  page={page}
-                  isSelected={idx === currentPageIdx}
-                  onSelect={() => { setCurrentPageIdx(idx); setSelectedComponentId(null); }}
-                  selectedComponentId={selectedComponentId}
-                  onComponentSelect={handleComponentSelect}
-                  onMoveUp={handleMoveComponentUp}
-                  onMoveDown={handleMoveComponentDown}
-                  onDeleteComponent={handleDeleteComponent}
-                  onUpdateComponent={handleUpdateComponent}
-                  isViewerMode={isExportingPdf}
-                  mode={mode}
-                  bindingData={commonFunctions.bindingData}
-                  documentData={documentData}
-                />
+                p{idx + 1}
               </div>
+
+              <EDocEditorCanvas
+                page={page}
+                isSelected={idx === currentPageIdx}
+                onSelect={() => { setCurrentPageIdx(idx); setSelectedComponentId(null); }}
+                selectedComponentId={selectedComponentId}
+                onComponentSelect={handleComponentSelect}
+                onMoveUp={handleMoveComponentUp}
+                onMoveDown={handleMoveComponentDown}
+                onDeleteComponent={handleDeleteComponent}
+                onUpdateComponent={handleUpdateComponent}
+                isViewerMode={isExportingPdf}
+                mode={mode}
+                bindingData={commonFunctions.bindingData}
+                documentData={documentData}
+              />
+            </div>
+          ))}
+        </main>
+
+        {/* 오른쪽 속성창 */}
+        <aside className="w-60 bg-white dark:bg-slate-700 border-l border-slate-300 dark:border-slate-500 p-4 hidden md:block">
+          <h2 className="text-lg font-semibold mb-4 text-slate-800 dark:text-slate-100">속성창</h2>
+          {selectedComponentId !== null && pages[currentPageIdx]?.components[selectedComponentId] ? (
+            <EDocComponentPropertyEditor
+              component={pages[currentPageIdx].components[selectedComponentId]}
+              handleUpdateComponent={handleUpdateComponent}
+            />
+          ) : (
+            <EDocDocumentPropertyEditor
+              title={documentData.title || ''}
+              runtimeData={documentData.runtime_data || {}}
+              onChangeTitle={(newTitle) => {
+                setDocumentData((prev) => ({ ...prev, title: newTitle }));
+              }}
+              onChangeRuntimeData={(updatedRuntimeData) => {
+                setDocumentData((prev) => {
+                  const prevAlign = prev.runtime_data?.positionAlign;
+                  const newAlign = updatedRuntimeData.positionAlign;
+                  const needUpdateAlign = prevAlign !== newAlign;
+
+                  const updatedComponents = needUpdateAlign
+                    ? prev.components.map((comp) => ({
+                        ...comp,
+                        runtime_data: {
+                          ...comp.runtime_data,
+                          positionAlign: newAlign,
+                        },
+                      }))
+                    : prev.components;
+
+                  return {
+                    ...prev,
+                    runtime_data: updatedRuntimeData,
+                    components: updatedComponents,
+                  };
+                });
+              }}
+            />
+          )}
+        </aside>
+      </div>
+    </div>
+
+    {/* 문서 목록 모달 */}
+    {showDocumentListModal && (
+      <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+        <div className="bg-white dark:bg-slate-800 rounded shadow-lg w-96 max-h-96 overflow-auto p-4">
+          <h3 className="text-lg font-bold mb-4 text-slate-800 dark:text-slate-100">문서 선택</h3>
+          <ul>
+            {documentList.map((doc) => (
+              <li
+                key={doc.id}
+                className="cursor-pointer py-2 px-3 hover:bg-slate-200 dark:hover:bg-slate-600 rounded"
+                onClick={() => handleDocumentListClick(doc)}
+              >
+                {doc.title} ({doc.id})
+              </li>
             ))}
-          </main>
-
-          {/* 오른쪽 속성창 */}
-          <aside className="w-60 bg-white border-l border-gray-300 p-4 overflow-y-auto hidden md:block">
-            <h2 className="text-lg font-semibold mb-4">속성창</h2>
-            {selectedComponentId !== null && pages[currentPageIdx]?.components[selectedComponentId] ? (
-              <EDocComponentPropertyEditor
-                component={pages[currentPageIdx].components[selectedComponentId]}
-                handleUpdateComponent={handleUpdateComponent}
-              />
-            ) : (
-              <EDocDocumentPropertyEditor
-                title={documentData.title || ''}
-                runtimeData={documentData.runtime_data || {}}
-                onChangeTitle={(newTitle) => {
-                  setDocumentData((prev) => ({ ...prev, title: newTitle }));
-                }}
-                onChangeRuntimeData={(updatedRuntimeData) => {
-                  setDocumentData((prev) => {
-                    const prevAlign = prev.runtime_data?.positionAlign;
-                    const newAlign = updatedRuntimeData.positionAlign;
-                    const needUpdateAlign = prevAlign !== newAlign;
-
-                    const updatedComponents = needUpdateAlign
-                      ? prev.components.map((comp) => ({
-                          ...comp,
-                          runtime_data: {
-                            ...comp.runtime_data,
-                            positionAlign: newAlign,
-                          },
-                        }))
-                      : prev.components;
-
-                    return {
-                      ...prev,
-                      runtime_data: updatedRuntimeData,
-                      components: updatedComponents,
-                    };
-                  });
-                }}
-              />
-            )}
-          </aside>
+          </ul>
+          <button
+            className="mt-4 px-4 py-2 bg-slate-300 dark:bg-slate-600 rounded hover:bg-slate-400 dark:hover:bg-slate-500"
+            onClick={() => setShowDocumentListModal(false)}
+          >
+            닫기
+          </button>
         </div>
       </div>
+    )}
 
-      {/* 문서 목록 모달 */}
-      {showDocumentListModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-          <div className="bg-white rounded shadow-lg w-96 max-h-96 overflow-auto p-4">
-            <h3 className="text-lg font-bold mb-4">문서 선택</h3>
-            <ul>
-              {documentList.map((doc) => (
-                <li
-                  key={doc.id}
-                  className="cursor-pointer py-2 px-3 hover:bg-gray-200 rounded"
-                  onClick={() => handleDocumentListClick(doc)}
-                >
-                  {doc.title} ({doc.id})
-                </li>
-              ))}
-            </ul>
-            <button
-              className="mt-4 px-4 py-2 bg-gray-300 rounded hover:bg-gray-400"
-              onClick={() => setShowDocumentListModal(false)}
-            >
-              닫기
-            </button>
-          </div>
-        </div>
-      )}
-
-      {/* 메시지 박스 렌더링 */}
-      <BrunnerMessageBox />
-    </>
-  );
+    {/* 메시지 박스 렌더링 */}
+    <BrunnerMessageBox />
+  </>
+);
 }

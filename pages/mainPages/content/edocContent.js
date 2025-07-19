@@ -43,7 +43,7 @@ export default function EDocContent({ documentId }) {
           }
         ]).map(page => ({
           ...page,
-          documentData: doc   // ✅ 여기서 안전하게 붙임
+          documentData: doc   // ✅ 안전하게 붙임
         }));
 
         setPages(safePages);
@@ -57,15 +57,15 @@ export default function EDocContent({ documentId }) {
 
   if (loading) {
     return (
-      <div className="flex h-screen items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-gray-900"></div>
+      <div className="flex h-screen items-center justify-center bg-white dark:bg-gray-900">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-gray-900 dark:border-white"></div>
       </div>
     );
   }
 
   if (!documentData) {
     return (
-      <div className="flex h-screen items-center justify-center">
+      <div className="flex h-screen items-center justify-center bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-100">
         문서를 불러오는 중입니다...
       </div>
     );
@@ -73,30 +73,31 @@ export default function EDocContent({ documentId }) {
 
   return (
     <>
-  <DivContainer className="flex flex-col desktop:flex-row">
-    <div className={`w-full desktop:w-2/3 items-start text-left`}>
-      <h2 className={`title-font sm:text-4xl text-3xl mb-10 font-medium text-green-900`}>
-        {`${documentData.title}`}
-      </h2>
-      {pages.map((page) => (
-          <EDocEditorCanvas
-            page={page}
-            isViewerMode={true}
-            mode="runtime"
-            bindingData={commonFunctions.bindingData}
-            documentData={page.documentData}
-            style={{ width: "100%", minWidth: 0, overflow: "visible" }} // ✅ 스타일 props로 전달
-          />
-      ))}
+      <DivContainer className="flex flex-col desktop:flex-row bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-100">
+        <div className="w-full desktop:w-2/3 items-start text-left">
+          <h2 className="title-font sm:text-4xl text-3xl mb-10 font-medium text-green-900 dark:text-green-200">
+            {`${documentData.title}`}
+          </h2>
 
-      {!isMobile && (
-        <div className="items-center">
-          {/* {<ClipsContentAnimation />} */}
+          {pages.map((page) => (
+            <EDocEditorCanvas
+              key={page.id}
+              page={page}
+              isViewerMode={true}
+              mode="runtime"
+              bindingData={commonFunctions.bindingData}
+              documentData={page.documentData}
+              style={{ width: "100%", minWidth: 0, overflow: "visible" }}
+            />
+          ))}
+
+          {!isMobile && (
+            <div className="items-center">
+              {/* <ClipsContentAnimation /> */}
+            </div>
+          )}
         </div>
-      )}
-    </div>
-  </DivContainer>
-</>
-
+      </DivContainer>
+    </>
   );
 }
