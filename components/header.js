@@ -108,8 +108,8 @@ export default function Header({ triggerLeftMenuReload }) {
 
   return (
     <>
-      <header className={`text-gray-600 body-font mb-10`}>
-        <DivContainer className="flex items-center">
+      <header className={`fixed top-0 left-0 right-0 w-full z-50 bg-white text-gray-600 body-font mb-10`}>
+        <DivContainer className="flex items-center w-full max-w-full">
         <Link
           className={`flex title-font font-medium items-center text-gray-900 mb-4 md:mb-0`}
           href="/"
