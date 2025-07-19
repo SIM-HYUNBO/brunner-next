@@ -175,7 +175,12 @@ export default function EDocEditorCanvas({
             <DocComponentRenderer
               component={comp}
               isSelected={!isViewerMode && selectedComponentId === compIdx}
-              onSelect={() => !isViewerMode && onComponentSelect(compIdx)}
+              onSelect={() => {
+                if (!isViewerMode) {
+                  onSelect?.(); // ✅ 페이지 선택 먼저!
+                  onComponentSelect?.(compIdx); // ✅ 그 다음 컴포넌트 선택!
+                }
+              }}
               onRuntimeDataChange={(...args) =>
                 updateRuntimeData(compIdx, args.length === 1 ? args[0] : args)
               }
