@@ -24,25 +24,24 @@ export default function Layout({ children, reloadSignal, triggerLeftMenuReload }
     }
   };
 
-  // ✅ 의존성에 props로 전달받은 reloadSignal 사용
   useEffect(() => {
     reloadLeftMenu();
   }, [reloadSignal]);
 
   return (
     <div className="flex bg-primary min-h-screen justify-center">
-      <LeftMenu documentList={documentList} 
-                reloadSignal={reloadSignal} />
+      <LeftMenu documentList={documentList} reloadSignal={reloadSignal} />
 
       <div className="px-2 w-full desktop:w-3/4 ml-5">
         <Header triggerLeftMenuReload={triggerLeftMenuReload} />
-        <main>
-          {React.Children.map(children, child =>
-            React.isValidElement(child)
-              ? React.cloneElement(child, { triggerLeftMenuReload })
-              : child
-          )}
-        </main>
+
+        {/* ✅ main 제거, overflow-y-auto 제거 */}
+        {React.Children.map(children, child =>
+          React.isValidElement(child)
+            ? React.cloneElement(child, { triggerLeftMenuReload })
+            : child
+        )}
+
         <Footer />
       </div>
     </div>

@@ -398,7 +398,7 @@ export default function EDocDesignerContainer({ documentId, triggerLeftMenuReloa
       />
       <div className="flex h-screen bg-gray-100">
         {/* 왼쪽 팔레트 */}
-        <aside className="w-40 bg-white border-r border-gray-300 p-4 overflow-y-auto">
+        <aside className="w-40 bg-white border-r border-gray-300 p-4">
           <h2 className="font-bold mb-3">컴포넌트 팔레트</h2>
           <EDocComponentPalette
             templates={componentTemplates}
@@ -409,7 +409,7 @@ export default function EDocDesignerContainer({ documentId, triggerLeftMenuReloa
         {/* 가운데 편집영역 + 오른쪽 속성창 */}
         <div className="flex flex-1 overflow-hidden">
           {/* 편집 캔버스 */}
-          <main className="flex-grow overflow-auto p-4 bg-white edoc-designer-canvas">
+          <main className="flex-grow p-4 bg-white edoc-designer-canvas">
             {documentData && (
               <h1 className="text-2xl font-bold mb-6">
                 {documentData.title || ''} : {documentData.id}
