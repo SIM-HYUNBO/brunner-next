@@ -14,12 +14,14 @@ export default function HomeContent() {
   return (
     <>
       <DivContainer className={`flex-row`}>
-        <div className={`w-full desktop:w-2/3 items-center justify-center text-left`}>
+        <div className={`w-full items-center justify-center text-left`}>
           <h2 className={`title-font sm:text-4xl text-3xl mb-10 font-medium text-green-900`}>
             Pelagos Voyager
           </h2>
-          <GoverningMessage governingMessage={"우리의 생각은 무한히 많고 시시각각 변합니다. \n 그래서 생각은 기록으로 남기고 보전해야 합니다. \n 무한한 디지털 기록의 바다를 항해하는 항해자에게 등대가 되겠습니다. \n\n무료 가입 후 페이지 디자이너로 직접 페이지를 만들어보세요.\n"} />
-          <div className={`flex flex-col`}>
+          <GoverningMessage governingMessage={`사람의 생각은 무한히 많고 시시각각 변합니다. 
+          그래서 생각은 기록으로 남기고 보전해야 합니다. 무한한 당신의 생각을 디지털 기록으로 보관하세요.`} />
+          
+          <div className={`flex flex-col mt-20`}>
             {!userInfo.isLogin() && (
               <div>
                 <button
