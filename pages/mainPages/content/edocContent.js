@@ -78,24 +78,23 @@ export default function EDocContent({ documentId }) {
       <h2 className={`title-font sm:text-4xl text-3xl mb-10 font-medium text-green-900`}>
         {`${documentData.title}`}
       </h2>
+      {pages.map((page) => (
+          <EDocEditorCanvas
+            page={page}
+            isViewerMode={true}
+            mode="runtime"
+            bindingData={commonFunctions.bindingData}
+            documentData={page.documentData}
+            style={{ width: "100%", minWidth: 0, overflow: "visible" }} // ✅ 스타일 props로 전달
+          />
+      ))}
+
+      {!isMobile && (
+        <div className="items-center">
+          {/* {<ClipsContentAnimation />} */}
+        </div>
+      )}
     </div>
-
-    {pages.map((page) => (
-        <EDocEditorCanvas
-          page={page}
-          isViewerMode={true}
-          mode="runtime"
-          bindingData={commonFunctions.bindingData}
-          documentData={page.documentData}
-          style={{ width: "100%", minWidth: 0, overflow: "visible" }} // ✅ 스타일 props로 전달
-        />
-    ))}
-
-    {!isMobile && (
-      <div className="items-center">
-        {/* {<ClipsContentAnimation />} */}
-      </div>
-    )}
   </DivContainer>
 </>
 
