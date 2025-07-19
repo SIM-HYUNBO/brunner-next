@@ -47,7 +47,11 @@ export default function EDocument() {
       </Head>
       <BodySection>
         <div className="flex flex-col md:flex-row items-start gap-4 md:gap-8">
-          {/* <h2 className="text-2xl font-bold mb-4">문서 제목</h2> */}
+          {/* 모바일에서만 보이는 제목 */}
+          <h2 className="block md:hidden text-2xl font-bold mb-4">문서 제목</h2>
+          {/* 데스크탑에서만 보이는 제목 */}
+          <h2 className="hidden md:block text-2xl font-bold mb-4">문서 제목</h2>
+          {/* 문서 내용 컴포넌트 */}    
           <EDocContent documentId={documentId} />
         </div>
       </BodySection>
