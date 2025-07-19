@@ -112,7 +112,7 @@ export default function Header({ triggerLeftMenuReload }) {
   }, []);
 
   return (
-    <header className="top-0 left-0 right-0 w-full z-50 bg-white text-gray-600 body-font mb-10">
+    <header className="sticky top-0 left-0 right-0 w-full z-50 bg-white text-gray-600 body-font mb-10">
       <DivContainer className="flex items-center w-full max-w-full relative">
         {/* 로고 */}
         <Link
@@ -128,7 +128,7 @@ export default function Header({ triggerLeftMenuReload }) {
           />
         </Link>
 
-        {/* 문서 제목 - 보이도록 유지 */}
+        {/* 문서 제목 */}
         <Link
           className="flex title-font font-medium items-center text-gray-900 mb-4 md:mb-0"
           href="/"
@@ -140,12 +140,12 @@ export default function Header({ triggerLeftMenuReload }) {
 
         <div className="flex-1"></div>
 
-        {/* 모바일 햄버거 버튼 - 항상 우측 상단 고정 */}
+        {/* 모바일 햄버거 메뉴 */}
         <div className="md:hidden absolute top-4 right-4">
           {mobileDropdownMenu()}
         </div>
 
-        {/* PC용 topMenu */}
+        {/* PC용 메뉴 */}
         <div className="hidden md:flex flex-wrap items-center justify-end">
           {topMenu()}
         </div>
