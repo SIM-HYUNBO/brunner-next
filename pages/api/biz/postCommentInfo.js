@@ -11,13 +11,13 @@ const executeService = async (txnId, jRequest) => {
 
     try {
         switch (jRequest.commandName) {
-             case constants.commands.COMMAND_POST_COMMENT_INFO_INSERT_ONE:
+             case constants.commands.POST_COMMENT_INFO_INSERT_ONE:
                 jResponse = await insertOne(txnId, jRequest);
                 break;
-            case constants.commands.COMMAND_POST_COMMENT_INFO_UPDATE_ONE:
+            case constants.commands.POST_COMMENT_INFO_UPDATE_ONE:
                 jResponse = await updateOne(txnId, jRequest);
                 break;
-            case constants.commands.COMMAND_POST_COMMENT_INFO_DELETE_ONE:
+            case constants.commands.POST_COMMENT_INFO_DELETE_ONE:
                 jResponse = await deleteOne(txnId, jRequest);
                 break;
             default:
@@ -83,7 +83,7 @@ const updateOne = async (txnId, jRequest) => {
 
         if (!jRequest.commentInfo) {
             jResponse.error_code = -2;
-            jResponse.error_message = `${constants.messages.MESSAGE_REQUIRED_FIELD} [commentInfo]`;
+            jResponse.error_message = `${constants.messages.REQUIRED_FIELD} [commentInfo]`;
 
             return jResponse;
         }
@@ -124,7 +124,7 @@ const deleteOne = async (txnId, jRequest) => {
 
         if (!jRequest.commentInfo) {
             jResponse.error_code = -2;
-            jResponse.error_message = `${constants.messages.MESSAGE_REQUIRED_FIELD} [commentInfo]`;
+            jResponse.error_message = `${constants.messages.REQUIRED_FIELD} [commentInfo]`;
 
             return jResponse;
         }

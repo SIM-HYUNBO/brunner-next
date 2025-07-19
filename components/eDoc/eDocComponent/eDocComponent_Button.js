@@ -47,15 +47,15 @@ const RenderComponent = (props) => {
       !runtimeData?.apiMethod || 
       !["GET", "POST"].includes(runtimeData?.apiMethod.toUpperCase())
     ) {
-    openModal(constants.messages.MESSAGE_NOT_SUPPORTED_API_METHOD);
+    openModal(constants.messages.NOT_SUPPORTED_API_METHOD);
     return;
   }
   if (!runtimeData?.apiEndpoint) {
-    openModal(constants.messages.MESSAGE_NOT_SET_API_ENDPOINT);
+    openModal(constants.messages.NOT_SET_API_ENDPOINT);
     return;
   }
   if (!runtimeData?.commandName) {
-    openModal(`${constants.messages.MESSAGE_REQUIRED_FIELD} [commandName]`);
+    openModal(`${constants.messages.REQUIRED_FIELD} [commandName]`);
     return;
   }
 

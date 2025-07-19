@@ -10,17 +10,17 @@ const executeService = async (txnId, jRequest) => {
 
   try {
     switch (jRequest.commandName) {
-      case constants.commands.COMMAND_DYNAMIC_SEQ_SELECT_ALL:
+      case constants.commands.DYNAMIC_SEQ_SELECT_ALL:
         jResponse = await selectAll(txnId, jRequest);
         break;
-      case constants.commands.COMMAND_DYNAMIC_SEQ_UPDATE_ONE:
+      case constants.commands.DYNAMIC_SEQ_UPDATE_ONE:
         jResponse = await updateOne(txnId, jRequest);
         break;
-      case constants.commands.COMMAND_DYNAMIC_SEQ_DELETE_ONE:
+      case constants.commands.DYNAMIC_SEQ_DELETE_ONE:
         jResponse = await deleteOne(txnId, jRequest);
         break; 
       default:
-      case constants.commands.COMMAND_DYNAMIC_SEQ_LOAD_ALL:
+      case constants.commands.DYNAMIC_SEQ_LOAD_ALL:
           jResponse = await loadAll(txnId, jRequest);
           break;
     }
@@ -51,7 +51,7 @@ async function selectAll(txnId, jRequest) {
       jResponse.error_message = constants.messages.EMPTY_STRING;
     }
     else {
-      throw new Error(constants.messages.MESSAGE_SERVER_SQL_NOT_LOADED);
+      throw new Error(constants.messages.SERVER_SQL_NOT_LOADED);
     }
   }
   catch (err) {
@@ -72,30 +72,30 @@ async function updateOne(txnId, jRequest) {
 
     if (!jRequest.userId) {
       jResponse.error_code = -2;
-      jResponse.error_message = `${constants.messages.MESSAGE_REQUIRED_FIELD} [userId`;
+      jResponse.error_message = `${constants.messages.REQUIRED_FIELD} [userId`;
       return jResponse;
     }
     if (!jRequest.systemCode) {
       jResponse.error_code = -2;
-      jResponse.error_message = `${constants.messages.MESSAGE_REQUIRED_FIELD} [systemCode]`;
+      jResponse.error_message = `${constants.messages.REQUIRED_FIELD} [systemCode]`;
       return jResponse;
     }
 
     if (!jRequest.sqlName) {
       jResponse.error_code = -2;
-      jResponse.error_message = `${constants.messages.MESSAGE_REQUIRED_FIELD} [sqlName]`;
+      jResponse.error_message = `${constants.messages.REQUIRED_FIELD} [sqlName]`;
       return jResponse;
     }
 
     if (!jRequest.sqlSeq) {
       jResponse.error_code = -2;
-      jResponse.error_message = `${constants.messages.MESSAGE_REQUIRED_FIELD} [sqlSeq]`;
+      jResponse.error_message = `${constants.messages.REQUIRED_FIELD} [sqlSeq]`;
       return jResponse;
     }
 
     if (!jRequest.sqlContent) {
       jResponse.error_code = -2;
-      jResponse.error_message = `${constants.messages.MESSAGE_REQUIRED_FIELD} [sqlContent]`;
+      jResponse.error_message = `${constants.messages.REQUIRED_FIELD} [sqlContent]`;
       return jResponse;
     }
 
@@ -177,24 +177,24 @@ async function deleteOne(txnId, jRequest) {
 
     if (!jRequest.userId) {
       jResponse.error_code = -2;
-      jResponse.error_message = `${constants.messages.MESSAGE_REQUIRED_FIELD} [userId`;
+      jResponse.error_message = `${constants.messages.REQUIRED_FIELD} [userId`;
       return jResponse;
     }
     if (!jRequest.systemCode) {
       jResponse.error_code = -2;
-      jResponse.error_message = `${constants.messages.MESSAGE_REQUIRED_FIELD} [systemCode]`;
+      jResponse.error_message = `${constants.messages.REQUIRED_FIELD} [systemCode]`;
       return jResponse;
     }
 
     if (!jRequest.sqlName) {
       jResponse.error_code = -2;
-      jResponse.error_message = `${constants.messages.MESSAGE_REQUIRED_FIELD} [sqlName]`;
+      jResponse.error_message = `${constants.messages.REQUIRED_FIELD} [sqlName]`;
       return jResponse;
     }
 
     if (!jRequest.sqlSeq) {
       jResponse.error_code = -2;
-      jResponse.error_message = `${constants.messages.MESSAGE_REQUIRED_FIELD} [sqlSeq]`;
+      jResponse.error_message = `${constants.messages.REQUIRED_FIELD} [sqlSeq]`;
       return jResponse;
     }
 
@@ -268,7 +268,7 @@ async function loadAll(txnId, jRequest) {
       return process.serviceSQL.size;
     }
     else {
-      throw new Error(constants.messages.MESSAGE_SERVER_SQL_NOT_LOADED);
+      throw new Error(constants.messages.SERVER_SQL_NOT_LOADED);
     }
   }
   catch (err) {

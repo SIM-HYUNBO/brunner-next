@@ -16,7 +16,7 @@ function BrunnerBoard({ boardType }) {
   const fetchPosts = async () => {
     try {
       const jRequest = {
-        commandName: constants.commands.COMMAND_POST_INFO_SELECT_ALL,
+        commandName: constants.commands.POST_INFO_SELECT_ALL,
         systemCode: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE,
         postInfo: { postType: boardType }
       };
@@ -61,7 +61,7 @@ function BrunnerBoard({ boardType }) {
           userId: userId,
         };
 
-        jRequest.commandName = constants.commands.COMMAND_POST_INFO_INSERT_ONE;
+        jRequest.commandName = constants.commands.POST_INFO_INSERT_ONE;
         jRequest.systemCode = process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE;
         jRequest.postInfo = newPost;
 
@@ -91,11 +91,11 @@ function BrunnerBoard({ boardType }) {
 
       const userId = userInfo.getLoginUserId();
       if (!userId) {
-        openModal(constants.messages.MESSAGE_NO_PERMISSION);
+        openModal(constants.messages.NO_PERMISSION);
         return;
       }
 
-      jRequest.commandName = constants.commands.COMMAND_POST_INFO_UPDATE_ONE;
+      jRequest.commandName = constants.commands.POST_INFO_UPDATE_ONE;
       jRequest.systemCode = process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE;
       jRequest.postInfo = {
         postId: postId,
@@ -136,11 +136,11 @@ function BrunnerBoard({ boardType }) {
 
       const userId = userInfo.getLoginUserId();
       if (!userId) {
-        openModal(constants.messages.MESSAGE_NO_PERMISSION);
+        openModal(constants.messages.NO_PERMISSION);
         return;
       }
 
-      jRequest.commandName = constants.commands.COMMAND_POST_INFO_DELETE_ONE;
+      jRequest.commandName = constants.commands.POST_INFO_DELETE_ONE;
       jRequest.systemCode = process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE;
 
       jRequest.postInfo = {
@@ -173,7 +173,7 @@ function BrunnerBoard({ boardType }) {
 
       const userId = userInfo.getLoginUserId();
 
-      jRequest.commandName = constants.commands.COMMAND_POST_COMMENT_INFO_INSERT_ONE;
+      jRequest.commandName = constants.commands.POST_COMMENT_INFO_INSERT_ONE;
       jRequest.systemCode = process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE;
 
       jRequest.commentInfo = {
@@ -212,13 +212,13 @@ function BrunnerBoard({ boardType }) {
 
       const userId = userInfo.getLoginUserId();
       if (!userId) {
-        openModal(constants.messages.MESSAGE_NO_PERMISSION);
+        openModal(constants.messages.NO_PERMISSION);
         return;
       }
 
       const post = posts.find((post) => post.post_id === postId);
 
-      jRequest.commandName = constants.commands.COMMAND_POST_COMMENT_INFO_UPDATE_ONE;
+      jRequest.commandName = constants.commands.POST_COMMENT_INFO_UPDATE_ONE;
       jRequest.systemCode = process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE;
       jRequest.commentInfo = {
         postId: postId,
@@ -259,11 +259,11 @@ function BrunnerBoard({ boardType }) {
 
       const userId = userInfo.getLoginUserId();
       if (!userId) {
-        openModal(constants.messages.MESSAGE_NO_PERMISSION);
+        openModal(constants.messages.NO_PERMISSION);
         return;
       }
 
-      jRequest.commandName = constants.commands.COMMAND_POST_COMMENT_INFO_DELETE_ONE;
+      jRequest.commandName = constants.commands.POST_COMMENT_INFO_DELETE_ONE;
       jRequest.systemCode = process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE;
 
       jRequest.commentInfo = {
@@ -450,7 +450,7 @@ function BoardContent({
               onClick={() => {
                 const userId = userInfo.getLoginUserId();
                 if (!userId) {
-                  openModal(constants.messages.MESSAGE_NO_PERMISSION);
+                  openModal(constants.messages.NO_PERMISSION);
                   return;
                 }
                 setIsEditingPost(true);
@@ -463,7 +463,7 @@ function BoardContent({
               onClick={() => {
                 const userId = userInfo.getLoginUserId();
                 if (!userId) {
-                  openModal(constants.messages.MESSAGE_NO_PERMISSION);
+                  openModal(constants.messages.NO_PERMISSION);
                   return;
                 }
                 handleDeletePost();
@@ -518,7 +518,7 @@ function BoardContent({
                     onClick={() => {
                       const userId = userInfo.getLoginUserId();
                       if (!userId) {
-                        openModal(constants.messages.MESSAGE_NO_PERMISSION);
+                        openModal(constants.messages.NO_PERMISSION);
                         return;
                       }
                       setEditingCommentId(comment.comment_id);
@@ -532,7 +532,7 @@ function BoardContent({
                     onClick={() => {
                       const userId = userInfo.getLoginUserId();
                       if (!userId) {
-                        openModal(constants.messages.MESSAGE_NO_PERMISSION);
+                        openModal(constants.messages.NO_PERMISSION);
                         return;
                       }
                       handleDeleteComment(comment.comment_id);

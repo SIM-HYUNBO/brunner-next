@@ -10,6 +10,10 @@ import * as CheckListComponent from "./eDoc/eDocComponent/eDocComponent_CheckLis
 import * as ButtonComponent from "./eDoc/eDocComponent/eDocComponent_Button";
 import * as VideoComponent from "./eDoc/eDocComponent/eDocComponent_Video";
 
+export function isJsonObject(obj) {
+    return obj && typeof obj === 'object' && !Array.isArray(obj);
+}
+
 export function generateUUID() { // Public Domain/MIT
     return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
         const r = Math.random() * 16 | 0;
@@ -30,25 +34,25 @@ export const bindingData = (documentData) => {
       let bindingKey = comp.runtime_data.bindingKey;
       if (bindingKey) {    
         switch (comp.type) {
-          case constants.edoc.EDOC_COMPONENT_TYPE_TEXT:
+          case constants.edocComponentType._TEXT:
             value = TextComponent.getBindingValue(comp);
             break;
-          case constants.edoc.EDOC_COMPONENT_TYPE_INPUT:
+          case constants.edocComponentType._INPUT:
             value = InputComponent.getBindingValue(comp);
             break;
-          case constants.edoc.EDOC_COMPONENT_TYPE_IMAGE:
+          case constants.edocComponentType._IMAGE:
             value = ImageComponent.getBindingValue(comp);
             break;
-          case constants.edoc.EDOC_COMPONENT_TYPE_TABLE:
+          case constants.edocComponentType._TABLE:
             value = TableComponent.getBindingValue(comp);
             break;
-          case constants.edoc.EDOC_COMPONENT_TYPE_CHECKLIST:
+          case constants.edocComponentType._CHECKLIST:
             value = CheckListComponent.getBindingValue(comp);
             break;
-          case constants.edoc.EDOC_COMPONENT_TYPE_BUTTON:
+          case constants.edocComponentType._BUTTON:
             value = ButtonComponent.getBindingValue(comp);
             break;
-          case constants.edoc.EDOC_COMPONENT_TYPE_VIDEO:
+          case constants.edocComponentType._VIDEO:
             value = VideoComponent.getBindingValue(comp);
             break;
           default:

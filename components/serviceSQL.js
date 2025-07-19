@@ -104,7 +104,7 @@ const ServiceSQL = () => {
     const userId = userInfo.getLoginUserId();
     try {
       const jRequest = {
-        commandName: constants.commands.COMMAND_DYNAMIC_SEQ_SELECT_ALL,
+        commandName: constants.commands.DYNAMIC_SEQ_SELECT_ALL,
         systemCode: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE,
         userId: userId,
       };
@@ -145,7 +145,7 @@ const ServiceSQL = () => {
         `${sqlInput.system_code} ${sqlInput.sql_name} ${sqlInput.sql_seq} ${sqlInput.sql_content}`
       );
 
-      jRequest.commandName = constants.commands.COMMAND_DYNAMIC_SEQ_UPDATE_ONE;
+      jRequest.commandName = constants.commands.DYNAMIC_SEQ_UPDATE_ONE;
       jRequest.systemCode = sqlInput.system_code;
       jRequest.sqlName = sqlInput.sql_name;
       jRequest.sqlSeq = sqlInput.sql_seq;
@@ -158,7 +158,7 @@ const ServiceSQL = () => {
       setLoading(false); // 데이터 로딩 끝
 
       if (jResponse.error_code === 0) {
-        openModal(constants.messages.MESSAGE_SUCCESS_SAVED);
+        openModal(constants.messages.SUCCESS_SAVED);
         fetchSQLList();
       } else openModal(jResponse.error_message);
     } catch (error) {
@@ -241,14 +241,14 @@ const ServiceSQL = () => {
   // Handle delete action
   const handleDelete = async (userQueryItem) => {
     try {
-      const result = await openModal(constants.messages.MESSAGE_DELETE_ITEM);
+      const result = await openModal(constants.messages.DELETE_ITEM);
       if (!result) 
         return;
 
       var jRequest = {};
       var jResponse = null;
 
-      jRequest.commandName = constants.commands.COMMAND_DYNAMIC_SEQ_DELETE_ONE;
+      jRequest.commandName = constants.commands.DYNAMIC_SEQ_DELETE_ONE;
       jRequest.systemCode = userQueryItem.system_code;
       jRequest.sqlName = userQueryItem.sql_name;
       jRequest.sqlSeq = userQueryItem.sql_seq;
@@ -259,7 +259,7 @@ const ServiceSQL = () => {
       setLoading(false); // 데이터 로딩 끝
 
       if (jResponse.error_code === 0) {
-        openModal(constants.messages.MESSAGE_SUCCESS_DELETED);
+        openModal(constants.messages.SUCCESS_DELETED);
         fetchSQLList();
       } else openModal(jResponse.error_message);
     } catch (error) {

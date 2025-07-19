@@ -34,7 +34,7 @@ export default function EDocDesignerContainer({ documentId, triggerLeftMenuReloa
   useEffect(() => {
     async function fetchTemplates() {
       const jRequest = {
-        commandName: constants.commands.COMMAND_EDOC_COMPONENT_TEMPLATES_SELECT_ALL,
+        commandName: constants.commands.EDOC_COMPONENT_TEMPLATES_SELECT_ALL,
         systemCode: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE,
         userId: userInfo?.userId,
       };
@@ -106,11 +106,11 @@ export default function EDocDesignerContainer({ documentId, triggerLeftMenuReloa
 
   const handleDeleteCurrentPage = async () => {
     if (pages.length === 1) {
-      openModal(constants.messages.MESSAGE_MINIUM_PAGE_COUNT);
+      openModal(constants.messages.MINIUM_PAGE_COUNT);
           return;
     }
 
-    const confirm =await openModal(`The index ${currentPageIdx + 1}, ${constants.messages.MESSAGE_DELETE_SELECTED_PAGE}`);
+    const confirm =await openModal(`The index ${currentPageIdx + 1}, ${constants.messages.DELETE_SELECTED_PAGE}`);
       if (!confirm) 
         return;
 
@@ -145,25 +145,25 @@ export default function EDocDesignerContainer({ documentId, triggerLeftMenuReloa
     };
 
     switch (component.template_json.type) {
-      case constants.edoc.EDOC_COMPONENT_TYPE_TEXT:
+      case constants.edocComponentType._TEXT:
         baseComponent.runtime_data = TextComponent.initDefaultRuntimeData(defaultRuntimeData);
         break;
-      case constants.edoc.EDOC_COMPONENT_TYPE_IMAGE:
+      case constants.edocComponentType._IMAGE:
         baseComponent.runtime_data = ImageComponent.initDefaultRuntimeData(defaultRuntimeData);
         break;
-      case constants.edoc.EDOC_COMPONENT_TYPE_INPUT:
+      case constants.edocComponentType._INPUT:
         baseComponent.runtime_data = InputComponent.initDefaultRuntimeData(defaultRuntimeData);
         break;
-      case constants.edoc.EDOC_COMPONENT_TYPE_TABLE:
+      case constants.edocComponentType._TABLE:
         baseComponent.runtime_data = TableComponent.initDefaultRuntimeData(defaultRuntimeData);
         break;
-      case constants.edoc.EDOC_COMPONENT_TYPE_CHECKLIST:
+      case constants.edocComponentType._CHECKLIST:
         baseComponent.runtime_data = CheckListComponent.initDefaultRuntimeData(defaultRuntimeData);
         break;
-      case constants.edoc.EDOC_COMPONENT_TYPE_BUTTON:
+      case constants.edocComponentType._BUTTON:
         baseComponent.runtime_data = ButtonComponent.initDefaultRuntimeData(defaultRuntimeData);
         break;
-      case constants.edoc.EDOC_COMPONENT_TYPE_VIDEO:
+      case constants.edocComponentType._VIDEO:
         baseComponent.runtime_data = VideoComponent.initDefaultRuntimeData(defaultRuntimeData);
         break;
       default:
@@ -219,7 +219,7 @@ export default function EDocDesignerContainer({ documentId, triggerLeftMenuReloa
 
   const handleOpenDocument = async () => {
     const jRequest = {
-      commandName: constants.commands.COMMAND_EDOC_USER_DOCUMENT_SELECT_ALL,
+      commandName: constants.commands.EDOC_USER_DOCUMENT_SELECT_ALL,
       systemCode: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE,
       userId: userInfo.getLoginUserId(),
     };
@@ -236,7 +236,7 @@ export default function EDocDesignerContainer({ documentId, triggerLeftMenuReloa
 
 const openDocumentById = async (id) => {
   const jRequest = {
-    commandName: constants.commands.COMMAND_EDOC_DOCUMENT_SELECT_ONE,
+    commandName: constants.commands.EDOC_DOCUMENT_SELECT_ONE,
     systemCode: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE,
     userId: userInfo.getLoginUserId(),
     documentId: id,
@@ -278,7 +278,7 @@ const openDocumentById = async (id) => {
 
 const handleSaveDocument = async () => {
   const jRequest = {
-    commandName: constants.commands.COMMAND_EDOC_DOCUMENT_UPSERT_ONE,
+    commandName: constants.commands.EDOC_DOCUMENT_UPSERT_ONE,
     systemCode: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE,
     userId: userInfo.getLoginUserId(),
     documentData: {
@@ -296,7 +296,7 @@ const handleSaveDocument = async () => {
        triggerLeftMenuReload(); // ✅ LeftMenu 새로고침 트리거
     }
 
-    openModal(constants.messages.MESSAGE_SUCCESS_SAVED);
+    openModal(constants.messages.SUCCESS_SAVED);
     setDocumentData(jResponse.documentData);
 
     // 서버에서 받은 pages 배열로 복원
@@ -317,12 +317,12 @@ const handleSaveDocument = async () => {
 };
 
   const handleDeleteDocument = async () => {
-    const result = await openModal(constants.messages.MESSAGE_DELETE_ITEM);
+    const result = await openModal(constants.messages.DELETE_ITEM);
     if (!result) 
       return;
 
     const jRequest = {
-      commandName: constants.commands.COMMAND_EDOC_DOCUMENT_DELETE_ONE,
+      commandName: constants.commands.EDOC_DOCUMENT_DELETE_ONE,
       systemCode: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE,
       userId: userInfo.getLoginUserId(),
       documentId: documentData.id
@@ -337,7 +337,7 @@ const handleSaveDocument = async () => {
         triggerLeftMenuReload(); // ✅ LeftMenu 새로고침 트리거
       }
     
-      openModal(constants.messages.MESSAGE_SUCCESS_DELETED);
+      openModal(constants.messages.SUCCESS_DELETED);
       setDocumentData({
         id: null,
         title: 'new document',
