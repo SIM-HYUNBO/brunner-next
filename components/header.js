@@ -35,6 +35,8 @@ export default function Header({ triggerLeftMenuReload }) {
             alt="home icon"
           />
         </Link>
+        {mobileDropdownMenu()}
+
         <UserInfo handleLogout={handleLogout} />
       </nav>
     );
@@ -118,7 +120,6 @@ export default function Header({ triggerLeftMenuReload }) {
           {/* flex-grow로 왼쪽 공간을 채우고, topMenu를 우측 끝으로 */}
           <div className="flex-1"></div>
           {/* 모바일: 햄버거, 데스크탑: 기존 메뉴 */}
-            {mobileDropdownMenu()}
           <div className={`flex flex-wrap items-center justify-end`}>
             {topMenu()}
           </div>
