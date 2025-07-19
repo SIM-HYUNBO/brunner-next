@@ -46,7 +46,10 @@ export default function EDocument() {
         <meta rel="icon" href="/brunnerLogo.png"></meta>
       </Head>
       <BodySection>
-        <EDocContent documentId={documentId} />
+        <div className="flex flex-col md:flex-row items-start gap-4 md:gap-8">
+          <h2 className="text-2xl font-bold mb-4">문서 제목</h2>
+          <EDocContent documentId={documentId} />
+        </div>
       </BodySection>
     </Layout>
   );
