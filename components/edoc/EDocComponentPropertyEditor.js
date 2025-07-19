@@ -7,7 +7,7 @@ import * as InputComponent from "@/components/eDoc/edocComponent/edocComponent_I
 import * as ImageComponent from "@/components/eDoc/edocComponent/edocComponent_Image";
 import * as TableComponent from "@/components/eDoc/edocComponent/edocComponent_Table";
 import * as CheckListComponent from "@/components/eDoc/edocComponent/edocComponent_CheckList";
-import * as ButtonComponent from "@/components/eDoc/edocComponent/edocComponent_Button";
+import * as ButtonComponent from "@/components/eDoc/eDocComponent/eDocComponent_Button";
 import * as VideoComponent from "@/components/eDoc/edocComponent/edocComponent_Video";
 
 /*
