@@ -1,7 +1,10 @@
+'use client';
+
 import React, { useEffect, useState } from "react";
 import LeftMenu from "./leftMenu";
 import Header from "./header";
 import Footer from "./footer";
+import DivContainer from "@/components/divContainer";
 import RequestServer from "@/components/requestServer";
 import * as constants from "@/components/constants";
 import * as userInfo from "@/components/userInfo";
@@ -29,21 +32,26 @@ export default function Layout({ children, reloadSignal, triggerLeftMenuReload }
   }, [reloadSignal]);
 
   return (
-    <div className="flex bg-primary min-h-screen justify-center">
-      <LeftMenu documentList={documentList} reloadSignal={reloadSignal} />
+    <div className="flex bg-primary justify-center">
+      {/* ✅ LeftMenu 그대로 */}
+      <LeftMenu
+        documentList={documentList}
+        reloadSignal={reloadSignal}
+      />
 
-      <div className="px-2 w-full desktop:w-3/4 ml-5">
+      {/* ✅ 오른쪽 영역 */}
+      <DivContainer>
+        {/* ✅ Header */}
         <Header triggerLeftMenuReload={triggerLeftMenuReload} />
 
-        {/* ✅ main 제거, overflow-y-auto 제거 */}
+        {/* ✅ main 제거 & 그냥 children */}
         {React.Children.map(children, child =>
           React.isValidElement(child)
             ? React.cloneElement(child, { triggerLeftMenuReload })
             : child
         )}
-
-        <Footer />
+      <Footer />
+      </DivContainer>
       </div>
-    </div>
   );
 }
