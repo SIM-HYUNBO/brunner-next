@@ -7,9 +7,9 @@ import * as dynamicSql from './biz/dynamicSql'
 import * as security from './biz/security'
 import * as postInfo from './biz/postInfo'
 import * as postCommentInfo from './biz/postCommentInfo'
-import * as edocComponentTemplate from './biz/eDoc/edocComponentTemplate'
-import * as edocDocument from './biz/eDoc/edocDocument'
-import * as edocCustom from './biz/eDoc/edocCustom'
+import * as edocComponentTemplate from './biz/eDoc/eDocComponentTemplate'
+import * as edocDocument from './biz/eDoc/eDocDocument'
+import * as edocCustom from './biz/eDoc/eDocCustom'
 
 async function initialize() {
     var serviceSql = null;
