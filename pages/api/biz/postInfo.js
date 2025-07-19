@@ -11,16 +11,16 @@ const executeService = async (txnId, jRequest) => {
 
     try {
         switch (jRequest.commandName) {
-            case constants.commands.COMMAND_POST_INFO_SELECT_ALL:
+            case constants.commands.POST_INFO_SELECT_ALL:
                 jResponse = await selectAll(txnId, jRequest);
                 break;
-            case constants.commands.COMMAND_POST_INFO_INSERT_ONE:
+            case constants.commands.POST_INFO_INSERT_ONE:
                 jResponse = await insertOne(txnId, jRequest);
                 break;
-            case constants.commands.COMMAND_POST_INFO_UPDATE_ONE:
+            case constants.commands.POST_INFO_UPDATE_ONE:
                 jResponse = await updateOne(txnId, jRequest);
                 break;
-            case constants.commands.COMMAND_POST_INFO_DELETE_ONE:
+            case constants.commands.POST_INFO_DELETE_ONE:
                 jResponse = await deleteOne(txnId, jRequest);
                 break;
             default:
@@ -42,13 +42,13 @@ const selectAll = async (txnId, jRequest) => {
 
         if (!jRequest.postInfo) {
             jResponse.error_code = -2;
-            jResponse.error_message = `${constants.messages.MESSAGE_REQUIRED_FIELD} [postInfo].`;
+            jResponse.error_message = `${constants.messages.REQUIRED_FIELD} [postInfo].`;
             return jResponse;
         }
 
         if (!jRequest.postInfo.postType) {
             jResponse.error_code = -2;
-            jResponse.error_message = `${constants.messages.MESSAGE_REQUIRED_FIELD} [postType]`;
+            jResponse.error_message = `${constants.messages.REQUIRED_FIELD} [postType]`;
             return jResponse;
         }
 
@@ -95,7 +95,7 @@ const insertOne = async (txnId, jRequest) => {
 
         if (!jRequest.postInfo.userId) {
             jResponse.error_code = -2;
-            jResponse.error_message = `${constants.messages.MESSAGE_REQUIRED_FIELD} [userId].`;
+            jResponse.error_message = `${constants.messages.REQUIRED_FIELD} [userId].`;
             return jResponse;
         }
 
@@ -181,7 +181,7 @@ const deleteOne = async (txnId, jRequest) => {
 
         if (!jRequest.postInfo) {
             jResponse.error_code = -2;
-            jResponse.error_message = `${constants.messages.MESSAGE_REQUIRED_FIELD} [postInfo]`;
+            jResponse.error_message = `${constants.messages.REQUIRED_FIELD} [postInfo]`;
 
             return jResponse;
         }

@@ -20,7 +20,7 @@ export default async function RequestServer(jRequest, method = 'POST', serverUrl
   catch (e) {
     jResponse = {};
     jResponse.error_code = -1;
-    jResponse.error_message = `${constants.messages.MESSAGE_SERVER_NOT_CONNECTTED} ${e}`;
+    jResponse.error_message = `${constants.messages.SERVER_NOT_CONNECTTED} ${e}`;
     return jResponse;
   }
 }

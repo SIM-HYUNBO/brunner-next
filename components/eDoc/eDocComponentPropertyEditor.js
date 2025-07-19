@@ -81,19 +81,19 @@ export default function EDocComponentPropertyEditor({ component, handleUpdateCom
 
   const renderComponentProperty = (component) => {
     switch (component.type) {
-      case constants.edoc.EDOC_COMPONENT_TYPE_TEXT:
+      case constants.edocComponentType._TEXT:
         return TextComponent.renderProperty(component, updateRuntimeDataByPropertyEeditor, renderWidthPropertyByPropertyEditor, renderForceNewLinePropertyByPropertyEditor, renderPositionAlignPropertyByPropertyEditor);
-      case constants.edoc.EDOC_COMPONENT_TYPE_TABLE:
+      case constants.edocComponentType._TABLE:
         return TableComponent.renderProperty(component, updateRuntimeDataByPropertyEeditor, renderWidthPropertyByPropertyEditor, renderForceNewLinePropertyByPropertyEditor, renderPositionAlignPropertyByPropertyEditor);
-      case constants.edoc.EDOC_COMPONENT_TYPE_INPUT:
+      case constants.edocComponentType._INPUT:
         return InputComponent.renderProperty(component,  updateRuntimeDataByPropertyEeditor, renderWidthPropertyByPropertyEditor, renderForceNewLinePropertyByPropertyEditor, renderPositionAlignPropertyByPropertyEditor);
-      case constants.edoc.EDOC_COMPONENT_TYPE_IMAGE:
+      case constants.edocComponentType._IMAGE:
         return ImageComponent.renderProperty(component, updateRuntimeDataByPropertyEeditor, renderWidthPropertyByPropertyEditor, renderForceNewLinePropertyByPropertyEditor, renderPositionAlignPropertyByPropertyEditor);
-      case constants.edoc.EDOC_COMPONENT_TYPE_CHECKLIST:
+      case constants.edocComponentType._CHECKLIST:
         return CheckListComponent.renderProperty(component, updateRuntimeDataByPropertyEeditor,renderWidthPropertyByPropertyEditor, renderForceNewLinePropertyByPropertyEditor, renderPositionAlignPropertyByPropertyEditor);
-      case constants.edoc.EDOC_COMPONENT_TYPE_BUTTON:
+      case constants.edocComponentType._BUTTON:
         return ButtonComponent.renderProperty(component, updateRuntimeDataByPropertyEeditor,renderWidthPropertyByPropertyEditor,renderForceNewLinePropertyByPropertyEditor,renderPositionAlignPropertyByPropertyEditor);
-      case constants.edoc.EDOC_COMPONENT_TYPE_VIDEO:
+      case constants.edocComponentType._VIDEO:
         return VideoComponent.renderProperty(component, updateRuntimeDataByPropertyEeditor,renderWidthPropertyByPropertyEditor,renderForceNewLinePropertyByPropertyEditor,renderPositionAlignPropertyByPropertyEditor);
 
       default:

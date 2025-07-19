@@ -20,7 +20,7 @@ export default function EDocContent({ documentId }) {
 
     const fetchDocument = async () => {
       const jRequest = {
-        commandName: constants.commands.COMMAND_EDOC_DOCUMENT_SELECT_ONE,
+        commandName: constants.commands.EDOC_DOCUMENT_SELECT_ONE,
         systemCode: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE,
         userId: userInfo.getLoginUserId?.() || '',
         documentId: documentId

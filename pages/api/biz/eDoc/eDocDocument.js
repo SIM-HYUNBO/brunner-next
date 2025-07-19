@@ -11,19 +11,19 @@ const executeService = async (txnId, jRequest) => {
 
     try {
         switch (jRequest.commandName) {
-            case constants.commands.COMMAND_EDOC_DOCUMENT_UPSERT_ONE:
+            case constants.commands.EDOC_DOCUMENT_UPSERT_ONE:
                 jResponse = await upsertOne(txnId, jRequest);
                 break;
-            case constants.commands.COMMAND_EDOC_DOCUMENT_SELECT_ONE:
+            case constants.commands.EDOC_DOCUMENT_SELECT_ONE:
                 jResponse = await selectOne(txnId, jRequest);
                 break;
-            case constants.commands.COMMAND_EDOC_DOCUMENT_DELETE_ONE:
+            case constants.commands.EDOC_DOCUMENT_DELETE_ONE:
                 jResponse = await deleteOne(txnId, jRequest);
                 break;
-            case constants.commands.COMMAND_EDOC_USER_DOCUMENT_SELECT_ALL: // user all documents
+            case constants.commands.EDOC_USER_DOCUMENT_SELECT_ALL: // user all documents
                 jResponse = await selectUserAll(txnId, jRequest);
                 break;
-            case constants.commands.COMMAND_EDOC_ADMIN_DOCUMENT_SELECT_ALL: // admin & public documents
+            case constants.commands.EDOC_ADMIN_DOCUMENT_SELECT_ALL: // admin & public documents
                 jResponse = await selectAdminAll(txnId, jRequest);
                 break;
             default:
@@ -46,7 +46,7 @@ const upsertOne = async (txnId, jRequest) => {
 
     if (!jRequest.documentData) {
       jResponse.error_code = -2;
-      jResponse.error_message = `${constants.messages.MESSAGE_REQUIRED_FIELD} [documentData]`;
+      jResponse.error_message = `${constants.messages.REQUIRED_FIELD} [documentData]`;
       return jResponse;
     }
 
@@ -92,7 +92,7 @@ const upsertOne = async (txnId, jRequest) => {
 
       if (insertResult.rowCount !== 1) {
         jResponse.error_code = 0;
-        jResponse.error_message = constants.messages.MESSAGE_FAIL_TO_SAVE;
+        jResponse.error_message = constants.messages.FAIL_TO_SAVE;
         return jResponse;
       }
     } else {
@@ -111,13 +111,13 @@ const upsertOne = async (txnId, jRequest) => {
 
       if (updateResult.rowCount !== 1) {
         jResponse.error_code = -1;
-        jResponse.error_message = constants.messages.MESSAGE_FAIL_TO_SAVE;
+        jResponse.error_message = constants.messages.FAIL_TO_SAVE;
         return jResponse;
       }
     }
 
     jResponse.error_code = 0;
-    jResponse.error_message = constants.messages.MESSAGE_SUCCESS_SAVED;
+    jResponse.error_message = constants.messages.SUCCESS_SAVED;
     jResponse.documentData = jRequest.documentData;
   } catch (e) {
     logger.error(e);
@@ -137,7 +137,7 @@ const selectOne = async (txnId, jRequest) => {
 
     if (!jRequest.documentId) {
       jResponse.error_code = -2;
-      jResponse.error_message = `${constants.messages.MESSAGE_REQUIRED_FIELD} [documentData.id]`;
+      jResponse.error_message = `${constants.messages.REQUIRED_FIELD} [documentData.id]`;
       return jResponse;
     }
 
@@ -150,7 +150,7 @@ const selectOne = async (txnId, jRequest) => {
 
     if (select_TB_DOC_DOCUMENT.rowCount < 1) {
       jResponse.error_code = 0;
-      jResponse.error_message = constants.messages.MESSAGE_NO_DATA_FOUND;
+      jResponse.error_message = constants.messages.NO_DATA_FOUND;
       return jResponse;
     }
 
@@ -186,7 +186,7 @@ const deleteOne = async (txnId, jRequest) => {
 
     if (!jRequest.documentId) {
       jResponse.error_code = -2;
-      jResponse.error_message = `${constants.messages.MESSAGE_REQUIRED_FIELD} [documentId]`;
+      jResponse.error_message = `${constants.messages.REQUIRED_FIELD} [documentId]`;
       return jResponse;
     }
 
@@ -198,7 +198,7 @@ const deleteOne = async (txnId, jRequest) => {
     ]);
 
     jResponse.error_code = 0;
-    jResponse.error_message = constants.messages.MESSAGE_SUCCESS_DELETED;
+    jResponse.error_message = constants.messages.SUCCESS_DELETED;
     jResponse.documentData = jRequest.documentData; // optional
   } catch (e) {
     logger.error(e);

@@ -70,7 +70,7 @@ export default function Signup() {
     var jResponse = null;
 
     try {
-      jRequest.commandName = constants.commands.COMMAND_SECURITY_SIGNUP;
+      jRequest.commandName = constants.commands.SECURITY_SIGNUP;
       jRequest.systemCode = process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE;
       jRequest.userId = userId;
       jRequest.password = password;
@@ -85,7 +85,7 @@ export default function Signup() {
       setLoading(false); // 데이터 로딩 끝
 
       if (jResponse.error_code == 0) {
-        const result = await openModal(constants.messages.MESSAGE_SUCCESS_SIGNUP);
+        const result = await openModal(constants.messages.SUCCESS_SIGNUP);
         if (result) {
           router.push("/mainPages/signin");
         }

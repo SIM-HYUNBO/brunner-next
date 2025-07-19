@@ -10,7 +10,7 @@ const executeService = async (txnId, jRequest) => {
 
     try {
         switch (jRequest.commandName) {
-            case constants.commands.COMMAND_EDOC_COMPONENT_TEMPLATES_SELECT_ALL:
+            case constants.commands.EDOC_COMPONENT_TEMPLATES_SELECT_ALL:
                 jResponse = await selectAll(txnId, jRequest);
                 break;
             default:

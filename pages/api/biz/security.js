@@ -13,22 +13,22 @@ const executeService = async (txnId, jRequest) => {
 
     try {
         switch (jRequest.commandName) {
-            case constants.commands.COMMAND_SECURITY_SIGNUP:
+            case constants.commands.SECURITY_SIGNUP:
                 jResponse = await signup(txnId, jRequest);
                 break;
-            case constants.commands.COMMAND_SECURITY_SIGNIN:
+            case constants.commands.SECURITY_SIGNIN:
                 jResponse = await signin(txnId, jRequest);
                 break;
-            case constants.commands.COMMAND_SECURITY_SIGNOUT:
+            case constants.commands.SECURITY_SIGNOUT:
                 jResponse = await signout(txnId, jRequest);
                 break;
-            case constants.commands.COMMAND_SECURITY_RESET_PASSWORD:
+            case constants.commands.SECURITY_RESET_PASSWORD:
                 jResponse = await resetPassword(txnId, jRequest);
                 break;
-            case constants.commands.COMMAND_SECURITY_DELETE_ACCOUNT:
+            case constants.commands.SECURITY_DELETE_ACCOUNT:
                 jResponse = await deleteAccount(txnId, jRequest);
                 break;
-            case constants.commands.COMMAND_SECURITY_SEND_EMAIL_AUTHCODE:
+            case constants.commands.SECURITY_SEND_EMAIL_AUTHCODE:
                 jResponse = await sendEMailAuthCode(txnId, jRequest);
                 break;
             default:
@@ -51,17 +51,17 @@ const signup = async (txnId, jRequest) => {
 
         if (!jRequest.userId) {
             jResponse.error_code = -2;
-            jResponse.error_message = `${constants.messages.MESSAGE_REQUIRED_FIELD} [userId`;
+            jResponse.error_message = `${constants.messages.REQUIRED_FIELD} [userId`;
             return jResponse;
         }
         if (jRequest.userId.length < 5 || jRequest.userId.length > 10) {
             jResponse.error_code = -2;
-            jResponse.error_message = `The [userId] length should be from 5 to 10.`;
+            jResponse.error_message = `${constants.messages.USER_ID_LENGTH_CHECK}`;
             return jResponse;
         }
         if (!jRequest.password) {
             jResponse.error_code = -2;
-            jResponse.error_message = `${constants.messages.MESSAGE_REQUIRED_FIELD} [password]`;
+            jResponse.error_message = `${constants.messages.REQUIRED_FIELD} [password]`;
             return jResponse;
         }
 
@@ -70,22 +70,22 @@ const signup = async (txnId, jRequest) => {
 
         if (jRequest.password.length < 5) {
             jResponse.error_code = -2;
-            jResponse.error_message = `The [password] length should be more than 5.`;
+            jResponse.error_message = `${constants.messages.USER_PASSWORD_LENGTH_CHECK}`;
             return jResponse;
         }
         if (!jRequest.userName) {
             jResponse.error_code = -2;
-            jResponse.error_message = `${constants.messages.MESSAGE_REQUIRED_FIELD} [userName]`;
+            jResponse.error_message = `${constants.messages.REQUIRED_FIELD} [userName]`;
             return jResponse;
         }
         if (jRequest.userName.length < 2 || jRequest.userName.length > 10) {
             jResponse.error_code = -2;
-            jResponse.error_message = `The [password] length should be from 2 to 10.`;
+            jResponse.error_message = `${constants.messages.USER_NAME_LENGTH_CHECK}`;
             return jResponse;
         }
         if (!jRequest.phoneNumber) {
             jResponse.error_code = -2;
-            jResponse.error_message = `${constants.messages.MESSAGE_REQUIRED_FIELD} [phoneNumber]`;
+            jResponse.error_message = `${constants.messages.REQUIRED_FIELD} [phoneNumber]`;
             return jResponse;
         }
         if (verifyTelNo(jRequest.phoneNumber) == false) {
@@ -95,22 +95,22 @@ const signup = async (txnId, jRequest) => {
         }
         if (!jRequest.email) {
             jResponse.error_code = -2;
-            jResponse.error_message = `${constants.messages.MESSAGE_REQUIRED_FIELD} [email]`;
+            jResponse.error_message = `${constants.messages.REQUIRED_FIELD} [email]`;
             return jResponse;
         }
         if (verifyEMail(jRequest.email) == false) {
             jResponse.error_code = -2;
-            jResponse.error_message = `The [email] is not valid.`;
+            jResponse.error_message = `${constants.messages.EMAIL_NOT_VALID}`;
             return jResponse;
         }
         if (!jRequest.registerNo) {
             jResponse.error_code = -2;
-            jResponse.error_message = `${constants.messages.MESSAGE_REQUIRED_FIELD} [registerNo]`;
+            jResponse.error_message = `${constants.messages.REQUIRED_FIELD} [registerNo]`;
             return jResponse;
         }
         if (!jRequest.address) {
             jResponse.error_code = -2;
-            jResponse.error_message = `${constants.messages.MESSAGE_REQUIRED_FIELD} [address]`;
+            jResponse.error_message = `${constants.messages.REQUIRED_FIELD} [address]`;
             return jResponse;
         }
 
@@ -219,30 +219,30 @@ const resetPassword = async (txnId, jRequest) => {
 
         if (jRequest.userId === ``) {
             jResponse.error_code = -2;
-            jResponse.error_message = `${constants.messages.MESSAGE_REQUIRED_FIELD} [userId]`;
+            jResponse.error_message = `${constants.messages.REQUIRED_FIELD} [userId]`;
             return jResponse;
         }
         if (jRequest.phoneNumber === ``) {
             jResponse.error_code = -2;
-            jResponse.error_message = `${constants.messages.MESSAGE_REQUIRED_FIELD} [phoneNumber]`;
+            jResponse.error_message = `${constants.messages.REQUIRED_FIELD} [phoneNumber]`;
             return jResponse;
 
         }
 
         if (jRequest.authCode === '') {
             jResponse.error_code = -2;
-            jResponse.error_message = `${constants.messages.MESSAGE_REQUIRED_FIELD} [authCode]`;
+            jResponse.error_message = `${constants.messages.REQUIRED_FIELD} [authCode]`;
             return jResponse;
         }
 
         if (jRequest.newPassword === ``) {
             jResponse.error_code = -2;
-            jResponse.error_message = `${constants.messages.MESSAGE_REQUIRED_FIELD} [newPassword]`;
+            jResponse.error_message = `${constants.messages.REQUIRED_FIELD} [newPassword]`;
             return jResponse;
         }
         if (jRequest.confirmPassword === ``) {
             jResponse.error_code = -2;
-            jResponse.error_message = `${constants.messages.MESSAGE_REQUIRED_FIELD} [confirmPassword]`;
+            jResponse.error_message = `${constants.messages.REQUIRED_FIELD} [confirmPassword]`;
             return jResponse;
 
         }
@@ -264,7 +264,7 @@ const resetPassword = async (txnId, jRequest) => {
         }
         else if (select_TB_COR_USER_MST_02.rowCount <= 0) {
             jResponse.error_code = -1;
-            jResponse.error_message = `The user Id not exist.`;
+            jResponse.error_message = `${constants.messages.USER_ID_NOT_EXIST}`;
             return jResponse;
         }
 
@@ -299,7 +299,7 @@ const resetPassword = async (txnId, jRequest) => {
             logger.info(`RESULT: rowCount=${update_TB_COR_USER_MST_01.rowCount}\n`);
             if (update_TB_COR_USER_MST_01.rowCount == 1) {
                 jResponse.error_code = 0;
-                jResponse.error_message = `The password successfully changed.`;
+                jResponse.error_message = `${constants.messages.SUCCESS_CHANGED}`;
                 logger.info(`RESULT:\n${JSON.stringify(jResponse)}\n`);
             } else {
                 jResponse.error_code = -2;
@@ -325,19 +325,19 @@ const deleteAccount = async (txnId, jRequest) => {
 
         if (jRequest.userId === ``) {
             jResponse.error_code = -2;
-            jResponse.error_message = `${constants.messages.MESSAGE_REQUIRED_FIELD} [userId]`;
+            jResponse.error_message = `${constants.messages.REQUIRED_FIELD} [userId]`;
             return jResponse;
         }
         if (jRequest.phoneNumber === ``) {
             jResponse.error_code = -2;
-            jResponse.error_message = `${constants.messages.MESSAGE_REQUIRED_FIELD} [phoneNumber]`;
+            jResponse.error_message = `${constants.messages.REQUIRED_FIELD} [phoneNumber]`;
             return jResponse;
 
         }
 
         if (jRequest.authCode === '') {
             jResponse.error_code = -2;
-            jResponse.error_message = `${constants.messages.MESSAGE_REQUIRED_FIELD} [authCode]`;
+            jResponse.error_message = `${constants.messages.REQUIRED_FIELD} [authCode]`;
             return jResponse;
         }
 
@@ -353,7 +353,7 @@ const deleteAccount = async (txnId, jRequest) => {
         }
         else if (select_TB_COR_USER_MST_02.rowCount <= 0) {
             jResponse.error_code = -1;
-            jResponse.error_message = `The user Id not exist.`;
+            jResponse.error_message = `${constants.messages.USER_ID_NOT_EXIST}`;
             return jResponse;
         }
 
@@ -399,18 +399,18 @@ const sendEMailAuthCode = async (txnId, jRequest) => {
 
         if (jRequest.userId === ``) {
             jResponse.error_code = -2;
-            jResponse.error_message = `${constants.messages.MESSAGE_REQUIRED_FIELD} [userId]`;
+            jResponse.error_message = `${constants.messages.REQUIRED_FIELD} [userId]`;
             return jResponse;
         }
         if (jRequest.phoneNumber === ``) {
             jResponse.error_code = -2;
-            jResponse.error_message = `${constants.messages.MESSAGE_REQUIRED_FIELD} [phoneNumber]`;
+            jResponse.error_message = `${constants.messages.REQUIRED_FIELD} [phoneNumber]`;
             return jResponse;
 
         }
         if (jRequest.email === ``) {
             jResponse.error_code = -2;
-            jResponse.error_message = `${constants.messages.MESSAGE_REQUIRED_FIELD} [email]`;
+            jResponse.error_message = `${constants.messages.REQUIRED_FIELD} [email]`;
             return jResponse;
 
         }
@@ -429,7 +429,7 @@ const sendEMailAuthCode = async (txnId, jRequest) => {
 
                 // 사용자 정보 불일치 오류 - 사용자 전화번호와 이메일 주소 확인 메시지
                 jResponse.error_code = -1;
-                jResponse.error_message = `Invalid user phone number or E-Mail.`;
+                jResponse.error_message = `${constants.messages.PHONE_NUMBER_OR_EMAIL_NOT_VALID}`;
 
                 return jResponse;
             }

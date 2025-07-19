@@ -20,7 +20,7 @@ export async function getLeftMenuItems() {
 
 const getAdminDocumentList = async (items) => {
   const jRequest = {
-    commandName: constants.commands.COMMAND_EDOC_ADMIN_DOCUMENT_SELECT_ALL,
+    commandName: constants.commands.EDOC_ADMIN_DOCUMENT_SELECT_ALL,
     systemCode: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE,
     userId: userInfo.getLoginUserId(),
   };
@@ -43,7 +43,7 @@ const getUsersDocumentList = async (items) => {
   } 
   
   var jRequest = {
-    commandName: constants.commands.COMMAND_EDOC_USER_DOCUMENT_SELECT_ALL,
+    commandName: constants.commands.EDOC_USER_DOCUMENT_SELECT_ALL,
     systemCode: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE,
     userId: userInfo.getLoginUserId(),
   };

@@ -2,6 +2,7 @@
 
 import logger from "./winston/logger"
 import * as constants from "@/components/constants"
+import * as commonFunctions from '@/components/commonFunctions';
 import * as database from "./biz/database/database"
 import * as dynamicSql from './biz/dynamicSql'
 import * as security from './biz/security'
@@ -41,10 +42,10 @@ export default async (req, res) => {
         if (!isLoadingDynamicSql)
             loadedSQLSize = await initialize();
         else
-            throw Error(constants.messages.MESSAGE_SERVER_NOW_INITIALIZING);
+            throw Error(constants.messages.SERVER_NOW_INITIALIZING);
 
         if (!process.serviceSQL || process.serviceSQL.length == 0) {
-            throw Error(constants.messages.MESSAGE_SERVER_NOW_INITIALIZING);
+            throw Error(constants.messages.SERVER_NOW_INITIALIZING);
         }
 
         remoteIp = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
@@ -59,7 +60,7 @@ export default async (req, res) => {
         
         response = await executeService(req.method, req);
         
-        if(response && constants.isJsonObject(response))
+        if(response && commonFunctions.isJsonObject(response))
             jResponse= response;
         else
             jResponse = JSON.parse(response.toString())
@@ -91,7 +92,7 @@ const executeService = async (method, req) => {
     
     if (!commandName) {
         jResponse.error_code = -1;
-        jResponse.error_message = `${constants.messages.MESSAGE_SERVER_NO_COMMAND_NAME}\n${constants.messages.MESSAGE_SERVER_NOT_SUPPORTED_MODULE}`;
+        jResponse.error_message = `${constants.messages.SERVER_NO_COMMAND_NAME}\n${constants.messages.SERVER_NOT_SUPPORTED_MODULE}`;
         return jResponse;
     }
 
@@ -111,7 +112,7 @@ const executeService = async (method, req) => {
         jResponse = await edocCustom.executeService(req.body._txnId, jRequest);
     } else {
         jResponse.error_code = -1;
-        jResponse.error_message = `[${commandName}] ${constants.messages.MESSAGE_SERVER_NOT_SUPPORTED_MODULE}`;
+        jResponse.error_message = `[${commandName}] ${constants.messages.SERVER_NOT_SUPPORTED_MODULE}`;
     }
     return jResponse;
 }
