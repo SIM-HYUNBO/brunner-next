@@ -7,6 +7,7 @@ import Head from 'next/head'
 import BodySection from '@/components/bodySection'
 
 import EDocDesignerContainer from '@/components/eDoc/eDocDesignerContainer';
+import DivContainer from '@/components/divContainer';
 
 export default function EDocDesigner() {
   useEffect(() => {
@@ -31,7 +32,14 @@ export default function EDocDesigner() {
         <link></link>
       </Head>
       <BodySection>
-          <EDocDesignerContainer documentId={documentId} />
+          <DivContainer className="flex flex-col desktop:flex-row">
+            <div className={`w-full desktop:w-2/3 items-start text-left`}>
+              <h2 className={`title-font sm:text-4xl text-3xl mb-10 font-medium text-green-900`}>
+                {`${documentData.title}`}
+              </h2>
+              <EDocDesignerContainer documentId={documentId} />
+            </div>
+            </DivContainer>
       </BodySection>
     </Layout>
   );
