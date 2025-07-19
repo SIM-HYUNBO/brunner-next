@@ -55,7 +55,7 @@ export default function Header({ triggerLeftMenuReload }) {
         <button
           className="p-2"
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-          aria-label="메뉴 열기"
+          aria-label="Menu"
         >
           {/* ...SVG... */}
         </button>
