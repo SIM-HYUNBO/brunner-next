@@ -3,7 +3,7 @@
 import React, { useEffect } from 'react';
 import * as constants from '@/components/constants';
 import DocComponentRenderer from '@/components/eDoc/eDocComponentRenderer';
--
+
 export default function EDocEditorCanvas({
   page,                  // ✅ 단일 페이지
   isSelected,            // ✅ 현재 페이지 선택 상태
