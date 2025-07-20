@@ -73,7 +73,7 @@ export default function EDocContent({ documentId }) {
 
   return (
     <>
-      <h2 className="title-font sm:text-4xl text-3xl font-medium text-green-800 dark:text-green-200">
+      <h2 className="title-font sm:text-4xl text-3xl font-medium text-green-800 dark:text-green-200 my-20">
         {`${documentData.title}`}
       </h2>
       <DivContainer>

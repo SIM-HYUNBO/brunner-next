@@ -6,7 +6,7 @@ import DivContainer from "@/components/divContainer";
 export default function Footer() {
   return (
     <>
-      <footer className={`body-font`}>
+      <footer className={`body-font desktop:w-2/3`}>
         <DivContainer>
           <Link
             className={`flex title-font font-medium items-center md:justify-start justify-center text-gray-600 dark:text-gray-400`}

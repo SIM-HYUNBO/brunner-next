@@ -33,13 +33,13 @@ export default function Layout({ children, reloadSignal, triggerLeftMenuReload }
 
   return (
     
-    <div className="flex flex-col md:flex-row min-h-screen bg-primary justify-center desktop:px-80">
+    <div className="flex flex-col md:flex-row min-h-screen bg-primary justify-center desktop:pl-10">
       <LeftMenu
         documentList={documentList}
         reloadSignal={reloadSignal}
       />
 
-      <DivContainer className="flex flex-col w-full px-4">
+      <DivContainer className="flex flex-col w-full px-4 ml-10">
         <main className="pt-16 flex-grow overflow-x: auto">
           <Header triggerLeftMenuReload={triggerLeftMenuReload} />
           {React.Children.map(children, child =>
