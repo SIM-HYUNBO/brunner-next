@@ -18,8 +18,9 @@ export default function HomeContent() {
           <h2 className={`title-font sm:text-4xl text-3xl mb-10 font-medium text-green-900`}>
             Pelagos Voyager
           </h2>
-          <GoverningMessage governingMessage={`사람의 생각은 무한히 많고 시시각각 변합니다. 
-          그래서 생각은 기록으로 남기고 보전해야 합니다. 무한한 당신의 생각을 디지털 기록으로 보관하세요.`} />
+          <GoverningMessage governingMessage={`사람의 생각은 무한하고 시시각각 변하지만 기억은 영원하지 않습니다. 
+          그래서 생각은 기록으로 남기고 보전해야 합니다. 
+          무한한 당신의 생각을 디지털 기록으로 보관하세요.`} />
           
           <div className={`flex flex-col mt-20`}>
             {!userInfo.isLogin() && (
