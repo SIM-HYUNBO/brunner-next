@@ -400,7 +400,7 @@ return (
 
     <div className="flex h-screen p-0">
       {/* 왼쪽 팔레트 */}
-      <aside className="w-40 bg-white dark:bg-slate-700 border-r border-slate-300 dark:border-slate-500 p-4">
+      <aside className="w-40 bg-white dark:bg-slate-700 border-r border-slate-300 dark:border-slate-500 p-4 mr-4">
         <h2 className="font-bold mb-3 text-slate-800 dark:text-slate-100">컴포넌트 팔레트</h2>
         <EDocComponentPalette
           templates={componentTemplates}
