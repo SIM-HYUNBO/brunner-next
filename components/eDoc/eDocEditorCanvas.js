@@ -118,7 +118,7 @@ export default function EDocEditorCanvas({
                 style={{
                   maxWidth: `calc(${pageWidthPx}px - ${runtime_data?.padding ?? 24 * 2}px)`,
                   justifyContent,
-                  // overflow: "hidden",
+                  overflow: "x-auto",
                 }}
               >
               {row.map((compIdx) => {
