@@ -398,7 +398,7 @@ return (
       setCurrentPageIdx={setCurrentPageIdx}
     />
 
-    <div className="flex h-screen bg-slate-100 dark:bg-slate-800 overflow-x-auto">
+    <div className="flex h-screen p-0">
       {/* 왼쪽 팔레트 */}
       <aside className="w-40 bg-white dark:bg-slate-700 border-r border-slate-300 dark:border-slate-500 p-4">
         <h2 className="font-bold mb-3 text-slate-800 dark:text-slate-100">컴포넌트 팔레트</h2>
@@ -409,9 +409,9 @@ return (
       </aside>
 
       {/* 가운데 편집영역 + 오른쪽 속성창 */}
-      <div className="flex flex-1  overflow-x-auto overflow-y-hidden flex-nowrap">
+      <div className="flex overflow-hidden">
         {/* 편집 캔버스 */}
-        <main className="flex-grow p-4 bg-white dark:bg-slate-900 edoc-designer-canvas">
+        <main className="w-fit p-4 bg-white dark:bg-slate-900 mx-auto">
           {documentData && (
             <h1 className="text-2xl font-bold mb-6 text-slate-800 dark:text-slate-100">
               {documentData.title || ''} : {documentData.id}
@@ -451,9 +451,9 @@ return (
             </div>
           ))}
         </main>
-
+      </div>
         {/* 오른쪽 속성창 */}
-        <aside className="w-60 bg-white dark:bg-slate-700 border-l border-slate-300 dark:border-slate-500 p-4 block">
+        <aside className="w-60 bg-white dark:bg-slate-700 border-0 border-slate-300 dark:border-slate-500 p-4 block">
           <h2 className="text-lg font-semibold mb-4 text-slate-800 dark:text-slate-100">속성창</h2>
           {selectedComponentId !== null && pages[currentPageIdx]?.components[selectedComponentId] ? (
             <EDocComponentPropertyEditor
@@ -493,7 +493,7 @@ return (
             />
           )}
         </aside>
-      </div>
+
     </div>
 
     {/* 문서 목록 모달 */}

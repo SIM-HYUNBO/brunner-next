@@ -15,8 +15,8 @@ export default function HomeContent() {
     <>
       <DivContainer className={`my-24 flex-row`}>
         <div className={`w-full items-center justify-center text-left`}>
-          <h2 className={`title-font sm:text-4xl text-3xl mb-10 font-medium text-green-900`}>
-            Pelagos Voyager
+          <h2 className={`title-font sm:text-4xl text-3xl my-20 font-medium text-green-900`}>
+            Noesis Pelagos
           </h2>
           <GoverningMessage governingMessage={`사람의 생각은 무한하고 시시각각 변하지만 기억은 영원하지 않습니다. 
           그래서 생각은 기록으로 남기고 보전해야 합니다. 
@@ -40,7 +40,7 @@ export default function HomeContent() {
               </div>
             )}
           </div>
-          <div className={`flex space-x-4 w-full h-full text-align-left mt-10 readonly`}>
+          <div className={`flex w-3/5 h-full text-align-left mt-10 readonly`}>
             <BrunnerBoard boardType={'MAIN_TALK'} />
           </div>
 

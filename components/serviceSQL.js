@@ -278,7 +278,7 @@ const ServiceSQL = () => {
           </div>
           )}
           <BrunnerMessageBox />
-          <h2 className={`text-xl font-bold mb-4`}>Service SQL Management</h2>
+          <h2 className={`text-xl font-bold my-10`}>Service SQL Management</h2>
           <div ref={editPanelRef} className={`mb-4`}>
             <label className={`block mb-2`}>
               <span className={`text-gray-400`}>System Code:</span>

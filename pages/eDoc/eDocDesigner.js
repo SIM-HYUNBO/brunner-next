@@ -42,7 +42,7 @@ export default function EDocDesigner() {
       <BodySection>
           <DivContainer>
             <div className={`w-full desktop:w-full items-start text-left`}>
-              <h2 className={`title-font sm:text-4xl text-3xl mb-10 font-medium text-green-900`}>
+              <h2 className={`title-font sm:text-4xl text-3xl my-20 font-medium text-green-900`}>
                 {`Page Designer`}
               </h2>
               <EDocDesignerContainer documentId={documentId} 
