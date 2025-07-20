@@ -2,7 +2,7 @@
 
 const DivContainer = ({ children, className = "" }) => {
   return (
-    <div className={`w-full relative my-10 ${className}`}>
+    <div className={`w-full relative my-16 ${className}`}>
       {children}
     </div>
   );
