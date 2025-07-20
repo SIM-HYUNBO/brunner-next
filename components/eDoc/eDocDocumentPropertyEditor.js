@@ -18,7 +18,7 @@ export default function EDocDocumentPropertyEditor({
   return (
     <div>
       {/* ✅ 제목은 별도로 */}
-      <label>문서 제목 (title):</label>
+      <label>Title</label>
       <input
         type="text"
         value={title || ''}
@@ -34,11 +34,11 @@ export default function EDocDocumentPropertyEditor({
           onChange={e => updateProperty('isPublic', e.target.checked)}
           className="mr-2"
         />
-        공용 문서 여부
+        Public Document
       </label>
 
       {/* 나머지는 그대로 runtimeData */}
-      <label>여백 (padding, px):</label>
+      <label>Padding (px)</label>
       <input
         type="number"
         value={runtimeData.padding ?? 24}
@@ -48,7 +48,7 @@ export default function EDocDocumentPropertyEditor({
         className="w-full border border-gray-300 rounded p-2 mb-3"
       />
 
-      <label>정렬 (positionAlign):</label>
+      <label>Position Align</label>
       <select
         value={runtimeData.positionAlign || 'center'}
         onChange={(e) => updateProperty('positionAlign', e.target.value)}
@@ -59,7 +59,7 @@ export default function EDocDocumentPropertyEditor({
         <option value="right">오른쪽</option>
       </select>
 
-      <label>배경색 (backgroundColor):</label>
+      <label> Background Color</label>
       <input
         type="color"
         value={runtimeData.backgroundColor || '#ffffff'}
@@ -69,7 +69,7 @@ export default function EDocDocumentPropertyEditor({
         className="w-full h-10 p-1 mb-3 border border-gray-300 rounded"
       />
 
-      <label>페이지 크기 (pageSize):</label>
+      <label>Page Size</label>
       <select
         value={runtimeData.pageSize || 'A4'}
         onChange={(e) => updateProperty('pageSize', e.target.value)}
