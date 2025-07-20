@@ -453,7 +453,7 @@ return (
         </main>
 
         {/* 오른쪽 속성창 */}
-        <aside className="w-60 bg-white dark:bg-slate-700 border-l border-slate-300 dark:border-slate-500 p-4 hidden md:block">
+        <aside className="w-60 bg-white dark:bg-slate-700 border-l border-slate-300 dark:border-slate-500 p-4 hidden block">
           <h2 className="text-lg font-semibold mb-4 text-slate-800 dark:text-slate-100">속성창</h2>
           {selectedComponentId !== null && pages[currentPageIdx]?.components[selectedComponentId] ? (
             <EDocComponentPropertyEditor
