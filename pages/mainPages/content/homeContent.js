@@ -13,11 +13,7 @@ export default function HomeContent() {
 
   return (
     <>
-<<<<<<< HEAD
-      <DivContainer className={`flex-row`}>
-=======
       <DivContainer className={`my-24 flex-row`}>
->>>>>>> parent of 971250a (레이아웃 정리 끝)
         <div className={`w-full items-center justify-center text-left`}>
           <h2 className={`title-font sm:text-4xl text-3xl mb-10 font-medium text-green-900`}>
             Pelagos Voyager
