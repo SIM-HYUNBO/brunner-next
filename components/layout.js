@@ -33,7 +33,7 @@ export default function Layout({ children, reloadSignal, triggerLeftMenuReload }
 
   return (
     
-    <div className="flex flex-col md:flex-row min-h-screen bg-primary justify-center desktop:pl-10">
+    <div className="flex flex-col md:flex-row min-h-screen bg-primary justify-center desktop:pl-10 w-full overflow-x-hidden">
       <LeftMenu
         documentList={documentList}
         reloadSignal={reloadSignal}
