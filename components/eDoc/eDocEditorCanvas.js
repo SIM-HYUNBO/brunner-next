@@ -198,32 +198,28 @@ export default function EDocEditorCanvas({
   };
 
 return (
-  <div
-    id={`editor-canvas-${page.id}`}
-    className={[
-      "relative",
-      mode === "design"
-        ? "bg-white dark:bg-slate-800 cursor-pointer border border-dashed border-black dark:border-slate-500"
-        : "bg-white dark:bg-slate-800 cursor-pointer",
-      "flex flex-col gap-4",
-    ].join(" ")}
-    style={{
-      width: `${pageWidthPx}px`,
-      minHeight: `${pageHeightPx}px`,
-      padding: `${runtime_data?.padding ?? 48}px`,
-      boxSizing: "border-box",
-    }}
-    onClick={onSelect}
-  >
-    {components?.length === 0 ? (
-      isViewerMode ? null : (
-        <p className="text-gray-500 dark:text-slate-300 text-center mt-20">
-          좌측에서 컴포넌트를 추가하세요.
-        </p>
-      )
-    ) : (
-      RenderComponents()
-    )}
+  <div className="overflow-x-auto">
+    <div
+      id={`editor-canvas-${page.id}`}
+      className="relative flex flex-col gap-4"
+      style={{
+        width: `${pageWidthPx}px`,
+        minHeight: `${pageHeightPx}px`,
+        padding: `${runtime_data?.padding ?? 48}px`,
+        boxSizing: "border-box",
+      }}
+      onClick={onSelect}
+    >
+      {components?.length === 0 ? (
+        isViewerMode ? null : (
+          <p className="text-gray-500 dark:text-slate-300 text-center mt-20">
+            좌측에서 컴포넌트를 추가하세요.
+          </p>
+        )
+      ) : (
+        RenderComponents()
+      )}
+    </div>
   </div>
 );
 }
