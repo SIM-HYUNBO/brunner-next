@@ -36,7 +36,7 @@ export default function Home() {
   return (
     <Layout>
       <Head>
-        <title>Pelagos Voyager - Brunner-Next</title>
+        <title>Noesis Pelagos - Brunner-Next</title>
         <meta name="description" content="Brunner-Next provides digital document creation tool."></meta>
         <meta name="keywords" content="Digital document, 전자 문서"></meta>
         <meta rel="icon" href="/brunnerLogo.png"></meta>
