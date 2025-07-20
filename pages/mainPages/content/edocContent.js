@@ -57,15 +57,15 @@ export default function EDocContent({ documentId }) {
 
   if (loading) {
     return (
-      <div className="flex h-screen items-center justify-center bg-white dark:bg-gray-900">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-gray-900 dark:border-white"></div>
+      <div className="flex h-screen items-center justify-center bg-white dark:bg-gray-800">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-gray-800 dark:border-white"></div>
       </div>
     );
   }
 
   if (!documentData) {
     return (
-      <div className="flex h-screen items-center justify-center bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-100">
+      <div className="flex h-screen items-center justify-center bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-100">
         문서를 불러오는 중입니다...
       </div>
     );
@@ -73,9 +73,9 @@ export default function EDocContent({ documentId }) {
 
   return (
     <>
-      <DivContainer className="flex flex-col desktop:flex-row bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100">
+      <DivContainer className="flex flex-col desktop:flex-row bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100">
         <div className="w-full desktop:w-2/3 items-start text-left mt-10">
-          <h2 className="title-font sm:text-4xl text-3xl mb-10 font-medium text-green-900 dark:text-green-200">
+          <h2 className="title-font sm:text-4xl text-3xl mb-10 font-medium text-green-800 dark:text-green-200">
             {`${documentData.title}`}
           </h2>
 
