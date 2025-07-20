@@ -17,7 +17,7 @@ export default function EDocDesignerTopMenu({
   onExportPdf
 }) {
   return (
-    <div className="w-full bg-slate-100 dark:bg-slate-800 py-2 flex items-center justify-left pl-52 space-x-1">
+    <div className="w-full bg-slate-100 dark:bg-slate-800 py-2 flex items-center justify-center desktop:justify-left desktop:pl-52 space-x-1">
       <button
         onClick={onNewDocument}
         className="px-3 py-1 bg-blue-400 text-white rounded hover:bg-blue-600"
