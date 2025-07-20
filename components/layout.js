@@ -39,18 +39,16 @@ export default function Layout({ children, reloadSignal, triggerLeftMenuReload }
       />
 
       <DivContainer className="flex flex-col w-full">
-        <Header triggerLeftMenuReload={triggerLeftMenuReload} />
-
-        <main className="pt-16 flex-grow">
+        <main className="pt-16 flex-grow overflow-x: auto">
+          <Header triggerLeftMenuReload={triggerLeftMenuReload} />
           {React.Children.map(children, child =>
             React.isValidElement(child)
               ? React.cloneElement(child, { triggerLeftMenuReload })
               : child
           )}
+          <Footer />
         </main>
-
-        <Footer />
-      </DivContainer>
+    </DivContainer>
     </div>
   );
 }
