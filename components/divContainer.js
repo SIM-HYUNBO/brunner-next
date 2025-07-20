@@ -2,7 +2,7 @@
 
 const DivContainer = ({ children, className = "" }) => {
   return (
-    <div className={`w-full px-4 md:container md:px-0 relative ${className}`}>
+    <div className={`w-full relative ${className}`}>
       {children}
     </div>
   );
