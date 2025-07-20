@@ -73,11 +73,11 @@ export default function EDocContent({ documentId }) {
 
   return (
     <>
-      <h2 className="title-font sm:text-4xl text-3xl m-10 font-medium text-green-800 dark:text-green-200">
+      <h2 className="title-font sm:text-4xl text-3xl font-medium text-green-800 dark:text-green-200">
         {`${documentData.title}`}
       </h2>
-      <DivContainer className="flex flex-col w-full desktop:flex-row bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100">
-        <div className="w-full desktop:w-2/3 items-start text-left mt-10">
+      <DivContainer>
+        <div className="w-full desktop:w-2/3 items-start text-left">
           {pages.map((page) => (
             <EDocEditorCanvas
               key={page.id}

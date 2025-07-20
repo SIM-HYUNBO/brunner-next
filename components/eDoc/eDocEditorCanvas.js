@@ -213,7 +213,7 @@ return (
     >
       {components?.length === 0 ? (
         isViewerMode ? null : (
-          <p className="text-gray-500 dark:text-slate-300 text-center mt-20">
+          <p className="text-gray-500 dark:text-slate-300 text-center">
             좌측에서 컴포넌트를 추가하세요.
           </p>
         )

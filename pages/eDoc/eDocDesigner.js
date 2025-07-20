@@ -40,7 +40,7 @@ export default function EDocDesigner() {
         <link></link>
       </Head>
       <BodySection>
-          <DivContainer className="flex flex-col desktop:flex-row">
+          <DivContainer>
             <div className={`w-full desktop:w-full items-start text-left`}>
               <h2 className={`title-font sm:text-4xl text-3xl mb-10 font-medium text-green-900`}>
                 {`Page Designer`}
