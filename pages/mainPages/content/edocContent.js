@@ -73,7 +73,7 @@ export default function EDocContent({ documentId }) {
 
   return (
     <>
-      <DivContainer className="flex flex-col desktop:flex-row bg-white dark:bg-gray-900 text-slate-800 dark:text-slate-100">
+      <DivContainer className="flex flex-col desktop:flex-row bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100">
         <div className="w-full desktop:w-2/3 items-start text-left">
           <h2 className="title-font sm:text-4xl text-3xl mb-10 font-medium text-green-900 dark:text-green-200">
             {`${documentData.title}`}
