@@ -398,7 +398,7 @@ return (
       setCurrentPageIdx={setCurrentPageIdx}
     />
 
-    <div className="flex h-screen bg-slate-100 dark:bg-slate-800">
+    <div className="flex h-screen bg-slate-100 dark:bg-slate-800 overflow-x-auto">
       {/* 왼쪽 팔레트 */}
       <aside className="w-40 bg-white dark:bg-slate-700 border-r border-slate-300 dark:border-slate-500 p-4">
         <h2 className="font-bold mb-3 text-slate-800 dark:text-slate-100">컴포넌트 팔레트</h2>
