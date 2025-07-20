@@ -513,7 +513,7 @@ return (
             ))}
           </ul>
           <button
-            className="mt-4 px-4 py-2 bg-slate-300 dark:bg-slate-600 rounded hover:bg-slate-400 dark:hover:bg-slate-500"
+            className="px-4 py-2 bg-slate-300 dark:bg-slate-600 rounded hover:bg-slate-400 dark:hover:bg-slate-500"
             onClick={() => setShowDocumentListModal(false)}
           >
             닫기
