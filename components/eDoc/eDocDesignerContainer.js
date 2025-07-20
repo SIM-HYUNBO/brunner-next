@@ -409,9 +409,10 @@ return (
       </aside>
 
       {/* 가운데 편집영역 + 오른쪽 속성창 */}
-      <div className="flex overflow-hidden">
-        {/* 편집 캔버스 */}
-        <main className="w-fit p-4 bg-white dark:bg-slate-900 mx-auto">
+      <div className="flex flex-1 overflow-hidden">
+        {/* 캔버스를 스크롤 가능한 래퍼로 감쌈 */}
+        <div className="flex-1 overflow-auto">
+          <main className="min-w-[800px] p-4 bg-white dark:bg-slate-900 mx-auto">
           {documentData && (
             <h1 className="text-2xl font-bold mb-6 text-slate-800 dark:text-slate-100">
               {documentData.title || ''} : {documentData.id}
@@ -452,48 +453,48 @@ return (
           ))}
         </main>
       </div>
-        {/* 오른쪽 속성창 */}
-        <aside className="w-60 bg-white dark:bg-slate-700 border-0 border-slate-300 dark:border-slate-500 p-4 block">
-          <h2 className="text-lg font-semibold mb-4 text-slate-800 dark:text-slate-100">속성창</h2>
-          {selectedComponentId !== null && pages[currentPageIdx]?.components[selectedComponentId] ? (
-            <EDocComponentPropertyEditor
-              component={pages[currentPageIdx].components[selectedComponentId]}
-              handleUpdateComponent={handleUpdateComponent}
-            />
-          ) : (
-            <EDocDocumentPropertyEditor
-              title={documentData.title || ''}
-              runtimeData={documentData.runtime_data || {}}
-              onChangeTitle={(newTitle) => {
-                setDocumentData((prev) => ({ ...prev, title: newTitle }));
-              }}
-              onChangeRuntimeData={(updatedRuntimeData) => {
-                setDocumentData((prev) => {
-                  const prevAlign = prev.runtime_data?.positionAlign;
-                  const newAlign = updatedRuntimeData.positionAlign;
-                  const needUpdateAlign = prevAlign !== newAlign;
+      </div>
+      {/* 오른쪽 속성창 */}
+      <aside className="w-60 bg-white dark:bg-slate-700 border-0 border-slate-300 dark:border-slate-500 p-4 block">
+        <h2 className="text-lg font-semibold mb-4 text-slate-800 dark:text-slate-100">속성창</h2>
+        {selectedComponentId !== null && pages[currentPageIdx]?.components[selectedComponentId] ? (
+          <EDocComponentPropertyEditor
+            component={pages[currentPageIdx].components[selectedComponentId]}
+            handleUpdateComponent={handleUpdateComponent}
+          />
+        ) : (
+          <EDocDocumentPropertyEditor
+            title={documentData.title || ''}
+            runtimeData={documentData.runtime_data || {}}
+            onChangeTitle={(newTitle) => {
+              setDocumentData((prev) => ({ ...prev, title: newTitle }));
+            }}
+            onChangeRuntimeData={(updatedRuntimeData) => {
+              setDocumentData((prev) => {
+                const prevAlign = prev.runtime_data?.positionAlign;
+                const newAlign = updatedRuntimeData.positionAlign;
+                const needUpdateAlign = prevAlign !== newAlign;
 
-                  const updatedComponents = needUpdateAlign
-                    ? prev.components.map((comp) => ({
-                        ...comp,
-                        runtime_data: {
-                          ...comp.runtime_data,
-                          positionAlign: newAlign,
-                        },
-                      }))
-                    : prev.components;
+                const updatedComponents = needUpdateAlign
+                  ? prev.components.map((comp) => ({
+                      ...comp,
+                      runtime_data: {
+                        ...comp.runtime_data,
+                        positionAlign: newAlign,
+                      },
+                    }))
+                  : prev.components;
 
-                  return {
-                    ...prev,
-                    runtime_data: updatedRuntimeData,
-                    components: updatedComponents,
-                  };
-                });
-              }}
-            />
-          )}
-        </aside>
-
+                return {
+                  ...prev,
+                  runtime_data: updatedRuntimeData,
+                  components: updatedComponents,
+                };
+              });
+            }}
+          />
+        )}
+      </aside>
     </div>
 
     {/* 문서 목록 모달 */}
