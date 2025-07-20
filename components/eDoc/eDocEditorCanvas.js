@@ -199,7 +199,7 @@ export default function EDocEditorCanvas({
 
 return (
   // 모바일에서 문서 내용이 가로로 넘처서 삐져나오는 경우가 많은데 이경우 가로 스크롤로 봐야함.
-  <div className="overflow-x-auto"> 
+  <div className="overflow-x-auto flex flex-col w-full desktop:flex-row bg-white text-slate-800"> 
     <div
       id={`editor-canvas-${page.id}`}
       className="relative flex flex-col gap-4"
