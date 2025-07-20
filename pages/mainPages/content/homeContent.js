@@ -22,7 +22,7 @@ export default function HomeContent() {
           그래서 생각은 기록으로 남기고 보전해야 합니다. 
           무한한 당신의 생각을 디지털 기록으로 보관하세요.`} />
           
-          <div className={`flex flex-col`}>
+          <div className={`flex flex-col my-10`}>
             {!userInfo.isLogin() && (
               <div>
                 <button
