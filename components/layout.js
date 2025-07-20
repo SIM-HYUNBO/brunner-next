@@ -39,7 +39,7 @@ export default function Layout({ children, reloadSignal, triggerLeftMenuReload }
         reloadSignal={reloadSignal}
       />
 
-      <DivContainer className="flex flex-col w-full">
+      <DivContainer className="flex flex-col w-full md:px-4">
         <main className="pt-16 flex-grow overflow-x: auto">
           <Header triggerLeftMenuReload={triggerLeftMenuReload} />
           {React.Children.map(children, child =>
