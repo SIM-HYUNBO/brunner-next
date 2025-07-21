@@ -398,18 +398,17 @@ return (
       setCurrentPageIdx={setCurrentPageIdx}
     />
 
-    <div className="flex h-screen p-0">
-      {/* 왼쪽 팔레트 */}
-      <aside className="w-40 bg-white dark:bg-slate-700 border-r border-slate-300 dark:border-slate-500">
-        <h2 className="font-bold mb-3 text-slate-800 dark:text-slate-100">컴포넌트 팔레트</h2>
-        <EDocComponentPalette
-          templates={componentTemplates}
-          onAddComponent={handleAddComponent}
-        />
-      </aside>
-
+    <div className="flex h-screen desktop:pr-80">
       {/* 가운데 편집영역 + 오른쪽 속성창 */}
       <div className="flex flex-1 overflow-hidden">
+      {/* 왼쪽 팔레트 */}
+        <aside className="w-40 bg-white dark:bg-slate-700 border-r border-slate-300 dark:border-slate-500">
+          <h2 className="font-bold mb-3 text-slate-800 dark:text-slate-100">컴포넌트 팔레트</h2>
+          <EDocComponentPalette
+            templates={componentTemplates}
+            onAddComponent={handleAddComponent}
+          />
+        </aside>        
         {/* 캔버스를 스크롤 가능한 래퍼로 감쌈 */}
         <div className="flex-1 overflow-auto">
           <main className="min-w-[800px] bg-white dark:bg-slate-900">
@@ -453,7 +452,6 @@ return (
           ))}
         </main>
       </div>
-      </div>
       {/* 오른쪽 속성창 */}
       <aside className="w-60 bg-white dark:bg-slate-700 border-0 border-slate-300 dark:border-slate-500 p-4 block">
         <h2 className="text-lg font-semibold mb-4 text-slate-800 dark:text-slate-100">속성창</h2>
@@ -495,6 +493,7 @@ return (
           />
         )}
       </aside>
+      </div>
     </div>
 
     {/* 문서 목록 모달 */}
