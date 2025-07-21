@@ -116,10 +116,7 @@ export default function RenderComponent (props) {
           src={component.runtime_data.src}
           alt="이미지"
           className="inline-block h-auto"
-          style={{
-            width: '100%',
-            maxWidth: '100%',
-          }}
+          style={style}
         />
       ) : (
         <div className="w-full h-24 bg-gray-200 flex items-center justify-center text-gray-500">
