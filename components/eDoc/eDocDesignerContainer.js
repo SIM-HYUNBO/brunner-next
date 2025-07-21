@@ -350,8 +350,8 @@ export default function EDocDesignerContainer({ documentId, triggerLeftMenuReloa
 
   // PDF 내보내기
   const handleExportPdf = async () => {
+    
     setIsExportingPdf(true);
-
     const canvas = await html2canvas(document.querySelector('.edoc-designer-canvas'), {
       scale: 2,
     });
@@ -411,7 +411,7 @@ return (
         </aside>        
         {/* 캔버스를 스크롤 가능한 래퍼로 감쌈 */}
         <div className="flex-1 overflow-auto">
-          <main className="min-w-[800px] bg-white dark:bg-slate-900">
+          <main className="min-w-[800px] bg-white dark:bg-slate-900 edoc-designer-canvas">
           {documentData && (
             <h1 className="text-2xl font-bold mb-6 text-slate-800 dark:text-slate-100">
               {documentData.title || ''} : {documentData.id}
