@@ -33,6 +33,16 @@ export default function DocComponentRenderer({
     right: 'text-right',
   }[textAlign];
 
+  if(component.type === constants.edocComponentType._IMAGE) {
+    const positionAlign = component.runtime_data?.positionAlign || 'center';  
+    alignmentClass = positionAlign === 'right' ? 'flex justify-end' :
+                      positionAlign === 'left' ? 'flex justify-start' :
+                      positionAlign === 'center' ? 'flex justify-center' : '';
+  }
+
+
+
+
   const handleComponentClick = (e) => {
     if (e && typeof e.stopPropagation === "function") {
     e.stopPropagation();
