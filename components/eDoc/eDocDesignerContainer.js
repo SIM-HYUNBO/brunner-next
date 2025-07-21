@@ -474,7 +474,7 @@ return (
                 const needUpdateAlign = prevAlign !== newAlign;
 
                 const updatedComponents = needUpdateAlign
-                  ? prev.components.map((comp) => ({
+                  ? prev?.components?.map((comp) => ({
                       ...comp,
                       runtime_data: {
                         ...comp.runtime_data,
