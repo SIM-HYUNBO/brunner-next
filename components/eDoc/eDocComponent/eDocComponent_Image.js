@@ -105,7 +105,7 @@ export default function RenderComponent (props) {
 
   return (
     <div
-      className={`${selectedClass} ${alignmentClass} cursor-pointer`}
+      className={`${selectedClass} ${alignmentClass} cursor-pointer inline-block`}
       onClick={handleComponentClick}
       style={{
         width:`100%`,
