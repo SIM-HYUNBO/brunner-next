@@ -412,7 +412,7 @@ return (
       <div className="flex flex-1 overflow-hidden">
         {/* 캔버스를 스크롤 가능한 래퍼로 감쌈 */}
         <div className="flex-1 overflow-auto">
-          <main className="min-w-[800px] p-4 bg-white dark:bg-slate-900 mx-auto">
+          <main className="min-w-[800px] p-4 bg-white dark:bg-slate-900">
           {documentData && (
             <h1 className="text-2xl font-bold mb-6 text-slate-800 dark:text-slate-100">
               {documentData.title || ''} : {documentData.id}
