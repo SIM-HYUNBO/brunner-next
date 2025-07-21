@@ -5,7 +5,7 @@ import React from 'react';
 
 export const initDefaultRuntimeData = (defaultRuntimeData) => {
   defaultRuntimeData.src = "";
-  defaultRuntimeData.positionAlign = "left";
+  defaultRuntimeData.positionAlign = "center"; // 기본 정렬은 중앙
   
   // font 관련 기본 설정
   defaultRuntimeData.fontFamily = "Arial";
@@ -100,7 +100,7 @@ export default function RenderComponent (props) {
   const style = {
     width: '100%',
     height: component.runtime_data?.height || 'auto',
-    textAlign, // 텍스트 정렬 적용
+    textAlign: component.runtime_data?.positionAlign, // 텍스트 정렬 적용
   };
 
   return (
