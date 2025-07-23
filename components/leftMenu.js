@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { isMobile } from 'react-device-detect';
+import { isMobile, isTablet } from 'react-device-detect';
 import * as constants from "@/components/constants";
 import * as userInfo from "@/components/userInfo";
 import RequestServer from "@/components/requestServer";
@@ -15,7 +15,7 @@ export default function LeftMenu({ reloadSignal }) {
 
   return (
     <>
-      {!isMobile && (
+      {!(isMobile && !isTablet) && (
         <aside className={`dark:bg-slate-800 pt-32 w-48 desktop:pt-32 desktop:w-48 mx-20`}>
           <nav className={`fixed`}>
             <ul>

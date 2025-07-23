@@ -8,7 +8,7 @@ import * as userInfo from "@/components/userInfo";
 import RequestServer from "@/components/requestServer";
 import EDocEditorCanvas from '@/components/eDoc/eDocEditorCanvas';
 import * as commonFunctions from '@/components/commonFunctions';
-import { isMobile } from 'react-device-detect';
+import { isMosMobile, isTablet } from 'react-device-detect';
 
 export default function EDocContent({ documentId }) {
   const [loading, setLoading] = useState(false);
