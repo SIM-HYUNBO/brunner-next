@@ -1,6 +1,6 @@
 `use strict`
 
-
+import { useState, useRef, useEffect } from 'react';
 import * as constants from './constants';
 import * as InputComponent from "./eDoc/eDocComponent/eDocComponent_Input";
 import * as TextComponent from "./eDoc/eDocComponent/eDocComponent_Text";
@@ -75,7 +75,7 @@ export function useDeviceType() {
   useEffect(() => {
     function updateDeviceType() {
       const width = window.innerWidth;
-      setDevice({
+      setDeviceType({
         isMobile: width < 767,
         isTablet: width >= 767 && width < 1024
       });

@@ -33,7 +33,7 @@ export default function EDocDesignerContainer({ documentId, triggerLeftMenuReloa
   const [componentTemplates, setComponentTemplates] = useState([]);
   const [documentData, setDocumentData] = useState({
     id: documentId || null,
-    title: 'new document',
+    title: 'New Document',
     description: '신규 전자 문서',
     isPublic: false,
     components: [],
@@ -92,7 +92,7 @@ export default function EDocDesignerContainer({ documentId, triggerLeftMenuReloa
       const title = window.prompt('새문서 이름을 입력하세요');
       setDocumentData({
         id: null,
-        title: title || 'new document',
+        title: title || 'New Document',
         description: '신규 기록서',
         components: [],
         runtime_data: { padding: 24, alignment: "center", backgroundColor: "#ffffff", pageSize: "A4" }
@@ -209,7 +209,7 @@ export default function EDocDesignerContainer({ documentId, triggerLeftMenuReloa
       openModal(constants.messages.SUCCESS_DELETED);
       setDocumentData({
         id: null,
-        title: 'new document',
+        title: 'New Document',
         description: '신규 기록서',
         components: [],
         runtime_data: {
@@ -402,7 +402,7 @@ return (
       {/* 가운데 편집영역 + 오른쪽 속성창 */}
       <div className="flex flex-1 overflow-hidden">
       {/* 왼쪽 팔레트 */}
-        <aside className="w-40 bg-white dark:bg-slate-700 border-r border-slate-300 dark:border-slate-500">
+        <aside className="w-36 bg-white dark:bg-slate-700 border-r border-slate-300 dark:border-slate-500">
           <h2 className="font-bold mb-3 text-slate-800 dark:text-slate-100">컴포넌트 팔레트</h2>
           <EDocComponentPalette
             templates={componentTemplates}
@@ -411,9 +411,9 @@ return (
         </aside>        
         {/* 캔버스를 스크롤 가능한 래퍼로 감쌈 */}
         <div className="flex-1 overflow-auto">
-          <main className="min-w-[800px] bg-white dark:bg-slate-900 edoc-designer-canvas">
+          <main className="pt-16 flex-grow md:overflow-x: auto edoc-designer-canvas">
           {documentData && (
-            <h1 className="text-2xl font-bold mb-6 text-slate-800 dark:text-slate-100">
+            <h1 className="text-2xl font-bold mx-4 mb-4 text-slate-800 dark:text-slate-100">
               {documentData.title || ''} : {documentData.id}
             </h1>
           )}
@@ -453,7 +453,7 @@ return (
         </main>
       </div>
       {/* 오른쪽 속성창 */}
-      <aside className="w-60 bg-white dark:bg-slate-700 border-0 border-slate-300 dark:border-slate-500 p-4 block">
+      <aside className="w-56 bg-white dark:bg-slate-700 border-0 border-slate-300 dark:border-slate-500 p-4 block">
         <h2 className="text-lg font-semibold mb-4 text-slate-800 dark:text-slate-100">속성창</h2>
         {selectedComponentId !== null && pages[currentPageIdx]?.components[selectedComponentId] ? (
           <EDocComponentPropertyEditor
