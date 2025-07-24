@@ -127,7 +127,7 @@ export default function Header({ triggerLeftMenuReload }) {
         <div className="flex-1" />
 
         {/* 모바일 햄버거 메뉴 */}
-        <div className="md:hidden absolute top-4 right-4">
+        <div className="md:hidden absolute top-4 right-4 dark:bg-slate-800 dark:text-white">
           {mobileDropdownMenu()}
         </div>
 
