@@ -44,7 +44,7 @@ export default function Header({ triggerLeftMenuReload }) {
   const mobileDropdownMenu = () => (
     <>
       <button
-        className="p-2"
+        className="p-2 dark:bg-slate-800%20dark%3Atext-gray-100"
         onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
         aria-label="Menu"
       >
@@ -66,7 +66,7 @@ export default function Header({ triggerLeftMenuReload }) {
       </button>
 
       {mobileMenuOpen && (
-        <div className="absolute right-4 mt-2 w-64 bg-white shadow-lg rounded z-50">
+        <div className="absolute right-4 mt-2 w-64 bg-white shadow-lg rounded z-50 dark:bg-slate-800 dark:text-gray-100">
           {leftMenuItems.map((item, idx) =>
             item.type === "divider" ? (
               <hr key={idx} className="my-2 border-gray-300" />
@@ -78,7 +78,7 @@ export default function Header({ triggerLeftMenuReload }) {
               <Link
                 key={item.href + idx}
                 href={item.href}
-                className="block px-4 py-2 text-gray-700 hover:bg-gray-100"
+                className="block px-4 py-2 text-gray-700 hover:bg-gray-100 dark:bg-slate-800 dark:text-gray-100"
                 onClick={() => setMobileMenuOpen(false)}
               >
                 {item.label}
