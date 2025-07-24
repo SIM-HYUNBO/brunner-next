@@ -11,10 +11,9 @@ export default function Footer() {
           <Link
             className={`flex text-gray-600 dark:text-gray-400`}
             href="/"
-          >
-            ©2020 Brunner
+          >©2020 Brunner
           </Link>
-          <span className={`inline-flex sm:ml-auto sm:mt-0 mt-4 justify-center sm:justify-start`}>
+          <span className={`inline-flex sm:ml-auto sm:mt-0 mt-4 justify-center sm:justify-end`}>
             <a className={`text-gray-500`}>
               <svg
                 fill="currentColor"
