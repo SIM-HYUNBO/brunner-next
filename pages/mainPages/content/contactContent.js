@@ -1,12 +1,14 @@
 `use strict`;
 
+import { useDeviceType } from "@/components/commonFunctions"
 import ContactContentAnimation from "./content-animation/contactContentAnimation";
 import DivContainer from "@/components/divContainer";
-import { isMobile, isTablet, isBrowser } from "react-device-detect";
+
 import GoverningMessage from "@/components/governingMessage";
 
 export default function ContactContent() {
-  
+  const { isMobile, isTablet } = useDeviceType();
+
   return (
     <>
       <DivContainer>

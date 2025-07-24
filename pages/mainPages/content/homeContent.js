@@ -1,15 +1,16 @@
 `use strict`;
 
+import { useDeviceType } from "@/components/commonFunctions"
 import HomeContentAnimation from "./content-animation/homeContentAnimation";
 import { useRouter } from "next/router";
 import * as userInfo from "@/components/userInfo";
 import DivContainer from "@/components/divContainer";
-import { isMobile, isTablet, isBrowser } from "react-device-detect";
 import GoverningMessage from "@/components/governingMessage";
 import BrunnerBoard from "@/components/brunnerBoard";
 
 export default function HomeContent() {
   const router = useRouter();
+  const { isMobile, isTablet } = useDeviceType();
 
   return (
     <>

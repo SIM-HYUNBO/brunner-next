@@ -9,6 +9,7 @@ import * as TableComponent from "./eDoc/eDocComponent/eDocComponent_Table";
 import * as CheckListComponent from "./eDoc/eDocComponent/eDocComponent_CheckList";
 import * as ButtonComponent from "./eDoc/eDocComponent/eDocComponent_Button";
 import * as VideoComponent from "./eDoc/eDocComponent/eDocComponent_Video";
+import { userAgent } from 'next/server';
 
 export function isJsonObject(obj) {
     return obj && typeof obj === 'object' && !Array.isArray(obj);
@@ -64,3 +65,28 @@ export const bindingData = (documentData) => {
     return acc;
   }, {});
 };
+
+export function useDeviceType() {
+  const [device, setDeviceType] = useState({
+    isMobile: false,
+    isTablet: false
+  });
+
+  useEffect(() => {
+    function updateDeviceType() {
+      const width = window.innerWidth;
+      setDevice({
+        isMobile: width < 767,
+        isTablet: width >= 767 && width < 1024
+      });
+    }
+
+    updateDeviceType();
+
+    window.addEventListener('resize', updateDeviceType);
+    return () => 
+      window.removeEventListener('resize', updateDeviceType);
+   }, []);
+
+    return device;
+}

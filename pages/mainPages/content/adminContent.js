@@ -1,12 +1,14 @@
 `use strict`;
 
+import { useDeviceType } from "@/components/commonFunctions"
 import ServiceSQL from "@/components/serviceSQL";
 import AdminContentAnimation from "./content-animation/adminContentAnimation";
 import * as userInfo from "@/components/userInfo";
 import DivContainer from "@/components/divContainer";
-import { isMobile, isTablet, isBrowser } from "react-device-detect";
 
 export default function AdminContent() {
+  const { isMobile, isTablet } = useDeviceType();
+
   return (
     <>
       <DivContainer>
