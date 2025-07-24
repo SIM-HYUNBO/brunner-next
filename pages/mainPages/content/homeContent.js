@@ -41,7 +41,7 @@ export default function HomeContent() {
               </div>
             )}
           </div>
-          <div className={`flex w-full mt-10 pr-10 readonly`}>
+          <div className={`flex w-full mt-10 pr-5 readonly`}>
             <BrunnerBoard boardType={'MAIN_TALK'} />
           </div>
 
