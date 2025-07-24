@@ -89,7 +89,7 @@ export default function Header({ triggerLeftMenuReload }) {
           {/* topMenu 항목 추가 */}
           <Link
             href="/mainPages/contact"
-            className="block px-4 py-2 text-gray-700 hover:bg-gray-100"
+            className="block px-4 py-2 text-gray-700 hover:bg-gray-100  dark:bg-slate-800 dark:text-gray-100"
           >
             Contact
           </Link>
