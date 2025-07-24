@@ -1,5 +1,6 @@
 `use strict`
 
+import { useState, useRef, useEffect } from 'react';
 import Layout from '@/components/layout'
 import Head from 'next/head'
 import BodySection from '@/components/bodySection'

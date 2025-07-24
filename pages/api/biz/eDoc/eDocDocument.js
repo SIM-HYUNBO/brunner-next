@@ -54,11 +54,11 @@ const upsertOne = async (txnId, jRequest) => {
       jRequest.documentData.id = commonFunctions.generateUUID();
 
       if (!jRequest.documentData.title) {
-        jRequest.documentData.title = "new document";
+        jRequest.documentData.title = "New document";
       }
 
       if (!jRequest.documentData.description) {
-        jRequest.documentData.description = "new document";
+        jRequest.documentData.description = "New document";
       }
 
       isInsert = true; // insert

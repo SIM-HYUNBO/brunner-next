@@ -32,24 +32,14 @@ export default function EDocDesigner() {
   const documentId = null;
 
   return (
-    <Layout reloadSignal={reloadSignal} triggerLeftMenuReload={triggerLeftMenuReload}>
-      <Head>
-        <title>Stock Quotes and Investment Information - Brunner-Next</title>
-        <meta name="description" content="Brunner-Next provides real-time stock quotes. Make effective investments with real-time stock charts, investment strategies, stock news, and stock analysis tools."></meta>
-        <meta rel="icon" href="/brunnerLogo.png"></meta>
-        <link></link>
-      </Head>
+    <Layout>
       <BodySection>
-          <DivContainer>
-            <div className={`w-full desktop:w-full items-start text-left`}>
-              <h2 className={`title-font sm:text-4xl text-3xl my-20 font-medium text-green-900`}>
-                {`Page Designer`}
-              </h2>
+        <div className="w-full">
               <EDocDesignerContainer documentId={documentId} 
                                      triggerLeftMenuReload={triggerLeftMenuReload}/>
-            </div>
-            </DivContainer>
+        </div>
       </BodySection>
     </Layout>
+
   );
 }
