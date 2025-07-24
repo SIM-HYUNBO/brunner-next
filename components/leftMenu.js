@@ -1,12 +1,13 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { isMobile, isTablet } from 'react-device-detect';
+import { useDeviceType } from "@/components/commonFunctions"
 import * as constants from "@/components/constants";
 import * as userInfo from "@/components/userInfo";
 import RequestServer from "@/components/requestServer";
 import { getLeftMenuItems } from "@/components/leftMenuItems"; // 추가
 
 export default function LeftMenu({ reloadSignal }) {
+  const { isMobile, isTablet } = useDeviceType();
   const [leftMenuItems, setLeftMenuItems] = useState([]);
 
   useEffect(() => {
