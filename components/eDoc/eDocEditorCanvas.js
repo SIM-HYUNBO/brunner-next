@@ -49,7 +49,7 @@ export default function EDocEditorCanvas({
   }
 
   const { width: pageWidthPx, height: pageHeightPx } = getPageDimensionsPx(
-    runtime_data?.pageSize || "A4"
+    documentData?.runtime_data?.pageSize || "A4"
   );
 
   const splitIntoRows = (comps) => {
@@ -184,7 +184,6 @@ export default function EDocEditorCanvas({
               onRuntimeDataChange={(...args) =>
                 updateRuntimeData(compIdx, args.length === 1 ? args[0] : args)
               }
-              documentRuntimeData={runtime_data}
               mode={mode}
               bindingData={bindingData}
               documentData={documentData}
@@ -202,13 +201,13 @@ return (
   <div className="overflow-x-auto flex flex-col w-full desktop:flex-row bg-white text-slate-800 items-center justify-center"> 
     <div
       id={`editor-canvas-${page.id}`}
-      className="border border-gray-300 dark:border-white border-dashed border-6"
+      className="border border-gray-300 dark:border-white border-dashed border-1"
       style={{
         width: `${pageWidthPx}px`,
         minHeight: `${pageHeightPx}px`,
-        padding: `${runtime_data?.padding ?? 48}px`,
+        padding: `${documentData?.runtime_data?.padding ?? 48}px`,
         boxSizing: "border-box",
-        backgroundColor: runtime_data?.backgroundColor || '#ffffff',
+        backgroundColor: documentData?.runtime_data?.backgroundColor || '#f8f8f8', // 기본 회색 배경
       }}
       onClick={onSelect}
     >
