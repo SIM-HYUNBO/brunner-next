@@ -208,6 +208,7 @@ return (
         minHeight: `${pageHeightPx}px`,
         padding: `${runtime_data?.padding ?? 48}px`,
         boxSizing: "border-box",
+        backgroundColor: runtime_data?.backgroundColor || '#ffffff',
       }}
       onClick={onSelect}
     >
