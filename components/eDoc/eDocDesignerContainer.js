@@ -398,7 +398,7 @@ return (
       setCurrentPageIdx={setCurrentPageIdx}
     />
 
-    <div className="flex h-screen desktop:pr-80">
+    <div className="flex h-screen desktop:pr-20">
       {/* 가운데 편집영역 + 오른쪽 속성창 */}
       <div className="flex flex-1 overflow-hidden">
       {/* 왼쪽 팔레트 */}
@@ -411,7 +411,10 @@ return (
         </aside>        
         {/* 캔버스를 스크롤 가능한 래퍼로 감쌈 */}
         <div className="flex-1 overflow-auto">
-          <main className="pt-16 flex-grow md:overflow-x: auto edoc-designer-canvas">
+          <main className="pt-16 flex-grow md:overflow-x: auto edoc-designer-canvas" 
+                style={{
+                  backgroundColor: documentData?.runtime_data?.backgroundColor || '#f8f8f8', // 기본 회색 배경
+                }}>
           {documentData && (
             <h1 className="text-2xl font-bold mx-4 mb-4 text-slate-800 dark:text-slate-100">
               {documentData.title || ''} : {documentData.id}
@@ -424,8 +427,14 @@ return (
               className={`relative w-fit mx-auto border border-dashed border-slate-400 dark:border-slate-500 mb-8 ${
                 idx === currentPageIdx ? 'outline outline-2 outline-blue-400' : ''
               }`}
-              style={{ boxSizing: 'border-box' }}
-              onClick={() => { setCurrentPageIdx(idx); setSelectedComponentId(null); }}
+              style={{
+                boxSizing: 'border-box',
+                  backgroundColor: documentData?.runtime_data?.backgroundColor || '#f8f8f8', // 기본 회색 배경
+              }}
+              onClick={() => {
+                setCurrentPageIdx(idx);
+                setSelectedComponentId(null);
+              }}
             >
               <div
                 className="absolute top-2 left-2 bg-slate-200 dark:bg-slate-600 text-slate-600 dark:text-slate-200 text-xs rounded px-2 py-1 select-none pointer-events-none z-10"
