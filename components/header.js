@@ -116,7 +116,7 @@ export default function Header({ triggerLeftMenuReload }) {
       <DivContainer className="flex items-center w-full max-w-full">
         {/* 로고 */}
         <Link href="/" className="flex title-font font-medium items-center text-gray-900 mb-4 md:mb-0">
-          <Image src="/brunnerLogo_new.png" height={100} width={100} alt="brunner logo" priority />
+          <Image src="/brunnerLogo.png" height={100} width={100} alt="brunner logo" priority />
         </Link>
 
         {/* 문서 제목 */}
