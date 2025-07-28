@@ -43,10 +43,10 @@ export default function EDocument() {
       <Head>
         <title>Document View - Brunner-Next</title>
         <meta name="description" content="View your document here"></meta>
-        <meta rel="icon" href="/brunnerLogo.png"></meta>
+        <meta rel="icon" href="/brunnerLogo2025.png"></meta>
       </Head>
       <BodySection>
-        <div className="w-full ml-40">
+        <div className="w-full">
           <EDocContent documentId={documentId} />
         </div>
       </BodySection>
