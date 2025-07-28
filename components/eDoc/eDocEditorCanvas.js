@@ -1,13 +1,13 @@
-'use strict'
+'use strict';
 
 import React, { useEffect } from 'react';
 import * as constants from '@/components/constants';
 import DocComponentRenderer from '@/components/eDoc/eDocComponentRenderer';
 
 export default function EDocEditorCanvas({
-  pageData,                  // ✅ 단일 페이지
-  isSelected,            // ✅ 현재 페이지 선택 상태
-  onSelect,              // ✅ 페이지 클릭 시 실행
+  pageData, // ✅ 단일 페이지
+  isSelected,
+  onSelect,
   selectedComponentId,
   onComponentSelect,
   onDeleteComponent,
@@ -15,10 +15,9 @@ export default function EDocEditorCanvas({
   onMoveDown,
   onUpdateComponent,
   isViewerMode = false,
-  mode,// design | runtime
+  mode, // design | runtime
   bindingData
 }) {
-
   useEffect(() => {
     const handleKeyDown = (e) => {
       if (e.key === 'Escape') {
@@ -36,18 +35,18 @@ export default function EDocEditorCanvas({
 
   function getPageDimensionsPx(pageSize) {
     switch (pageSize) {
-      case "A3":
+      case 'A3':
         return { width: 1123, height: 1587 };
-      case "Letter":
+      case 'Letter':
         return { width: 816, height: 1056 };
-      case "A4":
+      case 'A4':
       default:
         return { width: 794, height: 1123 };
     }
   }
 
   const { width: pageWidthPx, height: pageHeightPx } = getPageDimensionsPx(
-    pageData.runtime_data?.pageSize || "A4"
+    pageData.runtime_data?.pageSize || 'A4'
   );
 
   const splitIntoRows = (comps) => {
@@ -69,8 +68,7 @@ export default function EDocEditorCanvas({
 
   const updateRuntimeData = (componentIdx, newData) => {
     const component = pageData.components[componentIdx];
-    const currentData = component.runtime_data || {};
-    let newRuntimeData = newData.runtime_data;
+    const newRuntimeData = newData.runtime_data;
 
     const updatedComponent = {
       ...component,
@@ -89,136 +87,141 @@ export default function EDocEditorCanvas({
   };
 
   const RenderComponents = () => {
-    const comps = pageData.components.length > 0
-      ? [
-          {
-            ...pageData.components[0],
-            runtime_data: {
-              ...pageData.components[0].runtime_data,
-              forceNewLine: true,
+    const comps =
+      pageData.components.length > 0
+        ? [
+            {
+              ...pageData.components[0],
+              runtime_data: {
+                ...pageData.components[0].runtime_data,
+                forceNewLine: true,
+              },
             },
-          },
-          ...pageData.components.slice(1),
-        ]
-      : [];
+            ...pageData.components.slice(1),
+          ]
+        : [];
 
     const rows = splitIntoRows(comps);
 
+    // 페이지 전체 정렬값으로 통일
+    const pageAlign = pageData.runtime_data?.positionAlign || 'left';
+    const justifyContent = justifyMap[pageAlign] || 'flex-start';
+
     return rows.map((row, rowIdx) => {
-      const firstCompInRow = comps[row[0]];
-      const rowAlign = firstCompInRow.runtime_data?.positionAlign || pageData.runtime_data?.positionAlign || 'left';
-      const justifyContent = justifyMap[rowAlign] || 'flex-start';
-
       return (
+        <div
+          key={rowIdx}
+          className="flex mb-2 gap-2"
+          style={{
+            maxWidth: `calc(${pageWidthPx}px - ${(pageData.runtime_data?.padding ?? 24) * 2}px)`,
+            justifyContent, // 페이지 전체 정렬로 통일
+            overflow: 'x-auto',
+          }}
+        >
+          {row.map((compIdx) => {
+            const comp = comps[compIdx];
+            const widthRaw = comp.runtime_data?.width;
+            const componentWidth =
+              typeof widthRaw === 'string'
+                ? widthRaw
+                : `${parseInt(widthRaw ?? 100)}%`;
+
+            return (
               <div
-                key={rowIdx}
-                className="flex mb-2 gap-2"
-                style={{
-                  maxWidth: `calc(${pageWidthPx}px - ${pageData.runtime_data?.padding ?? 24 * 2}px)`,
-                  justifyContent,
-                  overflow: "x-auto",
-                }}
+                key={compIdx}
+                className={`relative group rounded ${
+                  isViewerMode
+                    ? ''
+                    : selectedComponentId === compIdx
+                    ? 'border-2 border-blue-500'
+                    : 'border border-transparent hover:border-gray-300'
+                }`}
+                style={{ width: componentWidth }}
               >
-              {row.map((compIdx) => {
-                const comp = comps[compIdx];
-                const widthRaw = comp.runtime_data?.width;
-                const componentWidth = typeof widthRaw === 'string' ? widthRaw : `${parseInt(widthRaw ?? 100)}%`;
-
-                return (
-                  <div
-                    key={compIdx}
-                    className={`relative group rounded ${
-                      isViewerMode
-                        ? ''
-                        : selectedComponentId === compIdx
-                          ? 'border-2 border-blue-500'
-                          : 'border border-transparent hover:border-gray-300'
-                    }`}
-                    style={{ width: componentWidth }}
-                  >
-                  {!isViewerMode && selectedComponentId === compIdx && (
+                {!isViewerMode && selectedComponentId === compIdx && (
                   <div className="opacity-80 left-0 top-1/2 -translate-y-1/2 flex flex-row pointer-events-auto text-xs bg-white border rounded shadow items-center justify-center gap-1 absolute z-10">
-                  <button
-                    onClick={() => onMoveUp(compIdx)}
-                    disabled={compIdx === 0}
-                    className="hover:bg-gray-100 text-sm px-1 py-0.5 transition-opacity duration-200"
-                    style={{ width: '16px', height: '20px', opacity:1 }}
-                    onMouseEnter={e => (e.currentTarget.style.opacity = 1)}
-                    onMouseLeave={e => (e.currentTarget.style.opacity = 1)}
-                  >
-                    ↑
-                  </button>
-                  <button
-                    onClick={() => onMoveDown(compIdx)}
-                    disabled={compIdx === comps.length - 1}
-                    className="hover:bg-gray-100  text-sm px-1 py-0.5 transition-opacity duration-200"
-                    style={{ width: '16px', height: '20px', opacity: 1 }}
-                    onMouseEnter={e => (e.currentTarget.style.opacity = 1)}
-                    onMouseLeave={e => (e.currentTarget.style.opacity = 1)}
-                  >
-                    ↓
-                  </button>
-                  <button
-                    onClick={() => onDeleteComponent(compIdx)}
-                    className="hover:bg-gray-100 text-red-600 text-sm px-1 py-0.5 transition-opacity duration-200"
-                    style={{ width: '16px', height: '20px', opacity: 1}}
-                    onMouseEnter={e => (e.currentTarget.style.opacity = 1)}
-                    onMouseLeave={e => (e.currentTarget.style.opacity = 1)}
-                  >
-                    🗑
-                  </button>
-                </div>
-            )}
+                    <button
+                      onClick={() => onMoveUp(compIdx)}
+                      disabled={compIdx === 0}
+                      className="hover:bg-gray-100 text-sm px-1 py-0.5 transition-opacity duration-200"
+                      style={{ width: '16px', height: '20px', opacity: 1 }}
+                    >
+                      ↑
+                    </button>
+                    <button
+                      onClick={() => onMoveDown(compIdx)}
+                      disabled={compIdx === comps.length - 1}
+                      className="hover:bg-gray-100 text-sm px-1 py-0.5 transition-opacity duration-200"
+                      style={{ width: '16px', height: '20px', opacity: 1 }}
+                    >
+                      ↓
+                    </button>
+                    <button
+                      onClick={() => onDeleteComponent(compIdx)}
+                      className="hover:bg-gray-100 text-red-600 text-sm px-1 py-0.5 transition-opacity duration-200"
+                      style={{ width: '16px', height: '20px', opacity: 1 }}
+                    >
+                      🗑
+                    </button>
+                  </div>
+                )}
 
-            <DocComponentRenderer
-              component={comp}
-              isSelected={!isViewerMode && selectedComponentId === compIdx}
-              onSelect={() => {
-                if (!isViewerMode) {
-                  onSelect?.(); // ✅ 페이지 선택 먼저!
-                  onComponentSelect?.(compIdx); // ✅ 그 다음 컴포넌트 선택!
-                }
-              }}
-              onRuntimeDataChange={(...args) =>
-                updateRuntimeData(compIdx, args.length === 1 ? args[0] : args)
-              }
-              mode={mode}
-              bindingData={bindingData}
-              page={pageData}
-            />
-          </div>
-          );
-        })}
-      </div>
+                <DocComponentRenderer
+                  component={comp}
+                  isSelected={!isViewerMode && selectedComponentId === compIdx}
+                  onSelect={() => {
+                    if (!isViewerMode) {
+                      onSelect?.(); // ✅ 페이지 선택 먼저
+                      onComponentSelect?.(compIdx);
+                    }
+                  }}
+                  onRuntimeDataChange={(...args) =>
+                    updateRuntimeData(compIdx, args.length === 1 ? args[0] : args)
+                  }
+                  mode={mode}
+                  bindingData={bindingData}
+                  page={pageData}
+                />
+              </div>
+            );
+          })}
+        </div>
       );
     });
   };
 
-return (
-  // 모바일에서 문서 내용이 가로로 넘처서 삐져나오는 경우가 많은데 이경우 가로 스크롤로 봐야함.
-  <div className="overflow-x-auto flex flex-col w-full desktop:flex-row text-slate-800 items-center justify-center"> 
-    <div
-      id={`editor-canvas-${pageData.id}`}
-      className="border border-gray-300 dark:border-white border-dashed border-1"
-      style={{
-        width: `${pageWidthPx}px`,
-        minHeight: `${pageHeightPx}px`,
-        padding: `${pageData.runtime_data?.padding ?? 48}px`,
-        boxSizing: "border-box",
-        backgroundColor: pageData.runtime_data?.backgroundColor || '#f8f8f8', // 기본 회색 배경
-      }}
-      onClick={onSelect}
-    >
-      {pageData.components?.length === 0 ? (
-        isViewerMode ? null : (
-          <p className="text-gray-500 dark:text-slate-300 text-center">
-            좌측에서 컴포넌트를 추가하세요.
-          </p>
-        )
-      ) : (
-        RenderComponents()
-      )}
+  // 페이지 전체 정렬 클래스
+  const pageAlign = pageData.runtime_data?.positionAlign || 'center';
+  const outerAlignClass = {
+    left: 'items-start justify-start',
+    center: 'items-center justify-center',
+    right: 'items-end justify-end',
+  }[pageAlign];
+
+  return (
+    <div className={`overflow-x-auto flex w-full text-slate-800 ${outerAlignClass}`}>
+      <div
+        id={`editor-canvas-${pageData.id}`}
+        className="border border-gray-300 dark:border-white border-dashed border-1"
+        style={{
+          width: `${pageWidthPx}px`,
+          minHeight: `${pageHeightPx}px`,
+          padding: `${pageData.runtime_data?.padding ?? 48}px`,
+          boxSizing: 'border-box',
+          backgroundColor: pageData.runtime_data?.backgroundColor || '#f8f8f8',
+        }}
+        onClick={onSelect}
+      >
+        {pageData.components?.length === 0 ? (
+          isViewerMode ? null : (
+            <p className="text-gray-500 dark:text-slate-300 text-center">
+              좌측에서 컴포넌트를 추가하세요.
+            </p>
+          )
+        ) : (
+          RenderComponents()
+        )}
+      </div>
     </div>
-  </div>
-);
+  );
 }
