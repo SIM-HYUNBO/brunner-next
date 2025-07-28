@@ -91,7 +91,7 @@ const upsertOne = async (txnId, jRequest) => {
       ]);
 
       if (insertResult.rowCount !== 1) {
-        jResponse.error_code = 0;
+        jResponse.error_code = -1;
         jResponse.error_message = constants.messages.FAILED_TO_SAVE;
         return jResponse;
       }
