@@ -118,12 +118,13 @@ export default function Header({ triggerLeftMenuReload }) {
         {/* 로고 */}
         <Link href="/" className="flex title-font font-medium items-center text-gray-900 mb-4 md:mb-0">
           <Image
-            src="/brunnerLogo2025.png"
-            height={100}
-            width={100}
-            alt="brunner logo"
-            priority
-            className="h-12 w-auto sm:h-16"
+            src="/brunnerLogo202507.png"
+              alt="brunner logo"
+              priority
+              width={0}
+              height={0}
+              sizes="(max-width: 768px) 200px, 320px"
+              className="w-[200px] sm:w-[320px] h-auto"
           />
         </Link>
 
