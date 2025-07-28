@@ -5,7 +5,7 @@ import * as constants from '@/components/constants';
 import DocComponentRenderer from '@/components/eDoc/eDocComponentRenderer';
 
 export default function EDocEditorCanvas({
-  pageData, // ✅ 단일 페이지
+  pageData,
   isSelected,
   onSelect,
   selectedComponentId,
@@ -15,7 +15,7 @@ export default function EDocEditorCanvas({
   onMoveDown,
   onUpdateComponent,
   isViewerMode = false,
-  mode, // design | runtime
+  mode,
   bindingData
 }) {
   useEffect(() => {
@@ -49,6 +49,12 @@ export default function EDocEditorCanvas({
     pageData.runtime_data?.pageSize || 'A4'
   );
 
+  const justifyMap = {
+    left: 'flex-start',
+    center: 'center',
+    right: 'flex-end',
+  };
+
   const splitIntoRows = (comps) => {
     const rows = [];
     let currentRow = [];
@@ -80,12 +86,6 @@ export default function EDocEditorCanvas({
     }
   };
 
-  const justifyMap = {
-    left: 'flex-start',
-    center: 'center',
-    right: 'flex-end',
-  };
-
   const RenderComponents = () => {
     const comps =
       pageData.components.length > 0
@@ -103,19 +103,13 @@ export default function EDocEditorCanvas({
 
     const rows = splitIntoRows(comps);
 
-    // 페이지 전체 정렬값으로 통일
-    const pageAlign = pageData.runtime_data?.positionAlign || 'left';
-    const justifyContent = justifyMap[pageAlign] || 'flex-start';
-
     return rows.map((row, rowIdx) => {
       return (
         <div
           key={rowIdx}
-          className="flex mb-2 gap-2"
+          className="flex mb-2 gap-2 w-full"
           style={{
             maxWidth: `calc(${pageWidthPx}px - ${(pageData.runtime_data?.padding ?? 24) * 2}px)`,
-            justifyContent, // 페이지 전체 정렬로 통일
-            overflow: 'x-auto',
           }}
         >
           {row.map((compIdx) => {
@@ -126,62 +120,70 @@ export default function EDocEditorCanvas({
                 ? widthRaw
                 : `${parseInt(widthRaw ?? 100)}%`;
 
+            const align = comp.runtime_data?.positionAlign || 'left';
+            const justifyContent = justifyMap[align] || 'flex-start';
+
             return (
               <div
                 key={compIdx}
-                className={`relative group rounded ${
-                  isViewerMode
-                    ? ''
-                    : selectedComponentId === compIdx
-                    ? 'border-2 border-blue-500'
-                    : 'border border-transparent hover:border-gray-300'
-                }`}
-                style={{ width: componentWidth }}
+                className="flex w-full"
+                style={{ justifyContent }}
               >
-                {!isViewerMode && selectedComponentId === compIdx && (
-                  <div className="opacity-80 left-0 top-1/2 -translate-y-1/2 flex flex-row pointer-events-auto text-xs bg-white border rounded shadow items-center justify-center gap-1 absolute z-10">
-                    <button
-                      onClick={() => onMoveUp(compIdx)}
-                      disabled={compIdx === 0}
-                      className="hover:bg-gray-100 text-sm px-1 py-0.5 transition-opacity duration-200"
-                      style={{ width: '16px', height: '20px', opacity: 1 }}
-                    >
-                      ↑
-                    </button>
-                    <button
-                      onClick={() => onMoveDown(compIdx)}
-                      disabled={compIdx === comps.length - 1}
-                      className="hover:bg-gray-100 text-sm px-1 py-0.5 transition-opacity duration-200"
-                      style={{ width: '16px', height: '20px', opacity: 1 }}
-                    >
-                      ↓
-                    </button>
-                    <button
-                      onClick={() => onDeleteComponent(compIdx)}
-                      className="hover:bg-gray-100 text-red-600 text-sm px-1 py-0.5 transition-opacity duration-200"
-                      style={{ width: '16px', height: '20px', opacity: 1 }}
-                    >
-                      🗑
-                    </button>
-                  </div>
-                )}
+                <div
+                  className={`relative group rounded ${
+                    isViewerMode
+                      ? ''
+                      : selectedComponentId === compIdx
+                      ? 'border-2 border-blue-500'
+                      : 'border border-transparent hover:border-gray-300'
+                  }`}
+                  style={{ width: componentWidth }}
+                >
+                  {!isViewerMode && selectedComponentId === compIdx && (
+                    <div className="opacity-80 left-0 top-1/2 -translate-y-1/2 flex flex-row pointer-events-auto text-xs bg-white border rounded shadow items-center justify-center gap-1 absolute z-10">
+                      <button
+                        onClick={() => onMoveUp(compIdx)}
+                        disabled={compIdx === 0}
+                        className="hover:bg-gray-100 text-sm px-1 py-0.5 transition-opacity duration-200"
+                        style={{ width: '16px', height: '20px', opacity: 1 }}
+                      >
+                        ↑
+                      </button>
+                      <button
+                        onClick={() => onMoveDown(compIdx)}
+                        disabled={compIdx === comps.length - 1}
+                        className="hover:bg-gray-100 text-sm px-1 py-0.5 transition-opacity duration-200"
+                        style={{ width: '16px', height: '20px', opacity: 1 }}
+                      >
+                        ↓
+                      </button>
+                      <button
+                        onClick={() => onDeleteComponent(compIdx)}
+                        className="hover:bg-gray-100 text-red-600 text-sm px-1 py-0.5 transition-opacity duration-200"
+                        style={{ width: '16px', height: '20px', opacity: 1 }}
+                      >
+                        🗑
+                      </button>
+                    </div>
+                  )}
 
-                <DocComponentRenderer
-                  component={comp}
-                  isSelected={!isViewerMode && selectedComponentId === compIdx}
-                  onSelect={() => {
-                    if (!isViewerMode) {
-                      onSelect?.(); // ✅ 페이지 선택 먼저
-                      onComponentSelect?.(compIdx);
+                  <DocComponentRenderer
+                    component={comp}
+                    isSelected={!isViewerMode && selectedComponentId === compIdx}
+                    onSelect={() => {
+                      if (!isViewerMode) {
+                        onSelect?.();
+                        onComponentSelect?.(compIdx);
+                      }
+                    }}
+                    onRuntimeDataChange={(...args) =>
+                      updateRuntimeData(compIdx, args.length === 1 ? args[0] : args)
                     }
-                  }}
-                  onRuntimeDataChange={(...args) =>
-                    updateRuntimeData(compIdx, args.length === 1 ? args[0] : args)
-                  }
-                  mode={mode}
-                  bindingData={bindingData}
-                  page={pageData}
-                />
+                    mode={mode}
+                    bindingData={bindingData}
+                    page={pageData}
+                  />
+                </div>
               </div>
             );
           })}
@@ -190,16 +192,8 @@ export default function EDocEditorCanvas({
     });
   };
 
-  // 페이지 전체 정렬 클래스
-  const pageAlign = pageData.runtime_data?.positionAlign || 'center';
-  const outerAlignClass = {
-    left: 'items-start justify-start',
-    center: 'items-center justify-center',
-    right: 'items-end justify-end',
-  }[pageAlign];
-
   return (
-    <div className={`overflow-x-auto flex w-full text-slate-800 ${outerAlignClass}`}>
+    <div className="overflow-x-auto flex w-full justify-center text-slate-800 mb-1">
       <div
         id={`editor-canvas-${pageData.id}`}
         className="border border-gray-300 dark:border-white border-dashed border-1"
