@@ -1,5 +1,5 @@
 import Head from 'next/head';
-import EDocContent from '@/components/content/edocContent';
+import EDocContent from '..edocContent';
 
 export async function getServerSideProps(context) {
   const { documentId } = context.params;
