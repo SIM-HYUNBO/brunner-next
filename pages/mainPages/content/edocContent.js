@@ -71,8 +71,41 @@ export default function EDocContent({ documentId }) {
     );
   }
 
+  const components = documentData?.components || [];
+  const title =
+    components.find(c => c.type === constants.edocComponentType._TEXT)?.runtime_data?.text?.slice(0, 60) ||
+    documentData.title || '전자문서';
+
+  const description =
+    components
+      .filter(c => c.type === constants.edocComponentType._TEXT || c.type === constants.edocComponentType._INPUT)
+      .map(c => c.runtime_data?.text || c.runtime_data?.label || '')
+      .join(' ')
+      .slice(0, 160) || '전자문서 내용 요약';
+
+  const ogImage =
+    components.find(c => c.type === constants.edocComponentType._IMAGE || c.type === constants.edocComponentType._VIDEO)?.runtime_data?.src || '/default-og-image.png';
+
   return (
     <>
+      <Head>
+        <title>{title}</title>
+        <meta name="description" content={description} />
+
+        {/* OpenGraph */}
+        <meta property="og:title" content={title} />
+        <meta property="og:description" content={description} />
+        <meta property="og:image" content={ogImage} />
+        <meta property="og:type" content="article" />
+        <meta property="og:url" content={`https://brunner-next.vercel.app/edoc/${documentData.id}`} />
+
+        {/* Twitter */}
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content={title} />
+        <meta name="twitter:description" content={description} />
+        <meta name="twitter:image" content={ogImage} />
+      </Head>
+      
       <h2 className="title-font sm:text-4xl text-3xl font-medium text-green-800 dark:text-green-200 my-20">
         {`${documentData.title}`}
       </h2>
