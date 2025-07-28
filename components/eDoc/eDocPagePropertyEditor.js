@@ -25,17 +25,6 @@ export default function EDocPagePropertyEditor({
         className="w-full border border-gray-300 rounded p-2 mb-3"
       />
 
-      <label>Position Align</label>
-      <select
-        value={runtimeData.positionAlign || 'center'}
-        onChange={(e) => updateProperty('positionAlign', e.target.value)}
-        className="w-full border border-gray-300 rounded p-2 mb-3"
-      >
-        <option value="left">왼쪽</option>
-        <option value="center">가운데</option>
-        <option value="right">오른쪽</option>
-      </select>
-
       <label>Page Background Color</label>
       <input
         type="color"
