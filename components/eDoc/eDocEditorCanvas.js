@@ -193,7 +193,14 @@ export default function EDocEditorCanvas({
   };
 
   return (
-    <div className="overflow-x-auto flex w-full justify-center text-slate-800 mb-1">
+    // 페이지간 간격 1 고정
+    <div className={`overflow-x-auto 
+                     flex w-full justify-center 
+                     text-slate-800`}
+         style={{
+          marginTop: `${pageData.runtime_data.pageMargin}px`,          
+        }}            
+    > 
       <div
         id={`editor-canvas-${pageData.id}`}
         className="border border-gray-300 dark:border-white border-dashed border-1"
