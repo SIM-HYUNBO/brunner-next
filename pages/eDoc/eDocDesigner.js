@@ -40,6 +40,5 @@ export default function EDocDesigner() {
         </div>
       </BodySection>
     </Layout>
-
   );
 }
