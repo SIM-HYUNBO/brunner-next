@@ -388,6 +388,13 @@ export default function EDocDesignerContainer({ documentId, triggerLeftMenuReloa
 
         {/* 중앙 편집 캔버스 */}
         <div className="flex-1 overflow-auto">
+          {documentData && (
+            <h1 className="text-2xl font-bold mx-4 mb-4 text-slate-800 dark:text-slate-100">
+              {documentData.title || ''} : {documentData.id}
+            </h1>
+          )}
+
+          {/* 도큐먼트 객체 */}
           <main
             className="pt-16 flex-grow edoc-designer-canvas"
             style={{
@@ -395,47 +402,41 @@ export default function EDocDesignerContainer({ documentId, triggerLeftMenuReloa
               padding: '40px', // ✅ 여백 추가
             }}
           >
-            {documentData && (
-              <h1 className="text-2xl font-bold mx-4 mb-4 text-slate-800 dark:text-slate-100">
-                {documentData.title || ''} : {documentData.id}
-              </h1>
-            )}
+          {documentData.pages.map((page, idx) => (
+            <div
+              key={page.id}
+              className={`relative w-fit mx-auto border border-dashed border-slate-400 dark:border-slate-500 mb-8 ${
+                idx === currentPageIdx ? 'outline outline-2 outline-blue-400' : ''
+              }`}
+              
+              onClick={() => {
+                setCurrentPageIdx(idx);
+                setSelectedComponentId(null);
+              }}
+            >
+              <div className="absolute top-2 left-2 bg-slate-200 dark:bg-slate-600 text-slate-600 dark:text-slate-200 text-xs rounded px-2 py-1 select-none pointer-events-none z-10">
+                p{idx + 1}
+              </div>
 
-            {documentData.pages.map((page, idx) => (
-              <div
-                key={page.id}
-                className={`relative w-fit mx-auto border border-dashed border-slate-400 dark:border-slate-500 mb-8 ${
-                  idx === currentPageIdx ? 'outline outline-2 outline-blue-400' : ''
-                }`}
-                
-                onClick={() => {
+              <EDocEditorCanvas
+                pageData={page}
+                isSelected={idx === currentPageIdx}
+                onSelect={() => {
                   setCurrentPageIdx(idx);
                   setSelectedComponentId(null);
                 }}
-              >
-                <div className="absolute top-2 left-2 bg-slate-200 dark:bg-slate-600 text-slate-600 dark:text-slate-200 text-xs rounded px-2 py-1 select-none pointer-events-none z-10">
-                  p{idx + 1}
-                </div>
-
-                <EDocEditorCanvas
-                  pageData={page}
-                  isSelected={idx === currentPageIdx}
-                  onSelect={() => {
-                    setCurrentPageIdx(idx);
-                    setSelectedComponentId(null);
-                  }}
-                  selectedComponentId={selectedComponentId}
-                  onComponentSelect={handleComponentSelect}
-                  onMoveUp={handleMoveComponentUp}
-                  onMoveDown={handleMoveComponentDown}
-                  onDeleteComponent={handleDeleteComponent}
-                  onUpdateComponent={handleUpdateComponent}
-                  isViewerMode={isExportingPdf}
-                  mode={mode}
-                  bindingData={commonFunctions.bindingData}
-                />
-              </div>
-            ))}
+                selectedComponentId={selectedComponentId}
+                onComponentSelect={handleComponentSelect}
+                onMoveUp={handleMoveComponentUp}
+                onMoveDown={handleMoveComponentDown}
+                onDeleteComponent={handleDeleteComponent}
+                onUpdateComponent={handleUpdateComponent}
+                isViewerMode={isExportingPdf}
+                mode={mode}
+                bindingData={commonFunctions.bindingData}
+              />
+            </div>
+          ))}
           </main>
         </div>
 
@@ -452,7 +453,6 @@ export default function EDocDesignerContainer({ documentId, triggerLeftMenuReloa
           ) : (
             <>
               <EDocDocumentPropertyEditor
-                title={documentData.title || ''}
                 runtimeData={documentData.runtime_data || {}}
                 onChangeTitle={(newTitle) =>
                   setDocumentData((prev) => ({ ...prev, title: newTitle }))

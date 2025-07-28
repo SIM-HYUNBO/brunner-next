@@ -76,20 +76,29 @@ export default function EDocContent({ documentId }) {
       <h2 className="title-font sm:text-4xl text-3xl font-medium text-green-800 dark:text-green-200 my-20">
         {`${documentData.title}`}
       </h2>
-      <DivContainer>
-        <div className="w-full desktop:w-2/3 items-start text-left">
-          {pages.map((page) => (
-            <EDocEditorCanvas
-              key={page.id}
-              pageData={page}
-              isViewerMode={true}
-              mode="runtime"
-              bindingData={commonFunctions.bindingData}
-              style={{ width: "100%", minWidth: 0, overflow: "visible" }}
-            />
-          ))}
-        </div>
-      </DivContainer>
+      <main
+        className="flex-grow edoc-designer-canvas"
+        style={{
+          backgroundColor: documentData?.runtime_data?.backgroundColor || '#f8f8f8',
+        }}
+      >
+      {/* 도큐먼트 객체 (실행타임) */}
+      <div className="w-full" 
+           style={{
+                  backgroundColor: documentData?.runtime_data?.backgroundColor || '#f8f8f8',
+                 }}>
+                {pages.map((page) => (
+                  <EDocEditorCanvas
+                    key={page.id}
+                    pageData={page}
+                    isViewerMode={true}
+                    mode="runtime"
+                    bindingData={commonFunctions.bindingData}
+                    style={{ width: "100%", minWidth: 0, overflow: "visible" }}
+                  />
+             ))}
+      </div>
+      </main>
     </>
   );
 }
