@@ -112,7 +112,7 @@ export default function EDocContent({ documentId }) {
         <meta property="og:type" content="article" />
         <meta
           property="og:url"
-          content={`https://brunner-next.vercel.app/edoc/${documentData.id}`}
+          content={`https://brunner-next.vercel.app/edoc/${documentId}`}
         />
 
         {/* Twitter */}
