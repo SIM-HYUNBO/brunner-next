@@ -132,7 +132,7 @@ export default function EDocContent({ documentId }) {
       >
       {/* 도큐먼트 객체 (실행타임) */}
         <div
-          className="w-full p-10"
+          className="w-full p-1"
           style={{ backgroundColor: documentData.runtime_data?.backgroundColor || '#f8f8f8' }}
         >
           {pages.map(page => (
