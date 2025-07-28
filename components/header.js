@@ -120,9 +120,9 @@ export default function Header({ triggerLeftMenuReload }) {
         </Link>
 
         {/* 문서 제목 */}
-        <Link href="/" className="flex title-font font-medium items-center text-gray-900 mb-4 md:mb-0">
+        {/* <Link href="/" className="flex title-font font-medium items-center text-gray-900 mb-4 md:mb-0">
           <h1 className="title-font sm:text-4xl text-3xl m-5 font-medium text-orange-900">Brunner</h1>
-        </Link>
+        </Link> */}
 
         <div className="flex-1" />
 
