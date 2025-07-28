@@ -27,10 +27,10 @@ export function generateUUID() { // Public Domain/MIT
 export const bindingData = (documentData) => {
   if (!Array.isArray(documentData.pages)) return {};
 
-  return documentData.pages.reduce((acc, page) => {
-    if (!Array.isArray(page.components)) return acc;
+  return documentData.pages.reduce((acc, pageData) => {
+    if (!Array.isArray(pageData.components)) return acc;
 
-    page.components.forEach(comp => {
+    pageData.components.forEach(comp => {
       let value = null;
       let bindingKey = comp.runtime_data.bindingKey;
       if (bindingKey) {    

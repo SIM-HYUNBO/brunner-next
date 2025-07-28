@@ -17,7 +17,7 @@ export default function DocComponentRenderer({
   onRuntimeDataChange,
   mode,
   bindingData,
-  documentData 
+  page 
 }) {
   
   const selectedClass = isSelected
@@ -25,7 +25,7 @@ export default function DocComponentRenderer({
     : '';
 
   // 내부 텍스트 정렬 (content 정렬용)
-  const textAlign = component.runtime_data?.textAlign || documentData?.runtime_data?.alignment || 'left';
+  const textAlign = component.runtime_data?.textAlign || page?.runtime_data?.alignment || 'left';
   var alignmentClass = {
     left: 'text-left',
     center: 'text-center',
@@ -58,7 +58,7 @@ export default function DocComponentRenderer({
     textAlign,
     isDesignMode: mode === "design",
     bindingData,
-    documentData,
+    page,
   };
 
 switch (component.type) {

@@ -81,11 +81,10 @@ export default function EDocContent({ documentId }) {
           {pages.map((page) => (
             <EDocEditorCanvas
               key={page.id}
-              page={page}
+              pageData={page}
               isViewerMode={true}
               mode="runtime"
               bindingData={commonFunctions.bindingData}
-              documentData={page.documentData}
               style={{ width: "100%", minWidth: 0, overflow: "visible" }}
             />
           ))}

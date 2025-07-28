@@ -5,7 +5,7 @@ import * as constants from '@/components/constants';
 import DocComponentRenderer from '@/components/eDoc/eDocComponentRenderer';
 
 export default function EDocEditorCanvas({
-  page,                  // ✅ 단일 페이지
+  pageData,                  // ✅ 단일 페이지
   isSelected,            // ✅ 현재 페이지 선택 상태
   onSelect,              // ✅ 페이지 클릭 시 실행
   selectedComponentId,
@@ -16,10 +16,8 @@ export default function EDocEditorCanvas({
   onUpdateComponent,
   isViewerMode = false,
   mode,// design | runtime
-  bindingData,
-  documentData
+  bindingData
 }) {
-  const { components, runtime_data } = page;
 
   useEffect(() => {
     const handleKeyDown = (e) => {
@@ -49,7 +47,7 @@ export default function EDocEditorCanvas({
   }
 
   const { width: pageWidthPx, height: pageHeightPx } = getPageDimensionsPx(
-    documentData?.runtime_data?.pageSize || "A4"
+    pageData.runtime_data?.pageSize || "A4"
   );
 
   const splitIntoRows = (comps) => {
@@ -70,7 +68,7 @@ export default function EDocEditorCanvas({
   };
 
   const updateRuntimeData = (componentIdx, newData) => {
-    const component = components[componentIdx];
+    const component = pageData.components[componentIdx];
     const currentData = component.runtime_data || {};
     let newRuntimeData = newData.runtime_data;
 
@@ -91,16 +89,16 @@ export default function EDocEditorCanvas({
   };
 
   const RenderComponents = () => {
-    const comps = components.length > 0
+    const comps = pageData.components.length > 0
       ? [
           {
-            ...components[0],
+            ...pageData.components[0],
             runtime_data: {
-              ...components[0].runtime_data,
+              ...pageData.components[0].runtime_data,
               forceNewLine: true,
             },
           },
-          ...components.slice(1),
+          ...pageData.components.slice(1),
         ]
       : [];
 
@@ -108,7 +106,7 @@ export default function EDocEditorCanvas({
 
     return rows.map((row, rowIdx) => {
       const firstCompInRow = comps[row[0]];
-      const rowAlign = firstCompInRow.runtime_data?.positionAlign || runtime_data?.positionAlign || 'left';
+      const rowAlign = firstCompInRow.runtime_data?.positionAlign || pageData.runtime_data?.positionAlign || 'left';
       const justifyContent = justifyMap[rowAlign] || 'flex-start';
 
       return (
@@ -116,7 +114,7 @@ export default function EDocEditorCanvas({
                 key={rowIdx}
                 className="flex mb-2 gap-2"
                 style={{
-                  maxWidth: `calc(${pageWidthPx}px - ${runtime_data?.padding ?? 24 * 2}px)`,
+                  maxWidth: `calc(${pageWidthPx}px - ${pageData.runtime_data?.padding ?? 24 * 2}px)`,
                   justifyContent,
                   overflow: "x-auto",
                 }}
@@ -186,7 +184,7 @@ export default function EDocEditorCanvas({
               }
               mode={mode}
               bindingData={bindingData}
-              documentData={documentData}
+              page={pageData}
             />
           </div>
           );
@@ -198,20 +196,20 @@ export default function EDocEditorCanvas({
 
 return (
   // 모바일에서 문서 내용이 가로로 넘처서 삐져나오는 경우가 많은데 이경우 가로 스크롤로 봐야함.
-  <div className="overflow-x-auto flex flex-col w-full desktop:flex-row bg-white text-slate-800 items-center justify-center"> 
+  <div className="overflow-x-auto flex flex-col w-full desktop:flex-row text-slate-800 items-center justify-center"> 
     <div
-      id={`editor-canvas-${page.id}`}
+      id={`editor-canvas-${pageData.id}`}
       className="border border-gray-300 dark:border-white border-dashed border-1"
       style={{
         width: `${pageWidthPx}px`,
         minHeight: `${pageHeightPx}px`,
-        padding: `${documentData?.runtime_data?.padding ?? 48}px`,
+        padding: `${pageData.runtime_data?.padding ?? 48}px`,
         boxSizing: "border-box",
-        backgroundColor: documentData?.runtime_data?.backgroundColor || '#f8f8f8', // 기본 회색 배경
+        backgroundColor: pageData.runtime_data?.backgroundColor || '#f8f8f8', // 기본 회색 배경
       }}
       onClick={onSelect}
     >
-      {components?.length === 0 ? (
+      {pageData.components?.length === 0 ? (
         isViewerMode ? null : (
           <p className="text-gray-500 dark:text-slate-300 text-center">
             좌측에서 컴포넌트를 추가하세요.

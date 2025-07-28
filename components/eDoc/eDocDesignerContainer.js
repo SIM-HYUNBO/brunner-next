@@ -11,6 +11,7 @@ import EDocEditorCanvas from './eDocEditorCanvas';
 import EDocDesignerTopMenu from './eDocDesignerTopMenu';
 import EDocComponentPropertyEditor from './eDocComponentPropertyEditor';
 import EDocDocumentPropertyEditor from './eDocDocumentPropertyEditor';
+import EDocPagePropertyEditor from './eDocPagePropertyEditor';
 import * as commonFunctions from '@/components/commonFunctions';
 
 import html2canvas from 'html2canvas';
@@ -29,35 +30,33 @@ export default function EDocDesignerContainer({ documentId, triggerLeftMenuReloa
 
   const [loading, setLoading] = useState(false);
   const [isExportingPdf, setIsExportingPdf] = useState(false);
-  const [mode, setMode] = useState("design"); // design or runtime
+  const [mode, setMode] = useState("design");
   const [componentTemplates, setComponentTemplates] = useState([]);
   const [documentData, setDocumentData] = useState({
     id: documentId || null,
     title: 'New Document',
     description: '신규 전자 문서',
     isPublic: false,
-    components: [],
-    runtime_data: {
-      padding: 24,
-      alignment: "center",
-      backgroundColor: "#ffffff",
-      pageSize: "A4"
-    }
-  });
-  const [pages, setPages] = useState([
-    {
+    pages: [{
       id: 'page-1',
       components: [],
-      runtime_data: { pageSize: 'A4', padding: 24 }
+      runtime_data: {
+        padding: 24,
+        alignment: "center",
+        backgroundColor: "#ffffff",
+        pageSize: "A4"
+      }
+    }],
+    runtime_data: {
+      backgroundColor: "#ffffff"
     }
-  ]);
+  });
+
   const [currentPageIdx, setCurrentPageIdx] = useState(0);
   const [selectedComponentId, setSelectedComponentId] = useState(null);
-
   const [documentList, setDocumentList] = useState([]);
   const [showDocumentListModal, setShowDocumentListModal] = useState(false);
 
-  // 로딩시 컴포넌트 템플릿 불러오기
   useEffect(() => {
     async function fetchTemplates() {
       const jRequest = {
@@ -76,17 +75,14 @@ export default function EDocDesignerContainer({ documentId, triggerLeftMenuReloa
     fetchTemplates();
   }, []);
 
-  // documentId가 바뀌면 문서 열기
   useEffect(() => {
     if (documentId) {
       openDocumentById(documentId);
     }
   }, [documentId]);
 
-  // 모드 토글
   const toggleMode = () => setMode(prev => (prev === "design" ? "runtime" : "design"));
 
-  // 새 문서 생성
   const handleNewDocument = () => {
     if (window.confirm('현재 작업 중인 문서가 저장되지 않을 수 있습니다. 새 문서를 생성하시겠습니까?')) {
       const title = window.prompt('새문서 이름을 입력하세요');
@@ -94,16 +90,25 @@ export default function EDocDesignerContainer({ documentId, triggerLeftMenuReloa
         id: null,
         title: title || 'New Document',
         description: '신규 기록서',
-        components: [],
-        runtime_data: { padding: 24, alignment: "center", backgroundColor: "#ffffff", pageSize: "A4" }
+        pages: [{
+          id: 'page-1',
+          components: [],
+          runtime_data: {
+            padding: 24,
+            alignment: "center",
+            backgroundColor: "#ffffff",
+            pageSize: "A4"
+          }
+        }],
+        runtime_data: {
+          backgroundColor: "#ffffff"
+        }
       });
-      setPages([{ id: 'page-1', components: [], runtime_data: { pageSize: 'A4', padding: 24 } }]);
       setCurrentPageIdx(0);
       setSelectedComponentId(null);
     }
   };
 
-  // 문서 열기 - 사용자 문서 목록 조회 후 모달 띄우기
   const handleOpenDocument = async () => {
     const jRequest = {
       commandName: constants.commands.EDOC_USER_DOCUMENT_SELECT_ALL,
@@ -120,7 +125,6 @@ export default function EDocDesignerContainer({ documentId, triggerLeftMenuReloa
     } else openModal(jResponse.error_message);
   };
 
-  // 문서 ID로 열기
   const openDocumentById = async (id) => {
     const jRequest = {
       commandName: constants.commands.EDOC_DOCUMENT_SELECT_ONE,
@@ -135,20 +139,6 @@ export default function EDocDesignerContainer({ documentId, triggerLeftMenuReloa
     if (jResponse.error_code === 0) {
       const loadedDocument = jResponse.documentData || {};
       setDocumentData(loadedDocument);
-
-      if (Array.isArray(loadedDocument.pages) && loadedDocument.pages.length > 0) {
-        setPages(loadedDocument.pages);
-      } else {
-        setPages([{
-          id: 'page-1',
-          components: loadedDocument.components || [],
-          runtime_data: {
-            pageSize: loadedDocument.runtime_data?.pageSize || 'A4',
-            padding: loadedDocument.runtime_data?.padding || 24,
-          },
-        }]);
-      }
-
       setCurrentPageIdx(0);
       setSelectedComponentId(null);
     } else {
@@ -156,16 +146,12 @@ export default function EDocDesignerContainer({ documentId, triggerLeftMenuReloa
     }
   };
 
-  // 문서 저장
   const handleSaveDocument = async () => {
     const jRequest = {
       commandName: constants.commands.EDOC_DOCUMENT_UPSERT_ONE,
       systemCode: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE,
       userId: userInfo.getLoginUserId(),
-      documentData: {
-        ...documentData,
-        pages,
-      },
+      documentData: documentData
     };
     setLoading(true);
     const jResponse = await RequestServer(jRequest);
@@ -175,21 +161,12 @@ export default function EDocDesignerContainer({ documentId, triggerLeftMenuReloa
       if (triggerLeftMenuReload) triggerLeftMenuReload();
       openModal(constants.messages.SUCCESS_SAVED);
       setDocumentData(jResponse.documentData);
-      setPages(jResponse.documentData.pages || [{
-        id: 'page-1',
-        components: jResponse.documentData.components || [],
-        runtime_data: {
-          pageSize: jResponse.documentData.runtime_data?.pageSize || 'A4',
-          padding: jResponse.documentData.runtime_data?.padding || 24,
-        }
-      }]);
       setCurrentPageIdx(0);
     } else {
       openModal(jResponse.error_message);
     }
   };
 
-  // 문서 삭제
   const handleDeleteDocument = async () => {
     const result = await openModal(constants.messages.DELETE_ITEM);
     if (!result) return;
@@ -211,51 +188,59 @@ export default function EDocDesignerContainer({ documentId, triggerLeftMenuReloa
         id: null,
         title: 'New Document',
         description: '신규 기록서',
-        components: [],
+        pages: [{
+          id: 'page-1',
+          components: [],
+          runtime_data: {
+            padding: 24,
+            alignment: "center",
+            backgroundColor: "#ffffff",
+            pageSize: "A4"
+          }
+        }],
         runtime_data: {
-          padding: 24,
-          alignment: "center",
-          backgroundColor: "#ffffff",
-          pageSize: "A4"
+          backgroundColor: "#ffffff"
         }
       });
-      setPages([{ id: 'page-1', components: [], runtime_data: { pageSize: 'A4', padding: 24 } }]);
       setCurrentPageIdx(0);
       setSelectedComponentId(null);
     } else openModal(jResponse.error_message);
   };
 
-  // 페이지 추가
   const handleAddPage = () => {
-    setPages(prevPages => {
-      const newPageId = `page-${prevPages.length + 1}`;
-      return [
-        ...prevPages,
-        { id: newPageId, components: [], runtime_data: { pageSize: 'A4', padding: 24 } }
-      ];
-    });
-    setCurrentPageIdx(pages.length);
+    const newPageId = `page-${documentData.pages.length + 1}`;
+    const newPage = {
+      id: newPageId,
+      components: [],
+      runtime_data: { pageSize: 'A4', padding: 24 }
+    };
+
+    setDocumentData(prev => ({
+      ...prev,
+      pages: [...prev.pages, newPage]
+    }));
+    setCurrentPageIdx(documentData.pages.length);
   };
 
-  // 현재 페이지 삭제
   const handleDeleteCurrentPage = async () => {
-    if (pages.length === 1) {
+    if (documentData.pages.length === 1) {
       openModal(constants.messages.MINIUM_PAGE_COUNT);
       return;
     }
     const confirm = await openModal(`The index ${currentPageIdx + 1}, ${constants.messages.DELETE_SELECTED_PAGE}`);
     if (!confirm) return;
 
-    setPages(prevPages => {
-      const newPages = [...prevPages];
+    setDocumentData(prev => {
+      const newPages = [...prev.pages];
       newPages.splice(currentPageIdx, 1);
-      const newCurrent = currentPageIdx > 0 ? currentPageIdx - 1 : 0;
-      setCurrentPageIdx(newCurrent);
-      return newPages;
+      return {
+        ...prev,
+        pages: newPages
+      };
     });
+    setCurrentPageIdx(currentPageIdx > 0 ? currentPageIdx - 1 : 0);
   };
 
-  // 컴포넌트 추가
   const handleAddComponent = (component) => {
     const baseComponent = { ...component };
     const defaultRuntimeData = {
@@ -288,76 +273,71 @@ export default function EDocDesignerContainer({ documentId, triggerLeftMenuReloa
       default:
         break;
     }
-    setPages(prevPages => {
-      const newPages = [...prevPages];
-      newPages[currentPageIdx].components = [...newPages[currentPageIdx].components, baseComponent];
-      return newPages;
+    setDocumentData(prev => {
+      const newPages = [...prev.pages];
+      newPages[currentPageIdx] = {
+        ...newPages[currentPageIdx],
+        components: [...newPages[currentPageIdx].components, baseComponent]
+      };
+      return { ...prev, pages: newPages };
     });
   };
 
-  // 컴포넌트 선택
   const handleComponentSelect = (idx) => setSelectedComponentId(idx);
 
-  // 컴포넌트 업데이트
   const handleUpdateComponent = (updatedComponent) => {
     if (selectedComponentId === null) return;
-    setPages(prevPages => {
-      const newPages = [...prevPages];
-      newPages[currentPageIdx].components[selectedComponentId] = updatedComponent;
-      return newPages;
+    setDocumentData(prev => {
+      const newPages = [...prev.pages];
+      const newComponents = [...newPages[currentPageIdx].components];
+      newComponents[selectedComponentId] = updatedComponent;
+      newPages[currentPageIdx].components = newComponents;
+      return { ...prev, pages: newPages };
     });
   };
 
-  // 컴포넌트 이동 (위)
   const handleMoveComponentUp = () => {
     if (selectedComponentId === null || selectedComponentId <= 0) return;
-    setPages(prevPages => {
-      const newPages = [...prevPages];
-      const comps = [...newPages[currentPageIdx].components];
-      [comps[selectedComponentId - 1], comps[selectedComponentId]] = [comps[selectedComponentId], comps[selectedComponentId - 1]];
-      newPages[currentPageIdx].components = comps;
-      return newPages;
+    setDocumentData(prev => {
+      const newPages = [...prev.pages];
+      const components = [...newPages[currentPageIdx].components];
+      [components[selectedComponentId - 1], components[selectedComponentId]] = [components[selectedComponentId], components[selectedComponentId - 1]];
+      newPages[currentPageIdx].components = components;
+      return { ...prev, pages: newPages };
     });
     setSelectedComponentId(prev => prev - 1);
   };
 
-  // 컴포넌트 이동 (아래)
   const handleMoveComponentDown = () => {
-    const comps = pages[currentPageIdx].components;
+    const comps = documentData.pages[currentPageIdx].components;
     if (selectedComponentId === null || selectedComponentId >= comps.length - 1) return;
-    setPages(prevPages => {
-      const newPages = [...prevPages];
-      const comps = [...newPages[currentPageIdx].components];
-      [comps[selectedComponentId + 1], comps[selectedComponentId]] = [comps[selectedComponentId], comps[selectedComponentId + 1]];
-      newPages[currentPageIdx].components = comps;
-      return newPages;
+    setDocumentData(prev => {
+      const newPages = [...prev.pages];
+      const components = [...newPages[currentPageIdx].components];
+      [components[selectedComponentId + 1], components[selectedComponentId]] = [components[selectedComponentId], components[selectedComponentId + 1]];
+      newPages[currentPageIdx].components = components;
+      return { ...prev, pages: newPages };
     });
     setSelectedComponentId(prev => prev + 1);
   };
 
-  // 컴포넌트 삭제
   const handleDeleteComponent = () => {
     if (selectedComponentId === null) return;
-    setPages(prevPages => {
-      const newPages = [...prevPages];
-      const comps = [...newPages[currentPageIdx].components];
-      comps.splice(selectedComponentId, 1);
-      newPages[currentPageIdx].components = comps;
-      return newPages;
+    setDocumentData(prev => {
+      const newPages = [...prev.pages];
+      const components = [...newPages[currentPageIdx].components];
+      components.splice(selectedComponentId, 1);
+      newPages[currentPageIdx].components = components;
+      return { ...prev, pages: newPages };
     });
     setSelectedComponentId(null);
   };
 
-  // PDF 내보내기
   const handleExportPdf = async () => {
-    
     setIsExportingPdf(true);
-    const canvas = await html2canvas(document.querySelector('.edoc-designer-canvas'), {
-      scale: 2,
-    });
+    const canvas = await html2canvas(document.querySelector('.edoc-designer-canvas'), { scale: 2 });
     const imgData = canvas.toDataURL('image/png');
     const pdf = new jsPDF('p', 'mm', 'a4');
-
     const pdfWidth = pdf.internal.pageSize.getWidth();
     const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
 
@@ -367,172 +347,171 @@ export default function EDocDesignerContainer({ documentId, triggerLeftMenuReloa
     setIsExportingPdf(false);
   };
 
-  // 문서 리스트 모달에서 선택시 문서 열기
   const handleDocumentListClick = (doc) => {
     setShowDocumentListModal(false);
     openDocumentById(doc.id);
   };
 
-  // 레이아웃 JSX
-return (
-  <>
-    {loading && (
-      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40 text-white text-xl font-bold">
-        Loading...
-      </div>
-    )}
+  return (
+    <>
+      {loading && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40 text-white text-xl font-bold">
+          Loading...
+        </div>
+      )}
 
-    {/* 상단 메뉴 */}
-    <EDocDesignerTopMenu
-      mode={mode}
-      toggleMode={toggleMode}
-      onNewDocument={handleNewDocument}
-      onOpenDocument={handleOpenDocument}
-      onSaveDocument={handleSaveDocument}
-      onDeleteDocument={handleDeleteDocument}
-      onAddPage={handleAddPage}
-      onDeleteCurrentPage={handleDeleteCurrentPage}
-      onExportPdf={handleExportPdf}
-      currentPageIdx={currentPageIdx}
-      totalPageCount={pages.length}
-      setCurrentPageIdx={setCurrentPageIdx}
-    />
+      {/* 상단 메뉴 */}
+      <EDocDesignerTopMenu
+        mode={mode}
+        toggleMode={toggleMode}
+        onNewDocument={handleNewDocument}
+        onOpenDocument={handleOpenDocument}
+        onSaveDocument={handleSaveDocument}
+        onDeleteDocument={handleDeleteDocument}
+        onAddPage={handleAddPage}
+        onDeleteCurrentPage={handleDeleteCurrentPage}
+        onExportPdf={handleExportPdf}
+        currentPageIdx={currentPageIdx}
+        totalPageCount={documentData.pages.length}
+        setCurrentPageIdx={setCurrentPageIdx}
+      />
 
-    <div className="flex h-screen desktop:pr-20">
-      {/* 가운데 편집영역 + 오른쪽 속성창 */}
-      <div className="flex flex-1 overflow-hidden">
-      {/* 왼쪽 팔레트 */}
+      <div className="flex h-screen desktop:pr-20">
+        {/* 왼쪽 컴포넌트 팔레트 */}
         <aside className="w-36 bg-white dark:bg-slate-700 border-r border-slate-300 dark:border-slate-500">
           <h2 className="font-bold mb-3 text-slate-800 dark:text-slate-100">컴포넌트 팔레트</h2>
           <EDocComponentPalette
             templates={componentTemplates}
             onAddComponent={handleAddComponent}
           />
-        </aside>        
-        {/* 캔버스를 스크롤 가능한 래퍼로 감쌈 */}
+        </aside>
+
+        {/* 중앙 편집 캔버스 */}
         <div className="flex-1 overflow-auto">
-          <main className="pt-16 flex-grow md:overflow-x: auto edoc-designer-canvas" 
-                style={{
-                  backgroundColor: documentData?.runtime_data?.backgroundColor || '#f8f8f8', // 기본 회색 배경
-                }}>
-          {documentData && (
-            <h1 className="text-2xl font-bold mx-4 mb-4 text-slate-800 dark:text-slate-100">
-              {documentData.title || ''} : {documentData.id}
-            </h1>
-          )}
-
-          {pages.map((page, idx) => (
-            <div
-              key={page.id}
-              className={`relative w-fit mx-auto border border-dashed border-slate-400 dark:border-slate-500 mb-8 ${
-                idx === currentPageIdx ? 'outline outline-2 outline-blue-400' : ''
-              }`}
-              style={{
-                boxSizing: 'border-box',
-                  backgroundColor: documentData?.runtime_data?.backgroundColor || '#f8f8f8', // 기본 회색 배경
-              }}
-              onClick={() => {
-                setCurrentPageIdx(idx);
-                setSelectedComponentId(null);
-              }}
-            >
-              <div
-                className="absolute top-2 left-2 bg-slate-200 dark:bg-slate-600 text-slate-600 dark:text-slate-200 text-xs rounded px-2 py-1 select-none pointer-events-none z-10"
-              >
-                p{idx + 1}
-              </div>
-
-              <EDocEditorCanvas
-                page={page}
-                isSelected={idx === currentPageIdx}
-                onSelect={() => { setCurrentPageIdx(idx); setSelectedComponentId(null); }}
-                selectedComponentId={selectedComponentId}
-                onComponentSelect={handleComponentSelect}
-                onMoveUp={handleMoveComponentUp}
-                onMoveDown={handleMoveComponentDown}
-                onDeleteComponent={handleDeleteComponent}
-                onUpdateComponent={handleUpdateComponent}
-                isViewerMode={isExportingPdf}
-                mode={mode}
-                bindingData={commonFunctions.bindingData}
-                documentData={documentData}
-              />
-            </div>
-          ))}
-        </main>
-      </div>
-      {/* 오른쪽 속성창 */}
-      <aside className="w-56 bg-white dark:bg-slate-700 border-0 border-slate-300 dark:border-slate-500 p-4 block">
-        <h2 className="text-lg font-semibold mb-4 text-slate-800 dark:text-slate-100">속성창</h2>
-        {selectedComponentId !== null && pages[currentPageIdx]?.components[selectedComponentId] ? (
-          <EDocComponentPropertyEditor
-            component={pages[currentPageIdx].components[selectedComponentId]}
-            handleUpdateComponent={handleUpdateComponent}
-          />
-        ) : (
-          <EDocDocumentPropertyEditor
-            title={documentData.title || ''}
-            runtimeData={documentData.runtime_data || {}}
-            onChangeTitle={(newTitle) => {
-              setDocumentData((prev) => ({ ...prev, title: newTitle }));
+          <main
+            className="pt-16 flex-grow edoc-designer-canvas"
+            style={{
+              backgroundColor: documentData?.runtime_data?.backgroundColor || '#f8f8f8',
+              padding: '40px', // ✅ 여백 추가
             }}
-            onChangeRuntimeData={(updatedRuntimeData) => {
-              setDocumentData((prev) => {
-                const prevAlign = prev.runtime_data?.positionAlign;
-                const newAlign = updatedRuntimeData.positionAlign;
-                const needUpdateAlign = prevAlign !== newAlign;
-
-                const updatedComponents = needUpdateAlign
-                  ? prev?.components?.map((comp) => ({
-                      ...comp,
-                      runtime_data: {
-                        ...comp.runtime_data,
-                        positionAlign: newAlign,
-                      },
-                    }))
-                  : prev.components;
-
-                return {
-                  ...prev,
-                  runtime_data: updatedRuntimeData,
-                  components: updatedComponents,
-                };
-              });
-            }}
-          />
-        )}
-      </aside>
-      </div>
-    </div>
-
-    {/* 문서 목록 모달 */}
-    {showDocumentListModal && (
-      <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-        <div className="bg-white dark:bg-slate-800 rounded shadow-lg w-96 max-h-96 overflow-auto p-4">
-          <h3 className="text-lg font-bold mb-4 text-slate-800 dark:text-slate-100">문서 선택</h3>
-          <ul>
-            {documentList.map((doc) => (
-              <li
-                key={doc.id}
-                className="cursor-pointer py-2 px-3 hover:bg-slate-200 dark:hover:bg-slate-600 rounded"
-                onClick={() => handleDocumentListClick(doc)}
-              >
-                {doc.title} ({doc.id})
-              </li>
-            ))}
-          </ul>
-          <button
-            className="px-4 py-2 bg-slate-300 dark:bg-slate-600 rounded hover:bg-slate-400 dark:hover:bg-slate-500"
-            onClick={() => setShowDocumentListModal(false)}
           >
-            닫기
-          </button>
-        </div>
-      </div>
-    )}
+            {documentData && (
+              <h1 className="text-2xl font-bold mx-4 mb-4 text-slate-800 dark:text-slate-100">
+                {documentData.title || ''} : {documentData.id}
+              </h1>
+            )}
 
-    {/* 메시지 박스 렌더링 */}
-    <BrunnerMessageBox />
-  </>
-);
+            {documentData.pages.map((page, idx) => (
+              <div
+                key={page.id}
+                className={`relative w-fit mx-auto border border-dashed border-slate-400 dark:border-slate-500 mb-8 ${
+                  idx === currentPageIdx ? 'outline outline-2 outline-blue-400' : ''
+                }`}
+                
+                onClick={() => {
+                  setCurrentPageIdx(idx);
+                  setSelectedComponentId(null);
+                }}
+              >
+                <div className="absolute top-2 left-2 bg-slate-200 dark:bg-slate-600 text-slate-600 dark:text-slate-200 text-xs rounded px-2 py-1 select-none pointer-events-none z-10">
+                  p{idx + 1}
+                </div>
+
+                <EDocEditorCanvas
+                  pageData={page}
+                  isSelected={idx === currentPageIdx}
+                  onSelect={() => {
+                    setCurrentPageIdx(idx);
+                    setSelectedComponentId(null);
+                  }}
+                  selectedComponentId={selectedComponentId}
+                  onComponentSelect={handleComponentSelect}
+                  onMoveUp={handleMoveComponentUp}
+                  onMoveDown={handleMoveComponentDown}
+                  onDeleteComponent={handleDeleteComponent}
+                  onUpdateComponent={handleUpdateComponent}
+                  isViewerMode={isExportingPdf}
+                  mode={mode}
+                  bindingData={commonFunctions.bindingData}
+                />
+              </div>
+            ))}
+          </main>
+        </div>
+
+        {/* 오른쪽 속성 편집창 */}
+        <aside className="w-56 bg-white dark:bg-slate-700 border-0 border-slate-300 dark:border-slate-500 p-4 block">
+          <h2 className="text-lg font-semibold mb-4 text-slate-800 dark:text-slate-100">속성창</h2>
+
+          {selectedComponentId !== null &&
+          documentData.pages[currentPageIdx]?.components[selectedComponentId] ? (
+            <EDocComponentPropertyEditor
+              component={documentData.pages[currentPageIdx].components[selectedComponentId]}
+              handleUpdateComponent={handleUpdateComponent}
+            />
+          ) : (
+            <>
+              <EDocDocumentPropertyEditor
+                title={documentData.title || ''}
+                runtimeData={documentData.runtime_data || {}}
+                onChangeTitle={(newTitle) =>
+                  setDocumentData((prev) => ({ ...prev, title: newTitle }))
+                }
+                onChangeRuntimeData={(updatedRuntimeData) =>
+                  setDocumentData((prev) => ({
+                    ...prev,
+                    runtime_data: updatedRuntimeData,
+                  }))
+                }
+              />
+
+              {/* ✅ 페이지 속성 편집기 추가 */}
+              <EDocPagePropertyEditor
+                runtimeData={documentData.pages[currentPageIdx]?.runtime_data || {}}
+                onChangeRuntimeData={(updatedPageRuntimeData) =>
+                  setDocumentData((prev) => {
+                    const updatedPages = [...prev.pages];
+                    updatedPages[currentPageIdx] = {
+                      ...updatedPages[currentPageIdx],
+                      runtime_data: updatedPageRuntimeData,
+                    };
+                    return { ...prev, pages: updatedPages };
+                  })
+                }
+              />
+            </>
+          )}
+        </aside>
+      </div>
+
+      {/* 문서 선택 모달 */}
+      {showDocumentListModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+          <div className="bg-white dark:bg-slate-800 rounded shadow-lg w-96 max-h-96 overflow-auto p-4">
+            <h3 className="text-lg font-bold mb-4 text-slate-800 dark:text-slate-100">문서 선택</h3>
+            <ul>
+              {documentList.map((doc) => (
+                <li
+                  key={doc.id}
+                  className="cursor-pointer py-2 px-3 hover:bg-slate-200 dark:hover:bg-slate-600 rounded"
+                  onClick={() => handleDocumentListClick(doc)}
+                >
+                  {doc.title} ({doc.id})
+                </li>
+              ))}
+            </ul>
+            <button
+              className="mt-4 px-4 py-2 bg-slate-300 dark:bg-slate-600 rounded hover:bg-slate-400 dark:hover:bg-slate-500"
+              onClick={() => setShowDocumentListModal(false)}
+            >
+              닫기
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* 메시지 박스 */}
+      <BrunnerMessageBox />
+    </>
+  );
 }
