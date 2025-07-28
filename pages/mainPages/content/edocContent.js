@@ -1,14 +1,12 @@
 'use strict'
 import { useState, useEffect } from 'react';
 
-import DivContainer from "@/components/divContainer";
-import GoverningMessage from "@/components/governingMessage";
+import Head from 'next/head';
 import * as constants from "@/components/constants";
 import * as userInfo from "@/components/userInfo";
 import RequestServer from "@/components/requestServer";
 import EDocEditorCanvas from '@/components/eDoc/eDocEditorCanvas';
 import * as commonFunctions from '@/components/commonFunctions';
-import { isMosMobile, isTablet } from 'react-device-detect';
 
 export default function EDocContent({ documentId }) {
   const [loading, setLoading] = useState(false);
@@ -105,7 +103,7 @@ export default function EDocContent({ documentId }) {
         <meta name="twitter:description" content={description} />
         <meta name="twitter:image" content={ogImage} />
       </Head>
-      
+
       <h2 className="title-font sm:text-4xl text-3xl font-medium text-green-800 dark:text-green-200 my-20">
         {`${documentData.title}`}
       </h2>
