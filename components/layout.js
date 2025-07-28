@@ -34,10 +34,10 @@ export default function Layout({ children, reloadSignal, triggerLeftMenuReload }
   return (
     
     <div className="flex flex-col md:flex-row min-h-screen bg-primary justify-center desktop:pl-10 w-full overflow-x-hidden">
-      <LeftMenu
+      {/* <LeftMenu
         documentList={documentList}
         reloadSignal={reloadSignal}
-      />
+      /> */}
 
       <DivContainer className="flex flex-col w-full desktop:px-4 mx-2 px-1">
         <main className="pt-16 flex-grow md:overflow-x: auto">

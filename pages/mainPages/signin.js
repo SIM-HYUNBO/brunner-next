@@ -89,7 +89,7 @@ export default function Signin() {
             name="description"
             content="Brunner-Next provides real-time stock quotes. Make effective investments with real-time stock charts, investment strategies, stock news, and stock analysis tools."
           />
-          <link rel="icon" href="/brunnerLogo.png" />
+          <link rel="icon" href="/brunnerLogo2025.png" />
         </Head>
         <BodySection>
           <DivContainer>

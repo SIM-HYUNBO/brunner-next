@@ -44,9 +44,10 @@ export default function Header({ triggerLeftMenuReload }) {
   const mobileDropdownMenu = () => (
     <>
       <button
-        className="p-2 dark:bg-slate-800%20dark%3Atext-gray-100"
+        className="p-2 dark:bg-slate-800 dark:text-gray-100"
         onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-        aria-label="Menu"
+        aria-label="메뉴 열기"
+        aria-expanded={mobileMenuOpen}
       >
         <svg
           width="28"
@@ -113,10 +114,17 @@ export default function Header({ triggerLeftMenuReload }) {
 
   return (
     <header className="sticky top-0 left-0 right-0 w-full z-50 bg-white dark:bg-slate-800 text-gray-600 dark:text-white body-font md:w-2/3">
-      <DivContainer className="flex items-center w-full max-w-full">
+      <DivContainer className="relative flex items-center w-full max-w-full">
         {/* 로고 */}
         <Link href="/" className="flex title-font font-medium items-center text-gray-900 mb-4 md:mb-0">
-          <Image src="/brunnerLogo.png" height={100} width={100} alt="brunner logo" priority />
+          <Image
+            src="/brunnerLogo2025.png"
+            height={100}
+            width={100}
+            alt="brunner logo"
+            priority
+            className="h-12 w-auto sm:h-16"
+          />
         </Link>
 
         {/* 문서 제목 */}
@@ -127,14 +135,14 @@ export default function Header({ triggerLeftMenuReload }) {
         <div className="flex-1" />
 
         {/* 모바일 햄버거 메뉴 */}
-        <div className="md:hidden absolute top-4 right-4 dark:bg-slate-800 dark:text-gray-100">
+        <div className="absolute top-4 right-4 z-50">
           {mobileDropdownMenu()}
         </div>
 
         {/* PC 메뉴 */}
-        <div className="hidden md:flex flex-wrap items-center justify-end">
+        {/* <div className="md:hidden lg:block w-64 bg-gray-100">
           {topMenu()}
-        </div>
+        </div> */}
       </DivContainer>
     </header>
   );
