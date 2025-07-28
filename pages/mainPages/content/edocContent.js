@@ -132,8 +132,11 @@ export default function EDocContent({ documentId }) {
       >
       {/* 도큐먼트 객체 (실행타임) */}
         <div
-          className="w-full p-1"
-          style={{ backgroundColor: documentData.runtime_data?.backgroundColor || '#f8f8f8' }}
+          className={`w-full`} /* 문서여백 p-1 고정 */
+            style={{
+              backgroundColor: documentData?.runtime_data?.backgroundColor || '#f8f8f8',
+              padding: `${documentData.runtime_data.padding}px`, // 문서여백 1px 고정
+            }}
         >
           {pages.map(page => (
             <EDocEditorCanvas

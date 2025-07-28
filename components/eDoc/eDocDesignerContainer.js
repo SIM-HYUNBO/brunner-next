@@ -394,18 +394,18 @@ export default function EDocDesignerContainer({ documentId, triggerLeftMenuReloa
             </h1>
           )}
 
-          {/* 도큐먼트 객체 */}
+          {/* 도큐먼트 객체 (디자인 타임) */}
           <main
             className="pt-16 flex-grow edoc-designer-canvas"
             style={{
               backgroundColor: documentData?.runtime_data?.backgroundColor || '#f8f8f8',
-              padding: '40px', // ✅ 여백 추가
+              padding: `${documentData.runtime_data.padding}px`, // 문서여백 1px 고정
             }}
           >
           {documentData.pages.map((page, idx) => (
             <div
               key={page.id}
-              className={`relative w-fit mx-auto border border-dashed border-slate-400 dark:border-slate-500 mb-8 ${
+              className={`relative w-fit mx-auto border border-dashed border-slate-400 dark:border-slate-500 ${
                 idx === currentPageIdx ? 'outline outline-2 outline-blue-400' : ''
               }`}
               

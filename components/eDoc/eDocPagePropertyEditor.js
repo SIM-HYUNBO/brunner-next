@@ -44,6 +44,15 @@ export default function EDocPagePropertyEditor({
         <option value="Letter">Letter</option>
         <option value="Legal">Legal</option>
       </select>
+
+      <label>Page Margin (px)</label>
+      <input
+        type="number"
+        min="0"
+        value={runtimeData.pageMargin ?? 1}
+        onChange={(e) => updateProperty('pageMargin', parseInt(e.target.value) || 1)}
+        className="w-full border border-gray-300 rounded p-2 mb-3"
+      />
     </section>
   );
 }

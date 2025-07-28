@@ -50,6 +50,18 @@ export default function EDocDocumentPropertyEditor({
           }
           className="w-full h-10 p-1 mb-3 border border-gray-300 rounded"
         />
+
+        <label>문서 여백 (px)</label>
+        <input
+          type="number"
+          min="0"
+          value={runtimeData.padding || 1}
+          onChange={(e) =>
+            updateProperty('padding', parseInt(e.target.value, 10) || 0)
+          }
+          className="w-full border border-gray-300 rounded p-2 mb-3"
+          placeholder="문서 여백(px)"
+        />
       </section>
     </div>
   );
