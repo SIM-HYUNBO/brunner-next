@@ -20,7 +20,6 @@ export default function EDocDesigner() {
     setTheme(newValue);
   };
 
-  // ✅ 이 부분이 반드시 있어야 함
   const triggerLeftMenuReload = () => {
     setReloadSignal(prev => prev + 1);
   };

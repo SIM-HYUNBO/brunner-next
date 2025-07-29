@@ -27,8 +27,8 @@ export default function LeftMenu({ reloadSignal }) {
                 <li key={idx} className="text-gray-500 dark:text-gray-300 py-1">{item.label}</li>
               ) : (
                 <Link
-                  key={item.href + idx}
-                  href={item.href}
+                  key={item.menuPath + idx}
+                  href={item.menuPath}
                   className="block text-gray-600 dark:text-gray-100 py-2"
                 >
                   {item.label}
