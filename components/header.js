@@ -78,8 +78,8 @@ export default function Header({ triggerLeftMenuReload, reloadSignal }) {
               </div>
             ) : (
               <Link
-                key={item.menuPath + idx}
-                href={item.menuPath}
+                key={item.href + idx}
+                href={item.href}
                 className="block px-4 py-2 text-gray-700 hover:bg-gray-100 dark:bg-slate-800 dark:text-gray-100"
                 onClick={() => setMobileMenuOpen(false)}
               >
