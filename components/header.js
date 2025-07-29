@@ -5,7 +5,7 @@ import * as userInfo from "@/components/userInfo";
 import DivContainer from "@/components/divContainer";
 import { getLeftMenuItems } from "@/components/leftMenuItems";
 
-export default function Header({ triggerLeftMenuReload }) {
+export default function Header({ triggerLeftMenuReload, reloadSignal }) {
   const UserInfo = userInfo.default;
 
   const handleLogout = () => {
@@ -110,7 +110,7 @@ export default function Header({ triggerLeftMenuReload }) {
 
   useEffect(() => {
     getLeftMenuItems().then(setLeftMenuItems);
-  }, []);
+  }, [reloadSignal]);
 
   return (
     <header className="sticky top-0 left-0 right-0 w-full z-50 bg-white dark:bg-slate-800 text-gray-600 dark:text-white body-font md:w-2/3">

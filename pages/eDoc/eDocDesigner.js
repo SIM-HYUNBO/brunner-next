@@ -32,7 +32,7 @@ export default function EDocDesigner() {
   const documentId = null;
 
   return (
-    <Layout>
+    <Layout reloadSignal={reloadSignal} triggerLeftMenuReload={triggerLeftMenuReload}>
       <BodySection>
         <h2 className={`title-font sm:text-4xl text-3xl my-20 font-medium text-green-900`}>
           Page Designer
