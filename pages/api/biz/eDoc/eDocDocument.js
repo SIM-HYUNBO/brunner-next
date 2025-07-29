@@ -50,15 +50,15 @@ const upsertOne = async (txnId, jRequest) => {
       return jResponse;
     }
 
-    if (!jRequest.documentData.id) {
-      jRequest.documentData.id = commonFunctions.generateUUID();
+    if (!jRequest.documentData.runtime_data.id) {
+      jRequest.documentData.runtime_data.id = commonFunctions.generateUUID();
 
-      if (!jRequest.documentData.title) {
-        jRequest.documentData.title = "New document";
+      if (!jRequest.documentData.runtime_data.title) {
+        jRequest.documentData.runtime_data.title = "New document";
       }
 
-      if (!jRequest.documentData.description) {
-        jRequest.documentData.description = "New document";
+      if (!jRequest.documentData.runtime_data.description) {
+        jRequest.documentData.runtime_data.description = "New document";
       }
 
       isInsert = true; // insert
@@ -66,8 +66,8 @@ const upsertOne = async (txnId, jRequest) => {
       isInsert = false; // update
     }
 
-    if (!jRequest.documentData.title) {
-      jRequest.documentData.title = constants.messages.EMPTY_STRING;
+    if (!jRequest.documentData.runtime_data.title) {
+      jRequest.documentData.runtime_data.title = constants.messages.EMPTY_STRING;
     }
 
     // ✅ pages는 필수 JSON
@@ -80,14 +80,14 @@ const upsertOne = async (txnId, jRequest) => {
       const sql = await dynamicSql.getSQL00('insert_TB_DOC_DOCUMENT', 1);
       const insertResult = await database.executeSQL(sql, [
         jRequest.systemCode,
-        jRequest.documentData.id,
-        jRequest.documentData.title,
-        jRequest.documentData.description,
+        jRequest.documentData.runtime_data.id,
+        jRequest.documentData.runtime_data.title,
+        jRequest.documentData.runtime_data.description,
         1, // version
         jRequest.userId,
         JSON.stringify(jRequest.documentData.runtime_data || {}),
         JSON.stringify(jRequest.documentData.pages || []),
-        '/mainPages/edocument?documentId=' +  jRequest.documentData.id, // menu_path는 항상 고정
+        '/mainPages/edocument?documentId=' +  jRequest.documentData.runtime_data.id, // menu_path는 항상 고정
       ]);
 
       if (insertResult.rowCount !== 1) {
@@ -100,13 +100,13 @@ const upsertOne = async (txnId, jRequest) => {
       const sql = await dynamicSql.getSQL00('update_TB_DOC_DOCUMENT', 1);
       const updateResult = await database.executeSQL(sql, [
         jRequest.systemCode,
-        jRequest.documentData.id,
-        jRequest.documentData.title,
-        jRequest.documentData.description,
+        jRequest.documentData.runtime_data.id,
+        jRequest.documentData.runtime_data.title,
+        jRequest.documentData.runtime_data.description,
         jRequest.userId,
         JSON.stringify(jRequest.documentData.runtime_data || {}),
         JSON.stringify(jRequest.documentData.pages || []),
-        '/mainPages/edocument?documentId=' +  jRequest.documentData.id, // menu_path는 항상 고정
+        '/mainPages/edocument?documentId=' +  jRequest.documentData.runtime_data.id, // menu_path는 항상 고정
       ]);
 
       if (updateResult.rowCount !== 1) {
@@ -137,7 +137,7 @@ const selectOne = async (txnId, jRequest) => {
 
     if (!jRequest.documentId) {
       jResponse.error_code = -2;
-      jResponse.error_message = `${constants.messages.REQUIRED_FIELD} [documentData.id]`;
+      jResponse.error_message = `${constants.messages.REQUIRED_FIELD} [documentData.runtime_data.id]`;
       return jResponse;
     }
 

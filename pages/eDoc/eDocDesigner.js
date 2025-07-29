@@ -34,9 +34,14 @@ export default function EDocDesigner() {
   return (
     <Layout>
       <BodySection>
+        <h2 className={`title-font sm:text-4xl text-3xl my-20 font-medium text-green-900`}>
+          Page Designer
+        </h2>        
         <div className="w-full">
-              <EDocDesignerContainer documentId={documentId} 
-                                     triggerLeftMenuReload={triggerLeftMenuReload}/>
+          <EDocDesignerContainer 
+           documentId={documentId} 
+           triggerLeftMenuReload={triggerLeftMenuReload}
+          />
         </div>
       </BodySection>
     </Layout>

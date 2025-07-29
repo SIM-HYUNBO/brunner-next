@@ -7,7 +7,7 @@ import RequestServer from "@/components/requestServer";
 export async function getLeftMenuItems() {
   let items = [
     { label: "Home", href: "/" },
-    { label: "Doc Designer", href: "/eDoc/eDocDesigner" },
+    { label: "Page Designer", href: "/eDoc/eDocDesigner" },
     // 기타 고정 메뉴
   ];
 
@@ -30,7 +30,7 @@ const getAdminDocumentList = async (items) => {
   if (jResponse.error_code === 0 && Array.isArray(jResponse.documentList)) {
     jResponse.documentList.forEach(doc => {
       const menuPath = doc.menu_path || `mainPages/edocument?documentId=${doc.id}`;
-      items.push({ label: doc.title, href: menuPath });
+      items.push({ label: doc.runtime_data.title, href: menuPath });
     });
   }
 
@@ -53,8 +53,8 @@ const getUsersDocumentList = async (items) => {
     items.push({ type: "divider" });
     items.push({ label: `${userInfo.getLoginName()}'s Page`, type: "section" });
     jResponse.documentList.forEach(doc => {
-      const menuPath = doc.menu_path || `mainPages/edocument?documentId=${doc.id}`;
-      items.push({ label: doc.title, href: menuPath });
+      const menuPath = doc.runtime_data.menu_path || `mainPages/edocument?documentId=${doc.id}`;
+      items.push({ label: doc.runtime_data.title, href: menuPath });
     });
   }
   return items;
