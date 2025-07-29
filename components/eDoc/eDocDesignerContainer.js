@@ -33,6 +33,14 @@ export default function EDocDesignerContainer({ documentId, triggerLeftMenuReloa
   const [mode, setMode] = useState("design");
   const [componentTemplates, setComponentTemplates] = useState([]);
   const [documentData, setDocumentData] = useState({
+    id: documentId || null,
+    runtime_data: {
+      title: 'New Document',
+      description: '신규 전자 문서',
+      isPublic: false,
+      backgroundColor: "#ffffff",
+      padding: 1
+    },
     pages: [{
       id: 'page-1',
       components: [],
@@ -43,14 +51,6 @@ export default function EDocDesignerContainer({ documentId, triggerLeftMenuReloa
         pageSize: "A4"
       }
     }],
-    runtime_data: {
-      id: documentId || null,
-      title: 'New Document',
-      description: '신규 전자 문서',
-      isPublic: false,
-      backgroundColor: "#ffffff",
-      padding: 1
-    }
   });
 
   const [currentPageIdx, setCurrentPageIdx] = useState(0);
@@ -89,8 +89,11 @@ export default function EDocDesignerContainer({ documentId, triggerLeftMenuReloa
       const title = window.prompt('새문서 이름을 입력하세요');
       setDocumentData({
         id: null,
-        title: title || 'New Document',
-        description: '신규 기록서',
+        runtime_data: {
+          title: title || 'New Document',
+          description: '신규 기록서',
+          backgroundColor: "#ffffff"
+        },
         pages: [{
           id: 'page-1',
           components: [],
@@ -101,9 +104,6 @@ export default function EDocDesignerContainer({ documentId, triggerLeftMenuReloa
             pageSize: "A4"
           }
         }],
-        runtime_data: {
-          backgroundColor: "#ffffff"
-        }
       });
       setCurrentPageIdx(0);
       setSelectedComponentId(null);
@@ -176,7 +176,7 @@ export default function EDocDesignerContainer({ documentId, triggerLeftMenuReloa
       commandName: constants.commands.EDOC_DOCUMENT_DELETE_ONE,
       systemCode: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE,
       userId: userInfo.getLoginUserId(),
-      documentId: documentData.runtime_data.id
+      documentId: documentData.id
     };
     setLoading(true);
     const jResponse = await RequestServer(jRequest);
@@ -391,7 +391,7 @@ export default function EDocDesignerContainer({ documentId, triggerLeftMenuReloa
         <div className="flex-1 overflow-auto">
           {documentData && (
             <h1 className="text-2xl font-bold mx-4 mb-4 text-slate-800 dark:text-slate-100">
-              {documentData.runtime_data.title || ''} : {documentData.runtime_data.id}
+              {documentData.runtime_data.title || ''} : {documentData.id}
             </h1>
           )}
 

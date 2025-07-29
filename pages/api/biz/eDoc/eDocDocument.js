@@ -50,8 +50,8 @@ const upsertOne = async (txnId, jRequest) => {
       return jResponse;
     }
 
-    if (!jRequest.documentData.runtime_data.id) {
-      jRequest.documentData.runtime_data.id = commonFunctions.generateUUID();
+    if (!jRequest.documentData.id) {
+      jRequest.documentData.id = commonFunctions.generateUUID();
 
       if (!jRequest.documentData.runtime_data.title) {
         jRequest.documentData.runtime_data.title = "New document";
@@ -80,14 +80,14 @@ const upsertOne = async (txnId, jRequest) => {
       const sql = await dynamicSql.getSQL00('insert_TB_DOC_DOCUMENT', 1);
       const insertResult = await database.executeSQL(sql, [
         jRequest.systemCode,
-        jRequest.documentData.runtime_data.id,
+        jRequest.documentData.id,
         jRequest.documentData.runtime_data.title,
         jRequest.documentData.runtime_data.description,
         1, // version
         jRequest.userId,
         JSON.stringify(jRequest.documentData.runtime_data || {}),
         JSON.stringify(jRequest.documentData.pages || []),
-        '/mainPages/edocument?documentId=' +  jRequest.documentData.runtime_data.id, // menu_path는 항상 고정
+        '/mainPages/edocument?documentId=' +  jRequest.documentData.id, // menu_path는 항상 고정
       ]);
 
       if (insertResult.rowCount !== 1) {
@@ -100,13 +100,13 @@ const upsertOne = async (txnId, jRequest) => {
       const sql = await dynamicSql.getSQL00('update_TB_DOC_DOCUMENT', 1);
       const updateResult = await database.executeSQL(sql, [
         jRequest.systemCode,
-        jRequest.documentData.runtime_data.id,
+        jRequest.documentData.id,
         jRequest.documentData.runtime_data.title,
         jRequest.documentData.runtime_data.description,
         jRequest.userId,
         JSON.stringify(jRequest.documentData.runtime_data || {}),
         JSON.stringify(jRequest.documentData.pages || []),
-        '/mainPages/edocument?documentId=' +  jRequest.documentData.runtime_data.id, // menu_path는 항상 고정
+        '/mainPages/edocument?documentId=' +  jRequest.documentData.id, // menu_path는 항상 고정
       ]);
 
       if (updateResult.rowCount !== 1) {
@@ -137,7 +137,7 @@ const selectOne = async (txnId, jRequest) => {
 
     if (!jRequest.documentId) {
       jResponse.error_code = -2;
-      jResponse.error_message = `${constants.messages.REQUIRED_FIELD} [documentData.runtime_data.id]`;
+      jResponse.error_message = `${constants.messages.REQUIRED_FIELD} [documentData.id]`;
       return jResponse;
     }
 
