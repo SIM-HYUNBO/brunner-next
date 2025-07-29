@@ -7,7 +7,7 @@ import RequestServer from "@/components/requestServer";
 export async function getLeftMenuItems() {
   let items = [
     { label: "Home", href: "/" },
-    { label: "Page Designer", href: "/eDoc/eDocDesigner" },
+    { label: "Page Designer", href: "/mainPages/eDocDesigner" },
     // 기타 고정 메뉴
   ];
 
