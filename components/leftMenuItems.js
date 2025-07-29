@@ -8,8 +8,15 @@ export async function getLeftMenuItems() {
   let items = [
     { label: "Home", href: "/" },
     { label: "Page Designer", href: "/mainPages/eDocDesigner" },
+    { label: "Contact", href: "/mainPages/contact" },
     // 기타 고정 메뉴
   ];
+
+  if (userInfo.isAdminUser()) {
+    items.push({ label: "Administration", href: "/mainPages/administration" });
+  }
+
+  items.push({ type: "divider" });
 
   items = await getAdminDocumentList(items);
 
