@@ -14,31 +14,6 @@ export default function Header({ triggerLeftMenuReload, reloadSignal }) {
     // 필요하다면 로그아웃 후 이동 처리 추가
   };
 
-  const topMenu = () => {
-    return (
-      <nav className="md:ml-auto flex flex-wrap items-center text-base justify-center md:w-full">
-        <Link
-          className="mr-5 text-gray-600 dark:text-gray-100 hover:text-gray-400"
-          href="/mainPages/contact"
-        >
-          Contact
-        </Link>
-        {userInfo.isAdminUser() && (
-          <Link
-            className="mr-5 text-gray-600 dark:text-gray-100 hover:text-gray-400"
-            href="/mainPages/administration"
-          >
-            Administration
-          </Link>
-        )}
-        <Link href="/" className="ml-4 flex items-center">
-          <Image src="/homeIcon.png" height={24} width={24} alt="home icon" />
-        </Link>
-        <UserInfo handleLogout={handleLogout} />
-      </nav>
-    );
-  };
-
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [leftMenuItems, setLeftMenuItems] = useState([]);
 
@@ -87,22 +62,7 @@ export default function Header({ triggerLeftMenuReload, reloadSignal }) {
               </Link>
             )
           )}
-
-          {/* topMenu 항목 추가 */}
-          <Link
-            href="/mainPages/contact"
-            className="block px-4 py-2 text-gray-700 hover:bg-gray-100  dark:bg-slate-800 dark:text-gray-100"
-          >
-            Contact
-          </Link>
-          {userInfo.isAdminUser() && (
-            <Link
-              href="/mainPages/administration"
-              className="block px-4 py-2 text-gray-700 hover:bg-gray-100"
-            >
-              Administration
-            </Link>
-          )}
+          <hr />
           <UserInfo handleLogout={handleLogout} />
         </div>
       )}
@@ -124,8 +84,8 @@ export default function Header({ triggerLeftMenuReload, reloadSignal }) {
               priority
               width={0}
               height={0}
-              sizes="(max-width: 768px) 200px, 320px"
-              className="w-[200px] sm:w-[320px] h-auto"
+              sizes="(max-width: 768px) 150px, 240px"
+              className="w-[150px] sm:w-[240px] h-auto"
           />
         </Link>
 
