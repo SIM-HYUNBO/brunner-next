@@ -38,10 +38,7 @@ export default function EDocDesigner() {
           Page Designer
         </h2>        
         <div className="w-full">
-          <EDocDesignerContainer 
-           documentId={documentId} 
-           triggerLeftMenuReload={triggerLeftMenuReload}
-          />
+          <EDocDesignerContainer documentId={documentId} triggerLeftMenuReload={triggerLeftMenuReload} />
         </div>
       </BodySection>
     </Layout>
