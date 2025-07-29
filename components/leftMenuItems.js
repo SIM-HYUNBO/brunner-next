@@ -30,7 +30,7 @@ const getAdminDocumentList = async (items) => {
   if (jResponse.error_code === 0 && Array.isArray(jResponse.documentList)) {
     jResponse.documentList.forEach(doc => {
       const menuPath = doc.runtime_data.menu_path || `mainPages/edocument?documentId=${doc.id}`;
-      items.push({ label: doc.runtime_data.title, menuPath: menuPath });
+      items.push({ label: doc.runtime_data.title, href: menuPath });
     });
   }
 
@@ -54,7 +54,7 @@ const getUsersDocumentList = async (items) => {
     items.push({ label: `${userInfo.getLoginName()}'s Page`, type: "section" });
     jResponse.documentList.forEach(doc => {
       const menuPath = doc.runtime_data.menu_path || `mainPages/edocument?documentId=${doc.id}`;
-      items.push({ label: doc.runtime_data.title, menuPath: menuPath });
+      items.push({ label: doc.runtime_data.title, href: menuPath });
     });
   }
   return items;
