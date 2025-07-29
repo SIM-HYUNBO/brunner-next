@@ -158,12 +158,8 @@ const selectOne = async (txnId, jRequest) => {
 
     const documentData = {
       id: row.id,
-      title: row.title,
-      description: row.description,
       runtime_data: row.runtime_data,
       pages: row.pages || [],
-      menu_path: row.menu_path, // 메뉴 경로
-      // ✅ components는 pages에 이미 포함되므로 제거!
     };
 
     jResponse.documentData = documentData;

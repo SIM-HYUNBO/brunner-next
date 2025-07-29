@@ -10,6 +10,7 @@ export default function Header({ triggerLeftMenuReload, reloadSignal }) {
 
   const handleLogout = () => {
     if (triggerLeftMenuReload) triggerLeftMenuReload();
+    
     // 필요하다면 로그아웃 후 이동 처리 추가
   };
 
@@ -77,8 +78,8 @@ export default function Header({ triggerLeftMenuReload, reloadSignal }) {
               </div>
             ) : (
               <Link
-                key={item.href + idx}
-                href={item.href}
+                key={item.menuPath + idx}
+                href={item.menuPath}
                 className="block px-4 py-2 text-gray-700 hover:bg-gray-100 dark:bg-slate-800 dark:text-gray-100"
                 onClick={() => setMobileMenuOpen(false)}
               >

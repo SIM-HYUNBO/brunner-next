@@ -39,7 +39,8 @@ export default function EDocDesignerContainer({ documentId, triggerLeftMenuReloa
       description: '신규 전자 문서',
       isPublic: false,
       backgroundColor: "#ffffff",
-      padding: 1
+      padding: 1,
+      menu_path: null, // 메뉴 경로는 나중에 설정
     },
     pages: [{
       id: 'page-1',
@@ -88,11 +89,14 @@ export default function EDocDesignerContainer({ documentId, triggerLeftMenuReloa
     if (window.confirm('현재 작업 중인 문서가 저장되지 않을 수 있습니다. 새 문서를 생성하시겠습니까?')) {
       const title = window.prompt('새문서 이름을 입력하세요');
       setDocumentData({
-        id: null,
+        id: documentId || null,
         runtime_data: {
-          title: title || 'New Document',
-          description: '신규 기록서',
-          backgroundColor: "#ffffff"
+          title: 'New Document',
+          description: '신규 전자 문서',
+          isPublic: false,
+          backgroundColor: "#ffffff",
+          padding: 1,
+          menu_path: null, // 메뉴 경로는 나중에 설정
         },
         pages: [{
           id: 'page-1',
@@ -139,6 +143,7 @@ export default function EDocDesignerContainer({ documentId, triggerLeftMenuReloa
 
     if (jResponse.error_code === 0) {
       const loadedDocument = jResponse.documentData || {};
+
       setDocumentData(loadedDocument);
       setCurrentPageIdx(0);
       setSelectedComponentId(null);
@@ -186,6 +191,7 @@ export default function EDocDesignerContainer({ documentId, triggerLeftMenuReloa
       if (triggerLeftMenuReload) triggerLeftMenuReload();
       openModal(constants.messages.SUCCESS_DELETED);
       setDocumentData({
+        id: null,
         pages: [{
           id: 'page-1',
           components: [],
@@ -197,10 +203,12 @@ export default function EDocDesignerContainer({ documentId, triggerLeftMenuReloa
           }
         }],
         runtime_data: {
-          id: null,
           title: 'New Document',
-          description: '신규 기록서',
-          backgroundColor: "#ffffff"
+          description: '신규 전자 문서',
+          isPublic: false,
+          backgroundColor: "#ffffff",
+          padding: 1,
+          menu_path: null, // 메뉴 경로는 나중에 설정
         }
       });
       setCurrentPageIdx(0);
