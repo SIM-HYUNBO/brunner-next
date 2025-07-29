@@ -4,9 +4,6 @@ import React, { useState } from 'react';
 
 export default function EDocDocumentPropertyEditor({
   runtimeData,
-  onChangeTitle,
-  onChangeIsPublic,
-  onChangeDocumentBackgroundColor,
   onChangeRuntimeData,
 }) {
   const updateProperty = (key, value) => {
@@ -26,7 +23,9 @@ export default function EDocDocumentPropertyEditor({
         <input
           type="text"
           value={runtimeData.title || ''}
-          onChange={(e) => onChangeTitle(e.target.value)}
+          onChange={(e) => 
+            updateProperty('title', e.target.value)
+          }
           className="w-full border border-gray-300 rounded p-2 mb-3"
           placeholder="문서 제목 입력"
         />
@@ -35,7 +34,9 @@ export default function EDocDocumentPropertyEditor({
           <input
             type="checkbox"
             checked={!!runtimeData.isPublic}
-            onChange={(e) => onChangeIsPublic(e.target.checked)}
+            onChange={(e) => 
+              updateProperty('isPublic', e.target.checked)
+            }
             className="mr-2"
           />
           Public Document

@@ -33,10 +33,6 @@ export default function EDocDesignerContainer({ documentId, triggerLeftMenuReloa
   const [mode, setMode] = useState("design");
   const [componentTemplates, setComponentTemplates] = useState([]);
   const [documentData, setDocumentData] = useState({
-    id: documentId || null,
-    title: 'New Document',
-    description: '신규 전자 문서',
-    isPublic: false,
     pages: [{
       id: 'page-1',
       components: [],
@@ -48,7 +44,12 @@ export default function EDocDesignerContainer({ documentId, triggerLeftMenuReloa
       }
     }],
     runtime_data: {
-      backgroundColor: "#ffffff"
+      id: documentId || null,
+      title: 'New Document',
+      description: '신규 전자 문서',
+      isPublic: false,
+      backgroundColor: "#ffffff",
+      padding: 1
     }
   });
 
@@ -175,7 +176,7 @@ export default function EDocDesignerContainer({ documentId, triggerLeftMenuReloa
       commandName: constants.commands.EDOC_DOCUMENT_DELETE_ONE,
       systemCode: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE,
       userId: userInfo.getLoginUserId(),
-      documentId: documentData.id
+      documentId: documentData.runtime_data.id
     };
     setLoading(true);
     const jResponse = await RequestServer(jRequest);
@@ -185,9 +186,6 @@ export default function EDocDesignerContainer({ documentId, triggerLeftMenuReloa
       if (triggerLeftMenuReload) triggerLeftMenuReload();
       openModal(constants.messages.SUCCESS_DELETED);
       setDocumentData({
-        id: null,
-        title: 'New Document',
-        description: '신규 기록서',
         pages: [{
           id: 'page-1',
           components: [],
@@ -199,6 +197,9 @@ export default function EDocDesignerContainer({ documentId, triggerLeftMenuReloa
           }
         }],
         runtime_data: {
+          id: null,
+          title: 'New Document',
+          description: '신규 기록서',
           backgroundColor: "#ffffff"
         }
       });
@@ -342,7 +343,7 @@ export default function EDocDesignerContainer({ documentId, triggerLeftMenuReloa
     const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
 
     pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
-    pdf.save(`${documentData.title || 'document'}.pdf`);
+    pdf.save(`${documentData.runtime_data.title || 'document'}.pdf`);
 
     setIsExportingPdf(false);
   };
@@ -390,7 +391,7 @@ export default function EDocDesignerContainer({ documentId, triggerLeftMenuReloa
         <div className="flex-1 overflow-auto">
           {documentData && (
             <h1 className="text-2xl font-bold mx-4 mb-4 text-slate-800 dark:text-slate-100">
-              {documentData.title || ''} : {documentData.id}
+              {documentData.runtime_data.title || ''} : {documentData.runtime_data.id}
             </h1>
           )}
 
@@ -453,10 +454,7 @@ export default function EDocDesignerContainer({ documentId, triggerLeftMenuReloa
           ) : (
             <>
               <EDocDocumentPropertyEditor
-                runtimeData={documentData.runtime_data || {}}
-                onChangeTitle={(newTitle) =>
-                  setDocumentData((prev) => ({ ...prev, title: newTitle }))
-                }
+                runtimeData={documentData.runtime_data}
                 onChangeRuntimeData={(updatedRuntimeData) =>
                   setDocumentData((prev) => ({
                     ...prev,
@@ -496,7 +494,7 @@ export default function EDocDesignerContainer({ documentId, triggerLeftMenuReloa
                   className="cursor-pointer py-2 px-3 hover:bg-slate-200 dark:hover:bg-slate-600 rounded"
                   onClick={() => handleDocumentListClick(doc)}
                 >
-                  {doc.title} ({doc.id})
+                  {doc.runtime_data.title} ({doc.id})
                 </li>
               ))}
             </ul>

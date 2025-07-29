@@ -81,7 +81,7 @@ export default function EDocContent({ documentId }) {
 
   const title =
     components.find(c => c.type === constants.edocComponentType._TEXT)?.runtime_data?.text?.slice(0, 60) ||
-    documentData.title ||
+    documentData.runtime_data.title ||
     '전자문서';
 
   const description =
@@ -123,7 +123,7 @@ export default function EDocContent({ documentId }) {
       </Head>
 
       <h2 className="title-font sm:text-4xl text-3xl font-medium text-green-800 dark:text-green-200 my-20">
-        {documentData.title}
+        {documentData.runtime_data.title}
       </h2>
 
       <main
