@@ -35,59 +35,55 @@ export default function LeftMenu({ reloadSignal }) {
     };
     loadMenu();
   }, [reloadSignal]);
-
+  
+  
   // 각 메뉴가 속한 섹션 라벨 구하기 (없으면 빈문자열)
   // getLeftMenuItems에서 parent가 section label로 주어져야 합니다
   const getSectionLabel = (item) => item.parent || "";
-
+ 
   return (
     <>
       {!isMobile && !isTablet && (
-        <aside className="dark:bg-slate-800 pt-32 w-48 desktop:pt-32 desktop:w-48 mx-20">
-          <nav className="fixed">
-            <ul className="list-none p-0 m-0">
-              {leftMenuItems.map((item, idx) => {
-                if (item.type === "divider") {
-                  return <hr key={idx} className="my-4 border-gray-400" />;
-                }
+      <aside className="bg-gray-100 dark:bg-slate-800 pt-32 w-48 desktop:pt-32 desktop:w-48 mx-20">
+  <nav className="fixed">
+    <ul className="list-none p-0 m-0">
+      {leftMenuItems.map((item, idx) => {
+        if (item.type === "divider") {
+          return <hr key={idx} className="my-4 border-gray-400" />;
+        }
 
-                if (item.type === "section") {
-                  return (
-                    <li
-                      key={idx}
-                      className="text-gray-500 dark:text-gray-300 py-2 font-semibold cursor-pointer select-none"
-                      onClick={() => toggleSection(item.label)}
-                    >
-                      {/* 화살표 아이콘 */}
-                      <span className="inline-block mr-1">
-                        {openSections[item.label] ? "▼" : "▶"}
-                      </span>
-                      {item.label}
-                    </li>
-                  );
-                }
+        if (item.type === "section") {
+          return (
+            <li
+              key={idx}
+              className="text-gray-700 dark:text-gray-300 py-2 font-semibold cursor-pointer select-none"
+              onClick={() => toggleSection(item.label)}
+            >
+              <span className="inline-block mr-1">
+                {openSections[item.label] ? "▼" : "▶"}
+              </span>
+              {item.label}
+            </li>
+          );
+        }
 
-                // section이 있고, 해당 섹션이 닫혀있으면 렌더링 안 함
-                const sectionLabel = getSectionLabel(item);
-                if (sectionLabel && !openSections[sectionLabel]) {
-                  return null;
-                }
+        const sectionLabel = getSectionLabel(item);
+        if (sectionLabel && !openSections[sectionLabel]) return null;
 
-                // 일반 메뉴 아이템 렌더링
-                return (
-                  <li key={item.href + idx} className="list-none text-gray-500 dark:text-gray-300 py-2 font-semibold cursor-pointer select-none">
-                    <Link
-                      href={item.href}
-                      className="block text-black dark:text-gray-100 py-2 pl-6 hover:bg-gray-200 dark:hover:bg-slate-700 rounded"
-                    >
-                      {item.label}
-                    </Link>
-                  </li>
-                );
-              })}
-            </ul>
-          </nav>
-        </aside>
+        return (
+          <li key={item.href + idx} className="py-2">
+            <Link
+              href={item.href}
+              className="block text-gray-800 dark:text-gray-100 py-2 pl-6 hover:bg-gray-300 dark:hover:bg-slate-700 rounded"
+            >
+              {item.label}
+            </Link>
+          </li>
+        );
+      })}
+    </ul>
+  </nav>
+</aside>
       )}
     </>
   );
