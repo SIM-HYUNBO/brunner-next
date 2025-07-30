@@ -75,7 +75,7 @@ export default function LeftMenu({ reloadSignal }) {
 
                 // 일반 메뉴 아이템 렌더링
                 return (
-                  <li key={item.href + idx} className="list-none">
+                  <li key={item.href + idx} className="list-none text-gray-500 dark:text-gray-300 py-2 font-semibold cursor-pointer select-none">
                     <Link
                       href={item.href}
                       className="block text-black dark:text-gray-100 py-2 pl-6 hover:bg-gray-200 dark:hover:bg-slate-700 rounded"
