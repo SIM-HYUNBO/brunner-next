@@ -78,7 +78,7 @@ export default function LeftMenu({ reloadSignal }) {
                   <li key={item.href + idx} className="list-none">
                     <Link
                       href={item.href}
-                      className="block text-gray-900 dark:text-gray-100 py-2 pl-6 hover:bg-gray-200 dark:hover:bg-slate-700 rounded"
+                      className="block text-black dark:text-gray-100 py-2 pl-6 hover:bg-gray-200 dark:hover:bg-slate-700 rounded"
                     >
                       {item.label}
                     </Link>
