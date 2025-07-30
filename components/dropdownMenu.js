@@ -2,11 +2,14 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { getDropdownMenuItems } from "@/components/dropdownMenuitem";
 import UserInfo from "@/components/userInfo"; // 예시 import
+import { useTheme } from 'next-themes';
+import { getIsDarkMode } from '@/components/darkModeToggleButton';
 
 export default function DropdownMenu({ reloadSignal, triggerMenuReload }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [menuItems, setMenuItems] = useState([]);
   const [openSections, setOpenSections] = useState({});
+  
 
   useEffect(() => {
     const loadMenu = async () => {
@@ -89,14 +92,18 @@ export default function DropdownMenu({ reloadSignal, triggerMenuReload }) {
               const sectionLabel = getSectionLabel(item);
               if (sectionLabel && !openSections[sectionLabel]) return null;
 
+              
+              const menuStyle = {
+                  color: getIsDarkMode() ? 'white' : 'black',
+                  padding: '8px',
+                  textDecoration: 'none',
+                };
+
               return (
                 <li key={item.href + idx}>
-                  <Link
-                    href={item.href}
-                    className="font-semibold cursor-pointer select-none flex items-center justify-between"
-                  >
+                  <a href={item.href} style={menuStyle}>
                     {item.label}
-                  </Link>
+                  </a>
                 </li>
               );
             })}
