@@ -120,7 +120,7 @@ export default function RenderComponent (props) {
       value={component.runtime_data?.value || ''}
       placeholder={component.runtime_data?.placeholder || ''}
       onClick={handleComponentClick}
-      onChange={(e) => onRuntimeDataChange( "value", e.target.value)}
+      onChange={(e) => onRuntimeDataChange({ runtime_data: { value: e.target.value } })}
     />
   );
 };
