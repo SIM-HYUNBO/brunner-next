@@ -140,13 +140,27 @@ export default function EDocContent({ documentId }) {
         >
           {pages.map(page => (
             <EDocEditorCanvas
-              key={page.id}
-              pageData={page}
-              isViewerMode={true}
-              mode="runtime"
-              bindingData={commonFunctions.bindingData}
-              style={{ width: '100%', minWidth: 0, overflow: 'visible' }}
-            />
+  key={page.id}
+  pageData={page}
+  isViewerMode={false} // ✅ 입력 허용
+  mode="runtime"
+  bindingData={commonFunctions.bindingData}
+  onUpdateComponent={(updatedComponent) => {
+    setPages(prevPages => {
+      return prevPages.map(page => {
+        if (page.id !== updatedComponent.pageId) return page;
+
+        const newComponents = page.components.map(comp =>
+          comp.id === updatedComponent.id ? updatedComponent : comp
+        );
+        return {
+          ...page,
+          components: newComponents,
+        };
+      });
+    });
+  }}
+/>
           ))}
         </div>
       </main>
