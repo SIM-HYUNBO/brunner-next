@@ -20,7 +20,7 @@ export default function EDocDesigner() {
     setTheme(newValue);
   };
 
-  const triggerLeftMenuReload = () => {
+  const triggerMenuReload = () => {
     setReloadSignal(prev => prev + 1);
   };
 
@@ -31,13 +31,13 @@ export default function EDocDesigner() {
   const documentId = null;
 
   return (
-    <Layout reloadSignal={reloadSignal} triggerLeftMenuReload={triggerLeftMenuReload}>
+    <Layout reloadSignal={reloadSignal} triggerMenuReload={triggerMenuReload}>
       <BodySection>
         <h2 className={`title-font sm:text-4xl text-3xl my-20 font-medium text-green-900`}>
           Page Designer
         </h2>        
         <div className="w-full">
-          <EDocDesignerContainer documentId={documentId} triggerLeftMenuReload={triggerLeftMenuReload} />
+          <EDocDesignerContainer documentId={documentId} triggerMenuReload={triggerMenuReload} />
         </div>
       </BodySection>
     </Layout>

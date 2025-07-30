@@ -4,7 +4,7 @@ import * as userInfo from "@/components/userInfo";
 import RequestServer from "@/components/requestServer";
 
 // 왼쪽 메뉴 전체 구성 반환 함수
-export async function getLeftMenuItems() {
+export async function getDropdownMenuItems() {
   let items = [
     { label: "Home", href: "/", type: "item" },
     { label: "Page Designer", href: "/mainPages/eDocDesigner", type: "item" },

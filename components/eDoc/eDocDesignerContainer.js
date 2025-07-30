@@ -25,7 +25,7 @@ import * as CheckListComponent from "@/components/eDoc/eDocComponent/eDocCompone
 import * as ButtonComponent from "@/components/eDoc/eDocComponent/eDocComponent_Button";
 import * as VideoComponent from "@/components/eDoc/eDocComponent/eDocComponent_Video";
 
-export default function EDocDesignerContainer({ documentId, triggerLeftMenuReload }) {
+export default function EDocDesignerContainer({ documentId, triggerMenuReload }) {
   const { BrunnerMessageBox, openModal } = useModal();
 
   const [loading, setLoading] = useState(false);
@@ -164,7 +164,7 @@ export default function EDocDesignerContainer({ documentId, triggerLeftMenuReloa
     setLoading(false);
 
     if (jResponse.error_code === 0) {
-      if (triggerLeftMenuReload) triggerLeftMenuReload();
+      if (triggerMenuReload) triggerMenuReload();
       openModal(constants.messages.SUCCESS_SAVED);
       setDocumentData(jResponse.documentData);
       setCurrentPageIdx(0);
@@ -188,7 +188,7 @@ export default function EDocDesignerContainer({ documentId, triggerLeftMenuReloa
     setLoading(false);
 
     if (jResponse.error_code === 0) {
-      if (triggerLeftMenuReload) triggerLeftMenuReload();
+      if (triggerMenuReload) triggerMenuReload();
       openModal(constants.messages.SUCCESS_DELETED);
       setDocumentData({
         id: null,
