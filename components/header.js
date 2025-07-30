@@ -3,7 +3,7 @@ import Link from "next/link";
 import Image from "next/image";
 import * as userInfo from "@/components/userInfo";
 import DivContainer from "@/components/divContainer";
-import { getLeftMenuItems } from "@/components/leftMenuItems";
+import {  } from "@/components/leftMenuItems";
 
 export default function Header({ triggerLeftMenuReload, reloadSignal }) {
   const UserInfo = userInfo.default;
