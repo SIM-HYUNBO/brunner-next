@@ -35,8 +35,8 @@ const getAdminDocumentList = async (items) => {
 
   const jResponse = await RequestServer(jRequest);
   if (jResponse.error_code === 0 && Array.isArray(jResponse.documentList)) {
-    // const sectionLabel = "Admin Documents";
-    // items.push({ label: sectionLabel, type: "section" });
+    const sectionLabel = "Admin's pages";
+    items.push({ label: sectionLabel, type: "section" });
 
     jResponse.documentList.forEach((doc) => {
       const hRef = `/mainPages/edocument?documentId=${doc.id}`;
