@@ -14,7 +14,7 @@ export default function HomeContent() {
 
   return (
     <>
-      <DivContainer className={`my-24 flex-row`}>
+      <DivContainer className={`flex-row`}>
         <div className={`w-full items-center justify-center text-left`}>
           <h2 className={`title-font sm:text-4xl text-3xl my-20 font-medium text-green-900`}>
             Noesis Pelagos
