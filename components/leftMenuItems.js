@@ -1,27 +1,28 @@
-import { useEffect, useState } from "react";
+// components/leftMenuItems.js
 import * as constants from "@/components/constants";
 import * as userInfo from "@/components/userInfo";
 import RequestServer from "@/components/requestServer";
 
-// 동적 문서 메뉴까지 포함해서 반환
+// 왼쪽 메뉴 전체 구성 반환 함수
 export async function getLeftMenuItems() {
   let items = [
-    { label: "Home", href: "/" },
-    { label: "Page Designer", href: "/mainPages/eDocDesigner" },
-    { label: "Contact", href: "/mainPages/contact" },
-    // 기타 고정 메뉴
+    { label: "Home", href: "/", type: "item" },
+    { label: "Page Designer", href: "/mainPages/eDocDesigner", type: "item" },
+    { label: "Contact", href: "/mainPages/contact", type: "item" },
   ];
 
   if (userInfo.isAdminUser()) {
-    items.push({ label: "Administration", href: "/mainPages/administration" });
+    items.push({ label: "Administration", href: "/mainPages/administration", type: "item" });
   }
 
   items.push({ type: "divider" });
 
   items = await getAdminDocumentList(items);
 
-  items = await getUsersDocumentList(items);
-
+  if (userInfo.getLoginUserId() && !userInfo.isAdminUser()) {
+    items = await getUsersDocumentList(items);
+  }
+  
   return items;
 }
 
@@ -31,38 +32,52 @@ const getAdminDocumentList = async (items) => {
     systemCode: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE,
     userId: userInfo.getLoginUserId(),
   };
-  var jResponse = null;
 
-  jResponse = await RequestServer(jRequest);
+  const jResponse = await RequestServer(jRequest);
   if (jResponse.error_code === 0 && Array.isArray(jResponse.documentList)) {
-    jResponse.documentList.forEach(doc => {
+    const sectionLabel = "Admin Documents";
+    items.push({ label: sectionLabel, type: "section" });
+
+    jResponse.documentList.forEach((doc) => {
       const hRef = `/mainPages/edocument?documentId=${doc.id}`;
-      items.push({ label: doc.runtime_data.title, href: hRef });
+      items.push({
+        label: doc.runtime_data?.title || "(제목 없음)",
+        href: hRef,
+        type: "item",
+        parent: sectionLabel,
+      });
     });
   }
 
   return items;
-}
+};
 
 const getUsersDocumentList = async (items) => {
-  if(!userInfo.getLoginUserId() || userInfo.isAdminUser()) {
-    return items; // 관리자면 사용자 문서 목록은 필요 없음
-  } 
-  
-  var jRequest = {
+  const userId = userInfo.getLoginUserId();
+  if (!userId || userInfo.isAdminUser()) return items;
+
+  const jRequest = {
     commandName: constants.commands.EDOC_USER_DOCUMENT_SELECT_ALL,
     systemCode: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE,
-    userId: userInfo.getLoginUserId(),
+    userId: userId,
   };
-  var jResponse = null;
-  jResponse = await RequestServer(jRequest);
+
+  const jResponse = await RequestServer(jRequest);
   if (jResponse.error_code === 0 && Array.isArray(jResponse.documentList)) {
-    items.push({ type: "divider" });
-    items.push({ label: `${userInfo.getLoginName()}'s Page`, type: "section" });
-    jResponse.documentList.forEach(doc => {
+    const sectionLabel = `${userInfo.getLoginName()}'s Page`;
+
+    items.push({ label: sectionLabel, type: "section" });
+
+    jResponse.documentList.forEach((doc) => {
       const hRef = `/mainPages/edocument?documentId=${doc.id}`;
-      items.push({ label: doc.runtime_data.title, href: hRef });
+      items.push({
+        label: doc.runtime_data?.title || "(제목 없음)",
+        href: hRef,
+        type: "item",
+        parent: sectionLabel,
+      });
     });
   }
+
   return items;
-}
+};

@@ -3,20 +3,52 @@ import Link from "next/link";
 import Image from "next/image";
 import * as userInfo from "@/components/userInfo";
 import DivContainer from "@/components/divContainer";
-import {  } from "@/components/leftMenuItems";
+import { getLeftMenuItems } from "@/components/leftMenuItems";
 
 export default function Header({ triggerLeftMenuReload, reloadSignal }) {
   const UserInfo = userInfo.default;
 
   const handleLogout = () => {
     if (triggerLeftMenuReload) triggerLeftMenuReload();
-    
-    // 필요하다면 로그아웃 후 이동 처리 추가
+    // 로그아웃 후 추가 처리 가능
   };
 
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [leftMenuItems, setLeftMenuItems] = useState([]);
 
+  // 섹션별 열림/닫힘 상태
+  const [openSections, setOpenSections] = useState({});
+
+  // 섹션 클릭 시 토글 함수
+  const toggleSection = (label) => {
+    setOpenSections((prev) => ({
+      ...prev,
+      [label]: !prev[label],
+    }));
+  };
+
+  useEffect(() => {
+    const loadMenu = async () => {
+      const items = await getLeftMenuItems();
+
+      // 모든 section 기본 닫힘(false)으로 초기화
+      const sections = items
+        .filter((item) => item.type === "section")
+        .reduce((acc, cur) => {
+          acc[cur.label] = false;
+          return acc;
+        }, {});
+
+      setOpenSections(sections);
+      setLeftMenuItems(items);
+    };
+    loadMenu();
+  }, [reloadSignal]);
+
+  // 하위 메뉴인지 판단용 - parent가 section label임
+  const getSectionLabel = (item) => item.parent || "";
+
+  // 메뉴 렌더링
   const mobileDropdownMenu = () => (
     <>
       <button
@@ -43,25 +75,53 @@ export default function Header({ triggerLeftMenuReload, reloadSignal }) {
       </button>
 
       {mobileMenuOpen && (
-        <div className="absolute right-4 mt-2 w-64 bg-white shadow-lg rounded z-50 dark:bg-slate-800 dark:text-gray-100">
-          {leftMenuItems.map((item, idx) =>
-            item.type === "divider" ? (
-              <hr key={idx} className="my-2 border-gray-300" />
-            ) : item.type === "section" ? (
-              <div key={idx} className="px-4 py-2 text-gray-500">
-                {item.label}
-              </div>
-            ) : (
-              <Link
-                key={item.href + idx}
-                href={item.href}
-                className="block px-4 py-2 text-gray-700 hover:bg-gray-100 dark:bg-slate-800 dark:text-gray-100"
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                {item.label}
-              </Link>
-            )
-          )}
+        <div className="absolute right-4 w-64 bg-white shadow-lg rounded z-50 dark:bg-slate-800 dark:text-gray-100">
+          <ul className="p-2">
+            {leftMenuItems.map((item, idx) => {
+              if (item.type === "divider") {
+                return <hr key={idx} className="my-2 border-gray-300" />;
+              }
+
+              if (item.type === "section") {
+                return (
+                  <li
+                    key={idx}
+                    className="font-semibold mt-3 cursor-pointer select-none flex items-center justify-between px-2 py-1"
+                    onClick={() => toggleSection(item.label)}
+                  >
+                    <span>{item.label}</span>
+                    <span>{openSections[item.label] ? "▼" : "▶"}</span>
+                  </li>
+                );
+              }
+
+              // 하위 메뉴인데 해당 섹션이 닫혀있으면 숨김
+              const sectionLabel = getSectionLabel(item);
+              if (sectionLabel && !openSections[sectionLabel]) return null;
+
+              // 하위 메뉴 스타일
+              if (item.type === "submenu" || item.type === "menu") {
+                return (
+                  <li
+                    key={item.href + idx}
+                    className="ml-4 px-2 py-1 text-sm hover:bg-slate-200 dark:hover:bg-slate-600 rounded"
+                  >
+                    <Link href={item.href}>{item.label}</Link>
+                  </li>
+                );
+              }
+
+              // 일반 메뉴
+              return (
+                <li
+                  key={item.href + idx}
+                  className="px-2 py-2 hover:bg-slate-200 dark:hover:bg-slate-600 rounded"
+                >
+                  <Link href={item.href}>{item.label}</Link>
+                </li>
+              );
+            })}
+          </ul>
           <hr />
           <UserInfo handleLogout={handleLogout} />
         </div>
@@ -69,42 +129,31 @@ export default function Header({ triggerLeftMenuReload, reloadSignal }) {
     </>
   );
 
-  useEffect(() => {
-    getLeftMenuItems().then(setLeftMenuItems);
-  }, [reloadSignal]);
-
   return (
     <header className="sticky top-0 left-0 right-0 w-full z-50 bg-white dark:bg-slate-800 text-gray-600 dark:text-white body-font md:w-2/3">
       <DivContainer className="relative flex items-center w-full max-w-full">
         {/* 로고 */}
-        <Link href="/" className="flex title-font font-medium items-center text-gray-900 mb-4 md:mb-0">
+        <Link
+          href="/"
+          className="flex title-font font-medium items-center text-gray-900 mb-4 md:mb-0"
+        >
           <Image
             src="/brunnerLogo202507.png"
-              alt="brunner logo"
-              priority
-              width={0}
-              height={0}
-              sizes="(max-width: 768px) 150px, 240px"
-              className="w-[150px] sm:w-[240px] h-auto"
+            alt="brunner logo"
+            priority
+            width={0}
+            height={0}
+            sizes="(max-width: 768px) 150px, 240px"
+            className="w-[150px] sm:w-[240px] h-auto"
           />
         </Link>
-
-        {/* 문서 제목 */}
-        {/* <Link href="/" className="flex title-font font-medium items-center text-gray-900 mb-4 md:mb-0">
-          <h1 className="title-font sm:text-4xl text-3xl m-5 font-medium text-orange-900">Brunner</h1>
-        </Link> */}
 
         <div className="flex-1" />
 
         {/* 모바일 햄버거 메뉴 */}
-        <div className="absolute top-4 right-4 z-50">
-          {mobileDropdownMenu()}
-        </div>
+        <div className="absolute top-4 right-4 z-50">{mobileDropdownMenu()}</div>
 
-        {/* PC 메뉴 */}
-        {/* <div className="md:hidden lg:block w-64 bg-gray-100">
-          {topMenu()}
-        </div> */}
+        {/* PC 메뉴는 필요하면 별도로 구현 */}
       </DivContainer>
     </header>
   );
