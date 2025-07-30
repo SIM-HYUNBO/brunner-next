@@ -9,7 +9,7 @@ export async function getLeftMenuItems() {
     { label: "Home", href: "/", type: "item" },
     { label: "Page Designer", href: "/mainPages/eDocDesigner", type: "item" },
     { label: "Contact", href: "/mainPages/contact", type: "item" },
-  ];
+  ]; 
 
   if (userInfo.isAdminUser()) {
     items.push({ label: "Administration", href: "/mainPages/administration", type: "item" });
