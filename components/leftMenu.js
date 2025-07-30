@@ -71,10 +71,10 @@ export default function LeftMenu({ reloadSignal }) {
         if (sectionLabel && !openSections[sectionLabel]) return null;
 
         return (
-          <li key={item.href + idx} className="py-2">
+          <li key={item.href + idx} className="py-2 text-black">
             <Link
               href={item.href}
-              className="block text-gray-800 dark:text-gray-100 py-2 pl-6 hover:bg-gray-300 dark:hover:bg-slate-700 rounded"
+              className="block text-black dark:text-gray-100 py-2 pl-6 hover:bg-gray-300 dark:hover:bg-slate-700 rounded"
             >
               {item.label}
             </Link>

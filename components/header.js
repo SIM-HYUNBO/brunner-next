@@ -115,7 +115,7 @@ export default function Header({ triggerLeftMenuReload, reloadSignal }) {
               return (
                 <li
                   key={item.href + idx}
-                  className="px-2 py-2 hover:bg-slate-200 dark:hover:bg-slate-600 rounded"
+                  className="px-2 py-2 hover:bg-slate-200 dark:hover:bg-slate-600 rounded text-black"
                 >
                   <Link href={item.href}>{item.label}</Link>
                 </li>
