@@ -7,7 +7,7 @@ import { useModal } from "@/components/brunnerMessageBox";
 import * as constants from "@/components/constants";
 import * as userInfo from "@/components/userInfo";
 
-export default function SignoutButton({ handleLogout }) {
+export default function SignoutButton({ handleLogout, triggerMenuReload }) {
   const router = useRouter();
   const { BrunnerMessageBox, openModal } = useModal();
   const [loading, setLoading] = useState(false);
@@ -26,9 +26,9 @@ export default function SignoutButton({ handleLogout }) {
 
     if (jResponse.error_code == 0) {
       localStorage.removeItem('userInfo');
+      if (triggerMenuReload) triggerMenuReload();
       router.push("/");
       handleLogout();
-
     } else {
       openModal(result.error_message);
     }
