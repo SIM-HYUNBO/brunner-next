@@ -31,18 +31,33 @@ export default function Layout({ children, reloadSignal, triggerMenuReload }) {
   }, [reloadSignal]);
 
   return (
-    <div className="flex flex-col md:flex-row min-h-screen bg-primary justify-center desktop:pl-10 w-full overflow-x-hidden">
-      <DivContainer className="flex flex-col w-full desktop:px-4 mx-2 px-1">
-        <main className="flex-grow md:overflow-x: auto">
-          <Header triggerMenuReload={triggerMenuReload} reloadSignal={reloadSignal} />
-          {React.Children.map(children, child =>
-            React.isValidElement(child)
-              ? React.cloneElement(child, { triggerMenuReload })
-              : child
+    <div className="flex 
+                    flex-col 
+                    md:flex-row 
+                    min-h-screen 
+                    bg-primary 
+                    justify-center 
+                    desktop:pl-10 
+                    w-full 
+                    overflow-x-hidden">
+      <DivContainer className="flex 
+                               flex-col 
+                               w-full 
+                               desktop:px-4 
+                               mx-2 
+                               px-1">
+        <main className="flex-grow 
+                         md:overflow-x: auto">
+          <Header triggerMenuReload={triggerMenuReload} 
+                  reloadSignal={reloadSignal} />
+            {React.Children.map(children, child =>
+              React.isValidElement(child) ? 
+              React.cloneElement(child, { triggerMenuReload }) : 
+              child
           )}
           <Footer />
         </main>
-    </DivContainer>
+      </DivContainer>
     </div>
   );
 }
