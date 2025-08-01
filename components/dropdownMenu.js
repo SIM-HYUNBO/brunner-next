@@ -109,7 +109,7 @@ export default function DropdownMenu({ reloadSignal, triggerMenuReload }) {
             })}
           </ul>
           <hr />
-          <UserInfo handleLogout={handleLogout} />
+          <UserInfo handleLogout={handleLogout} triggerMenuReload={triggerMenuReload} />
         </div>
       )}
     </>

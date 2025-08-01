@@ -4,7 +4,7 @@ import SignoutButton from "./signoutButton";
 import DarkModeToggleButton from "./darkModeToggleButton";
 import { useState, useEffect } from 'react';
 
-export default function UserInfo({ handleLogout }) {
+export default function UserInfo({ handleLogout, triggerMenuReload }) {
   const [userName, setUserName] = useState('');
 
   useEffect(() => {
@@ -27,7 +27,7 @@ export default function UserInfo({ handleLogout }) {
       <div className="mr-1 ml-1 inline-block align-middle">
         {userName}
       </div>
-      <SignoutButton handleLogout={handleLogout} />
+      <SignoutButton handleLogout={handleLogout} triggerMenuReload={triggerMenuReload}/>
     </div>
   );
 }
