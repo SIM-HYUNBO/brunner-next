@@ -73,7 +73,7 @@ export default function DropdownMenu({ reloadSignal, triggerMenuReload }) {
       {mobileMenuOpen && (
         <div className="absolute 
                         right-4 
-                        w-48 
+                        w-42 
                         shadow-lg 
                         rounded 
                         z-50 
