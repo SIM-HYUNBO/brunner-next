@@ -1,36 +1,41 @@
 // components/leftMenuItems.js
 import * as constants from "@/components/constants";
-import * as userInfo from "@/components/userInfo";
 import RequestServer from "@/components/requestServer";
 
 // 왼쪽 메뉴 전체 구성 반환 함수
 export async function getDropdownMenuItems() {
+  const loginUserId = typeof window !== "undefined" ? localStorage.getItem("userId") : null;
+  const loginUserName = typeof window !== "undefined" ? localStorage.getItem("userName") : null;
+  const isAdmin = typeof window !== "undefined" ? localStorage.getItem("adminFlag") === "true" : false;
+
   let items = [
     { label: "Home", href: "/", type: "item" },
     { label: "Page Designer", href: "/mainPages/eDocDesigner", type: "item" },
     { label: "Contact", href: "/mainPages/contact", type: "item" },
-  ]; 
+  ];
 
-  if (userInfo.isAdminUser()) {
+  if (isAdmin) {
     items.push({ label: "Administration", href: "/mainPages/administration", type: "item" });
   }
 
   items.push({ type: "divider" });
 
-  items = await getAdminDocumentList(items);
+  items = await getAdminDocumentList(items, loginUserId);
 
-  if (userInfo.getLoginUserId() && !userInfo.isAdminUser()) {
-    items = await getUsersDocumentList(items);
+  if (loginUserId && !isAdmin) {
+    items = await getUsersDocumentList(items, loginUserId, loginUserName);
   }
-  
+
   return items;
 }
 
-const getAdminDocumentList = async (items) => {
+const getAdminDocumentList = async (items, userId) => {
+  if (!userId) return items;
+
   const jRequest = {
     commandName: constants.commands.EDOC_ADMIN_DOCUMENT_SELECT_ALL,
     systemCode: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE,
-    userId: userInfo.getLoginUserId(),
+    userId: userId,
   };
 
   const jResponse = await RequestServer(jRequest);
@@ -52,9 +57,8 @@ const getAdminDocumentList = async (items) => {
   return items;
 };
 
-const getUsersDocumentList = async (items) => {
-  const userId = userInfo.getLoginUserId();
-  if (!userId || userInfo.isAdminUser()) return items;
+const getUsersDocumentList = async (items, userId, userName) => {
+  if (!userId) return items;
 
   const jRequest = {
     commandName: constants.commands.EDOC_USER_DOCUMENT_SELECT_ALL,
@@ -64,7 +68,7 @@ const getUsersDocumentList = async (items) => {
 
   const jResponse = await RequestServer(jRequest);
   if (jResponse.error_code === 0 && Array.isArray(jResponse.documentList)) {
-    const sectionLabel = `${userInfo.getLoginName()}'s Page`;
+    const sectionLabel = `${userName || "User"}'s Page`;
 
     items.push({ label: sectionLabel, type: "section" });
 
