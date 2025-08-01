@@ -1,8 +1,7 @@
-// 중요: 반드시 'use client' 선언 필요
 'use client';
 
 import { useEffect, useState } from "react";
-import { getDropdownMenuItems } from "@/components/dropdownMenuitem";
+import { getDropdownMenuItems } from "@/components/leftMenuItems";
 import UserInfo from "@/components/userInfo";
 import { getIsDarkMode } from '@/components/darkModeToggleButton';
 
@@ -25,7 +24,6 @@ export default function DropdownMenu({ reloadSignal, triggerMenuReload }) {
       setOpenSections(sections);
       setMenuItems(items);
     };
-
     loadMenu();
   }, [reloadSignal]);
 
@@ -44,7 +42,28 @@ export default function DropdownMenu({ reloadSignal, triggerMenuReload }) {
 
   return (
     <>
-      <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>☰</button>
+      <button
+        className="p-2 dark:bg-slate-800 dark:text-gray-100"
+        onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+        aria-label="메뉴 열기"
+        aria-expanded={mobileMenuOpen}
+      >
+        <svg
+          width="28"
+          height="28"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          className="text-gray-700 dark:text-gray-100"
+        >
+          <line x1="4" y1="6" x2="20" y2="6" />
+          <line x1="4" y1="12" x2="20" y2="12" />
+          <line x1="4" y1="18" x2="20" y2="18" />
+        </svg>
+      </button>
 
       {mobileMenuOpen && (
         <div className="absolute right-4 w-64 bg-white shadow-lg rounded z-50 dark:bg-slate-800 dark:text-gray-100">
@@ -56,7 +75,11 @@ export default function DropdownMenu({ reloadSignal, triggerMenuReload }) {
 
               if (item.type === "section") {
                 return (
-                  <li key={idx} className="font-semibold cursor-pointer select-none flex justify-between" onClick={() => toggleSection(item.label)}>
+                  <li
+                    key={idx}
+                    className="font-semibold cursor-pointer select-none flex items-center justify-between"
+                    onClick={() => toggleSection(item.label)}
+                  >
                     <span>{item.label}</span>
                     <span>{openSections[item.label] ? "▼" : "▶"}</span>
                   </li>
@@ -67,9 +90,9 @@ export default function DropdownMenu({ reloadSignal, triggerMenuReload }) {
               if (sectionLabel && !openSections[sectionLabel]) return null;
 
               const menuStyle = {
-                color: getIsDarkMode() ? 'white' : 'black',
-                padding: '8px',
-                textDecoration: 'none',
+                color: getIsDarkMode() ? "white" : "black",
+                padding: "8px",
+                textDecoration: "none",
               };
 
               return (
