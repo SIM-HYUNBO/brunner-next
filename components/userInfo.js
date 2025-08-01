@@ -40,6 +40,7 @@ export default function UserInfo({ handleLogout, reloadSignal, triggerMenuReload
                     flex-row 
                     justify-center 
                     items-center
+                    mt-3
                     text-gray-600 
                     dark:text-gray-400">
       <DarkModeToggleButton />
