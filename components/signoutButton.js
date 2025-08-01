@@ -50,9 +50,8 @@ export default function SignoutButton({ handleLogout, triggerMenuReload }) {
                       dark:bg-slate-600
                       dark:text-yellow-600 
                       dark:hover:text-yellow-300 
-                      rounded text-base 
-                      mt-4 
-                      md:mt-0`}
+                      rounded 
+                      text-base`}
           type="button"
           onClick={async () => {
             const result = await openModal(constants.messages.SIGNOUT);
