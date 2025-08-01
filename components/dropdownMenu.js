@@ -6,7 +6,7 @@ import { useTheme } from 'next-themes';
 import { getIsDarkMode } from '@/components/darkModeToggleButton';
 
 export default function DropdownMenu({ reloadSignal, triggerMenuReload }) {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [menuItems, setMenuItems] = useState([]);
   const [openSections, setOpenSections] = useState({});
   
@@ -49,7 +49,7 @@ export default function DropdownMenu({ reloadSignal, triggerMenuReload }) {
     <>
       <button
         className="p-2 dark:bg-slate-800 dark:text-gray-100"
-        onClick={() => setIsMenuOpen(!isMenuOpen)}
+        onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
         aria-label="메뉴 열기"
         aria-expanded={mobileMenuOpen}
       >
