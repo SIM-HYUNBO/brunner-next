@@ -17,16 +17,15 @@ export default function SignoutButton({ handleLogout }) {
     var jResponse = null;
 
     jRequest.commandName = constants.commands.SECURITY_SIGNOUT;
-    var userInfo = process.env.userInfo ? process.env.userInfo : null;
 
-    jRequest.userId = userInfo?.USER_ID;
+    jRequest.userId = userInfo?.getLoginUserId();
 
     setLoading(true); // 데이터 로딩 시작
     jResponse = await RequestServer(jRequest);
     setLoading(false); // 데이터 로딩 끝
 
     if (jResponse.error_code == 0) {
-      process.env.userInfo = null;
+      localStorage.setItem('userInfo', null);
       router.push("/");
       handleLogout();
 
