@@ -71,7 +71,16 @@ export default function DropdownMenu({ reloadSignal, triggerMenuReload }) {
       </button>
 
       {mobileMenuOpen && (
-        <div className="absolute right-4 w-64 bg-white shadow-lg rounded z-50 dark:bg-slate-800 dark:text-gray-100">
+        <div className="absolute 
+                        right-4 
+                        w-48 
+                        shadow-lg 
+                        rounded 
+                        z-50 
+                        bg-slate-100
+                        text-gray-800
+                        dark:bg-slate-800 
+                        dark:text-gray-100">
           <ul className="p-2">
             {menuItems.map((item, idx) => {
               if (item.type === "divider") {
@@ -82,7 +91,11 @@ export default function DropdownMenu({ reloadSignal, triggerMenuReload }) {
                 return (
                   <li
                     key={idx}
-                    className="font-semibold cursor-pointer select-none flex items-center justify-between"
+                    className="cursor-pointer 
+                               select-none 
+                               flex 
+                               items-center 
+                               justify-between"
                     onClick={() => toggleSection(item.label)}
                   >
                     <span>{item.label}</span>
