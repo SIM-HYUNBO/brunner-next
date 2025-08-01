@@ -1,54 +1,86 @@
-`use strict`
+'use client';
 
 import SignoutButton from "./signoutButton";
 import DarkModeToggleButton from "./darkModeToggleButton";
 import { useState, useEffect } from 'react';
 
 export default function UserInfo({ handleLogout }) {
+  const [userName, setUserName] = useState('');
+
   useEffect(() => {
-    getLoginName();
+    if (typeof window !== 'undefined') {
+      try {
+        const userInfoStr = localStorage.getItem('userInfo');
+        if (userInfoStr) {
+          const userInfo = JSON.parse(userInfoStr);
+          setUserName(userInfo?.userName || '');
+        }
+      } catch (e) {
+        console.error("Invalid userInfo JSON:", e);
+      }
+    }
   }, []);
 
   return (
-    <div className={`flex flex-row ml-3 mr-1  mt-5 text-gray-600 dark:text-gray-400`}>
+    <div className="flex flex-row ml-3 mr-1 mt-5 text-gray-600 dark:text-gray-400">
       <DarkModeToggleButton />
-      <div className={`mr-1 ml-1 inline-block align-middle`}>
-        {getLoginName()}
+      <div className="mr-1 ml-1 inline-block align-middle">
+        {userName}
       </div>
       <SignoutButton handleLogout={handleLogout} />
     </div>
   );
 }
 
+// Helper 함수들
 export const getLoginUserId = () => {
-  var userInfo = null;
-
-  if (localStorage.getItem('userInfo')) {
-    userInfo = localStorage.getItem('userInfo');
+  if (typeof window !== 'undefined') {
+    try {
+      const userInfoStr = localStorage.getItem('userInfo');
+      const userInfo = JSON.parse(userInfoStr);
+      return userInfo?.userId || '';
+    } catch {
+      return '';
+    }
   }
-  return userInfo?.userId;
-}
+  return '';
+};
 
 export const getLoginName = () => {
-  var userInfo = null;
-
-  if (localStorage.getItem('userInfo')) {
-    userInfo = localStorage.getItem('userInfo');
+  if (typeof window !== 'undefined') {
+    try {
+      const userInfoStr = localStorage.getItem('userInfo');
+      const userInfo = JSON.parse(userInfoStr);
+      return userInfo?.userName || '';
+    } catch {
+      return '';
+    }
   }
-  return !userInfo?.userName ? '' : userInfo?.userName;
-}
+  return '';
+};
 
 export const isAdminUser = () => {
-  var userInfo = null;
-
-  if (localStorage.getItem('userInfo')) {
-    userInfo = localStorage.getItem('userInfo');
+  if (typeof window !== 'undefined') {
+    try {
+      const userInfoStr = localStorage.getItem('userInfo');
+      const userInfo = JSON.parse(userInfoStr);
+      return !!userInfo?.adminFlag;
+    } catch {
+      return false;
+    }
   }
-
-  return !userInfo?.adminFlag ? '' : userInfo?.adminFlag;
-}
+  return false;
+};
 
 export const isLogin = () => {
-  var userInfo = localStorage.getItem('userInfo')
-  return userInfo?.userId ? true : false;
-}
+  if (typeof window !== 'undefined') {
+    try {
+      const userInfoStr = localStorage.getItem('userInfo');
+      const userInfo = JSON.parse(userInfoStr);
+      return !!userInfo?.userId;
+    } catch {
+      return false;
+    }
+  }
+  return false;
+};
