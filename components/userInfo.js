@@ -36,7 +36,12 @@ export default function UserInfo({ handleLogout, reloadSignal, triggerMenuReload
   }, [reloadSignal]);
   
   return (
-    <div className="flex flex-row ml-3 mr-1 mt-1 text-gray-600 dark:text-gray-400">
+    <div className="flex 
+                    flex-row 
+                    ml-3 
+                    mt-3 
+                    text-gray-600 
+                    dark:text-gray-400">
       <DarkModeToggleButton />
       {getLoginUserId() && (
        <div className="mr-1 ml-1 inline-block align-middle">
