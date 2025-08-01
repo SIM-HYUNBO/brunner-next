@@ -4,9 +4,14 @@ import RequestServer from "@/components/requestServer";
 
 // 왼쪽 메뉴 전체 구성 반환 함수
 export async function getDropdownMenuItems() {
-  const loginUserId = typeof window !== "undefined" ? localStorage.getItem("userId") : null;
-  const loginUserName = typeof window !== "undefined" ? localStorage.getItem("userName") : null;
-  const isAdmin = typeof window !== "undefined" ? localStorage.getItem("adminFlag") === "true" : false;
+  if (typeof window === "undefined") {
+    // SSR 환경이면 localStorage 접근 불가 → 빈 목록 반환
+    return [];
+  }
+
+  const loginUserId = localStorage.getItem("userId");
+  const loginUserName = localStorage.getItem("userName");
+  const isAdmin = localStorage.getItem("adminFlag") === "true";
 
   let items = [
     { label: "Home", href: "/", type: "item" },
@@ -69,7 +74,6 @@ const getUsersDocumentList = async (items, userId, userName) => {
   const jResponse = await RequestServer(jRequest);
   if (jResponse.error_code === 0 && Array.isArray(jResponse.documentList)) {
     const sectionLabel = `${userName || "User"}'s Page`;
-
     items.push({ label: sectionLabel, type: "section" });
 
     jResponse.documentList.forEach((doc) => {
