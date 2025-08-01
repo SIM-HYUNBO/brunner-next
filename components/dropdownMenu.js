@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from "react";
-import { getDropdownMenuItems } from "@/components/dropdownMenuItem";
+import { getDropdownMenuItems } from "@/components/dropdownMenuitem";
 import UserInfo from "@/components/userInfo";
 import { getIsDarkMode } from '@/components/darkModeToggleButton';
 
