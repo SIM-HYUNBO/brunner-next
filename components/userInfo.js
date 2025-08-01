@@ -4,7 +4,7 @@ import SignoutButton from "./signoutButton";
 import DarkModeToggleButton from "./darkModeToggleButton";
 import { useState, useEffect } from 'react';
 
-export default function UserInfo({ handleLogout, triggerMenuReload }) {
+export default function UserInfo({ handleLogout, reloadSignal, triggerMenuReload }) {
   const [userName, setUserName] = useState('');
 
   useEffect(() => {
@@ -21,6 +21,20 @@ export default function UserInfo({ handleLogout, triggerMenuReload }) {
     }
   }, []);
 
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      try {
+        const userInfoStr = localStorage.getItem('userInfo');
+        if (userInfoStr) {
+          const userInfo = JSON.parse(userInfoStr);
+          setUserName(userInfo?.userName || '');
+        }
+      } catch (e) {
+        console.error("Invalid userInfo JSON:", e);
+      }
+    }
+  }, [reloadSignal]);
+  
   return (
     <div className="flex flex-row ml-3 mr-1 mt-5 text-gray-600 dark:text-gray-400">
       <DarkModeToggleButton />
