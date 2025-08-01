@@ -25,7 +25,7 @@ export default function SignoutButton({ handleLogout }) {
     setLoading(false); // 데이터 로딩 끝
 
     if (jResponse.error_code == 0) {
-      localStorage.setItem('userInfo', null);
+      localStorage.removeItem('userInfo');
       router.push("/");
       handleLogout();
 

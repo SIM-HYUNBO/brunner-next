@@ -56,7 +56,7 @@ export default function Signin() {
       setLoading(false); // 데이터 로딩 끝
 
       if (jResponse.error_code === 0) {
-        localStorage.setItem('userInfo', jResponse);
+        localStorage.setItem('userInfo', JSON.stringify(jResponse));
         router.push("/");
       } else {
         openModal(jResponse.error_message);
