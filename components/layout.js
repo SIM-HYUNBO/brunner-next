@@ -12,7 +12,7 @@ import * as userInfo from "@/components/userInfo";
 export default function Layout({ children, reloadSignal, triggerMenuReload }) {
   const [documentList, setDocumentList] = useState([]);
 
-  const reloadLeftMenu = async () => {
+  const reloadMenu = async () => {
     const jRequest = {
       commandName: constants.commands.EDOC_USER_DOCUMENT_SELECT_ALL,
       systemCode: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE,
@@ -28,7 +28,7 @@ export default function Layout({ children, reloadSignal, triggerMenuReload }) {
   };
 
   useEffect(() => {
-    reloadLeftMenu();
+    reloadMenu();
   }, [reloadSignal]);
 
   return (
