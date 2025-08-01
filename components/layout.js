@@ -1,7 +1,6 @@
 'use client';
 
 import React, { useEffect, useState } from "react";
-import LeftMenu from "./dropdownMenu";
 import Header from "./header";
 import Footer from "./footer";
 import DivContainer from "@/components/divContainer";
@@ -32,7 +31,6 @@ export default function Layout({ children, reloadSignal, triggerMenuReload }) {
   }, [reloadSignal]);
 
   return (
-    
     <div className="flex flex-col md:flex-row min-h-screen bg-primary justify-center desktop:pl-10 w-full overflow-x-hidden">
       <DivContainer className="flex flex-col w-full desktop:px-4 mx-2 px-1">
         <main className="flex-grow md:overflow-x: auto">
