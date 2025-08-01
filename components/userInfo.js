@@ -23,8 +23,8 @@ export default function UserInfo({ handleLogout }) {
 export const getLoginUserId = () => {
   var userInfo = null;
 
-  if (process.env.userInfo) {
-    userInfo = process.env.userInfo;
+  if (localStorage.getItem('userInfo')) {
+    userInfo = localStorage.getItem('userInfo');
   }
   return userInfo?.userId;
 }
@@ -32,23 +32,23 @@ export const getLoginUserId = () => {
 export const getLoginName = () => {
   var userInfo = null;
 
-  if (process.env.userInfo) {
-    userInfo = process.env.userInfo;
-
-    return !userInfo?.userName ? '' : userInfo?.userName;
+  if (localStorage.getItem('userInfo')) {
+    userInfo = localStorage.getItem('userInfo');
   }
+  return !userInfo?.userName ? '' : userInfo?.userName;
 }
 
 export const isAdminUser = () => {
   var userInfo = null;
 
-  if (process.env.userInfo) {
-    userInfo = process.env.userInfo;
-
-    return !userInfo?.adminFlag ? '' : userInfo?.adminFlag;
+  if (localStorage.getItem('userInfo')) {
+    userInfo = localStorage.getItem('userInfo');
   }
+
+  return !userInfo?.adminFlag ? '' : userInfo?.adminFlag;
 }
 
 export const isLogin = () => {
-  return process.env.userInfo?.userId ? true : false;
+  var userInfo = localStorage.getItem('userInfo')
+  return userInfo?.userId ? true : false;
 }
