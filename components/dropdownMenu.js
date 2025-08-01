@@ -1,19 +1,20 @@
-'use client';
-
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import { getDropdownMenuItems } from "@/components/dropdownMenuitem";
-import UserInfo from "@/components/userInfo";
+import UserInfo from "@/components/userInfo"; // 예시 import
+import { useTheme } from 'next-themes';
 import { getIsDarkMode } from '@/components/darkModeToggleButton';
 
 export default function DropdownMenu({ reloadSignal, triggerMenuReload }) {
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [menuItems, setMenuItems] = useState([]);
   const [openSections, setOpenSections] = useState({});
-
+  
   useEffect(() => {
     const loadMenu = async () => {
       const items = await getDropdownMenuItems();
 
+      // 모든 section 기본 닫힘(false)으로 초기화
       const sections = items
         .filter((item) => item.type === "section")
         .reduce((acc, cur) => {
@@ -36,15 +37,19 @@ export default function DropdownMenu({ reloadSignal, triggerMenuReload }) {
 
   const getSectionLabel = (item) => item.parent || "";
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
     if (triggerMenuReload) triggerMenuReload();
+    
+    // 로그아웃 후 추가 처리 가능
+    const items = await getDropdownMenuItems();
+    setMenuItems(items);
   };
 
   return (
     <>
       <button
         className="p-2 dark:bg-slate-800 dark:text-gray-100"
-        onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+        onClick={() => setIsMenuOpen(!isMenuOpen)}
         aria-label="메뉴 열기"
         aria-expanded={mobileMenuOpen}
       >
@@ -65,7 +70,7 @@ export default function DropdownMenu({ reloadSignal, triggerMenuReload }) {
         </svg>
       </button>
 
-      {mobileMenuOpen && (
+      {isMenuOpen && (
         <div className="absolute right-4 w-64 bg-white shadow-lg rounded z-50 dark:bg-slate-800 dark:text-gray-100">
           <ul className="p-2">
             {menuItems.map((item, idx) => {
@@ -89,11 +94,12 @@ export default function DropdownMenu({ reloadSignal, triggerMenuReload }) {
               const sectionLabel = getSectionLabel(item);
               if (sectionLabel && !openSections[sectionLabel]) return null;
 
+              
               const menuStyle = {
-                color: getIsDarkMode() ? "white" : "black",
-                padding: "8px",
-                textDecoration: "none",
-              };
+                  color: getIsDarkMode() ? 'white' : 'black',
+                  padding: '8px',
+                  textDecoration: 'none',
+                };
 
               return (
                 <li key={item.href + idx}>

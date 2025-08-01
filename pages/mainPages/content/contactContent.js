@@ -4,7 +4,6 @@ import { useState, useRef, useEffect } from 'react';
 import { useDeviceType } from "@/components/commonFunctions"
 import ContactContentAnimation from "./content-animation/contactContentAnimation";
 import DivContainer from "@/components/divContainer";
-
 import GoverningMessage from "@/components/governingMessage";
 
 export default function ContactContent() {
