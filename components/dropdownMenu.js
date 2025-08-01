@@ -81,10 +81,10 @@ export default function DropdownMenu({ reloadSignal, triggerMenuReload }) {
                         text-gray-800
                         dark:bg-slate-800 
                         dark:text-gray-100">
-          <ul className="p-2">
+          <ul>
             {menuItems.map((item, idx) => {
               if (item.type === "divider") {
-                return <hr key={idx} className="my-2 border-gray-300" />;
+                return <hr key={idx} className="border-gray-300" />;
               }
 
               if (item.type === "section") {
