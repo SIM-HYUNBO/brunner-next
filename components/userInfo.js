@@ -38,9 +38,11 @@ export default function UserInfo({ handleLogout, reloadSignal, triggerMenuReload
   return (
     <div className="flex flex-row ml-3 mr-1 mt-5 text-gray-600 dark:text-gray-400">
       <DarkModeToggleButton />
-      <div className="mr-1 ml-1 inline-block align-middle">
-        {getLoginUserId() ? userName : ''}
-      </div>
+      {getLoginUserId() && (
+       <div className="mr-1 ml-1 inline-block align-middle">
+          {userName}
+        </div>
+       )}
       <SignoutButton handleLogout={handleLogout} triggerMenuReload={triggerMenuReload}/>
     </div>
   );
