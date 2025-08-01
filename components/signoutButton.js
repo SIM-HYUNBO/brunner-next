@@ -26,7 +26,10 @@ export default function SignoutButton({ handleLogout, triggerMenuReload }) {
 
     if (jResponse.error_code == 0) {
       localStorage.removeItem('userInfo');
-      if (triggerMenuReload) triggerMenuReload();
+      
+      if (triggerMenuReload) 
+       triggerMenuReload();
+      
       router.push("/");
       handleLogout();
     } else {
