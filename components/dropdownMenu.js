@@ -70,7 +70,7 @@ export default function DropdownMenu({ reloadSignal, triggerMenuReload }) {
         </svg>
       </button>
 
-      {isMenuOpen && (
+      {mobileMenuOpen && (
         <div className="absolute right-4 w-64 bg-white shadow-lg rounded z-50 dark:bg-slate-800 dark:text-gray-100">
           <ul className="p-2">
             {menuItems.map((item, idx) => {
