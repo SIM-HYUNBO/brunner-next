@@ -33,6 +33,15 @@ lg: (데스크탑)
            min-h-[calc(100vh-5rem)] 
            max-w-full 
            pb-20}
+ 
+ .page-title {
+    @apply title-font 
+           sm:text-4xl 
+           text-3xl 
+           my-10 
+           font-medium 
+           text-green-900`
+ }          
 
 footer {
     @apply text-gray-200 
