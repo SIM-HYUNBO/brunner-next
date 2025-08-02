@@ -48,7 +48,7 @@ export default function DropdownMenu({ reloadSignal, triggerMenuReload }) {
   return (
     <>
       <button
-        className="p-2 dark:bg-gray-800 dark:text-gray-100"
+        className="p-2 dark:bg-gray-600 dark:text-gray-100"
         onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
         aria-label="메뉴 열기"
         aria-expanded={mobileMenuOpen}
