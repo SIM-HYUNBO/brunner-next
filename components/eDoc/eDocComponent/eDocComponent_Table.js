@@ -247,18 +247,12 @@ export default function RenderComponent (props) {
           {columns.map((col, colIdx) => (
             <th
               key={colIdx}
-              className="border border-gray-300 px-2 py-1 text-center"
+              className="border border-gray-300 px-2 py-1 bg-gray-100 text-center"
               style={{
-                verticalAlign: 'middle',
-                height: '40px',
-                textAlign: col.align || "center",
-                backgroundColor: comp.runtime_data?.backgroundColor || '#ffffff', // 추가
-                color: comp.runtime_data?.fontColor || '#000000', // 필요 시 추가
-                fontFamily: comp.runtime_data?.fontFamily || 'inherit',
-                fontSize: comp.runtime_data?.fontSize ? `${comp.runtime_data.fontSize}px` : 'inherit',
-                fontWeight: comp.runtime_data?.fontWeight || 'normal',
-                textDecoration: comp.runtime_data?.underline ? 'underline' : 'none',
-              }}
+                  verticalAlign: 'middle',
+                  height: '40px',
+                  textAlign: col.align || "center",
+                }}
             >
               {col.header}
             </th>
