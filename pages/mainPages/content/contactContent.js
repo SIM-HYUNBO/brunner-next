@@ -17,7 +17,7 @@ export default function ContactContent() {
             Contact us ...
           </h2>
           <GoverningMessage governingMessage={"Brunner's call center is always available to assist investors.\nContact us immediately"} />
-          <div className={`flex justify-center`}>
+          <div className={`flex justify-center mt-5`}>
             <GetContact />
           </div>
         </div>
