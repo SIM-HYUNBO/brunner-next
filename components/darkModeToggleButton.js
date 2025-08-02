@@ -25,8 +25,8 @@ export default function DarkModeToggleButton() {
     return (
         <>
           <button 
-             `className={
-              inline-flex 
+             className={
+             `inline-flex 
               items-center 
               boder-0 
               py-1  
