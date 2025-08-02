@@ -10,7 +10,20 @@ export default function Header({ triggerMenuReload, reloadSignal }) {
   const UserInfo = userInfo.default;
 
   return (
-  <header className="bg-primary sticky top-0 left-0 right-0 w-full z-50 body-font relative">
+  
+    <header className="sticky 
+                       top-0 
+                       left-0 
+                       right-0 
+                       w-full 
+                       z-50 
+                       bg-white 
+                       dark:bg-slate-900 
+                       text-gray-600 
+                       dark:text-white 
+                       body-font 
+                       relative">
+
   {/* 햄버거 메뉴 */}
     <div className="absolute top-4 right-4 z-50">
       <DropdownMenu triggerMenuReload={triggerMenuReload} reloadSignal={reloadSignal} />
