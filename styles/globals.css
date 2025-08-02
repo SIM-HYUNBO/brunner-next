@@ -50,6 +50,8 @@ footer {
         mt-10
         mx-2
         px-2 
+        md:mx-2
+        md;px-2       
         flex 
         flex-col 
         items-start
