@@ -25,7 +25,9 @@ lg: (데스크탑)
 
 .bg-primary { 
     @apply bg-white 
-           dark:bg-slate-900 
+           dark:bg-slate-900
+           text-black
+           dark:text-white 
            w-full 
            h-full 
            min-h-[calc(100vh-5rem)] 
