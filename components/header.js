@@ -17,7 +17,7 @@ export default function Header({ triggerMenuReload, reloadSignal }) {
     </div>
 
     {/* 전체 너비로 확장된 컨테이너 */}
-    <DivContainer className="flex items-center w-full px-4">
+    <DivContainer className="flex items-center w-full">
       {/* 로고 */}
       <Link
         href="/"
