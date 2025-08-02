@@ -388,10 +388,18 @@ export default function EDocDesignerContainer({ documentId, triggerMenuReload })
         setCurrentPageIdx={setCurrentPageIdx}
       />
 
-      <div className="flex h-screen desktop:pr-20">
+      <div className="flex h-screen">
         {/* 왼쪽 컴포넌트 팔레트 */}
-        <aside className="w-36 bg-white dark:bg-slate-700 border-r border-slate-300 dark:border-slate-500">
-          <h2 className="font-bold mb-3 text-slate-800 dark:text-slate-100">컴포넌트 팔레트</h2>
+        <aside className="w-36 
+               bg-white 
+               dark:bg-slate-700 
+               border-r 
+               border-slate-300 
+               dark:border-slate-500">
+          <h2 className="font-bold 
+                         mb-3 
+                         text-slate-900 
+                         dark:text-slate-100">컴포넌트 팔레트</h2>
           <EDocComponentPalette
             templates={componentTemplates}
             onAddComponent={handleAddComponent}
@@ -401,7 +409,12 @@ export default function EDocDesignerContainer({ documentId, triggerMenuReload })
         {/* 중앙 편집 캔버스 */}
         <div className="flex-1 overflow-auto">
           {documentData && (
-            <h1 className="text-2xl font-bold mx-4 mb-4 text-slate-800 dark:text-slate-100">
+            <h1 className="text-2xl 
+                           font-bold 
+                           mx-4 
+                           mb-4 
+                           text-slate-800 
+                           dark:text-slate-100">
               {documentData.runtime_data.title || ''} : {documentData.id}
             </h1>
           )}
