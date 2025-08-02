@@ -434,8 +434,8 @@ export default function EDocDesignerContainer({ documentId, triggerMenuReload })
           <main
             className="pt-16 flex-grow edoc-designer-canvas"
             style={{
-              backgroundColor: documentData?.runtime_data?.backgroundColor || '#f8f8f8',
-              padding: `${documentData.runtime_data.padding}px`, // 문서여백 1px 고정
+              backgroundColor: documentData.runtime_data.backgroundColor || '#f8f8f8',
+              padding: `${documentData.runtime_data.padding}px`,
             }}
           >
           {documentData.pages.map((page, idx) => (
