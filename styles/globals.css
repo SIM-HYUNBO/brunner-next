@@ -52,6 +52,7 @@ footer {
         flex 
         flex-col 
         items-center
+        justify-center
         text-gray-200 
         bg-gray-300/50 
         dark:bg-gray-600/50 
