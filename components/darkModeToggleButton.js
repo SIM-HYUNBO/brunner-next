@@ -7,7 +7,7 @@ export default function DarkModeToggleButton() {
   const { theme, setTheme } = useTheme();
   const themeRef = useRef(theme);
 
-  const setThemeRef = (newValue: string) => {
+  const setThemeRef = (newValue) => {
     themeRef.current = newValue;
     setTheme(newValue);
   };
