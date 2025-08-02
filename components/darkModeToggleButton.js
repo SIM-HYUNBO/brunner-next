@@ -44,6 +44,8 @@ export default function DarkModeToggleButton() {
              onClick={() => {
               const newTheme = theme === 'dark' ? 'light' : 'dark';
               setThemeRef(newTheme);
+             }}
+            >
             {/* 다크 모드 아이콘: 라이트 모드일 때 보여줌 */}
               <svg xmlns="http://www.w3.org/2000/svg" 
                    fill="none" 
