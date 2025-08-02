@@ -39,6 +39,7 @@ export default function EDocDesignerTopMenu({
                    text-white
                    text-center 
                    rounded 
+                   ml-1 
                    hover:bg-sky-600"
       >
         Open
@@ -49,6 +50,7 @@ export default function EDocDesignerTopMenu({
                    text-white 
                    text-center
                    rounded 
+                   ml-1 
                    hover:bg-yellow-600"
       >
         Save
@@ -59,7 +61,7 @@ export default function EDocDesignerTopMenu({
                    text-white 
                    text-center
                    rounded 
-                   ml-2 
+                   ml-1 
                    hover:bg-red-600"
       >
         Delete
@@ -70,6 +72,7 @@ export default function EDocDesignerTopMenu({
                    text-white 
                    text-center
                    rounded 
+                   ml-2 
                    hover:bg-green-600"
       >
         Add Page
@@ -80,7 +83,7 @@ export default function EDocDesignerTopMenu({
                    text-white 
                    text-center
                    rounded 
-                   ml-2 
+                   ml-1 
                    hover:bg-pink-600"
       >
         Delete Page
@@ -91,6 +94,7 @@ export default function EDocDesignerTopMenu({
                    text-white 
                    text-center
                    rounded 
+                   ml-1 
                    hover:bg-purple-600"
       >
         Export PDF
