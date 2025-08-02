@@ -364,7 +364,17 @@ export default function EDocDesignerContainer({ documentId, triggerMenuReload })
   return (
     <>
       {loading && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40 text-white text-xl font-bold">
+        <div className="fixed 
+                        inset-0 
+                        z-50 
+                        flex 
+                        items-center 
+                        justify-center 
+                        bg-black 
+                        bg-opacity-40 
+                        text-white 
+                        text-xl 
+                        font-bold">
           Loading...
         </div>
       )}
