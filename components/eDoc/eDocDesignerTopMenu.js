@@ -22,8 +22,7 @@ export default function EDocDesignerTopMenu({
                     dark:bg-slate-800 
                     flex 
                     items-center 
-                    justify-center 
-                    space-x-1">
+                    justify-center">
       <button
         onClick={onNewDocument}
         className="bg-blue-400 
