@@ -11,10 +11,7 @@ export default function Footer() {
           href="/"
         >©2020 Brunner
         </Link>
-        <span className={`inline-flex 
-                          sm:ml-auto 
-                          justify-center 
-                          sm:justify-end`}>
+        <span className={``}>
           <a className={`text-gray-500`}>
             <svg
               fill="currentColor"
