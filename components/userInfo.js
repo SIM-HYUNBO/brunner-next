@@ -46,7 +46,11 @@ export default function UserInfo({ handleLogout, reloadSignal, triggerMenuReload
       </div>
 
       {/* 가운데 고정: 사용자 이름 */}
-      <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-base text-center">
+      <div className="absolute 
+                      left-1/2 
+                      top-1/2 -translate-x-1/2 -translate-y-1/2 
+                      text-base 
+                      text-center">
         {getLoginUserId() && userName}
       </div>
 

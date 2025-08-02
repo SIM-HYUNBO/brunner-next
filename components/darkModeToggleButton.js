@@ -30,8 +30,7 @@ export default function DarkModeToggleButton() {
              `inline-flex 
               items-center 
               boder-0 
-              py-1 
-              px-3 
+              py-1  
               focus:outline-none 
               bg-gray-100  
               hover:bg-gray-50 
