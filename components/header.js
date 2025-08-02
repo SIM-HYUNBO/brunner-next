@@ -21,7 +21,13 @@ export default function Header({ triggerMenuReload, reloadSignal }) {
       {/* 로고 */}
       <Link
         href="/"
-        className="flex title-font font-medium items-center text-gray-900 mb-4 md:mb-0"
+        className="flex 
+                   title-font 
+                   font-medium 
+                   items-center 
+                   text-gray-900 
+                   mb-4 
+                   md:mb-0"
       >
         <Image
           src="/brunnerLogo202507.png"
