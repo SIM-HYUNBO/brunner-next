@@ -36,7 +36,7 @@ lg: (데스크탑)
  
  .page-title {
     @apply sm:text-4xl 
-           text-3xl 
+           text-3xl
            my-10 
            font-medium 
            text-green-900
@@ -47,7 +47,8 @@ footer {
         w-full 
         relative 
         bottom-0 /* footer는 부모요소의 맨 바닥에 딱 붙어있다. */ 
-        mt-20
+        mt-10
+        mx-2
         px-2
         flex 
         flex-col 
