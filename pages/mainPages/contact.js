@@ -21,7 +21,6 @@ export default function Contact() {
     setTheme(newValue);
   };
 
-
   return (
     <Layout>
       <Head>

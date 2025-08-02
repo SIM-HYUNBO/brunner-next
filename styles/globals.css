@@ -51,7 +51,9 @@ footer {
            w-full 
            relative 
            bottom-0 /* footer는 부모요소의 맨 바닥에 딱 붙어있다. */ 
-           mt-20 
+           mt-20
+           px-2
+           py-auto
 }
 
 h1, h2, h3, h4, h5, h6 {
