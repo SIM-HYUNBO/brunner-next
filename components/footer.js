@@ -6,7 +6,7 @@ import DivContainer from "@/components/divContainer";
 export default function Footer() {
   return (
     <>
-      <footer className={`body-font w-full justify-center items-center`}>
+      <footer>
         <div className="flex flex-row items-center justify-center">
           <Link
             className={`flex text-gray-600 dark:text-gray-400`}
