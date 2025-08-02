@@ -17,49 +17,51 @@ sm, md, lg 이런 접두사를 보다 보면 반응형을 구현할 때,
 @tailwind components;
 @tailwind utilities;
 
-/* 주배경 (min-h-[footer높이(5rem)]) 
-좌우 여백
+/*  
 px-5 (모바일) 
-md:px-32 (탭)
-lg:px-48 (데스크탑) 
-
+md: (탭)
+lg: (데스크탑) 
 */
 
 .bg-primary { 
-    @apply bg-white dark:bg-slate-800 w-full h-full min-h-[calc(100vh-5rem)] max-w-full pb-20}
+    @apply bg-white 
+           dark:bg-slate-800 
+           w-full 
+           h-full 
+           min-h-[calc(100vh-5rem)] 
+           max-w-full pb-20}
 
-/* footer 높이:5rem */
 footer {
-    @apply text-gray-200 bg-gray-300/50 dark:bg-gray-600/50 h-20 w-full relative bottom-0 mt-20 px-10 py-5
+    @apply text-gray-200 
+           bg-gray-300/50 
+           dark:bg-gray-600/50 
+           h-20 
+           w-full 
+           relative 
+           bottom-0 /* footer는 부모요소의 맨 바닥에 딱 붙어있다. */ 
+           mt-20 
 }
 
 h1, h2, h3, h4, h5, h6 {
-    @apply text-green-600 dark:text-green-300
+    @apply text-green-600 
+           dark:text-green-300
 }
 
 pre {
-    @apply text-slate-900 dark:text-white whitespace-pre-wrap 
+    @apply text-slate-900 
+           dark:text-white 
+           whitespace-pre-wrap 
 }
 
 html {
     @apply h-screen;
 }
 
-
 a {
     @apply text-slate-100
 }
 
 p {
-    @apply text-slate-600 dark:text-slate-400
+    @apply text-slate-600 
+           dark:text-slate-400
 }
-
-.container {
-    @apply w-full h-full flex desktop:flex-wrap items-center 
-}
-
-.main-governing-text {
-    @apply leading-relaxed text-slate-900 mb-10 dark:text-slate-400
-}
-
-
