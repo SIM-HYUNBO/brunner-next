@@ -16,7 +16,7 @@ export default function HomeContent() {
     <>
       <DivContainer className={`flex-row`}>
         <div className={`w-full items-center justify-center text-left`}>
-          <h2 className={`title-font sm:text-4xl text-3xl my-20 font-medium text-green-900`}>
+          <h2 className={`page-title`}>
             Noesis Pelagos
           </h2>
           <GoverningMessage governingMessage={`생각은 무한하고 시시각각 변하지만 기억은 영원하지 않습니다. 

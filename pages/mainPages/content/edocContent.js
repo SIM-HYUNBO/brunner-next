@@ -122,7 +122,7 @@ export default function EDocContent({ documentId }) {
         <meta name="twitter:image" content={ogImage} />
       </Head>
 
-      <h2 className="title-font sm:text-4xl text-3xl font-medium text-green-800 dark:text-green-200 my-20">
+      <h2 className={'page-title'}>
         {documentData.runtime_data.title}
       </h2>
 
