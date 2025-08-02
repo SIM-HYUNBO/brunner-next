@@ -279,7 +279,7 @@ const ServiceSQL = () => {
           )}
           <BrunnerMessageBox />
           <h2 className={`text-xl font-bold my-10`}>Service SQL Management</h2>
-          <div ref={editPanelRef} className={`w-full overflow-auto mb-4`}>
+          <div ref={editPanelRef} className={`w-full mb-4`}>
             <label className={`block mb-2`}>
               <span className={`text-gray-400`}>System Code:</span>
               <input
@@ -342,6 +342,7 @@ const ServiceSQL = () => {
               <CreateUpdateButton/>
               <ClearInputButton/>
             </div>
+            
           </div>
           <h2 className={`text-lg 
                           font-semibold 
@@ -362,6 +363,7 @@ const ServiceSQL = () => {
           >
             Refresh
           </button>
+          <div className="w-full overflow-x-auto">
           <table className={`w-full bg-white border border-gray-300 mt-2`}>
             <thead>
               <tr>
@@ -433,6 +435,7 @@ const ServiceSQL = () => {
               ))}
             </tbody>
           </table>
+          </div>
           <button
             onClick={fetchSQLList}
             className={`bg-blue-500 
