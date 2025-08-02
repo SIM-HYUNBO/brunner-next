@@ -14,15 +14,13 @@ export default function AdminContent() {
       <DivContainer>
         {userInfo?.isAdminUser() && (
           <>
-            <div className={`w-full pr-16 flex flex-col items-start text-left md:mb-0 mb-20`}>
-              <h2 className={`title-font sm:text-4xl text-3xl mb-10 font-medium text-green-900`}>
-                Brunner administration
-              </h2>
-              <div className={`flex justify-center`}>
-                <ServiceSQL />
-              </div>
+            <h2 className={`page-title`}>
+              Brunner administration
+            </h2>
+            <div className={`flex justify-center`}>
+              <ServiceSQL />
             </div>
-            {!isMobile && (
+           {!isMobile && (
               <div className={`items-center`}>
                 {<AdminContentAnimation width={300} height={300} />}
               </div>
