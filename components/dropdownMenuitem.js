@@ -64,7 +64,7 @@ const getUsersDocumentList = async (items) => {
 
   const jResponse = await RequestServer(jRequest);
   if (jResponse.error_code === 0 && Array.isArray(jResponse.documentList)) {
-    const sectionLabel = `${userInfo.getLoginName()}'s Page`;
+    const sectionLabel = `${userInfo.getLoginName()}'s pages`;
 
     items.push({ label: sectionLabel, type: "section" });
 
