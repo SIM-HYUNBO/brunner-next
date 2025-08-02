@@ -35,8 +35,7 @@ lg: (데스크탑)
            pb-20}
  
  .page-title {
-    @apply title-font 
-           sm:text-4xl 
+    @apply sm:text-4xl 
            text-3xl 
            my-10 
            font-medium 
