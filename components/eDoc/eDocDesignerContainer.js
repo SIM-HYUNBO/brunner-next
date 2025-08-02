@@ -395,7 +395,8 @@ export default function EDocDesignerContainer({ documentId, triggerMenuReload })
                dark:bg-slate-700 
                border-r 
                border-slate-300 
-               dark:border-slate-500">
+               dark:border-slate-500
+               overflow-auto">
           <h2 className="font-bold 
                          mb-3 
                          text-slate-900 
@@ -466,8 +467,22 @@ export default function EDocDesignerContainer({ documentId, triggerMenuReload })
         </div>
 
         {/* 오른쪽 속성 편집창 */}
-        <aside className="w-56 bg-white dark:bg-slate-700 border-0 border-slate-300 dark:border-slate-500 p-4 block">
-          <h2 className="text-lg font-semibold mb-4 text-slate-800 dark:text-slate-100">속성창</h2>
+        <aside className="w-56 
+                          bg-white 
+                          dark:bg-slate-700 
+                          border-0 
+                          border-slate-300 
+                          dark:border-slate-500 
+                          p-4 
+                          block
+                          overflow-auto">
+          <h2 className="text-lg 
+                         font-semibold 
+                         mb-4 
+                         text-slate-800 
+                         dark:text-slate-100">
+                         속성창
+                         </h2>
 
           {selectedComponentId !== null &&
           documentData.pages[currentPageIdx]?.components[selectedComponentId] ? (
