@@ -37,7 +37,6 @@ export default function Layout({ children, reloadSignal, triggerMenuReload }) {
                     min-h-screen 
                     bg-primary 
                     justify-center 
-                    desktop:pl-10 
                     w-full 
                     overflow-x-hidden">
       <DivContainer className="flex 
