@@ -48,8 +48,8 @@ footer {
         relative 
         bottom-0 /* footer는 부모요소의 맨 바닥에 딱 붙어있다. */ 
         mt-10
-        mx-30
-        px-30 
+        mx-20
+        px-20 
         flex 
         flex-col 
         items-start
