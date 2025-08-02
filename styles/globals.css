@@ -44,16 +44,18 @@ lg: (데스크탑)
  }          
 
 footer {
-    @apply text-gray-200 
-           bg-gray-300/50 
-           dark:bg-gray-600/50 
-           h-20 
-           w-full 
-           relative 
-           bottom-0 /* footer는 부모요소의 맨 바닥에 딱 붙어있다. */ 
-           mt-20
-           px-2
-           py-auto
+    @apply h-20 
+        w-full 
+        relative 
+        bottom-0 /* footer는 부모요소의 맨 바닥에 딱 붙어있다. */ 
+        mt-20
+        px-2
+        flex 
+        flex-col 
+        justify-center
+        text-gray-200 
+        bg-gray-300/50 
+        dark:bg-gray-600/50 
 }
 
 h1, h2, h3, h4, h5, h6 {
