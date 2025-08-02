@@ -44,10 +44,12 @@ lg: (데스크탑)
 
 footer {
     @apply h-20 
-        w-1/2 
+        w-4/5 
         relative 
         bottom-0 /* footer는 부모요소의 맨 바닥에 딱 붙어있다. */ 
         mt-10
+        mx-30
+        px-30 
         flex 
         flex-col 
         items-start
