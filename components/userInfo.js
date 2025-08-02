@@ -38,26 +38,27 @@ export default function UserInfo({ handleLogout, reloadSignal, triggerMenuReload
   }, [reloadSignal]);
 
   return (
-    return (
     <div className="relative w-full h-12 mt-3 text-gray-600 dark:text-gray-400">
-      {/* 왼쪽 고정: 다크모드 토글 버튼 */}
-      <div className="absolute left-0 top-1/2 -translate-y-1/2">
+      
+      {/* 왼쪽 고정: 다크모드 토글 */}
+      <div className="absolute inset-y-0 left-0 flex items-center pl-2">
         <DarkModeToggleButton />
       </div>
 
       {/* 가운데 고정: 사용자 이름 */}
-      <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-center text-base">
-        {getLoginUserId() && userName}
+      <div className="absolute inset-y-0 left-1/2 flex items-center -translate-x-1/2">
+        {getLoginUserId() && (
+          <span className="text-base text-center">{userName}</span>
+        )}
       </div>
 
       {/* 오른쪽 고정: 로그아웃 버튼 */}
-      <div className="absolute right-0 top-1/2 -translate-y-1/2">
+      <div className="absolute inset-y-0 right-0 flex items-center pr-2">
         <SignoutButton handleLogout={handleLogout} triggerMenuReload={triggerMenuReload} />
       </div>
     </div>
   );
 }
-
 
 // helper 함수들
 
