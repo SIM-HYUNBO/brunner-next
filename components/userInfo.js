@@ -38,7 +38,7 @@ export default function UserInfo({ handleLogout, reloadSignal, triggerMenuReload
   }, [reloadSignal]);
 
   return (
-    <div className="relative w-full h-12 mt-3 text-gray-600 dark:text-gray-400">
+    <div className="relative w-full h-12 mt-1 text-gray-600 dark:text-gray-400">
       
       {/* 왼쪽 고정: 다크모드 토글 */}
       <div className="absolute inset-y-0 left-0 flex items-center pl-2">
