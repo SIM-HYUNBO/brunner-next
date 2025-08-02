@@ -31,7 +31,8 @@ lg: (데스크탑)
            w-full 
            h-full 
            min-h-[calc(100vh-5rem)] 
-           max-w-full pb-20}
+           max-w-full 
+           pb-20}
 
 footer {
     @apply text-gray-200 

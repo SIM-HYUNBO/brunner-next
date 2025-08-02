@@ -42,10 +42,7 @@ export default function Layout({ children, reloadSignal, triggerMenuReload }) {
                     overflow-x-hidden">
       <DivContainer className="flex 
                                flex-col 
-                               w-full 
-                               desktop:px-4 
-                               mx-2 
-                               px-1">
+                               w-full">
         <main className="flex-grow 
                          md:overflow-x: auto">
           <Header triggerMenuReload={triggerMenuReload} 
