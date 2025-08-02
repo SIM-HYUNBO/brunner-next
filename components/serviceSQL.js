@@ -271,7 +271,7 @@ const ServiceSQL = () => {
   return (
     <>
       {userInfo?.isAdminUser() && (
-        <div className={`p-4`}>
+        <div className={`w-full p-4`}>
           {loading && (
           <div className={`fixed top-0 left-0 w-full h-full flex items-center justify-center bg-gray-500 bg-opacity-75 z-50`}>
             <div className={`animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-gray-900`}></div>
@@ -279,7 +279,7 @@ const ServiceSQL = () => {
           )}
           <BrunnerMessageBox />
           <h2 className={`text-xl font-bold my-10`}>Service SQL Management</h2>
-          <div ref={editPanelRef} className={`mb-4`}>
+          <div ref={editPanelRef} className={`w-full mb-4`}>
             <label className={`block mb-2`}>
               <span className={`text-gray-400`}>System Code:</span>
               <input

@@ -17,7 +17,7 @@ export default function AdminContent() {
             <h2 className={`page-title`}>
               Brunner administration
             </h2>
-            <div className={`flex justify-center`}>
+            <div className={`flex justify-center w-full`}>
               <ServiceSQL />
             </div>
            {!isMobile && (
@@ -28,20 +28,6 @@ export default function AdminContent() {
           </>
         )}
       </DivContainer>
-    </>
-  );
-}
-
-export function GetContact() {
-  return (
-    <>
-      <div className={`px-5 py-2 mr-2 bg-indigo-500`}>
-        <a href={`tel:82-10-7544-8698`}>Mobile</a>
-      </div>
-      <br />
-      <div className={`px-5 py-2 mr-2 bg-indigo-500`}>
-        <a href="mailto:hbsim0605@gmail.com">Mail</a>
-      </div>
     </>
   );
 }
