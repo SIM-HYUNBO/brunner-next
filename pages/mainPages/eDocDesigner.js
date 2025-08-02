@@ -33,13 +33,8 @@ export default function EDocDesigner() {
   return (
     <Layout reloadSignal={reloadSignal} triggerMenuReload={triggerMenuReload}>
       <BodySection>
-        <h2 className={`title-font sm:text-4xl text-3xl my-20 font-medium text-green-900`}>
-          Page Designer
-        </h2>        
-        <div className="w-full">
-          <EDocDesignerContainer documentId={documentId} triggerMenuReload={triggerMenuReload} />
-        </div>
-      </BodySection>
+         <EDocDesignerContainer documentId={documentId} triggerMenuReload={triggerMenuReload} />
+     </BodySection>
     </Layout>
   );
 }
