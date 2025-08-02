@@ -1,22 +1,27 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useTheme } from 'next-themes';
 
 export default function DarkModeToggleButton() {
-  const { theme, setTheme } = useTheme();
+  const { theme, setTheme, resolvedTheme } = useTheme();
   const themeRef = useRef(theme);
+  const [mounted, setMounted] = useState(false);
+
+  // 마운트 후 렌더링 허용 (SSR mismatch 방지용)
+  useEffect(() => {
+    setMounted(true);
+    setThemeRef(themeRef.current || 'light');
+  }, []);
 
   const setThemeRef = (newValue) => {
     themeRef.current = newValue;
     setTheme(newValue);
   };
 
-  useEffect(() => {
-    setThemeRef(themeRef.current || 'light');
-  }, []);
+  const isDark = resolvedTheme === 'dark';
 
-  const isDark = theme === 'dark';
+  if (!mounted) return null; // 아직 마운트되지 않았으면 아무것도 렌더링하지 않음
 
   return (
     <button
@@ -25,7 +30,7 @@ export default function DarkModeToggleButton() {
       className={`relative flex items-center w-16 h-9 px-2 rounded-full transition-colors duration-300
         ${isDark ? 'bg-slate-700' : 'bg-yellow-200'}`}
     >
-      {/* ☀️ SVG (왼쪽) */}
+      {/* ☀️ Light */}
       <svg
         xmlns="http://www.w3.org/2000/svg"
         fill="none"
@@ -44,7 +49,7 @@ export default function DarkModeToggleButton() {
         />
       </svg>
 
-      {/* 🌙 SVG (오른쪽) */}
+      {/* 🌙 Dark */}
       <svg
         xmlns="http://www.w3.org/2000/svg"
         fill="none"
@@ -62,7 +67,7 @@ export default function DarkModeToggleButton() {
         />
       </svg>
 
-      {/* 가운데 슬라이더 */}
+      {/* 가운데 원형 토글 */}
       <span
         className={`absolute top-1 left-1 w-7 h-7 rounded-full transition-all duration-300
           ${isDark ? 'translate-x-7 bg-white' : 'translate-x-0 bg-gray-800'}`}
