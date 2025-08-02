@@ -368,7 +368,10 @@ export default function EDocDesignerContainer({ documentId, triggerMenuReload })
           Loading...
         </div>
       )}
-
+      <h2 className={`page-title`}>
+        Page designer
+      </h2>
+       
       {/* 상단 메뉴 */}
       <EDocDesignerTopMenu
         mode={mode}
