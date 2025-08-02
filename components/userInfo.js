@@ -7,6 +7,7 @@ import { useState, useEffect } from 'react';
 export default function UserInfo({ handleLogout, reloadSignal, triggerMenuReload }) {
   const [userName, setUserName] = useState('');
 
+  // 최초 렌더링 시 userInfo 로딩
   useEffect(() => {
     if (typeof window !== 'undefined') {
       try {
@@ -21,6 +22,7 @@ export default function UserInfo({ handleLogout, reloadSignal, triggerMenuReload
     }
   }, []);
 
+  // reloadSignal이 바뀔 때 userInfo 갱신
   useEffect(() => {
     if (typeof window !== 'undefined') {
       try {
@@ -34,27 +36,30 @@ export default function UserInfo({ handleLogout, reloadSignal, triggerMenuReload
       }
     }
   }, [reloadSignal]);
-  
+
   return (
-    <div className="flex 
-                    flex-row 
-                    justify-center 
-                    items-center
-                    mt-3
-                    text-gray-600 
-                    dark:text-gray-400">
-      <DarkModeToggleButton />
-      {getLoginUserId() && (
-       <div className="mx-1 inline-block align-middle">
-          {userName}
-        </div>
-       )}
-      <SignoutButton handleLogout={handleLogout} triggerMenuReload={triggerMenuReload}/>
+    <div className="relative w-full flex items-center mt-3 text-gray-600 dark:text-gray-400 h-10">
+      
+      {/* 왼쪽: 다크모드 토글 버튼 */}
+      <div className="absolute left-4">
+        <DarkModeToggleButton />
+      </div>
+
+      {/* 가운데: 사용자 이름 */}
+      <div className="mx-auto text-center text-base">
+        {getLoginUserId() && userName}
+      </div>
+
+      {/* 오른쪽: 로그아웃 버튼 */}
+      <div className="absolute right-4">
+        <SignoutButton handleLogout={handleLogout} triggerMenuReload={triggerMenuReload} />
+      </div>
     </div>
   );
 }
 
-// Helper 함수들
+// helper 함수들
+
 export const getLoginUserId = () => {
   if (typeof window !== 'undefined') {
     try {
