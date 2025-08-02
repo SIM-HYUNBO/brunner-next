@@ -279,7 +279,7 @@ const ServiceSQL = () => {
           )}
           <BrunnerMessageBox />
           <h2 className={`text-xl font-bold my-10`}>Service SQL Management</h2>
-          <div ref={editPanelRef} className={`w-full mb-4`}>
+          <div ref={editPanelRef} className={`w-full overflow-auto mb-4`}>
             <label className={`block mb-2`}>
               <span className={`text-gray-400`}>System Code:</span>
               <input
@@ -380,7 +380,7 @@ const ServiceSQL = () => {
                 <th className={`border border-gray-300 dark:text-gray-400 dark:bg-slate-800 px-4 py-2`}>
                   Actions
                 </th>
-              </tr>
+              </tr> 
             </thead>
             <tbody>
               {queries.map((query) => (
