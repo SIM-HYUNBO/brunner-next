@@ -32,7 +32,8 @@ export async function getServerSideProps(context) {
   const jResponse = await RequestServer(jRequest);
 
   if (jResponse.error_code !== 0 || !jResponse.documentData) {
-    return { notFound: true };
+    jResponse.documentData = {};
+    // return { notFound: true };
   }
 
   const documentData = jResponse.documentData;
