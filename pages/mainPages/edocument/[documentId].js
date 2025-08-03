@@ -18,7 +18,6 @@ export default function EDocument({ documentData, pages }) {
 }
 
 export async function getServerSideProps(context) {
-/*
   const { documentId } = context.params;
 
   const constants = await import('@/components/constants');
@@ -56,17 +55,4 @@ export async function getServerSideProps(context) {
       pages: safePages,
     },
   };
-  */
-  
-// 테스트용 하드코딩
-  return {
-    props: {
-      documentData: {
-        runtime_data: { title: `문서 ID: ${documentId}` },
-        components: [],
-      },
-      pages: [],
-    },
-  };
-  
 }
