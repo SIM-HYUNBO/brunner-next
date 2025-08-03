@@ -8,7 +8,7 @@ export default function RedirectToDynamic() {
 
   useEffect(() => {
     if (documentId) {
-      router.replace(`/mainPages/edocument/${documentId}`);
+      router.replace(`/mainPages/edocument/${documentId}`); 
     }
   }, [documentId]);
 
