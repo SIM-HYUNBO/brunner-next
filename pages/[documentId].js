@@ -2,6 +2,7 @@ import Head from 'next/head';
 import Layout from '@/components/layout';
 import BodySection from '@/components/bodySection';
 import EDocContent from '@/components/eDoc/eDocContent' // 기존 그대로 사용
+import * as userInfo from '@/components/userInfo'
 
 export default function EDocument({ documentData, pages }) {
   return (
@@ -24,16 +25,16 @@ export async function getServerSideProps(context) {
   const RequestServer = (await import('@/components/requestServer')).default;
 
   const jRequest = {
-    commandName: constants.commands.EDOC_DOCUMENT_SELECT_ONE,
-    systemCode: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE,
-    documentId: documentId, 
+   commandName: constants.commands.EDOC_DOCUMENT_SELECT_ONE,
+   systemCode: '00',
+   userId: userInfo.getLoginUserId(),
+   documentId: documentId,
   };
-
+  
   const jResponse = await RequestServer(jRequest);
 
   if (jResponse.error_code !== 0 || !jResponse.documentData) {
-    jResponse.documentData = {};
-    // return { notFound: true };
+    return { notFound: true };
   }
 
   const documentData = jResponse.documentData;
