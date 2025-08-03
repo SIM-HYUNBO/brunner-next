@@ -26,8 +26,7 @@ export async function getServerSideProps(context) {
   const jRequest = {
     commandName: constants.commands.EDOC_DOCUMENT_SELECT_ONE,
     systemCode: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE,
-    userId: 'seo@system',
-    documentId,
+    documentId: documentId, 
   };
 
   const jResponse = await RequestServer(jRequest);
