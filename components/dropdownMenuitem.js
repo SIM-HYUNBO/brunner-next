@@ -39,7 +39,7 @@ const getAdminDocumentList = async (items) => {
     items.push({ label: sectionLabel, type: "section" });
 
     jResponse.documentList.forEach((doc) => {
-      const hRef = `/mainPages/edocument?documentId=${doc.id}`;
+      const hRef = `/edocument?documentId=${doc.id}`;
       items.push({
         label: doc.runtime_data?.title || "(제목 없음)",
         href: hRef,
@@ -69,7 +69,7 @@ const getUsersDocumentList = async (items) => {
     items.push({ label: sectionLabel, type: "section" });
 
     jResponse.documentList.forEach((doc) => {
-      const hRef = `/mainPages/edocument?documentId=${doc.id}`;
+      const hRef = `/edocument?documentId=${doc.id}`;
       items.push({
         label: doc.runtime_data?.title || "(제목 없음)",
         href: hRef,
