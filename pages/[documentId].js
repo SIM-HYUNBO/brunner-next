@@ -12,7 +12,7 @@ export default function EDocument({ documentData, pages }) {
         <meta name="description" content="전자문서 내용을 확인하세요." />
       </Head>
       <BodySection>
-        <EDocContent  documentData={documentData} pages={pages} />
+        <EDocContent documentId={documentData.id}  documentData={documentData} pages={pages} />
       </BodySection>
     </Layout>
   );
