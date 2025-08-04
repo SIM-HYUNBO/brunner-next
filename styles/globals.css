@@ -18,7 +18,6 @@ sm, md, lg 이런 접두사를 보다 보면 반응형을 구현할 때,
 @tailwind utilities;
 
 /*  
-px-5 (모바일) 
 md: (탭)
 lg: (데스크탑) 
 */
@@ -80,3 +79,16 @@ p {
     @apply text-slate-600 
            dark:text-slate-400
 }
+
+.Layout {
+    @apply bg-primary 
+           flex 
+           flex-col 
+           w-full
+           lg:w-2/3
+           min-h-screen 
+           justify-center 
+           lg:mx-auto
+           overflow-x-hidden
+           md:flex-row 
+}   
