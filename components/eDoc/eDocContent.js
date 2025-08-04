@@ -1,6 +1,5 @@
 'use strict';
 import { useState, useEffect } from 'react';
-
 import Head from 'next/head';
 import * as constants from '@/components/constants';
 import * as userInfo from '@/components/userInfo';
@@ -8,8 +7,16 @@ import RequestServer from '@/components/requestServer';
 import EDocEditorCanvas from '@/components/eDoc/eDocEditorCanvas';
 import * as commonFunctions from '@/components/commonFunctions';
 
-export default function EDocContent({ documentId, documentData, pages }) {
+export default function EDocContent({ documentId, documentData: initialDocumentData, pages: initialPages }) {
   const [loading, setLoading] = useState(false);
+  const [documentData, setDocumentData] = useState(initialDocumentData || null);
+  const [pages, setPages] = useState(initialPages || []);
+
+  // props가 변경되면 상태도 업데이트 (필요하다면)
+  useEffect(() => {
+    setDocumentData(initialDocumentData);
+    setPages(initialPages);
+  }, [initialDocumentData, initialPages]);
 
   useEffect(() => {
     if (!documentId) return;
@@ -128,37 +135,37 @@ export default function EDocContent({ documentId, documentData, pages }) {
         className="flex-grow edoc-designer-canvas"
         style={{ backgroundColor: documentData.runtime_data?.backgroundColor || '#f8f8f8' }}
       >
-      {/* 도큐먼트 객체 (실행타임) */}
+        {/* 도큐먼트 객체 (실행타임) */}
         <div
-          className={`w-full`} /* 문서여백 p-1 고정 */
-            style={{
-              backgroundColor: documentData?.runtime_data?.backgroundColor || '#f8f8f8',
-              padding: `${documentData.runtime_data.padding}px`, // 문서여백 1px 고정
-            }}
+          className={`w-full`}
+          style={{
+            backgroundColor: documentData?.runtime_data?.backgroundColor || '#f8f8f8',
+            padding: `${documentData.runtime_data.padding}px`,
+          }}
         >
           {pages.map(page => (
             <EDocEditorCanvas
-  key={page.id}
-  pageData={page}
-  isViewerMode={false} // ✅ 입력 허용
-  mode="runtime"
-  bindingData={commonFunctions.bindingData}
-  onUpdateComponent={(updatedComponent) => {
-    setPages(prevPages => {
-      return prevPages.map(page => {
-        if (page.id !== updatedComponent.pageId) return page;
+              key={page.id}
+              pageData={page}
+              isViewerMode={false} // 입력 허용
+              mode="runtime"
+              bindingData={commonFunctions.bindingData}
+              onUpdateComponent={(updatedComponent) => {
+                setPages(prevPages => {
+                  return prevPages.map(page => {
+                    if (page.id !== updatedComponent.pageId) return page;
 
-        const newComponents = page.components.map(comp =>
-          comp.id === updatedComponent.id ? updatedComponent : comp
-        );
-        return {
-          ...page,
-          components: newComponents,
-        };
-      });
-    });
-  }}
-/>
+                    const newComponents = page.components.map(comp =>
+                      comp.id === updatedComponent.id ? updatedComponent : comp
+                    );
+                    return {
+                      ...page,
+                      components: newComponents,
+                    };
+                  });
+                });
+              }}
+            />
           ))}
         </div>
       </main>
