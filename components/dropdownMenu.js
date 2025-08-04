@@ -116,9 +116,9 @@ export default function DropdownMenu({ reloadSignal, triggerMenuReload }) {
 
               return (
                 <li key={item.href + idx}>
-                  <a href={item.href} style={menuStyle}>
+                  <Link href={item.href} style={menuStyle}>
                     {item.label}
-                  </a>
+                  </Link>
                 </li>
               );
             })}
