@@ -81,15 +81,14 @@ p {
 }
 
 .Layout {
-    @apply bg-primary 
-           flex 
-           flex-col 
-           w-full
-           md:w-full
-           lg:w-2/3
-           min-h-screen 
-           justify-center 
-           lg:mx-auto
-           overflow-x-hidden
-           md:flex-row 
-}   
+  @apply bg-primary 
+         flex 
+         flex-col 
+         min-h-screen 
+         justify-center 
+         overflow-x-hidden;
+
+  @apply w-full md:w-full lg:w-2/3 lg:mx-auto;
+
+  @apply md:flex-row;
+}
