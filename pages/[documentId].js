@@ -26,12 +26,13 @@ export async function getServerSideProps(context) {
 
   const jRequest = {
    commandName: constants.commands.EDOC_DOCUMENT_SELECT_ONE,
-   systemCode: '00',
+   systemCode: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE,
    userId: userInfo.getLoginUserId(),
    documentId: documentId,
   };
   
-  const jResponse = await RequestServer(jRequest);
+  const baseUrl = getBaseUrl();
+  const jResponse = await RequestServer(jRequest, 'POST', `${baseUrl}/api/backendServer/`);
 
   if (jResponse.error_code !== 0 || !jResponse.documentData) {
     return { notFound: true };
@@ -56,4 +57,10 @@ export async function getServerSideProps(context) {
       pages: safePages,
     },
   };
+}
+
+export function getBaseUrl() {
+  if(process.env.NODE_ENV === 'production')
+    return 'https://brunner-next.vercel.app';
+  return  'http://localhost:3000';
 }
