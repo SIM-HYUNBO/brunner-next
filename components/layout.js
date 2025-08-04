@@ -31,14 +31,7 @@ export default function Layout({ children, reloadSignal, triggerMenuReload }) {
   }, [reloadSignal]);
 
   return (
-    <div className="bg-primary 
-                    flex 
-                    flex-col 
-                    md:flex-row 
-                    min-h-screen 
-                    justify-center 
-                    w-full 
-                    overflow-x-hidden">
+    <div className="Layout">
       <DivContainer className="flex 
                                flex-col 
                                w-full">
