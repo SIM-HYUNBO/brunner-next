@@ -8,10 +8,8 @@ import RequestServer from '@/components/requestServer';
 import EDocEditorCanvas from '@/components/eDoc/eDocEditorCanvas';
 import * as commonFunctions from '@/components/commonFunctions';
 
-export default function EDocContent({ documentId }) {
+export default function EDocContent({ documentId, documentData, pages }) {
   const [loading, setLoading] = useState(false);
-  const [documentData, setDocumentData] = useState(null);
-  const [pages, setPages] = useState([]);
 
   useEffect(() => {
     if (!documentId) return;
