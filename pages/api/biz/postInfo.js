@@ -161,7 +161,7 @@ const updateOne = async (txnId, jRequest) => {
         }
         else {
             jResponse.error_code = -1;
-            jResponse.error_message = `Fail to edit post.`;
+            jResponse.error_message = constants.messages.FAILED_TO_UPDATE_DATA;
             return jResponse;
         }
     } catch (e) {
@@ -209,7 +209,7 @@ const deleteOne = async (txnId, jRequest) => {
         }
         else {
             jResponse.error_code = -1;
-            jResponse.error_message = `Fail to delete post.`;
+            jResponse.error_message = constants.messages.FAILED_TO_DELETE_DATA;
             return jResponse;
         }
     } catch (e) {

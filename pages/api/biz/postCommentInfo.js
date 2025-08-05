@@ -63,7 +63,7 @@ const insertOne = async (txnId, jRequest) => {
         }
         else {
             jResponse.error_code = -1;
-            jResponse.error_message = constants.messages.FAILED_TO_INSERT;
+            jResponse.error_message = constants.messages.FAILED_TO_INSERT_DATA;
 
         }
     } catch (e) {
@@ -145,7 +145,7 @@ const deleteOne = async (txnId, jRequest) => {
         }
         else {
             jResponse.error_code = -1;
-            jResponse.error_message = constants.messages.FAILED_TO_DELETE;
+            jResponse.error_message = constants.messages.FAILED_TO_DELETE_DATA;
             return jResponse;
         }
     }
