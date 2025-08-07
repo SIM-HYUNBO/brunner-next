@@ -18,9 +18,9 @@ export default function HomeContent() {
         <h2 className={`page-title`}>
           Noesis Pelagos
         </h2>
-        <GoverningMessage governingMessage={`생각은 무한하고 시시각각 변하지만 기억은 영원하지 않습니다. 
-        그래서 생각은 기록으로 남기고 보전해야 합니다. 
-        무한한 당신의 생각을 디지털 기록으로 보관하세요.`} />
+        <GoverningMessage governingMessage={`Thoughts are finite, but records are eternal.
+Leave your ideas as digital documents.
+Creation begins the moment you start recording.`} />
         
         <div className={`flex flex-col mt-20`}>
           {!userInfo.isLogin() && (
