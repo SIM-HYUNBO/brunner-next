@@ -39,7 +39,8 @@ export default function Home() {
         <title>Noesis Pelagos - Brunner-Next</title>
         <meta name="description" content="Brunner-Next provides digital document creation tool."></meta>
         <meta name="keywords" content="Digital document, 전자 문서"></meta>
-        <link rel="icon" href="/favicon.ico?v=20250807" type="image/x-icon">
+        <link rel="icon" href="/favicon.png?v=20250807" type="image/png" />
+<link rel="shortcut icon" href="/favicon.png?v=20250807" type="image/png" />
         <meta name="google-adsense-account" content="ca-pub-3879149687745447"></meta> 
         <GoogleAdScript />
       </Head>
