@@ -45,9 +45,9 @@ export default function DropdownMenu({ reloadSignal, triggerMenuReload }) {
     setMenuItems(items);
   };
 
+  // 햄버거 메뉴 그리기
   return (
     <>
-      // 햄버거 메뉴 그리기
       <button
         className="p-2 
                    dark:bg-slate-900 
