@@ -5,7 +5,7 @@ import RequestServer from "@/components/requestServer";
 import * as userInfo from "@/components/userInfo";
 import { useModal } from "@/components/brunnerMessageBox";
 import * as constants from "@/components/constants";
-import Loading from "@/component/loading";
+import Loading from "@/components/loading";
 
 function BrunnerBoard({ boardType }) {
   const [loading, setLoading] = useState(false);
