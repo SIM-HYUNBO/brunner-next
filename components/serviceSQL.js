@@ -48,16 +48,18 @@ const AutoResizeTextarea = forwardRef(
           border 
           border-gray-300 
           resize-none 
-          rounded-md p-2 mt-1
+          rounded-md 
+          p-2 
+          mt-1
           ${readOnly ? 
-            "bg-gray-100 
+            `bg-gray-100 
              text-slate-400 
              dark:bg-slate-900 
-             dark:text-slate-800" : 
-            "bg-white 
+             dark:text-slate-800` : 
+            `bg-white 
              text-slate-900 
              dark:bg-slate-900 
-             dark:text-slate-400"
+             dark:text-slate-400`
           }
           `
         }
