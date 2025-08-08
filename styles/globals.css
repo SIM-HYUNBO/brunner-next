@@ -102,7 +102,10 @@ p {
          justify-center 
          overflow-x-hidden;
 
-  @apply w-full md:w-full lg:w-2/3 lg:mx-auto;
+  @apply w-full 
+         md:w-full 
+         lg:w-5/6 
+         lg:mx-auto;
 
   @apply md:flex-row;
 }
