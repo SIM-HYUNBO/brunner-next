@@ -39,7 +39,22 @@ lg: (데스크탑)
            my-10 
            font-medium 
            text-green-900
- }          
+ }
+ 
+header {
+  @apply sticky 
+         top-0 
+         left-0 
+         right-0 
+         w-full 
+         z-50 
+         bg-white 
+         text-gray-600 
+         dark:bg-slate-900 
+         dark:text-white 
+         body-font 
+         relative
+}           
 
 footer {
     @apply h-20 

@@ -1,15 +1,20 @@
 `use strict`;
 
+import { useState, useEffect, useRef } from "react";
+import { useRouter } from "next/router";
+import { useTheme } from "next-themes";
+
+import { useModal } from "@/components/brunnerMessageBox";
+
+import * as constants from "@/components/constants";
+import RequestServer from "@/components/requestServer";
+import Loading from "@/components/loading";
+
 import Layout from "@/components/layout";
 import Head from "next/head";
 import BodySection from "@/components/bodySection";
-import { useRouter } from "next/router";
-import { useState, useEffect, useRef } from "react";
-import RequestServer from "@/components/requestServer";
-import { useModal } from "@/components/brunnerMessageBox";
-import * as constants from "@/components/constants";
+
 import DivContainer from "@/components/divContainer";
-import { useTheme } from "next-themes";
 
 export default function Signin() {
 
@@ -79,9 +84,7 @@ export default function Signin() {
       <BrunnerMessageBox />
       <Layout>
         {loading && (
-          <div className={`fixed top-0 left-0 w-full h-full flex items-center justify-center bg-gray-500 bg-opacity-75 z-50`}>
-            <div className={`animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-gray-900`}></div>
-          </div>
+          <Loading />
         )}      
         <Head>
           <title>Stock Quotes and Investment Information - Brunner-Next</title>

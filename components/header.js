@@ -11,18 +11,7 @@ export default function Header({ triggerMenuReload, reloadSignal }) {
 
   return (
   
-    <header className="sticky 
-                       top-0 
-                       left-0 
-                       right-0 
-                       w-full 
-                       z-50 
-                       bg-white 
-                       dark:bg-slate-900 
-                       text-gray-600 
-                       dark:text-white 
-                       body-font 
-                       relative">
+    <header className="header">
 
   {/* 햄버거 메뉴 */}
     <div className="absolute top-4 right-4 z-50">
