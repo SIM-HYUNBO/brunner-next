@@ -50,8 +50,14 @@ const AutoResizeTextarea = forwardRef(
           resize-none 
           rounded-md p-2 mt-1
           ${readOnly ? 
-            "dark:bg-slate-800 bg-gray-100 text-slate-400 dark:text-slate-800" : 
-            "bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-400"
+            "bg-gray-100 
+             text-slate-400 
+             dark:bg-slate-900 
+             dark:text-slate-800" : 
+            "bg-white 
+             text-slate-900 
+             dark:bg-slate-900 
+             dark:text-slate-400"
           }
           `
         }
@@ -287,7 +293,20 @@ const ServiceSQL = () => {
                 value={sqlInput.system_code}
                 onChange={handleInputChange}
                 readOnly={!isEditing && !isCreating}
-                className={`mt-1 block w-full border border-gray-300 text-gray-800 dark:text-gray-400 dark:bg-slate-800 rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50`}
+                className={`mt-1 
+                            block 
+                            w-full 
+                            border 
+                            border-gray-300 
+                            text-gray-800 
+                            dark:text-gray-400 
+                            dark:bg-slate-900 
+                            rounded-md 
+                            shadow-sm 
+                            focus:border-blue-500 
+                            focus:ring 
+                            focus:ring-blue-500 
+                            focus:ring-opacity-50`}
                 required
               />
             </label>
@@ -306,7 +325,7 @@ const ServiceSQL = () => {
                             border-gray-300 
                             text-gray-800 
                             dark:text-gray-400 
-                            dark:bg-slate-800 
+                            dark:bg-slate-900 
                             rounded-md 
                             shadow-sm 
                             focus:border-blue-500 
@@ -324,7 +343,7 @@ const ServiceSQL = () => {
                 value={sqlInput.sql_seq}
                 onChange={handleInputChange}
                 readOnly={!isEditing && !isCreating}
-                className={`mt-1 block w-full border border-gray-300 text-gray-800 dark:text-gray-400 dark:bg-slate-800 rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50`}
+                className={`mt-1 block w-full border border-gray-300 text-gray-800 dark:text-gray-400 dark:bg-slate-900 rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50`}
                 required
               />
             </label>
@@ -366,19 +385,19 @@ const ServiceSQL = () => {
           <table className={`w-full bg-white border border-gray-300 mt-2`}>
             <thead>
               <tr>
-                <th className={`border border-gray-300 dark:text-gray-400 dark:bg-slate-800 px-4 py-2`}>
+                <th className={`border border-gray-300 dark:text-gray-400 dark:bg-slate-900 px-4 py-2`}>
                   System Code
                 </th>
-                <th className={`border border-gray-300 dark:text-gray-400 dark:bg-slate-800 px-4 py-2`}>
+                <th className={`border border-gray-300 dark:text-gray-400 dark:bg-slate-900 px-4 py-2`}>
                   SQL Name
                 </th>
-                <th className={`border border-gray-300  dark:text-gray-400 dark:bg-slate-800 px-4 py-2`}>
+                <th className={`border border-gray-300  dark:text-gray-400 dark:bg-slate-900 px-4 py-2`}>
                   SQL Sequence
                 </th>
-                <th className={`border border-gray-300  dark:text-gray-400 dark:bg-slate-800 px-4 py-2`}>
+                <th className={`border border-gray-300  dark:text-gray-400 dark:bg-slate-900 px-4 py-2`}>
                   SQL Content
                 </th>
-                <th className={`border border-gray-300 dark:text-gray-400 dark:bg-slate-800 px-4 py-2`}>
+                <th className={`border border-gray-300 dark:text-gray-400 dark:bg-slate-900 px-4 py-2`}>
                   Actions
                 </th>
               </tr> 
@@ -386,19 +405,19 @@ const ServiceSQL = () => {
             <tbody>
               {queries.map((query) => (
                 <tr key={query.id}>
-                  <td className={`border border-gray-300  dark:text-gray-400 dark:bg-slate-800 px-4 py-2`}>
+                  <td className={`border border-gray-300  dark:text-gray-400 dark:bg-slate-900 px-4 py-2`}>
                     {query.system_code}
                   </td>
-                  <td className={`border border-gray-300 dark:text-gray-400 dark:bg-slate-800 px-4 py-2`}>
+                  <td className={`border border-gray-300 dark:text-gray-400 dark:bg-slate-900 px-4 py-2`}>
                     {query.sql_name}
                   </td>
-                  <td className={`border border-gray-300 dark:text-gray-400 dark:bg-slate-800 px-4 py-2`}>
+                  <td className={`border border-gray-300 dark:text-gray-400 dark:bg-slate-900 px-4 py-2`}>
                     {query.sql_seq}
                   </td>
-                  <td className={`border border-gray-300 dark:text-gray-400 dark:bg-slate-800 px-4 py-2`}>
+                  <td className={`border border-gray-300 dark:text-gray-400 dark:bg-slate-900 px-4 py-2`}>
                     <pre>{query.sql_content}</pre>
                   </td>
-                  <td className={`border border-gray-300 dark:text-gray-400 dark:bg-slate-800 px-4 py-2`}>
+                  <td className={`border border-gray-300 dark:text-gray-400 dark:bg-slate-900 px-4 py-2`}>
                     <button
                       onClick={() => handleEdit(query)}
                       className={`bg-yellow-500 

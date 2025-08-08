@@ -392,7 +392,7 @@ export default function EDocDesignerContainer({ documentId, triggerMenuReload })
         {/* 왼쪽 컴포넌트 팔레트 */}
         <aside className="w-36 
                bg-white 
-               dark:bg-slate-700 
+               dark:bg-slate-900 
                border-r 
                border-slate-300 
                dark:border-slate-500
@@ -440,7 +440,20 @@ export default function EDocDesignerContainer({ documentId, triggerMenuReload })
                 setSelectedComponentId(null);
               }}
             >
-              <div className="absolute top-2 left-2 bg-slate-200 dark:bg-slate-600 text-slate-600 dark:text-slate-200 text-xs rounded px-2 py-1 select-none pointer-events-none z-10">
+              <div className="absolute 
+                              top-2 
+                              left-2 
+                              bg-slate-200 
+                              dark:bg-slate-900 
+                              text-slate-900 
+                              dark:text-slate-200 
+                              text-xs 
+                              rounded 
+                              px-2 
+                              py-1 
+                              select-none 
+                              pointer-events-none 
+                              z-10">
                 p{idx + 1}
               </div>
 
@@ -469,7 +482,7 @@ export default function EDocDesignerContainer({ documentId, triggerMenuReload })
         {/* 오른쪽 속성 편집창 */}
         <aside className="w-56 
                           bg-white 
-                          dark:bg-slate-700 
+                          dark:bg-slate-900 
                           border-0 
                           border-slate-300 
                           dark:border-slate-500 
@@ -524,7 +537,7 @@ export default function EDocDesignerContainer({ documentId, triggerMenuReload })
       {/* 문서 선택 모달 */}
       {showDocumentListModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-          <div className="bg-white dark:bg-slate-800 rounded shadow-lg w-96 max-h-96 overflow-auto p-4">
+          <div className="bg-white dark:bg-slate-900 rounded shadow-lg w-96 max-h-96 overflow-auto p-4">
             <h3 className="text-lg font-bold mb-4 text-slate-800 dark:text-slate-100">문서 선택</h3>
             <ul>
               {documentList.map((doc) => (
@@ -538,7 +551,7 @@ export default function EDocDesignerContainer({ documentId, triggerMenuReload })
               ))}
             </ul>
             <button
-              className="mt-4 px-4 py-2 bg-slate-300 dark:bg-slate-600 rounded hover:bg-slate-400 dark:hover:bg-slate-500"
+              className="mt-4 px-4 py-2 bg-slate-300 dark:bg-slate-900 rounded hover:bg-slate-400 dark:hover:bg-slate-500"
               onClick={() => setShowDocumentListModal(false)}
             >
               닫기

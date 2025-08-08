@@ -34,7 +34,7 @@ export default function DarkModeToggleButton() {
               bg-gray-100  
               hover:bg-gray-50 
               hover:text-orange-500
-              dark:bg-slate-600
+              dark:bg-slate-900
               dark:text-yellow-600 
               dark:hover:text-yellow-300 
               rounded 
