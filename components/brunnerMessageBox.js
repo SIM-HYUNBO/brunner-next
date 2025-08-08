@@ -56,7 +56,7 @@ export const useModal = () => {
       <>
         <div className="flex items-center justify-center z-50 fixed inset-0">
           <div className="fixed inset-0 bg-gray-900 opacity-75"></div>
-          <div className="bg-slate-200 dark:bg-slate-700 rounded-lg p-8 max-w-md w-full z-50">
+          <div className="bg-slate-200 dark:bg-slate-900 rounded-lg p-8 max-w-md w-full z-50">
             <p className="text-lg dark:text-gray-200 text-center mb-4 whitespace-pre-line">
               {isObject(modalContent.message) ? JSON.stringify(modalContent.message) : modalContent.message}
             </p>

@@ -42,7 +42,7 @@ const BrunnerTable = forwardRef(({
                   type="datetime-local"
                   value={formattedLocalDateTime}
                   readOnly
-                  className={`text-center dark:bg-slate-800`}
+                  className={`text-center dark:bg-slate-900`}
                 />
               );
             },
@@ -106,7 +106,7 @@ const BrunnerTable = forwardRef(({
 
   const TableConditionArea = () => {
     return (
-      <div className={`flex justify-end w-full p-4 bg-gray-100 dark:bg-slate-800  mt-2`}>
+      <div className={`flex justify-end w-full p-4 bg-gray-100 dark:bg-slate-900  mt-2`}>
         <button
           onClick={fetchTableData}
           className={`text-white bg-indigo-500 border-0 py-2 px-6 focus:outline-none hover:bg-indigo-600 rounded text-lg mb-3`}
@@ -256,7 +256,7 @@ const BrunnerTable = forwardRef(({
 
 
     return (
-      <div className={`mb-2 table w-full dark:bg-slate-800 mt-2 p-2`}>
+      <div className={`mb-2 table w-full dark:bg-slate-900 mt-2 p-2`}>
         {columnHeaders.map((header) => (
           !header.input_hidden && (
             <div key={header.accessor} className="flex items-center mb-2">
