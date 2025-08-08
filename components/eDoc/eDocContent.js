@@ -68,15 +68,34 @@ export default function EDocContent({ documentId, documentData: initialDocumentD
 
   if (loading) {
     return (
-      <div className="flex h-screen items-center justify-center bg-white dark:bg-gray-800">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-gray-800 dark:border-white"></div>
+      <div className="flex 
+                      h-screen 
+                      items-center 
+                      justify-center 
+                      bg-white 
+                      dark:bg-gray-900">
+        <div className="animate-spin 
+                        rounded-full 
+                        h-12 
+                        w-12 
+                        border-t-2 
+                        border-b-2 
+                        border-gray-800 
+                        dark:border-white"></div>
       </div>
     );
   }
 
   if (!documentData) {
     return (
-      <div className="flex h-screen items-center justify-center bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-100">
+      <div className="flex 
+                      h-screen 
+                      items-center 
+                      justify-center 
+                      bg-white 
+                      dark:bg-gray-900 
+                      text-gray-900 
+                      dark:text-gray-100">
         문서를 불러오는 중입니다...
       </div>
     );

@@ -83,7 +83,7 @@ export default function DropdownMenu({ reloadSignal, triggerMenuReload }) {
                         z-50 
                         bg-gray-100
                         text-gray-800
-                        dark:bg-gray-700 
+                        dark:bg-gray-900 
                         dark:text-gray-100">
           <ul>
             {menuItems.map((item, idx) => {
