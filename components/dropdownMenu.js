@@ -81,8 +81,8 @@ export default function DropdownMenu({ reloadSignal, triggerMenuReload }) {
                         shadow-lg 
                         rounded 
                         z-50 
-                        bg-gray-100
-                        text-gray-800
+                        bg-gray-200
+                        text-gray-900
                         dark:bg-slate-800 
                         dark:text-gray-100">
           <ul>
