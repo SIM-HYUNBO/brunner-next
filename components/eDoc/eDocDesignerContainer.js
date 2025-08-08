@@ -25,6 +25,8 @@ import * as CheckListComponent from "@/components/eDoc/eDocComponent/eDocCompone
 import * as ButtonComponent from "@/components/eDoc/eDocComponent/eDocComponent_Button";
 import * as VideoComponent from "@/components/eDoc/eDocComponent/eDocComponent_Video";
 
+import Loading from "@/components/loading";
+
 export default function EDocDesignerContainer({ documentId, triggerMenuReload }) {
   const { BrunnerMessageBox, openModal } = useModal();
 
@@ -364,19 +366,7 @@ export default function EDocDesignerContainer({ documentId, triggerMenuReload })
   return (
     <>
       {loading && (
-        <div className="fixed 
-                        inset-0 
-                        z-50 
-                        flex 
-                        items-center 
-                        justify-center 
-                        bg-black 
-                        bg-opacity-40 
-                        text-white 
-                        text-xl 
-                        font-bold">
-          Loading...
-        </div>
+        <Loading />
       )}
       <h2 className={`page-title`}>
         Page designer

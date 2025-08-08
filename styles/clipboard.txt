@@ -1,0 +1,1 @@
+         dark:bg-slate-900 

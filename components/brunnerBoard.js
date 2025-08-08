@@ -5,6 +5,7 @@ import RequestServer from "@/components/requestServer";
 import * as userInfo from "@/components/userInfo";
 import { useModal } from "@/components/brunnerMessageBox";
 import * as constants from "@/components/constants";
+import Loading from "@/component/loading";
 
 function BrunnerBoard({ boardType }) {
   const [loading, setLoading] = useState(false);
@@ -297,9 +298,7 @@ function BrunnerBoard({ boardType }) {
     <div className={`w-full max-w-4xl mx-auto`}>
       <BrunnerMessageBox />
       {loading && (
-        <div className={`fixed top-0 left-0 w-full h-full flex items-center justify-center bg-gray-500 bg-opacity-75 z-50`}>
-          <div className={`animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-gray-900`}></div>
-        </div>
+        <Loading />
       )}
       <div className={`mb-6 flex`}>
         <textarea
@@ -307,7 +306,13 @@ function BrunnerBoard({ boardType }) {
           onChange={handlePostChange}
           placeholder="Write new post..."
           maxLength="1000"
-          className={`w-full p-2 border border-gray-300 rounded-md text-slate-600 dark:text-slate-400`}
+          className={`w-full 
+                      p-2 
+                      border 
+                      border-gray-300 
+                      rounded-md 
+                      text-slate-600 
+                      dark:text-slate-400`}
         />
         <button
           onClick={handleAddPost}
@@ -409,9 +414,7 @@ function BoardContent({
       <BrunnerMessageBox />
       <hr />
       {loading && (
-        <div className={`fixed top-0 left-0 w-full h-full flex items-center justify-center bg-gray-500 bg-opacity-75 z-50`}>
-          <div className={`animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-gray-900`}></div>
-        </div>
+        <Loading />
       )}
       {isEditingPost ? (
         <div>

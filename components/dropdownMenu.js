@@ -47,8 +47,11 @@ export default function DropdownMenu({ reloadSignal, triggerMenuReload }) {
 
   return (
     <>
+      // 햄버거 메뉴 그리기
       <button
-        className="p-2 dark:bg-slate-900 dark:text-gray-100"
+        className="p-2 
+                   dark:bg-slate-900 
+                   dark:text-gray-100"
         onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
         aria-label="메뉴 열기"
         aria-expanded={mobileMenuOpen}
@@ -62,7 +65,8 @@ export default function DropdownMenu({ reloadSignal, triggerMenuReload }) {
           strokeWidth="2"
           strokeLinecap="round"
           strokeLinejoin="round"
-          className="text-gray-700 dark:text-gray-100"
+          className="text-gray-700 
+                     dark:text-gray-100"
         >
           <line x1="4" y1="6" x2="20" y2="6" />
           <line x1="4" y1="12" x2="20" y2="12" />
