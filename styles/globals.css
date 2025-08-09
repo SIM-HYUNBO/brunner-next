@@ -22,24 +22,50 @@ md: (탭)
 lg: (데스크탑) 
 */
 
+.light-text-bg {
+  @apply text-black
+         bg-white             
+}
+
+.dark-text {
+  @apply dark:text-white
+} 
+
+.dark-bg {
+  @apply dark:bg-slate-900
+}
+
+.dark-text-bg {
+  @apply dark-text 
+         dark-bg
+}
+
+.general-text-bg {
+  @apply light-text-bg 
+         dark-text-bg             
+}
+
 .bg-primary { 
-    @apply bg-white 
-           dark:bg-slate-900
-           text-black
-           dark:text-white 
+    @apply general-text-bg
            w-full 
            h-full 
            min-h-[calc(100vh-5rem)] 
            max-w-full 
-           pb-20}
+           pb-20
+}
  
- .page-title {
+.page-title {
     @apply sm:text-4xl 
            text-3xl
            my-10 
            font-medium 
            text-green-900
- }
+}
+
+.header-text-bg {
+  @apply light-text-bg 
+         dark-text-bg 
+}
  
 header {
   @apply sticky 
@@ -48,10 +74,7 @@ header {
          right-0 
          w-full 
          z-50 
-         bg-white 
-         text-gray-600 
-         dark:bg-slate-900 
-         dark:text-white 
+         header-text-bg 
          relative
 }           
 
