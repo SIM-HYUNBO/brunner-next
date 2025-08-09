@@ -188,8 +188,7 @@ const BrunnerTable = forwardRef(({
                       {...cell.getCellProps()}
                       className={`p-2 
                                   border-b 
-                                  text-slate-700 
-                                  dark:text-slate-400 
+                                  general-text-bg-color
                                   dark:border-slate-400 
                                   ${cell.column.type === 'number' ? 
                                   'text-right': 
