@@ -50,8 +50,8 @@ export default function DropdownMenu({ reloadSignal, triggerMenuReload }) {
     <>
       <button
         className="p-2 
-                   dark:bg-slate-900 
-                   dark:text-gray-100"
+                   dark-bg-color 
+                   semi-dark-text-color"
         onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
         aria-label="메뉴 열기"
         aria-expanded={mobileMenuOpen}
@@ -66,7 +66,7 @@ export default function DropdownMenu({ reloadSignal, triggerMenuReload }) {
           strokeLinecap="round"
           strokeLinejoin="round"
           className="text-gray-700 
-                     dark:text-gray-100"
+                     semi-dark-text-color "
         >
           <line x1="4" y1="6" x2="20" y2="6" />
           <line x1="4" y1="12" x2="20" y2="12" />
@@ -81,10 +81,7 @@ export default function DropdownMenu({ reloadSignal, triggerMenuReload }) {
                         shadow-lg 
                         rounded 
                         z-50 
-                        bg-gray-200
-                        text-gray-900
-                        dark:bg-slate-800 
-                        dark:text-gray-100">
+                        semi-dark-color">
           <ul>
             {menuItems.map((item, idx) => {
               if (item.type === "divider") {

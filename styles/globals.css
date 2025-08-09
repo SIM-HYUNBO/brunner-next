@@ -22,36 +22,70 @@ md: (탭)
 lg: (데스크탑) 
 */
 
-.light-text-bg {
+.light-text-bg-color {
   @apply text-black
-         bg-white             
+         bg-white
+         ;
 }
 
-.dark-text {
-  @apply dark:text-white
+.light-bg-color {
+  @apply dark:bg-slate-900
+         ;
 } 
 
-.dark-bg {
+.dark-bg-color {
   @apply dark:bg-slate-900
+         ;
+} 
+
+.dark-text-bg-color {
+  @apply dark:text-white 
+         dark-bg-color
+         ;
+} 
+
+.semi-dark-text-color {
+  @apply dark:text-gray-100
+  ;
 }
 
-.dark-text-bg {
-  @apply dark-text 
-         dark-bg
+.semi-dark-bg-color {
+  @apply dark:bg-slate-800
+  ;
+}
+ 
+.semi-dark-color {
+  @apply semi-dark-text-color 
+         semi-dark-bg-color
+         ;
+}              
+
+.general-text-color {
+  @apply text-black 
+         dark:text-white
+         ;
 }
 
-.general-text-bg {
-  @apply light-text-bg 
-         dark-text-bg             
+.general-text-bg-color {
+  @apply light-text-bg-color 
+         dark-text-bg-color
+         ;
+}
+
+.general-bg-bg-color {
+  @apply light-bg-color 
+         dark-bg-color
+         ;
 }
 
 .bg-primary { 
-    @apply general-text-bg
+    @apply general-text-bg-color
            w-full 
            h-full 
            min-h-[calc(100vh-5rem)] 
            max-w-full 
            pb-20
+           ;
 }
  
 .page-title {
@@ -60,13 +94,9 @@ lg: (데스크탑)
            my-10 
            font-medium 
            text-green-900
+           ;
 }
 
-.header-text-bg {
-  @apply light-text-bg 
-         dark-text-bg 
-}
- 
 header {
   @apply sticky 
          top-0 
@@ -74,8 +104,9 @@ header {
          right-0 
          w-full 
          z-50 
-         header-text-bg 
+         general-text-bg-color 
          relative
+         ;
 }           
 
 footer {
@@ -90,31 +121,37 @@ footer {
         justify-center
         text-gray-200 
         bg-gray-300/50 
-        dark:bg-gray-900/50 
+        dark:bg-gray-900/50
+        ; 
 }
 
 h1, h2, h3, h4, h5, h6 {
     @apply text-green-600 
            dark:text-green-300
+           ;
 }
 
 pre {
     @apply text-slate-900 
            dark:text-white 
-           whitespace-pre-wrap 
+           whitespace-pre-wrap
+           ; 
 }
 
 html {
-    @apply h-screen;
+    @apply h-screen
+    ;
 }
 
 a {
     @apply text-slate-100
+    ;
 }
 
 p {
     @apply text-slate-600 
            dark:text-slate-400
+           ;
 }
 
 .Layout {
@@ -123,12 +160,15 @@ p {
          flex-col 
          min-h-screen 
          justify-center 
-         overflow-x-hidden;
+         overflow-x-hidden
+         ;
 
   @apply w-full 
          md:w-full 
          lg:w-5/6 
-         lg:mx-auto;
+         lg:mx-auto
+         ;
 
-  @apply md:flex-row;
+  @apply md:flex-row
+  ;
 }

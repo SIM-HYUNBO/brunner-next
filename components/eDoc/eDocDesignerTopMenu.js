@@ -19,7 +19,7 @@ export default function EDocDesignerTopMenu({
   return (
     <div className="w-full 
                     bg-slate-100 
-                    dark:bg-slate-800 
+                    dark-bg-color 
                     flex 
                     items-center 
                     justify-center">
