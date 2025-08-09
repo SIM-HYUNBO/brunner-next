@@ -215,7 +215,8 @@ const ServiceSQL = () => {
             onClick={handleNew}
             className={`bg-green-500 
                         text-white 
-                        p-1 
+                        px-4 
+                        py-2
                         rounded-md 
                         hover:bg-green-600 
                         focus:outline-none 
@@ -233,7 +234,8 @@ const ServiceSQL = () => {
       <button onClick={handleCreateOrUpdate} 
               className={`bg-blue-500 
                           text-white 
-                          p-1 
+                          px-4
+                          py-2 
                           rounded-md 
                           hover:bg-blue-600 
                           focus:outline-none 
