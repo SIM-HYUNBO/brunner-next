@@ -1,7 +1,7 @@
 `use strict`
 
 import { useState, useRef, useEffect } from 'react';
-import * from '@/components/constants'
+import * as constants from '@/components/constants'
 import Head from 'next/head'
 import Layout from '@/components/layout'
 import BodySection from '@/components/bodySection'
