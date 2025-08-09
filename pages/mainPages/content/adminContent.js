@@ -15,7 +15,7 @@ export default function AdminContent() {
         {userInfo?.isAdminUser() && (
           <>
             <h2 className={`page-title`}>
-              Brunner administration
+              Service SQL  
             </h2>
             <div className={`flex justify-center w-full`}>
               <ServiceSQL />
