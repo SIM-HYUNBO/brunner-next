@@ -49,13 +49,15 @@ export default async (req, res) => {
         }
 
         remoteIp = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
-        jRequest = req.method === "GET" ? JSON.parse(req.params.requestJson) : req.method === "POST" ? req.body : null;
+        jRequest = req.method === "GET" ? 
+                   JSON.parse(req.params.requestJson) : 
+                   req.method === "POST" ? req.body : null;
         txnId = await generateTxnId();
         commandName = jRequest.commandName;
         
         logger.warn(`START TXN ${commandName}\n`);
         jRequest._txnId = txnId;
-        logger.info(`method:${req.method} from ${remoteIp}\n requestBody:${JSON.stringify(req.body)}\n`);
+        logger.info(`method: ${req.method} from ${remoteIp}\n requestBody: ${JSON.stringify(req.body)}\n`);
         startTxnTime = new Date();
         
         response = await executeService(req.method, req);
@@ -77,10 +79,6 @@ export default async (req, res) => {
         jResponse._durationMs = durationMs;
 
         res.send(`${JSON.stringify(jResponse)}`);
-
-        if (commandName !== constants.commands.COMMAND_STOCK_INFO_GET_REALTIME_STOCK_INFO)
-            await saveTxnHistory(remoteIp, txnId, jRequest, jResponse);
-
         logger.warn(`END TXN ${(!commandName) ? "" : commandName} in ${durationMs} milliseconds.\n response: ${JSON.stringify(jResponse)}\n`)
     }
 }

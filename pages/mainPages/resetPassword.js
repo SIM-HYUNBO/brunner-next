@@ -152,10 +152,10 @@ export default function ResetPassword() {
       )}
       <Layout>
         <Head>
-          <title>Stock Quotes and Investment Information - Brunner-Next</title>
+          <title>Noesis Pelagos - Brunner-Next</title>
           <meta
             name="description"
-            content="Brunner-Next provides real-time stock quotes. Make effective investments with real-time stock charts, investment strategies, stock news, and stock analysis tools."
+            content=`${constants.messages.SITE_DESCRIPTION}`
           ></meta>
           <meta rel="icon" href="/brunnerLogo2025.png"></meta>
           <link></link>

@@ -10,7 +10,8 @@ export const modulePrefix = {
     edocCustom: `edocCustom`,
 }
 
-export const messages = {    
+export const messages = {
+    SITE_DESCRIPTION = `Brunner-Next now provides a document management platform that enables you to create and manage electronic documents in real time using an electronic document designer.` 
     EMPTY_STRING : '',
     DATABASE_FAILED : `Database failed.`,
     DELETE_ITEM : `Delete this item?`,
@@ -21,7 +22,6 @@ export const messages = {
     FAILED_TO_SAVE_DATA : `Failed to save data.`,
     FAILED_TO_UPDATE_DATA : `Failed to update data.`,
     FAILED_REQUESTED : `Failed to request service.`,
-    INPUT_STOCK_SYMBOL : `Select or Input a stock symbol.`,
     INVALIED_NUMBER_AMOUNT : `Invalid number or amount.`,
     MINIUM_PAGE_COUNT : `Minimum page count is 1.`,
     NOT_SET_API_ENDPOINT : `API endpoint is not set.`,

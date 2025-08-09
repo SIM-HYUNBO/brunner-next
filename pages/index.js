@@ -1,11 +1,12 @@
 `use strict`
 
-import Layout from '@/components/layout'
-import Head from 'next/head'
-import BodySection from '@/components/bodySection'
 import React from 'react';
-import { useEffect } from 'react'
+import Head from 'next/head'
 import Script from 'next/script';
+import {useEffect} from 'react'
+import * as constants from "@/components/constants";
+import Layout from '@/components/layout'
+import BodySection from '@/components/bodySection'
 import HomeContent from '@/pages/mainPages/content/homeContent'
 
 
@@ -37,11 +38,20 @@ export default function Home() {
     <Layout>
       <Head>
         <title>Noesis Pelagos - Brunner-Next</title>
-        <meta name="description" content="Brunner-Next provides digital document creation tool."></meta>
-        <meta name="keywords" content="Digital document, 전자 문서"></meta>
-        <link rel="icon" href="/favicon.png?v=20250807" type="image/png" />
-<link rel="shortcut icon" href="/favicon.png?v=20250807" type="image/png" />
-        <meta name="google-adsense-account" content="ca-pub-3879149687745447"></meta> 
+        <meta name="description" 
+              content=`${constants.messages.SITE_DESCRIPTION}`></meta>
+        <meta name="keywords" 
+              content="Digital document, 전자 문서"></meta>
+        <link rel="icon" 
+              href="/favicon.png?v=20250807" 
+              type="image/png" />
+        <link rel="shortcut icon" 
+              href="/favicon.png?v=20250807" 
+              type="image/png" />
+        <meta name="google-adsense-account" 
+              content="ca-pub-3879149687745447">
+        </meta> 
+        
         <GoogleAdScript />
       </Head>
       <BodySection>

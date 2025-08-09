@@ -87,10 +87,10 @@ export default function Signin() {
           <Loading />
         )}      
         <Head>
-          <title>Stock Quotes and Investment Information - Brunner-Next</title>
+          <title>Noesis Pelagos - Brunner-Next</title>
           <meta
             name="description"
-            content="Brunner-Next provides real-time stock quotes. Make effective investments with real-time stock charts, investment strategies, stock news, and stock analysis tools."
+            content="Brunner-Next now provides a document management platform that enables you to create and manage electronic documents in real time using an electronic document designer."
           />
           <link rel="icon" href="/brunnerLogo2025.png" />
         </Head>
