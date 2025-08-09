@@ -66,7 +66,7 @@ export const useModal = () => {
                opacity-75">
           </div>
           <div className="bg-slate-200 
-                          dark:bg-slate-900 
+                          dark-bg-color 
                           rounded-lg 
                           p-8 
                           max-w-md 

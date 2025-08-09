@@ -47,7 +47,7 @@ export default function SignoutButton({ handleLogout, triggerMenuReload }) {
                       bg-gray-100  
                       hover:bg-gray-50 
                       hover:text-orange-500
-                      dark:bg-slate-900
+                      dark-bg-color
                       dark:text-yellow-600 
                       dark:hover:text-yellow-300 
                       rounded 

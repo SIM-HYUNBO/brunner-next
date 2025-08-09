@@ -72,8 +72,7 @@ export default function EDocContent({ documentId, documentData: initialDocumentD
                       h-screen 
                       items-center 
                       justify-center 
-                      bg-white 
-                      dark:bg-gray-900">
+                      general-bg-color">
         <div className="animate-spin 
                         rounded-full 
                         h-12 
@@ -93,7 +92,7 @@ export default function EDocContent({ documentId, documentData: initialDocumentD
                       items-center 
                       justify-center 
                       bg-white 
-                      dark:bg-gray-900 
+                      dark-bg-color 
                       text-gray-900 
                       dark:text-gray-100">
         문서를 불러오는 중입니다...
