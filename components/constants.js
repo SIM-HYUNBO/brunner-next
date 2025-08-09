@@ -11,7 +11,7 @@ export const modulePrefix = {
 }
 
 export const messages = {
-    SITE_DESCRIPTION = `Brunner-Next now provides a document management platform that enables you to create and manage electronic documents in real time using an electronic document designer.`, 
+    SITE_DESCRIPTION : `Brunner-Next now provides a document management platform that enables you to create and manage electronic documents in real time using an electronic document designer.`, 
     EMPTY_STRING : '',
     DATABASE_FAILED : `Database failed.`,
     DELETE_ITEM : `Delete this item?`,
