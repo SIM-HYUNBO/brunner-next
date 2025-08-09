@@ -215,14 +215,13 @@ const ServiceSQL = () => {
             onClick={handleNew}
             className={`bg-green-500 
                         text-white 
-                        py-2 
-                        px-4 
+                        p-1 
                         rounded-md 
                         hover:bg-green-600 
                         focus:outline-none 
                         focus:ring focus:ring-green-500 
                         focus:ring-opacity-50 
-                        ml-2`}
+                        ml-1`}
           >
             Clear
           </button>
@@ -234,8 +233,7 @@ const ServiceSQL = () => {
       <button onClick={handleCreateOrUpdate} 
               className={`bg-blue-500 
                           text-white 
-                          py-2 
-                          px-4 
+                          p-1 
                           rounded-md 
                           hover:bg-blue-600 
                           focus:outline-none 
