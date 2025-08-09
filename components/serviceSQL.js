@@ -446,40 +446,35 @@ const ServiceSQL = () => {
                 <tr key={query.id}>
                   <td className={`border 
                                   border-gray-300  
-                                  dark:text-gray-400 
-                                  dark:bg-color 
+                                  general-text-bg-color
                                   px-4 
                                   py-2`}>
                     {query.system_code}
                   </td>
                   <td className={`border 
-                                  border-gray-300 
-                                  dark:text-gray-400 
-                                  dark-bg-color 
+                                  border-gray-300  
+                                  general-text-bg-color
                                   px-4 
                                   py-2`}>
                     {query.sql_name}
                   </td>
                   <td className={`border 
                                   border-gray-300 
-                                  dark:text-gray-400 
-                                  dark-bg-color 
+                                  general-text-bg-color
                                   px-4 
                                   py-2`}>
                     {query.sql_seq}
                   </td>
                   <td className={`border 
                                   border-gray-300 
-                                  dark:text-gray-400 
-                                  dark-bg-color 
+                                  general-text-bg-color
                                   px-4 
                                   py-2`}>
                     <pre>{query.sql_content}</pre>
                   </td>
                   <td className={`border 
                                   border-gray-300 
-                                  dark:text-gray-400 
-                                  dark-bg-color 
+                                  general-text-bg-color
                                   px-4 
                                   py-2`}>
                     <button
