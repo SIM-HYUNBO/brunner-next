@@ -54,21 +54,55 @@ export const useModal = () => {
 
     return (
       <>
-        <div className="flex items-center justify-center z-50 fixed inset-0">
-          <div className="fixed inset-0 bg-gray-900 opacity-75"></div>
-          <div className="bg-slate-200 dark:bg-slate-900 rounded-lg p-8 max-w-md w-full z-50">
-            <p className="text-lg dark:text-gray-200 text-center mb-4 whitespace-pre-line">
-              {isObject(modalContent.message) ? JSON.stringify(modalContent.message) : modalContent.message}
+        <div className="flex 
+             items-center 
+             justify-center 
+             z-50 
+             fixed 
+             inset-0">
+          <div className="fixed 
+               inset-0 
+               bg-gray-900 
+               opacity-75">
+          </div>
+          <div className="bg-slate-200 
+                          dark:bg-slate-900 
+                          rounded-lg 
+                          p-8 
+                          max-w-md 
+                          w-full 
+                          z-50">
+            <p className="text-lg 
+                          dark:text-gray-200 
+                          text-center 
+                          mb-4 
+                          whitespace-pre-line">
+              { isObject(modalContent.message) ? 
+                JSON.stringify(modalContent.message) : 
+                modalContent.message }
             </p>
             <div className="flex justify-center">
               <button
-                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mr-2"
+                className="bg-blue-500 
+                           hover:bg-blue-700 
+                           text-white 
+                           font-bold 
+                           mr-2
+                           px-4 
+                           py-2" 
+                           rounded 
                 onClick={handleConfirm}
               >
                 OK
               </button>
               <button
-                className="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded"
+                className="bg-gray-300 
+                           hover:bg-gray-400 
+                           text-gray-800 
+                           font-bold 
+                           py-2 
+                           px-4 
+                           rounded"
                 onClick={handleClose}
               >
                 Cancel
