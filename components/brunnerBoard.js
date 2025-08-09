@@ -421,11 +421,22 @@ function BoardContent({
           <textarea
             value={editedPostText}
             onChange={handleEditPostChange}
-            className={`w-full p-2 border border-gray-300 rounded-md text-slate-600 dark:text-slate-400`}
+            className={`w-full 
+                        p-2 
+                        border 
+                        border-gray-300 
+                        rounded-md 
+                        text-slate-600 
+                        dark:text-slate-400`}
           />
           <button
             onClick={handleEditPost}
-            className={`mt-2 px-4 py-2 bg-blue-500 text-slate-400 rounded-md`}
+            className={`mt-2 
+                        px-4 
+                        py-2 
+                        bg-blue-500 
+                        text-slate-400 
+                        rounded-md`}
           >
             Save
           </button>
@@ -458,7 +469,13 @@ function BoardContent({
                 }
                 setIsEditingPost(true);
               }}
-              className={`mr-2 px-4 py-2 bg-yellow-500 text-white rounded-md`}
+              
+              className={`mr-1
+                          px-2 
+                          py-1 
+                          bg-yellow-500 
+                          text-white 
+                          rounded-md`}
             >
               Edit
             </button>
@@ -471,7 +488,11 @@ function BoardContent({
                 }
                 handleDeletePost();
               }}
-              className={`px-4 py-2 bg-red-500 text-white rounded-md`}
+              className={`px-2
+                          py-1 
+                          bg-red-500 
+                          text-white 
+                          rounded-md`}
             >
               Delete
             </button>

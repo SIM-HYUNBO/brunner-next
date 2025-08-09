@@ -26,7 +26,16 @@ Creation begins the moment you start recording.`} />
           {!userInfo.isLogin() && (
             <div>
               <button
-                className={`inline-flex text-white bg-indigo-500 border-0 py-2 px-6 focus:outline-none hover:bg-indigo-600 rounded text-lg mr-2`}
+                className={`inline-flex 
+                            text-white 
+                            bg-indigo-500 
+                            border-0 
+                            py-2 px-6 
+                            focus:outline-none 
+                            hover:bg-indigo-600 
+                            rounded 
+                            text-lg 
+                            mr-1`}
                 onClick={() => router.push("/mainPages/signin")}
               >
                 Sign in
