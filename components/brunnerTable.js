@@ -146,14 +146,22 @@ const BrunnerTable = forwardRef(({
 
     return (
       <div className="w-full overflow-x-auto">
-      <table {...getTableProps()} className={`min-w-full w-full text-left table-auto mt-2`}>
+      <table {...getTableProps()} 
+             className={`min-w-full 
+                         w-full 
+                         text-left 
+                         table-auto 
+                         mt-2`}>
         <thead>
           {headerGroups.map((headerGroup) => (
             <tr {...headerGroup.getHeaderGroupProps()}>
               {headerGroup.headers.map((column) => (
                 <th 
                   {...column.getHeaderProps({
-                    className: `text-center ${column.headerClassName ? column.headerClassName : ""}`,
+                    className: `text-center 
+                                ${column.headerClassName ?
+                                column.headerClassName : 
+                                ""}`,
                   })}
                 >
                   {column.render("Header")}
@@ -183,10 +191,13 @@ const BrunnerTable = forwardRef(({
                                   text-slate-700 
                                   dark:text-slate-400 
                                   dark:border-slate-400 
-                                  ${cell.column.type === 'number' ? 'text-right': 'text-left'}
+                                  ${cell.column.type === 'number' ? 
+                                  'text-right': 
+                                  'text-left'}
                                   `}
                     >
-                      {cell.column.id !== 'actions' && cell.column.editable ? (
+                      {cell.column.id !== 'actions' && 
+                       cell.column.editable ? (
                         <EditableCell
                           value={cell.value}
                           rowIndex={row.index}

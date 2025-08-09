@@ -1,6 +1,7 @@
 `use strict`
 
 import { useState, useRef, useEffect } from 'react';
+import * from '@/components/constants'
 import Head from 'next/head'
 import Layout from '@/components/layout'
 import BodySection from '@/components/bodySection'
@@ -10,10 +11,10 @@ export default function AdminPage() {
   return (
     <Layout>
       <Head>
-        <title>Stock Quotes and Investment Information - Brunner-Next</title>
+        <title>Noesis Pelagos - Brunner-Next</title>
         <meta 
         name="description" 
-        content="Brunner-Next provides real-time stock quotes. Make effective investments with real-time stock charts, investment strategies, stock news, and stock analysis tools."></meta>
+        content=`${constants.messages.SITE_DESCRIPTION}`></meta>
         <meta rel="icon" href="/brunnerLogo2025.png"></meta>
       </Head>
       <BodySection>
