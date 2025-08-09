@@ -488,8 +488,7 @@ function BoardContent({
                 }
                 handleDeletePost();
               }}
-              className={`px-2
-                          py-1 
+              className={`p-1 
                           bg-red-500 
                           text-white 
                           rounded-md`}
@@ -508,17 +507,30 @@ function BoardContent({
                   type="text"
                   value={editedCommentText}
                   onChange={handleEditCommentChange}
-                  className={`w-full p-2 border border-gray-300 rounded-md`}
+                  className={`w-full 
+                              p-1 
+                              border 
+                              border-gray-300 
+                              rounded-md`}
                 />
                 <button
                   onClick={() => handleEditComment(comment.comment_id)}
-                  className={`mt-2 px-4 py-2 bg-blue-500 text-white rounded-md`}
+                  className={`mt-2 
+                              p-1 
+                              bg-blue-500 
+                              text-white 
+                              rounded-md`}
                 >
                   Save
                 </button>
                 <button
                   onClick={() => setEditingCommentId(null)}
-                  className={`mt-2 ml-2 px-4 py-2 bg-gray-500 text-white rounded-md`}
+                  className={`mt-2 
+                              ml-1 
+                              p-1 
+                              bg-gray-500 
+                              text-white 
+                              rounded-md`}
                 >
                   Cancel
                 </button>
@@ -548,7 +560,10 @@ function BoardContent({
                       setEditingCommentId(comment.comment_id);
                       setEditedCommentText(comment.comment_content);
                     }}
-                    className={`mr-2 px-3 py-1 bg-yellow-500 text-white rounded-md`}
+                    className={`p-1 
+                                bg-yellow-500 
+                                text-white 
+                                rounded-md`}
                   >
                     Edit
                   </button>
@@ -561,7 +576,11 @@ function BoardContent({
                       }
                       handleDeleteComment(comment.comment_id);
                     }}
-                    className={`px-3 py-1 bg-red-500 text-white rounded-md`}
+                    className={`p-1
+                                ml-1 
+                                bg-red-500 
+                                text-white 
+                                rounded-md`}
                   >
                     Delete
                   </button>
@@ -577,11 +596,21 @@ function BoardContent({
           value={commentText}
           onChange={handleCommentChange}
           placeholder="Write new comment."
-          className={`flex-1 p-2 border border-gray-300 rounded-md text-slate-600 dark:text-slate-400`}
+          className={`flex-1 
+                      p-1
+                      border 
+                      border-gray-300 
+                      rounded-md 
+                      text-slate-600 
+                      dark:text-slate-400`}
         />
         <button
           onClick={handleAddComment}
-          className={`ml-2 px-4 py-2 bg-blue-500 text-white rounded-md`}
+          className={`ml-1 
+                      p-1 
+                      bg-blue-500 
+                      text-white 
+                      rounded-md`}
         >
           Add...
         </button>
