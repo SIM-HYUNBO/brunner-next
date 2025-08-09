@@ -496,7 +496,7 @@ const ServiceSQL = () => {
                                   focus:ring-yellow-500 
                                   focus:ring-opacity-50`}
                     >
-                      Edit SQL    
+                      Edit    
                     </button>
                     <button
                       onClick={() => handleDelete(query)}
@@ -511,7 +511,7 @@ const ServiceSQL = () => {
                                   focus:ring-red-500 
                                   focus:ring-opacity-50`}
                     >
-                      Del. SQL
+                      Del.
                     </button>
                   </td>
                 </tr>
