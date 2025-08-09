@@ -12,7 +12,7 @@ export async function getDropdownMenuItems() {
   ]; 
 
   if (userInfo.isAdminUser()) {
-    items.push({ label: "Administration", href: "/mainPages/administration", type: "item" });
+    items.push({ label: "Service SQL", href: "/mainPages/administration", type: "item" });
   }
 
   items.push({ type: "divider" });
