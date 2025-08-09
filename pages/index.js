@@ -39,7 +39,7 @@ export default function Home() {
       <Head>
         <title>Noesis Pelagos - Brunner-Next</title>
         <meta name="description" 
-              content=`${constants.messages.SITE_DESCRIPTION}`></meta>
+              content={`${constants.messages.SITE_DESCRIPTION}`}></meta>
         <meta name="keywords" 
               content="Digital document, 전자 문서"></meta>
         <link rel="icon" 

@@ -14,7 +14,7 @@ export default function AdminPage() {
         <title>Noesis Pelagos - Brunner-Next</title>
         <meta 
         name="description" 
-        content=`${constants.messages.SITE_DESCRIPTION}`></meta>
+        content={`${constants.messages.SITE_DESCRIPTION}`}></meta>
         <meta rel="icon" href="/brunnerLogo2025.png"></meta>
       </Head>
       <BodySection>

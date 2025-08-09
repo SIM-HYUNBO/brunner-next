@@ -110,7 +110,7 @@ export default function Signup() {
         <Head>
           <title>Noesis Pelagos - Brunner-Next</title>
           <meta name="description"
-                content=`${constants.messages.SITE_DESCRIPTION}`
+                content={`${constants.messages.SITE_DESCRIPTION}`}
           ></meta>
           <meta rel="icon" href="/brunnerLogo2025.png"></meta>
           <link></link>
