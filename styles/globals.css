@@ -65,7 +65,7 @@ black 또는 trueGray (만약 정말 진한 다크톤 원한다면)
 }
 
 .theme-text-medium {
-  @apply text-neutral-500 dark:text-nautral-500;
+  @apply text-neutral-600 dark:text-nautral-400;
 }
 
 .theme-bg-light {
