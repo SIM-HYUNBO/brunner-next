@@ -52,39 +52,44 @@ p {
 }
 
 /* 색 테마
-	gray (ex: dark:bg-gray-900, dark:text-gray-300)
-neutral (ex: dark:bg-neutral-900)
-zinc (ex: dark:bg-zinc-900)
-stone (ex: dark:bg-stone-900)
-coolGray (이전 Tailwind 버전에서 coolGray 이름이었으나 지금은 그냥 gray로 합쳐짐)
-black 또는 trueGray (만약 정말 진한 다크톤 원한다면)
+무채색: gray, zinc, neutral, stone
+빨강: red
+주황: orange
+노랑: amber, yellow
+연두: lime, green
+청록: emerald, teal, cyan
+하늘: sky, blue
+남색: indigo, violet
+보라: purple, fuchsia
+분홍: pink, rose
+
 */
 
 .theme-text-light {
-  @apply text-green-900;
+  @apply text-indigo-900;
 }
 
 .theme-text-medium {
-  @apply text-green-600 dark:text-green-400;
+  @apply text-indigo-600 dark:text-indigo-400;
 }
 
 .theme-bg-light {
-  @apply bg-green-100;
+  @apply bg-indigo-100;
 }
 .theme-text-dark {
-  @apply text-green-600 dark:text-green-400;
+  @apply text-indigo-600 dark:text-indigo-400;
 }
 .theme-bg-dark {
-  @apply bg-green-400 dark:bg-green-600;
+  @apply bg-indigo-400 dark:bg-indigo-600;
 }
 .theme-dark-bg-color {
-  @apply dark:bg-green-900;
+  @apply dark:bg-indigo-900;
 }
 .theme-semi-dark-text-color {
-  @apply dark:text-green-200;
+  @apply dark:text-indigo-200;
 }
 .theme-semi-dark-bg-color {
-  @apply dark:bg-green-700;
+  @apply dark:bg-indigo-700;
 }  
 
 /* 사용자 정의 스타일 (기존 변수명 유지) */
