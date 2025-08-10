@@ -9,7 +9,7 @@ header {
          left-0 
          right-0 
          z-50 
-         semi-text-bg-color
+         general-text-bg-color
          relative
          ;
 }           
@@ -24,7 +24,7 @@ footer {
          flex-col 
          items-center
          justify-center
-         semi-text-bg-color
+         general-text-bg-color
          ; 
 }
 
