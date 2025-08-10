@@ -280,7 +280,7 @@ const BrunnerTable = forwardRef(({
                                 mr-2 
                                 text-sm 
                                 font-medium 
-                                midium-text-color">
+                                medium-text-color">
                 {header.Header}
               </label>
               <input
@@ -292,7 +292,7 @@ const BrunnerTable = forwardRef(({
                 className={`p-2 
                             border 
                             rounded 
-                            midium-text-color 
+                            medium-text-color 
                             dark-bg-color 
                             flex-1 
                             ${header.type === "number" ? "text-right" : "text-left"}`

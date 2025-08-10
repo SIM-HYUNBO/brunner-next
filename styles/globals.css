@@ -6,8 +6,7 @@
 md: (탭)
 lg: (데스크탑) 
 */
-
-@import './theme.css'; /* slate-theme.css 임포트 */
+@import './theme.css';  /* 여기서 불러오기 */
 
 header {
   @apply sticky 
@@ -80,11 +79,11 @@ p {
   @apply theme-text-light theme-bg-light;
 }
 
-.midium-text-color {
+.medium-text-color {
   @apply theme-text-light theme-text-dark;
 } 
 
-.midium-bg-color {
+.medium-bg-color {
   @apply theme-bg-light theme-bg-dark;
 } 
 
