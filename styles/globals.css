@@ -22,81 +22,6 @@ md: (탭)
 lg: (데스크탑) 
 */
 
-.light-text-bg-color {
-  @apply text-black
-         bg-white
-         ;
-}
-
-.light-bg-color {
-  @apply dark:bg-slate-900
-         ;
-} 
-
-.dark-bg-color {
-  @apply dark:bg-slate-900
-         ;
-} 
-
-.dark-text-bg-color {
-  @apply dark:text-white 
-         dark-bg-color
-         ;
-} 
-
-.semi-dark-text-color {
-  @apply dark:text-gray-100
-  ;
-}
-
-.semi-dark-bg-color {
-  @apply dark:bg-slate-800
-  ;
-}
- 
-.semi-dark-color {
-  @apply semi-dark-text-color 
-         semi-dark-bg-color
-         ;
-}              
-
-.general-text-color {
-  @apply text-black 
-         dark:text-white
-         ;
-}
-
-.general-text-bg-color {
-  @apply light-text-bg-color 
-         dark-text-bg-color
-         ;
-}
-
-.general-bg-bg-color {
-  @apply light-bg-color 
-         dark-bg-color
-         ;
-}
-
-.bg-primary { 
-    @apply general-text-bg-color
-           w-full 
-           h-full 
-           min-h-[calc(100vh-5rem)] 
-           max-w-full 
-           pb-20
-           ;
-}
- 
-.page-title {
-    @apply sm:text-4xl 
-           text-3xl
-           my-10 
-           font-medium 
-           text-green-900
-           ;
-}
-
 header {
   @apply sticky 
          top-0 
@@ -144,7 +69,7 @@ html {
 }
 
 a {
-    @apply text-slate-100
+    @apply text-white
     ;
 }
 
@@ -153,6 +78,95 @@ p {
            dark:text-slate-400
            ;
 }
+
+/* 사용자 정의 스타일 */
+
+.light-text-bg-color {
+  @apply text-black
+         bg-white
+         ;
+}
+
+.midium-text-color {
+  @apply text-slate-600
+         dark:text-slate-400
+         ;
+} 
+.midium-bg-color {
+  @apply bg-slate-400
+         dark:bg-slate-600
+         ;
+} 
+
+.dark-text-color {
+  @apply dark:text-white
+         ;
+}
+
+.dark-bg-color {
+  @apply dark:bg-slate-900
+         ;
+} 
+
+.semi-dark-text-color {
+  @apply dark:text-gray-100
+  ;
+}
+
+.semi-dark-bg-color {
+  @apply dark:bg-slate-800
+  ;
+}
+
+.dark-text-bg-color {
+  @apply dark-text-color 
+         dark-bg-color
+         ;
+} 
+ 
+.semi-dark-text-bg-color {
+  @apply semi-dark-text-color 
+         semi-dark-bg-color
+         ;
+}              
+
+.general-text-color {
+  @apply text-black 
+         dark:text-white
+         ;
+}
+
+.general-text-bg-color {
+  @apply light-text-bg-color 
+         dark-text-bg-color
+         ;
+}
+
+.general-bg-color {
+  @apply light-bg-color 
+         dark-bg-color
+         ;
+}
+
+.bg-primary { 
+    @apply w-full 
+           h-full 
+           general-text-bg-color
+           min-h-[calc(100vh-5rem)] 
+           max-w-full 
+           pb-20
+           ;
+}
+
+.page-title {
+    @apply sm:text-4xl 
+           text-3xl
+           my-10 
+           font-medium 
+           text-green-900
+           ;
+}
+
 
 .Layout {
   @apply bg-primary 

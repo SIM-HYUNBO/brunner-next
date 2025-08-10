@@ -189,7 +189,8 @@ const BrunnerTable = forwardRef(({
                       className={`p-2 
                                   border-b 
                                   general-text-bg-color
-                                  dark:border-slate-400 
+                                  border-gray
+                                  dark:border-gray 
                                   ${cell.column.type === 'number' ? 
                                   'text-right': 
                                   'text-left'}
@@ -275,7 +276,11 @@ const BrunnerTable = forwardRef(({
         {columnHeaders.map((header) => (
           !header.input_hidden && (
             <div key={header.accessor} className="flex items-center mb-2">
-              <label className="w-32 mr-2 text-sm font-medium dark:text-slate-400">
+              <label className="w-32 
+                                mr-2 
+                                text-sm 
+                                font-medium 
+                                midium-text-color">
                 {header.Header}
               </label>
               <input
@@ -287,7 +292,7 @@ const BrunnerTable = forwardRef(({
                 className={`p-2 
                             border 
                             rounded 
-                            dark:text-slate-400 
+                            midium-text-color 
                             dark-bg-color 
                             flex-1 
                             ${header.type === "number" ? "text-right" : "text-left"}`

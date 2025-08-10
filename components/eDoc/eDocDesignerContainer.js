@@ -394,8 +394,6 @@ export default function EDocDesignerContainer({ documentId, triggerMenuReload })
                bg-white 
                dark-bg-color 
                border-r 
-               border-slate-300 
-               dark:border-slate-500
                overflow-auto">
           <h2 className="font-bold 
                          mb-3 
@@ -413,8 +411,7 @@ export default function EDocDesignerContainer({ documentId, triggerMenuReload })
                            font-bold 
                            mx-4 
                            mb-4 
-                           text-slate-800 
-                           dark:text-slate-100">
+                           general-text-color">
               {documentData.runtime_data.title || ''} : {documentData.id}
             </h1>
           )}
@@ -430,9 +427,17 @@ export default function EDocDesignerContainer({ documentId, triggerMenuReload })
           {documentData.pages.map((page, idx) => (
             <div
               key={page.id}
-              className={`relative w-fit mx-auto border border-dashed border-slate-400 dark:border-slate-500 ${
-                idx === currentPageIdx ? 'outline outline-2 outline-blue-400' : ''
-              }`}
+              className={`relative 
+                          w-fit 
+                          mx-auto 
+                          border 
+                          border-dashed 
+                          border-gray 
+                          dark:border-gray 
+                          ${ idx === currentPageIdx ? 
+                            'outline outline-2 outline-blue-400' : 
+                            ''}`
+                        }
               
               onClick={() => {
                 setCurrentPageIdx(idx);
@@ -442,10 +447,7 @@ export default function EDocDesignerContainer({ documentId, triggerMenuReload })
               <div className="absolute 
                               top-2 
                               left-2 
-                              bg-slate-200 
-                              dark-bg-color 
-                              text-slate-900 
-                              dark:text-slate-200 
+                              general-text-bg-color 
                               text-xs 
                               rounded 
                               px-2 
@@ -483,16 +485,15 @@ export default function EDocDesignerContainer({ documentId, triggerMenuReload })
                           bg-white 
                           dark-bg-color 
                           border-0 
-                          border-slate-300 
-                          dark:border-slate-500 
+                          border-gray 
+                          dark:border-gray 
                           p-4 
                           block
                           overflow-auto">
           <h2 className="text-lg 
                          font-semibold 
                          mb-4 
-                         text-slate-800 
-                         dark:text-slate-100">
+                         general-text-color">
                          속성창
                          </h2>
 
@@ -535,14 +536,35 @@ export default function EDocDesignerContainer({ documentId, triggerMenuReload })
 
       {/* 문서 선택 모달 */}
       {showDocumentListModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-          <div className="bg-white dark-bg-color rounded shadow-lg w-96 max-h-96 overflow-auto p-4">
-            <h3 className="text-lg font-bold mb-4 text-slate-800 dark:text-slate-100">문서 선택</h3>
+        <div className="fixed 
+                        inset-0 
+                        bg-black 
+                        bg-opacity-50 
+                        flex 
+                        justify-center 
+                        items-center 
+                        z-50">
+          <div className="general-bg-color 
+                          rounded 
+                          shadow-lg 
+                          w-96 
+                          max-h-96 
+                          overflow-auto 
+                          p-4">
+            <h3 className="text-lg 
+                           font-bold 
+                           mb-4 
+                           general-text-color">문서 선택</h3>
             <ul>
               {documentList.map((doc) => (
                 <li
                   key={doc.id}
-                  className="cursor-pointer py-2 px-3 hover:bg-slate-200 dark:hover:bg-slate-600 rounded"
+                  className="cursor-pointer 
+                             py-2 
+                             px-3 
+                             hover:bg-slate-200 
+                             dark:hover:bg-slate-600 
+                             rounded"
                   onClick={() => handleDocumentListClick(doc)}
                 >
                   {doc.runtime_data.title} ({doc.id})
@@ -553,11 +575,10 @@ export default function EDocDesignerContainer({ documentId, triggerMenuReload })
               className="mt-4 
                          px-4 
                          py-2 
-                         bg-slate-300 
-                         dark-bg-color 
+                         general-bg-color 
                          rounded 
-                         hover:bg-slate-400 
-                         dark:hover:bg-slate-500"
+                         hover:midium-bg-color 
+                         dark:hover:midium-bg-color"
               onClick={() => setShowDocumentListModal(false)}
             >
               닫기

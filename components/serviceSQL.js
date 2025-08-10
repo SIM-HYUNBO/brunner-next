@@ -56,10 +56,7 @@ const AutoResizeTextarea = forwardRef(
              text-slate-400 
              dark-bg-color 
              dark:text-slate-800` : 
-            `bg-white 
-             text-slate-900 
-             dark-bg-color 
-             dark:text-slate-400`
+            `general-text-bg-color`
           }
           `
         }
