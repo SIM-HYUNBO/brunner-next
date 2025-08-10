@@ -4,30 +4,30 @@
 
 header {
   @apply sticky 
+         w-full 
          top-0 
          left-0 
          right-0 
-         w-full 
          z-50 
-         general-text-bg-color 
+         semi-light-text-bg-color
+         semi-dark-text-bg-color 
          relative
          ;
 }           
 
 footer {
-    @apply h-20 
-        w-full
-        relative 
-        bottom-0 /* footer는 부모요소의 맨 바닥에 딱 붙어있다. */ 
-        mt-10
-        flex 
-        flex-col 
-        items-center
-        justify-center
-        text-gray-200 
-        bg-gray-400
-        semi-dark-bg-color
-        ; 
+  @apply h-20 
+         w-full
+         relative 
+         bottom-0 /* footer는 부모요소의 맨 바닥에 딱 붙어있다. */ 
+         mt-10
+         flex 
+         flex-col 
+         items-center
+         justify-center
+         semi-light-text-bg-color
+         semi-dark-text-bg-color
+         ; 
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -85,6 +85,13 @@ p {
 .theme-dark-bg-color {
   @apply dark:bg-indigo-900;
 }
+.theme-semi-text-color {
+  @apply dark:text-indigo-700;
+}
+.theme-semi-bg-color {
+  @apply dark:bg-indigo-200;
+}
+
 .theme-semi-dark-text-color {
   @apply dark:text-indigo-200;
 }
@@ -122,6 +129,15 @@ p {
   @apply theme-dark-bg-color;
 }
 
+.semi-text-color {
+  @apply theme-semi-text-color;
+}
+
+.semi-bg-color {
+  @apply theme-semi-bg-color;
+}
+
+
 .semi-dark-text-color {
   @apply theme-semi-dark-text-color;
 }
@@ -132,6 +148,11 @@ p {
 
 .dark-text-bg-color {
   @apply dark-text-color dark-bg-color;
+} 
+
+.semi-text-bg-color {
+  @apply semi-text-color 
+         semi-bg-color;
 } 
  
 .semi-dark-text-bg-color {
