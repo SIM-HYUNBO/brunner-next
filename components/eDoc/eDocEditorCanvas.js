@@ -218,11 +218,11 @@ export default function EDocEditorCanvas({
     > 
       <div
         id={`editor-canvas-${pageData.id}`}
-        className=`border 
+        className={`border 
                    border-gray-300 
                    dark:border-white 
                    border-dashed 
-                   border-1`
+                   border-1`}
         style={{
           width: `${pageWidthPx}px`,
           minHeight: `${pageHeightPx}px`,
