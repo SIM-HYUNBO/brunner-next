@@ -81,7 +81,7 @@ export default function DropdownMenu({ reloadSignal, triggerMenuReload }) {
                         shadow-lg 
                         rounded 
                         z-50 
-                        semi-dark-color">
+                        semi-dark-text-bg-color">
           <ul>
             {menuItems.map((item, idx) => {
               if (item.type === "divider") {

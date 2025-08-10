@@ -87,9 +87,8 @@ export default function EDocEditorCanvas({
   };
 
   const RenderComponents = () => {
-    const comps =
-      pageData.components.length > 0
-        ? [
+    const comps = pageData.components.length > 0 ? 
+          [
             {
               ...pageData.components[0],
               runtime_data: {
@@ -140,7 +139,22 @@ export default function EDocEditorCanvas({
                   style={{ width: componentWidth }}
                 >
                   {!isViewerMode && selectedComponentId === compIdx && (
-                    <div className="opacity-80 left-0 top-1/2 -translate-y-1/2 flex flex-row pointer-events-auto text-xs bg-white border rounded shadow items-center justify-center gap-1 absolute z-10">
+                    <div className="opacity-80 
+                                    left-0 
+                                    top-1/2 
+                                    -translate-y-1/2 
+                                    flex 
+                                    flex-row 
+                                    pointer-events-auto 
+                                    text-xs 
+                                    bg-white 
+                                    border 
+                                    rounded 
+                                    shadow 
+                                    items-center 
+                                    justify-center 
+                                    gap-1 
+                                    absolute z-10">
                       <button
                         onClick={() => onMoveUp(compIdx)}
                         disabled={compIdx === 0}
@@ -195,15 +209,20 @@ export default function EDocEditorCanvas({
   return (
     // 페이지간 간격 1 고정
     <div className={`overflow-x-auto 
-                     flex w-full justify-center 
-                     text-slate-800`}
+                     flex 
+                     w-full 
+                     justify-center`}
          style={{
-          marginTop: `${pageData.runtime_data.pageMargin}px`,          
+          marginTop:`${pageData.runtime_data.pageMargin}px`,          
         }}            
     > 
       <div
         id={`editor-canvas-${pageData.id}`}
-        className="border border-gray-300 dark:border-white border-dashed border-1"
+        className=`border 
+                   border-gray-300 
+                   dark:border-white 
+                   border-dashed 
+                   border-1`
         style={{
           width: `${pageWidthPx}px`,
           minHeight: `${pageHeightPx}px`,
@@ -215,7 +234,9 @@ export default function EDocEditorCanvas({
       >
         {pageData.components?.length === 0 ? (
           isViewerMode ? null : (
-            <p className="text-gray-500 dark:text-slate-300 text-center">
+            <p className="text-gray-500 
+                          dark:text-gray-500 
+                          text-center">
               좌측에서 컴포넌트를 추가하세요.
             </p>
           )

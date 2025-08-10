@@ -311,8 +311,7 @@ function BrunnerBoard({ boardType }) {
                       border 
                       border-gray-300 
                       rounded-md 
-                      text-slate-600 
-                      dark:text-slate-400`}
+                      midium-text-color`}
         />
         <button
           onClick={handleAddPost}
@@ -601,8 +600,7 @@ function BoardContent({
                       border 
                       border-gray-300 
                       rounded-md 
-                      text-slate-600 
-                      dark:text-slate-400`}
+                      midium-text-color`}
         />
         <button
           onClick={handleAddComment}
