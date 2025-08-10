@@ -66,37 +66,39 @@ p {
 */
 
 .theme-text-light {
-  @apply text-indigo-900;
+  @apply text-stone-900;
 }
 
 .theme-text-medium {
-  @apply text-indigo-600 dark:text-indigo-400;
+  @apply text-stone-600 
+         dark:text-stone-400;
 }
 
 .theme-bg-light {
-  @apply bg-indigo-100;
+  @apply bg-stone-100;
 }
 .theme-text-dark {
-  @apply text-indigo-600 dark:text-indigo-400;
+  @apply text-stone-600 
+         dark:text-stone-400;
 }
 .theme-bg-dark {
-  @apply bg-indigo-400 dark:bg-indigo-600;
+  @apply bg-stone-400 
+         dark:bg-stone-600;
 }
 .theme-dark-bg-color {
-  @apply dark:bg-indigo-900;
+  @apply dark:bg-stone-900;
 }
 .theme-semi-text-color {
-  @apply dark:text-indigo-700;
+  @apply dark:text-stone-700;
 }
 .theme-semi-bg-color {
-  @apply dark:bg-indigo-200;
+  @apply dark:bg-stone-200;
 }
-
 .theme-semi-dark-text-color {
-  @apply dark:text-indigo-200;
+  @apply dark:text-stone-200;
 }
 .theme-semi-dark-bg-color {
-  @apply dark:bg-indigo-700;
+  @apply dark:bg-stone-700;
 }  
 
 /* 사용자 정의 스타일 (기존 변수명 유지) */
