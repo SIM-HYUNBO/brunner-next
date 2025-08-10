@@ -49,7 +49,7 @@ p {
     @apply theme-medium-text-color;
 }
 
-* 사용자 정의 스타일 (기존 변수명 유지) */
+/* 사용자 정의 스타일 (기존 변수명 유지) */
 
 .light-text-color {
   @apply theme-light-text-color;
