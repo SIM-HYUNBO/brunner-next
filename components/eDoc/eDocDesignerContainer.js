@@ -577,8 +577,8 @@ export default function EDocDesignerContainer({ documentId, triggerMenuReload })
                          py-2 
                          general-bg-color 
                          rounded 
-                         hover:midium-bg-color 
-                         dark:hover:midium-bg-color"
+                         hover:medium-bg-color 
+                         dark:hover:medium-bg-color"
               onClick={() => setShowDocumentListModal(false)}
             >
               닫기

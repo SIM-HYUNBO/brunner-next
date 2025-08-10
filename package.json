@@ -60,13 +60,15 @@
     "uuid": "^10.0.0",
     "winston": "^3.13.0",
     "winston-daily-rotate-file": "^5.0.0",
-    "ws": "^8.18.0"
+    "ws": "^8.18.0",
+    "postcss-import": "^15.1.0",
   },
   "devDependencies": {
     "@babel/cli": "^7.21.5",
     "@babel/core": "^7.21.5",
     "@babel/node": "^7.20.7",
     "@babel/preset-env": "^7.21.5",
-    "tailwindcss": "^3.3.1"
+    "tailwindcss": "^3.3.1",
+    "postcss-import": "^15.1.0",
   }
 }
