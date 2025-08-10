@@ -10,12 +10,10 @@
     @apply bg-white;
   }
   .theme-text-dark {
-    @apply text-slate-600; 
-    @apply dark:text-slate-400;
+    @apply text-slate-600 dark:text-slate-400;
   }
   .theme-bg-dark {
-    @apply bg-slate-400; 
-    @apply dark:bg-slate-600;
+    @apply bg-slate-400 dark:bg-slate-600;
   }
   .theme-dark-bg-color {
     @apply dark:bg-slate-900;
