@@ -7,6 +7,8 @@ md: (탭)
 lg: (데스크탑) 
 */
 
+@import './theme.css'; /* slate-theme.css 임포트 */
+
 header {
   @apply sticky 
          top-0 
@@ -64,43 +66,26 @@ p {
            ;
 }
 
-/* slate 색상만 변수처럼 따로 분리 */
-.slate-text-light {
-  @apply text-slate-600;
-}
-
-.slate-text-dark {
-  @apply dark:text-slate-400;
-}
-
-.slate-bg-light {
-  @apply bg-slate-400;
-}
-
-.slate-bg-dark {
-  @apply dark:bg-slate-600;
-}
-
 /* 사용자 정의 스타일 (기존 변수명 유지) */
 
 .light-text-color {
-  @apply text-black;
+  @apply theme-text-light;
 }
 
 .light-bg-color {
-  @apply bg-white;
+  @apply theme-bg-light;
 }
 
 .light-text-bg-color {
-  @apply text-black bg-white;
+  @apply theme-text-light theme-bg-light;
 }
 
 .midium-text-color {
-  @apply slate-text-light slate-text-dark;
+  @apply theme-text-light theme-text-dark;
 } 
 
 .midium-bg-color {
-  @apply slate-bg-light slate-bg-dark;
+  @apply theme-bg-light theme-bg-dark;
 } 
 
 .dark-text-color {
@@ -108,15 +93,15 @@ p {
 }
 
 .dark-bg-color {
-  @apply dark:bg-slate-900;
+  @apply theme-dark-bg-color;
 }
 
 .semi-dark-text-color {
-  @apply dark:text-gray-100;
+  @apply theme-semi-dark-text-color;
 }
 
 .semi-dark-bg-color {
-  @apply dark:bg-slate-800;
+  @apply theme-semi-dark-bg-color;
 }
 
 .dark-text-bg-color {
@@ -124,19 +109,23 @@ p {
 } 
  
 .semi-dark-text-bg-color {
-  @apply semi-dark-text-color semi-dark-bg-color;
+  @apply semi-dark-text-color 
+         semi-dark-bg-color;
 }              
 
 .general-text-color {
-  @apply text-black dark:text-white;
+  @apply text-black 
+         dark:text-white;
 }
 
 .general-text-bg-color {
-  @apply light-text-bg-color dark-text-bg-color;
+  @apply light-text-bg-color 
+         dark-text-bg-color;
 }
 
 .general-bg-color {
-  @apply light-bg-color dark-bg-color;
+  @apply light-bg-color 
+         dark-bg-color;
 }
 
 .bg-primary { 
@@ -165,7 +154,10 @@ p {
          justify-center 
          overflow-x-hidden;
 
-  @apply w-full md:w-full lg:w-5/6 lg:mx-auto;
+  @apply w-full 
+         md:w-full 
+         lg:w-5/6 
+         lg:mx-auto;
 
   @apply md:flex-row;
 }

@@ -1,0 +1,35 @@
+
+
+/* theme 색상만 변수처럼 따로 분리 */
+.theme-text-light {
+  @apply text-gray-600;
+}
+
+.theme-bg-light {
+  @apply bg-gray-100;
+}
+
+
+.theme-text-dark {
+  @apply dark:text-gray-400;
+}
+
+.theme-bg-light {
+  @apply bg-gray-400;
+}
+
+.theme-bg-dark {
+  @apply dark:bg-gray-600;
+}
+
+.theme-dark-bg-color {
+  @apply dark:bg-gray-900;
+}
+
+.theme-semi-dark-text-color {
+  @apply dark:text-gray-100;
+}
+
+.theme-semi-dark-bg-color {
+  @apply dark:bg-gray-800;
+}
