@@ -88,10 +88,10 @@ p {
 
 /* semi는 다크모드에서 약간 다르게 보이는 색상 */
 .theme-semi-text-color {
-  @apply dark:text-stone-200;
+  @apply text-stone-800 dark:text-stone-200;
 }
 .theme-semi-bg-color {
-  @apply dark:bg-stone-800;
+  @apply bg-stone-200 dark:bg-stone-800;
 }
 
 /* 사용자 정의 스타일 (기존 변수명 유지) */
