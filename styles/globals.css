@@ -1,18 +1,3 @@
-/* 
-sm, md, lg 이런 접두사를 보다 보면 반응형을 구현할 때,
-'모바일의 경우는 sm을 쓰면 되는구나~~' 라고 생각할 수도 있는데 
-테일윈드 CSS에서는 추천하지 않는 방식이다.
-
-공식문서에 따르면 Tailwind는 기본적으로 부트스트랩과 같이 모바일 우선 중단점 시스템을 사용하기 때문에
-모바일용으로 CSS를 적용하려면 sm:w-16과 같이 sm을 붙이는 것이 아닌, 
-아무 접두사도 붙이지 않는 w-16으로 사용해야 한다는 것이다.
-
-테일윈드 CSS를 사용해 반응형 디자인을 구현할 거라면
-"모바일"에 먼저 맞게 디자인을 적용하고 
-만약 태블릿이나 데스크톱 등 다양한 환경을 위해서는 md: 또는 lg:를 붙여서 
-기기에 맞게 스타일링하면 된다는 것이다.
-*/
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -79,84 +64,79 @@ p {
            ;
 }
 
-/* 사용자 정의 스타일 */
-
-.light-text-color {
-  @apply text-black
-         ;
+/* slate 색상만 변수처럼 따로 분리 */
+.slate-text-light {
+  @apply text-slate-600;
 }
 
+.slate-text-dark {
+  @apply dark:text-slate-400;
+}
+
+.slate-bg-light {
+  @apply bg-slate-400;
+}
+
+.slate-bg-dark {
+  @apply dark:bg-slate-600;
+}
+
+/* 사용자 정의 스타일 (기존 변수명 유지) */
+
+.light-text-color {
+  @apply text-black;
+}
 
 .light-bg-color {
-  @apply bg-white
-         ;
+  @apply bg-white;
 }
 
 .light-text-bg-color {
-  @apply text-black
-         bg-white
-         ;
+  @apply text-black bg-white;
 }
 
 .midium-text-color {
-  @apply text-slate-600
-         dark:text-slate-400
-         ;
+  @apply slate-text-light slate-text-dark;
 } 
+
 .midium-bg-color {
-  @apply bg-slate-400
-         dark:bg-slate-600
-         ;
+  @apply slate-bg-light slate-bg-dark;
 } 
 
 .dark-text-color {
-  @apply dark:text-white
-         ;
+  @apply dark:text-white;
 }
 
 .dark-bg-color {
-  @apply dark:bg-slate-900
-         ;
-} 
+  @apply dark:bg-slate-900;
+}
 
 .semi-dark-text-color {
-  @apply dark:text-gray-100
-  ;
+  @apply dark:text-gray-100;
 }
 
 .semi-dark-bg-color {
-  @apply dark:bg-slate-800
-  ;
+  @apply dark:bg-slate-800;
 }
 
 .dark-text-bg-color {
-  @apply dark-text-color 
-         dark-bg-color
-         ;
+  @apply dark-text-color dark-bg-color;
 } 
  
 .semi-dark-text-bg-color {
-  @apply semi-dark-text-color 
-         semi-dark-bg-color
-         ;
+  @apply semi-dark-text-color semi-dark-bg-color;
 }              
 
 .general-text-color {
-  @apply text-black 
-         dark:text-white
-         ;
+  @apply text-black dark:text-white;
 }
 
 .general-text-bg-color {
-  @apply light-text-bg-color 
-         dark-text-bg-color
-         ;
+  @apply light-text-bg-color dark-text-bg-color;
 }
 
 .general-bg-color {
-  @apply light-bg-color 
-         dark-bg-color
-         ;
+  @apply light-bg-color dark-bg-color;
 }
 
 .bg-primary { 
@@ -165,8 +145,7 @@ p {
            general-text-bg-color
            min-h-[calc(100vh-5rem)] 
            max-w-full 
-           pb-20
-           ;
+           pb-20;
 }
 
 .page-title {
@@ -178,22 +157,15 @@ p {
            ;
 }
 
-
 .Layout {
   @apply bg-primary 
          flex 
          flex-col 
          min-h-screen 
          justify-center 
-         overflow-x-hidden
-         ;
+         overflow-x-hidden;
 
-  @apply w-full 
-         md:w-full 
-         lg:w-5/6 
-         lg:mx-auto
-         ;
+  @apply w-full md:w-full lg:w-5/6 lg:mx-auto;
 
-  @apply md:flex-row
-  ;
+  @apply md:flex-row;
 }
