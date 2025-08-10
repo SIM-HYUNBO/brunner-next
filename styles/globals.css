@@ -184,10 +184,10 @@ p {
 
 /* semi는 라이트/다크모드에서 약간 다르게 보이는 색상 */
 .theme-semi-text-color {
-  @apply text-slate-800 
-         dark:text-slate-200;
+  @apply text-slate-850 
+         dark:text-slate-150;
 }
 .theme-semi-bg-color {
-  @apply bg-slate-200 
-         dark:bg-slate-800;
+  @apply bg-slate-150 
+         dark:bg-slate-850;
 }
