@@ -8,155 +8,158 @@ lg: (데스크탑)
 */
 @import './theme.css';  /* 여기서 불러오기 */
 
-header {
-  @apply sticky 
-         top-0 
-         left-0 
-         right-0 
-         w-full 
-         z-50 
-         general-text-bg-color 
-         relative
-         ;
-}           
 
-footer {
-    @apply h-20 
-        w-full
-        relative 
-        bottom-0 /* footer는 부모요소의 맨 바닥에 딱 붙어있다. */ 
-        mt-10
-        flex 
-        flex-col 
-        items-center
-        justify-center
-        text-gray-200 
-        bg-gray-400
-        dark:bg-gray-900
-        ; 
-}
-
-h1, h2, h3, h4, h5, h6 {
-    @apply text-green-600 
-           dark:text-green-300
+@layer utilities {
+  header {
+    @apply sticky 
+           top-0 
+           left-0 
+           right-0 
+           w-full 
+           z-50 
+           general-text-bg-color 
+           relative
            ;
-}
+  }           
 
-pre {
-    @apply text-slate-900 
-           dark:text-white 
-           whitespace-pre-wrap
-           ; 
-}
+  footer {
+      @apply h-20 
+          w-full
+          relative 
+          bottom-0 /* footer는 부모요소의 맨 바닥에 딱 붙어있다. */ 
+          mt-10
+          flex 
+          flex-col 
+          items-center
+          justify-center
+          text-gray-200 
+          bg-gray-400
+          dark:bg-gray-900
+          ; 
+  }
 
-html {
-    @apply h-screen
-    ;
-}
+  h1, h2, h3, h4, h5, h6 {
+      @apply text-green-600 
+             dark:text-green-300
+             ;
+  }
 
-a {
-    @apply text-white
-    ;
-}
+  pre {
+      @apply text-slate-900 
+             dark:text-white 
+             whitespace-pre-wrap
+             ; 
+  }
 
-p {
-    @apply text-slate-600 
-           dark:text-slate-400
-           ;
-}
+  html {
+      @apply h-screen
+      ;
+  }
 
-/* 사용자 정의 스타일 (기존 변수명 유지) */
+  a {
+      @apply text-white
+      ;
+  }
 
-.light-text-color {
-  @apply theme-text-light;
-}
+  p {
+      @apply text-slate-600 
+             dark:text-slate-400
+             ;
+  }
 
-.light-bg-color {
-  @apply theme-bg-light;
-}
+  /* 사용자 정의 스타일 (기존 변수명 유지) */
 
-.light-text-bg-color {
-  @apply theme-text-light theme-bg-light;
-}
+  .light-text-color {
+    @apply theme-text-light;
+  }
 
-.medium-text-color {
-  @apply theme-text-light theme-text-dark;
-} 
+  .light-bg-color {
+    @apply theme-bg-light;
+  }
 
-.medium-bg-color {
-  @apply theme-bg-light theme-bg-dark;
-} 
+  .light-text-bg-color {
+    @apply theme-text-light theme-bg-light;
+  }
 
-.dark-text-color {
-  @apply dark:text-white;
-}
+  .medium-text-color {
+    @apply theme-text-light theme-text-dark;
+  } 
 
-.dark-bg-color {
-  @apply theme-dark-bg-color;
-}
+  .medium-bg-color {
+    @apply theme-bg-light theme-bg-dark;
+  } 
 
-.semi-dark-text-color {
-  @apply theme-semi-dark-text-color;
-}
+  .dark-text-color {
+    @apply dark:text-white;
+  }
 
-.semi-dark-bg-color {
-  @apply theme-semi-dark-bg-color;
-}
+  .dark-bg-color {
+    @apply theme-dark-bg-color;
+  }
 
-.dark-text-bg-color {
-  @apply dark-text-color dark-bg-color;
-} 
- 
-.semi-dark-text-bg-color {
-  @apply semi-dark-text-color 
-         semi-dark-bg-color;
-}              
+  .semi-dark-text-color {
+    @apply theme-semi-dark-text-color;
+  }
 
-.general-text-color {
-  @apply text-black 
-         dark:text-white;
-}
+  .semi-dark-bg-color {
+    @apply theme-semi-dark-bg-color;
+  }
 
-.general-text-bg-color {
-  @apply light-text-bg-color 
-         dark-text-bg-color;
-}
+  .dark-text-bg-color {
+    @apply dark-text-color dark-bg-color;
+  } 
+   
+  .semi-dark-text-bg-color {
+    @apply semi-dark-text-color 
+           semi-dark-bg-color;
+  }              
 
-.general-bg-color {
-  @apply light-bg-color 
-         dark-bg-color;
-}
+  .general-text-color {
+    @apply text-black 
+           dark:text-white;
+  }
 
-.bg-primary { 
+  .general-text-bg-color {
+    @apply light-text-bg-color 
+           dark-text-bg-color;
+  }
+
+  .general-bg-color {
+    @apply light-bg-color 
+           dark-bg-color;
+  }
+
+  .bg-primary { 
+      @apply w-full 
+             h-full 
+             general-text-bg-color
+             min-h-[calc(100vh-5rem)] 
+             max-w-full 
+             pb-20;
+  }
+
+  .page-title {
+      @apply sm:text-4xl 
+             text-3xl
+             my-10 
+             font-medium 
+             text-green-900
+             ;
+  }
+
+  .Layout {
+    @apply bg-primary 
+           flex 
+           flex-col 
+           min-h-screen 
+           justify-center 
+           overflow-x-hidden;
+
     @apply w-full 
-           h-full 
-           general-text-bg-color
-           min-h-[calc(100vh-5rem)] 
-           max-w-full 
-           pb-20;
-}
+           md:w-full 
+           lg:w-5/6 
+           lg:mx-auto;
 
-.page-title {
-    @apply sm:text-4xl 
-           text-3xl
-           my-10 
-           font-medium 
-           text-green-900
-           ;
-}
-
-.Layout {
-  @apply bg-primary 
-         flex 
-         flex-col 
-         min-h-screen 
-         justify-center 
-         overflow-x-hidden;
-
-  @apply w-full 
-         md:w-full 
-         lg:w-5/6 
-         lg:mx-auto;
-
-  @apply md:flex-row;
+    @apply md:flex-row;
+  }
 }
