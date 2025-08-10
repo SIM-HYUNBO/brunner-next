@@ -10,7 +10,6 @@ header {
          right-0 
          z-50 
          semi-text-bg-color
-         semi-dark-text-bg-color 
          relative
          ;
 }           
@@ -26,7 +25,6 @@ footer {
          items-center
          justify-center
          semi-text-bg-color
-         semi-dark-text-bg-color
          ; 
 }
 
@@ -65,66 +63,61 @@ p {
 
 */
 
-.theme-text-light {
+.theme-light-text-color {
   @apply text-stone-900;
 }
-
-.theme-text-medium {
-  @apply text-stone-600 
-         dark:text-stone-400;
-}
-
-.theme-bg-light {
+.theme-light-bg-color {
   @apply bg-stone-100;
 }
-.theme-text-dark {
-  @apply text-stone-600 
-         dark:text-stone-400;
-}
-.theme-bg-dark {
-  @apply bg-stone-400 
-         dark:bg-stone-600;
+.theme-dark-text-color {
+  @apply dark:text-stone-100;
 }
 .theme-dark-bg-color {
   @apply dark:bg-stone-900;
 }
+
+/* medium은 중간 어두운 색상 */
+.theme-medium-text-color {
+  @apply text-stone-600 
+         dark:text-stone-400;
+}
+.theme-medium-bg-color {
+  @apply bg-stone-400 
+         dark:bg-stone-600;
+}
+
+/* semi는 다크모드에서 약간 다르게 보이는 색상 */
 .theme-semi-text-color {
-  @apply dark:text-stone-700;
-}
-.theme-semi-bg-color {
-  @apply dark:bg-stone-200;
-}
-.theme-semi-dark-text-color {
   @apply dark:text-stone-200;
 }
-.theme-semi-dark-bg-color {
-  @apply dark:bg-stone-700;
-}  
+.theme-semi-bg-color {
+  @apply dark:bg-stone-800;
+}
 
 /* 사용자 정의 스타일 (기존 변수명 유지) */
 
 .light-text-color {
-  @apply theme-text-light;
+  @apply theme-light-text-color;
 }
 
 .light-bg-color {
-  @apply theme-bg-light;
+  @apply theme-light-bg-color;
 }
 
 .light-text-bg-color {
-  @apply theme-text-light theme-bg-light;
+  @apply theme-light-text-color theme-light-bg-color;
 }
 
 .medium-text-color {
-  @apply theme-text-light theme-text-dark;
+  @apply theme-medium-text-color;
 } 
 
 .medium-bg-color {
-  @apply theme-bg-light theme-bg-dark;
+  @apply theme-medium-bg-color;
 } 
 
 .dark-text-color {
-  @apply dark:text-white;
+  @apply theme-dark-text-color;
 }
 
 .dark-bg-color {
@@ -139,15 +132,6 @@ p {
   @apply theme-semi-bg-color;
 }
 
-
-.semi-dark-text-color {
-  @apply theme-semi-dark-text-color;
-}
-
-.semi-dark-bg-color {
-  @apply theme-semi-dark-bg-color;
-}
-
 .dark-text-bg-color {
   @apply dark-text-color dark-bg-color;
 } 
@@ -155,13 +139,7 @@ p {
 .semi-text-bg-color {
   @apply semi-text-color 
          semi-bg-color;
-} 
- 
-.semi-dark-text-bg-color {
-  @apply semi-dark-text-color 
-         semi-dark-bg-color;
-}              
-
+}
 .general-text-color {
   @apply text-black 
          dark:text-white;
