@@ -46,7 +46,7 @@ a {
 }
 
 p {
-    @apply theme-text-medium;
+    @apply theme-medium-text-color;
 }
 
 /* 색 테마
