@@ -81,6 +81,17 @@ p {
 
 /* 사용자 정의 스타일 */
 
+.light-text-color {
+  @apply text-black
+         ;
+}
+
+
+.light-bg-color {
+  @apply bg-white
+         ;
+}
+
 .light-text-bg-color {
   @apply text-black
          bg-white
