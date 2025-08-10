@@ -61,30 +61,30 @@ black 또는 trueGray (만약 정말 진한 다크톤 원한다면)
 */
 
 .theme-text-light {
-  @apply text-neutral-900;
+  @apply text-green-900;
 }
 
 .theme-text-medium {
-  @apply text-neutral-600 dark:text-neutral-400;
+  @apply text-green-600 dark:text-green-400;
 }
 
 .theme-bg-light {
-  @apply bg-neutral-100;
+  @apply bg-green-100;
 }
 .theme-text-dark {
-  @apply text-neutral-600 dark:text-neutral-400;
+  @apply text-green-600 dark:text-green-400;
 }
 .theme-bg-dark {
-  @apply bg-neutral-400 dark:bg-neutral-600;
+  @apply bg-green-400 dark:bg-green-600;
 }
 .theme-dark-bg-color {
-  @apply dark:bg-neutral-900;
+  @apply dark:bg-green-900;
 }
 .theme-semi-dark-text-color {
-  @apply dark:text-neutral-200;
+  @apply dark:text-green-200;
 }
 .theme-semi-dark-bg-color {
-  @apply dark:bg-neutral-700;
+  @apply dark:bg-green-700;
 }  
 
 /* 사용자 정의 스타일 (기존 변수명 유지) */
