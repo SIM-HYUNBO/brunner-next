@@ -77,25 +77,25 @@ lg: (데스크탑)
   */
   
   .theme-text-light {
-    @apply text-black;
+    @apply text-neutral-900;
   }
   .theme-bg-light {
-    @apply bg-white;
+    @apply bg-neutral-100;
   }
   .theme-text-dark {
-    @apply text-slate-600 dark:text-zinc-400;
+    @apply text-neutral-600 dark:text-neutral-400;
   }
   .theme-bg-dark {
-    @apply bg-zinc-400 dark:bg-zinc-600;
+    @apply bg-neutral-400 dark:bg-neutral-600;
   }
   .theme-dark-bg-color {
-    @apply dark:bg-zinc-900;
+    @apply dark:bg-neutral-900;
   }
   .theme-semi-dark-text-color {
-    @apply dark:text-zinc-200;
+    @apply dark:text-neutral-200;
   }
   .theme-semi-dark-bg-color {
-    @apply dark:bg-zinc-700;
+    @apply dark:bg-neutral-700;
   }  
   
   /* 사용자 정의 스타일 (기존 변수명 유지) */
