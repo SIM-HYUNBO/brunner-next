@@ -2,195 +2,183 @@
 @tailwind components;
 @tailwind utilities;
 
-/*  
-md: (탭)
-lg: (데스크탑) 
-*/
-@import './theme.css';  /* 여기서 불러오기 */
+header {
+  @apply sticky 
+         top-0 
+         left-0 
+         right-0 
+         w-full 
+         z-50 
+         general-text-bg-color 
+         relative
+         ;
+}           
 
+footer {
+    @apply h-20 
+        w-full
+        relative 
+        bottom-0 /* footer는 부모요소의 맨 바닥에 딱 붙어있다. */ 
+        mt-10
+        flex 
+        flex-col 
+        items-center
+        justify-center
+        text-gray-200 
+        bg-gray-400
+        semi-dark-bg-color
+        ; 
+}
 
-@layer utilities {
-  header {
-    @apply sticky 
-           top-0 
-           left-0 
-           right-0 
-           w-full 
-           z-50 
-           general-text-bg-color 
-           relative
+h1, h2, h3, h4, h5, h6 {
+    @apply text-green-600 dark:text-green-300
            ;
-  }           
+}
 
-  footer {
-      @apply h-20 
-          w-full
-          relative 
-          bottom-0 /* footer는 부모요소의 맨 바닥에 딱 붙어있다. */ 
-          mt-10
-          flex 
-          flex-col 
-          items-center
-          justify-center
-          text-gray-200 
-          bg-gray-400
-          dark:bg-gray-900
-          ; 
-  }
+pre {
+    @apply general-text-color whitespace-pre-wrap; 
+}
 
-  h1, h2, h3, h4, h5, h6 {
-      @apply text-green-600 
-             dark:text-green-300
-             ;
-  }
+html {
+    @apply h-screen;
+}
 
-  pre {
-      @apply text-slate-900 
-             dark:text-white 
-             whitespace-pre-wrap
-             ; 
-  }
+a {
+    @apply text-white;
+}
 
-  html {
-      @apply h-screen
-      ;
-  }
+p {
+    @apply theme-text-medium;
+}
 
-  a {
-      @apply text-white
-      ;
-  }
+/* 색 테마
+	gray (ex: dark:bg-gray-900, dark:text-gray-300)
+neutral (ex: dark:bg-neutral-900)
+zinc (ex: dark:bg-zinc-900)
+stone (ex: dark:bg-stone-900)
+coolGray (이전 Tailwind 버전에서 coolGray 이름이었으나 지금은 그냥 gray로 합쳐짐)
+black 또는 trueGray (만약 정말 진한 다크톤 원한다면)
+*/
 
-  p {
-      @apply text-slate-600 
-             dark:text-slate-400
-             ;
-  }
+.theme-text-light {
+  @apply text-neutral-900;
+}
 
-  /* 색 테마
-  	gray (ex: dark:bg-gray-900, dark:text-gray-300)
-	neutral (ex: dark:bg-neutral-900)
-	zinc (ex: dark:bg-zinc-900)
-	stone (ex: dark:bg-stone-900)
-	coolGray (이전 Tailwind 버전에서 coolGray 이름이었으나 지금은 그냥 gray로 합쳐짐)
-	black 또는 trueGray (만약 정말 진한 다크톤 원한다면)
-  */
-  
-  .theme-text-light {
-    @apply text-neutral-900;
-  }
-  .theme-bg-light {
-    @apply bg-neutral-100;
-  }
-  .theme-text-dark {
-    @apply text-neutral-600 dark:text-neutral-400;
-  }
-  .theme-bg-dark {
-    @apply bg-neutral-400 dark:bg-neutral-600;
-  }
-  .theme-dark-bg-color {
-    @apply dark:bg-neutral-900;
-  }
-  .theme-semi-dark-text-color {
-    @apply dark:text-neutral-200;
-  }
-  .theme-semi-dark-bg-color {
-    @apply dark:bg-neutral-700;
-  }  
-  
-  /* 사용자 정의 스타일 (기존 변수명 유지) */
+.theme-text-medium {
+  @apply text-neutral-500 dark:text-nautral-500;
+}
 
-  .light-text-color {
-    @apply theme-text-light;
-  }
+.theme-bg-light {
+  @apply bg-neutral-100;
+}
+.theme-text-dark {
+  @apply text-neutral-600 dark:text-neutral-400;
+}
+.theme-bg-dark {
+  @apply bg-neutral-400 dark:bg-neutral-600;
+}
+.theme-dark-bg-color {
+  @apply dark:bg-neutral-900;
+}
+.theme-semi-dark-text-color {
+  @apply dark:text-neutral-200;
+}
+.theme-semi-dark-bg-color {
+  @apply dark:bg-neutral-700;
+}  
 
-  .light-bg-color {
-    @apply theme-bg-light;
-  }
+/* 사용자 정의 스타일 (기존 변수명 유지) */
 
-  .light-text-bg-color {
-    @apply theme-text-light theme-bg-light;
-  }
+.light-text-color {
+  @apply theme-text-light;
+}
 
-  .medium-text-color {
-    @apply theme-text-light theme-text-dark;
-  } 
+.light-bg-color {
+  @apply theme-bg-light;
+}
 
-  .medium-bg-color {
-    @apply theme-bg-light theme-bg-dark;
-  } 
+.light-text-bg-color {
+  @apply theme-text-light theme-bg-light;
+}
 
-  .dark-text-color {
-    @apply dark:text-white;
-  }
+.medium-text-color {
+  @apply theme-text-light theme-text-dark;
+} 
 
-  .dark-bg-color {
-    @apply theme-dark-bg-color;
-  }
+.medium-bg-color {
+  @apply theme-bg-light theme-bg-dark;
+} 
 
-  .semi-dark-text-color {
-    @apply theme-semi-dark-text-color;
-  }
+.dark-text-color {
+  @apply dark:text-white;
+}
 
-  .semi-dark-bg-color {
-    @apply theme-semi-dark-bg-color;
-  }
+.dark-bg-color {
+  @apply theme-dark-bg-color;
+}
 
-  .dark-text-bg-color {
-    @apply dark-text-color dark-bg-color;
-  } 
-   
-  .semi-dark-text-bg-color {
-    @apply semi-dark-text-color 
-           semi-dark-bg-color;
-  }              
+.semi-dark-text-color {
+  @apply theme-semi-dark-text-color;
+}
 
-  .general-text-color {
-    @apply text-black 
-           dark:text-white;
-  }
+.semi-dark-bg-color {
+  @apply theme-semi-dark-bg-color;
+}
 
-  .general-text-bg-color {
-    @apply light-text-bg-color 
-           dark-text-bg-color;
-  }
+.dark-text-bg-color {
+  @apply dark-text-color dark-bg-color;
+} 
+ 
+.semi-dark-text-bg-color {
+  @apply semi-dark-text-color 
+         semi-dark-bg-color;
+}              
 
-  .general-bg-color {
-    @apply light-bg-color 
-           dark-bg-color;
-  }
+.general-text-color {
+  @apply text-black 
+         dark:text-white;
+}
 
-  .bg-primary { 
-      @apply w-full 
-             h-full 
-             general-text-bg-color
-             min-h-[calc(100vh-5rem)] 
-             max-w-full 
-             pb-20;
-  }
+.general-text-bg-color {
+  @apply light-text-bg-color 
+         dark-text-bg-color;
+}
 
-  .page-title {
-      @apply sm:text-4xl 
-             text-3xl
-             my-10 
-             font-medium 
-             text-green-900
-             ;
-  }
+.general-bg-color {
+  @apply light-bg-color 
+         dark-bg-color;
+}
 
-  .Layout {
-    @apply bg-primary 
-           flex 
-           flex-col 
-           min-h-screen 
-           justify-center 
-           overflow-x-hidden;
-
+.bg-primary { 
     @apply w-full 
-           md:w-full 
-           lg:w-5/6 
-           lg:mx-auto;
+           h-full 
+           general-text-bg-color
+           min-h-[calc(100vh-5rem)] 
+           max-w-full 
+           pb-20;
+}
 
-    @apply md:flex-row;
-  }
+.page-title {
+    @apply sm:text-4xl 
+           text-3xl
+           my-10 
+           font-medium 
+           text-green-900
+           ;
+}
+
+.Layout {
+  @apply bg-primary 
+         flex 
+         flex-col 
+         min-h-screen 
+         justify-center 
+         overflow-x-hidden;
+
+  @apply w-full 
+         md:w-full 
+         lg:w-5/6 
+         lg:mx-auto;
+
+  @apply md:flex-row;
 }
