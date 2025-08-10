@@ -64,34 +64,36 @@ p {
 */
 
 .theme-light-text-color {
-  @apply text-stone-900;
+  @apply text-teal-900;
 }
 .theme-light-bg-color {
-  @apply bg-stone-100;
+  @apply bg-teal-100;
 }
 .theme-dark-text-color {
-  @apply dark:text-stone-100;
+  @apply dark:text-teal-100;
 }
 .theme-dark-bg-color {
-  @apply dark:bg-stone-900;
+  @apply dark:bg-teal-900;
 }
 
 /* medium은 중간 어두운 색상 */
 .theme-medium-text-color {
-  @apply text-stone-600 
-         dark:text-stone-400;
+  @apply text-teal-600 
+         dark:text-teal-400;
 }
 .theme-medium-bg-color {
-  @apply bg-stone-400 
-         dark:bg-stone-600;
+  @apply bg-teal-400 
+         dark:bg-teal-600;
 }
 
-/* semi는 다크모드에서 약간 다르게 보이는 색상 */
+/* semi는 라이트/다크모드에서 약간 다르게 보이는 색상 */
 .theme-semi-text-color {
-  @apply text-stone-800 dark:text-stone-200;
+  @apply text-teal-800 
+         dark:text-teal-200;
 }
 .theme-semi-bg-color {
-  @apply bg-stone-200 dark:bg-stone-800;
+  @apply bg-teal-200 
+         dark:bg-teal-800;
 }
 
 /* 사용자 정의 스타일 (기존 변수명 유지) */
