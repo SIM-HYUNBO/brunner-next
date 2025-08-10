@@ -25,7 +25,7 @@ footer {
          flex-col 
          items-center
          justify-center
-         semi-light-text-bg-color
+         semi-text-bg-color
          semi-dark-text-bg-color
          ; 
 }
