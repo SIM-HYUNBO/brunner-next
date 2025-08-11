@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import Link from "next/link";
 import { getDropdownMenuItems } from "@/components/dropdownMenuitem";
 import UserInfo from "@/components/userInfo"; // 예시 import
@@ -9,7 +9,7 @@ export default function DropdownMenu({ reloadSignal, triggerMenuReload }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [menuItems, setMenuItems] = useState([]);
   const [openSections, setOpenSections] = useState({});
-  
+  const menuRef = useRef(null);
   useEffect(() => {
     const loadMenu = async () => {
       const items = await getDropdownMenuItems();
@@ -27,6 +27,23 @@ export default function DropdownMenu({ reloadSignal, triggerMenuReload }) {
     };
     loadMenu();
   }, [reloadSignal]);
+
+    useEffect(() => {
+      const handleClickOutside = (event) => {
+        if(menuRef.current && !menuRef.current.contains(event.target)) {
+          setMobileMenuOpen(false);
+        }   
+    };
+
+    if(mobileMenuOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+    } else {
+      document.removeEventListener("mousedown", handleClickOutside);
+    }   
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [mobileMenuOpen]); 
 
   const toggleSection = (label) => {
     setOpenSections((prev) => ({
@@ -75,7 +92,7 @@ export default function DropdownMenu({ reloadSignal, triggerMenuReload }) {
       </button>
 
       {mobileMenuOpen && (
-        <div className="absolute 
+        <div ref={menuRef} className="absolute 
                         right-4 
                         w-40 
                         shadow-lg 

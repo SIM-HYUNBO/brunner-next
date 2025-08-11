@@ -447,14 +447,14 @@ function BoardContent({
           </button>
         </div>
       ) : (
-        <p className={`w-full text-left`}>
+        <div className={`w-full text-left`}>
           <strong className={`text-left text-sm`}>{post.create_user_id}</strong>
           <span className={`text-gray-400 ml-2 text-xs`}>
             {new Date(post.create_time).toLocaleString()}
           </span>
           <br />
           <p className={`w-full text-left`}>{post.post_content}</p>
-        </p>
+        </div>
       )}
       <div className={`flex mt-2`}>
         {!isEditingPost && (
@@ -535,7 +535,7 @@ function BoardContent({
                 </button>
               </div>
             ) : (
-              <p className={`w-full text-left`}>
+              <div className={`w-full text-left`}>
                 <strong className={`text-left text-sm`}>
                   {comment.create_user_id}
                 </strong>
@@ -544,7 +544,7 @@ function BoardContent({
                 </span>
                 <br />
                 <p className={`w-full text-left`}>{comment.comment_content}</p>
-              </p>
+              </div>
             )}
             <div className={`flex mt-1`}>
               {editingCommentId !== comment.comment_id && (
