@@ -51,7 +51,7 @@ export default function DarkModeToggleButton() {
                  viewBox="0 0 24 24" 
                  strokeWidth="1.5" 
                  stroke="currentColor"
-                 className={`visible dark:invisible h-5 w-5`}>
+                 className={`visible dark:invisible h-5 w-5 text-gray-900`}>
               <path strokeLinecap="round" 
                     strokeLinejoin="round" 
                     d="M12 3v2.25m6.364.386l-1.591 1.591M21 12h-2.25m-.386 
