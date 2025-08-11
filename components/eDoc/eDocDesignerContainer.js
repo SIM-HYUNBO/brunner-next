@@ -542,7 +542,7 @@ export default function EDocDesignerContainer({ documentId, triggerMenuReload })
                         justify-center 
                         items-center 
                         z-50">
-          <div className="general-bg-color 
+          <div className="medium-bg-color 
                           rounded 
                           shadow-lg 
                           w-96 
@@ -557,7 +557,8 @@ export default function EDocDesignerContainer({ documentId, triggerMenuReload })
               {documentList.map((doc) => (
                 <li
                   key={doc.id}
-                  className="cursor-pointer 
+                  className="cursor-pointer
+                            border-b 
                              py-2 
                              px-3 
                              hover:bg-slate-200 
