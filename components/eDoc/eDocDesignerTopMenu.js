@@ -18,7 +18,8 @@ export default function EDocDesignerTopMenu({
 }) {
   return (
     <div className="w-full 
-                    general-bg-color 
+                    general-bg-color
+                    my-3
                     flex 
                     items-center 
                     justify-center">
@@ -28,7 +29,7 @@ export default function EDocDesignerTopMenu({
                    text-white
                    text-center 
                    rounded 
-                   px-2
+                   p-2
                    hover:bg-blue-600"
       >
         New Doc.
@@ -40,7 +41,7 @@ export default function EDocDesignerTopMenu({
                    text-center 
                    rounded 
                    ml-1 
-                   px-2
+                   p-2
                    hover:bg-sky-600"
       >
         Open Doc.
@@ -52,7 +53,7 @@ export default function EDocDesignerTopMenu({
                    text-center
                    rounded 
                    ml-1 
-                   px-2
+                   p-2
                    hover:bg-yellow-600"
       >
         Save Doc.
@@ -64,7 +65,7 @@ export default function EDocDesignerTopMenu({
                    text-center
                    rounded 
                    ml-1 
-                   px-2
+                   p-2
                    hover:bg-red-600"
       >
         Del. Doc.
@@ -76,7 +77,7 @@ export default function EDocDesignerTopMenu({
                    text-center
                    rounded 
                    ml-2
-                   px-2
+                   p-2
                    hover:bg-green-600"
       >
         Add Page
@@ -88,7 +89,7 @@ export default function EDocDesignerTopMenu({
                    text-center
                    rounded 
                    ml-1 
-                   px-2
+                   p-2
                    hover:bg-pink-600"
       >
         Del. Page
@@ -100,7 +101,7 @@ export default function EDocDesignerTopMenu({
                    text-center
                    rounded 
                    ml-1 
-                   px-2
+                   p-2
                    hover:bg-purple-600"
       >
         Exp. PDF

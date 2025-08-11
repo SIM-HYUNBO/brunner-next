@@ -65,7 +65,7 @@ export const useModal = () => {
                bg-gray-900 
                opacity-75">
           </div>
-          <div className="general-bg-color 
+          <div className="semi-text-bg-color 
                           rounded-lg 
                           p-8 
                           max-w-md 
