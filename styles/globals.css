@@ -2,6 +2,51 @@
 @tailwind components;
 @tailwind utilities;
 
+/* 색 테마 변수 정의
+===============================
+red, orange, amber, yellow, lime,
+green, emerald, teal, cyan, sky,
+blue, indigo, violet, purple, fuchsia,
+pink, rose, slate, gray, zinc,
+neutral, stone
+================================== 
+*/
+
+:root {
+  /* Light Mode 색상 변수 */
+  --theme-light-text: theme('colors.zinc.900');
+  --theme-light-bg: theme('colors.zinc.100');
+
+  --theme-medium-text: theme('colors.zinc.600');
+  --theme-medium-bg: theme('colors.zinc.400');
+
+  --theme-semi-text: theme('colors.zinc.800');
+  --theme-semi-bg: theme('colors.zinc.200');
+
+  /* general colors */
+  --general-text-color-light: black;
+  --general-text-color-dark: white;
+}
+
+.dark {
+  /* Dark Mode 색상 변수 덮어쓰기 */
+  --theme-light-text: theme('colors.zinc.100');
+  --theme-light-bg: theme('colors.zinc.900');
+
+  --theme-medium-text: theme('colors.zinc.400');
+  --theme-medium-bg: theme('colors.zinc.600');
+
+  --theme-semi-text: theme('colors.zinc.200');
+  --theme-semi-bg: theme('colors.zinc.800');
+
+  --general-text-color-light: white;
+  --general-text-color-dark: black;
+}
+
+/* ===============================
+   기존 스타일들
+   =============================== */
+
 header {
   @apply sticky 
          w-full 
@@ -18,7 +63,7 @@ footer {
   @apply h-20 
          w-full
          relative 
-         bottom-0 /* footer는 부모요소의 맨 바닥에 딱 붙어있다. */ 
+         bottom-0 
          mt-10
          flex 
          flex-col 
@@ -29,165 +74,164 @@ footer {
 }
 
 h1, h2, h3, h4, h5, h6 {
-    @apply text-green-600 dark:text-green-300
-           ;
+  @apply text-green-600 dark:text-green-300;
 }
 
 pre {
-    @apply general-text-color whitespace-pre-wrap; 
+  @apply general-text-color whitespace-pre-wrap; 
 }
 
 html {
-    @apply h-screen;
+  @apply h-screen;
 }
 
 a {
-    @apply text-white;
+  @apply text-white;
 }
 
 p {
-    @apply theme-medium-text-color;
-}
-
-/* 사용자 정의 스타일 (기존 변수명 유지) */
-
-.light-text-color {
-  @apply theme-light-text-color;
-}
-
-.light-bg-color {
-  @apply theme-light-bg-color;
-}
-
-.light-text-bg-color {
-  @apply theme-light-text-color theme-light-bg-color;
-}
-
-.medium-text-color {
   @apply theme-medium-text-color;
-} 
-
-.medium-bg-color {
-  @apply theme-medium-bg-color;
-} 
-
-.dark-text-color {
-  @apply theme-dark-text-color;
 }
 
-.dark-bg-color {
-  @apply theme-dark-bg-color;
-}
+/* ===============================
+   변수 기반 색상 적용
+   =============================== */
 
-.semi-text-color {
-  @apply theme-semi-text-color;
-}
+@layer utilities {
+  /* light/dark 텍스트 색상 */
+  .theme-light-text-color {
+    color: var(--theme-light-text);
+  }
+  .theme-dark-text-color {
+    color: var(--theme-light-text);
+  }
 
-.semi-bg-color {
-  @apply theme-semi-bg-color;
-}
+  /* light/dark 배경색 */
+  .theme-light-bg-color {
+    background-color: var(--theme-light-bg);
+  }
+  .theme-dark-bg-color {
+    background-color: var(--theme-light-bg);
+  }
 
-.dark-text-bg-color {
-  @apply dark-text-color dark-bg-color;
-} 
+  /* light/dark 텍스트 및 배경색 */
+  .theme-light-text-color {
+    color: var(--theme-light-text);
+  }
+  .theme-light-bg-color {
+    background-color: var(--theme-light-bg);
+  }
+  .theme-dark-text-color {
+    /* 예전 dark:text-slate-100 대체 */
+    color: var(--theme-light-text);
+  }
+  .theme-dark-bg-color {
+    color: var(--theme-light-bg);
+  }
 
-.semi-text-bg-color {
-  @apply semi-text-color 
-         semi-bg-color;
-}
-.general-text-color {
-  @apply text-black 
-         dark:text-white;
-}
+  /* medium 텍스트 및 배경 */
+  .theme-medium-text-color {
+    color: var(--theme-medium-text);
+  }
+  .theme-medium-bg-color {
+    background-color: var(--theme-medium-bg);
+  }
 
-.general-text-bg-color {
-  @apply light-text-bg-color 
-         dark-text-bg-color;
-}
+  /* semi 텍스트 및 배경 */
+  .theme-semi-text-color {
+    color: var(--theme-semi-text);
+  }
+  .theme-semi-bg-color {
+    background-color: var(--theme-semi-bg);
+  }
 
-.general-bg-color {
-  @apply light-bg-color 
-         dark-bg-color;
-}
+  /* general 텍스트 및 배경 (검정/흰색) */
+  .general-text-color {
+    color: var(--general-text-color-light);
+    color: var(--general-text-color-dark);
+  }
 
-.bg-primary { 
+  .general-text-bg-color {
+    @apply theme-light-text-color 
+          theme-light-bg-color 
+          dark:theme-dark-text-color 
+          dark:theme-dark-bg-color;
+  }
+
+  .general-bg-color {
+    @apply theme-light-bg-color 
+          dark:theme-dark-bg-color;
+  }
+
+  /* 사용자 정의 클래스 재활용 */
+  .light-text-color {
+    @apply theme-light-text-color;
+  }
+  .light-bg-color {
+    @apply theme-light-bg-color;
+  }
+  .light-text-bg-color {
+    @apply theme-light-text-color 
+          theme-light-bg-color;
+  }
+  .medium-text-color {
+    @apply theme-medium-text-color;
+  } 
+  .medium-bg-color {
+    @apply theme-medium-bg-color;
+  } 
+  .dark-text-color {
+    @apply theme-dark-text-color;
+  }
+  .dark-bg-color {
+    @apply theme-dark-bg-color;
+  }
+  .semi-text-color {
+    @apply theme-semi-text-color;
+  }
+  .semi-bg-color {
+    @apply theme-semi-bg-color;
+  }
+  .dark-text-bg-color {
+    @apply dark-text-color 
+          dark-bg-color;
+  } 
+  .semi-text-bg-color {
+    @apply semi-text-color 
+          semi-bg-color;
+  }
+
+  .bg-primary { 
     @apply w-full 
-           h-full 
-           general-text-bg-color
-           min-h-[calc(100vh-5rem)] 
-           max-w-full 
-           pb-20;
-}
+          h-full 
+          general-text-bg-color
+          min-h-[calc(100vh-5rem)] 
+          max-w-full 
+          pb-20;
+  }
 
-.page-title {
+  .page-title {
     @apply sm:text-4xl 
-           text-3xl
-           my-10 
-           font-medium 
-           text-green-900
-           ;
-}
+          text-3xl
+          my-10 
+          font-medium 
+          text-green-900
+          ;
+  }
 
-.Layout {
-  @apply bg-primary 
-         flex 
-         flex-col 
-         min-h-screen 
-         justify-center 
-         overflow-x-hidden;
+  .Layout {
+    @apply bg-primary 
+          flex 
+          flex-col 
+          min-h-screen 
+          justify-center 
+          overflow-x-hidden;
 
-  @apply w-full 
-         md:w-full 
-         lg:w-5/6 
-         lg:mx-auto;
+    @apply w-full 
+          md:w-full 
+          lg:w-5/6 
+          lg:mx-auto;
 
-  @apply md:flex-row;
-}
-
-
-/* 색 테마
-무채색: gray, zinc, neutral, stone
-빨강: red
-주황: orange
-노랑: amber, yellow
-연두: lime, green
-청록: emerald, teal, cyan
-하늘: sky, blue
-남색: indigo, violet, slate
-보라: purple, fuchsia
-분홍: pink, rose
-
-*/
-
-.theme-light-text-color {
-  @apply text-slate-900;
-}
-.theme-light-bg-color {
-  @apply bg-slate-100;
-}
-.theme-dark-text-color {
-  @apply dark:text-slate-100;
-}
-.theme-dark-bg-color {
-  @apply dark:bg-slate-900;
-}
-
-/* medium은 중간 어두운 색상 */
-.theme-medium-text-color {
-  @apply text-slate-600 
-         dark:text-slate-400;
-}
-.theme-medium-bg-color {
-  @apply bg-slate-400 
-         dark:bg-slate-600;
-}
-
-/* semi는 라이트/다크모드에서 약간 다르게 보이는 색상 */
-.theme-semi-text-color {
-  @apply text-slate-800 
-         dark:text-slate-200;
-}
-.theme-semi-bg-color {
-  @apply bg-slate-200 
-         dark:bg-slate-800;
+    @apply md:flex-row;
+  }
 }
