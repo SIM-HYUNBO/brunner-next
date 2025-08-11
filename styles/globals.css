@@ -13,89 +13,37 @@ neutral, stone
 */
 @layer utilities {
 
-:root {
-  /* Light Mode 색상 변수 */
-  --theme-light-text: theme('colors.slate.900');
-  --theme-light-bg: theme('colors.slate.100');
+  :root {
+    /* Light Mode 색상 변수 */
+    --theme-light-text: theme('colors.slate.900');
+    --theme-light-bg: theme('colors.slate.100');
 
-  --theme-medium-text: theme('colors.slate.600');
-  --theme-medium-bg: theme('colors.slate.400');
+    --theme-medium-text: theme('colors.slate.600');
+    --theme-medium-bg: theme('colors.slate.400');
 
-  --theme-semi-text: theme('colors.slate.800');
-  --theme-semi-bg: theme('colors.slate.200');
+    --theme-semi-text: theme('colors.slate.800');
+    --theme-semi-bg: theme('colors.slate.200');
 
-  --general-text-color: var(--theme-light-text);
-  --general-bg-color: var(--theme-light-bg);
-}
+    --general-text-color: var(--theme-light-text);
+    --general-bg-color: var(--theme-light-bg);
+  }
 
-.dark {
-  /* Dark Mode 색상 변수 덮어쓰기 */
-  --theme-dark-text: theme('colors.slate.100');
-  --theme-dark-bg: theme('colors.slate.900');
+  .dark {
+    /* Dark Mode 색상 변수 덮어쓰기 */
+    --theme-dark-text: theme('colors.slate.100');
+    --theme-dark-bg: theme('colors.slate.900');
 
-  --theme-medium-text: theme('colors.slate.400');
-  --theme-medium-bg: theme('colors.slate.600');
+    --theme-medium-text: theme('colors.slate.400');
+    --theme-medium-bg: theme('colors.slate.600');
 
-  --theme-semi-text: theme('colors.slate.200');
-  --theme-semi-bg: theme('colors.slate.800');
+    --theme-semi-text: theme('colors.slate.200');
+    --theme-semi-bg: theme('colors.slate.800');
 
-  --general-text-color: var(--theme-dark-text);
-  --general-bg-color: var(--theme-dark-bg);
-}
+    --general-text-color: var(--theme-dark-text);
+    --general-bg-color: var(--theme-dark-bg);
+  }
 
-/* ===============================
-   기존 스타일들
-   =============================== */
-
-header {
-  @apply sticky 
-         w-full 
-         top-0 
-         left-0 
-         right-0 
-         z-50 
-         general-text-bg-color
-         relative
-         ;
-}           
-
-footer {
-  @apply h-20 
-         w-full
-         relative 
-         bottom-0 
-         mt-10
-         flex 
-         flex-col 
-         items-center
-         justify-center
-         general-text-bg-color
-         ; 
-}
-
-h1, h2, h3, h4, h5, h6 {
-  @apply text-green-600 
-         dark:text-green-300;
-}
-
-pre {
-  @apply general-text-color 
-         whitespace-pre-wrap; 
-}
-
-html {
-  @apply h-screen;
-}
-
-a {
-  @apply text-white;
-}
-
-p {
-  @apply semi-text-bg-color;
-}
-
-/* ============================================
+  /* ============================================
    변수 기반 색상 적용 @apply 안써도 var 사용하면 됨
    ============================================ */
 
@@ -153,7 +101,59 @@ p {
     color: var(--general-text-color);
     background-color: var(--general-bg-color);
   } 
+ 
+  /* ===============================
+     기본 스타일들
+   =============================== */
 
+  header {
+    @apply sticky 
+           w-full 
+           top-0 
+           left-0 
+           right-0 
+           z-50 
+           general-text-bg-color
+           relative
+           ;
+  }           
+
+  footer {
+    @apply h-20 
+           w-full
+           relative 
+           bottom-0 
+           mt-10
+           flex 
+           flex-col 
+           items-center
+           justify-center
+           general-text-bg-color
+           ; 
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply text-green-600 
+           dark:text-green-300;
+  }
+
+  pre {
+    @apply general-text-color 
+           whitespace-pre-wrap; 
+  }
+
+  html {
+    @apply h-screen;
+  }
+
+  a {
+    @apply text-white;
+  }
+
+  p {
+    @apply semi-text-bg-color;
+  }
+  
   .bg-primary { 
     @apply w-full 
            h-full 
@@ -190,5 +190,6 @@ p {
 
     @apply md:flex-row
            ;
-  }
+  }  
 }
+
