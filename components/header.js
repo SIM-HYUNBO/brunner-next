@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import * as userInfo from "@/components/userInfo";
-import DivContainer from "@/components/divContainer";
+// import DivContainer from "@/components/div";
 import DropdownMenu from "@/components/dropdownMenu";
 
 
@@ -19,7 +19,7 @@ export default function Header({ triggerMenuReload, reloadSignal }) {
     </div>
 
     {/* 전체 너비로 확장된 컨테이너 */}
-    <DivContainer className="">
+    <div className="">
       {/* 로고 */}
       <Link
         href="/"
@@ -43,7 +43,7 @@ export default function Header({ triggerMenuReload, reloadSignal }) {
       </Link>
 
       <div className="flex-1" />
-    </DivContainer>
+    </div>
   </header>
   );
 }

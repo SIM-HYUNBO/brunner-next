@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useRef, useImperativeHandle, forwardRef } from "react";
 import { useTable, useSortBy } from "react-table";
-import DivContainer from "@/components/divContainer";
+// import DivContainer from "@/components/div";
 
 const BrunnerTable = forwardRef(({
   tableTitle,
@@ -325,14 +325,14 @@ const BrunnerTable = forwardRef(({
 
   return (
     <>
-      <DivContainer>
+      <div>
         <div className={`w-full px-1`}>
           <TableTitleArea />
           <TableConditionArea />
           <TableBodyArea />
           <TableInputDataArea />
         </div>
-      </DivContainer>
+      </div>
     </>
   );
 });

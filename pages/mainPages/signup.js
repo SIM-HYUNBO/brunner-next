@@ -9,7 +9,7 @@ import BodySection from "@/components/bodySection";
 import RequestServer from "@/components/requestServer";
 import { useModal } from "@/components/brunnerMessageBox";
 import * as constants from "@/components/constants";
-import DivContainer from "@/components/divContainer";
+// import DivContainer from "@/components/div";
 import Loading from "@/components/loading";
 
 export default function Signup() {
@@ -116,7 +116,7 @@ export default function Signup() {
           <link></link>
         </Head>
         <BodySection>
-          <DivContainer>
+          <div>
             <div className={`w-full pr-16 flex flex-col items-start text-left mb-16`}>
               <h2 className={`title-font text-3xl mb-10 font-medium text-green-900`}>
                 Create account
@@ -248,7 +248,7 @@ export default function Signup() {
 
               <p className={`text-xs text-gray-500 mt-3`}>Nice to meet you.</p>
             </div>
-          </DivContainer>
+          </div>
         </BodySection>
       </Layout>
     </>

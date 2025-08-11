@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from "react";
 import Header from "./header";
 import Footer from "./footer";
-import DivContainer from "@/components/divContainer";
+// import DivContainer from "@/components/div";
 import RequestServer from "@/components/requestServer";
 import * as constants from "@/components/constants";
 import * as userInfo from "@/components/userInfo";
@@ -32,7 +32,7 @@ export default function Layout({ children, reloadSignal, triggerMenuReload }) {
 
   return (
     <div className="Layout">
-      <DivContainer className="flex 
+      <div className="flex 
                                flex-col 
                                w-full">
         <main className="flex-grow 
@@ -46,7 +46,7 @@ export default function Layout({ children, reloadSignal, triggerMenuReload }) {
           )}
           <Footer />
         </main>
-      </DivContainer>
+      </div>
     </div>
   );
 }
