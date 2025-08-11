@@ -7,7 +7,7 @@ import Head from 'next/head'
 import BodySection from '@/components/bodySection'
 
 import EDocDesignerContainer from '@/components/eDoc/eDocDesignerContainer';
-import DivContainer from '@/components/divContainer';
+// import DivContainer from '@/components/div';
 
 export default function EDocDesigner() {
  const [reloadSignal, setReloadSignal] = useState(0);

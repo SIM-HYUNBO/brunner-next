@@ -11,7 +11,7 @@ import BodySection from "@/components/bodySection";
 import RequestServer from "@/components/requestServer";
 import { useModal } from "@/components/brunnerMessageBox";
 import * as constants from "@/components/constants";
-import DivContainer from "@/components/divContainer";
+// import DivContainer from "@/components/div";
 import Loading from "@/components/loading";
 
 export default function ResetPassword() {
@@ -161,7 +161,7 @@ export default function ResetPassword() {
           <link></link>
         </Head>
         <BodySection>
-          <DivContainer>
+          <div>
             <div className={`w-3/5 pr-0`}>
               <h2 className={`title-font font-medium text-3xl text-gray-900`}>
                 Protect your important information.
@@ -337,7 +337,7 @@ export default function ResetPassword() {
                 Reset password
               </button>
             </div>
-          </DivContainer>
+          </div>
         </BodySection>
       </Layout>
     </>

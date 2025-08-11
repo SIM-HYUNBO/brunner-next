@@ -3,7 +3,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { useDeviceType } from "@/components/commonFunctions"
 import ContactContentAnimation from "./content-animation/contactContentAnimation";
-import DivContainer from "@/components/divContainer";
+// import DivContainer from "@/components/div";
 import GoverningMessage from "@/components/governingMessage";
 
 export default function ContactContent() {
@@ -11,7 +11,7 @@ export default function ContactContent() {
 
   return (
     <>
-      <DivContainer>
+      <div>
         <div className={`w-full desktop:w-2/3 items-start text-left`}>
           <h2 className={`page-title`}>
             Contact us ...
@@ -26,7 +26,7 @@ export default function ContactContent() {
             {<ContactContentAnimation width={300} height={300} />}
           </div>
         )}
-      </DivContainer>
+      </div>
     </>
   );
 }

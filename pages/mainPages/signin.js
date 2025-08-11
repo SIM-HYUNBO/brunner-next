@@ -14,7 +14,7 @@ import Layout from "@/components/layout";
 import Head from "next/head";
 import BodySection from "@/components/bodySection";
 
-import DivContainer from "@/components/divContainer";
+// import DivContainer from "@/components/div";
 
 export default function Signin() {
 
@@ -95,7 +95,7 @@ export default function Signin() {
           <link rel="icon" href="/brunnerLogo2025.png" />
         </Head>
         <BodySection>
-          <DivContainer>
+          <div>
             <div className={`w-full pr-16 flex flex-col items-start text-left mb-16 md:mb-0`}>
               <h2 className={`title-font sm:text-4xl text-3xl mb-10 font-medium text-green-900`}>
                 Sign in
@@ -191,7 +191,7 @@ export default function Signin() {
                 Leave & Delete Account
               </button>
             </div>
-          </DivContainer>
+          </div>
         </BodySection>
       </Layout>
     </>
