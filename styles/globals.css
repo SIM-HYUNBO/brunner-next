@@ -74,11 +74,13 @@ footer {
 }
 
 h1, h2, h3, h4, h5, h6 {
-  @apply text-green-600 dark:text-green-300;
+  @apply text-green-600 
+         dark:text-green-300;
 }
 
 pre {
-  @apply general-text-color whitespace-pre-wrap; 
+  @apply general-text-color 
+         whitespace-pre-wrap; 
 }
 
 html {
@@ -153,85 +155,102 @@ p {
 
   .general-text-bg-color {
     @apply theme-light-text-color 
-          theme-light-bg-color 
-          dark:theme-dark-text-color 
-          dark:theme-dark-bg-color;
+           theme-light-bg-color 
+           dark:theme-dark-text-color 
+           dark:theme-dark-bg-color
+           ;
   }
 
   .general-bg-color {
     @apply theme-light-bg-color 
-          dark:theme-dark-bg-color;
+           dark:theme-dark-bg-color
+           ;
   }
 
   /* 사용자 정의 클래스 재활용 */
   .light-text-color {
-    @apply theme-light-text-color;
+    @apply theme-light-text-color
+           ;
   }
   .light-bg-color {
-    @apply theme-light-bg-color;
+    @apply theme-light-bg-color
+           ;
   }
   .light-text-bg-color {
     @apply theme-light-text-color 
-          theme-light-bg-color;
+           theme-light-bg-color
+           ;
   }
   .medium-text-color {
-    @apply theme-medium-text-color;
+    @apply theme-medium-text-color
+           ;
   } 
   .medium-bg-color {
-    @apply theme-medium-bg-color;
+    @apply theme-medium-bg-color
+           ;
   } 
   .dark-text-color {
-    @apply theme-dark-text-color;
+    @apply theme-dark-text-color
+           ;
   }
   .dark-bg-color {
-    @apply theme-dark-bg-color;
+    @apply theme-dark-bg-color
+           ;
   }
   .semi-text-color {
-    @apply theme-semi-text-color;
+    @apply theme-semi-text-color
+           ;
   }
   .semi-bg-color {
-    @apply theme-semi-bg-color;
+    @apply theme-semi-bg-color
+           ;
   }
   .dark-text-bg-color {
     @apply dark-text-color 
-          dark-bg-color;
+           dark-bg-color
+           ;
   } 
   .semi-text-bg-color {
     @apply semi-text-color 
-          semi-bg-color;
+           semi-bg-color
+           ;
   }
 
   .bg-primary { 
     @apply w-full 
-          h-full 
-          general-text-bg-color
-          min-h-[calc(100vh-5rem)] 
-          max-w-full 
-          pb-20;
+           h-full 
+           general-text-bg-color
+           min-h-[calc(100vh-5rem)] 
+           max-w-full 
+           pb-20
+           ;
   }
 
   .page-title {
     @apply sm:text-4xl 
-          text-3xl
-          my-10 
-          font-medium 
-          text-green-900
-          ;
+           text-3xl
+           my-10 
+           font-medium 
+           text-green-900
+           ;
   }
 
   .Layout {
     @apply bg-primary 
-          flex 
-          flex-col 
-          min-h-screen 
-          justify-center 
-          overflow-x-hidden;
+           flex 
+           flex-col 
+           min-h-screen 
+           justify-center 
+           overflow-x-hidden
+           ;
 
     @apply w-full 
-          md:w-full 
-          lg:w-5/6 
-          lg:mx-auto;
+           md:w-full 
+           lg:w-5/6 
+           lg:mx-auto
+           ;
 
-    @apply md:flex-row;
+    @apply md:flex-row
+           ;
   }
 }
