@@ -28,10 +28,10 @@ export default function EDocDesignerTopMenu({
                    text-white
                    text-center 
                    rounded 
-                   px-1
+                   px-2
                    hover:bg-blue-600"
       >
-        New
+        New Doc.
       </button>
       <button
         onClick={onOpenDocument}
@@ -40,10 +40,10 @@ export default function EDocDesignerTopMenu({
                    text-center 
                    rounded 
                    ml-1 
-                   px-1
+                   px-2
                    hover:bg-sky-600"
       >
-        Open
+        Open Doc.
       </button>
       <button
         onClick={onSaveDocument}
@@ -52,10 +52,10 @@ export default function EDocDesignerTopMenu({
                    text-center
                    rounded 
                    ml-1 
-                   px-1
+                   px-2
                    hover:bg-yellow-600"
       >
-        Save
+        Save Doc.
       </button>
       <button
         onClick={onDeleteDocument}
@@ -64,10 +64,10 @@ export default function EDocDesignerTopMenu({
                    text-center
                    rounded 
                    ml-1 
-                   px-1
+                   px-2
                    hover:bg-red-600"
       >
-        Delete
+        Del. Doc.
       </button>
       <button 
         onClick={onAddPage}
@@ -76,7 +76,7 @@ export default function EDocDesignerTopMenu({
                    text-center
                    rounded 
                    ml-2
-                   px-1
+                   px-2
                    hover:bg-green-600"
       >
         Add Page
@@ -88,10 +88,10 @@ export default function EDocDesignerTopMenu({
                    text-center
                    rounded 
                    ml-1 
-                   px-1
+                   px-2
                    hover:bg-pink-600"
       >
-        Delete Page
+        Del. Page
       </button>
       <button
         onClick={onExportPdf}
@@ -100,10 +100,10 @@ export default function EDocDesignerTopMenu({
                    text-center
                    rounded 
                    ml-1 
-                   px-1
+                   px-2
                    hover:bg-purple-600"
       >
-        Export PDF
+        Exp. PDF
       </button>     
     </div>
   );

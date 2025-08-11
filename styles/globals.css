@@ -30,8 +30,8 @@ neutral, stone
 
 .dark {
   /* Dark Mode 색상 변수 덮어쓰기 */
-  --theme-light-text: theme('colors.zinc.100');
-  --theme-light-bg: theme('colors.zinc.900');
+  --theme-dark-text: theme('colors.zinc.100');
+  --theme-dark-bg: theme('colors.zinc.900');
 
   --theme-medium-text: theme('colors.zinc.400');
   --theme-medium-bg: theme('colors.zinc.600');
@@ -105,7 +105,7 @@ p {
     color: var(--theme-light-text);
   }
   .theme-dark-text-color {
-    color: var(--theme-light-text);
+    color: var(--them-dark-text);
   }
 
   /* light/dark 배경색 */
@@ -113,7 +113,7 @@ p {
     background-color: var(--theme-light-bg);
   }
   .theme-dark-bg-color {
-    background-color: var(--theme-light-bg);
+    background-color: var(--theme-dark-bg);
   }
 
   /* light/dark 텍스트 및 배경색 */
@@ -125,10 +125,10 @@ p {
   }
   .theme-dark-text-color {
     /* 예전 dark:text-slate-100 대체 */
-    color: var(--theme-light-text);
+    color: var(--theme-dark-text);
   }
   .theme-dark-bg-color {
-    color: var(--theme-light-bg);
+    color: var(--theme-dark-bg);
   }
 
   /* medium 텍스트 및 배경 */
@@ -153,17 +153,14 @@ p {
     color: var(--general-text-color-dark);
   }
 
-  .general-text-bg-color {
-    @apply theme-light-text-color 
-           theme-light-bg-color 
-           dark:theme-dark-text-color 
-           dark:theme-dark-bg-color
-           ;
+  .general-bg-color {
+    color: var(--general-bg-color-light);
+    color: var(--general-bg-color-dark);
   }
 
-  .general-bg-color {
-    @apply theme-light-bg-color 
-           dark:theme-dark-bg-color
+  .general-text-bg-color {
+    @apply general-text-color
+           general-bg-color
            ;
   }
 

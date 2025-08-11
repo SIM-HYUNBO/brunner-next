@@ -19,7 +19,7 @@ export default function EDocDocumentPropertyEditor({
       <section className="mb-6 p-4 border rounded shadow-sm">
         <h2 className="text-lg font-semibold mb-3">문서 속성</h2>
 
-        <label>Title</label>
+        <label className="general-text-bg-color">Title</label>
         <input
           type="text"
           value={runtimeData.title || ''}

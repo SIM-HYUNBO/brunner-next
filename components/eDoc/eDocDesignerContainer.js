@@ -391,8 +391,7 @@ export default function EDocDesignerContainer({ documentId, triggerMenuReload })
       <div className="flex h-screen">
         {/* 왼쪽 컴포넌트 팔레트 */}
         <aside className="w-36 
-               bg-white 
-               dark-bg-color 
+               general-text-bg-color
                border-r 
                overflow-auto">
           <h2 className="font-bold 
@@ -482,9 +481,8 @@ export default function EDocDesignerContainer({ documentId, triggerMenuReload })
 
         {/* 오른쪽 속성 편집창 */}
         <aside className="w-56 
-                          bg-white 
-                          dark-bg-color 
-                          border-0 
+                          border-0
+                          general-text-bg-color 
                           border-gray 
                           dark:border-gray 
                           p-4 
