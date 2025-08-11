@@ -1,27 +1,20 @@
 `use strict`;
 
-import React, { useEffect, useState } from "react";
 import { useDeviceType } from "@/components/commonFunctions"
 import HomeContentAnimation from "./content-animation/homeContentAnimation";
 import { useRouter } from "next/router";
 import * as userInfo from "@/components/userInfo";
-// import DivContainer from "@/components/div";
+import DivContainer from "@/components/divContainer";
 import GoverningMessage from "@/components/governingMessage";
 import BrunnerBoard from "@/components/brunnerBoard";
-import { use } from "react";
 
 export default function HomeContent() {
   const router = useRouter();
   const { isMobile, isTablet } = useDeviceType();
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
 
   return (
     <>
-      <div className={`flex-row`}>
+      <DivContainer className={`flex-row`}>
         <h2 className={`page-title`}>
           Noesis Pelagos
         </h2>
@@ -30,8 +23,8 @@ Leave your ideas as digital documents.
 Creation begins the moment you start recording.`} />
         
         <div className={`flex flex-col mt-20`}>
-          {mounted && !userInfo.isLogin() && (
-            <>
+          {!userInfo.isLogin() && (
+            <div className ="flex space-x-1">
               <button
                 className={`inline-flex 
                             text-white 
@@ -53,7 +46,7 @@ Creation begins the moment you start recording.`} />
               >
                 Sign up
               </button>
-            </>
+            </div>
           )}
         </div>
         <div className={`flex w-full mt-10 px-2 readonly`}>
@@ -64,7 +57,7 @@ Creation begins the moment you start recording.`} />
             <HomeContentAnimation width={300} height={300} />
           </div>
         )}
-      </div>
+      </DivContainer>
     </>
   );
 }

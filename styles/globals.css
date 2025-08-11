@@ -11,36 +11,36 @@ pink, rose, slate, gray, zinc,
 neutral, stone
 ================================== 
 */
+@layer utilities {
 
 :root {
   /* Light Mode 색상 변수 */
-  --theme-light-text: theme('colors.zinc.900');
-  --theme-light-bg: theme('colors.zinc.100');
+  --theme-light-text: theme('colors.slate.900');
+  --theme-light-bg: theme('colors.slate.100');
 
-  --theme-medium-text: theme('colors.zinc.600');
-  --theme-medium-bg: theme('colors.zinc.400');
+  --theme-medium-text: theme('colors.slate.600');
+  --theme-medium-bg: theme('colors.slate.400');
 
-  --theme-semi-text: theme('colors.zinc.800');
-  --theme-semi-bg: theme('colors.zinc.200');
+  --theme-semi-text: theme('colors.slate.800');
+  --theme-semi-bg: theme('colors.slate.200');
 
-  /* general colors */
-  --general-text-color-light: black;
-  --general-text-color-dark: white;
+  --general-text-color: var(--theme-light-text);
+  --general-bg-color: var(--theme-light-bg);
 }
 
 .dark {
   /* Dark Mode 색상 변수 덮어쓰기 */
-  --theme-dark-text: theme('colors.zinc.100');
-  --theme-dark-bg: theme('colors.zinc.900');
+  --theme-dark-text: theme('colors.slate.100');
+  --theme-dark-bg: theme('colors.slate.900');
 
-  --theme-medium-text: theme('colors.zinc.400');
-  --theme-medium-bg: theme('colors.zinc.600');
+  --theme-medium-text: theme('colors.slate.400');
+  --theme-medium-bg: theme('colors.slate.600');
 
-  --theme-semi-text: theme('colors.zinc.200');
-  --theme-semi-bg: theme('colors.zinc.800');
+  --theme-semi-text: theme('colors.slate.200');
+  --theme-semi-bg: theme('colors.slate.800');
 
-  --general-text-color-light: white;
-  --general-text-color-dark: black;
+  --general-text-color: var(--theme-dark-text);
+  --general-bg-color: var(--theme-dark-bg);
 }
 
 /* ===============================
@@ -92,126 +92,67 @@ a {
 }
 
 p {
-  @apply theme-medium-text-color;
+  @apply semi-text-bg-color;
 }
 
-/* ===============================
-   변수 기반 색상 적용
-   =============================== */
+/* ============================================
+   변수 기반 색상 적용 @apply 안써도 var 사용하면 됨
+   ============================================ */
 
-@layer utilities {
   /* light/dark 텍스트 색상 */
-  .theme-light-text-color {
+  .theme-light-text-bg-color {
     color: var(--theme-light-text);
-  }
-  .theme-dark-text-color {
-    color: var(--them-dark-text);
-  }
-
-  /* light/dark 배경색 */
-  .theme-light-bg-color {
     background-color: var(--theme-light-bg);
   }
-  .theme-dark-bg-color {
+  .theme-dark-text-bg-color {
+    color: var(--theme-dark-text);
     background-color: var(--theme-dark-bg);
   }
 
-  /* light/dark 텍스트 및 배경색 */
-  .theme-light-text-color {
-    color: var(--theme-light-text);
-  }
-  .theme-light-bg-color {
-    background-color: var(--theme-light-bg);
-  }
-  .theme-dark-text-color {
-    /* 예전 dark:text-slate-100 대체 */
-    color: var(--theme-dark-text);
-  }
-  .theme-dark-bg-color {
-    color: var(--theme-dark-bg);
-  }
-
   /* medium 텍스트 및 배경 */
-  .theme-medium-text-color {
+  .theme-medium-text-bg-color {
     color: var(--theme-medium-text);
-  }
-  .theme-medium-bg-color {
     background-color: var(--theme-medium-bg);
   }
 
   /* semi 텍스트 및 배경 */
-  .theme-semi-text-color {
+  .theme-semi-text-bg-color {
     color: var(--theme-semi-text);
-  }
-  .theme-semi-bg-color {
     background-color: var(--theme-semi-bg);
   }
 
-  /* general 텍스트 및 배경 (검정/흰색) */
-  .general-text-color {
-    color: var(--general-text-color-light);
-    color: var(--general-text-color-dark);
-  }
-
-  .general-bg-color {
-    color: var(--general-bg-color-light);
-    color: var(--general-bg-color-dark);
-  }
-
-  .general-text-bg-color {
-    @apply general-text-color
-           general-bg-color
-           ;
-  }
-
   /* 사용자 정의 클래스 재활용 */
-  .light-text-color {
-    @apply theme-light-text-color
-           ;
-  }
-  .light-bg-color {
-    @apply theme-light-bg-color
-           ;
-  }
-  .light-text-bg-color {
-    @apply theme-light-text-color 
-           theme-light-bg-color
-           ;
-  }
+
   .medium-text-color {
-    @apply theme-medium-text-color
-           ;
+    color: var(--theme-medium-text);
   } 
   .medium-bg-color {
-    @apply theme-medium-bg-color
-           ;
+    background-color: var(--theme-medium-bg);
   } 
-  .dark-text-color {
-    @apply theme-dark-text-color
-           ;
-  }
+
   .dark-bg-color {
-    @apply theme-dark-bg-color
-           ;
+    background-color: var(--theme-dark-bg);
   }
   .semi-text-color {
-    @apply theme-semi-text-color
-           ;
+    color: var(--theme-semi-text);
   }
   .semi-bg-color {
-    @apply theme-semi-bg-color
-           ;
+    background-color: var(--theme-semi-bg);
   }
-  .dark-text-bg-color {
-    @apply dark-text-color 
-           dark-bg-color
-           ;
-  } 
+
   .semi-text-bg-color {
-    @apply semi-text-color 
-           semi-bg-color
-           ;
+    color: var(--theme-semi-text);
+    background-color: var(--theme-semi-bg);
   }
+
+  .general-text-color {
+    color: var(--general-text-color);
+  } 
+
+  .general-text-bg-color {
+    color: var(--general-text-color);
+    background-color: var(--general-bg-color);
+  } 
 
   .bg-primary { 
     @apply w-full 
