@@ -1,8 +1,9 @@
 `use strict`;
 
+import React, { useEffect, useState } from "react";
+import { useRouter } from "next/router";
 import { useDeviceType } from "@/components/commonFunctions"
 import HomeContentAnimation from "./content-animation/homeContentAnimation";
-import { useRouter } from "next/router";
 import * as userInfo from "@/components/userInfo";
 import DivContainer from "@/components/divContainer";
 import GoverningMessage from "@/components/governingMessage";
@@ -11,7 +12,12 @@ import BrunnerBoard from "@/components/brunnerBoard";
 export default function HomeContent() {
   const router = useRouter();
   const { isMobile, isTablet } = useDeviceType();
+  const [isMounted, setIsMounted ] = useState(false);
 
+  useEffect(() => {
+    setIsMounted(true);
+  } , []);
+  
   return (
     <>
       <DivContainer className={`flex-row`}>
@@ -23,7 +29,7 @@ Leave your ideas as digital documents.
 Creation begins the moment you start recording.`} />
         
         <div className={`flex flex-col mt-20`}>
-          {!userInfo.isLogin() && (
+          {isMounted && !userInfo.isLogin() && (
             <div className ="flex space-x-1">
               <button
                 className={`inline-flex 
