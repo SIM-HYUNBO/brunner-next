@@ -1,21 +1,21 @@
-'use strict';
+"use strict";
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect } from "react";
 import * as constants from "@/components/constants";
 import * as userInfo from "@/components/userInfo";
 import { useModal } from "@/components/brunnerMessageBox";
 import RequestServer from "@/components/requestServer";
 
-import EDocComponentPalette from './eDocComponentPalette';
-import EDocEditorCanvas from './eDocEditorCanvas';
-import EDocDesignerTopMenu from './eDocDesignerTopMenu';
-import EDocComponentPropertyEditor from './eDocComponentPropertyEditor';
-import EDocDocumentPropertyEditor from './eDocDocumentPropertyEditor';
-import EDocPagePropertyEditor from './eDocPagePropertyEditor';
-import * as commonFunctions from '@/components/commonFunctions';
+import EDocComponentPalette from "./eDocComponentPalette";
+import EDocEditorCanvas from "./eDocEditorCanvas";
+import EDocDesignerTopMenu from "./eDocDesignerTopMenu";
+import EDocComponentPropertyEditor from "./eDocComponentPropertyEditor";
+import EDocDocumentPropertyEditor from "./eDocDocumentPropertyEditor";
+import EDocPagePropertyEditor from "./eDocPagePropertyEditor";
+import * as commonFunctions from "@/components/commonFunctions";
 
-import html2canvas from 'html2canvas';
-import jsPDF from 'jspdf';
+import html2canvas from "html2canvas";
+import jsPDF from "jspdf";
 
 import * as InputComponent from "@/components/eDoc/eDocComponent/eDocComponent_Input";
 import * as TextComponent from "@/components/eDoc/eDocComponent/eDocComponent_Text";
@@ -27,7 +27,10 @@ import * as VideoComponent from "@/components/eDoc/eDocComponent/eDocComponent_V
 
 import Loading from "@/components/loading";
 
-export default function EDocDesignerContainer({ documentId, triggerMenuReload }) {
+export default function EDocDesignerContainer({
+  documentId,
+  triggerMenuReload,
+}) {
   const { BrunnerMessageBox, openModal } = useModal();
 
   const [loading, setLoading] = useState(false);
@@ -37,23 +40,25 @@ export default function EDocDesignerContainer({ documentId, triggerMenuReload })
   const [documentData, setDocumentData] = useState({
     id: documentId || null,
     runtime_data: {
-      title: 'New Document',
-      description: '신규 전자 문서',
+      title: "New Document",
+      description: "신규 전자 문서",
       isPublic: false,
       backgroundColor: "#ffffff",
       padding: 1,
       menu_path: null, // 메뉴 경로는 나중에 설정
     },
-    pages: [{
-      id: 'page-1',
-      components: [],
-      runtime_data: {
-        padding: 24,
-        alignment: "center",
-        backgroundColor: "#ffffff",
-        pageSize: "A4"
-      }
-    }],
+    pages: [
+      {
+        id: "page-1",
+        components: [],
+        runtime_data: {
+          padding: 24,
+          alignment: "center",
+          backgroundColor: "#ffffff",
+          pageSize: "A4",
+        },
+      },
+    ],
   });
 
   const [currentPageIdx, setCurrentPageIdx] = useState(0);
@@ -85,31 +90,38 @@ export default function EDocDesignerContainer({ documentId, triggerMenuReload })
     }
   }, [documentId]);
 
-  const toggleMode = () => setMode(prev => (prev === "design" ? "runtime" : "design"));
+  const toggleMode = () =>
+    setMode((prev) => (prev === "design" ? "runtime" : "design"));
 
   const handleNewDocument = () => {
-    if (window.confirm('현재 작업 중인 문서가 저장되지 않을 수 있습니다. 새 문서를 생성하시겠습니까?')) {
-      const title = window.prompt('새문서 이름을 입력하세요');
+    if (
+      window.confirm(
+        "현재 작업 중인 문서가 저장되지 않을 수 있습니다. 새 문서를 생성하시겠습니까?"
+      )
+    ) {
+      const title = window.prompt("새문서 이름을 입력하세요");
       setDocumentData({
         id: documentId || null,
         runtime_data: {
-          title: 'New Document',
-          description: '신규 전자 문서',
+          title: "New Document",
+          description: "신규 전자 문서",
           isPublic: false,
           backgroundColor: "#ffffff",
           padding: 1,
           menu_path: null, // 메뉴 경로는 나중에 설정
         },
-        pages: [{
-          id: 'page-1',
-          components: [],
-          runtime_data: {
-            padding: 24,
-            alignment: "center",
-            backgroundColor: "#ffffff",
-            pageSize: "A4"
-          }
-        }],
+        pages: [
+          {
+            id: "page-1",
+            components: [],
+            runtime_data: {
+              padding: 24,
+              alignment: "center",
+              backgroundColor: "#ffffff",
+              pageSize: "A4",
+            },
+          },
+        ],
       });
       setCurrentPageIdx(0);
       setSelectedComponentId(null);
@@ -117,6 +129,11 @@ export default function EDocDesignerContainer({ documentId, triggerMenuReload })
   };
 
   const handleOpenDocument = async () => {
+    if (!userInfo.isLogin()) {
+      openModal(constants.messages.LOGIN_REQUIRED);
+      return;
+    }
+
     const jRequest = {
       commandName: constants.commands.EDOC_USER_DOCUMENT_SELECT_ALL,
       systemCode: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE,
@@ -155,11 +172,16 @@ export default function EDocDesignerContainer({ documentId, triggerMenuReload })
   };
 
   const handleSaveDocument = async () => {
+    if (!userInfo.isLogin()) {
+      openModal(constants.messages.LOGIN_REQUIRED);
+      return;
+    }
+
     const jRequest = {
       commandName: constants.commands.EDOC_DOCUMENT_UPSERT_ONE,
       systemCode: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE,
       userId: userInfo.getLoginUserId(),
-      documentData: documentData
+      documentData: documentData,
     };
     setLoading(true);
     const jResponse = await RequestServer(jRequest);
@@ -176,6 +198,11 @@ export default function EDocDesignerContainer({ documentId, triggerMenuReload })
   };
 
   const handleDeleteDocument = async () => {
+    if (!userInfo.isLogin()) {
+      openModal(constants.messages.LOGIN_REQUIRED);
+      return;
+    }
+
     const result = await openModal(constants.messages.DELETE_ITEM);
     if (!result) return;
 
@@ -183,7 +210,7 @@ export default function EDocDesignerContainer({ documentId, triggerMenuReload })
       commandName: constants.commands.EDOC_DOCUMENT_DELETE_ONE,
       systemCode: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE,
       userId: userInfo.getLoginUserId(),
-      documentId: documentData.id
+      documentId: documentData.id,
     };
     setLoading(true);
     const jResponse = await RequestServer(jRequest);
@@ -194,24 +221,26 @@ export default function EDocDesignerContainer({ documentId, triggerMenuReload })
       openModal(constants.messages.SUCCESS_DELETED);
       setDocumentData({
         id: null,
-        pages: [{
-          id: 'page-1',
-          components: [],
-          runtime_data: {
-            padding: 24,
-            alignment: "center",
-            backgroundColor: "#ffffff",
-            pageSize: "A4"
-          }
-        }],
+        pages: [
+          {
+            id: "page-1",
+            components: [],
+            runtime_data: {
+              padding: 24,
+              alignment: "center",
+              backgroundColor: "#ffffff",
+              pageSize: "A4",
+            },
+          },
+        ],
         runtime_data: {
-          title: 'New Document',
-          description: '신규 전자 문서',
+          title: "New Document",
+          description: "신규 전자 문서",
           isPublic: false,
           backgroundColor: "#ffffff",
           padding: 1,
           menu_path: null, // 메뉴 경로는 나중에 설정
-        }
+        },
       });
       setCurrentPageIdx(0);
       setSelectedComponentId(null);
@@ -219,76 +248,102 @@ export default function EDocDesignerContainer({ documentId, triggerMenuReload })
   };
 
   const handleAddPage = () => {
+    if (!userInfo.isLogin()) {
+      openModal(constants.messages.LOGIN_REQUIRED);
+      return;
+    }
+
     const newPageId = `page-${documentData.pages.length + 1}`;
     const newPage = {
       id: newPageId,
       components: [],
-      runtime_data: { pageSize: 'A4', padding: 24 }
+      runtime_data: { pageSize: "A4", padding: 24 },
     };
 
-    setDocumentData(prev => ({
+    setDocumentData((prev) => ({
       ...prev,
-      pages: [...prev.pages, newPage]
+      pages: [...prev.pages, newPage],
     }));
     setCurrentPageIdx(documentData.pages.length);
   };
 
   const handleDeleteCurrentPage = async () => {
+    if (!userInfo.isLogin()) {
+      openModal(constants.messages.LOGIN_REQUIRED);
+      return;
+    }
+
     if (documentData.pages.length === 1) {
       openModal(constants.messages.MINIUM_PAGE_COUNT);
       return;
     }
-    const confirm = await openModal(`The index ${currentPageIdx + 1}, ${constants.messages.DELETE_SELECTED_PAGE}`);
+    const confirm = await openModal(
+      `The index ${currentPageIdx + 1}, ${
+        constants.messages.DELETE_SELECTED_PAGE
+      }`
+    );
     if (!confirm) return;
 
-    setDocumentData(prev => {
+    setDocumentData((prev) => {
       const newPages = [...prev.pages];
       newPages.splice(currentPageIdx, 1);
       return {
         ...prev,
-        pages: newPages
+        pages: newPages,
       };
     });
     setCurrentPageIdx(currentPageIdx > 0 ? currentPageIdx - 1 : 0);
   };
 
   const handleAddComponent = (component) => {
+    if (!userInfo.isLogin()) {
+      openModal(constants.messages.LOGIN_REQUIRED);
+      return;
+    }
+
     const baseComponent = { ...component };
     const defaultRuntimeData = {
-      width: 'auto',
-      height: '',
+      width: "auto",
+      height: "",
       forceNewLine: true,
     };
     switch (component.template_json.type) {
       case constants.edocComponentType._TEXT:
-        baseComponent.runtime_data = TextComponent.initDefaultRuntimeData(defaultRuntimeData);
+        baseComponent.runtime_data =
+          TextComponent.initDefaultRuntimeData(defaultRuntimeData);
         break;
       case constants.edocComponentType._IMAGE:
-        baseComponent.runtime_data = ImageComponent.initDefaultRuntimeData(defaultRuntimeData);
+        baseComponent.runtime_data =
+          ImageComponent.initDefaultRuntimeData(defaultRuntimeData);
         break;
       case constants.edocComponentType._INPUT:
-        baseComponent.runtime_data = InputComponent.initDefaultRuntimeData(defaultRuntimeData);
+        baseComponent.runtime_data =
+          InputComponent.initDefaultRuntimeData(defaultRuntimeData);
         break;
       case constants.edocComponentType._TABLE:
-        baseComponent.runtime_data = TableComponent.initDefaultRuntimeData(defaultRuntimeData);
+        baseComponent.runtime_data =
+          TableComponent.initDefaultRuntimeData(defaultRuntimeData);
         break;
       case constants.edocComponentType._CHECKLIST:
-        baseComponent.runtime_data = CheckListComponent.initDefaultRuntimeData(defaultRuntimeData);
+        baseComponent.runtime_data =
+          CheckListComponent.initDefaultRuntimeData(defaultRuntimeData);
         break;
       case constants.edocComponentType._BUTTON:
-        baseComponent.runtime_data = ButtonComponent.initDefaultRuntimeData(defaultRuntimeData);
+        baseComponent.runtime_data =
+          ButtonComponent.initDefaultRuntimeData(defaultRuntimeData);
         break;
       case constants.edocComponentType._VIDEO:
-        baseComponent.runtime_data = VideoComponent.initDefaultRuntimeData(defaultRuntimeData);
+        baseComponent.runtime_data =
+          VideoComponent.initDefaultRuntimeData(defaultRuntimeData);
         break;
       default:
         break;
     }
-    setDocumentData(prev => {
+    setDocumentData((prev) => {
       const newPages = [...prev.pages];
       newPages[currentPageIdx] = {
         ...newPages[currentPageIdx],
-        components: [...newPages[currentPageIdx].components, baseComponent]
+        components: [...newPages[currentPageIdx].components, baseComponent],
       };
       return { ...prev, pages: newPages };
     });
@@ -298,7 +353,7 @@ export default function EDocDesignerContainer({ documentId, triggerMenuReload })
 
   const handleUpdateComponent = (updatedComponent) => {
     if (selectedComponentId === null) return;
-    setDocumentData(prev => {
+    setDocumentData((prev) => {
       const newPages = [...prev.pages];
       const newComponents = [...newPages[currentPageIdx].components];
       newComponents[selectedComponentId] = updatedComponent;
@@ -309,32 +364,39 @@ export default function EDocDesignerContainer({ documentId, triggerMenuReload })
 
   const handleMoveComponentUp = () => {
     if (selectedComponentId === null || selectedComponentId <= 0) return;
-    setDocumentData(prev => {
+    setDocumentData((prev) => {
       const newPages = [...prev.pages];
       const components = [...newPages[currentPageIdx].components];
-      [components[selectedComponentId - 1], components[selectedComponentId]] = [components[selectedComponentId], components[selectedComponentId - 1]];
+      [components[selectedComponentId - 1], components[selectedComponentId]] = [
+        components[selectedComponentId],
+        components[selectedComponentId - 1],
+      ];
       newPages[currentPageIdx].components = components;
       return { ...prev, pages: newPages };
     });
-    setSelectedComponentId(prev => prev - 1);
+    setSelectedComponentId((prev) => prev - 1);
   };
 
   const handleMoveComponentDown = () => {
     const comps = documentData.pages[currentPageIdx].components;
-    if (selectedComponentId === null || selectedComponentId >= comps.length - 1) return;
-    setDocumentData(prev => {
+    if (selectedComponentId === null || selectedComponentId >= comps.length - 1)
+      return;
+    setDocumentData((prev) => {
       const newPages = [...prev.pages];
       const components = [...newPages[currentPageIdx].components];
-      [components[selectedComponentId + 1], components[selectedComponentId]] = [components[selectedComponentId], components[selectedComponentId + 1]];
+      [components[selectedComponentId + 1], components[selectedComponentId]] = [
+        components[selectedComponentId],
+        components[selectedComponentId + 1],
+      ];
       newPages[currentPageIdx].components = components;
       return { ...prev, pages: newPages };
     });
-    setSelectedComponentId(prev => prev + 1);
+    setSelectedComponentId((prev) => prev + 1);
   };
 
   const handleDeleteComponent = () => {
     if (selectedComponentId === null) return;
-    setDocumentData(prev => {
+    setDocumentData((prev) => {
       const newPages = [...prev.pages];
       const components = [...newPages[currentPageIdx].components];
       components.splice(selectedComponentId, 1);
@@ -345,15 +407,23 @@ export default function EDocDesignerContainer({ documentId, triggerMenuReload })
   };
 
   const handleExportPdf = async () => {
+    if (!userInfo.isLogin()) {
+      openModal(constants.messages.LOGIN_REQUIRED);
+      return;
+    }
+
     setIsExportingPdf(true);
-    const canvas = await html2canvas(document.querySelector('.edoc-designer-canvas'), { scale: 2 });
-    const imgData = canvas.toDataURL('image/png');
-    const pdf = new jsPDF('p', 'mm', 'a4');
+    const canvas = await html2canvas(
+      document.querySelector(".edoc-designer-canvas"),
+      { scale: 2 }
+    );
+    const imgData = canvas.toDataURL("image/png");
+    const pdf = new jsPDF("p", "mm", "a4");
     const pdfWidth = pdf.internal.pageSize.getWidth();
     const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
 
-    pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
-    pdf.save(`${documentData.runtime_data.title || 'document'}.pdf`);
+    pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
+    pdf.save(`${documentData.runtime_data.title || "document"}.pdf`);
 
     setIsExportingPdf(false);
   };
@@ -365,13 +435,9 @@ export default function EDocDesignerContainer({ documentId, triggerMenuReload })
 
   return (
     <>
-      {loading && (
-        <Loading />
-      )}
-      <h2 className={`page-title`}>
-        Page designer
-      </h2>
-       
+      {loading && <Loading />}
+      <h2 className={`page-title`}>Page designer</h2>
+
       {/* 상단 메뉴 */}
       <EDocDesignerTopMenu
         mode={mode}
@@ -390,13 +456,19 @@ export default function EDocDesignerContainer({ documentId, triggerMenuReload })
 
       <div className="flex h-screen">
         {/* 왼쪽 컴포넌트 팔레트 */}
-        <aside className="w-36 
+        <aside
+          className="w-36 
                general-text-bg-color
                border-r 
-               overflow-auto">
-          <h2 className="font-bold 
+               overflow-auto"
+        >
+          <h2
+            className="font-bold 
                          mb-3 
-                         general-text-color">컴포넌트 팔레트</h2>
+                         general-text-color"
+          >
+            컴포넌트 팔레트
+          </h2>
           <EDocComponentPalette
             templates={componentTemplates}
             onAddComponent={handleAddComponent}
@@ -406,12 +478,14 @@ export default function EDocDesignerContainer({ documentId, triggerMenuReload })
         {/* 중앙 편집 캔버스 */}
         <div className="flex-1 overflow-auto">
           {documentData && (
-            <h1 className="text-2xl 
+            <h1
+              className="text-2xl 
                            font-bold 
                            mx-4 
                            mb-4 
-                           general-text-color">
-              {documentData.runtime_data.title || ''} : {documentData.id}
+                           general-text-color"
+            >
+              {documentData.runtime_data.title || ""} : {documentData.id}
             </h1>
           )}
 
@@ -419,31 +493,33 @@ export default function EDocDesignerContainer({ documentId, triggerMenuReload })
           <main
             className="pt-16 flex-grow edoc-designer-canvas"
             style={{
-              backgroundColor: documentData.runtime_data.backgroundColor || '#f8f8f8',
+              backgroundColor:
+                documentData.runtime_data.backgroundColor || "#f8f8f8",
               padding: `${documentData.runtime_data.padding}px`,
             }}
           >
-          {documentData.pages.map((page, idx) => (
-            <div
-              key={page.id}
-              className={`relative 
+            {documentData.pages.map((page, idx) => (
+              <div
+                key={page.id}
+                className={`relative 
                           w-fit 
                           mx-auto 
                           border 
                           border-dashed 
                           border-gray 
                           dark:border-gray 
-                          ${ idx === currentPageIdx ? 
-                            'outline outline-2 outline-blue-400' : 
-                            ''}`
-                        }
-              
-              onClick={() => {
-                setCurrentPageIdx(idx);
-                setSelectedComponentId(null);
-              }}
-            >
-              <div className="absolute 
+                          ${
+                            idx === currentPageIdx
+                              ? "outline outline-2 outline-blue-400"
+                              : ""
+                          }`}
+                onClick={() => {
+                  setCurrentPageIdx(idx);
+                  setSelectedComponentId(null);
+                }}
+              >
+                <div
+                  className="absolute 
                               top-2 
                               left-2 
                               general-text-bg-color 
@@ -453,52 +529,63 @@ export default function EDocDesignerContainer({ documentId, triggerMenuReload })
                               py-1 
                               select-none 
                               pointer-events-none 
-                              z-10">
-                p{idx + 1}
-              </div>
+                              z-10"
+                >
+                  p{idx + 1}
+                </div>
 
-              <EDocEditorCanvas
-                pageData={page}
-                isSelected={idx === currentPageIdx}
-                onSelect={() => {
-                  setCurrentPageIdx(idx);
-                  setSelectedComponentId(null);
-                }}
-                selectedComponentId={selectedComponentId}
-                onComponentSelect={handleComponentSelect}
-                onMoveUp={handleMoveComponentUp}
-                onMoveDown={handleMoveComponentDown}
-                onDeleteComponent={handleDeleteComponent}
-                onUpdateComponent={handleUpdateComponent}
-                isViewerMode={isExportingPdf}
-                mode={mode}
-                bindingData={commonFunctions.bindingData}
-              />
-            </div>
-          ))}
+                <EDocEditorCanvas
+                  pageData={page}
+                  isSelected={idx === currentPageIdx}
+                  onSelect={() => {
+                    setCurrentPageIdx(idx);
+                    setSelectedComponentId(null);
+                  }}
+                  selectedComponentId={selectedComponentId}
+                  onComponentSelect={handleComponentSelect}
+                  onMoveUp={handleMoveComponentUp}
+                  onMoveDown={handleMoveComponentDown}
+                  onDeleteComponent={handleDeleteComponent}
+                  onUpdateComponent={handleUpdateComponent}
+                  isViewerMode={isExportingPdf}
+                  mode={mode}
+                  bindingData={commonFunctions.bindingData}
+                />
+              </div>
+            ))}
           </main>
         </div>
 
         {/* 오른쪽 속성 편집창 */}
-        <aside className="w-56 
+        <aside
+          className="w-56 
                           border-0
                           general-text-bg-color 
                           border-gray 
                           dark:border-gray 
                           p-4 
                           block
-                          overflow-auto">
-          <h2 className="text-lg 
+                          overflow-auto"
+        >
+          <h2
+            className="text-lg 
                          font-semibold 
                          mb-4 
-                         general-text-color">
-                         속성창
-                         </h2>
+                         general-text-color"
+          >
+            속성창
+          </h2>
 
           {selectedComponentId !== null &&
-          documentData.pages[currentPageIdx]?.components[selectedComponentId] ? (
+          documentData.pages[currentPageIdx]?.components[
+            selectedComponentId
+          ] ? (
             <EDocComponentPropertyEditor
-              component={documentData.pages[currentPageIdx].components[selectedComponentId]}
+              component={
+                documentData.pages[currentPageIdx].components[
+                  selectedComponentId
+                ]
+              }
               handleUpdateComponent={handleUpdateComponent}
             />
           ) : (
@@ -515,7 +602,9 @@ export default function EDocDesignerContainer({ documentId, triggerMenuReload })
 
               {/* ✅ 페이지 속성 편집기 추가 */}
               <EDocPagePropertyEditor
-                runtimeData={documentData.pages[currentPageIdx]?.runtime_data || {}}
+                runtimeData={
+                  documentData.pages[currentPageIdx]?.runtime_data || {}
+                }
                 onChangeRuntimeData={(updatedPageRuntimeData) =>
                   setDocumentData((prev) => {
                     const updatedPages = [...prev.pages];
@@ -534,25 +623,33 @@ export default function EDocDesignerContainer({ documentId, triggerMenuReload })
 
       {/* 문서 선택 모달 */}
       {showDocumentListModal && (
-        <div className="fixed 
+        <div
+          className="fixed 
                         inset-0 
                         bg-black 
                         bg-opacity-50 
                         flex 
                         justify-center 
                         items-center 
-                        z-50">
-          <div className="medium-bg-color 
+                        z-50"
+        >
+          <div
+            className="medium-bg-color 
                           rounded 
                           shadow-lg 
                           w-96 
                           max-h-96 
                           overflow-auto 
-                          p-4">
-            <h3 className="text-lg 
+                          p-4"
+          >
+            <h3
+              className="text-lg 
                            font-bold 
                            mb-4 
-                           general-text-color">문서 선택</h3>
+                           general-text-color"
+            >
+              문서 선택
+            </h3>
             <ul>
               {documentList.map((doc) => (
                 <li
