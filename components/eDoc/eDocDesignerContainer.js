@@ -459,30 +459,31 @@ export default function EDocDesignerContainer({
         setCurrentPageIdx={setCurrentPageIdx}
       />
 
-      <div className="flex h-screen">
-        <button className="text-lg font-semibold mb-4" onClick={toggleMode}>
-          {mode === "design" ? "To Runtime Mode" : "To Design Mode"}
-        </button>
-        {/* 왼쪽 컴포넌트 팔레트 */}
-        <aside
-          className="w-36 
-               general-text-bg-color
-               border-r 
-               overflow-auto"
-        >
-          <h2
-            className="font-bold 
-                         mb-3 
-                         general-text-color"
+      <div className="flex flex-row h-screen">
+        <div>
+          <button className="text-lg font-semibold mb-4" onClick={toggleMode}>
+            {mode === "design" ? "To Runtime Mode" : "To Design Mode"}
+          </button>
+          {/* 왼쪽 컴포넌트 팔레트 */}
+          <aside
+            className="w-36 
+                general-text-bg-color
+                border-r 
+                overflow-auto"
           >
-            컴포넌트 팔레트
-          </h2>
-          <EDocComponentPalette
-            templates={componentTemplates}
-            onAddComponent={handleAddComponent}
-          />
-        </aside>
-
+            <h2
+              className="font-bold 
+                          mb-3 
+                          general-text-color"
+            >
+              컴포넌트 팔레트
+            </h2>
+            <EDocComponentPalette
+              templates={componentTemplates}
+              onAddComponent={handleAddComponent}
+            />
+          </aside>
+        </div>
         {/* 중앙 편집 캔버스 */}
         <div className="flex-1 overflow-auto">
           {documentData && (
