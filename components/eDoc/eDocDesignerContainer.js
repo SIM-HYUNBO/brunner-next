@@ -94,6 +94,11 @@ export default function EDocDesignerContainer({
     setMode((prev) => (prev === "design" ? "runtime" : "design"));
 
   const handleNewDocument = () => {
+    if (!userInfo.isLogin()) {
+      openModal(constants.messages.LOGIN_REQUIRED);
+      return;
+    }
+
     if (
       window.confirm(
         "현재 작업 중인 문서가 저장되지 않을 수 있습니다. 새 문서를 생성하시겠습니까?"
