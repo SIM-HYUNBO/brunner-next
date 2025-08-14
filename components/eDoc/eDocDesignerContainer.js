@@ -460,6 +460,9 @@ export default function EDocDesignerContainer({
       />
 
       <div className="flex h-screen">
+        <button className="text-lg font-semibold mb-4" onClick={toggleMode}>
+          {mode === "design" ? "To Runtime Mode" : "To Design Mode"}
+        </button>
         {/* 왼쪽 컴포넌트 팔레트 */}
         <aside
           className="w-36 
