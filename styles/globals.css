@@ -2,50 +2,51 @@
 @tailwind components;
 @tailwind utilities;
 
-/* 색상 테마 변수
-===============================
-사용 가능한 색상 이름 (Tailwind 공식 색상 기준):
-red, orange, amber, yellow, lime,
-green, emerald, teal, cyan, sky,
-blue, indigo, violet, purple, fuchsia,
-pink, rose, slate, gray, zinc,
-neutral, stone
-================================== 
-*/
-
+/* =====================================================
+   색 테마 변수 정의 (Tailwind 공식 색상 기준)
+   사용 가능한 이름:
+   red, orange, amber, yellow, lime, green, emerald,
+   teal, cyan, sky, blue, indigo, violet, purple, fuchsia,
+   pink, rose, slate, gray, zinc, neutral, stone
+===================================================== */
 @layer utilities {
+
   :root {
-    /* 테마 색상 변수 (여기서만 바꾸면 전체 색상 변경 가능) */
-    --theme-color-name: fuchsia;
+    /* Light Mode 색상 변수 */
+    --theme-color-name: 'green'; /* 색상 이름만 바꾸면 모든 관련 색상 변경 */
+    
+    --theme-light-text: theme(`colors.${var(--theme-color-name)}.900`);
+    --theme-light-bg: theme(`colors.${var(--theme-color-name)}.100`);
 
-    --theme-light-text: theme('colors.' var(--theme-color-name) '.900');
-    --theme-light-bg: theme('colors.' var(--theme-color-name) '.100');
+    --theme-medium-text: theme(`colors.${var(--theme-color-name)}.600`);
+    --theme-medium-bg: theme(`colors.${var(--theme-color-name)}.400`);
 
-    --theme-medium-text: theme('colors.' var(--theme-color-name) '.600');
-    --theme-medium-bg: theme('colors.' var(--theme-color-name) '.400');
-
-    --theme-semi-text: theme('colors.' var(--theme-color-name) '.800');
-    --theme-semi-bg: theme('colors.' var(--theme-color-name) '.200');
+    --theme-semi-text: theme(`colors.${var(--theme-color-name)}.800`);
+    --theme-semi-bg: theme(`colors.${var(--theme-color-name)}.200`);
 
     --general-text-color: var(--theme-light-text);
     --general-bg-color: var(--theme-light-bg);
   }
 
   .dark {
-    --theme-dark-text: theme('colors.' var(--theme-color-name) '.100');
-    --theme-dark-bg: theme('colors.' var(--theme-color-name) '.900');
+    /* Dark Mode 색상 변수 덮어쓰기 */
+    --theme-dark-text: theme(`colors.${var(--theme-color-name)}.100`);
+    --theme-dark-bg: theme(`colors.${var(--theme-color-name)}.900`);
 
-    --theme-medium-text: theme('colors.' var(--theme-color-name) '.400');
-    --theme-medium-bg: theme('colors.' var(--theme-color-name) '.600');
+    --theme-medium-text: theme(`colors.${var(--theme-color-name)}.400`);
+    --theme-medium-bg: theme(`colors.${var(--theme-color-name)}.600`);
 
-    --theme-semi-text: theme('colors.' var(--theme-color-name) '.200');
-    --theme-semi-bg: theme('colors.' var(--theme-color-name) '.800');
+    --theme-semi-text: theme(`colors.${var(--theme-color-name)}.200`);
+    --theme-semi-bg: theme(`colors.${var(--theme-color-name)}.800`);
 
     --general-text-color: var(--theme-dark-text);
     --general-bg-color: var(--theme-dark-bg);
   }
 
-  /* 클래스 정의 */
+  /* ===============================
+     변수 기반 색상 클래스
+  =============================== */
+
   .theme-light-text-bg-color {
     color: var(--theme-light-text);
     background-color: var(--theme-light-bg);
@@ -54,46 +55,38 @@ neutral, stone
     color: var(--theme-dark-text);
     background-color: var(--theme-dark-bg);
   }
-
   .theme-medium-text-bg-color {
     color: var(--theme-medium-text);
     background-color: var(--theme-medium-bg);
   }
-
   .theme-semi-text-bg-color {
     color: var(--theme-semi-text);
     background-color: var(--theme-semi-bg);
   }
 
-  .general-text-color { color: var(--general-text-color); }
-  .general-text-bg-color {
-    color: var(--general-text-color);
-    background-color: var(--general-bg-color);
-  }
+  /* ===============================
+     기존 커스텀 클래스 재사용
+  =============================== */
 
-  .medium-text-color { color: var(--theme-medium-text); } 
-  .medium-bg-color { background-color: var(--theme-medium-bg); } 
+  .medium-text-color { color: var(--theme-medium-text); }
+  .medium-bg-color { background-color: var(--theme-medium-bg); }
   .dark-bg-color { background-color: var(--theme-dark-bg); }
   .semi-text-color { color: var(--theme-semi-text); }
   .semi-bg-color { background-color: var(--theme-semi-bg); }
-  .semi-text-bg-color {
-    color: var(--theme-semi-text);
-    background-color: var(--theme-semi-bg);
-  }
+  .semi-text-bg-color { color: var(--theme-semi-text); background-color: var(--theme-semi-bg); }
+  .general-text-color { color: var(--general-text-color); }
+  .general-text-bg-color { color: var(--general-text-color); background-color: var(--general-bg-color); }
 
   /* ===============================
-     기본 스타일들
-   =============================== */
+     페이지 레이아웃 & 스타일
+  =============================== */
+
   header {
-    @apply sticky w-full top-0 left-0 right-0 z-50 relative;
-    color: var(--general-text-color);
-    background-color: var(--general-bg-color);
-  }           
+    @apply sticky w-full top-0 left-0 right-0 z-50 relative general-text-bg-color;
+  }
 
   footer {
-    @apply h-20 w-full relative bottom-0 mt-10 flex flex-col items-center justify-center;
-    color: var(--general-text-color);
-    background-color: var(--general-bg-color);
+    @apply h-20 w-full relative bottom-0 mt-10 flex flex-col items-center justify-center general-text-bg-color; 
   }
 
   h1, h2, h3, h4, h5, h6 {
@@ -101,27 +94,16 @@ neutral, stone
   }
 
   pre {
-    color: var(--general-text-color);
-    white-space: pre-wrap;
+    @apply general-text-color whitespace-pre-wrap; 
   }
 
-  html {
-    @apply h-screen;
-  }
+  html { @apply h-screen; }
+  a { @apply text-white; }
+  p { @apply semi-text-bg-color; }
 
-  a {
-    @apply text-white;
-  }
-
-  p {
-    color: var(--theme-semi-text);
-    background-color: var(--theme-semi-bg);
-  }
-  
+  /* 페이지 기본 배경 */
   .bg-primary { 
-    @apply w-full h-full min-h-[calc(100vh-5rem)] max-w-full pb-20;
-    color: var(--general-text-color);
-    background-color: var(--general-bg-color);
+    @apply w-full h-full general-text-bg-color min-h-[calc(100vh-5rem)] max-w-full pb-20;
   }
 
   .page-title {
@@ -129,8 +111,17 @@ neutral, stone
   }
 
   .Layout {
-    @apply flex flex-col min-h-screen justify-center overflow-x-hidden w-full md:w-full lg:w-5/6 lg:mx-auto md:flex-row;
-    color: var(--general-text-color);
-    background-color: var(--general-bg-color);
-  }  
+    @apply bg-primary flex flex-col min-h-screen justify-center overflow-x-hidden;
+    @apply w-full md:w-full lg:w-5/6 lg:mx-auto;
+    @apply md:flex-row;
+  }
+
+  .big-primary {
+    @apply text-6xl font-bold text-green-700 dark:text-green-300;
+  }
+
+  .layout {
+    @apply flex flex-col gap-4;
+  }
+
 }
