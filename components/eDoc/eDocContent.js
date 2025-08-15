@@ -1,13 +1,17 @@
-'use strict';
-import { useState, useEffect } from 'react';
-import Head from 'next/head';
-import * as constants from '@/components/constants';
-import * as userInfo from '@/components/userInfo';
-import RequestServer from '@/components/requestServer';
-import EDocEditorCanvas from '@/components/eDoc/eDocEditorCanvas';
-import * as commonFunctions from '@/components/commonFunctions';
+"use strict";
+import { useState, useEffect } from "react";
+import Head from "next/head";
+import * as constants from "@/components/constants";
+import * as userInfo from "@/components/userInfo";
+import RequestServer from "@/components/requestServer";
+import EDocEditorCanvas from "@/components/eDoc/eDocEditorCanvas";
+import * as commonFunctions from "@/components/commonFunctions";
 
-export default function EDocContent({ documentId, documentData: initialDocumentData, pages: initialPages }) {
+export default function EDocContent({
+  documentId,
+  documentData: initialDocumentData,
+  pages: initialPages,
+}) {
   const [loading, setLoading] = useState(false);
   const [documentData, setDocumentData] = useState(initialDocumentData || null);
   const [pages, setPages] = useState(initialPages || []);
@@ -27,7 +31,7 @@ export default function EDocContent({ documentId, documentData: initialDocumentD
         const jRequest = {
           commandName: constants.commands.EDOC_DOCUMENT_SELECT_ONE,
           systemCode: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE,
-          userId: userInfo.getLoginUserId?.() || '',
+          userId: userInfo.getLoginUserId?.() || "",
           documentId,
         };
 
@@ -37,13 +41,15 @@ export default function EDocContent({ documentId, documentData: initialDocumentD
           const doc = jResponse.documentData || {};
           setDocumentData(doc);
 
-          const safePages = (doc.pages || [
-            {
-              id: 'page-1',
-              components: doc.components || [],
-              runtime_data: doc.runtime_data || {},
-            },
-          ]).map(page => ({
+          const safePages = (
+            doc.pages || [
+              {
+                id: "page-1",
+                components: doc.components || [],
+                runtime_data: doc.runtime_data || {},
+              },
+            ]
+          ).map((page) => ({
             ...page,
             documentData: doc,
           }));
@@ -55,7 +61,7 @@ export default function EDocContent({ documentId, documentData: initialDocumentD
           setPages([]);
         }
       } catch (error) {
-        alert('문서 로딩 중 오류가 발생했습니다.');
+        alert("문서 로딩 중 오류가 발생했습니다.");
         setDocumentData(null);
         setPages([]);
       } finally {
@@ -68,33 +74,39 @@ export default function EDocContent({ documentId, documentData: initialDocumentD
 
   if (loading) {
     return (
-      <div className="flex 
+      <div
+        className="flex 
                       h-screen 
                       items-center 
                       justify-center 
-                      general-bg-color">
-        <div className="animate-spin 
+                      general-bg-color"
+      >
+        <div
+          className="animate-spin 
                         rounded-full 
                         h-12 
                         w-12 
                         border-t-2 
                         border-b-2 
                         border-gray-800 
-                        dark:border-white"></div>
+                        dark:border-white"
+        ></div>
       </div>
     );
   }
 
   if (!documentData) {
     return (
-      <div className="flex 
+      <div
+        className="flex 
                       h-screen 
                       items-center 
                       justify-center 
                       bg-white 
                       dark-bg-color 
                       text-gray-900 
-                      dark:text-gray-100">
+                      dark:text-gray-100"
+      >
         문서를 불러오는 중입니다...
       </div>
     );
@@ -103,24 +115,29 @@ export default function EDocContent({ documentId, documentData: initialDocumentD
   const components = documentData.components || [];
 
   const title =
-    components.find(c => c.type === constants.edocComponentType._TEXT)?.runtime_data?.text?.slice(0, 60) ||
+    components
+      .find((c) => c.type === constants.edocComponentType._TEXT)
+      ?.runtime_data?.text?.slice(0, 60) ||
     documentData.runtime_data.title ||
-    '전자문서';
+    "전자문서";
 
   const description =
     components
       .filter(
-        c =>
-          c.type === constants.edocComponentType._TEXT || c.type === constants.edocComponentType._INPUT
+        (c) =>
+          c.type === constants.edocComponentType._TEXT ||
+          c.type === constants.edocComponentType._INPUT
       )
-      .map(c => c.runtime_data?.text || c.runtime_data?.label || '')
-      .join(' ')
-      .slice(0, 160) || '전자문서 내용 요약';
+      .map((c) => c.runtime_data?.text || c.runtime_data?.label || "")
+      .join(" ")
+      .slice(0, 160) || "전자문서 내용 요약";
 
   const ogImage =
     components.find(
-      c => c.type === constants.edocComponentType._IMAGE || c.type === constants.edocComponentType._VIDEO
-    )?.runtime_data?.src || '/default-og-image.png';
+      (c) =>
+        c.type === constants.edocComponentType._IMAGE ||
+        c.type === constants.edocComponentType._VIDEO
+    )?.runtime_data?.src || "/default-og-image.png";
 
   return (
     <>
@@ -145,35 +162,38 @@ export default function EDocContent({ documentId, documentData: initialDocumentD
         <meta name="twitter:image" content={ogImage} />
       </Head>
 
-      <h2 className={'page-title'}>
-        {documentData.runtime_data.title}
-      </h2>
+      <h2 className={"page-title"}>{documentData.runtime_data.title}</h2>
 
       <main
         className="flex-grow edoc-designer-canvas"
-        style={{ backgroundColor: documentData.runtime_data?.backgroundColor || '#f8f8f8' }}
+        style={{
+          backgroundColor:
+            documentData.runtime_data?.backgroundColor || "#f8f8f8",
+        }}
       >
         {/* 도큐먼트 객체 (실행타임) */}
         <div
           className={`w-full`}
           style={{
-            backgroundColor: documentData?.runtime_data?.backgroundColor || '#f8f8f8',
+            backgroundColor:
+              documentData?.runtime_data?.backgroundColor || "#f8f8f8",
             padding: `${documentData.runtime_data.padding}px`,
           }}
         >
-          {pages.map(page => (
+          {pages.map((page) => (
             <EDocEditorCanvas
               key={page.id}
               pageData={page}
               isViewerMode={false} // 입력 허용
               mode="runtime"
               bindingData={commonFunctions.bindingData}
+              documentData={documentData}
               onUpdateComponent={(updatedComponent) => {
-                setPages(prevPages => {
-                  return prevPages.map(page => {
+                setPages((prevPages) => {
+                  return prevPages.map((page) => {
                     if (page.id !== updatedComponent.pageId) return page;
 
-                    const newComponents = page.components.map(comp =>
+                    const newComponents = page.components.map((comp) =>
                       comp.id === updatedComponent.id ? updatedComponent : comp
                     );
                     return {

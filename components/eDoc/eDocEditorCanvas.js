@@ -1,8 +1,8 @@
-'use strict';
+"use strict";
 
-import React, { useEffect } from 'react';
-import * as constants from '@/components/constants';
-import DocComponentRenderer from '@/components/eDoc/eDocComponentRenderer';
+import React, { useEffect } from "react";
+import * as constants from "@/components/constants";
+import DocComponentRenderer from "@/components/eDoc/eDocComponentRenderer";
 
 export default function EDocEditorCanvas({
   pageData,
@@ -16,12 +16,13 @@ export default function EDocEditorCanvas({
   onUpdateComponent,
   isViewerMode = false,
   mode,
-  bindingData
+  bindingData,
+  documentData,
 }) {
   useEffect(() => {
     const handleKeyDown = (e) => {
-      if (e.key === 'Escape') {
-        if (!isViewerMode && typeof onComponentSelect === 'function') {
+      if (e.key === "Escape") {
+        if (!isViewerMode && typeof onComponentSelect === "function") {
           onComponentSelect(null);
         }
         if (document.activeElement instanceof HTMLElement) {
@@ -29,30 +30,30 @@ export default function EDocEditorCanvas({
         }
       }
     };
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
   }, [onComponentSelect]);
 
   function getPageDimensionsPx(pageSize) {
     switch (pageSize) {
-      case 'A3':
+      case "A3":
         return { width: 1123, height: 1587 };
-      case 'Letter':
+      case "Letter":
         return { width: 816, height: 1056 };
-      case 'A4':
+      case "A4":
       default:
         return { width: 794, height: 1123 };
     }
   }
 
   const { width: pageWidthPx, height: pageHeightPx } = getPageDimensionsPx(
-    pageData.runtime_data?.pageSize || 'A4'
+    pageData.runtime_data?.pageSize || "A4"
   );
 
   const justifyMap = {
-    left: 'flex-start',
-    center: 'center',
-    right: 'flex-end',
+    left: "flex-start",
+    center: "center",
+    right: "flex-end",
   };
 
   const splitIntoRows = (comps) => {
@@ -81,14 +82,15 @@ export default function EDocEditorCanvas({
       runtime_data: newRuntimeData,
     };
 
-    if (typeof onUpdateComponent === 'function') {
+    if (typeof onUpdateComponent === "function") {
       onUpdateComponent(updatedComponent);
     }
   };
 
   const RenderComponents = () => {
-    const comps = pageData.components.length > 0 ? 
-          [
+    const comps =
+      pageData.components.length > 0
+        ? [
             {
               ...pageData.components[0],
               runtime_data: {
@@ -108,19 +110,21 @@ export default function EDocEditorCanvas({
           key={rowIdx}
           className="flex mb-2 gap-2 w-full"
           style={{
-            maxWidth: `calc(${pageWidthPx}px - ${(pageData.runtime_data?.padding ?? 24) * 2}px)`,
+            maxWidth: `calc(${pageWidthPx}px - ${
+              (pageData.runtime_data?.padding ?? 24) * 2
+            }px)`,
           }}
         >
           {row.map((compIdx) => {
             const comp = comps[compIdx];
             const widthRaw = comp.runtime_data?.width;
             const componentWidth =
-              typeof widthRaw === 'string'
+              typeof widthRaw === "string"
                 ? widthRaw
                 : `${parseInt(widthRaw ?? 100)}%`;
 
-            const align = comp.runtime_data?.positionAlign || 'left';
-            const justifyContent = justifyMap[align] || 'flex-start';
+            const align = comp.runtime_data?.positionAlign || "left";
+            const justifyContent = justifyMap[align] || "flex-start";
 
             return (
               <div
@@ -131,15 +135,16 @@ export default function EDocEditorCanvas({
                 <div
                   className={`relative group rounded ${
                     isViewerMode
-                      ? ''
+                      ? ""
                       : selectedComponentId === compIdx
-                      ? 'border-2 border-blue-500'
-                      : 'border border-transparent hover:border-gray-300'
+                      ? "border-2 border-blue-500"
+                      : "border border-transparent hover:border-gray-300"
                   }`}
                   style={{ width: componentWidth }}
                 >
                   {!isViewerMode && selectedComponentId === compIdx && (
-                    <div className="opacity-80 
+                    <div
+                      className="opacity-80 
                                     left-0 
                                     top-1/2 
                                     -translate-y-1/2 
@@ -154,12 +159,13 @@ export default function EDocEditorCanvas({
                                     items-center 
                                     justify-center 
                                     gap-1 
-                                    absolute z-10">
+                                    absolute z-10"
+                    >
                       <button
                         onClick={() => onMoveUp(compIdx)}
                         disabled={compIdx === 0}
                         className="hover:bg-gray-100 text-sm px-1 py-0.5 transition-opacity duration-200"
-                        style={{ width: '16px', height: '20px', opacity: 1 }}
+                        style={{ width: "16px", height: "20px", opacity: 1 }}
                       >
                         ↑
                       </button>
@@ -167,14 +173,14 @@ export default function EDocEditorCanvas({
                         onClick={() => onMoveDown(compIdx)}
                         disabled={compIdx === comps.length - 1}
                         className="hover:bg-gray-100 text-sm px-1 py-0.5 transition-opacity duration-200"
-                        style={{ width: '16px', height: '20px', opacity: 1 }}
+                        style={{ width: "16px", height: "20px", opacity: 1 }}
                       >
                         ↓
                       </button>
                       <button
                         onClick={() => onDeleteComponent(compIdx)}
                         className="hover:bg-gray-100 text-red-600 text-sm px-1 py-0.5 transition-opacity duration-200"
-                        style={{ width: '16px', height: '20px', opacity: 1 }}
+                        style={{ width: "16px", height: "20px", opacity: 1 }}
                       >
                         🗑
                       </button>
@@ -183,7 +189,9 @@ export default function EDocEditorCanvas({
 
                   <DocComponentRenderer
                     component={comp}
-                    isSelected={!isViewerMode && selectedComponentId === compIdx}
+                    isSelected={
+                      !isViewerMode && selectedComponentId === compIdx
+                    }
                     onSelect={() => {
                       if (!isViewerMode) {
                         onSelect?.();
@@ -191,11 +199,15 @@ export default function EDocEditorCanvas({
                       }
                     }}
                     onRuntimeDataChange={(...args) =>
-                      updateRuntimeData(compIdx, args.length === 1 ? args[0] : args)
+                      updateRuntimeData(
+                        compIdx,
+                        args.length === 1 ? args[0] : args
+                      )
                     }
                     mode={mode}
                     bindingData={bindingData}
-                    page={pageData}
+                    pageData={pageData}
+                    documentData={documentData}
                   />
                 </div>
               </div>
@@ -208,14 +220,15 @@ export default function EDocEditorCanvas({
 
   return (
     // 페이지간 간격 1 고정
-    <div className={`overflow-x-auto 
+    <div
+      className={`overflow-x-auto 
                      flex 
                      w-full 
                      justify-center`}
-         style={{
-          marginTop:`${pageData.runtime_data.pageMargin}px`,          
-        }}            
-    > 
+      style={{
+        marginTop: `${pageData.runtime_data.pageMargin}px`,
+      }}
+    >
       <div
         id={`editor-canvas-${pageData.id}`}
         className={`border 
@@ -227,16 +240,18 @@ export default function EDocEditorCanvas({
           width: `${pageWidthPx}px`,
           minHeight: `${pageHeightPx}px`,
           padding: `${pageData.runtime_data?.padding ?? 48}px`,
-          boxSizing: 'border-box',
-          backgroundColor: pageData.runtime_data?.backgroundColor || '#f8f8f8',
+          boxSizing: "border-box",
+          backgroundColor: pageData.runtime_data?.backgroundColor || "#f8f8f8",
         }}
         onClick={onSelect}
       >
         {pageData.components?.length === 0 ? (
           isViewerMode ? null : (
-            <p className="text-gray-500 
+            <p
+              className="text-gray-500 
                           dark:text-gray-500 
-                          text-center">
+                          text-center"
+            >
               좌측에서 컴포넌트를 추가하세요.
             </p>
           )

@@ -559,6 +559,7 @@ export default function EDocDesignerContainer({
                   isViewerMode={isExportingPdf}
                   mode={mode}
                   bindingData={commonFunctions.bindingData}
+                  documentData={documentData}
                 />
               </div>
             ))}
