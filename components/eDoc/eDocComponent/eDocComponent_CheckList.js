@@ -1,48 +1,54 @@
-`use strict`
+`use strict`;
 
-import React from 'react';
+import React from "react";
 import EDocTextStyleEditor from "@/components/eDoc/eDocTextStyleEditor";
 
 export const initDefaultRuntimeData = (defaultRuntimeData) => {
-  
   defaultRuntimeData.itemCount = 3;
-  defaultRuntimeData.items = Array.from({ length: 3 }, (_, i) => ({ label: `항목 ${i + 1}`, checked: false}));
+  defaultRuntimeData.items = Array.from({ length: 3 }, (_, i) => ({
+    label: `항목 ${i + 1}`,
+    checked: false,
+  }));
   defaultRuntimeData.positionAlign = "left";
-  
+
   // font 관련 기본 설정
   defaultRuntimeData.fontFamily = "Arial";
   defaultRuntimeData.fontSize = 12;
   defaultRuntimeData.underline = false;
-  defaultRuntimeData.fontColor =  "#000000";
+  defaultRuntimeData.fontColor = "#000000";
   defaultRuntimeData.backgroundColor = "#ffffff";
   defaultRuntimeData.fontWeight = "normal";
 
   return defaultRuntimeData;
-}
+};
 
 export const getBindingValue = (component) => {
   if (!component.runtime_data?.bindingKey) {
     return null;
   }
   return component.runtime_data?.items || null;
-}
+};
 
 export const getNewRuntimeData = (component, newData) => {
-
   const currentData = component.runtime_data || {};
   let newRuntimeData = { ...currentData };
   const [itemIdx, checked] = newData;
   const items = [...(currentData.items || [])];
-  
+
   if (items[itemIdx]) {
     items[itemIdx] = { ...items[itemIdx], checked };
     newRuntimeData.items = items;
   }
   return newRuntimeData;
-}
+};
 
-export function renderProperty(component, updateRuntimeData, renderWidthProperty, renderForceNewLineProperty, renderPositionAlignProperty) {
-  
+export function renderProperty(
+  component,
+  updateRuntimeData,
+  renderWidthProperty,
+  renderForceNewLineProperty,
+  renderPositionAlignProperty
+) {
   const renderComponentProperty = (component) => {
     const items = component.runtime_data?.items || [];
     const updateItemLabel = (idx, newLabel) => {
@@ -58,7 +64,10 @@ export function renderProperty(component, updateRuntimeData, renderWidthProperty
       updateRuntimeData("items", newItems);
     };
     const addItem = () => {
-      const newItems = [...items, { label: `항목 ${items.length + 1}`, checked: false }];
+      const newItems = [
+        ...items,
+        { label: `항목 ${items.length + 1}`, checked: false },
+      ];
       updateRuntimeData("items", newItems);
     };
     const removeItem = (idx) => {
@@ -71,7 +80,7 @@ export function renderProperty(component, updateRuntimeData, renderWidthProperty
         <label>Binding Key:</label>
         <input
           type="text"
-          value={component.runtime_data?.bindingKey || ''}
+          value={component.runtime_data?.bindingKey || ""}
           onChange={(e) => updateRuntimeData("bindingKey", e.target.value)}
           className="w-full border border-gray-300 rounded p-2 mb-2"
         />
@@ -113,12 +122,12 @@ export function renderProperty(component, updateRuntimeData, renderWidthProperty
         {renderPositionAlignProperty()}
 
         <EDocTextStyleEditor
-          fontFamily={component.runtime_data?.fontFamily || 'Arial'}
+          fontFamily={component.runtime_data?.fontFamily || "Arial"}
           fontSize={component.runtime_data?.fontSize || 12}
-          fontWeight={component.runtime_data?.fontWeight || 'normal'}
+          fontWeight={component.runtime_data?.fontWeight || "normal"}
           underline={component.runtime_data?.underline || false}
-          fontColor={component.runtime_data?.fontColor || '#000000'}
-          backgroundColor={component.runtime_data?.backgroundColor || '#ffffff'}
+          fontColor={component.runtime_data?.fontColor || "#000000"}
+          backgroundColor={component.runtime_data?.backgroundColor || "#ffffff"}
           onChange={(updatedProps) => {
             Object.entries(updatedProps).forEach(([key, value]) => {
               updateRuntimeData(key, value);
@@ -128,7 +137,7 @@ export function renderProperty(component, updateRuntimeData, renderWidthProperty
 
         <label>내용 정렬:</label>
         <select
-          value={component.runtime_data?.textAlign || 'left'}
+          value={component.runtime_data?.textAlign || "left"}
           onChange={(e) => updateRuntimeData("textAlign", e.target.value)}
           className="w-full border border-gray-300 rounded p-2 mb-2"
         >
@@ -136,50 +145,48 @@ export function renderProperty(component, updateRuntimeData, renderWidthProperty
           <option value="center">가운데</option>
           <option value="right">오른쪽</option>
         </select>
-
       </div>
     );
-  }
+  };
 
   return renderComponentProperty(component);
 }
 
-export default function RenderComponent (props) {
+export default function RenderComponent(props) {
   const {
+    documentData,
+    pageData,
     component,
     handleComponentClick,
     onRuntimeDataChange,
-    selectedClass, 
-    alignmentClass, 
-    textAlign, 
-    isDesignMode, 
-    bindingData, 
-    documentData 
+    selectedClass,
+    alignmentClass,
+    textAlign,
+    isDesignMode,
   } = props;
 
-  
-
   const style = {
-    width: '100%',
-    height: component.runtime_data?.height || 'auto',
+    width: "100%",
+    height: component.runtime_data?.height || "auto",
     textAlign, // 외부에서 전달되는 textAlign
-    fontFamily: component.runtime_data?.fontFamily || 'inherit',
+    fontFamily: component.runtime_data?.fontFamily || "inherit",
     fontSize: component.runtime_data?.fontSize
       ? `${component.runtime_data.fontSize}px`
-      : 'inherit',
-    fontWeight: component.runtime_data?.fontWeight || 'normal',
-    color: component.runtime_data?.fontColor || '#000000',
-    backgroundColor: component.runtime_data?.backgroundColor || 'transparent',
-    textDecoration: component.runtime_data?.underline ? 'underline' : 'none',
+      : "inherit",
+    fontWeight: component.runtime_data?.fontWeight || "normal",
+    color: component.runtime_data?.fontColor || "#000000",
+    backgroundColor: component.runtime_data?.backgroundColor || "transparent",
+    textDecoration: component.runtime_data?.underline ? "underline" : "none",
   };
 
   const justifyMap = {
-    left: 'flex-start',
-    center: 'center',
-    right: 'flex-end',
+    left: "flex-start",
+    center: "center",
+    right: "flex-end",
   };
 
-  const justifyContent = justifyMap[component.runtime_data?.textAlign || 'left'];
+  const justifyContent =
+    justifyMap[component.runtime_data?.textAlign || "left"];
 
   return (
     <div
@@ -224,4 +231,4 @@ export default function RenderComponent (props) {
       ))}
     </div>
   );
-};
+}

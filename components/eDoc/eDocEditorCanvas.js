@@ -5,6 +5,7 @@ import * as constants from "@/components/constants";
 import DocComponentRenderer from "@/components/eDoc/eDocComponentRenderer";
 
 export default function EDocEditorCanvas({
+  documentData,
   pageData,
   isSelected,
   onSelect,
@@ -16,8 +17,6 @@ export default function EDocEditorCanvas({
   onUpdateComponent,
   isViewerMode = false,
   mode,
-  bindingData,
-  documentData,
 }) {
   useEffect(() => {
     const handleKeyDown = (e) => {
@@ -205,7 +204,6 @@ export default function EDocEditorCanvas({
                       )
                     }
                     mode={mode}
-                    bindingData={bindingData}
                     pageData={pageData}
                     documentData={documentData}
                   />

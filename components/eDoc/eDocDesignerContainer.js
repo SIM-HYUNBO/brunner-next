@@ -544,6 +544,7 @@ export default function EDocDesignerContainer({
                 </div>
 
                 <EDocEditorCanvas
+                  documentData={documentData}
                   pageData={page}
                   isSelected={idx === currentPageIdx}
                   onSelect={() => {
@@ -558,8 +559,6 @@ export default function EDocDesignerContainer({
                   onUpdateComponent={handleUpdateComponent}
                   isViewerMode={isExportingPdf}
                   mode={mode}
-                  bindingData={commonFunctions.bindingData}
-                  documentData={documentData}
                 />
               </div>
             ))}
