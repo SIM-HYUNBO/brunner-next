@@ -1,0 +1,195 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* 색 테마 변수 정의
+===============================
+red, orange, amber, yellow, lime,
+green, emerald, teal, cyan, sky,
+blue, indigo, violet, purple, fuchsia,
+pink, rose, slate, gray, zinc,
+neutral, stone
+================================== 
+*/
+@layer utilities {
+
+  :root {
+    /* Light Mode 색상 변수 */
+    --theme-light-text: theme('colors.slate.900');
+    --theme-light-bg: theme('colors.slate.100');
+
+    --theme-medium-text: theme('colors.slate.600');
+    --theme-medium-bg: theme('colors.slate.400');
+
+    --theme-semi-text: theme('colors.slate.800');
+    --theme-semi-bg: theme('colors.slate.200');
+
+    --general-text-color: var(--theme-light-text);
+    --general-bg-color: var(--theme-light-bg);
+  }
+
+  .dark {
+    /* Dark Mode 색상 변수 덮어쓰기 */
+    --theme-dark-text: theme('colors.slate.100');
+    --theme-dark-bg: theme('colors.slate.900');
+
+    --theme-medium-text: theme('colors.slate.400');
+    --theme-medium-bg: theme('colors.slate.600');
+
+    --theme-semi-text: theme('colors.slate.200');
+    --theme-semi-bg: theme('colors.slate.800');
+
+    --general-text-color: var(--theme-dark-text);
+    --general-bg-color: var(--theme-dark-bg);
+  }
+
+  /* ============================================
+   변수 기반 색상 적용 @apply 안써도 var 사용하면 됨
+   ============================================ */
+
+  /* light/dark 텍스트 색상 */
+  .theme-light-text-bg-color {
+    color: var(--theme-light-text);
+    background-color: var(--theme-light-bg);
+  }
+  .theme-dark-text-bg-color {
+    color: var(--theme-dark-text);
+    background-color: var(--theme-dark-bg);
+  }
+
+  /* medium 텍스트 및 배경 */
+  .theme-medium-text-bg-color {
+    color: var(--theme-medium-text);
+    background-color: var(--theme-medium-bg);
+  }
+
+  /* semi 텍스트 및 배경 */
+  .theme-semi-text-bg-color {
+    color: var(--theme-semi-text);
+    background-color: var(--theme-semi-bg);
+  }
+
+  /* 사용자 정의 클래스 재활용 */
+
+  .medium-text-color {
+    color: var(--theme-medium-text);
+  } 
+  .medium-bg-color {
+    background-color: var(--theme-medium-bg);
+  } 
+
+  .dark-bg-color {
+    background-color: var(--theme-dark-bg);
+  }
+  .semi-text-color {
+    color: var(--theme-semi-text);
+  }
+  .semi-bg-color {
+    background-color: var(--theme-semi-bg);
+  }
+
+  .semi-text-bg-color {
+    color: var(--theme-semi-text);
+    background-color: var(--theme-semi-bg);
+  }
+
+  .general-text-color {
+    color: var(--general-text-color);
+  } 
+
+  .general-text-bg-color {
+    color: var(--general-text-color);
+    background-color: var(--general-bg-color);
+  } 
+ 
+  /* ===============================
+     기본 스타일들
+   =============================== */
+
+  header {
+    @apply sticky 
+           w-full 
+           top-0 
+           left-0 
+           right-0 
+           z-50 
+           general-text-bg-color
+           relative
+           ;
+  }           
+
+  footer {
+    @apply h-20 
+           w-full
+           relative 
+           bottom-0 
+           mt-10
+           flex 
+           flex-col 
+           items-center
+           justify-center
+           general-text-bg-color
+           ; 
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply text-green-600 
+           dark:text-green-300;
+  }
+
+  pre {
+    @apply general-text-color 
+           whitespace-pre-wrap; 
+  }
+
+  html {
+    @apply h-screen;
+  }
+
+  a {
+    @apply text-white;
+  }
+
+  p {
+    @apply semi-text-bg-color;
+  }
+  
+  .bg-primary { 
+    @apply w-full 
+           h-full 
+           general-text-bg-color
+           min-h-[calc(100vh-5rem)] 
+           max-w-full 
+           pb-20
+           ;
+  }
+
+  .page-title {
+    @apply sm:text-4xl 
+           text-3xl
+           my-10 
+           font-medium 
+           text-green-900
+           ;
+  }
+
+  .Layout {
+    @apply bg-primary 
+           flex 
+           flex-col 
+           min-h-screen 
+           justify-center 
+           overflow-x-hidden
+           ;
+
+    @apply w-full 
+           md:w-full 
+           lg:w-5/6 
+           lg:mx-auto
+           ;
+
+    @apply md:flex-row
+           ;
+  }  
+}
+
