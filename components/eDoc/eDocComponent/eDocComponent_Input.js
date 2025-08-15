@@ -1,6 +1,6 @@
-'use strict';
+"use strict";
 
-import React from 'react';
+import React from "react";
 import EDocTextStyleEditor from "@/components/eDoc/eDocTextStyleEditor";
 
 export const initDefaultRuntimeData = (defaultRuntimeData) => {
@@ -32,18 +32,24 @@ export const getBindingValue = (component) => {
 export const getNewRuntimeData = (component, { key, value }) => {
   return {
     ...(component.runtime_data || {}),
-    [key]: value
+    [key]: value,
   };
 };
 
-export function renderProperty(component, updateRuntimeData, renderWidthProperty, renderForceNewLineProperty, renderPositionAlignProperty) {
+export function renderProperty(
+  component,
+  updateRuntimeData,
+  renderWidthProperty,
+  renderForceNewLineProperty,
+  renderPositionAlignProperty
+) {
   const renderComponentProperty = (component) => {
     return (
       <div>
         <label>Binding Key:</label>
         <input
           type="text"
-          value={component.runtime_data?.bindingKey || ''}
+          value={component.runtime_data?.bindingKey || ""}
           onChange={(e) => updateRuntimeData("bindingKey", e.target.value)}
           className="w-full border border-gray-300 rounded p-2 mb-2"
         />
@@ -51,14 +57,14 @@ export function renderProperty(component, updateRuntimeData, renderWidthProperty
         <label>입력값:</label>
         <input
           type="text"
-          value={component.runtime_data?.value || ''}
+          value={component.runtime_data?.value || ""}
           onChange={(e) => updateRuntimeData("value", e.target.value)}
           className="w-full border border-gray-300 rounded p-2 mb-2"
         />
 
         <label>내용 정렬:</label>
         <select
-          value={component.runtime_data?.textAlign || 'left'}
+          value={component.runtime_data?.textAlign || "left"}
           onChange={(e) => updateRuntimeData("textAlign", e.target.value)}
           className="w-full border border-gray-300 rounded p-2 mb-2"
         >
@@ -83,12 +89,12 @@ export function renderProperty(component, updateRuntimeData, renderWidthProperty
         {renderPositionAlignProperty()}
 
         <EDocTextStyleEditor
-          fontFamily={component.runtime_data?.fontFamily || 'Arial'}
+          fontFamily={component.runtime_data?.fontFamily || "Arial"}
           fontSize={component.runtime_data?.fontSize || 12}
-          fontWeight={component.runtime_data?.fontWeight || 'normal'}
+          fontWeight={component.runtime_data?.fontWeight || "normal"}
           underline={component.runtime_data?.underline || false}
-          fontColor={component.runtime_data?.fontColor || '#000000'}
-          backgroundColor={component.runtime_data?.backgroundColor || '#ffffff'}
+          fontColor={component.runtime_data?.fontColor || "#000000"}
+          backgroundColor={component.runtime_data?.backgroundColor || "#ffffff"}
           onChange={(updatedProps) => {
             Object.entries(updatedProps).forEach(([key, value]) => {
               updateRuntimeData(key, value);
@@ -104,6 +110,8 @@ export function renderProperty(component, updateRuntimeData, renderWidthProperty
 
 export default function RenderComponent(props) {
   const {
+    documentData,
+    pageData,
     component,
     handleComponentClick,
     onRuntimeDataChange,
@@ -111,31 +119,33 @@ export default function RenderComponent(props) {
     alignmentClass,
     textAlign,
     isDesignMode,
-    bindingData,
-    documentData
   } = props;
 
   const isEditable = component.runtime_data?.editable ?? true;
 
   const style = {
-    width: '100%',
-    height: component.runtime_data?.height || 'auto',
+    width: "100%",
+    height: component.runtime_data?.height || "auto",
     textAlign,
-    fontFamily: component.runtime_data?.fontFamily || 'Arial',
-    fontSize: component.runtime_data?.fontSize ? `${component.runtime_data.fontSize}px` : '14px',
-    fontWeight: component.runtime_data?.fontWeight || 'normal',
-    color: component.runtime_data?.fontColor || '#000000',
-    backgroundColor: component.runtime_data?.backgroundColor || 'transparent',
-    cursor: isEditable ? 'text' : 'default'
+    fontFamily: component.runtime_data?.fontFamily || "Arial",
+    fontSize: component.runtime_data?.fontSize
+      ? `${component.runtime_data.fontSize}px`
+      : "14px",
+    fontWeight: component.runtime_data?.fontWeight || "normal",
+    color: component.runtime_data?.fontColor || "#000000",
+    backgroundColor: component.runtime_data?.backgroundColor || "transparent",
+    cursor: isEditable ? "text" : "default",
   };
 
   return (
     <input
       type="text"
-      className={`${selectedClass} ${alignmentClass} h-8 ${isEditable ? 'cursor-text' : 'cursor-default'} ${!isEditable ? 'bg-gray-100' : ''}`}
+      className={`${selectedClass} ${alignmentClass} h-8 ${
+        isEditable ? "cursor-text" : "cursor-default"
+      } ${!isEditable ? "bg-gray-100" : ""}`}
       style={style}
-      value={component.runtime_data?.value || ''}
-      placeholder={component.runtime_data?.placeholder || ''}
+      value={component.runtime_data?.value || ""}
+      placeholder={component.runtime_data?.placeholder || ""}
       readOnly={!isEditable}
       onClick={handleComponentClick}
       onChange={(e) => {
@@ -143,8 +153,8 @@ export default function RenderComponent(props) {
           onRuntimeDataChange({
             runtime_data: {
               ...component.runtime_data,
-              value: e.target.value
-            }
+              value: e.target.value,
+            },
           });
         }
       }}

@@ -1,6 +1,6 @@
-`use strict`
+`use strict`;
 
-import React from 'react';
+import React from "react";
 import EDocTextStyleEditor from "@/components/eDoc/eDocTextStyleEditor";
 
 export const initDefaultRuntimeData = (defaultRuntimeData) => {
@@ -12,93 +12,99 @@ export const initDefaultRuntimeData = (defaultRuntimeData) => {
   defaultRuntimeData.fontFamily = "Arial";
   defaultRuntimeData.fontSize = 12;
   defaultRuntimeData.underline = false;
-  defaultRuntimeData.fontColor =  "#000000";
+  defaultRuntimeData.fontColor = "#000000";
   defaultRuntimeData.backgroundColor = "#ffffff";
   defaultRuntimeData.fontWeight = "normal";
 
   return defaultRuntimeData;
-}
+};
 
 export const getBindingValue = (component) => {
   if (!component.runtime_data?.bindingKey) {
     return null;
   }
   return component.runtime_data?.content || null;
-}
+};
 
 export const getNewRuntimeData = (component, { key, value }) => {
   return {
     ...(component.runtime_data || {}),
-    [key]: value
+    [key]: value,
   };
 };
 
-export function renderProperty(component, updateRuntimeData, renderWidthProperty, renderForceNewLineProperty, renderPositionAlignProperty) {
+export function renderProperty(
+  component,
+  updateRuntimeData,
+  renderWidthProperty,
+  renderForceNewLineProperty,
+  renderPositionAlignProperty
+) {
   const renderComponentProperty = (component) => {
-      return (
-        <div>
-          <label>Binding Key:</label>
-          <input
-            type="text"
-            value={component.runtime_data?.bindingKey || ''}
-            onChange={(e) => updateRuntimeData("bindingKey", e.target.value)}
-            className="w-full border border-gray-300 rounded p-2 mb-2"
-          />
+    return (
+      <div>
+        <label>Binding Key:</label>
+        <input
+          type="text"
+          value={component.runtime_data?.bindingKey || ""}
+          onChange={(e) => updateRuntimeData("bindingKey", e.target.value)}
+          className="w-full border border-gray-300 rounded p-2 mb-2"
+        />
 
-          <label>텍스트:</label>
-          <textarea
-            value={component.runtime_data?.content || ''}
-            onChange={(e) => updateRuntimeData("content", e.target.value)}
-            rows={4}
-            className="w-full border border-gray-300 rounded p-2"
-          />
+        <label>텍스트:</label>
+        <textarea
+          value={component.runtime_data?.content || ""}
+          onChange={(e) => updateRuntimeData("content", e.target.value)}
+          rows={4}
+          className="w-full border border-gray-300 rounded p-2"
+        />
 
-          <label>내용 정렬:</label>
-          <select
-            value={component.runtime_data?.textAlign || 'left'}
-            onChange={(e) => updateRuntimeData("textAlign", e.target.value)}
-            className="w-full border border-gray-300 rounded p-2 mb-2"
-          >
-            <option value="left">왼쪽</option>
-            <option value="center">가운데</option>
-            <option value="right">오른쪽</option>
-          </select>
+        <label>내용 정렬:</label>
+        <select
+          value={component.runtime_data?.textAlign || "left"}
+          onChange={(e) => updateRuntimeData("textAlign", e.target.value)}
+          className="w-full border border-gray-300 rounded p-2 mb-2"
+        >
+          <option value="left">왼쪽</option>
+          <option value="center">가운데</option>
+          <option value="right">오른쪽</option>
+        </select>
 
-          {renderWidthProperty()}
-          {renderForceNewLineProperty()}
-          {renderPositionAlignProperty()}
+        {renderWidthProperty()}
+        {renderForceNewLineProperty()}
+        {renderPositionAlignProperty()}
 
-          <EDocTextStyleEditor
-            fontFamily={component.runtime_data?.fontFamily || 'Arial'}
-            fontSize={component.runtime_data?.fontSize || 12}
-            fontWeight={component.runtime_data?.fontWeight || 'normal'}
-            underline={component.runtime_data?.underline || false}
-            fontColor={component.runtime_data?.fontColor || '#000000'}
-            backgroundColor={component.runtime_data?.backgroundColor || '#ffffff'}
-            onChange={(updatedProps) => {
-              Object.entries(updatedProps).forEach(([key, value]) => {
-                updateRuntimeData(key, value);
-              });
-            }}
-          />
-        </div>
-      );
-  }
+        <EDocTextStyleEditor
+          fontFamily={component.runtime_data?.fontFamily || "Arial"}
+          fontSize={component.runtime_data?.fontSize || 12}
+          fontWeight={component.runtime_data?.fontWeight || "normal"}
+          underline={component.runtime_data?.underline || false}
+          fontColor={component.runtime_data?.fontColor || "#000000"}
+          backgroundColor={component.runtime_data?.backgroundColor || "#ffffff"}
+          onChange={(updatedProps) => {
+            Object.entries(updatedProps).forEach(([key, value]) => {
+              updateRuntimeData(key, value);
+            });
+          }}
+        />
+      </div>
+    );
+  };
 
   return renderComponentProperty(component);
 }
 
-export default function RenderComponent (props) {
+export default function RenderComponent(props) {
   const {
+    documentData,
+    pageData,
     component,
     handleComponentClick,
     onRuntimeDataChange,
-    selectedClass, 
-    alignmentClass, 
-    textAlign, 
-    isDesignMode, 
-    bindingData, 
-    documentData 
+    selectedClass,
+    alignmentClass,
+    textAlign,
+    isDesignMode,
   } = props;
 
   const {
@@ -137,4 +143,4 @@ export default function RenderComponent (props) {
       ))}
     </p>
   );
-};
+}

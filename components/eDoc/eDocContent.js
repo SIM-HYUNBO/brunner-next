@@ -5,7 +5,7 @@ import * as constants from "@/components/constants";
 import * as userInfo from "@/components/userInfo";
 import RequestServer from "@/components/requestServer";
 import EDocEditorCanvas from "@/components/eDoc/eDocEditorCanvas";
-import * as commonFunctions from "@/components/commonFunctions";
+
 
 export default function EDocContent({
   documentId,
@@ -186,7 +186,6 @@ export default function EDocContent({
               pageData={page}
               isViewerMode={false} // 입력 허용
               mode="runtime"
-              bindingData={commonFunctions.bindingData}
               documentData={documentData}
               onUpdateComponent={(updatedComponent) => {
                 setPages((prevPages) => {

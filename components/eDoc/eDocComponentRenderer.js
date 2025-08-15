@@ -11,14 +11,13 @@ import ButtonComponent from "@/components/eDoc/eDocComponent/eDocComponent_Butto
 import VideoComponent from "@/components/eDoc/eDocComponent/eDocComponent_Video";
 
 export default function DocComponentRenderer({
+  documentData,
+  pageData,
   component,
   isSelected,
   onSelect,
   onRuntimeDataChange,
   mode,
-  bindingData,
-  pageData,
-  documentData,
 }) {
   const selectedClass = isSelected
     ? "outline outline-2 outline-blue-500 rounded bg-blue-50"
@@ -55,6 +54,8 @@ export default function DocComponentRenderer({
   };
 
   const renderProps = {
+    documentData: documentData,
+    pageData,
     component,
     handleComponentClick,
     onRuntimeDataChange,
@@ -62,9 +63,6 @@ export default function DocComponentRenderer({
     alignmentClass,
     textAlign,
     isDesignMode: mode === "design",
-    bindingData,
-    page: pageData,
-    documentData: documentData,
   };
 
   switch (component.type) {

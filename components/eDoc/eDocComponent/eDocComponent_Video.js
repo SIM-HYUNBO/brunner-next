@@ -1,15 +1,15 @@
-'use strict';
+"use strict";
 
-import React, { useState, useEffect, useRef } from 'react';
-import dynamic from 'next/dynamic';
+import React, { useState, useEffect, useRef } from "react";
+import dynamic from "next/dynamic";
 import BrunnerVideo from "@/components/brunnerVideo";
 
 /**
  * 기본 runtime_data 초기화
  */
 export const initDefaultRuntimeData = (defaultRuntimeData) => {
-  defaultRuntimeData.url = '';
-  defaultRuntimeData.title = '영상 제목';
+  defaultRuntimeData.url = "";
+  defaultRuntimeData.title = "영상 제목";
   defaultRuntimeData.originalWidth = 640;
   defaultRuntimeData.originalHeight = 360;
   return defaultRuntimeData;
@@ -38,31 +38,37 @@ export const getNewRuntimeData = (component, { key, value }) => {
 /**
  * 속성 편집기
  */
-export function renderProperty( component, updateRuntimeData, renderWidthProperty, renderForceNewLineProperty, renderPositionAlignProperty) {
+export function renderProperty(
+  component,
+  updateRuntimeData,
+  renderWidthProperty,
+  renderForceNewLineProperty,
+  renderPositionAlignProperty
+) {
   const renderComponentProperty = () => {
     return (
       <div>
         <label>Binding Key:</label>
         <input
           type="text"
-          value={component.runtime_data?.bindingKey || ''}
-          onChange={(e) => updateRuntimeData('bindingKey', e.target.value)}
+          value={component.runtime_data?.bindingKey || ""}
+          onChange={(e) => updateRuntimeData("bindingKey", e.target.value)}
           className="w-full border border-gray-300 rounded p-2 mb-2"
         />
 
         <label>영상 제목:</label>
         <input
           type="text"
-          value={component.runtime_data?.title || ''}
-          onChange={(e) => updateRuntimeData('title', e.target.value)}
+          value={component.runtime_data?.title || ""}
+          onChange={(e) => updateRuntimeData("title", e.target.value)}
           className="w-full border border-gray-300 rounded p-2 mb-2"
         />
 
         <label>영상 URL:</label>
         <input
           type="text"
-          value={component.runtime_data?.url || ''}
-          onChange={(e) => updateRuntimeData('url', e.target.value)}
+          value={component.runtime_data?.url || ""}
+          onChange={(e) => updateRuntimeData("url", e.target.value)}
           className="w-full border border-gray-300 rounded p-2 mb-2"
         />
 
@@ -71,7 +77,7 @@ export function renderProperty( component, updateRuntimeData, renderWidthPropert
           type="number"
           value={component.runtime_data?.originalWidth || 640}
           onChange={(e) =>
-            updateRuntimeData('originalWidth', parseInt(e.target.value, 10))
+            updateRuntimeData("originalWidth", parseInt(e.target.value, 10))
           }
           className="w-full border border-gray-300 rounded p-2 mb-2"
         />
@@ -81,15 +87,14 @@ export function renderProperty( component, updateRuntimeData, renderWidthPropert
           type="number"
           value={component.runtime_data?.originalHeight || 360}
           onChange={(e) =>
-            updateRuntimeData('originalHeight', parseInt(e.target.value, 10))
+            updateRuntimeData("originalHeight", parseInt(e.target.value, 10))
           }
           className="w-full border border-gray-300 rounded p-2 mb-2"
         />
-        
+
         {renderWidthProperty && renderWidthProperty()}
         {renderForceNewLineProperty && renderForceNewLineProperty()}
         {renderPositionAlignProperty && renderPositionAlignProperty()}
-
       </div>
     );
   };
@@ -102,6 +107,8 @@ export function renderProperty( component, updateRuntimeData, renderWidthPropert
  */
 export default function RenderComponent(props) {
   const {
+    documentData,
+    pageData,
     component,
     handleComponentClick,
     onRuntimeDataChange,
@@ -109,13 +116,11 @@ export default function RenderComponent(props) {
     alignmentClass,
     textAlign,
     isDesignMode,
-    bindingData,
-    documentData,
   } = props;
 
   const {
-    title = '영상 제목',
-    url = '',
+    title = "영상 제목",
+    url = "",
     originalWidth = 640,
     originalHeight = 360,
   } = component.runtime_data || {};
@@ -163,13 +168,13 @@ export default function RenderComponent(props) {
         handleComponentClick?.(component);
       }}
     >
-    <BrunnerVideo
-      url={url}
-      title={title}
-      width="800px" // 100%
-      height="450px" // 100%
-      className={`mt-5`}
-    ></BrunnerVideo>
+      <BrunnerVideo
+        url={url}
+        title={title}
+        width="800px" // 100%
+        height="450px" // 100%
+        className={`mt-5`}
+      ></BrunnerVideo>
     </div>
   );
 }
