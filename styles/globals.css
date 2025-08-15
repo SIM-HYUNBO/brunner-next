@@ -15,14 +15,14 @@ neutral, stone
 
   :root {
     /* Light Mode 색상 변수 */
-    --theme-light-text: theme('colors.inigo.900');
-    --theme-light-bg: theme('colors.inigo.100');
+    --theme-light-text: theme('colors.green.900');
+    --theme-light-bg: theme('colors.green.100');
 
-    --theme-medium-text: theme('colors.inigo.600');
-    --theme-medium-bg: theme('colors.inigo.400');
+    --theme-medium-text: theme('colors.green.600');
+    --theme-medium-bg: theme('colors.green.400');
 
-    --theme-semi-text: theme('colors.inigo.800');
-    --theme-semi-bg: theme('colors.inigo.200');
+    --theme-semi-text: theme('colors.green.800');
+    --theme-semi-bg: theme('colors.green.200');
 
     --general-text-color: var(--theme-light-text);
     --general-bg-color: var(--theme-light-bg);
@@ -30,14 +30,14 @@ neutral, stone
 
   .dark {
     /* Dark Mode 색상 변수 덮어쓰기 */
-    --theme-dark-text: theme('colors.inigo.100');
-    --theme-dark-bg: theme('colors.inigo.900');
+    --theme-dark-text: theme('colors.green.100');
+    --theme-dark-bg: theme('colors.green.900');
 
-    --theme-medium-text: theme('colors.inigo.400');
-    --theme-medium-bg: theme('colors.inigo.600');
+    --theme-medium-text: theme('colors.green.400');
+    --theme-medium-bg: theme('colors.green.600');
 
-    --theme-semi-text: theme('colors.inigo.200');
-    --theme-semi-bg: theme('colors.inigo.800');
+    --theme-semi-text: theme('colors.green.200');
+    --theme-semi-bg: theme('colors.green.800');
 
     --general-text-color: var(--theme-dark-text);
     --general-bg-color: var(--theme-dark-bg);
