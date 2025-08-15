@@ -16,7 +16,7 @@ neutral, stone
 @layer utilities {
   :root {
     /* 테마 색상 변수 (여기서만 바꾸면 전체 색상 변경 가능) */
-    --theme-color-name: slate;
+    --theme-color-name: fuchsia;
 
     --theme-light-text: theme('colors.' var(--theme-color-name) '.900');
     --theme-light-bg: theme('colors.' var(--theme-color-name) '.100');
