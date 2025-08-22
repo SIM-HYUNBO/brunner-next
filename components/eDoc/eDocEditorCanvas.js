@@ -224,7 +224,7 @@ export default function EDocEditorCanvas({
                      w-full 
                      justify-center`}
       style={{
-        marginTop: `${pageData.runtime_data.pageMargin}px`,
+        marginTop: `${pageData.runtime_data?.pageMargin ? pageData.runtime_data?.pageMargin : 0}px`,
       }}
     >
       <div

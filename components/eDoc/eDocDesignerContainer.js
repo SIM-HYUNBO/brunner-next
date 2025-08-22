@@ -25,6 +25,8 @@ import * as CheckListComponent from "@/components/eDoc/eDocComponent/eDocCompone
 import * as ButtonComponent from "@/components/eDoc/eDocComponent/eDocComponent_Button";
 import * as VideoComponent from "@/components/eDoc/eDocComponent/eDocComponent_Video";
 
+import EDocAIInputModal from "@/components/eDoc/eDocAIInputModal";
+
 import Loading from "@/components/loading";
 
 export default function EDocDesignerContainer({
@@ -60,7 +62,7 @@ export default function EDocDesignerContainer({
       },
     ],
   });
-
+  const [modalOpen, setModalOpen] = useState(false);
   const [currentPageIdx, setCurrentPageIdx] = useState(0);
   const [selectedComponentId, setSelectedComponentId] = useState(null);
   const [documentList, setDocumentList] = useState([]);
@@ -433,6 +435,47 @@ export default function EDocDesignerContainer({
     setIsExportingPdf(false);
   };
 
+  const handleAutoGenerateAndSave = async ({ title, instructions, apiKey, model }) => {
+    if (!title || !instructions || !model) {
+      openModal("문서 제목(Topic)과 지시사항을 모두 입력하고 모델을 선택해주세요.");
+      return;
+    }
+
+    try {
+      const jRequest = {
+        commandName: constants.commands.EDOC_DOCUMENT_AUTO_GENERATE_DOCUMENT,
+        systemCode: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE,
+        instructionInfo: { 
+          title,
+          instructions,
+          apiKey,
+          model }
+      };
+      setLoading(true);
+      const jResponse = await RequestServer(jRequest);
+      setLoading(false);
+
+      if (jResponse.error_code == 0) {
+        const newDoc = {
+          ...jResponse.documentData,
+          title: title,   // <-- topic을 곧바로 제목으로 지정
+        }
+
+        setDocumentData(newDoc);
+        setCurrentPageIdx(0);
+        openModal("문서가 자동 생성되었습니다!");
+      } else {
+        openModal(jResponse.error_message);
+      }
+    } catch (error) {
+      setLoading(false);
+      openModal(error.message);
+    }
+    finally{
+      setLoading(false);
+    }
+  };
+
   const handleDocumentListClick = (doc) => {
     setShowDocumentListModal(false);
     openDocumentById(doc.id);
@@ -440,6 +483,12 @@ export default function EDocDesignerContainer({
 
   return (
     <>
+      <EDocAIInputModal
+        isOpen={modalOpen}
+        onClose={() => setModalOpen(false)}
+        onSubmit={handleAutoGenerateAndSave}
+      />
+
       {loading && <Loading />}
       <h2 className={`page-title`}>Page designer</h2>
 
@@ -455,8 +504,9 @@ export default function EDocDesignerContainer({
         onDeleteCurrentPage={handleDeleteCurrentPage}
         onExportPdf={handleExportPdf}
         currentPageIdx={currentPageIdx}
-        totalPageCount={documentData.pages.length}
+        totalPageCount={documentData?.pages?.length}
         setCurrentPageIdx={setCurrentPageIdx}
+        setModalOpen={setModalOpen}
       />
 
       <div className="flex flex-row h-screen">
@@ -499,7 +549,7 @@ export default function EDocDesignerContainer({
           )}
 
           {/* 도큐먼트 객체 (디자인 타임) */}
-          <main
+            <main
             className="pt-16 flex-grow edoc-designer-canvas"
             style={{
               backgroundColor:
