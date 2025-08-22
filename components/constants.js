@@ -74,6 +74,7 @@ export const commands = {
   POST_COMMENT_INFO_UPDATE_ONE: `postCommentInfo.updateOne`,
   POST_COMMENT_INFO_DELETE_ONE: `postCommentInfo.deleteOne`,
 
+  EDOC_DOCUMENT_AUTO_GENERATE_DOCUMENT: `edocDocument.autoGenerate`,
   EDOC_COMPONENT_TEMPLATES_SELECT_ALL: `edocComponentTemplate.selectAll`,
   EDOC_DOCUMENT_UPSERT_ONE: `edocDocument.upsertOne`,
   EDOC_DOCUMENT_SELECT_ONE: `edocDocument.selectOne`,

@@ -1,6 +1,6 @@
 `use strict`
 
-import React from 'react';
+import React, { useEffect, useState } from "react";
 
 /**
  * EDocTopMenu.js
@@ -14,9 +14,12 @@ export default function EDocDesignerTopMenu({
   onDeleteDocument,
   onAddPage,
   onDeleteCurrentPage,
-  onExportPdf
+  onExportPdf,
+  setModalOpen
 }) {
+
   return (
+    <>
     <div className="w-full 
                     general-bg-color
                     my-3
@@ -105,7 +108,14 @@ export default function EDocDesignerTopMenu({
                    hover:bg-purple-600"
       >
         Exp. PDF
-      </button>     
+      </button>
+      <button
+        onClick={() => setModalOpen(true)}
+        className="bg-indigo-500 text-white rounded ml-2 p-2 hover:bg-indigo-700"
+      >
+        AI Generate
+      </button>
     </div>
+    </>
   );
 }

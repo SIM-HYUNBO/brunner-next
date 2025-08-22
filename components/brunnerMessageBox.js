@@ -57,7 +57,7 @@ export const useModal = () => {
         <div className="flex 
              items-center 
              justify-center 
-             z-50 
+             z-[1000001] 
              fixed 
              inset-0">
           <div className="fixed 
