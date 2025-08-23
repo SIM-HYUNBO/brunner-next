@@ -32,11 +32,12 @@ export default function DarkModeToggleButton() {
               py-1  
               focus:outline-none 
               bg-gray-100  
-              hover:bg-gray-50 
+              hover:bg-gray-300 
               hover:text-orange-500
               dark-bg-color
               dark:text-yellow-600 
               dark:hover:text-yellow-300 
+              dark:hover:bg-gray-600
               rounded 
               text-base`}
              type="button"
