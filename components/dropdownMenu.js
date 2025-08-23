@@ -2,7 +2,7 @@ import { useEffect, useState, useRef } from "react";
 import Link from "next/link";
 import { getDropdownMenuItems } from "@/components/dropdownMenuitem";
 import UserInfo from "@/components/userInfo"; // 예시 import
-import { getIsDarkMode } from '@/components/darkModeToggleButton';
+import { getIsDarkMode } from "@/components/darkModeToggleButton";
 
 export default function DropdownMenu({ reloadSignal, triggerMenuReload }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -54,14 +54,24 @@ export default function DropdownMenu({ reloadSignal, triggerMenuReload }) {
 
   const getSectionLabel = (item) => item.parent || "";
 
+  // depth 계산 함수 (section 아래 메뉴도 포함)
+  const getItemDepth = (item, items) => {
+    let depth = 0;
+    let current = item;
+    while (current.parent) {
+      depth++;
+      current = items.find((i) => i.label === current.parent);
+      if (!current) break;
+    }
+    return depth;
+  };
+
   const handleLogout = async () => {
     if (triggerMenuReload) triggerMenuReload();
-    // 로그아웃 후 추가 처리 가능
     const items = await getDropdownMenuItems();
     setMenuItems(items);
   };
 
-  // 햄버거 메뉴 그리기
   return (
     <>
       <button
@@ -90,7 +100,7 @@ export default function DropdownMenu({ reloadSignal, triggerMenuReload }) {
       {mobileMenuOpen && (
         <div
           ref={menuRef}
-          className="absolute right-4 w-48 shadow-lg rounded-md z-50 semi-text-bg-color"
+          className="absolute right-4 shadow-lg rounded-md z-50 semi-text-bg-color min-w-max"
         >
           <ul>
             {menuItems.map((item, idx) => {
@@ -102,14 +112,7 @@ export default function DropdownMenu({ reloadSignal, triggerMenuReload }) {
                 return (
                   <li
                     key={idx}
-                    className="cursor-pointer select-none 
-                               flex 
-                               items-center 
-                               justify-between 
-                               px-3 
-                               py-2 
-                               hover:bg-gray-300 
-                               dark:hover:bg-gray-600"
+                    className="cursor-pointer select-none flex items-center justify-between px-3 py-2 hover:bg-gray-300 dark:hover:bg-gray-600"
                     onClick={() => toggleSection(item.label)}
                   >
                     <span className="text-gray-800 dark:text-gray-200">{item.label}</span>
@@ -123,23 +126,14 @@ export default function DropdownMenu({ reloadSignal, triggerMenuReload }) {
               const sectionLabel = getSectionLabel(item);
               if (sectionLabel && !openSections[sectionLabel]) return null;
 
+              const depth = getItemDepth(item, menuItems);
+
               return (
                 <li key={item.href + idx}>
                   <Link
                     href={item.href}
-                    className="
-                      block 
-                      px-3 
-                      py-2 
-                      text-sm 
-                      text-gray-800 
-                      dark:text-gray-200 
-                      hover:bg-gray-300 
-                      dark:hover:bg-gray-600 
-                      hover:text-black 
-                      dark:hover:text-white 
-                      rounded-md
-                    "
+                    className="block px-3 py-2 text-sm text-gray-800 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-600 hover:text-black dark:hover:text-white rounded-md whitespace-nowrap"
+                    style={{ paddingLeft: `${16 * (depth + 1)}px` }} // section 아래 메뉴 들여쓰기 적용
                   >
                     {item.label}
                   </Link>

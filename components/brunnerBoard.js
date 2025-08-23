@@ -21,9 +21,9 @@ function BrunnerBoard({ boardType }) {
         systemCode: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE,
         postInfo: { postType: boardType }
       };
-      setLoading(true);
+      // setLoading(true);
       const jResponse = await RequestServer(jRequest);
-      setLoading(false);
+      // setLoading(false);
 
       if (jResponse.error_code === 0) {
         setPosts(jResponse.postList);
