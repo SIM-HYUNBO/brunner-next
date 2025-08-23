@@ -40,18 +40,20 @@ export default function SignoutButton({ handleLogout, triggerMenuReload }) {
 
       {userInfo.getLoginUserId() && (
         <button
-          className={`inline-flex 
-                      items-center 
-                      boder-0 
-                      focus:outline-none 
-                      bg-gray-100  
-                      hover:bg-gray-50 
-                      hover:text-orange-500
-                      dark-bg-color
-                      dark:text-yellow-600 
-                      dark:hover:text-yellow-300 
-                      rounded 
-                      text-base`}
+          className={`flex 
+              items-center 
+              justify-center 
+              w-6 h-6
+              border-0 
+              focus:outline-none 
+              dark-bg-color
+              bg-gray-200  
+              hover:bg-gray-300 
+              hover:text-orange-500
+              dark:text-yellow-600 
+              dark:hover:bg-gray-600 
+              dark:hover:text-yellow-300 
+              rounded-full`}
           type="button"
           onClick={async () => {
             const result = await openModal(constants.messages.SIGNOUT);
@@ -65,7 +67,7 @@ export default function SignoutButton({ handleLogout, triggerMenuReload }) {
           xmlns="http://www.w3.org/2000/svg"
           fill="none"
           viewBox="0 0 24 24"
-          strokeWidth="1"
+          strokeWidth="1.5"
           stroke="currentColor"
         >
         <path
