@@ -81,11 +81,8 @@ export default function DocComponentRenderer({
       return <ButtonComponent {...renderProps} />;
     case constants.edocComponentType._VIDEO:
       return <VideoComponent {...renderProps} />;
-<<<<<<< HEAD
     case constants.edocComponentType._LINKTEXT:
       return <LinkTextComponent {...renderProps} />;
-=======
->>>>>>> 1a053cf48fa24f933eecf2445af6bf121f742e0a
     default:
       return null;
   }
