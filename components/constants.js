@@ -81,6 +81,7 @@ export const commands = {
   EDOC_DOCUMENT_DELETE_ONE: `edocDocument.deleteOne`,
   EDOC_USER_DOCUMENT_SELECT_ALL: `edocDocument.slectUserAll`,
   EDOC_ADMIN_DOCUMENT_SELECT_ALL: `edocDocument.slectAdminAll`,
+  EDOC_GET_AI_MODEL_LIST: `edocDocument.getAIModelList`,
 };
 
 export const edocComponentType = {
@@ -91,4 +92,5 @@ export const edocComponentType = {
   _CHECKLIST: `checklist`,
   _BUTTON: `button`,
   _VIDEO: `video`,
+  _LINKTEXT: 'linkText'
 };

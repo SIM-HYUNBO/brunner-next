@@ -9,6 +9,7 @@ import * as TableComponent from "@/components/eDoc/eDocComponent/eDocComponent_T
 import * as CheckListComponent from "@/components/eDoc/eDocComponent/eDocComponent_CheckList";
 import * as ButtonComponent from "@/components/eDoc/eDocComponent/eDocComponent_Button";
 import * as VideoComponent from "@/components/eDoc/eDocComponent/eDocComponent_Video";
+import * as LinkTextComponent from "@/components/eDoc/eDocComponent/eDocComponent_LinkText";
 
 /*
  * EDocPropertyEditor.js
@@ -95,6 +96,8 @@ export default function EDocComponentPropertyEditor({ component, handleUpdateCom
         return ButtonComponent.renderProperty(component, updateRuntimeDataByPropertyEeditor,renderWidthPropertyByPropertyEditor,renderForceNewLinePropertyByPropertyEditor,renderPositionAlignPropertyByPropertyEditor);
       case constants.edocComponentType._VIDEO:
         return VideoComponent.renderProperty(component, updateRuntimeDataByPropertyEeditor,renderWidthPropertyByPropertyEditor,renderForceNewLinePropertyByPropertyEditor,renderPositionAlignPropertyByPropertyEditor);
+      case constants.edocComponentType._LINKTEXT:
+        return LinkTextComponent.renderProperty(component, updateRuntimeDataByPropertyEeditor,renderWidthPropertyByPropertyEditor,renderForceNewLinePropertyByPropertyEditor,renderPositionAlignPropertyByPropertyEditor);
 
       default:
         return <p>속성 편집이 지원되지 않는 컴포넌트입니다.</p>;

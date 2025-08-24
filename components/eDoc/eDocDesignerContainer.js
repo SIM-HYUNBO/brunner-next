@@ -24,6 +24,8 @@ import * as TableComponent from "@/components/eDoc/eDocComponent/eDocComponent_T
 import * as CheckListComponent from "@/components/eDoc/eDocComponent/eDocComponent_CheckList";
 import * as ButtonComponent from "@/components/eDoc/eDocComponent/eDocComponent_Button";
 import * as VideoComponent from "@/components/eDoc/eDocComponent/eDocComponent_Video";
+import * as LinkTextComponent from "@/components/eDoc/eDocComponent/eDocComponent_LinkText";
+
 
 import EDocAIInputModal from "@/components/eDoc/eDocAIInputModal";
 
@@ -343,6 +345,11 @@ export default function EDocDesignerContainer({
         baseComponent.runtime_data =
           VideoComponent.initDefaultRuntimeData(defaultRuntimeData);
         break;
+      case constants.edocComponentType._LINKTEXT:
+        baseComponent.runtime_data =
+          LinkTextComponent.initDefaultRuntimeData(defaultRuntimeData);
+        break;
+
       default:
         break;
     }
@@ -435,7 +442,7 @@ export default function EDocDesignerContainer({
     setIsExportingPdf(false);
   };
 
-  const handleAutoGenerateAndSave = async ({ title, instructions, apiKey, model }) => {
+  const handleRequestToAIModel = async ({ apiKey, title, instructions, model }) => {
     if (!title || !instructions || !model) {
       openModal("문서 제목(Topic)과 지시사항을 모두 입력하고 모델을 선택해주세요.");
       return;
@@ -486,7 +493,7 @@ export default function EDocDesignerContainer({
       <EDocAIInputModal
         isOpen={modalOpen}
         onClose={() => setModalOpen(false)}
-        onSubmit={handleAutoGenerateAndSave}
+        onRequestToAIModel={handleRequestToAIModel}
       />
 
       {loading && <Loading />}

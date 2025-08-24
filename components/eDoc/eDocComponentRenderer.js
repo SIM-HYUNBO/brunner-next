@@ -9,6 +9,7 @@ import TableComponent from "@/components/eDoc/eDocComponent/eDocComponent_Table"
 import CheckListComponent from "@/components/eDoc/eDocComponent/eDocComponent_CheckList";
 import ButtonComponent from "@/components/eDoc/eDocComponent/eDocComponent_Button";
 import VideoComponent from "@/components/eDoc/eDocComponent/eDocComponent_Video";
+import LinkTextComponent from "@/components/eDoc/eDocComponent/eDocComponent_LinkText";
 
 export default function DocComponentRenderer({
   documentData,
@@ -80,6 +81,8 @@ export default function DocComponentRenderer({
       return <ButtonComponent {...renderProps} />;
     case constants.edocComponentType._VIDEO:
       return <VideoComponent {...renderProps} />;
+    case constants.edocComponentType._LINKTEXT:
+      return <LinkTextComponent {...renderProps} />;
     default:
       return null;
   }
