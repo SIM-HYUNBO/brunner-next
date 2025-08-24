@@ -16,7 +16,7 @@ export default function EDocDocumentPropertyEditor({
   return (
     <div>
       {/* 문서 속성 영역 */}
-      <section className="mb-6 p-4 border rounded shadow-sm">
+      <section className="mb-6 border rounded shadow-sm">
         <h2 className="text-lg font-semibold mb-3">문서 속성</h2>
 
         <label className="general-text-bg-color">Title</label>

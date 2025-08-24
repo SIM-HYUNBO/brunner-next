@@ -516,25 +516,51 @@ export default function EDocDesignerContainer({
         setModalOpen={setModalOpen}
       />
 
-      <div className="flex flex-row h-screen">
-        <div>
-          <button className="text-lg font-semibold mb-4" onClick={toggleMode}>
-            {mode === "design" ? "To Runtime Mode" : "To Design Mode"}
+      <div className="flex flex-row h-screen mt-10">
+        <div className="flex flex-col items-center">
+          <button
+            onClick={toggleMode}
+            className="p-2 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700"
+            title={mode === "design" ? "To Runtime Mode" : "To Design Mode"}
+          >
+            {mode === "design" ? (
+              // 런타임 모드 아이콘 (▶ 플레이 버튼 느낌)
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="w-6 h-6"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth={2}
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" d="M5 3l14 9-14 9V3z" />
+              </svg>
+            ) : (
+              // 디자인 모드 아이콘 (연필 아이콘)
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="w-6 h-6"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth={2}
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M16.862 4.487l2.651 2.651a2 2 0 010 2.828l-9.9 9.9a4 4 0 01-1.414.94l-3.53 1.178a.5.5 0 01-.633-.633l1.178-3.53a4 4 0 01.94-1.414l9.9-9.9a2 2 0 012.828 0z"
+                />
+              </svg>
+            )}
           </button>
           {/* 왼쪽 컴포넌트 팔레트 */}
           <aside
-            className="w-36 
+            className="w-56
+                mt-10 
                 general-text-bg-color
                 border-r 
                 overflow-auto"
           >
-            <h2
-              className="font-bold 
-                          mb-3 
-                          general-text-color"
-            >
-              컴포넌트 팔레트
-            </h2>
             <EDocComponentPalette
               templates={componentTemplates}
               onAddComponent={handleAddComponent}
@@ -549,6 +575,7 @@ export default function EDocDesignerContainer({
                            font-bold 
                            mx-4 
                            mb-4 
+                           text-center
                            general-text-color"
             >
               {documentData.runtime_data.title || ""} : {documentData.id}
@@ -624,14 +651,14 @@ export default function EDocDesignerContainer({
 
         {/* 오른쪽 속성 편집창 */}
         <aside
-          className="w-56 
-                          border-0
-                          general-text-bg-color 
-                          border-gray 
-                          dark:border-gray 
-                          p-4 
-                          block
-                          overflow-auto"
+          className="w-96 
+                     border-0
+                     general-text-bg-color 
+                     border-gray 
+                     dark:border-gray 
+                     p-4 
+                     block
+                     overflow-auto"
         >
           <h2
             className="text-lg 
@@ -700,14 +727,18 @@ export default function EDocDesignerContainer({
                         z-50"
         >
           <div
-            className="medium-bg-color 
-                          rounded 
-                          shadow-lg 
-                          w-96 
-                          max-h-96 
-                          overflow-auto 
-                          p-4"
-          >
+          className="bg-white 
+                    semi-bg-color 
+                    rounded-xl 
+                    shadow-xl 
+                    w-96 
+                    max-h-96 
+                    overflow-auto 
+                    p-4
+                    border 
+                    border-gray-200 
+                    dark:border-slate-700"
+        >
             <h3
               className="text-lg 
                            font-bold 

@@ -22,7 +22,6 @@ export default function EDocDesignerTopMenu({
     <>
     <div className="w-full 
                     general-bg-color
-                    my-3
                     flex 
                     items-center 
                     justify-center">
