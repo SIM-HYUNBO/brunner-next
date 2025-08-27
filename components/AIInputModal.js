@@ -3,7 +3,7 @@ import React, { useState, useRef, useEffect } from "react";
 import Loading from "@/components/loading";
 import AIModelSelector from "@/components/eDoc/aiModelSelector";
 
-export default function EDocAIInputModal({ isOpen, onClose, onRequestToAIModel }) {
+export default function AIInputModal({ isOpen, onClose, onRequestToAIModel }) {
   const [loading, setLoading] = useState(false);
   const [title, setTitle] = useState("");
   const [instructions, setInstructions] = useState("");

@@ -21,16 +21,7 @@ export default function Header({ triggerMenuReload, reloadSignal }) {
     {/* 전체 너비로 확장된 컨테이너 */}
     <div className="">
       {/* 로고 */}
-      <Link
-        href="/"
-        className="flex 
-                   title-font 
-                   font-medium 
-                   items-center 
-                   text-gray-900 
-                   mb-4 
-                   md:mb-0"
-      >
+      <Link href="/" className="inline-block">
         <Image
           src="/brunnerLogo202507.png"
           alt="brunner logo"

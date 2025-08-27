@@ -27,7 +27,7 @@ import * as VideoComponent from "@/components/eDoc/eDocComponent/eDocComponent_V
 import * as LinkTextComponent from "@/components/eDoc/eDocComponent/eDocComponent_LinkText";
 
 
-import EDocAIInputModal from "@/components/eDoc/eDocAIInputModal";
+import AIInputModal from "@/components/AIInputModal";
 
 import Loading from "@/components/loading";
 
@@ -490,7 +490,7 @@ export default function EDocDesignerContainer({
 
   return (
     <>
-      <EDocAIInputModal
+      <AIInputModal
         isOpen={modalOpen}
         onClose={() => setModalOpen(false)}
         onRequestToAIModel={handleRequestToAIModel}
