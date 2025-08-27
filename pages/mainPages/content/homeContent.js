@@ -26,7 +26,11 @@ export default function HomeContent() {
         </h2>
         <GoverningMessage governingMessage={`Thoughts are finite, but records are eternal.
 Leave your ideas as digital documents.
-Creation begins the moment you start recording.`} />
+Creation begins the moment you start recording.
+
+Personal use of Brunner's services is free. 
+Sign up to try it out.
+`} />
         
         <div className={`flex flex-col mt-20`}>
           {isMounted && !userInfo.isLogin() && (
