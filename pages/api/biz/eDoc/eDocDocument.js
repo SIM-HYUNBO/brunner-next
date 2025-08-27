@@ -278,8 +278,10 @@ export const generateDocumentWithOpenAI = async (txnId, jRequest) => {
 문서 제목: ${jRequest.instructionInfo.title}
 지시사항: ${jRequest.instructionInfo.instructions}
 
-아래 지시사항에 따라 문서를 작성해주세요.  
-지금 제공되는 JSON 형식으로만 문서를 만들어야 하며 필요에 따라 아래 기본 컴포넌트를 사용할 수 있다.
+아래 지시사항에 따라 답변내용을 문서로 작성하라.
+아래 제공되는 JSON 형식으로만 문서를 생성하라. 
+필요에 따라 아래 기본 컴포넌트를 사용할 수 있다.
+
 1. 텍스트(text) : 
 텍스트로 문장들을 입력하고 단락(문단)을 구성하는 컴포넌트이다. 
 이 컴포넌트로 문단내에 여러 문장을 넣을 수 있다. 
@@ -291,7 +293,7 @@ export const generateDocumentWithOpenAI = async (txnId, jRequest) => {
 텍스트로 단일 문장을 사용자가 입력할 수 있게 하는 컴포넌트이다.
 4. 이미지(image): 
 문서에 외부 이미지를 삽입할 필요가 있을때 사용하는 컴포넌트이다.
-웹상에 있는 이미지의 정확한 URL이 확인되는 이미지를 설정하여 문서에서 표시할 수 있다.
+웹상에 있는 적합한 이미지의 정확한 URL이 확인되는 이미지를 설정하여 문서에서 표시하면 훨씬 유리하다.
 이미지 소스가 없거나 제대로 표시할 수 없으면 추가하지 않는다. 
 Base64형식으로 전환하여 넣을 수 있다.
 5. 버튼(button): 
@@ -299,14 +301,15 @@ Base64형식으로 전환하여 넣을 수 있다.
 호스트가 127.0.0.1인 url은 사용할 수 없다.
 6. 테이블(table): 
 문서내에 표를 삽입하고 표 데이터를 구성하고 표시하는 컴포넌트이다.
-컬럼헤더 값들을 설정할 수 있고 행값을 입력할 수 있다.
+컬럼 헤더 값들을 설정하고 각 행 데이터 값을 컬럼헤더와 구분해서 입력한다.
+표를 그리면서 컬럼 제목을 첫행에 중복해서 표시하지 않도록 주의한다.
 7. 동영상(video) : 
 문서에 동영상을 삽입하는 컴포넌트이다. 
-웹상에 있는 동영상의 정확한 URL을 설정하여 문서에서 재생 가능하다.
+웹상에 있는 적합한 동영상의 정확한 URL을 설정하여 문서에서 재생할 수 있게 하면 훨씬 유리하다.
 8. 링크 텍스트(linkText)
-문서내용과 관련해서 참고할 수 있는 웹상의 외부 다른 사이트 페이지로 링크 가능한 텍스트 컴포넌트이다.
-실행모드에서 새탭으로 열기 한다.
+문서내용과 관련해서 웹상에 있는 적합한 참고할 만한 외부 다른 사이트 페이지로 링크 가능한 텍스트 컴포넌트이다.
 해당 페이지의 Url 정보와 문서 제목등 연결될 텍스트 값을 설정해서 링크한다.
+외부 페이지를 링크하면 훨씬 유리하다.
 
 JSON 문서 포맷은 아래와 같고 상기 컴포넌트의 기본값을 모두 포함하고 있다.
 참고해서 값을 채워서 완성된 문서로 생성한다.
@@ -597,7 +600,7 @@ JSON 문서 포맷은 아래와 같고 상기 컴포넌트의 기본값을 모�
 ];
 
     const bodyPayload = {
-      model: jRequest.instructionInfo.model,
+      model: jRequest.instructionInfo.aiModel,
       messages: [
         {
           role: "system",
@@ -607,7 +610,7 @@ JSON 문서 포맷은 아래와 같고 상기 컴포넌트의 기본값을 모�
       ],
     };
 
-    if (temperatureSupportedModels.includes(jRequest.instructionInfo.model)) {
+    if (temperatureSupportedModels.includes(jRequest.instructionInfo.aiModel)) {
       bodyPayload.temperature = 0.7;
     }
     

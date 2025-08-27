@@ -3,10 +3,9 @@ import * as constants from "@/components/constants";
 import RequestServer from "@/components/requestServer";
 import * as userInfo from "@/components/userInfo";
 
-export default function AIModelSelector({ model, setModel, apiKey }) {
+export default function AIModelSelector({ model, setAIModel, apiKey }) {
   const [models, setModels] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [fetched, setFetched] = useState(false);
   const [error, setError] = useState("");
 
   const fetchModels = async () => {
@@ -19,8 +18,7 @@ export default function AIModelSelector({ model, setModel, apiKey }) {
       setError("먼저 API Key를 입력해주세요.");
       return;
     }
-    if (fetched) return; // 이미 불러온 경우 다시 요청 안 함
-
+  
     setLoading(true);
     setError("");
       try {
@@ -49,7 +47,7 @@ export default function AIModelSelector({ model, setModel, apiKey }) {
     <div>
       <select
         value={model || ""}
-        onChange={(e) => setModel(e.target.value)}
+        onChange={(e) => setAIModel(e.target.value)}
         onFocus={fetchModels}
         disabled={disabled}
         className={`w-full border p-2 rounded mb-2 ${disabled ? "bg-gray-100 text-gray-400 cursor-not-allowed" : ""}`}

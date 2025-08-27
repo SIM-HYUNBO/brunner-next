@@ -442,8 +442,8 @@ export default function EDocDesignerContainer({
     setIsExportingPdf(false);
   };
 
-  const handleRequestToAIModel = async ({ apiKey, title, instructions, model }) => {
-    if (!title || !instructions || !model) {
+  const handleRequestDocumentToAI = async ({ apiKey, title, instructions, aiModel }) => {
+    if (!title || !instructions || !aiModel) {
       openModal("문서 제목(Topic)과 지시사항을 모두 입력하고 모델을 선택해주세요.");
       return;
     }
@@ -456,7 +456,7 @@ export default function EDocDesignerContainer({
           title,
           instructions,
           apiKey,
-          model }
+          aiModel }
       };
       setLoading(true);
       const jResponse = await RequestServer(jRequest);
@@ -493,7 +493,7 @@ export default function EDocDesignerContainer({
       <AIInputModal
         isOpen={modalOpen}
         onClose={() => setModalOpen(false)}
-        onRequestToAIModel={handleRequestToAIModel}
+        onRequestToAIModel={handleRequestDocumentToAI}
       />
 
       {loading && <Loading />}

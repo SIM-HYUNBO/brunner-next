@@ -8,7 +8,7 @@ export default function AIInputModal({ isOpen, onClose, onRequestToAIModel }) {
   const [title, setTitle] = useState("");
   const [instructions, setInstructions] = useState("");
   const [apiKey, setApiKey] = useState("");
-  const [model, setModel] = useState();
+  const [aiModel, setAIModel] = useState();
   const [errorMessage, setErrorMessage] = useState("");
   const modalRef = useRef(null);
 
@@ -94,14 +94,14 @@ export default function AIInputModal({ isOpen, onClose, onRequestToAIModel }) {
   }, []);
 
   const handleRequestToAIModel = async () => {
-    if (!title.trim()) { setErrorMessage("문서 제목을 입력해주세요."); return; }
+    if (!title.trim()) { setErrorMessage("제목을 입력해주세요."); return; }
     if (!instructions.trim()) { setErrorMessage("문서 지시사항을 입력해주세요."); return; }
     if (!apiKey.trim()) { setErrorMessage("OpenAI API Key를 입력해주세요."); return; }
 
     setErrorMessage("");
     try {
       setLoading(true);
-      await onRequestToAIModel({ title, instructions, apiKey, model });
+      await onRequestToAIModel({ title, instructions, apiKey, aiModel });
     } catch (err) {
       console.error(err);
       setErrorMessage("문서를 생성하는 중 오류가 발생했습니다.");
@@ -165,9 +165,9 @@ export default function AIInputModal({ isOpen, onClose, onRequestToAIModel }) {
         />
 
         <label className="block mb-2 font-medium">Select Model</label>
-        <AIModelSelector model={model} setModel={setModel} apiKey={apiKey} />
+        <AIModelSelector model={aiModel} setAIModel={setAIModel} apiKey={apiKey} />
 
-        {model && <div className="mt-4">선택한 모델: <span className="font-mono">{model}</span></div>}
+        {aiModel && <div className="mt-4">선택한 모델: <span className="font-mono">{aiModel}</span></div>}
 
         <div className="mt-6 flex justify-end gap-2">
           <button onClick={onClose} className="px-4 py-2 rounded bg-gray-300 hover:bg-gray-400">닫기</button>
