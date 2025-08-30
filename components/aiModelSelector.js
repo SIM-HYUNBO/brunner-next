@@ -27,7 +27,7 @@ export default function AIModelSelector({ model, setAIModel, apiKey }) {
 
         const userId = userInfo.getLoginUserId();
         jRequest.systemCode = process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE;
-        jRequest.commandName = constants.commands.EDOC_GET_AI_MODEL_LIST;
+        jRequest.commandName = constants.commands.EDOC_AI_GET_MODEL_LIST;
         jRequest.userId = userId;
         jRequest.apiKey = apiKey;
 

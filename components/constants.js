@@ -74,14 +74,14 @@ export const commands = {
   POST_COMMENT_INFO_UPDATE_ONE: `postCommentInfo.updateOne`,
   POST_COMMENT_INFO_DELETE_ONE: `postCommentInfo.deleteOne`,
 
-  EDOC_DOCUMENT_AUTO_GENERATE_DOCUMENT: `edocDocument.autoGenerate`,
   EDOC_COMPONENT_TEMPLATES_SELECT_ALL: `edocComponentTemplate.selectAll`,
   EDOC_DOCUMENT_UPSERT_ONE: `edocDocument.upsertOne`,
   EDOC_DOCUMENT_SELECT_ONE: `edocDocument.selectOne`,
   EDOC_DOCUMENT_DELETE_ONE: `edocDocument.deleteOne`,
   EDOC_USER_DOCUMENT_SELECT_ALL: `edocDocument.slectUserAll`,
   EDOC_ADMIN_DOCUMENT_SELECT_ALL: `edocDocument.slectAdminAll`,
-  EDOC_GET_AI_MODEL_LIST: `edocDocument.getAIModelList`,
+  EDOC_AI_GET_MODEL_LIST: `edocDocument.getAIModelList`,
+  EDOC_AI_GENERATE_DOCUMENT: `edocDocument.generateAIDocument`,
 };
 
 export const edocComponentType = {

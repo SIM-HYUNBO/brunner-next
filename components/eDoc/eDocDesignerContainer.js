@@ -442,44 +442,15 @@ export default function EDocDesignerContainer({
     setIsExportingPdf(false);
   };
 
-  const handleRequestDocumentToAI = async ({ apiKey, instructions, aiModel }) => {
-    if (!instructions || !aiModel) {
-      openModal("openAI apikey와 모델을 선택하고 지시사항을 모두 입력하고 해주세요.");
-      return;
+  const handleAIResponse = async (aiResponse) => {
+    const newDoc = {
+      ...aiResponse.documentData,
+      title: aiResponse.documentData.runtime_data.title,
     }
 
-    try {
-      const jRequest = {
-        commandName: constants.commands.EDOC_DOCUMENT_AUTO_GENERATE_DOCUMENT,
-        systemCode: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE,
-        instructionInfo: { 
-          instructions,
-          apiKey,
-          aiModel }
-      };
-      setLoading(true);
-      const jResponse = await RequestServer(jRequest);
-      setLoading(false);
-
-      if (jResponse.error_code == 0) {
-        const newDoc = {
-          ...jResponse.documentData,
-          title: jResponse.documentData.runtime_data.title,
-        }
-
-        setDocumentData(newDoc);
-        setCurrentPageIdx(0);
-        openModal("문서가 자동 생성되었습니다!");
-      } else {
-        openModal(jResponse.error_message);
-      }
-    } catch (error) {
-      setLoading(false);
-      openModal(error.message);
-    }
-    finally{
-      setLoading(false);
-    }
+    setDocumentData(newDoc);
+    setCurrentPageIdx(0);
+    openModal("문서가 자동 생성되었습니다!");
   };
 
   const handleDocumentListClick = (doc) => {
@@ -492,7 +463,8 @@ export default function EDocDesignerContainer({
       <AIInputModal
         isOpen={modalOpen}
         onClose={() => setModalOpen(false)}
-        onRequestToAIModel={handleRequestDocumentToAI}
+        commandName={constants.commands.EDOC_AI_GENERATE_DOCUMENT}
+        onAIResponse={handleAIResponse}
       />
 
       {loading && <Loading />}

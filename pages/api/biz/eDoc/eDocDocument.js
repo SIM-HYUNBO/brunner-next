@@ -28,10 +28,10 @@ const executeService = async (txnId, jRequest) => {
             case constants.commands.EDOC_ADMIN_DOCUMENT_SELECT_ALL: // admin & public documents
                 jResponse = await selectAdminAll(txnId, jRequest);
                 break;
-            case constants.commands.EDOC_DOCUMENT_AUTO_GENERATE_DOCUMENT:
+            case constants.commands.EDOC_AI_GENERATE_DOCUMENT:
                 jResponse = await generateDocumentWithOpenAI(txnId, jRequest);
               break;
-            case constants.commands.EDOC_GET_AI_MODEL_LIST:
+            case constants.commands.EDOC_AI_GET_MODEL_LIST:
               jResponse = await getAIModelList(txnId, jRequest);
               break;
             default:

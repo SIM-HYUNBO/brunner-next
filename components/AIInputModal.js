@@ -1,10 +1,13 @@
-// components/eDoc/eDocAIInputModal.js
 import React, { useState, useRef, useEffect } from "react";
+import * as constants from "@/components/constants";
+import RequestServer from "@/components/requestServer"
 import Loading from "@/components/loading";
+import { useModal } from "./brunnerMessageBox";
 import AIModelSelector from "@/components/aiModelSelector";
 
-export default function AIInputModal({ isOpen, onClose, onRequestToAIModel }) {
+export default function AIInputModal({ isOpen, onClose, commandName, onAIResponse }) {
   const [loading, setLoading] = useState(false);
+  const {BrunnerMessageBox, openModal } = useModal();
   const [instructions, setInstructions] = useState("");
   const [apiKey, setApiKey] = useState("");
   const [aiModel, setAIModel] = useState();
@@ -92,19 +95,36 @@ export default function AIInputModal({ isOpen, onClose, onRequestToAIModel }) {
     };
   }, []);
 
-  const handleRequestToAIModel = async () => {
-    if (!instructions.trim()) { setErrorMessage("문서 지시사항을 입력해주세요."); return; }
-    if (!apiKey.trim()) { setErrorMessage("OpenAI API Key를 입력해주세요."); return; }
+  const handleRequestToAI = async () => {
+    if (!apiKey.trim() || !instructions || !aiModel) {
+      openModal("openAI apikey와 모델을 선택하고 지시사항을 모두 입력하고 해주세요.");
+      return;
+    }
 
     setErrorMessage("");
+
     try {
+      const jRequest = {
+        commandName: commandName,
+        systemCode: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE,
+        instructionInfo: { 
+          instructions: instructions,
+          apiKey: apiKey,
+          aiModel: aiModel 
+        }
+      };
+
       setLoading(true);
-      await onRequestToAIModel({ instructions, apiKey, aiModel });
+      const jResponse = await RequestServer(jRequest);
+      setLoading(false);
+
+      if (jResponse.error_code == 0) {
+        await onAIResponse(jResponse);
+      }
     } catch (err) {
-      console.error(err);
-      setErrorMessage("문서를 생성하는 중 오류가 발생했습니다.");
+      setErrorMessage(`문서를 생성하는 중 오류가 발생했습니다. ${err}`);
     } finally { setLoading(false); }
-  };
+  }
 
   if (!isOpen) return null;
 
@@ -115,7 +135,7 @@ export default function AIInputModal({ isOpen, onClose, onRequestToAIModel }) {
           <Loading />
         </div>
       )}
-
+      <BrunnerMessageBox />
       <div
         ref={modalRef}
         className="relative bg-gray-200 dark:bg-gray-800 text-gray-800 dark:text-gray-200
@@ -174,7 +194,7 @@ export default function AIInputModal({ isOpen, onClose, onRequestToAIModel }) {
                              hover:bg-gray-600">
           닫기
           </button>
-          <button onClick={handleRequestToAIModel} 
+          <button onClick={handleRequestToAI} 
                   className="px-4 
                              py-2 
                              rounded 
