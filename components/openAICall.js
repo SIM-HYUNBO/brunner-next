@@ -62,11 +62,15 @@ Open AI API에서 사용되는 role의 종류는 다음과 같습니다:
 
 */
 
-export const requestPrompt = async (apiKey, aiModel, systemPrompt, userPrompt, assistantPrompt) => {
+export const requestPrompt = async (apiKey, 
+                                    aiModel, 
+                                    systemPrompt, 
+                                    userPrompt, 
+                                    assistantPrompt) => {
     var result = {
         errror_code: -1,
         error_message: '',
-        result_content: ''
+        aiResultData : ''
     };
 
     const serverUrl = "https://api.openai.com/v1/chat/completions";
@@ -127,20 +131,21 @@ export const requestPrompt = async (apiKey, aiModel, systemPrompt, userPrompt, a
         result = {
         error_code: -1,
         error_message: resJson.error,
-        result_content: null
+        aiResultData : null
         }
     }
     else {
         result = {
         error_code: 0,
         error_message: null,
-        result_content: JSON.parse(content)
+        aiResultData : JSON.parse(content)
         }
     }
 } catch (e) {
     result = {
       error_code: -1,
       error_message: `${e}`,
+      aiResultData : null
     };
   }
 
