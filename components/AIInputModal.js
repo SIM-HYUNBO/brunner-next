@@ -5,7 +5,13 @@ import Loading from "@/components/loading";
 import { useModal } from "./brunnerMessageBox";
 import AIModelSelector from "@/components/aiModelSelector";
 
-export default function AIInputModal({ isOpen, onClose, commandName, onAIResponse }) {
+export default function AIInputModal({ 
+  isOpen, 
+  onClose, 
+  commandName, 
+  onAIResponse 
+}) {
+  
   const [loading, setLoading] = useState(false);
   const {BrunnerMessageBox, openModal } = useModal();
   const [instructions, setInstructions] = useState("");
@@ -13,7 +19,6 @@ export default function AIInputModal({ isOpen, onClose, commandName, onAIRespons
   const [aiModel, setAIModel] = useState();
   const [errorMessage, setErrorMessage] = useState("");
   const modalRef = useRef(null);
-
 
   // 이동(드래그) 상태
   const [position, setPosition] = useState({ x: 0, y: 0 });
@@ -95,7 +100,7 @@ export default function AIInputModal({ isOpen, onClose, commandName, onAIRespons
     };
   }, []);
 
-  const handleRequestToAI = async () => {
+  const handleRequest = async () => {
     if (!apiKey.trim() || !instructions || !aiModel) {
       openModal("openAI apikey와 모델을 선택하고 지시사항을 모두 입력하고 해주세요.");
       return;
@@ -194,7 +199,7 @@ export default function AIInputModal({ isOpen, onClose, commandName, onAIRespons
                              hover:bg-gray-600">
           닫기
           </button>
-          <button onClick={handleRequestToAI} 
+          <button onClick={handleRequest} 
                   className="px-4 
                              py-2 
                              rounded 
