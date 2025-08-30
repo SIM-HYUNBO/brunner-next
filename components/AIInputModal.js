@@ -1,11 +1,10 @@
 // components/eDoc/eDocAIInputModal.js
 import React, { useState, useRef, useEffect } from "react";
 import Loading from "@/components/loading";
-import AIModelSelector from "@/components/eDoc/aiModelSelector";
+import AIModelSelector from "@/components/aiModelSelector";
 
 export default function AIInputModal({ isOpen, onClose, onRequestToAIModel }) {
   const [loading, setLoading] = useState(false);
-  const [title, setTitle] = useState("");
   const [instructions, setInstructions] = useState("");
   const [apiKey, setApiKey] = useState("");
   const [aiModel, setAIModel] = useState();
@@ -94,14 +93,13 @@ export default function AIInputModal({ isOpen, onClose, onRequestToAIModel }) {
   }, []);
 
   const handleRequestToAIModel = async () => {
-    if (!title.trim()) { setErrorMessage("제목을 입력해주세요."); return; }
     if (!instructions.trim()) { setErrorMessage("문서 지시사항을 입력해주세요."); return; }
     if (!apiKey.trim()) { setErrorMessage("OpenAI API Key를 입력해주세요."); return; }
 
     setErrorMessage("");
     try {
       setLoading(true);
-      await onRequestToAIModel({ title, instructions, apiKey, aiModel });
+      await onRequestToAIModel({ instructions, apiKey, aiModel });
     } catch (err) {
       console.error(err);
       setErrorMessage("문서를 생성하는 중 오류가 발생했습니다.");
@@ -147,31 +145,44 @@ export default function AIInputModal({ isOpen, onClose, onRequestToAIModel }) {
           placeholder="sk-xxxxxxxx"
         />
 
-        <label className="block mb-2 font-medium">Document Title</label>
-        <input
-          type="text"
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-          className="w-full border p-2 rounded mb-4"
-          placeholder="예: 인공지능 기술 보고서"
-        />
+        <label className="block mb-2 font-medium">Select Model</label>
+        <AIModelSelector model={aiModel} 
+                         setAIModel={setAIModel} 
+                         apiKey={apiKey} />
+
+        {aiModel && 
+         <div className="mt-4">
+          선택한 모델: <span className="font-mono">{aiModel}</span>
+         </div>
+        }
 
         <label className="block mb-2 font-medium">Instructions</label>
         <textarea
           value={instructions}
           onChange={(e) => setInstructions(e.target.value)}
           className="w-full flex-grow border p-2 rounded mb-4 resize-none"
-          placeholder="예: 목차는 개요, 현황, 전망으로 구성..."
+          placeholder="예: AI model에게 좋은 답변을 받아내기 위해 요청서를 작성하는 방법은?"
         />
 
-        <label className="block mb-2 font-medium">Select Model</label>
-        <AIModelSelector model={aiModel} setAIModel={setAIModel} apiKey={apiKey} />
-
-        {aiModel && <div className="mt-4">선택한 모델: <span className="font-mono">{aiModel}</span></div>}
-
         <div className="mt-6 flex justify-end gap-2">
-          <button onClick={onClose} className="px-4 py-2 rounded bg-gray-300 hover:bg-gray-400">닫기</button>
-          <button onClick={handleRequestToAIModel} className="px-4 py-2 rounded bg-indigo-500 text-white hover:bg-indigo-600">생성하기</button>
+          <button onClick={onClose} 
+                  className="px-4 
+                             py-2 
+                             rounded 
+                             bg-gray-500
+                             text-white 
+                             hover:bg-gray-600">
+          닫기
+          </button>
+          <button onClick={handleRequestToAIModel} 
+                  className="px-4 
+                             py-2 
+                             rounded 
+                             bg-indigo-500 
+                             text-white 
+                             hover:bg-indigo-600">
+          생성하기
+          </button>
         </div>
 
         {/* 리사이즈 핸들 */}

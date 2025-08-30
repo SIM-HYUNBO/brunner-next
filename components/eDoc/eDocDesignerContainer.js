@@ -442,9 +442,9 @@ export default function EDocDesignerContainer({
     setIsExportingPdf(false);
   };
 
-  const handleRequestDocumentToAI = async ({ apiKey, title, instructions, aiModel }) => {
-    if (!title || !instructions || !aiModel) {
-      openModal("문서 제목(Topic)과 지시사항을 모두 입력하고 모델을 선택해주세요.");
+  const handleRequestDocumentToAI = async ({ apiKey, instructions, aiModel }) => {
+    if (!instructions || !aiModel) {
+      openModal("openAI apikey와 모델을 선택하고 지시사항을 모두 입력하고 해주세요.");
       return;
     }
 
@@ -453,7 +453,6 @@ export default function EDocDesignerContainer({
         commandName: constants.commands.EDOC_DOCUMENT_AUTO_GENERATE_DOCUMENT,
         systemCode: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE,
         instructionInfo: { 
-          title,
           instructions,
           apiKey,
           aiModel }
@@ -465,7 +464,7 @@ export default function EDocDesignerContainer({
       if (jResponse.error_code == 0) {
         const newDoc = {
           ...jResponse.documentData,
-          title: title,   // <-- topic을 곧바로 제목으로 지정
+          title: jResponse.documentData.runtime_data.title,
         }
 
         setDocumentData(newDoc);

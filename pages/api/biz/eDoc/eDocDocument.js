@@ -277,7 +277,6 @@ export const generateDocumentWithOpenAI = async (txnId, jRequest) => {
 
   try {
     const prompt = `
-문서 제목: ${jRequest.instructionInfo.title}
 지시사항: ${jRequest.instructionInfo.instructions}
 
 아래 지시사항에 따라 답변내용을 문서로 작성하라.
