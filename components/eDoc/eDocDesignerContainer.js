@@ -69,6 +69,8 @@ export default function EDocDesignerContainer({
   const [selectedComponentId, setSelectedComponentId] = useState(null);
   const [documentList, setDocumentList] = useState([]);
   const [showDocumentListModal, setShowDocumentListModal] = useState(false);
+  const [isLeftPanelOpen, setIsLeftPanelOpen] = useState(true);
+  const [isRightPanelOpen, setIsRightPanelOpen] = useState(true);
 
   useEffect(() => {
     async function fetchTemplates() {
@@ -469,7 +471,6 @@ export default function EDocDesignerContainer({
 
       {loading && <Loading />}
       <h2 className={`page-title`}>Page designer</h2>
-
       {/* 상단 메뉴 */}
       <EDocDesignerTopMenu
         mode={mode}
@@ -486,57 +487,69 @@ export default function EDocDesignerContainer({
         setCurrentPageIdx={setCurrentPageIdx}
         setModalOpen={setModalOpen}
       />
-
-      <div className="flex flex-row h-screen mt-10">
-        <div className="flex flex-col items-center">
-          <button
-            onClick={toggleMode}
-            className="p-2 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700"
-            title={mode === "design" ? "To Runtime Mode" : "To Design Mode"}
+      <button
+        onClick={toggleMode}
+        className="p-2 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700"
+        title={mode === "design" ? "To Runtime Mode" : "To Design Mode"}
+      >
+        {mode === "design" ? (
+          // 런타임 모드 아이콘 (▶ 플레이 버튼 느낌)
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="w-6 h-6"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            strokeWidth={2}
           >
-            {mode === "design" ? (
-              // 런타임 모드 아이콘 (▶ 플레이 버튼 느낌)
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="w-6 h-6"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                strokeWidth={2}
-              >
-                <path strokeLinecap="round" strokeLinejoin="round" d="M5 3l14 9-14 9V3z" />
-              </svg>
-            ) : (
-              // 디자인 모드 아이콘 (연필 아이콘)
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="w-6 h-6"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                strokeWidth={2}
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M16.862 4.487l2.651 2.651a2 2 0 010 2.828l-9.9 9.9a4 4 0 01-1.414.94l-3.53 1.178a.5.5 0 01-.633-.633l1.178-3.53a4 4 0 01.94-1.414l9.9-9.9a2 2 0 012.828 0z"
-                />
-              </svg>
-            )}
-          </button>
-          {/* 왼쪽 컴포넌트 팔레트 */}
-          <aside
-            className="w-56
-                mt-10 
-                general-text-bg-color
-                border-r 
-                overflow-auto"
+            <path strokeLinecap="round" 
+                  strokeLinejoin="round" 
+                  d="M5 3l14 9-14 9V3z" />
+          </svg>
+        ) : (
+          // 디자인 모드 아이콘 (연필 아이콘)
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="w-6 h-6"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            strokeWidth={2}
           >
-            <EDocComponentPalette
-              templates={componentTemplates}
-              onAddComponent={handleAddComponent}
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M16.862 4.487l2.651 2.651a2 2 0 010 2.828l-9.9 9.9a4 4 0 01-1.414.94l-3.53 1.178a.5.5 0 01-.633-.633l1.178-3.53a4 4 0 01.94-1.414l9.9-9.9a2 2 0 012.828 0z"
             />
+          </svg>
+        )}
+      </button>
+      <div className="flex flex-row h-screen mt-10">
+        <div className="flex flex-row">
+          <aside
+            className={`transition-all duration-300 overflow-auto border-r general-text-bg-color
+                        ${isLeftPanelOpen ? "w-56" : "w-0"}`}
+          >
+            {isLeftPanelOpen && (
+              <EDocComponentPalette
+                templates={componentTemplates}
+                onAddComponent={handleAddComponent}
+              />
+            )}
           </aside>
+          {/* 좌측 패널 토글 버튼 (항상 보임, 패널 우측에 겹치도록) */}
+          <button
+            onClick={() => setIsLeftPanelOpen(prev => !prev)}
+            className="flex 
+                      flex-col 
+                      items-center 
+                      justify-center 
+                      text-gray-800 
+                      dark:text-gray-200 
+                      bg-transparent z-10"
+          >
+            {isLeftPanelOpen ? "◀" : "▶"}
+          </button>
         </div>
         {/* 중앙 편집 캔버스 */}
         <div className="flex-1 overflow-auto">
@@ -622,67 +635,65 @@ export default function EDocDesignerContainer({
 
         {/* 오른쪽 속성 편집창 */}
         <aside
-          className="w-96 
-                     border-0
-                     general-text-bg-color 
-                     border-gray 
-                     dark:border-gray 
-                     p-4 
-                     block
-                     overflow-auto"
+          className={`relative general-text-bg-color 
+                      border-gray 
+                      dark:border-gray 
+                      p-4 
+                      overflow-auto 
+                      transition-all 
+                      duration-300
+                      ${isRightPanelOpen ? "w-72" : "w-0"}`}
         >
-          <h2
-            className="text-lg 
-                         font-semibold 
-                         mb-4 
-                         general-text-color"
+          {/* 우측 패널 토글 버튼 */}
+          <button
+            onClick={() => setIsRightPanelOpen(prev => !prev)}
+            className="absolute top-1/2 left-0 -translate-y-1/2 p-2
+                      text-gray-800 dark:text-gray-200 bg-transparent z-10"
           >
-            속성창
-          </h2>
+            {isRightPanelOpen ? "▶" : "◀"}
+          </button>
 
-          {selectedComponentId !== null &&
-          documentData.pages[currentPageIdx]?.components[
-            selectedComponentId
-          ] ? (
-            <EDocComponentPropertyEditor
-              component={
-                documentData.pages[currentPageIdx].components[
-                  selectedComponentId
-                ]
-              }
-              handleUpdateComponent={handleUpdateComponent}
-            />
-          ) : (
+          {isRightPanelOpen && (
             <>
-              <EDocDocumentPropertyEditor
-                runtimeData={documentData.runtime_data}
-                onChangeRuntimeData={(updatedRuntimeData) =>
-                  setDocumentData((prev) => ({
-                    ...prev,
-                    runtime_data: updatedRuntimeData,
-                  }))
-                }
-              />
-
-              {/* ✅ 페이지 속성 편집기 추가 */}
-              <EDocPagePropertyEditor
-                runtimeData={
-                  documentData.pages[currentPageIdx]?.runtime_data || {}
-                }
-                onChangeRuntimeData={(updatedPageRuntimeData) =>
-                  setDocumentData((prev) => {
-                    const updatedPages = [...prev.pages];
-                    updatedPages[currentPageIdx] = {
-                      ...updatedPages[currentPageIdx],
-                      runtime_data: updatedPageRuntimeData,
-                    };
-                    return { ...prev, pages: updatedPages };
-                  })
-                }
-              />
+              <h2 className="flex flex-row justify-center text-lg font-semibold mb-4 general-text-color">속성창</h2>
+              {selectedComponentId !== null &&
+              documentData.pages[currentPageIdx]?.components[selectedComponentId] ? (
+                <EDocComponentPropertyEditor
+                  component={
+                    documentData.pages[currentPageIdx].components[selectedComponentId]
+                  }
+                  handleUpdateComponent={handleUpdateComponent}
+                />
+              ) : (
+                <>
+                  <EDocDocumentPropertyEditor
+                    runtimeData={documentData.runtime_data}
+                    onChangeRuntimeData={(updatedRuntimeData) =>
+                      setDocumentData((prev) => ({
+                        ...prev,
+                        runtime_data: updatedRuntimeData,
+                      }))
+                    }
+                  />
+                  <EDocPagePropertyEditor
+                    runtimeData={documentData.pages[currentPageIdx]?.runtime_data || {}}
+                    onChangeRuntimeData={(updatedPageRuntimeData) =>
+                      setDocumentData((prev) => {
+                        const updatedPages = [...prev.pages];
+                        updatedPages[currentPageIdx] = {
+                          ...updatedPages[currentPageIdx],
+                          runtime_data: updatedPageRuntimeData,
+                        };
+                        return { ...prev, pages: updatedPages };
+                      })
+                    }
+                  />
+                </>
+              )}
             </>
           )}
         </aside>
+
       </div>
 
       {/* 문서 선택 모달 */}

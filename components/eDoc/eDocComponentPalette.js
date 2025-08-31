@@ -13,6 +13,8 @@ export default function EDocComponentPalette({ templates, onAddComponent }) {
 
   return (
     <div className="space-y-3 mr-1">
+      <h2 className="flex justify-center items-center text-lg font-semibold mb-4 general-text-color">컴포넌트</h2>
+
       {templates.map((template) => (
         <button
           key={template.id}
