@@ -487,9 +487,12 @@ export default function EDocDesignerContainer({
         setCurrentPageIdx={setCurrentPageIdx}
         setModalOpen={setModalOpen}
       />
+      <div className="flex flex-row h-screen mt-10">
       <button
         onClick={toggleMode}
-        className="p-2 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700"
+        className="flex flex-row justify-center rounded-lg 
+                   hover:bg-gray-200 
+                   dark:hover:bg-gray-700"
         title={mode === "design" ? "To Runtime Mode" : "To Design Mode"}
       >
         {mode === "design" ? (
@@ -524,21 +527,20 @@ export default function EDocDesignerContainer({
           </svg>
         )}
       </button>
-      <div className="flex flex-row h-screen mt-10">
-        <div className="flex flex-row">
-          <aside
+      <div className="flex flex-row">
+        <aside
             className={`transition-all duration-300 overflow-auto border-r general-text-bg-color
                         ${isLeftPanelOpen ? "w-56" : "w-0"}`}
-          >
+        >
             {isLeftPanelOpen && (
               <EDocComponentPalette
                 templates={componentTemplates}
                 onAddComponent={handleAddComponent}
               />
             )}
-          </aside>
+        </aside>
           {/* 좌측 패널 토글 버튼 (항상 보임, 패널 우측에 겹치도록) */}
-          <button
+        <button
             onClick={() => setIsLeftPanelOpen(prev => !prev)}
             className="flex 
                       flex-col 
@@ -547,12 +549,12 @@ export default function EDocDesignerContainer({
                       text-gray-800 
                       dark:text-gray-200 
                       bg-transparent z-10"
-          >
+        >
             {isLeftPanelOpen ? "◀" : "▶"}
-          </button>
-        </div>
+        </button>
+      </div>
         {/* 중앙 편집 캔버스 */}
-        <div className="flex-1 overflow-auto">
+      <div className="flex-1 overflow-auto">
           {documentData && (
             <h1
               className="text-2xl 
@@ -631,10 +633,10 @@ export default function EDocDesignerContainer({
               </div>
             ))}
           </main>
-        </div>
+      </div>
 
         {/* 오른쪽 속성 편집창 */}
-        <aside
+      <aside
           className={`relative general-text-bg-color 
                       border-gray 
                       dark:border-gray 
@@ -655,7 +657,7 @@ export default function EDocDesignerContainer({
 
           {isRightPanelOpen && (
             <>
-              <h2 className="flex flex-row justify-center text-lg font-semibold mb-4 general-text-color">속성창</h2>
+              <h2 className="flex flex-col items-center text-lg font-semibold mb-4 general-text-color">속성창</h2>
               {selectedComponentId !== null &&
               documentData.pages[currentPageIdx]?.components[selectedComponentId] ? (
                 <EDocComponentPropertyEditor
@@ -692,7 +694,7 @@ export default function EDocDesignerContainer({
               )}
             </>
           )}
-        </aside>
+      </aside>
 
       </div>
 
