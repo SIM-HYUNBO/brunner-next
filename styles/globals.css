@@ -183,8 +183,8 @@ neutral, stone
            ;
 
     @apply w-full 
-           md:w-full 
-           lg:w-5/6 
+           md:w-screen 
+           lg:w-screen
            lg:mx-auto
            ;
 
