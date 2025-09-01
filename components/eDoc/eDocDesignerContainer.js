@@ -70,6 +70,8 @@ export default function EDocDesignerContainer({
   const [showDocumentListModal, setShowDocumentListModal] = useState(false);
   const [isLeftPanelOpen, setIsLeftPanelOpen] = useState(true);
   const [isRightPanelOpen, setIsRightPanelOpen] = useState(true);
+  const [rightPanelWidth, setRightPanelWidth] = useState(300);
+  const [isResizing, setIsResizing] = useState(false);
 
   useEffect(() => {
     async function fetchTemplates() {
@@ -94,6 +96,33 @@ export default function EDocDesignerContainer({
       openDocumentById(documentId);
     }
   }, [documentId]);
+
+  useEffect(() => {
+
+    const handleMouseMove = (e) => {
+      if(isResizing) {
+        const newWidth = window.innerWidth - e.clientX;
+        if(newWidth > 200 && newWidth < 800) {
+          setRightPanelWidth(newWidth);
+        }
+      }
+    };
+
+  const handleMouseUp = () => {
+    if(isResizing) setIsResizing(false);
+  }
+
+  if(isResizing) {
+    window.addEventListener("mousemove", handleMouseMove);
+    window.addEventListener("mouseup", handleMouseUp);
+  }
+
+  return () => {
+    window.removeEventListener("mousemove", handleMouseMove);
+    window.removeEventListener("mouseup", handleMouseUp);   
+  };
+
+}, [isResizing]);
 
   const toggleMode = () =>
     setMode((prev) => (prev === "design" ? "runtime" : "design"));
@@ -459,6 +488,10 @@ export default function EDocDesignerContainer({
     openDocumentById(doc.id);
   };
 
+  const handleMouseDown = () =>{
+      setIsResizing(true);
+  }
+
   return (
     <>
       <AIInputModal
@@ -701,16 +734,25 @@ export default function EDocDesignerContainer({
         </div>
 
         {/* 오른쪽 속성 편집창 */}
+          {/* 리사이저 바 */}
+          {isRightPanelOpen && (
+            <div onMouseDown={handleMouseDown}
+            className="absoulte top-0 left-0 w-1 h-full cursor-col-resize bg-gray-300 hover:bg-gray-400"
+            />
+          )}
+
         <aside
-         className={`relative general-text-bg-color 
+         className={`flex flex-col justify-start 
+                     relative general-text-bg-color 
                      border-gray 
                      dark:border-gray 
                      p-4 
                      overflow-auto 
                      transition-all 
-                     duration-300
-                     ${isRightPanelOpen ? "w-72" : "w-0"}`}
+                     duration-100`}
+         style={{ width: isRightPanelOpen ? `${rightPanelWidth}px`: "0px"}}
         >
+
          {/* 우측 패널 토글 버튼 */}
          <button
           onClick={() => setIsRightPanelOpen(prev => !prev)}
@@ -720,8 +762,7 @@ export default function EDocDesignerContainer({
          {isRightPanelOpen ? "▶" : "◀"}
          </button>
 
-         {isRightPanelOpen && 
-         (
+         {isRightPanelOpen && (
           <>
             <h2 className="flex flex-col items-center text-lg font-semibold mb-4 general-text-color">속성창</h2>
             {selectedComponentId !== null &&
