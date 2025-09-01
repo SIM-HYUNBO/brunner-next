@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from "react";
 import * as constants from "@/components/constants";
 import RequestServer from "@/components/requestServer"
 import Loading from "@/components/loading";
-import { useModal } from "./brunnerMessageBox";
+import { useModal } from "@/components/brunnerMessageBox";
 import AIModelSelector from "@/components/aiModelSelector";
 
 export default function AIInputModal({ 

@@ -5,6 +5,7 @@ import * as constants from "@/components/constants";
 import * as userInfo from "@/components/userInfo";
 import RequestServer from "@/components/requestServer";
 import EDocEditorCanvas from "@/components/eDoc/eDocEditorCanvas";
+import BrunnerBoard from "@/components/brunnerBoard";
 
 
 export default function EDocContent({
@@ -204,6 +205,9 @@ export default function EDocContent({
               }}
             />
           ))}
+        </div>
+        <div className={`flex w-full mt-10 px-2 readonly`}>
+          <BrunnerBoard boardType={`${documentData.id}`} />
         </div>
       </main>
     </>

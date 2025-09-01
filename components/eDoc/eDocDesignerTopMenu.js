@@ -112,7 +112,7 @@ export default function EDocDesignerTopMenu({
         onClick={() => setModalOpen(true)}
         className="bg-indigo-500 text-white rounded ml-2 p-2 hover:bg-indigo-700"
       >
-        AI Generate
+        AI Gen.
       </button>
     </div>
     </>

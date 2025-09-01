@@ -10,7 +10,7 @@ const GoverningMessage = ({ governingMessage = "" }) => {
       </React.Fragment>
     ));
   
-    return <p>{formattedMessage}</p>;
+    return <p className='px-10'>{formattedMessage}</p>;
   };
   
   export default GoverningMessage;
