@@ -70,9 +70,12 @@ export default function EDocDesignerContainer({
   const [showDocumentListModal, setShowDocumentListModal] = useState(false);
   const [isLeftPanelOpen, setIsLeftPanelOpen] = useState(true);
   const [isRightPanelOpen, setIsRightPanelOpen] = useState(true);
-  const [rightPanelWidth, setRightPanelWidth] = useState(300);
+  
   const [isResizing, setIsResizing] = useState(false);
-
+  const [rightPanelWidth, setRightPanelWidth] = useState(300);
+  const [resizeStartX, setResizeStartX] = useState(0);
+  const [resizeStartWidth, setResizeStartWidth] = useState(0);
+  
   useEffect(() => {
     async function fetchTemplates() {
       const jRequest = {
@@ -99,31 +102,35 @@ export default function EDocDesignerContainer({
 
   useEffect(() => {
 
-    const handleMouseMove = (e) => {
-      if(isResizing) {
-        const newWidth = window.innerWidth - e.clientX;
-        if(newWidth > 200 && newWidth < 800) {
-          setRightPanelWidth(newWidth);
-        }
-      }
-    };
-
-  const handleMouseUp = () => {
-    if(isResizing) setIsResizing(false);
-  }
-
-  if(isResizing) {
+  if (isResizing) {
     window.addEventListener("mousemove", handleMouseMove);
     window.addEventListener("mouseup", handleMouseUp);
   }
 
   return () => {
     window.removeEventListener("mousemove", handleMouseMove);
-    window.removeEventListener("mouseup", handleMouseUp);   
+    window.removeEventListener("mouseup", handleMouseUp);
   };
-
 }, [isResizing]);
 
+  const handleMouseDown = (e) => {
+    setIsResizing(true);
+    setResizeStartX(e.clientX);          // 드래그 시작 시 마우스 X 위치
+    setResizeStartWidth(rightPanelWidth); // 드래그 시작 시 패널 너비 저장
+  };
+
+  const handleMouseUp = () => {
+    if (isResizing) setIsResizing(false);
+  };
+
+  const handleMouseMove = (e) => {
+    if (isResizing) {
+      const deltaX = resizeStartX - e.clientX; 
+      const newWidth = resizeStartWidth + deltaX; // 시작 시점 기준으로 너비 계산
+      setRightPanelWidth(Math.max(100, newWidth)); // 최소 너비 제한
+    }
+  };
+    
   const toggleMode = () =>
     setMode((prev) => (prev === "design" ? "runtime" : "design"));
 
@@ -487,10 +494,6 @@ export default function EDocDesignerContainer({
     setShowDocumentListModal(false);
     openDocumentById(doc.id);
   };
-
-  const handleMouseDown = () =>{
-      setIsResizing(true);
-  }
 
   const ModeToggleButton = () => {
     return (
