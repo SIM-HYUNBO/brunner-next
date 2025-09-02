@@ -34,7 +34,9 @@ export const getAIModelList = async (apiKey) => {
   return null;
 };
 
-/* prompts는 아래와 같은 구조의 JsonObject 배열입니다.
+/* 
+
+prompts는 아래와 같은 구조의 JsonObject 배열입니다.
    prompts: [
      {
        role: "system",

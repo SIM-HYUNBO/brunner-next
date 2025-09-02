@@ -5,7 +5,7 @@ import * as constants from '@/components/constants'
 import * as database from "../database/database"
 import * as dynamicSql from '../dynamicSql'
 import * as commonFunctions from '@/components/commonFunctions'
-import * as openAICall from '@/components/openAICall'
+import * as aiRequest from '@/components/aiRequestor'
 
 
 const executeService = async (txnId, jRequest) => {
@@ -592,7 +592,7 @@ JSON 문서 포맷은 아래와 같고 상기 컴포넌트의 기본값을 모�
   const userPrompt= prompt;
   const assistantPrompt = `반드시 JSON만 반환하고, 코드나 주석은 포함하지 않아야 한다.`;
 
-  var aiResult = await openAICall.requestPrompt(
+  var aiResult = await aiRequest.requestPrompt(
     jRequest.instructionInfo.apiKey, 
     jRequest.instructionInfo.aiModel, 
     systemPrompt,
@@ -626,7 +626,7 @@ export const getAIModelList = async (txnId, jRequest) => {
     };
 
   try{
-    const modelList = await openAICall.getAIModelList(jRequest.apiKey);
+    const modelList = await aiRequest.getAIModelList(jRequest.apiKey);
     jResponse.models = modelList;
   } catch (e) {
     jResponse.error_code = -1;
