@@ -198,7 +198,7 @@ const signin = async (txnId, jRequest) => {
                     from: 'brunner-admin@brunner-next.com', // 발신자 이메일 주소
                     to: 'hbsim0605@gmail.com',  // 관리자 이메일 주소
                     subject: '[brunner-next] New user signed in',
-                    text: `New user signed in. ID: ${jResponse.userId}` // 이메일 본문
+                    text: `New user signed in. ID: ${jResponse.userId}, Name:${jResponse.userName}` // 이메일 본문
                 })
             } else {
                 jResponse.error_code = -1;
