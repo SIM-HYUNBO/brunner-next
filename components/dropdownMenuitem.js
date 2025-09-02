@@ -35,8 +35,8 @@ const getAdminDocumentList = async (items) => {
 
   const jResponse = await RequestServer(jRequest);
   if (jResponse.error_code === 0 && Array.isArray(jResponse.documentList)) {
-    const sectionLabel = "Admin's pages";
-    items.push({ label: sectionLabel, type: "section" });
+    // const sectionLabel = "Admin's pages";
+    // items.push({ label: sectionLabel, type: "section" });
 
     jResponse.documentList.forEach((doc) => {
       const hRef = `/${doc.id}`;
@@ -44,7 +44,7 @@ const getAdminDocumentList = async (items) => {
         label: doc.runtime_data?.title || "(제목 없음)",
         href: hRef,
         type: "item",
-        parent: sectionLabel,
+        // parent: sectionLabel,
       });
     });
   }
