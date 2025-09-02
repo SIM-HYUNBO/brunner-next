@@ -24,13 +24,21 @@ export default function HomeContent() {
         <h2 className={`px-5 page-title`}>
           Noesis Pelagos
         </h2>
-        <GoverningMessage governingMessage={`Thoughts are finite, but records are eternal.
-Leave your ideas as digital documents.
-Creation begins the moment you start recording.
+        <div className="w-full flex flex-row items-center">
+          <div className="flex-1">
+          <GoverningMessage governingMessage={`Thoughts are finite, but records are eternal.
+  Leave your ideas as digital documents.
+  Creation begins the moment you start recording.
 
-Personal use of Brunner's services is free. 
-Sign up to try it out.`} />
-        
+  Personal use of Brunner's services is free. 
+  Sign up to try it out.`} />
+          </div>
+          {!isMobile && (
+            <div className={`items-center`}>
+              <HomeContentAnimation width={300} height={300} />
+            </div>
+          )}
+        </div>
         <div className={`flex flex-col mt-20`}>
           {isMounted && !userInfo.isLogin() && (
             <div className ="flex space-x-1">
@@ -61,11 +69,6 @@ Sign up to try it out.`} />
         <div className={`flex w-full mt-10 px-2 readonly`}>
           <BrunnerBoard boardType={'MAIN_TALK'} />
         </div>
-        {!isMobile && (
-          <div className={`items-center`}>
-            <HomeContentAnimation width={300} height={300} />
-          </div>
-        )}
       </DivContainer>
     </>
   );
