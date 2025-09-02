@@ -4,9 +4,9 @@ import logger from "../winston/logger"
 import * as constants from '@/components/constants'
 import * as database from "./database/database"
 import * as dynamicSql from "./dynamicSql"
+import * as mailSender from '@/components/mailSender'
 
 import bcrypt from "bcryptjs"
-import nodemailer from 'nodemailer';
 
 const executeService = async (txnId, jRequest) => {
     var jResponse = {};
@@ -192,6 +192,14 @@ const signin = async (txnId, jRequest) => {
                 jResponse.userId = select_TB_COR_USER_MST_02.rows[0].user_id;
                 jResponse.userName = select_TB_COR_USER_MST_02.rows[0].user_name;
                 jResponse.adminFlag = select_TB_COR_USER_MST_02.rows[0].admin_flag;
+
+                // New User login report mail send
+                mailSender.sendEmail({
+                    from: 'brunner-admin@brunner-next.com', // 발신자 이메일 주소
+                    to: 'hbsim0605@gmail.com',  // 관리자 이메일 주소
+                    subject: '[brunner-next] New user signed in',
+                    text: `New user signed in. ID: ${jResponse.userId}` // 이메일 본문
+                })
             } else {
                 jResponse.error_code = -1;
                 jResponse.error_message = `Incorrect password`;
@@ -438,7 +446,7 @@ const sendEMailAuthCode = async (txnId, jRequest) => {
                 var authCode = generateRandomString(6);
                 // EMail로 전송하고    
 
-                sendEmail({
+                mailSender.sendEmail({
                     from: 'brunner-admin@brunner-next.com', // 발신자 이메일 주소
                     to: select_TB_COR_USER_MST_03.rows[0].email_id,  // 수신자 이메일 주소
                     subject: '[brunner-next]Your Authentication Code',
@@ -495,25 +503,6 @@ const generateRandomString = (length) => {
     }
 
     return result;
-};
-
-// 이메일 발송을 위한 설정
-const transporter = nodemailer.createTransport({
-    service: 'gmail', // 또는 'smtp', 'yahoo', 'outlook' 등 사용하고자 하는 이메일 서비스
-    auth: {
-        user: 'hbsim0605@gmail.com', // 발송할 이메일 주소
-        pass: 'qjrc wqdk otau kvpg'   // 이메일 계정 비밀번호 또는 앱 비밀번호
-    }
-});
-
-// 이메일 발송
-const sendEmail = async (mailOptions) => {
-    try {
-        const info = await transporter.sendMail(mailOptions);
-        console.log('Email sent:', info.response);
-    } catch (error) {
-        console.error(`Error sending email: message:${error.message}\n stack:${error.stack}\n`);
-    }
 };
 
 const signout = (txnId, jRequest) => {
