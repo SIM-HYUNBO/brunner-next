@@ -492,6 +492,53 @@ export default function EDocDesignerContainer({
       setIsResizing(true);
   }
 
+  const ModeToggleButton = () => {
+    return (
+        <button
+          onClick={toggleMode}
+          className="flex 
+                      flex-row 
+                      justify-center 
+                      rounded-lg 
+                      hover:bg-gray-200 
+                      dark:hover:bg-gray-700"
+          title={mode === "design" ? "To Runtime Mode" : "To Design Mode"}
+          >
+          {mode === "design" ? (
+              // 런타임 모드 아이콘 (▶ 플레이 버튼 느낌)
+              <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="w-6 h-6"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              strokeWidth={2}
+              >
+              <path strokeLinecap="round" 
+                    strokeLinejoin="round" 
+                    d="M5 3l14 9-14 9V3z" />
+              </svg>
+            ) : (
+              // 디자인 모드 아이콘 (연필 아이콘)
+              <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="w-6 h-6"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              strokeWidth={2}
+              >
+                <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M16.862 4.487l2.651 2.651a2 2 0 010 2.828l-9.9 9.9a4 4 0 01-1.414.94l-3.53 1.178a.5.5 0 01-.633-.633l1.178-3.53a4 4 0 01.94-1.414l9.9-9.9a2 2 0 012.828 0z"
+                />
+              </svg>
+            )}
+        </button>
+    );
+  }
+
   return (
     <>
       <AIInputModal
@@ -566,7 +613,7 @@ export default function EDocDesignerContainer({
       )}
 
       {loading && <Loading />}
-        <h2 className={`page-title`}>Page designer</h2>
+        <h2 className={`page-title`}>Page Designer</h2>
         {/* 상단 메뉴 */}
         <EDocDesignerTopMenu
          mode={mode}
@@ -583,49 +630,10 @@ export default function EDocDesignerContainer({
          setCurrentPageIdx={setCurrentPageIdx}
          setModalOpen={setModalOpen}
         />
+        <div className="flex flex-row justify-center mt-3">
+          <ModeToggleButton/>
+        </div>
         <div className="flex flex-row h-screen mt-10">
-        <button
-         onClick={toggleMode}
-         className="flex 
-                    flex-row 
-                    justify-center 
-                    rounded-lg 
-                    hover:bg-gray-200 
-                    dark:hover:bg-gray-700"
-         title={mode === "design" ? "To Runtime Mode" : "To Design Mode"}
-        >
-        {mode === "design" ? (
-            // 런타임 모드 아이콘 (▶ 플레이 버튼 느낌)
-            <svg
-             xmlns="http://www.w3.org/2000/svg"
-             className="w-6 h-6"
-             fill="none"
-             viewBox="0 0 24 24"
-             stroke="currentColor"
-             strokeWidth={2}
-            >
-             <path strokeLinecap="round" 
-                   strokeLinejoin="round" 
-                   d="M5 3l14 9-14 9V3z" />
-            </svg>
-          ) : (
-            // 디자인 모드 아이콘 (연필 아이콘)
-            <svg
-             xmlns="http://www.w3.org/2000/svg"
-             className="w-6 h-6"
-             fill="none"
-             viewBox="0 0 24 24"
-             stroke="currentColor"
-             strokeWidth={2}
-            >
-              <path
-               strokeLinecap="round"
-               strokeLinejoin="round"
-               d="M16.862 4.487l2.651 2.651a2 2 0 010 2.828l-9.9 9.9a4 4 0 01-1.414.94l-3.53 1.178a.5.5 0 01-.633-.633l1.178-3.53a4 4 0 01.94-1.414l9.9-9.9a2 2 0 012.828 0z"
-              />
-            </svg>
-          )}
-        </button>
         {/* 좌측 컴포넌트 팔레트 */}
         <div className="flex flex-row">
           <aside
@@ -681,10 +689,24 @@ export default function EDocDesignerContainer({
                      }}
               >
               {documentData.pages.map((page, idx) => (
+                <>
+                <div 
+                  className="general-text-bg-color 
+                            text-xs 
+                            rounded 
+                            px-2 
+                            py-1 
+                            select-none 
+                            pointer-events-none 
+                            z-10"
+                >
+                  p{idx + 1}
+                </div>                
                 <div
                  key={page.id}
                  className={`relative 
                              w-fit 
+                             my-1
                              mx-auto 
                              border 
                              border-dashed 
@@ -696,22 +718,6 @@ export default function EDocDesignerContainer({
                   setSelectedComponentId(null);
                  }}
                 >
-                  <div 
-                   className="absolute 
-                              top-2 
-                              left-2 
-                              general-text-bg-color 
-                              text-xs 
-                              rounded 
-                              px-2 
-                              py-1 
-                              select-none 
-                              pointer-events-none 
-                              z-10"
-                  >
-                    p{idx + 1}
-                  </div>
-
                   <EDocEditorCanvas
                     documentData={documentData}
                     pageData={page}
@@ -730,6 +736,7 @@ export default function EDocDesignerContainer({
                     mode={mode}
                   />
                 </div>
+                </>
               ))}
             </main>
         </div>

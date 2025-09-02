@@ -246,9 +246,7 @@ export default function EDocEditorCanvas({
         {pageData.components?.length === 0 ? (
           isViewerMode ? null : (
             <p
-              className="text-gray-500 
-                          dark:text-gray-500 
-                          text-center"
+              className="text-center"
             >
               좌측에서 컴포넌트를 추가하세요.
             </p>

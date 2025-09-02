@@ -469,14 +469,26 @@ function BoardContent({
                 setIsEditingPost(true);
               }}
               
-              className={`mr-1
-                          px-2 
-                          py-1 
+              className={`px-1
                           bg-yellow-500 
                           text-white 
                           rounded-md`}
             >
-              Edit
+              {/* 연필아이콘 */}
+            <svg
+             xmlns="http://www.w3.org/2000/svg"
+             className="w-3 h-3"
+             fill="none"
+             viewBox="0 0 24 24"
+             stroke="currentColor"
+             strokeWidth={2}
+            >
+              <path
+               strokeLinecap="round"
+               strokeLinejoin="round"
+               d="M16.862 4.487l2.651 2.651a2 2 0 010 2.828l-9.9 9.9a4 4 0 01-1.414.94l-3.53 1.178a.5.5 0 01-.633-.633l1.178-3.53a4 4 0 01.94-1.414l9.9-9.9a2 2 0 012.828 0z"
+              />
+            </svg>
             </button>
             <button
               onClick={() => {
@@ -487,12 +499,12 @@ function BoardContent({
                 }
                 handleDeletePost();
               }}
-              className={`p-1 
+              className={`px-2
                           bg-red-500 
                           text-white 
                           rounded-md`}
             >
-              Delete
+             - 
             </button>
           </>
         )}
@@ -559,12 +571,26 @@ function BoardContent({
                       setEditingCommentId(comment.comment_id);
                       setEditedCommentText(comment.comment_content);
                     }}
-                    className={`p-1 
+                    className={`px-1
                                 bg-yellow-500 
                                 text-white 
                                 rounded-md`}
                   >
-                    Edit
+                    {/* 연필아이콘 */}
+                   <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="w-3 h-3"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    strokeWidth={2}
+                    >
+                      <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M16.862 4.487l2.651 2.651a2 2 0 010 2.828l-9.9 9.9a4 4 0 01-1.414.94l-3.53 1.178a.5.5 0 01-.633-.633l1.178-3.53a4 4 0 01.94-1.414l9.9-9.9a2 2 0 012.828 0z"
+                      />
+                    </svg>
                   </button>
                   <button
                     onClick={() => {
@@ -575,13 +601,12 @@ function BoardContent({
                       }
                       handleDeleteComment(comment.comment_id);
                     }}
-                    className={`p-1
-                                ml-1 
+                    className={`px-2
                                 bg-red-500 
                                 text-white 
                                 rounded-md`}
                   >
-                    Delete
+                   - 
                   </button>
                 </>
               )}
@@ -610,7 +635,7 @@ function BoardContent({
                       text-white 
                       rounded-md`}
         >
-          Add...
+          +
         </button>
       </div>
     </div>
