@@ -15,14 +15,14 @@ neutral, stone
 
   :root {
     /* Light Mode 색상 변수 */
-    --theme-light-text: theme('colors.stone.900');
-    --theme-light-bg: theme('colors.stone.100');
+    --theme-light-text: theme('colors.zinc.900');
+    --theme-light-bg: theme('colors.zinc.100');
 
-    --theme-medium-text: theme('colors.stone.600');
-    --theme-medium-bg: theme('colors.stone.400');
+    --theme-medium-text: theme('colors.zinc.600');
+    --theme-medium-bg: theme('colors.zinc.400');
 
-    --theme-semi-text: theme('colors.stone.800');
-    --theme-semi-bg: theme('colors.stone.200');
+    --theme-semi-text: theme('colors.zinc.800');
+    --theme-semi-bg: theme('colors.zinc.200');
 
     --general-text-color: var(--theme-light-text);
     --general-bg-color: var(--theme-light-bg);
@@ -30,14 +30,14 @@ neutral, stone
 
   .dark {
     /* Dark Mode 색상 변수 덮어쓰기 */
-    --theme-dark-text: theme('colors.stone.100');
-    --theme-dark-bg: theme('colors.stone.900');
+    --theme-dark-text: theme('colors.zinc.100');
+    --theme-dark-bg: theme('colors.zinc.900');
 
-    --theme-medium-text: theme('colors.stone.400');
-    --theme-medium-bg: theme('colors.stone.600');
+    --theme-medium-text: theme('colors.zinc.400');
+    --theme-medium-bg: theme('colors.zinc.600');
 
-    --theme-semi-text: theme('colors.stone.200');
-    --theme-semi-bg: theme('colors.stone.800');
+    --theme-semi-text: theme('colors.zinc.200');
+    --theme-semi-bg: theme('colors.zinc.800');
 
     --general-text-color: var(--theme-dark-text);
     --general-bg-color: var(--theme-dark-bg);
