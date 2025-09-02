@@ -626,6 +626,7 @@ export default function EDocDesignerContainer({
             </svg>
           )}
         </button>
+        {/* 좌측 컴포넌트 팔레트 */}
         <div className="flex flex-row">
           <aside
            className={`transition-all 
@@ -633,7 +634,7 @@ export default function EDocDesignerContainer({
                        overflow-auto 
                        border-r 
                        general-text-bg-color
-                       ${isLeftPanelOpen ? "w-56" : "w-0"}`}
+                       ${isLeftPanelOpen ? "w-24" : "w-0"}`}
           >
               {isLeftPanelOpen && (
                 <EDocComponentPalette

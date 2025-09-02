@@ -22,7 +22,7 @@ export default function EDocComponentPalette({ templates, onAddComponent }) {
             onAddComponent(template);
           }}
         >
-          {template.name}({template.type})
+          {template.type}
         </button>
       ))}
     </div>

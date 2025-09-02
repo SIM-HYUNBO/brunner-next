@@ -85,12 +85,12 @@ export const commands = {
 };
 
 export const edocComponentType = {
-  _TEXT: `text`,
-  _TABLE: `table`,
-  _IMAGE: `image`,
-  _INPUT: `input`,
-  _CHECKLIST: `checklist`,
-  _BUTTON: `button`,
-  _VIDEO: `video`,
-  _LINKTEXT: 'linkText'
+  _TEXT: `Text`,
+  _TABLE: `Table`,
+  _IMAGE: `Image`,
+  _INPUT: `Input`,
+  _CHECKLIST: `Checklist`,
+  _BUTTON: `Button`,
+  _VIDEO: `Video`,
+  _LINKTEXT: 'LinkText'
 };
