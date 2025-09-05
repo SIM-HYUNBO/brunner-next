@@ -19,7 +19,7 @@ function BrunnerBoard({ boardType }) {
       const jRequest = {
         commandName: constants.commands.POST_INFO_SELECT_ALL,
         systemCode: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE,
-        postInfo: { postType: boardType }
+        postInfo: { postType: boardType },
       };
       // setLoading(true);
       const jResponse = await RequestServer(jRequest);
@@ -66,9 +66,9 @@ function BrunnerBoard({ boardType }) {
         jRequest.systemCode = process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE;
         jRequest.postInfo = newPost;
 
-        setLoading(true);// 데이터 로딩 시작
+        setLoading(true); // 데이터 로딩 시작
         jResponse = await RequestServer(jRequest);
-        setLoading(false);// 데이터 로딩 끝
+        setLoading(false); // 데이터 로딩 끝
 
         if (jResponse.error_code === 0) {
           setPosts([jResponse.postInfo, ...posts]);
@@ -104,18 +104,18 @@ function BrunnerBoard({ boardType }) {
         userId: userId,
       };
 
-      setLoading(true);// 데이터 로딩 시작
+      setLoading(true); // 데이터 로딩 시작
       jResponse = await RequestServer(jRequest);
-      setLoading(false);// 데이터 로딩 끝
+      setLoading(false); // 데이터 로딩 끝
 
       if (jResponse.error_code === 0) {
         const updatedPosts = posts.map((post) =>
           post.post_id === postId
             ? {
-              ...post,
-              post_content: newContent,
-              update_user_id: userId,
-            }
+                ...post,
+                post_content: newContent,
+                update_user_id: userId,
+              }
             : post
         );
         setPosts(updatedPosts);
@@ -149,9 +149,9 @@ function BrunnerBoard({ boardType }) {
         userId: userId,
       };
 
-      setLoading(true);// 데이터 로딩 시작작
+      setLoading(true); // 데이터 로딩 시작작
       jResponse = await RequestServer(jRequest);
-      setLoading(false);// 데이터 로딩 끝
+      setLoading(false); // 데이터 로딩 끝
 
       if (jResponse.error_code === 0) {
         const updatedPosts = posts.filter((post) => post.post_id !== postId);
@@ -290,16 +290,16 @@ function BrunnerBoard({ boardType }) {
         openModal(jResponse.error_message);
       }
     } catch (error) {
-      console.error(`Error deleting comment: message:${error.message}\n stack:${error.stack}\n`);
+      console.error(
+        `Error deleting comment: message:${error.message}\n stack:${error.stack}\n`
+      );
     }
   };
 
   return (
     <div className={`w-full max-w-4xl mx-auto`}>
       <BrunnerMessageBox />
-      {loading && (
-        <Loading />
-      )}
+      {loading && <Loading />}
       <div className={`mb-6 flex`}>
         <textarea
           value={postText}
@@ -412,9 +412,7 @@ function BoardContent({
     <div className={`border-b border-gray-300 py-4`}>
       <BrunnerMessageBox />
       <hr />
-      {loading && (
-        <Loading />
-      )}
+      {loading && <Loading />}
       {isEditingPost ? (
         <div>
           <textarea
@@ -468,27 +466,26 @@ function BoardContent({
                 }
                 setIsEditingPost(true);
               }}
-              
               className={`px-1
                           bg-yellow-500 
                           text-white 
                           rounded-md`}
             >
               {/* 연필아이콘 */}
-            <svg
-             xmlns="http://www.w3.org/2000/svg"
-             className="w-3 h-3"
-             fill="none"
-             viewBox="0 0 24 24"
-             stroke="currentColor"
-             strokeWidth={2}
-            >
-              <path
-               strokeLinecap="round"
-               strokeLinejoin="round"
-               d="M16.862 4.487l2.651 2.651a2 2 0 010 2.828l-9.9 9.9a4 4 0 01-1.414.94l-3.53 1.178a.5.5 0 01-.633-.633l1.178-3.53a4 4 0 01.94-1.414l9.9-9.9a2 2 0 012.828 0z"
-              />
-            </svg>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="w-3 h-3"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth={2}
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M16.862 4.487l2.651 2.651a2 2 0 010 2.828l-9.9 9.9a4 4 0 01-1.414.94l-3.53 1.178a.5.5 0 01-.633-.633l1.178-3.53a4 4 0 01.94-1.414l9.9-9.9a2 2 0 012.828 0z"
+                />
+              </svg>
             </button>
             <button
               onClick={() => {
@@ -504,7 +501,7 @@ function BoardContent({
                           text-white 
                           rounded-md`}
             >
-             - 
+              -
             </button>
           </>
         )}
@@ -577,18 +574,18 @@ function BoardContent({
                                 rounded-md`}
                   >
                     {/* 연필아이콘 */}
-                   <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="w-3 h-3"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                    strokeWidth={2}
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="w-3 h-3"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                      strokeWidth={2}
                     >
                       <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M16.862 4.487l2.651 2.651a2 2 0 010 2.828l-9.9 9.9a4 4 0 01-1.414.94l-3.53 1.178a.5.5 0 01-.633-.633l1.178-3.53a4 4 0 01.94-1.414l9.9-9.9a2 2 0 012.828 0z"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M16.862 4.487l2.651 2.651a2 2 0 010 2.828l-9.9 9.9a4 4 0 01-1.414.94l-3.53 1.178a.5.5 0 01-.633-.633l1.178-3.53a4 4 0 01.94-1.414l9.9-9.9a2 2 0 012.828 0z"
                       />
                     </svg>
                   </button>
@@ -606,7 +603,7 @@ function BoardContent({
                                 text-white 
                                 rounded-md`}
                   >
-                   - 
+                    -
                   </button>
                 </>
               )}

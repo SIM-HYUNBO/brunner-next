@@ -32,8 +32,7 @@ import Loading from "@/components/loading";
 export default function EDocDesignerContainer({
   documentId,
   triggerMenuReload,
-}) 
-{
+}) {
   const { BrunnerMessageBox, openModal } = useModal();
 
   const [loading, setLoading] = useState(false);
@@ -70,12 +69,12 @@ export default function EDocDesignerContainer({
   const [showDocumentListModal, setShowDocumentListModal] = useState(false);
   const [isLeftPanelOpen, setIsLeftPanelOpen] = useState(true);
   const [isRightPanelOpen, setIsRightPanelOpen] = useState(true);
-  
+
   const [isResizing, setIsResizing] = useState(false);
   const [rightPanelWidth, setRightPanelWidth] = useState(300);
   const [resizeStartX, setResizeStartX] = useState(0);
   const [resizeStartWidth, setResizeStartWidth] = useState(0);
-  
+
   useEffect(() => {
     async function fetchTemplates() {
       const jRequest = {
@@ -101,21 +100,20 @@ export default function EDocDesignerContainer({
   }, [documentId]);
 
   useEffect(() => {
+    if (isResizing) {
+      window.addEventListener("mousemove", handleMouseMove);
+      window.addEventListener("mouseup", handleMouseUp);
+    }
 
-  if (isResizing) {
-    window.addEventListener("mousemove", handleMouseMove);
-    window.addEventListener("mouseup", handleMouseUp);
-  }
-
-  return () => {
-    window.removeEventListener("mousemove", handleMouseMove);
-    window.removeEventListener("mouseup", handleMouseUp);
-  };
-}, [isResizing]);
+    return () => {
+      window.removeEventListener("mousemove", handleMouseMove);
+      window.removeEventListener("mouseup", handleMouseUp);
+    };
+  }, [isResizing]);
 
   const handleMouseDown = (e) => {
     setIsResizing(true);
-    setResizeStartX(e.clientX);          // 드래그 시작 시 마우스 X 위치
+    setResizeStartX(e.clientX); // 드래그 시작 시 마우스 X 위치
     setResizeStartWidth(rightPanelWidth); // 드래그 시작 시 패널 너비 저장
   };
 
@@ -125,12 +123,12 @@ export default function EDocDesignerContainer({
 
   const handleMouseMove = (e) => {
     if (isResizing) {
-      const deltaX = resizeStartX - e.clientX; 
+      const deltaX = resizeStartX - e.clientX;
       const newWidth = resizeStartWidth + deltaX; // 시작 시점 기준으로 너비 계산
       setRightPanelWidth(Math.max(100, newWidth)); // 최소 너비 제한
     }
   };
-    
+
   const toggleMode = () =>
     setMode((prev) => (prev === "design" ? "runtime" : "design"));
 
@@ -196,25 +194,16 @@ export default function EDocDesignerContainer({
   };
 
   const openDocumentById = async (id) => {
-    const jRequest = {
-      commandName: constants.commands.EDOC_DOCUMENT_SELECT_ONE,
-      systemCode: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE,
-      userId: userInfo.getLoginUserId(),
-      documentId: id,
-    };
     setLoading(true);
-    const jResponse = await RequestServer(jRequest);
+    const loadedDocument = await commonFunctions.getDocumentData(
+      userInfo.getLoginUserId(),
+      id
+    );
     setLoading(false);
 
-    if (jResponse.error_code === 0) {
-      const loadedDocument = jResponse.documentData || {};
-
-      setDocumentData(loadedDocument);
-      setCurrentPageIdx(0);
-      setSelectedComponentId(null);
-    } else {
-      openModal(jResponse.error_message);
-    }
+    setDocumentData(loadedDocument);
+    setCurrentPageIdx(0);
+    setSelectedComponentId(null);
   };
 
   const handleSaveDocument = async () => {
@@ -483,7 +472,7 @@ export default function EDocDesignerContainer({
     const newDoc = {
       ...aiResponse.documentData,
       title: aiResponse.documentData.runtime_data.title,
-    }
+    };
 
     setDocumentData(newDoc);
     setCurrentPageIdx(0);
@@ -497,50 +486,52 @@ export default function EDocDesignerContainer({
 
   const ModeToggleButton = () => {
     return (
-        <button
-          onClick={toggleMode}
-          className="flex 
+      <button
+        onClick={toggleMode}
+        className="flex 
                       flex-row 
                       justify-center 
                       rounded-lg 
                       hover:bg-gray-200 
                       dark:hover:bg-gray-700"
-          title={mode === "design" ? "To Runtime Mode" : "To Design Mode"}
+        title={mode === "design" ? "To Runtime Mode" : "To Design Mode"}
+      >
+        {mode === "design" ? (
+          // 런타임 모드 아이콘 (▶ 플레이 버튼 느낌)
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="w-6 h-6"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            strokeWidth={2}
           >
-          {mode === "design" ? (
-              // 런타임 모드 아이콘 (▶ 플레이 버튼 느낌)
-              <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="w-6 h-6"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              strokeWidth={2}
-              >
-              <path strokeLinecap="round" 
-                    strokeLinejoin="round" 
-                    d="M5 3l14 9-14 9V3z" />
-              </svg>
-            ) : (
-              // 디자인 모드 아이콘 (연필 아이콘)
-              <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="w-6 h-6"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              strokeWidth={2}
-              >
-                <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M16.862 4.487l2.651 2.651a2 2 0 010 2.828l-9.9 9.9a4 4 0 01-1.414.94l-3.53 1.178a.5.5 0 01-.633-.633l1.178-3.53a4 4 0 01.94-1.414l9.9-9.9a2 2 0 012.828 0z"
-                />
-              </svg>
-            )}
-        </button>
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M5 3l14 9-14 9V3z"
+            />
+          </svg>
+        ) : (
+          // 디자인 모드 아이콘 (연필 아이콘)
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="w-6 h-6"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            strokeWidth={2}
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M16.862 4.487l2.651 2.651a2 2 0 010 2.828l-9.9 9.9a4 4 0 01-1.414.94l-3.53 1.178a.5.5 0 01-.633-.633l1.178-3.53a4 4 0 01.94-1.414l9.9-9.9a2 2 0 012.828 0z"
+            />
+          </svg>
+        )}
+      </button>
     );
-  }
+  };
 
   return (
     <>
@@ -563,7 +554,8 @@ export default function EDocDesignerContainer({
                      items-center 
                      z-50"
         >
-          <div className="bg-white 
+          <div
+            className="bg-white 
                           semi-bg-color 
                           rounded-xl 
                           shadow-xl 
@@ -575,7 +567,8 @@ export default function EDocDesignerContainer({
                           border-gray-200 
                           dark:border-slate-700"
           >
-            <h3 className="text-lg 
+            <h3
+              className="text-lg 
                            font-bold 
                            mb-4 
                            general-text-color"
@@ -599,8 +592,8 @@ export default function EDocDesignerContainer({
                 </li>
               ))}
             </ul>
-            <button 
-             className="mt-4 
+            <button
+              className="mt-4 
                         px-4 
                         py-2 
                         general-bg-color 
@@ -616,48 +609,48 @@ export default function EDocDesignerContainer({
       )}
 
       {loading && <Loading />}
-        <h2 className={`page-title`}>Page Designer</h2>
-        {/* 상단 메뉴 */}
-        <EDocDesignerTopMenu
-         mode={mode}
-         toggleMode={toggleMode}
-         onNewDocument={handleNewDocument}
-         onOpenDocument={handleOpenDocument}
-         onSaveDocument={handleSaveDocument}
-         onDeleteDocument={handleDeleteDocument}
-         onAddPage={handleAddPage}
-         onDeleteCurrentPage={handleDeleteCurrentPage}
-         onExportPdf={handleExportPdf}
-         currentPageIdx={currentPageIdx}
-         totalPageCount={documentData?.pages?.length}
-         setCurrentPageIdx={setCurrentPageIdx}
-         setModalOpen={setModalOpen}
-        />
-        <div className="flex flex-row justify-center mt-3">
-          <ModeToggleButton/>
-        </div>
-        <div className="flex flex-row h-screen mt-10">
+      <h2 className={`page-title`}>Page Designer</h2>
+      {/* 상단 메뉴 */}
+      <EDocDesignerTopMenu
+        mode={mode}
+        toggleMode={toggleMode}
+        onNewDocument={handleNewDocument}
+        onOpenDocument={handleOpenDocument}
+        onSaveDocument={handleSaveDocument}
+        onDeleteDocument={handleDeleteDocument}
+        onAddPage={handleAddPage}
+        onDeleteCurrentPage={handleDeleteCurrentPage}
+        onExportPdf={handleExportPdf}
+        currentPageIdx={currentPageIdx}
+        totalPageCount={documentData?.pages?.length}
+        setCurrentPageIdx={setCurrentPageIdx}
+        setModalOpen={setModalOpen}
+      />
+      <div className="flex flex-row justify-center mt-3">
+        <ModeToggleButton />
+      </div>
+      <div className="flex flex-row h-screen mt-10">
         {/* 좌측 컴포넌트 팔레트 */}
         <div className="flex flex-row">
           <aside
-           className={`transition-all 
+            className={`transition-all 
                        duration-300 
                        overflow-auto 
                        border-r 
                        general-text-bg-color
                        ${isLeftPanelOpen ? "w-24" : "w-0"}`}
           >
-              {isLeftPanelOpen && (
-                <EDocComponentPalette
-                  templates={componentTemplates}
-                  onAddComponent={handleAddComponent}
-                />
-              )}
+            {isLeftPanelOpen && (
+              <EDocComponentPalette
+                templates={componentTemplates}
+                onAddComponent={handleAddComponent}
+              />
+            )}
           </aside>
-            {/* 좌측 패널 토글 버튼 (항상 보임, 패널 우측에 겹치도록) */}
+          {/* 좌측 패널 토글 버튼 (항상 보임, 패널 우측에 겹치도록) */}
           <button
-              onClick={() => setIsLeftPanelOpen(prev => !prev)}
-              className="flex 
+            onClick={() => setIsLeftPanelOpen((prev) => !prev)}
+            className="flex 
                         flex-col 
                         items-center 
                         justify-center 
@@ -665,35 +658,36 @@ export default function EDocDesignerContainer({
                         dark:text-gray-200 
                         bg-transparent z-10"
           >
-           {isLeftPanelOpen ? "◀" : "▶"}
+            {isLeftPanelOpen ? "◀" : "▶"}
           </button>
         </div>
         {/* 중앙 편집 캔버스 */}
         <div className="flex-1 overflow-auto">
-            {documentData && (
-              <h1 
-               className="text-2xl 
+          {documentData && (
+            <h1
+              className="text-2xl 
                           font-bold 
                           mx-4 
                           mb-4 
                           text-center
                           general-text-color"
-              >
-                {documentData.runtime_data.title || ""} : {documentData.id}
-              </h1>
-            )}
+            >
+              {documentData.runtime_data.title || ""} : {documentData.id}
+            </h1>
+          )}
 
-            {/* 도큐먼트 객체 (디자인 타임) */}
-              <main
-               className="pt-16 flex-grow edoc-designer-canvas"
-               style={{ backgroundColor:
-                        documentData.runtime_data.backgroundColor || "#f8f8f8",
-                        padding: `${documentData.runtime_data.padding}px`,
-                     }}
-              >
-              {documentData.pages.map((page, idx) => (
-                <>
-                <div 
+          {/* 도큐먼트 객체 (디자인 타임) */}
+          <main
+            className="pt-16 flex-grow edoc-designer-canvas"
+            style={{
+              backgroundColor:
+                documentData.runtime_data.backgroundColor || "#f8f8f8",
+              padding: `${documentData.runtime_data.padding}px`,
+            }}
+          >
+            {documentData.pages.map((page, idx) => (
+              <>
+                <div
                   className="general-text-bg-color 
                             text-xs 
                             rounded 
@@ -704,22 +698,22 @@ export default function EDocDesignerContainer({
                             z-10"
                 >
                   p{idx + 1}
-                </div>                
+                </div>
                 <div
-                 key={page.id}
-                 className={`relative 
+                  key={page.id}
+                  className={`relative 
                              w-fit 
                              my-1
                              mx-auto 
-                             border 
-                             border-dashed 
-                             border-gray 
-                             dark:border-gray 
-                             ${ idx === currentPageIdx ? "outline outline-2 outline-blue-400" : "" }`}
-                 onClick={() => {
-                  setCurrentPageIdx(idx);
-                  setSelectedComponentId(null);
-                 }}
+                             ${
+                               idx === currentPageIdx
+                                 ? "outline outline-2 outline-blue-400"
+                                 : ""
+                             }`}
+                  onClick={() => {
+                    setCurrentPageIdx(idx);
+                    setSelectedComponentId(null);
+                  }}
                 >
                   <EDocEditorCanvas
                     documentData={documentData}
@@ -739,21 +733,22 @@ export default function EDocDesignerContainer({
                     mode={mode}
                   />
                 </div>
-                </>
-              ))}
-            </main>
+              </>
+            ))}
+          </main>
         </div>
 
         {/* 오른쪽 속성 편집창 */}
-          {/* 리사이저 바 */}
-          {isRightPanelOpen && (
-            <div onMouseDown={handleMouseDown}
+        {/* 리사이저 바 */}
+        {isRightPanelOpen && (
+          <div
+            onMouseDown={handleMouseDown}
             className="absoulte top-0 left-0 w-1 h-full cursor-col-resize bg-gray-300 hover:bg-gray-400"
-            />
-          )}
+          />
+        )}
 
         <aside
-         className={`flex flex-col justify-start 
+          className={`flex flex-col justify-start 
                      relative general-text-bg-color 
                      border-gray 
                      dark:border-gray 
@@ -761,47 +756,51 @@ export default function EDocDesignerContainer({
                      overflow-auto 
                      transition-all 
                      duration-100`}
-         style={{ width: isRightPanelOpen ? `${rightPanelWidth}px`: "0px"}}
+          style={{ width: isRightPanelOpen ? `${rightPanelWidth}px` : "0px" }}
         >
-
-         {/* 우측 패널 토글 버튼 */}
-         <button
-          onClick={() => setIsRightPanelOpen(prev => !prev)}
-          className="absolute top-1/2 left-0 -translate-y-1/2 p-2
+          {/* 우측 패널 토글 버튼 */}
+          <button
+            onClick={() => setIsRightPanelOpen((prev) => !prev)}
+            className="absolute top-1/2 left-0 -translate-y-1/2 p-2
                      text-gray-800 dark:text-gray-200 bg-transparent z-10"
-         >
-         {isRightPanelOpen ? "▶" : "◀"}
-         </button>
+          >
+            {isRightPanelOpen ? "▶" : "◀"}
+          </button>
 
-         {isRightPanelOpen && (
-          <>
-            <h2 className="flex flex-col items-center text-lg font-semibold mb-4 general-text-color">속성창</h2>
-            {selectedComponentId !== null &&
-            documentData.pages[currentPageIdx]?.components[selectedComponentId] ? (
-              <EDocComponentPropertyEditor
-                component={
-                  documentData.pages[currentPageIdx].components[selectedComponentId]
-                }
-                handleUpdateComponent={handleUpdateComponent}
-              />
-            ) : (
-              <>
-                <EDocDocumentPropertyEditor
-                  runtimeData={documentData.runtime_data}
-                  onChangeRuntimeData={(updatedRuntimeData) =>
-                    setDocumentData((prev) => ({
-                      ...prev,
-                      runtime_data: updatedRuntimeData,
-                    }))
+          {isRightPanelOpen && (
+            <>
+              <h2 className="flex flex-col items-center text-lg font-semibold mb-4 general-text-color">
+                속성창
+              </h2>
+              {selectedComponentId !== null &&
+              documentData.pages[currentPageIdx]?.components[
+                selectedComponentId
+              ] ? (
+                <EDocComponentPropertyEditor
+                  component={
+                    documentData.pages[currentPageIdx].components[
+                      selectedComponentId
+                    ]
                   }
+                  handleUpdateComponent={handleUpdateComponent}
                 />
-                <EDocPagePropertyEditor
-                  runtimeData={documentData.pages[currentPageIdx]?.runtime_data || {}}
-                  onChangeRuntimeData = 
-                  { 
-                    (updatedPageRuntimeData) =>
-                      setDocumentData((prev) => 
-                      {
+              ) : (
+                <>
+                  <EDocDocumentPropertyEditor
+                    runtimeData={documentData.runtime_data}
+                    onChangeRuntimeData={(updatedRuntimeData) =>
+                      setDocumentData((prev) => ({
+                        ...prev,
+                        runtime_data: updatedRuntimeData,
+                      }))
+                    }
+                  />
+                  <EDocPagePropertyEditor
+                    runtimeData={
+                      documentData.pages[currentPageIdx]?.runtime_data || {}
+                    }
+                    onChangeRuntimeData={(updatedPageRuntimeData) =>
+                      setDocumentData((prev) => {
                         const updatedPages = [...prev.pages];
                         updatedPages[currentPageIdx] = {
                           ...updatedPages[currentPageIdx],
@@ -809,12 +808,12 @@ export default function EDocDesignerContainer({
                         };
                         return { ...prev, pages: updatedPages };
                       })
-                  }
-                />
-              </>
-            )}
-          </>
-            )}
+                    }
+                  />
+                </>
+              )}
+            </>
+          )}
         </aside>
       </div>
 

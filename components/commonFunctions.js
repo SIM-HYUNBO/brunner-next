@@ -9,7 +9,7 @@ import * as TableComponent from "./eDoc/eDocComponent/eDocComponent_Table";
 import * as CheckListComponent from "./eDoc/eDocComponent/eDocComponent_CheckList";
 import * as ButtonComponent from "./eDoc/eDocComponent/eDocComponent_Button";
 import * as VideoComponent from "./eDoc/eDocComponent/eDocComponent_Video";
-import { userAgent } from "next/server";
+import RequestServer from "@/components/requestServer";
 
 export function isJsonObject(obj) {
   return obj && typeof obj === "object" && !Array.isArray(obj);
@@ -89,4 +89,27 @@ export function useDeviceType() {
   }, []);
 
   return device;
+}
+
+export async function getDocumentData(userId, documentId) {
+  try {
+    const jRequest = {
+      commandName: constants.commands.EDOC_DOCUMENT_SELECT_ONE,
+      systemCode: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE,
+      userId: userId,
+      documentId: documentId,
+    };
+
+    const jResponse = await RequestServer(jRequest);
+
+    if (jResponse.error_code === 0) {
+      const doc = jResponse.documentData || {};
+      return doc;
+    } else {
+      return null;
+    }
+  } catch (error) {
+    return null;
+  } finally {
+  }
 }

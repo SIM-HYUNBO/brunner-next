@@ -2,99 +2,16 @@
 import { useState, useEffect } from "react";
 import Head from "next/head";
 import * as constants from "@/components/constants";
-import * as userInfo from "@/components/userInfo";
-import RequestServer from "@/components/requestServer";
 import EDocEditorCanvas from "@/components/eDoc/eDocEditorCanvas";
 import BrunnerBoard from "@/components/brunnerBoard";
 
-
-export default function EDocContent({
-  documentId,
-  documentData: initialDocumentData,
-  pages: initialPages,
-}) {
-  const [loading, setLoading] = useState(false);
-  const [documentData, setDocumentData] = useState(initialDocumentData || null);
-  const [pages, setPages] = useState(initialPages || []);
+export default function EDocContent({ argDocumentData }) {
+  const [documentData, setDocumentData] = useState(argDocumentData || null);
 
   // props가 변경되면 상태도 업데이트 (필요하다면)
   useEffect(() => {
-    setDocumentData(initialDocumentData);
-    setPages(initialPages);
-  }, [initialDocumentData, initialPages]);
-
-  useEffect(() => {
-    if (!documentId) return;
-
-    const fetchDocument = async () => {
-      setLoading(true);
-      try {
-        const jRequest = {
-          commandName: constants.commands.EDOC_DOCUMENT_SELECT_ONE,
-          systemCode: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE,
-          userId: userInfo.getLoginUserId?.() || "",
-          documentId,
-        };
-
-        const jResponse = await RequestServer(jRequest);
-
-        if (jResponse.error_code === 0) {
-          const doc = jResponse.documentData || {};
-          setDocumentData(doc);
-
-          const safePages = (
-            doc.pages || [
-              {
-                id: "page-1",
-                components: doc.components || [],
-                runtime_data: doc.runtime_data || {},
-              },
-            ]
-          ).map((page) => ({
-            ...page,
-            documentData: doc,
-          }));
-
-          setPages(safePages);
-        } else {
-          alert(jResponse.error_message);
-          setDocumentData(null);
-          setPages([]);
-        }
-      } catch (error) {
-        alert("문서 로딩 중 오류가 발생했습니다.");
-        setDocumentData(null);
-        setPages([]);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchDocument();
-  }, [documentId]);
-
-  if (loading) {
-    return (
-      <div
-        className="flex 
-                      h-screen 
-                      items-center 
-                      justify-center 
-                      general-bg-color"
-      >
-        <div
-          className="animate-spin 
-                        rounded-full 
-                        h-12 
-                        w-12 
-                        border-t-2 
-                        border-b-2 
-                        border-gray-800 
-                        dark:border-white"
-        ></div>
-      </div>
-    );
-  }
+    setDocumentData(argDocumentData);
+  }, [argDocumentData]);
 
   if (!documentData) {
     return (
@@ -119,7 +36,7 @@ export default function EDocContent({
     components
       .find((c) => c.type === constants.edocComponentType._TEXT)
       ?.runtime_data?.text?.slice(0, 60) ||
-    documentData.runtime_data.title ||
+    documentData.runtime_data?.title ||
     "전자문서";
 
   const description =
@@ -153,7 +70,7 @@ export default function EDocContent({
         <meta property="og:type" content="article" />
         <meta
           property="og:url"
-          content={`https://brunner-next.vercel.app/mainPages/edocument?documentId=${documentId}`}
+          content={`https://brunner-next.vercel.app/mainPages/edocument?documentId=${documentData.id}`}
         />
 
         {/* Twitter */}
@@ -163,7 +80,7 @@ export default function EDocContent({
         <meta name="twitter:image" content={ogImage} />
       </Head>
 
-      <h2 className={"page-title"}>{documentData.runtime_data.title}</h2>
+      <h2 className={"page-title"}>{documentData.runtime_data?.title}</h2>
 
       <main
         className="flex-grow edoc-designer-canvas"
@@ -178,10 +95,10 @@ export default function EDocContent({
           style={{
             backgroundColor:
               documentData?.runtime_data?.backgroundColor || "#f8f8f8",
-            padding: `${documentData.runtime_data.padding}px`,
+            padding: `${documentData.runtime_data?.padding}px`,
           }}
         >
-          {pages.map((page) => (
+          {documentData.pages?.map((page) => (
             <EDocEditorCanvas
               key={page.id}
               pageData={page}
@@ -206,7 +123,9 @@ export default function EDocContent({
             />
           ))}
         </div>
-        <div className={`flex w-full mt-10 px-2 readonly`}>
+        <div
+          className={`flex w-full mt-10 px-2 readonly general-text-bg-color`}
+        >
           <BrunnerBoard boardType={`${documentData.id}`} />
         </div>
       </main>
