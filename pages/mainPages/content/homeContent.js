@@ -95,9 +95,7 @@ export default function HomeContent() {
           )}
         </div>
         <div className="flex flex-col">
-          <div>
-            <EDocContent argDocumentData={mainDocumentData} />
-          </div>
+          <EDocContent argDocumentData={mainDocumentData} />
         </div>
       </DivContainer>
     </>
