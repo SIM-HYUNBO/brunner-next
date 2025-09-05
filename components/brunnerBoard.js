@@ -432,14 +432,20 @@ function BoardContent({
                         px-4 
                         py-2 
                         bg-blue-500 
-                        text-slate-400 
+                        text-white
                         rounded-md`}
           >
             Save
           </button>
           <button
             onClick={() => setIsEditingPost(false)}
-            className={`mt-2 ml-2 px-4 py-2 bg-gray-500 text-white rounded-md`}
+            className={`mt-2 
+                        ml-2 
+                        px-4 
+                        py-2 
+                        bg-gray-500 
+                        text-white 
+                        rounded-md`}
           >
             Cancel
           </button>
