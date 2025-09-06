@@ -298,8 +298,8 @@ Base64형식으로 전환하여 넣을 수 있다.
 호스트가 127.0.0.1인 url은 사용할 수 없다.
 6. 테이블(table): 
 문서내에 표를 삽입하고 표 데이터를 구성하고 표시하는 컴포넌트이다.
-컬럼 헤더 값들을 설정하고 각 행 데이터 값을 컬럼헤더와 구분해서 입력한다.
-표를 그리면서 컬럼 제목은 컬럼제목에만 설정하고 데이터 영역의 첫행에 중복해서 표시하지 않도록 주의한다.
+columns에 컬럼 헤더 값들을 설정하고 각 행 데이터 값은 data에 따로 구분해서 저장한다.
+표를 그리면서 컬럼헤더 값은 columns에만 설정하고 data의 첫행에 중복해서  컬럼제목을 저장하지 않도록 주의한다.
 7. 동영상(video) : 
 문서에 동영상을 삽입하는 컴포넌트이다. 
 웹상에 있는 적합한 동영상의 정확한 URL을 설정하여 문서에서 재생할 수 있게 하면 훨씬 유리하다.
@@ -329,10 +329,10 @@ JSON 문서 포맷은 아래와 같고 상기 컴포넌트의 기본값을 모�
         {
           "id": "5e2013b1-7934-4a29-9d16-8da5e5e1b353",
           "name": "체크리스트",
-          "type": "checklist",
+          "type": "Checklist",
           "description": "체크리스트",
           "template_json": {
-            "type": "checklist",
+            "type": "Checklist",
             "itemCount": 3,
             "textAlign": "left"
           },
@@ -362,10 +362,10 @@ JSON 문서 포맷은 아래와 같고 상기 컴포넌트의 기본값을 모�
         {
           "id": "66b2f0cc-8e2f-454f-ac47-dc5703ef5be5",
           "name": "입력란",
-          "type": "input",
+          "type": "Input",
           "description": "사용자 입력을 받는 필드 컴포넌트",
           "template_json": {
-            "type": "input",
+            "type": "Input",
             "textAlign": "left",
             "placeholder": "값을 입력하세요"
           },
@@ -392,9 +392,9 @@ JSON 문서 포맷은 아래와 같고 상기 컴포넌트의 기본값을 모�
         {
           "id": "7f05c7a9-0364-4896-9e9e-bc2bbe383cf7",
           "name": "이미지",
-          "type": "image",
+          "type": "Image",
           "description": "이미지를 삽입할 수 있는 컴포넌트",
-          "template_json": { "src": "", "type": "image" },
+          "template_json": { "src": "", "type": "Image" },
           "version": 1,
           "is_active": true,
           "created_at": "2025-06-11T23:18:51.950Z",
@@ -416,10 +416,10 @@ JSON 문서 포맷은 아래와 같고 상기 컴포넌트의 기본값을 모�
         {
           "id": "9013173d-645b-4718-8f76-01dc3d252592",
           "name": "텍스트",
-          "type": "text",
+          "type": "Text",
           "description": "단일 줄 또는 여러 줄 텍스트 컴포넌트",
           "template_json": {
-            "type": "text",
+            "type": "Text",
             "content": "여기에 내용을 입력하세요.",
             "textAlign": "left"
           },
@@ -445,11 +445,11 @@ JSON 문서 포맷은 아래와 같고 상기 컴포넌트의 기본값을 모�
         {
           "id": "a1c2e3f4-5678-1234-9abc-def012345678",
           "name": "링크 텍스트",
-          "type": "linkText",
+          "type": "LinkText",
           "description": "외부 사이트 링크 텍스트 컴포넌트 기본 템플릿",
           "template_json": {
             "url": "https://example.com",
-            "type": "linkText",
+            "type": "LinkText",
             "content": "링크 텍스트를 입력하세요",
             "fontSize": 12,
             "fontColor": "#1a0dab",
@@ -484,10 +484,10 @@ JSON 문서 포맷은 아래와 같고 상기 컴포넌트의 기본값을 모�
         {
           "id": "a3f5c6d2-9e8b-4a72-8d92-0b6f2c4a9c13",
           "name": "버튼",
-          "type": "button",
+          "type": "Button",
           "description": "사용자 요청을 처리하는 버튼 컴포넌트",
           "template_json": {
-            "type": "button",
+            "type": "Button",
             "padding": "10px 20px",
             "apiMethod": "POST",
             "textColor": "#FFFFFF",
@@ -517,9 +517,9 @@ JSON 문서 포맷은 아래와 같고 상기 컴포넌트의 기본값을 모�
         {
           "id": "a787f5bf-8166-40c3-be68-457e63cd1767",
           "name": "테이블",
-          "type": "table",
+          "type": "Table",
           "description": "행과 열이 지정된 기본 테이블 컴포넌트",
-          "template_json": { "cols": 3, "rows": 3, "type": "table" },
+          "template_json": { "cols": 3, "rows": 3, "type": "Table" },
           "version": 1,
           "is_active": true,
           "created_at": "2025-06-11T23:18:52.178Z",
@@ -548,7 +548,7 @@ JSON 문서 포맷은 아래와 같고 상기 컴포넌트의 기본값을 모�
         {
           "id": "b2df4fd7-aad2-4554-8bde-db9e22229ec7",
           "name": "동영상",
-          "type": "video",
+          "type": "Video",
           "description": "영상 컴포넌트 기본 템플릿",
           "template_json": {
             "url": "https://www.youtube.com/watch?v=dQw4w9WgXcQ",

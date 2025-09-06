@@ -2,11 +2,13 @@ import { useEffect, useState } from "react";
 import * as constants from "@/components/constants";
 import RequestServer from "@/components/requestServer";
 import * as userInfo from "@/components/userInfo";
+import { useModal } from "@/components/brunnerMessageBox";
 
 export default function AIModelSelector({ model, setAIModel, apiKey }) {
   const [models, setModels] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const { BrunnerMessageBox, openModal } = useModal();
 
   const fetchModels = async () => {
     if (!userInfo.isLogin()) {
@@ -18,39 +20,42 @@ export default function AIModelSelector({ model, setAIModel, apiKey }) {
       setError("먼저 API Key를 입력해주세요.");
       return;
     }
-  
+
     setLoading(true);
     setError("");
-      try {
-        var jRequest = {};
-        var jResponse = null;
+    try {
+      var jRequest = {};
+      var jResponse = null;
 
-        const userId = userInfo.getLoginUserId();
-        jRequest.systemCode = process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE;
-        jRequest.commandName = constants.commands.EDOC_AI_GET_MODEL_LIST;
-        jRequest.userId = userId;
-        jRequest.apiKey = apiKey;
+      const userId = userInfo.getLoginUserId();
+      jRequest.systemCode = process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE;
+      jRequest.commandName = constants.commands.EDOC_AI_GET_MODEL_LIST;
+      jRequest.userId = userId;
+      jRequest.apiKey = apiKey;
 
-        setLoading(true);// 데이터 로딩 시작
-        jResponse = await RequestServer(jRequest);
-        setModels(jResponse.models);
-      } catch (error) {
-        console.error("모델 목록 불러오기 실패:", error);
-      } finally {
-        setLoading(false);
-      }
+      setLoading(true); // 데이터 로딩 시작
+      jResponse = await RequestServer(jRequest);
+      setModels(jResponse.models);
+    } catch (error) {
+      console.error("모델 목록 불러오기 실패:", error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const disabled = !apiKey;
 
   return (
     <div>
+      <BrunnerMessageBox />
       <select
         value={model || ""}
         onChange={(e) => setAIModel(e.target.value)}
         onFocus={fetchModels}
         disabled={disabled}
-        className={`w-full border p-2 rounded mb-2 ${disabled ? "bg-gray-100 text-gray-400 cursor-not-allowed" : ""}`}
+        className={`w-full border p-2 rounded mb-2 ${
+          disabled ? "bg-gray-100 text-gray-400 cursor-not-allowed" : ""
+        }`}
       >
         <option value="" disabled>
           {disabled
