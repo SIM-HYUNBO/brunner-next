@@ -49,7 +49,7 @@ export default function EDocContent({ argDocumentId, argDocumentData }) {
       .find((c) => c.type === constants.edocComponentType._TEXT)
       ?.runtime_data?.text?.slice(0, 60) ||
     documentData.runtime_data?.title ||
-    "전자문서";
+    "제목없음";
 
   const description =
     components
@@ -60,7 +60,7 @@ export default function EDocContent({ argDocumentId, argDocumentData }) {
       )
       .map((c) => c.runtime_data?.text || c.runtime_data?.label || "")
       .join(" ")
-      .slice(0, 160) || "전자문서 내용 요약";
+      .slice(0, 160) || "내용 요약";
 
   const ogImage =
     components.find(

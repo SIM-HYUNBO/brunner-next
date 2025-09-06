@@ -38,7 +38,10 @@ export default function Home() {
           name="description"
           content={`${constants.messages.SITE_DESCRIPTION}`}
         ></meta>
-        <meta name="keywords" content="Digital document, 전자 문서"></meta>
+        <meta
+          name="keywords"
+          content="Digital Document Innovation - Brunner-Next"
+        ></meta>
         <meta
           name="google-adsense-account"
           content="ca-pub-3879149687745447"

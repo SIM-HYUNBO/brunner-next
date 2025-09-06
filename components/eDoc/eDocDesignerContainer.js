@@ -43,7 +43,7 @@ export default function EDocDesignerContainer({
     id: documentId || null,
     runtime_data: {
       title: "New Document",
-      description: "신규 전자 문서",
+      description: "신규 문서",
       isPublic: false,
       backgroundColor: "#ffffff",
       padding: 1,
@@ -148,7 +148,7 @@ export default function EDocDesignerContainer({
         id: documentId || null,
         runtime_data: {
           title: "New Document",
-          description: "신규 전자 문서",
+          description: "신규 문서",
           isPublic: false,
           backgroundColor: "#ffffff",
           padding: 1,
@@ -270,7 +270,7 @@ export default function EDocDesignerContainer({
         ],
         runtime_data: {
           title: "New Document",
-          description: "신규 전자 문서",
+          description: "신규 문서",
           isPublic: false,
           backgroundColor: "#ffffff",
           padding: 1,

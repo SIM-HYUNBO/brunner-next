@@ -316,7 +316,7 @@ JSON 문서 포맷은 아래와 같고 상기 컴포넌트의 기본값을 모�
   "id": null,
   "runtime_data": {
     "title": "New Document",
-    "description": "신규 전자 문서",
+    "description": "신규 문서",
     "isPublic": false,
     "backgroundColor": "#ffffff",
     "padding": 1,
