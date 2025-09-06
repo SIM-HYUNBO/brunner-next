@@ -9,10 +9,14 @@ export async function getDropdownMenuItems() {
     { label: "Home", href: "/", type: "item" },
     { label: "Page Designer", href: "/mainPages/eDocDesigner", type: "item" },
     { label: "Contact", href: "/mainPages/contact", type: "item" },
-  ]; 
+  ];
 
   if (userInfo.isAdminUser()) {
-    items.push({ label: "Service SQL", href: "/mainPages/administration", type: "item" });
+    items.push({
+      label: "Service SQL",
+      href: "/mainPages/administration",
+      type: "item",
+    });
   }
 
   items.push({ type: "divider" });
@@ -20,9 +24,10 @@ export async function getDropdownMenuItems() {
   items = await getAdminDocumentList(items);
 
   if (userInfo.getLoginUserId() && !userInfo.isAdminUser()) {
+    items.push({ type: "divider" });
     items = await getUsersDocumentList(items);
   }
-  
+
   return items;
 }
 
@@ -64,9 +69,9 @@ const getUsersDocumentList = async (items) => {
 
   const jResponse = await RequestServer(jRequest);
   if (jResponse.error_code === 0 && Array.isArray(jResponse.documentList)) {
-    const sectionLabel = `${userInfo.getLoginName()}'s pages`;
+    // const sectionLabel = `${userInfo.getLoginName()}'s pages`;
 
-    items.push({ label: sectionLabel, type: "section" });
+    // items.push({ label: sectionLabel, type: "section" });
 
     jResponse.documentList.forEach((doc) => {
       const hRef = `/${doc.id}`;
@@ -74,7 +79,7 @@ const getUsersDocumentList = async (items) => {
         label: doc.runtime_data?.title || "(제목 없음)",
         href: hRef,
         type: "item",
-        parent: sectionLabel,
+        // parent: sectionLabel,
       });
     });
   }

@@ -114,22 +114,20 @@ export default function EDocContent({ argDocumentId, argDocumentData }) {
             <EDocEditorCanvas
               key={page.id}
               pageData={page}
-              isViewerMode={false} // 입력 허용
+              isViewerMode={false}
               mode="runtime"
               documentData={documentData}
               onUpdateComponent={(updatedComponent) => {
-                setPages((prevPages) => {
-                  return prevPages.map((page) => {
-                    if (page.id !== updatedComponent.pageId) return page;
-
-                    const newComponents = page.components.map((comp) =>
+                setDocumentData((prevDoc) => {
+                  const newPages = prevDoc.pages.map((p) => {
+                    if (p.id !== updatedComponent.pageId) return p;
+                    const newComponents = p.components.map((comp) =>
                       comp.id === updatedComponent.id ? updatedComponent : comp
                     );
-                    return {
-                      ...page,
-                      components: newComponents,
-                    };
+                    return { ...p, components: newComponents };
                   });
+
+                  return { ...prevDoc, pages: newPages }; // ✅ pages만 업데이트
                 });
               }}
             />
