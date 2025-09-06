@@ -1,4 +1,4 @@
-'use strict'
+"use strict";
 
 export default function EDocPagePropertyEditor({
   runtimeData = {},
@@ -21,22 +21,37 @@ export default function EDocPagePropertyEditor({
       <input
         type="number"
         value={runtimeData.padding ?? 24}
-        onChange={(e) => updateProperty('padding', parseInt(e.target.value) ?? 24)}
+        onChange={(e) =>
+          updateProperty("padding", parseInt(e.target.value) ?? 24)
+        }
         className="w-full border border-gray-300 rounded p-2 mb-3"
       />
 
       <label>Page Background Color</label>
       <input
         type="color"
-        value={runtimeData.backgroundColor || '#ffffff'}
-        onChange={(e) => updateProperty('backgroundColor', e.target.value)}
-        className="w-full h-10 p-1 mb-3 border border-gray-300 rounded"
+        value={runtimeData.backgroundColor || "#ffffff"}
+        onChange={(e) => updateProperty("backgroundColor", e.target.value)}
+        className="w-20 h-10 p-1 border border-gray-300 rounded"
       />
+      <label className="flex items-center gap-1">
+        <input
+          type="checkbox"
+          checked={runtimeData.backgroundColor === "transparent"}
+          onChange={(e) =>
+            updateProperty(
+              "backgroundColor",
+              e.target.checked ? "transparent" : "#ffffff"
+            )
+          }
+        />
+        Transparent
+      </label>
 
       <label>Page Size</label>
       <select
-        value={runtimeData.pageSize || 'A4'}
-        onChange={(e) => updateProperty('pageSize', e.target.value)}
+        value={runtimeData.pageSize || "A4"}
+        onChange={(e) => updateProperty("pageSize", e.target.value)}
         className="w-full border border-gray-300 rounded p-2"
       >
         <option value="A4">A4</option>
@@ -50,7 +65,9 @@ export default function EDocPagePropertyEditor({
         type="number"
         min="0"
         value={runtimeData.pageMargin ?? 1}
-        onChange={(e) => updateProperty('pageMargin', parseInt(e.target.value) || 1)}
+        onChange={(e) =>
+          updateProperty("pageMargin", parseInt(e.target.value) || 1)
+        }
         className="w-full border border-gray-300 rounded p-2 mb-3"
       />
     </section>
