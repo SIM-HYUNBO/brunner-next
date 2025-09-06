@@ -18,7 +18,9 @@ export default function HomeContent() {
   const { isMobile, isTablet } = useDeviceType();
   const [isMounted, setIsMounted] = useState(false);
 
-  useEffect(() => {}, []);
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   return (
     <>
