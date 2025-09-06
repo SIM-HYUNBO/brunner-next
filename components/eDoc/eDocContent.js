@@ -22,6 +22,7 @@ export default function EDocContent({ argDocumentId, argDocumentData }) {
     }
 
     if (!argDocumentData) fetchDocData(argDocumentId); // 함수 호출
+    else setDocumentData(argDocumentData);
   }, [argDocumentId]);
 
   if (!documentData) {
