@@ -1,49 +1,47 @@
-`use strict`
+`use strict`;
 
-import logger from "../../winston/logger"
-import * as constants from '@/components/constants'
-import * as database from "../database/database"
-import * as dynamicSql from '../dynamicSql'
-import * as commonFunctions from '@/components/commonFunctions'
-import * as aiRequestor from '@/components/aiRequestor'
-
+import logger from "../../winston/logger";
+import * as constants from "@/components/constants";
+import * as database from "../database/database";
+import * as dynamicSql from "../dynamicSql";
+import * as commonFunctions from "@/components/commonFunctions";
+import * as aiRequestor from "@/components/aiRequestor";
 
 const executeService = async (txnId, jRequest) => {
-    var jResponse = {};
+  var jResponse = {};
 
-    try {
-        switch (jRequest.commandName) {
-            case constants.commands.EDOC_DOCUMENT_UPSERT_ONE:
-                jResponse = await upsertOne(txnId, jRequest);
-                break;
-            case constants.commands.EDOC_DOCUMENT_SELECT_ONE:
-                jResponse = await selectOne(txnId, jRequest);
-                break;
-            case constants.commands.EDOC_DOCUMENT_DELETE_ONE:
-                jResponse = await deleteOne(txnId, jRequest);
-                break;
-            case constants.commands.EDOC_USER_DOCUMENT_SELECT_ALL: // user all documents
-                jResponse = await selectUserAll(txnId, jRequest);
-                break;
-            case constants.commands.EDOC_ADMIN_DOCUMENT_SELECT_ALL: // admin & public documents
-                jResponse = await selectAdminAll(txnId, jRequest);
-                break;
-            case constants.commands.EDOC_AI_GENERATE_DOCUMENT:
-                jResponse = await generateDocumentWithOpenAI(txnId, jRequest);
-              break;
-            case constants.commands.EDOC_AI_GET_MODEL_LIST:
-              jResponse = await getAIModelList(txnId, jRequest);
-              break;
-            default:
-                break;
-        }
-    } catch (error) {
-        logger.error(`message:${error.message}\n stack:${error.stack}\n`);
-    } finally {
-        return jResponse;
+  try {
+    switch (jRequest.commandName) {
+      case constants.commands.EDOC_DOCUMENT_UPSERT_ONE:
+        jResponse = await upsertOne(txnId, jRequest);
+        break;
+      case constants.commands.EDOC_DOCUMENT_SELECT_ONE:
+        jResponse = await selectOne(txnId, jRequest);
+        break;
+      case constants.commands.EDOC_DOCUMENT_DELETE_ONE:
+        jResponse = await deleteOne(txnId, jRequest);
+        break;
+      case constants.commands.EDOC_USER_DOCUMENT_SELECT_ALL: // user all documents
+        jResponse = await selectUserAll(txnId, jRequest);
+        break;
+      case constants.commands.EDOC_ADMIN_DOCUMENT_SELECT_ALL: // admin & public documents
+        jResponse = await selectAdminAll(txnId, jRequest);
+        break;
+      case constants.commands.EDOC_AI_GENERATE_DOCUMENT:
+        jResponse = await generateDocumentWithOpenAI(txnId, jRequest);
+        break;
+      case constants.commands.EDOC_AI_GET_MODEL_LIST:
+        jResponse = await getAIModelList(txnId, jRequest);
+        break;
+      default:
+        break;
     }
-}
-
+  } catch (error) {
+    logger.error(`message:${error.message}\n stack:${error.stack}\n`);
+  } finally {
+    return jResponse;
+  }
+};
 
 const upsertOne = async (txnId, jRequest) => {
   const jResponse = {};
@@ -75,7 +73,8 @@ const upsertOne = async (txnId, jRequest) => {
     }
 
     if (!jRequest.documentData.runtime_data.title) {
-      jRequest.documentData.runtime_data.title = constants.messages.EMPTY_STRING;
+      jRequest.documentData.runtime_data.title =
+        constants.messages.EMPTY_STRING;
     }
 
     // ✅ pages는 필수 JSON
@@ -85,7 +84,7 @@ const upsertOne = async (txnId, jRequest) => {
 
     if (isInsert) {
       // INSERT
-      const sql = await dynamicSql.getSQL00('insert_TB_DOC_DOCUMENT', 1);
+      const sql = await dynamicSql.getSQL00("insert_TB_DOC_DOCUMENT", 1);
       const insertResult = await database.executeSQL(sql, [
         jRequest.systemCode,
         jRequest.documentData.id,
@@ -105,7 +104,7 @@ const upsertOne = async (txnId, jRequest) => {
       }
     } else {
       // UPDATE
-      const sql = await dynamicSql.getSQL00('update_TB_DOC_DOCUMENT', 1);
+      const sql = await dynamicSql.getSQL00("update_TB_DOC_DOCUMENT", 1);
       const updateResult = await database.executeSQL(sql, [
         jRequest.systemCode,
         jRequest.documentData.id,
@@ -136,7 +135,6 @@ const upsertOne = async (txnId, jRequest) => {
   }
 };
 
-
 const selectOne = async (txnId, jRequest) => {
   const jResponse = {};
 
@@ -150,10 +148,10 @@ const selectOne = async (txnId, jRequest) => {
     }
 
     // ✅ TB_DOC_DOCUMENT에서 pages 포함 가져오기
-    const sql = await dynamicSql.getSQL00('select_TB_DOC_DOCUMENT', 1);
+    const sql = await dynamicSql.getSQL00("select_TB_DOC_DOCUMENT", 1);
     const select_TB_DOC_DOCUMENT = await database.executeSQL(sql, [
       jRequest.systemCode,
-      jRequest.documentId
+      jRequest.documentId,
     ]);
 
     if (select_TB_DOC_DOCUMENT.rowCount < 1) {
@@ -195,10 +193,10 @@ const deleteOne = async (txnId, jRequest) => {
     }
 
     // TB_DOC_DOCUMENT 삭제만 수행
-    const sql = await dynamicSql.getSQL00('delete_TB_DOC_DOCUMENT', 1);
+    const sql = await dynamicSql.getSQL00("delete_TB_DOC_DOCUMENT", 1);
     const delete_TB_DOC_DOCUMENT = await database.executeSQL(sql, [
       jRequest.systemCode,
-      jRequest.documentId
+      jRequest.documentId,
     ]);
 
     jResponse.error_code = 0;
@@ -214,59 +212,57 @@ const deleteOne = async (txnId, jRequest) => {
 };
 
 const selectUserAll = async (txnId, jRequest) => {
-    var jResponse = {};
-    
-    try {
-        jResponse.commanaName = jRequest.commandName;
-        
-        // select TB_DOC_DOCUMENT
-        var sql = null
-        sql = await dynamicSql.getSQL00('select_TB_DOC_DOCUMENT', 2);
-        var select_TB_DOC_DOCUMENT = await database.executeSQL(sql,
-            [
-                jRequest.systemCode,
-                jRequest.userId   
-            ]);
+  var jResponse = {};
 
-        jResponse.documentList = select_TB_DOC_DOCUMENT.rows;
+  try {
+    jResponse.commanaName = jRequest.commandName;
 
-        jResponse.error_code = 0;
-        jResponse.error_message = constants.messages.EMPTY_STRING
-    } catch (e) {
-        logger.error(e);
-        jResponse.error_code = -1; // exception
-        jResponse.error_message = e.message
-    } finally {
-        return jResponse;
-    }
+    // select TB_DOC_DOCUMENT
+    var sql = null;
+    sql = await dynamicSql.getSQL00("select_TB_DOC_DOCUMENT", 2);
+    var select_TB_DOC_DOCUMENT = await database.executeSQL(sql, [
+      jRequest.systemCode,
+      jRequest.userId,
+    ]);
+
+    jResponse.documentList = select_TB_DOC_DOCUMENT.rows;
+
+    jResponse.error_code = 0;
+    jResponse.error_message = constants.messages.EMPTY_STRING;
+  } catch (e) {
+    logger.error(e);
+    jResponse.error_code = -1; // exception
+    jResponse.error_message = e.message;
+  } finally {
+    return jResponse;
+  }
 };
 
 // 관리자가 작성한 공용문서 전체 목록 조회
 const selectAdminAll = async (txnId, jRequest) => {
-    var jResponse = {};
-    
-    try {
-        jResponse.commanaName = jRequest.commandName;
-        
-        // select TB_DOC_DOCUMENT
-        var sql = null
-        sql = await dynamicSql.getSQL00('select_TB_DOC_DOCUMENT', 3);
-        var select_TB_DOC_DOCUMENT = await database.executeSQL(sql,
-            [
-                jRequest.systemCode,
-            ]);
+  var jResponse = {};
 
-        jResponse.documentList = select_TB_DOC_DOCUMENT.rows;
+  try {
+    jResponse.commanaName = jRequest.commandName;
 
-        jResponse.error_code = 0;
-        jResponse.error_message = constants.messages.EMPTY_STRING
-    } catch (e) {
-        logger.error(e);
-        jResponse.error_code = -1; // exception
-        jResponse.error_message = e.message
-    } finally {
-        return jResponse;
-    }
+    // select TB_DOC_DOCUMENT
+    var sql = null;
+    sql = await dynamicSql.getSQL00("select_TB_DOC_DOCUMENT", 3);
+    var select_TB_DOC_DOCUMENT = await database.executeSQL(sql, [
+      jRequest.systemCode,
+    ]);
+
+    jResponse.documentList = select_TB_DOC_DOCUMENT.rows;
+
+    jResponse.error_code = 0;
+    jResponse.error_message = constants.messages.EMPTY_STRING;
+  } catch (e) {
+    logger.error(e);
+    jResponse.error_code = -1; // exception
+    jResponse.error_message = e.message;
+  } finally {
+    return jResponse;
+  }
 };
 
 // 관리자가 작성한 공용문서 전체 목록 조회 및 AI 문서 자동 생성
@@ -588,23 +584,33 @@ JSON 문서 포맷은 아래와 같고 상기 컴포넌트의 기본값을 모�
 }
 `;
 
-  const systemPrompt= `너는 문서 작성 도우미야. JSON 형식으로만 문서를 만들어야 한다.`;
-  const userPrompt= prompt;
-  const assistantPrompt = `반드시 JSON만 반환하고, 코드나 주석은 포함하지 않아야 한다.`;
+    const systemPrompt = `너는 문서 작성 도우미야. JSON 형식으로만 문서를 만들어야 한다.
+  ### 먼저 다음 규칙을 메모리에 업데이트 해주세요.
+1.충분한 근거가 없거나 정보가 불확실할 경우, 임의로 답변하지 말고 '알 수 없습니다' 또는 '근거가 부족합니다'라고 답변하세요.
+2.답변을 생성하기 전에 가능한 정보를 단계별로 검증하고, 출처가 명확하지 않은 부분은 '확실하지 않음'이라고 표시하세요.
+3.확실한 근거 없이 추측이 포함될 경우, '추측한 내용입니다'라고 밝혀주세요.
+4.답변은 자세하고, 객관적이며, 전문성을 유지하도록 구성하세요.
+5.답변의 근거를 명확히 제시하고, 신뢰할 수 있는 출처가 있는 경우 해당 정보를 함께 제공하세요.
+6.출처가 있는 경우, 해당 정보를 명확히 밝히고 간단히 요약하여 제공하세요.
+### 앞으로 모든 대화에 이 규칙을 적용합니다.
+  `;
+    const userPrompt = prompt;
+    const assistantPrompt = `반드시 JSON만 반환하고, 코드나 주석은 포함하지 않아야 합니다.`;
 
-  var aiResult = await aiRequestor.requestPrompt(
-    jRequest.instructionInfo.apiKey, 
-    jRequest.instructionInfo.aiModel, 
-    systemPrompt,
-    userPrompt,
-    assistantPrompt);
-    
+    var aiResult = await aiRequestor.requestPrompt(
+      jRequest.instructionInfo.apiKey,
+      jRequest.instructionInfo.aiModel,
+      systemPrompt,
+      userPrompt,
+      assistantPrompt
+    );
+
     jResponse = {
-        commanaName: jRequest.commandName,
-        documentData: aiResult.aiResultData,
-        error_code: 0,
-        error_message: "",
-      };
+      commanaName: jRequest.commandName,
+      documentData: aiResult.aiResultData,
+      error_code: 0,
+      error_message: "",
+    };
   } catch (e) {
     jResponse = {
       commanaName: jRequest.commandName,
@@ -617,20 +623,20 @@ JSON 문서 포맷은 아래와 같고 상기 컴포넌트의 기본값을 모�
 
 export const getAIModelList = async (txnId, jRequest) => {
   let jResponse = {};
-    jResponse = {
-      commandName: jRequest.commandName,
-      error_code: 0,
-      error_message: "",
-    };
+  jResponse = {
+    commandName: jRequest.commandName,
+    error_code: 0,
+    error_message: "",
+  };
 
-  try{
+  try {
     const modelList = await aiRequestor.getAIModelList(jRequest.apiKey);
     jResponse.models = modelList;
   } catch (e) {
     jResponse.error_code = -1;
     jResponse.error_message = `${e}`;
     jResponse.models = [];
-  };
+  }
   return jResponse;
 };
 
