@@ -300,7 +300,7 @@ function BrunnerBoard({ boardType }) {
     <div className={`w-full max-w-4xl mx-auto`}>
       <BrunnerMessageBox />
       {loading && <Loading />}
-      <div className={`mb-6 flex`}>
+      <div className={`my-2 flex`}>
         <textarea
           value={postText}
           onChange={handlePostChange}

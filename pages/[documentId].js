@@ -65,7 +65,10 @@ export default function EDocument({ documentId }) {
         />
       </Head>
       <BodySection>
-        <EDocContent argDocumentId={documentId} />
+        <EDocContent
+          argDocumentId={documentId}
+          argDocumentData={documentData}
+        />
       </BodySection>
     </Layout>
   );

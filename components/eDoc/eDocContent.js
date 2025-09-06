@@ -7,7 +7,7 @@ import * as userInfo from "@/components/userInfo";
 import EDocEditorCanvas from "@/components/eDoc/eDocEditorCanvas";
 import BrunnerBoard from "@/components/brunnerBoard";
 
-export default function EDocContent({ argDocumentId }) {
+export default function EDocContent({ argDocumentId, argDocumentData }) {
   const [documentData, setDocumentData] = useState(null);
 
   // props가 변경되면 상태도 업데이트 (필요하다면)
@@ -21,7 +21,7 @@ export default function EDocContent({ argDocumentId }) {
       setDocumentData(docData);
     }
 
-    fetchDocData(argDocumentId); // 함수 호출
+    if (!argDocumentData) fetchDocData(argDocumentId); // 함수 호출
   }, [argDocumentId]);
 
   if (!documentData) {
@@ -134,9 +134,7 @@ export default function EDocContent({ argDocumentId }) {
             />
           ))}
         </div>
-        <div
-          className={`flex w-full mt-10 px-2 readonly general-text-bg-color`}
-        >
+        <div className={`flex w-full mt-10 px-2 readonly semi-text-bg-color`}>
           <BrunnerBoard boardType={`${documentData.id}`} />
         </div>
       </main>
