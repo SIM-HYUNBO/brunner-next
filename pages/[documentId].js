@@ -58,11 +58,14 @@ export default function EDocument({ documentId }) {
   return (
     <Layout>
       <Head>
-        <title>{documentData?.runtime_data?.title || "전자문서"}</title>
-        <meta name="description" content="전자문서 내용을 확인하세요." />
+        <title>{documentData?.runtime_data?.title}</title>
+        <meta
+          name="description"
+          content={`${documentData?.runtime_data?.title}`}
+        />
       </Head>
       <BodySection>
-        <EDocContent argDocumentData={documentData} />
+        <EDocContent argDocumentId={documentId} />
       </BodySection>
     </Layout>
   );

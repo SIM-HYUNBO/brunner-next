@@ -2,16 +2,27 @@
 import { useState, useEffect } from "react";
 import Head from "next/head";
 import * as constants from "@/components/constants";
+import * as commonFunctions from "@/components/commonFunctions";
+import * as userInfo from "@/components/userInfo";
 import EDocEditorCanvas from "@/components/eDoc/eDocEditorCanvas";
 import BrunnerBoard from "@/components/brunnerBoard";
 
-export default function EDocContent({ argDocumentData }) {
-  const [documentData, setDocumentData] = useState(argDocumentData || null);
+export default function EDocContent({ argDocumentId }) {
+  const [documentData, setDocumentData] = useState(null);
 
   // props가 변경되면 상태도 업데이트 (필요하다면)
   useEffect(() => {
-    setDocumentData(argDocumentData);
-  }, [argDocumentData]);
+    async function fetchDocData(documentId) {
+      if (!documentId) return; // id 없으면 실행 안 함
+      const docData = await commonFunctions.getDocumentData(
+        userInfo.getLoginUserId(),
+        documentId
+      );
+      setDocumentData(docData);
+    }
+
+    fetchDocData(argDocumentId); // 함수 호출
+  }, [argDocumentId]);
 
   if (!documentData) {
     return (

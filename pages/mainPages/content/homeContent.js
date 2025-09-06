@@ -17,27 +17,8 @@ export default function HomeContent() {
   const [loading, setLoading] = useState(false);
   const { isMobile, isTablet } = useDeviceType();
   const [isMounted, setIsMounted] = useState(false);
-  const [mainDocumentData, setMainDocumentData] = useState(null);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        setIsMounted(true);
-        setLoading(true);
-        const docData = await commonFunctions.getDocumentData(
-          userInfo.getLoginUserId(),
-          process.env.NEXT_PUBLIC_MAIN_DOCUMENT_ID
-        );
-        setMainDocumentData(docData);
-      } catch (err) {
-        console.error("문서 데이터를 불러오는 중 오류 발생:", err);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchData();
-  }, []);
+  useEffect(() => {}, []);
 
   return (
     <>
@@ -95,7 +76,9 @@ export default function HomeContent() {
           )}
         </div>
         <div className="flex flex-col">
-          <EDocContent argDocumentData={mainDocumentData} />
+          <EDocContent
+            argDocumentId={process.env.NEXT_PUBLIC_MAIN_DOCUMENT_ID}
+          />
         </div>
       </DivContainer>
     </>
