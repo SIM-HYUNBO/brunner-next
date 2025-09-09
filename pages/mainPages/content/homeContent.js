@@ -17,10 +17,33 @@ export default function HomeContent() {
   const [loading, setLoading] = useState(false);
   const { isMobile, isTablet } = useDeviceType();
   const [isMounted, setIsMounted] = useState(false);
+  const [mainDocumentId, setMainDocumentId] = useState(false);
 
   useEffect(() => {
     setIsMounted(true);
+
+    async function getRandomPublicDocumentId() {
+      var documentList = await commonFunctions.getAdminDocumentList();
+      if (!Array.isArray(documentList)) return null;
+
+      // isPublic === true 인 문서만 필터링
+      const publicDocs = documentList.filter(
+        (doc) => doc.runtime_data?.isPublic === true
+      );
+
+      if (publicDocs.length === 0) {
+        return null; // 없으면 null 반환
+      }
+
+      // 랜덤으로 하나 선택
+      const randomIndex = Math.floor(Math.random() * publicDocs.length);
+      setMainDocumentId(publicDocs[randomIndex].id);
+    }
+
+    getRandomPublicDocumentId();
   }, []);
+
+
 
   return (
     <>
@@ -79,7 +102,7 @@ export default function HomeContent() {
         </div>
         <div className="flex flex-col">
           <EDocContent
-            argDocumentId={process.env.NEXT_PUBLIC_MAIN_DOCUMENT_ID}
+            argDocumentId={mainDocumentId}
           />
         </div>
       </DivContainer>

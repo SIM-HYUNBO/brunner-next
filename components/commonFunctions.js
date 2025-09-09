@@ -10,6 +10,7 @@ import * as CheckListComponent from "./eDoc/eDocComponent/eDocComponent_CheckLis
 import * as ButtonComponent from "./eDoc/eDocComponent/eDocComponent_Button";
 import * as VideoComponent from "./eDoc/eDocComponent/eDocComponent_Video";
 import RequestServer from "@/components/requestServer";
+import * as userInfo from "@/components/userInfo";
 
 export function isJsonObject(obj) {
   return obj && typeof obj === "object" && !Array.isArray(obj);
@@ -113,3 +114,39 @@ export async function getDocumentData(userId, documentId) {
   } finally {
   }
 }
+
+export const getAdminDocumentList = async () => {
+  const jRequest = {
+    commandName: constants.commands.EDOC_ADMIN_DOCUMENT_SELECT_ALL,
+    systemCode: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE,
+    userId: userInfo.getLoginUserId(),
+  };
+
+  const jResponse = await RequestServer(jRequest);
+  if (jResponse.error_code === 0 && Array.isArray(jResponse.documentList)) {
+    // const sectionLabel = "Admin's pages";
+    // items.push({ label: sectionLabel, type: "section" });
+
+    return jResponse.documentList;
+  }
+
+  return null;
+};
+
+export const getUsersDocumentList = async () => {
+  const userId = userInfo.getLoginUserId();
+  if (!userId || userInfo.isAdminUser()) return null;
+
+  const jRequest = {
+    commandName: constants.commands.EDOC_USER_DOCUMENT_SELECT_ALL,
+    systemCode: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE,
+    userId: userId,
+  };
+
+  const jResponse = await RequestServer(jRequest);
+  if (jResponse.error_code === 0 && Array.isArray(jResponse.documentList)) {
+    return jResponse.documentList;
+  }
+
+  return null;
+};
