@@ -32,7 +32,7 @@ export default function HomeContent() {
       );
 
       if (publicDocs.length === 0) {
-        return null; // 없으면 null 반환
+        setMainDocumentId(null); // 없으면 null 반환
       }
 
       // 랜덤으로 하나 선택
