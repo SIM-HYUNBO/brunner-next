@@ -92,5 +92,6 @@ export const edocComponentType = {
   _CHECKLIST: `Checklist`,
   _BUTTON: `Button`,
   _VIDEO: `Video`,
-  _LINKTEXT: 'LinkText'
+  _LINKTEXT: 'LinkText',
+  _LOTTIE: 'Lottie'
 };

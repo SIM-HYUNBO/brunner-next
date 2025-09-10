@@ -10,6 +10,7 @@ import CheckListComponent from "@/components/eDoc/eDocComponent/eDocComponent_Ch
 import ButtonComponent from "@/components/eDoc/eDocComponent/eDocComponent_Button";
 import VideoComponent from "@/components/eDoc/eDocComponent/eDocComponent_Video";
 import LinkTextComponent from "@/components/eDoc/eDocComponent/eDocComponent_LinkText";
+import LottieComponent from "@/components/eDoc/eDocComponent/eDocComponent_Lottie";
 
 export default function DocComponentRenderer({
   documentData,
@@ -83,6 +84,8 @@ export default function DocComponentRenderer({
       return <VideoComponent {...renderProps} />;
     case constants.edocComponentType._LINKTEXT:
       return <LinkTextComponent {...renderProps} />;
+    case constants.edocComponentType._LOTTIE:
+      return <LottieComponent {...renderProps} />;
     default:
       return null;
   }

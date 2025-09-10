@@ -16,6 +16,8 @@ import * as commonFunctions from "@/components/commonFunctions";
 
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
+import AIInputModal from "@/components/aiInputModal";
+import Loading from "@/components/loading";
 
 import * as InputComponent from "@/components/eDoc/eDocComponent/eDocComponent_Input";
 import * as TextComponent from "@/components/eDoc/eDocComponent/eDocComponent_Text";
@@ -25,9 +27,8 @@ import * as CheckListComponent from "@/components/eDoc/eDocComponent/eDocCompone
 import * as ButtonComponent from "@/components/eDoc/eDocComponent/eDocComponent_Button";
 import * as VideoComponent from "@/components/eDoc/eDocComponent/eDocComponent_Video";
 import * as LinkTextComponent from "@/components/eDoc/eDocComponent/eDocComponent_LinkText";
-import AIInputModal from "@/components/aiInputModal";
+import * as LottieComponent from "@/components/eDoc/eDocComponent/eDocComponent_Lottie";
 
-import Loading from "@/components/loading";
 
 export default function EDocDesignerContainer({
   documentId,
@@ -374,6 +375,10 @@ export default function EDocDesignerContainer({
       case constants.edocComponentType._LINKTEXT:
         baseComponent.runtime_data =
           LinkTextComponent.initDefaultRuntimeData(defaultRuntimeData);
+        break;
+      case constants.edocComponentType._LOTTIE:
+        baseComponent.runtime_data =
+          LottieComponent.initDefaultRuntimeData(defaultRuntimeData);
         break;
 
       default:

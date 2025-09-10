@@ -8,7 +8,9 @@ import * as ImageComponent from "./eDoc/eDocComponent/eDocComponent_Image";
 import * as TableComponent from "./eDoc/eDocComponent/eDocComponent_Table";
 import * as CheckListComponent from "./eDoc/eDocComponent/eDocComponent_CheckList";
 import * as ButtonComponent from "./eDoc/eDocComponent/eDocComponent_Button";
-import * as VideoComponent from "./eDoc/eDocComponent/eDocComponent_Video";
+import * as VideoComponent from  "./eDoc/eDocComponent/eDocComponent_Video";
+import * as LottieComponent from "./eDoc/eDocComponent/eDocComponent_Lottie";
+
 import RequestServer from "@/components/requestServer";
 import * as userInfo from "@/components/userInfo";
 
@@ -57,6 +59,9 @@ export const getDocumentBindingData = (documentData) => {
             break;
           case constants.edocComponentType._VIDEO:
             value = VideoComponent.getBindingValue(comp);
+            break;
+          case constants.edocComponentType._LOTTIE:
+            value = LottieComponent.getBindingValue(comp);
             break;
           default:
             break;
