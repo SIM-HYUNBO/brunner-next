@@ -103,9 +103,7 @@ export default function Signup() {
   return (
     <>
       <BrunnerMessageBox />
-      {loading && (
-        <Loading />
-      )}
+      {loading && ( <Loading />)}
       <Layout>
         <Head>
           <title>Noesis Pelagos - Brunner-Next</title>

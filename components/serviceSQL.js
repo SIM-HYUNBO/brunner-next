@@ -276,12 +276,10 @@ const ServiceSQL = () => {
 
   return (
     <>
+      {loading && ( <Loading />)}
+      <BrunnerMessageBox />
       {userInfo?.isAdminUser() && (
         <div className={`w-full p-4`}>
-          {loading && (
-            <Loading />
-          )}
-          <BrunnerMessageBox />
           <div ref={editPanelRef} className={`w-full mb-4`}>
             <label className={`block mb-2`}>
               <span className={`text-gray-400`}>System Code:</span>

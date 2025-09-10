@@ -135,11 +135,7 @@ export default function AIInputModal({
 
   return (
     <div className="fixed inset-0 z-[10000] flex items-center justify-center bg-black/40">
-      {loading && (
-        <div className="fixed inset-0 z-[10002] flex items-center justify-center bg-black/30">
-          <Loading />
-        </div>
-      )}
+      {loading && ( <Loading />)}
       <BrunnerMessageBox />
       <div
         ref={modalRef}

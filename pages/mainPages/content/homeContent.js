@@ -47,7 +47,7 @@ export default function HomeContent() {
 
   return (
     <>
-      {loading && <Loading />}
+      {loading && ( <Loading />)}
       <DivContainer className={`flex-row`}>
         <h2 className={`px-5 page-title`}>Noesis Pelagos</h2>
         <div className="w-full flex flex-row items-center">

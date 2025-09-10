@@ -54,6 +54,7 @@ export const useModal = () => {
 
     return (
       <>
+        {loading && ( <Loading />)}
         <div className="flex 
              items-center 
              justify-center 
@@ -107,10 +108,6 @@ export const useModal = () => {
                 Cancel
               </button>
             </div>
-            {/* ✅ 로딩 표시 */}
-            {loading && (
-              <Loading />
-            )}
           </div>
         </div>
       </>

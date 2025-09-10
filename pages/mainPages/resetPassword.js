@@ -146,10 +146,8 @@ export default function ResetPassword() {
 
   return (
     <>
+      {loading && ( <Loading />)}
       <BrunnerMessageBox />
-      {loading && (
-        <Loading />
-      )}
       <Layout>
         <Head>
           <title>Noesis Pelagos - Brunner-Next</title>
