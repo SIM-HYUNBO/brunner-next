@@ -145,6 +145,14 @@ const signup = async (txnId, jRequest) => {
         logger.info(`\nRESULT:rowCount=\n${insert_TB_COR_USER_MST_01.rowCount}\n`);
 
         if (insert_TB_COR_USER_MST_01.rowCount == 1) {
+            // New User login report mail send
+            mailSender.sendEmail({
+                from: 'brunner-admin@brunner-next.com', // 발신자 이메일 주소
+                to: 'hbsim0605@gmail.com',  // 관리자 이메일 주소
+                subject: '[brunner-next] New user signed in',
+                text: `New user signed up. ID: ${jRequest.userId}, Name:${jRequest.userName}` // 이메일 본문
+            })            
+
             jResponse.error_code = 0;
             jResponse.error_message = constants.messages.EMPTY_STRING;
         }
