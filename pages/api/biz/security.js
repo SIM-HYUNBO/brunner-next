@@ -149,7 +149,7 @@ const signup = async (txnId, jRequest) => {
             mailSender.sendEmail({
                 from: 'brunner-admin@brunner-next.com', // 발신자 이메일 주소
                 to: 'hbsim0605@gmail.com',  // 관리자 이메일 주소
-                subject: '[brunner-next] New user signed in',
+                subject: '[brunner-next] New user signed up',
                 text: `New user signed up. ID: ${jRequest.userId}, Name:${jRequest.userName}` // 이메일 본문
             })            
 
