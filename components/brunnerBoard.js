@@ -410,9 +410,6 @@ function BoardContent({
 
   return (
     <div className={`border-b border-gray-300 py-4`}>
-      <BrunnerMessageBox />
-      <hr />
-      {loading && ( <Loading />)}
       {isEditingPost ? (
         <div>
           <textarea

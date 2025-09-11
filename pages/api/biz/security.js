@@ -49,6 +49,7 @@ const signup = async (txnId, jRequest) => {
         jResponse.userId = jRequest.userId;
         jResponse.password = jRequest.password;
 
+        // 입력 필드값 유효성 검사
         if (!jRequest.userId) {
             jResponse.error_code = -2;
             jResponse.error_message = `${constants.messages.REQUIRED_FIELD} [userId`;
