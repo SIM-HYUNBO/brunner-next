@@ -697,12 +697,7 @@ export default function EDocDesignerContainer({
                   className={`relative 
                              w-fit 
                              my-1
-                             mx-auto 
-                             ${
-                               idx === currentPageIdx
-                                 ? "outline outline-2 outline-blue-400"
-                                 : ""
-                             }`}
+                             mx-auto`}
                   onClick={() => {
                     setCurrentPageIdx(idx);
                     setSelectedComponentId(null);

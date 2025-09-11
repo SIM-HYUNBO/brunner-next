@@ -222,7 +222,12 @@ export default function EDocEditorCanvas({
       className={`overflow-x-auto 
                      flex 
                      w-full 
-                     justify-center`}
+                     justify-center
+                     ${
+                      isSelected
+                        ? "outline outline-2 outline-blue-400"
+                        : ""
+                      }`}
       style={{
         marginTop: `${pageData.runtime_data?.pageMargin ? pageData.runtime_data?.pageMargin : 0}px`,
       }}
