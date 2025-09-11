@@ -293,7 +293,7 @@ export default function EDocDesignerContainer({
     const newPage = {
       id: newPageId,
       components: [],
-      runtime_data: { pageSize: "A4", padding: 24 },
+      runtime_data: { pageSize: "A4", padding: 24, backgroundColor: "white" },
     };
 
     setDocumentData((prev) => ({
@@ -693,18 +693,6 @@ export default function EDocDesignerContainer({
             {documentData.pages.map((page, idx) => (
               <>
                 <div
-                  className="general-text-bg-color 
-                            text-xs 
-                            rounded 
-                            px-2 
-                            py-1 
-                            select-none 
-                            pointer-events-none 
-                            z-10"
-                >
-                  p{idx + 1}
-                </div>
-                <div
                   key={page.id}
                   className={`relative 
                              w-fit 
@@ -720,6 +708,20 @@ export default function EDocDesignerContainer({
                     setSelectedComponentId(null);
                   }}
                 >
+                <div
+                  className="general-text-bg-color 
+                            border
+                            border-gray
+                            text-center
+                            text-xs 
+                            rounded 
+                            my-1
+                            select-none 
+                            pointer-events-none"
+                >
+                  p{idx + 1}
+                </div>
+
                   <EDocEditorCanvas
                     documentData={documentData}
                     pageData={page}

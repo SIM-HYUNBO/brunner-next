@@ -21,6 +21,7 @@ export default function EDocDesignerTopMenu({
   return (
     <>
     <div className="w-full 
+                    space-x-2
                     general-bg-color
                     flex 
                     items-center 
@@ -42,7 +43,6 @@ export default function EDocDesignerTopMenu({
                    text-white
                    text-center 
                    rounded 
-                   ml-1 
                    p-2
                    hover:bg-sky-600"
       >
@@ -54,7 +54,6 @@ export default function EDocDesignerTopMenu({
                    text-white 
                    text-center
                    rounded 
-                   ml-1 
                    p-2
                    hover:bg-yellow-600"
       >
@@ -66,7 +65,6 @@ export default function EDocDesignerTopMenu({
                    text-white 
                    text-center
                    rounded 
-                   ml-1 
                    p-2
                    hover:bg-red-600"
       >
@@ -78,7 +76,6 @@ export default function EDocDesignerTopMenu({
                    text-white 
                    text-center
                    rounded 
-                   ml-2
                    p-2
                    hover:bg-green-600"
       >
@@ -90,7 +87,6 @@ export default function EDocDesignerTopMenu({
                    text-white 
                    text-center
                    rounded 
-                   ml-1 
                    p-2
                    hover:bg-pink-600"
       >
@@ -102,7 +98,6 @@ export default function EDocDesignerTopMenu({
                    text-white 
                    text-center
                    rounded 
-                   ml-1 
                    p-2
                    hover:bg-purple-600"
       >
@@ -110,7 +105,11 @@ export default function EDocDesignerTopMenu({
       </button>
       <button
         onClick={() => setModalOpen(true)}
-        className="bg-indigo-500 text-white rounded ml-2 p-2 hover:bg-indigo-700"
+        className="bg-indigo-500 
+                   text-white 
+                   rounded 
+                   p-2 
+                   hover:bg-indigo-700"
       >
         AI Gen.
       </button>
