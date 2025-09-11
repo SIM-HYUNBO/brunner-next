@@ -15,9 +15,9 @@ const Loading = () => {
                   bg-gray-500 
                   bg-opacity-75 
                   z-50
-                  opacity-25
+                  opacity-50
                   `}>
-            /* 심플 스피너 */        
+            {/* 심플 스피너 */}        
             {/* <div className={`animate-spin 
                             rounded-full 
                             h-12 

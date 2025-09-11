@@ -7,6 +7,7 @@ import Head from "next/head";
 import Layout from "@/components/layout";
 import BodySection from "@/components/bodySection";
 import EDocContent from "@/components/eDoc/eDocContent"; // 기존 그대로 사용
+import Loading from "@/components/loading";
 
 export default function EDocument({ documentId }) {
   const [documentData, setDocumentData] = useState(null);
@@ -34,24 +35,9 @@ export default function EDocument({ documentId }) {
 
   if (loading) {
     return (
-      <div
-        className="flex 
-                      h-screen 
-                      items-center 
-                      justify-center 
-                      general-bg-color"
-      >
-        <div
-          className="animate-spin 
-                        rounded-full 
-                        h-12 
-                        w-12 
-                        border-t-2 
-                        border-b-2 
-                        border-gray-800 
-                        dark:border-white"
-        ></div>
-      </div>
+      <>
+       {loading && ( <Loading />)}
+      </>
     );
   }
 
