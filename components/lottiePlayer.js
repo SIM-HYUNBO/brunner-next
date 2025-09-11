@@ -3,7 +3,7 @@ import dynamic from "next/dynamic";
 
 const Lottie = dynamic(()=> import("lottie-react"), { ssr : false});
 
-export default function LottiePlayer({ jsonString, width, height, loop = true, autoplay = true }) {
+export default function LottiePlayer({ jsonString, width, height, opacityValue = 1.0, loop = true, autoplay = true }) {
   // 문자열 → 객체 변환 (잘못된 JSON일 경우 대비)
   const animationData = useMemo(() => {
     try {
@@ -19,11 +19,13 @@ export default function LottiePlayer({ jsonString, width, height, loop = true, a
   }
 
   return (
+    <div style = {{opacity:opacityValue}}>
     <Lottie
       animationData={animationData}
       loop={loop}
       autoplay={autoplay}
       style={{ width, height }}
     />
+    </div>
   );
 }
