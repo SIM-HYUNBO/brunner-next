@@ -523,7 +523,7 @@ JSON 문서 포맷은 아래와 같고 상기 컴포넌트의 기본값을 모�
           "name": "테이블",
           "type": "Table",
           "description": "행과 열이 지정된 기본 테이블 컴포넌트",
-          "template_json": { "cols": 3, "rows": 3, "type": "Table" },
+          "template_json": { "columnCount": 3, "rowCount": 3, "type": "Table" },
           "version": 1,
           "is_active": true,
           "created_at": "2025-06-11T23:18:52.178Z",
