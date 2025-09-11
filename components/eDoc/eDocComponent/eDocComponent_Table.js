@@ -7,9 +7,9 @@ import EDocTextStyleEditor from "@/components/eDoc/eDocTextStyleEditor";
  * 초기 RuntimeData 생성
  */
 export const initDefaultRuntimeData = (defaultRuntimeData) => {
-  defaultRuntimeData.cols = 3;
-  defaultRuntimeData.rows = 3;
-  defaultRuntimeData.data = Array.from({ length: 3 }, () => Array(3).fill(""));
+  defaultRuntimeData.columnCount = 3;
+  defaultRuntimeData.rowCount = 3;
+  defaultRuntimeData.rows = Array.from({ length: 3 }, () => Array(3).fill(""));
   defaultRuntimeData.columns = [
     { width: "33%", header: "Header1", align: "center" },
     { width: "200px", header: "Header2", align: "center" },
@@ -51,7 +51,7 @@ export const getBindingValue = (component) => {
  */
 export const getNewRuntimeData = (component, rowIdx, colIdx, newValue) => {
   const currentData = component.runtime_data || {};
-  const oldData = Array.isArray(currentData.data) ? currentData.data : [];
+  const oldData = Array.isArray(currentData.rows) ? currentData.rows : [];
   // 2차원 배열 깊은 복사
   const newData = oldData.map((row) => (Array.isArray(row) ? [...row] : []));
   // 값 변경
@@ -77,7 +77,7 @@ export function renderProperty(
 ) {
   const renderComponentProperty = (component) => {
     const updateTableSize = (newRows, newCols) => {
-      const oldData = component.runtime_data?.data || [];
+      const oldData = component.runtime_data?.rows || [];
       const oldColumns = component.runtime_data?.columns || [];
 
       const newData = Array.from({ length: newRows }, (_, r) =>
@@ -115,7 +115,7 @@ export function renderProperty(
         <input
           type="number"
           min={1}
-          value={component.runtime_data?.rows || 1}
+          value={component.runtime_data?.rowCount || 1}
           onChange={(e) =>
             updateTableSize(
               parseInt(e.target.value) || 1,
@@ -129,10 +129,10 @@ export function renderProperty(
         <input
           type="number"
           min={1}
-          value={component.runtime_data?.cols || 1}
+          value={component.runtime_data?.columnCount || 1}
           onChange={(e) =>
             updateTableSize(
-              component.runtime_data?.rows || 1,
+              component.runtime_data?.rowCount || 1,
               parseInt(e.target.value) || 1
             )
           }
@@ -237,7 +237,7 @@ export default function RenderComponent(props) {
     textDecoration: comp.runtime_data?.underline ? "underline" : "none",
   };
 
-  const rows = comp.runtime_data?.data || [];
+  const rows = comp.runtime_data?.rows || [];
   const columns = comp.runtime_data?.columns || [];
 
   return (
