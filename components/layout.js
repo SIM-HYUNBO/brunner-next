@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from "react";
 import Header from "./header";
 import Footer from "./footer";
+import Script from "next/script";
 import Head from "next/head";
 import RequestServer from "@/components/requestServer";
 import * as constants from "@/components/constants";

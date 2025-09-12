@@ -1,7 +1,6 @@
 `use strict`;
 
 import React from "react";
-import Script from "next/script";
 import { useEffect } from "react";
 import * as constants from "@/components/constants";
 import Layout from "@/components/layout";
