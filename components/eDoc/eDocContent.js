@@ -1,6 +1,5 @@
 "use strict";
 import { useState, useEffect } from "react";
-import Head from "next/head";
 import * as constants from "@/components/constants";
 import * as commonFunctions from "@/components/commonFunctions";
 import * as userInfo from "@/components/userInfo";

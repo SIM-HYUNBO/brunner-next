@@ -3,7 +3,6 @@ import * as constants from "@/components/constants";
 import * as userInfo from "@/components/userInfo";
 import * as commonFunctions from "@/components/commonFunctions";
 
-import Head from "next/head";
 import Layout from "@/components/layout";
 import BodySection from "@/components/bodySection";
 import EDocContent from "@/components/eDoc/eDocContent"; // 기존 그대로 사용
@@ -43,13 +42,6 @@ export default function EDocument({ documentId }) {
 
   return (
     <Layout>
-      <Head>
-        <title>{documentData?.runtime_data?.title}</title>
-        <meta
-          name="description"
-          content={`${documentData?.runtime_data?.title}`}
-        />
-      </Head>
       <BodySection>
         <EDocContent
           argDocumentId={documentId}

@@ -1,7 +1,6 @@
 `use strict`;
 
 import React from "react";
-import Head from "next/head";
 import Script from "next/script";
 import { useEffect } from "react";
 import * as constants from "@/components/constants";
@@ -32,23 +31,6 @@ export default function Home() {
 
   return (
     <Layout>
-      <Head>
-        <title>Noesis Pelagos - Brunner-Next</title>
-        <meta
-          name="description"
-          content={`${constants.messages.SITE_DESCRIPTION}`}
-        ></meta>
-        <meta
-          name="keywords"
-          content="Digital Document Innovation - Brunner-Next"
-        ></meta>
-        <meta
-          name="google-adsense-account"
-          content="ca-pub-3879149687745447"
-        ></meta>
-
-        <GoogleAdScript />
-      </Head>
       <BodySection>
         <HomeContent></HomeContent>
       </BodySection>

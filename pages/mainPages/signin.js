@@ -11,7 +11,6 @@ import RequestServer from "@/components/requestServer";
 import Loading from "@/components/loading";
 
 import Layout from "@/components/layout";
-import Head from "next/head";
 import BodySection from "@/components/bodySection";
 
 // import DivContainer from "@/components/div";
