@@ -106,9 +106,13 @@ export default function DropdownMenu({ reloadSignal, triggerMenuReload }) {
           <ul>
             {menuItems.map((item, idx) => {
               if (item.type === "divider") {
-                return <hr key={idx} 
-                           className="border-gray-300 
-                                      dark:border-gray-600" />;
+                return (
+                  <hr
+                    key={idx}
+                    className="border-gray-300 
+                                      dark:border-gray-600"
+                  />
+                );
               }
 
               if (item.type === "section") {
@@ -124,7 +128,9 @@ export default function DropdownMenu({ reloadSignal, triggerMenuReload }) {
                                dark:hover:bg-gray-600"
                     onClick={() => toggleSection(item.label)}
                   >
-                    <span className="text-gray-800 dark:text-gray-200 px-2">{item.label}</span>
+                    <span className="text-gray-800 dark:text-gray-200 px-2">
+                      {item.label}
+                    </span>
                     <span className="text-gray-600 dark:text-gray-400 px-2">
                       {openSections[item.label] ? "▼" : "▶"}
                     </span>
@@ -141,6 +147,7 @@ export default function DropdownMenu({ reloadSignal, triggerMenuReload }) {
                 <li key={item.href + idx}>
                   <Link
                     href={item.href}
+                    onClick={() => setMobileMenuOpen(false)} // 여기 추가
                     className="block px-5 py-2 text-sm text-gray-800 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-600 hover:text-black dark:hover:text-white rounded-md whitespace-nowrap"
                     style={{ paddingLeft: `${16 * (depth + 1)}px` }}
                   >
@@ -151,7 +158,10 @@ export default function DropdownMenu({ reloadSignal, triggerMenuReload }) {
             })}
           </ul>
           <hr className="border-gray-300 dark:border-gray-600" />
-          <UserInfo handleLogout={handleLogout} triggerMenuReload={triggerMenuReload} />
+          <UserInfo
+            handleLogout={handleLogout}
+            triggerMenuReload={triggerMenuReload}
+          />
         </div>
       )}
     </>
