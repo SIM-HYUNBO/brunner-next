@@ -5,9 +5,7 @@ import { useRouter } from "next/router";
 import { useDeviceType } from "@/components/commonFunctions";
 import * as userInfo from "@/components/userInfo";
 import * as commonFunctions from "@/components/commonFunctions";
-import DivContainer from "@/components/divContainer";
 import GoverningMessage from "@/components/governingMessage";
-import BrunnerBoard from "@/components/brunnerBoard";
 import LottiePlayer from "@/components/lottiePlayer";
 import EDocContent from "@/components/eDoc/eDocContent";
 import Loading from "@/components/loading";
@@ -43,12 +41,10 @@ export default function HomeContent() {
     getRandomPublicDocumentId();
   }, []);
 
-
-
   return (
     <>
-      {loading && ( <Loading />)}
-      <DivContainer className={`flex-row`}>
+      {loading && <Loading />}
+      <div className={`w-full relative flex-row`}>
         <h2 className={`px-5 page-title`}>Noesis Pelagos</h2>
         <div className="w-full flex flex-row items-center">
           <div className="flex-1">
@@ -57,7 +53,7 @@ export default function HomeContent() {
   Leave your ideas as digital documents.
   Creation begins the moment you start recording.
 
-  Personal use of Brunner's services is free. 
+  Personal use of services is free. 
   Sign up to try it out.`}
             />
           </div>
@@ -101,11 +97,9 @@ export default function HomeContent() {
           )}
         </div>
         <div className="flex flex-col">
-          <EDocContent
-            argDocumentId={mainDocumentId}
-          />
+          <EDocContent argDocumentId={mainDocumentId} />
         </div>
-      </DivContainer>
+      </div>
     </>
   );
 }
