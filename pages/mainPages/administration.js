@@ -10,13 +10,6 @@ import AdminContent from './content/adminContent'
 export default function AdminPage() {
   return (
     <Layout>
-      <Head>
-        <title>Noesis Pelagos - Brunner-Next</title>
-        <meta 
-        name="description" 
-        content={`${constants.messages.SITE_DESCRIPTION}`}></meta>
-        <meta rel="icon" href="/brunnerLogo2025.png"></meta>
-      </Head>
       <BodySection>
         <AdminContent></AdminContent>
       </BodySection>

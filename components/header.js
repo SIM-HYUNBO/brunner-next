@@ -23,7 +23,7 @@ export default function Header({ triggerMenuReload, reloadSignal }) {
       {/* 로고 */}
       <Link href="/" className="inline-block">
         <Image
-          src="/brunnerLogo202507.png"
+          src="/favicon.png"
           alt="brunner logo"
           priority
           width={0}

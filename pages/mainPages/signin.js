@@ -85,14 +85,6 @@ export default function Signin() {
       {loading && ( <Loading />)}
       <BrunnerMessageBox />
       <Layout>
-        <Head>
-          <title>Noesis Pelagos - Brunner-Next</title>
-          <meta
-            name="description"
-            content="Brunner-Next now provides a document management platform that enables you to create and manage electronic documents in real time using an electronic document designer."
-          />
-          <link rel="icon" href="/brunnerLogo2025.png" />
-        </Head>
         <BodySection>
           <div>
             <div className={`w-full pr-16 flex flex-col items-start text-left mb-16 md:mb-0`}>

@@ -105,14 +105,6 @@ export default function Signup() {
       <BrunnerMessageBox />
       {loading && ( <Loading />)}
       <Layout>
-        <Head>
-          <title>Noesis Pelagos - Brunner-Next</title>
-          <meta name="description"
-                content={`${constants.messages.SITE_DESCRIPTION}`}
-          ></meta>
-          <meta rel="icon" href="/brunnerLogo2025.png"></meta>
-          <link></link>
-        </Head>
         <BodySection>
           <div>
             <div className={`w-full pr-16 flex flex-col items-start text-left mb-16`}>

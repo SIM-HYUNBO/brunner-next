@@ -31,14 +31,20 @@ export default function Layout({ children, reloadSignal, triggerMenuReload }) {
   }, [reloadSignal]);
 
   return (
+    <>
+    <Head>
+        <title>Noesis Pelagos - Brunner-Next</title>
+        <meta name="description" content={`${constants.messages.SITE_DESCRIPTION}`} /> 
+        <meta name="keywords" content="Digital Document Innovation - Brunner-Next" ></meta>
+        <meta name="google-adsense-account" content="ca-pub-3879149687745447"></meta>
+        <link rel="apple-touch-icon" href="/favicon.png"/>
+        <link rel="icon" type="image/png" href="/favicon.png"/>
+        <GoogleAdScript />
+    </Head>
     <div className="Layout">
-      <div className="flex 
-                               flex-col 
-                               w-full">
-        <main className="flex-grow 
-                         md:overflow-x: auto">
-          <Header triggerMenuReload={triggerMenuReload} 
-                  reloadSignal={reloadSignal} />
+      <div className="flex flex-col w-full">
+        <main className="flex-grow md:overflow-x: auto">
+          <Header triggerMenuReload={triggerMenuReload} reloadSignal={reloadSignal} />
             {React.Children.map(children, child =>
               React.isValidElement(child) ? 
               React.cloneElement(child, { triggerMenuReload }) : 
@@ -48,5 +54,6 @@ export default function Layout({ children, reloadSignal, triggerMenuReload }) {
         </main>
       </div>
     </div>
+    </>
   );
 }

@@ -149,15 +149,7 @@ export default function ResetPassword() {
       {loading && ( <Loading />)}
       <BrunnerMessageBox />
       <Layout>
-        <Head>
-          <title>Noesis Pelagos - Brunner-Next</title>
-          <meta
-            name="description"
-            content={`${constants.messages.SITE_DESCRIPTION}`}
-          ></meta>
-          <meta rel="icon" href="/brunnerLogo2025.png"></meta>
-          <link></link>
-        </Head>
+
         <BodySection>
           <div>
             <div className={`w-3/5 pr-0`}>

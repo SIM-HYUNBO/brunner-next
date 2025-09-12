@@ -24,12 +24,6 @@ export default function Contact() {
 
   return (
     <Layout>
-      <Head>
-        <title>Noesis Pelagos - Brunner-Next</title>
-        <meta name="description" 
-              content={`${constants.messages.SITE_DESCRIPTION}`}></meta>
-        <meta rel="icon" href="/brunnerLogo2025.png"></meta>
-      </Head>
       <BodySection>
         <ContactContent></ContactContent>
       </BodySection>
