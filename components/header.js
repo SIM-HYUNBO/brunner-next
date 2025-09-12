@@ -1,13 +1,10 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import * as userInfo from "@/components/userInfo";
-// import DivContainer from "@/components/div";
 import DropdownMenu from "@/components/dropdownMenu";
 
 
 export default function Header({ triggerMenuReload, reloadSignal }) {
-  const UserInfo = userInfo.default;
 
   return (
   
