@@ -70,27 +70,6 @@ export default function EDocContent({ argDocumentId, argDocumentData }) {
 
   return (
     <>
-      <Head>
-        <title>{title}</title>
-        <meta name="description" content={description} />
-
-        {/* OpenGraph */}
-        <meta property="og:title" content={title} />
-        <meta property="og:description" content={description} />
-        <meta property="og:image" content={ogImage} />
-        <meta property="og:type" content="article" />
-        <meta
-          property="og:url"
-          content={`https://brunner-next.vercel.app/mainPages/edocument?documentId=${documentData.id}`}
-        />
-
-        {/* Twitter */}
-        <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content={title} />
-        <meta name="twitter:description" content={description} />
-        <meta name="twitter:image" content={ogImage} />
-      </Head>
-
       <h2 className={"page-title"}>{documentData.runtime_data?.title}</h2>
 
       <main
