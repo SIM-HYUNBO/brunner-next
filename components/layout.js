@@ -55,8 +55,8 @@ export default function Layout({ children, reloadSignal, triggerMenuReload }) {
         <meta name="description" content={`${constants.messages.SITE_DESCRIPTION}`} /> 
         <meta name="keywords" content="Digital Document Innovation - Brunner-Next" ></meta>
         <meta name="google-adsense-account" content="ca-pub-3879149687745447"></meta>
-        <link rel="apple-touch-icon" type="image/png" href="/favicon.png"/>
-        <link rel="icon" type="image/png" href="/favicon.png"/>
+        <link rel="apple-touch-icon" type="image/png" href="/favicon.png?v=2"/>
+        <link rel="icon" type="image/png" href="/favicon.png?v=2"/>
         <GoogleAdScript />
     </Head>
     <div className="Layout">
