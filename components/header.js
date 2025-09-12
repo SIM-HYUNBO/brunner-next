@@ -26,8 +26,8 @@ export default function Header({ triggerMenuReload, reloadSignal }) {
           src="/favicon.png"
           alt="brunner logo"
           priority
-          width={0}
-          height={0}
+          width={50}
+          height={50}
           sizes="(max-width: 768px) 150px, 240px"
           className="w-[150px] sm:w-[240px] h-auto"
         />
