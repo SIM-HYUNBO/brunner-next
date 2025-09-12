@@ -4,7 +4,6 @@ import * as userInfo from "@/components/userInfo";
 import * as commonFunctions from "@/components/commonFunctions";
 
 import Layout from "@/components/layout";
-import BodySection from "@/components/bodySection";
 import EDocContent from "@/components/eDoc/eDocContent"; // 기존 그대로 사용
 import Loading from "@/components/loading";
 
@@ -42,12 +41,7 @@ export default function EDocument({ documentId }) {
 
   return (
     <Layout>
-      <BodySection>
-        <EDocContent
-          argDocumentId={documentId}
-          argDocumentData={documentData}
-        />
-      </BodySection>
+      <EDocContent argDocumentId={documentId} argDocumentData={documentData} />
     </Layout>
   );
 }

@@ -31,9 +31,7 @@ export default function EDocDesigner() {
 
   return (
     <Layout reloadSignal={reloadSignal} triggerMenuReload={triggerMenuReload}>
-      <BodySection>
-         <EDocDesignerContainer documentId={documentId} triggerMenuReload={triggerMenuReload} />
-     </BodySection>
+      <EDocDesignerContainer documentId={documentId} triggerMenuReload={triggerMenuReload} />
     </Layout>
   );
 }

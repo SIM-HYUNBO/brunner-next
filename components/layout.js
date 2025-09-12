@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from "react";
 import Header from "./header";
 import Footer from "./footer";
+import BodySection from "@/components/bodySection";
 import Script from "next/script";
 import Head from "next/head";
 import RequestServer from "@/components/requestServer";
@@ -50,28 +51,30 @@ export default function Layout({ children, reloadSignal, triggerMenuReload }) {
 
   return (
     <>
-    <Head>
-        <title>Noesis Pelagos - Brunner-Next</title>
-        <meta name="description" content={`${constants.messages.SITE_DESCRIPTION}`} /> 
-        <meta name="keywords" content="Digital Document Innovation - Brunner-Next" ></meta>
-        <meta name="google-adsense-account" content="ca-pub-3879149687745447"></meta>
-        <link rel="apple-touch-icon" type="image/png" href="/favicon.png?v=2"/>
-        <link rel="icon" type="image/png" href="/favicon.png?v=2"/>
-        <GoogleAdScript />
-    </Head>
-    <div className="Layout">
-      <div className="flex flex-col w-full">
-        <main className="flex-grow md:overflow-x: auto">
-          <Header triggerMenuReload={triggerMenuReload} reloadSignal={reloadSignal} />
-            {React.Children.map(children, child =>
-              React.isValidElement(child) ? 
-              React.cloneElement(child, { triggerMenuReload }) : 
-              child
-          )}
-          <Footer />
-        </main>
+    <BodySection>
+      <Head>
+          <title>Noesis Pelagos - Brunner-Next</title>
+          <meta name="description" content={`${constants.messages.SITE_DESCRIPTION}`} /> 
+          <meta name="keywords" content="Digital Document Innovation - Brunner-Next" ></meta>
+          <meta name="google-adsense-account" content="ca-pub-3879149687745447"></meta>
+          <link rel="apple-touch-icon" type="image/png" href="/favicon.png?v=2"/>
+          <link rel="icon" type="image/png" href="/favicon.png?v=2"/>
+          <GoogleAdScript />
+      </Head>
+      <div className="Layout">
+        <div className="flex flex-col w-full">
+          <main className="flex-grow md:overflow-x: auto">
+            <Header triggerMenuReload={triggerMenuReload} reloadSignal={reloadSignal} />
+              {React.Children.map(children, child =>
+                React.isValidElement(child) ? 
+                React.cloneElement(child, { triggerMenuReload }) : 
+                child
+            )}
+            <Footer />
+          </main>
+        </div>
       </div>
-    </div>
+    </BodySection>
     </>
   );
 }

@@ -15,7 +15,6 @@ export default function Contact() {
 
   const { theme, setTheme } = useTheme()
   const themeRef = useRef(theme);
-
   const setThemeRef = (newValue) => {
     themeRef.current = newValue;
     setTheme(newValue);
@@ -23,9 +22,7 @@ export default function Contact() {
 
   return (
     <Layout>
-      <BodySection>
-        <ContactContent></ContactContent>
-      </BodySection>
-    </Layout>
+      <ContactContent />
+   </Layout>
   );
 }
