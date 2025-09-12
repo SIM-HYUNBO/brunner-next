@@ -1,28 +1,21 @@
-`use strict`
+`use strict`;
 
-import { useState, useRef, useEffect } from 'react';
-import { useTheme } from 'next-themes'
+import useInitTheme from "@/hooks/useInitTheme";
 
-import * as constants from "@/components/constants";
-import Layout from '@/components/layout'
-import BodySection from '@/components/bodySection'
-import ContactContent from './content/contactContent'
+import Layout from "@/components/layout";
+import ContactContent from "../../components/contactContent";
 
 export default function Contact() {
-  useEffect(() => {
-    setThemeRef(themeRef.current);
-  }, []);
+  useInitTheme();
 
-  const { theme, setTheme } = useTheme()
-  const themeRef = useRef(theme);
-  const setThemeRef = (newValue) => {
-    themeRef.current = newValue;
-    setTheme(newValue);
-  };
+  return <ContactContent />;
+}
 
+// 페이지 전용 Layout 적용
+Contact.getLayout = function getLayout(page) {
   return (
     <Layout>
-      <ContactContent />
-   </Layout>
+      {page}
+    </Layout>
   );
-}
+};

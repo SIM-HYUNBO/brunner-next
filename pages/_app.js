@@ -1,23 +1,13 @@
-`use strict`;
-
-import dotenv from "dotenv";
 import "@/styles/globals.css";
 import { ThemeProvider } from "next-themes";
-import { useEffect } from "react";
+import Layout from "@/components/layout";
 
-// Entry Point
 export default function App({ Component, pageProps }) {
-  useEffect(() => {
-    dotenv.config();
-  }, []);
-
-  dotenv.config();
+  const getLayout = Component.getLayout || ((page) => page);
 
   return (
-    <div>
-      <ThemeProvider attribute="class">
-        <Component {...pageProps} />
-      </ThemeProvider>
-    </div>
+    <ThemeProvider attribute="class">
+      {getLayout(<Component {...pageProps} />)}
+    </ThemeProvider>
   );
 }

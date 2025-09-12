@@ -1,28 +1,13 @@
-`use strict`;
-
-import { useState, useEffect, useRef } from "react";
+import useInitTheme from "@/hooks/useInitTheme";
 import Layout from "@/components/layout";
-import SigninContent from "./content/signinContent";
-import { useTheme } from "next-themes";
+import SigninContent from "@/components/signinContent";
 
 export default function Signin() {
-  useEffect(() => {
-      setThemeRef(themeRef.current);
-  }, []);
+  useInitTheme();
 
-  const { theme, setTheme } = useTheme();
-  const themeRef = useRef(theme);
-
-  const setThemeRef = (newValue) => {
-    themeRef.current = newValue;
-    setTheme(newValue);
-  };
-
-  return (
-    <>
-      <Layout>
-        <SigninContent />
-      </Layout>
-    </>
-  );
+  return <SigninContent />;
 }
+
+Signin.getLayout = function getLayout(page) {
+  return <Layout>{page}</Layout>;
+};

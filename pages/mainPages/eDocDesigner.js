@@ -1,37 +1,21 @@
-`use strict`
-
-import { useState, useRef, useEffect } from 'react';
-import { useTheme } from 'next-themes'
-import Layout from '@/components/layout'
-import BodySection from '@/components/bodySection'
-
-import EDocDesignerContainer from '@/components/eDoc/eDocDesignerContainer';
-// import DivContainer from '@/components/div';
+import { useState } from "react";
+import Layout from "@/components/layout";
+import EDocDesignerContainer from "@/components/eDoc/eDocDesignerContainer";
+import useInitTheme from "@/hooks/useInitTheme";
 
 export default function EDocDesigner() {
- const [reloadSignal, setReloadSignal] = useState(0);
-
-  const { theme, setTheme } = useTheme()
-  const themeRef = useRef(theme);
-
-  const setThemeRef = (newValue) => {
-    themeRef.current = newValue;
-    setTheme(newValue);
-  };
-
-  const triggerMenuReload = () => {
-    setReloadSignal(prev => prev + 1);
-  };
-
-  useEffect(() => {
-    setThemeRef(themeRef.current);
-  }, []);
-
+  const [reloadSignal, setReloadSignal] = useState(0);
+  const triggerMenuReload = () => setReloadSignal((prev) => prev + 1);
   const documentId = null;
+
+  useInitTheme();
 
   return (
     <Layout reloadSignal={reloadSignal} triggerMenuReload={triggerMenuReload}>
-      <EDocDesignerContainer documentId={documentId} triggerMenuReload={triggerMenuReload} />
+      <EDocDesignerContainer
+        documentId={documentId}
+        triggerMenuReload={triggerMenuReload}
+      />
     </Layout>
   );
 }

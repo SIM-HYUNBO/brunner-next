@@ -1,28 +1,13 @@
-`use strict`;
-
-import { useState, useEffect, useRef } from "react";
-import { useTheme } from "next-themes";
+import useInitTheme from "@/hooks/useInitTheme";
 import Layout from "@/components/layout";
-import ResetPasswordContent from "./content/resetPasswordContent";
+import ResetPasswordContent from "@/components/resetPasswordContent";
 
 export default function ResetPassword() {
-  useEffect(() => {
-    setThemeRef(themeRef.current);
-  }, []);
+  useInitTheme();
 
-  const { theme, setTheme } = useTheme();
-  const themeRef = useRef(theme);
-
-  const setThemeRef = (newValue) => {
-    themeRef.current = newValue;
-    setTheme(newValue);
-  };
-
-  return (
-    <>
-      <Layout>
-        <ResetPasswordContent />
-      </Layout>
-    </>
-  );
+  return <ResetPasswordContent />;
 }
+
+ResetPassword.getLayout = function getLayout(page) {
+  return <Layout>{page}</Layout>;
+};

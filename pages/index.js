@@ -1,18 +1,15 @@
 `use strict`;
 
 import React from "react";
-import { useEffect } from "react";
-import * as constants from "@/components/constants";
 import Layout from "@/components/layout";
-import HomeContent from "@/pages/mainPages/content/homeContent";
+import HomeContent from "@/components/homeContent";
 
 // Home 페이지
 export default function Home() {
-  useEffect(() => {}, []);
-
-  return (
-    <Layout>
-      <HomeContent />
-    </Layout>
-  );
+  return <HomeContent />;
 }
+
+// 페이지 전용 Layout 적용
+Home.getLayout = function getLayout(page) {
+  return <Layout>{page}</Layout>;
+};
