@@ -7,8 +7,7 @@ import RequestServer from "@/components/requestServer";
 import Loading from "@/components/loading";
 
 export default function SigninContent() {
-
- const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(false);
   const { BrunnerMessageBox, openModal } = useModal();
 
   useEffect(() => {
@@ -42,7 +41,7 @@ export default function SigninContent() {
       setLoading(false); // 데이터 로딩 끝
 
       if (jResponse.error_code === 0) {
-        localStorage.setItem('userInfo', JSON.stringify(jResponse));
+        localStorage.setItem("userInfo", JSON.stringify(jResponse));
         router.push("/");
       } else {
         openModal(jResponse.error_message);
@@ -60,26 +59,27 @@ export default function SigninContent() {
     }
   };
 
-
-return (
+  return (
     <>
-        {loading && ( <Loading />)}
-        <BrunnerMessageBox />
+      {loading && <Loading />}
+      <BrunnerMessageBox />
 
-        <div className={`w-full pr-16 flex flex-col items-start text-left mb-16 md:mb-0`}>
-        <h2 className={`title-font sm:text-4xl text-3xl mb-10 font-medium text-green-900`}>
-            Sign in
+      <div
+        className={`w-full pr-16 flex flex-col items-start text-left mb-16 md:mb-0`}
+      >
+        <h2
+          className={`page-title title-font sm:text-4xl text-3xl mb-10 font-medium text-green-900`}
+        >
+          Sign in
         </h2>
         <div className={`w-full`}>
-            <p className={`leading-relaxed mt-4 mb-5`}>
-            Inut ID and Password.
-            </p>
+          <p className={`leading-relaxed mt-4 mb-5`}>Inut ID and Password.</p>
         </div>
         <div className={`relative mb-4`}>
-            <label htmlFor="id" className={`leading-7 text-sm text-gray-400`}>
+          <label htmlFor="id" className={`leading-7 text-sm text-gray-400`}>
             ID
-            </label>
-            <input
+          </label>
+          <input
             type="text"
             ref={userIdRef}
             id="id"
@@ -102,16 +102,16 @@ return (
                         transition-colors 
                         duration-200 
                         ease-in-out`}
-            />
+          />
         </div>
         <div className={`relative mb-4`}>
-            <label
+          <label
             className={`leading-7 text-sm text-gray-400`}
             htmlFor="password"
-            >
+          >
             Password
-            </label>
-            <input
+          </label>
+          <input
             className={`w-full 
                         bg-white 
                         rounded 
@@ -134,33 +134,31 @@ return (
             name="password"
             onChange={changePasswordValue}
             onKeyPress={handleKeyPress} // Enter 키 눌림 처리
-            />
+          />
         </div>
         <button
-            className={`text-white bg-indigo-500 border-0 py-2 px-4 focus:outline-none hover:bg-indigo-600 rounded text-lg`}
-            onClick={requestSignIn}
+          className={`text-white bg-indigo-500 border-0 py-2 px-4 focus:outline-none hover:bg-indigo-600 rounded text-lg`}
+          onClick={requestSignIn}
         >
-            Sign in
+          Sign in
         </button>
         <p className={`text-xs text-gray-500 mt-10`}>
-            Forgot your password? Reset now.
+          Forgot your password? Reset now.
         </p>
         <button
-            className={`text-white bg-indigo-500 border-0 py-2 px-4 focus:outline-none hover:bg-indigo-600 rounded text-lg mt-5`}
-            onClick={() => router.push("/mainPages/resetPassword")}
+          className={`text-white bg-indigo-500 border-0 py-2 px-4 focus:outline-none hover:bg-indigo-600 rounded text-lg mt-5`}
+          onClick={() => router.push("/mainPages/resetPassword")}
         >
-            Reset password
+          Reset password
         </button>
-        <p className={`text-xs text-gray-500 mt-10`}>
-            You can delete account.
-        </p>
+        <p className={`text-xs text-gray-500 mt-10`}>You can delete account.</p>
         <button
-            className={`text-white bg-indigo-500 border-0 py-2 px-4 focus:outline-none hover:bg-indigo-600 rounded text-lg mt-5`}
-            onClick={() => router.push("/mainPages/resetPassword")}
+          className={`text-white bg-indigo-500 border-0 py-2 px-4 focus:outline-none hover:bg-indigo-600 rounded text-lg mt-5`}
+          onClick={() => router.push("/mainPages/resetPassword")}
         >
-            Leave & Delete Account
+          Leave & Delete Account
         </button>
-        </div>
-    </>        
-)
+      </div>
+    </>
+  );
 }
