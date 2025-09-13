@@ -3,7 +3,7 @@
 import useInitTheme from "@/hooks/useInitTheme";
 
 import Layout from "@/components/layout";
-import ContactContent from "../../components/contactContent";
+import ContactContent from "@/components/contactContent";
 
 export default function Contact() {
   useInitTheme();
