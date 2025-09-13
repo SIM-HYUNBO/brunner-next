@@ -22,10 +22,10 @@ export default function Header({ triggerMenuReload, reloadSignal }) {
             src="/favicon.png"
             alt="brunner logo"
             priority
-            width={200}
-            height={200} /* 확보하는 영역의 크기 */
-            sizes="(max-width: 768px) 100px, 200px" /* 화면 폭에 따라 반응형 이미지 로딩 최적화 힌트, 768px 보다 작을떄와 클때 구분 */
-            className="ml-5 w-[100px] sm:w-[200px] h-auto" /* 로드되는 이미지의 해상도 선택 */
+            width={100}
+            height={100} /* 확보하는 영역의 크기 */
+            sizes="(max-width: 768px) 50px, 100px" /* 화면 폭에 따라 반응형 이미지 로딩 최적화 힌트, 768px 보다 작을떄와 클때 구분 */
+            className="ml-5 w-[50px] sm:w-[100px] h-auto" /* 로드되는 이미지의 해상도 선택 */
           />
         </Link>
 
