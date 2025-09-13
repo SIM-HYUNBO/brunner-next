@@ -612,7 +612,9 @@ export default function EDocDesignerContainer({
         </div>
       )}
 
-      {loading && <Loading />}
+      <div className="flex-1 overflow-auto relative">
+        {loading && <Loading />}
+      </div>
       <h2 className={`page-title`}>Designer</h2>
       {/* 상단 메뉴 */}
       <EDocDesignerTopMenu

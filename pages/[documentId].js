@@ -39,7 +39,9 @@ export default function EDocument() {
       <div style={{ minHeight: "80vh" }}>
         {/* minHeight는 실제 콘텐츠 영역 높이에 맞게 조정 */}
         {loading || !documentData ? (
-          <Loading />
+          <div className="flex-1 overflow-auto relative">
+            {loading && <Loading />}
+          </div>
         ) : (
           <EDocContent
             argDocumentId={documentId}

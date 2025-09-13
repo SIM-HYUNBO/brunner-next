@@ -51,15 +51,15 @@ const AutoResizeTextarea = forwardRef(
           rounded-md 
           p-2 
           mt-1
-          ${readOnly ? 
-            `bg-gray-100 
+          ${
+            readOnly
+              ? `bg-gray-100 
              text-slate-400 
              dark-bg-color 
-             dark:text-slate-800` : 
-            `general-text-bg-color`
+             dark:text-slate-800`
+              : `general-text-bg-color`
           }
-          `
-        }
+          `}
         rows="10"
       />
     );
@@ -117,7 +117,7 @@ const ServiceSQL = () => {
 
       setLoading(true); // 데이터 로딩 시작
       const jResponse = await RequestServer(jRequest);
-      setLoading(false);// 데이터 로딩 끝
+      setLoading(false); // 데이터 로딩 끝
 
       if (jResponse.error_code === 0) {
         setQueries(jResponse.data);
@@ -209,8 +209,8 @@ const ServiceSQL = () => {
   const ClearInputButton = () => {
     return (
       <button
-            onClick={handleNew}
-            className={`bg-green-500 
+        onClick={handleNew}
+        className={`bg-green-500 
                         text-white 
                         px-4 
                         py-2
@@ -220,16 +220,17 @@ const ServiceSQL = () => {
                         focus:ring focus:ring-green-500 
                         focus:ring-opacity-50 
                         ml-1`}
-          >
-            Clear
-          </button>
-    )
-  }
+      >
+        Clear
+      </button>
+    );
+  };
 
-  const CreateUpdateButton = () =>{
+  const CreateUpdateButton = () => {
     return (
-      <button onClick={handleCreateOrUpdate} 
-              className={`bg-blue-500 
+      <button
+        onClick={handleCreateOrUpdate}
+        className={`bg-blue-500 
                           text-white 
                           px-4
                           py-2 
@@ -238,18 +239,18 @@ const ServiceSQL = () => {
                           focus:outline-none 
                           focus:ring-2 
                           focus:ring-blue-500 
-                          focus:ring-opacity-50`}>
+                          focus:ring-opacity-50`}
+      >
         {currentServiceSQL ? "Update" : "Create"}
       </button>
-    )
-  }
+    );
+  };
 
   // Handle delete action
   const handleDelete = async (userQueryItem) => {
     try {
       const result = await openModal(constants.messages.DELETE_ITEM);
-      if (!result) 
-        return;
+      if (!result) return;
 
       var jRequest = {};
       var jResponse = null;
@@ -276,8 +277,10 @@ const ServiceSQL = () => {
 
   return (
     <>
-      {loading && ( <Loading />)}
       <BrunnerMessageBox />
+      <div className="flex-1 overflow-auto relative">
+        {loading && <Loading />}
+      </div>
       {userInfo?.isAdminUser() && (
         <div className={`w-full p-4`}>
           <div ref={editPanelRef} className={`w-full mb-4`}>
@@ -366,14 +369,17 @@ const ServiceSQL = () => {
               />
             </label>
             <div className={``}>
-              <CreateUpdateButton/>
-              <ClearInputButton/>
+              <CreateUpdateButton />
+              <ClearInputButton />
             </div>
-            
           </div>
-          <h2 className={`text-lg 
+          <h2
+            className={`text-lg 
                           font-semibold 
-                          mb-4`}>Query List</h2>
+                          mb-4`}
+          >
+            Query List
+          </h2>
           <button
             onClick={fetchSQLList}
             className={`bg-blue-500 
@@ -391,90 +397,110 @@ const ServiceSQL = () => {
             Refresh
           </button>
           <div className="w-full overflow-x-auto">
-          <table className={`w-full bg-white border border-gray-300 mt-2`}>
-            <thead>
-              <tr>
-                <th className={`border 
+            <table className={`w-full bg-white border border-gray-300 mt-2`}>
+              <thead>
+                <tr>
+                  <th
+                    className={`border 
                                 border-gray-300 
                                 dark:text-gray-400 
                                 dark-bg-color 
                                 px-4 
-                                py-2`}>
-                  System Code
-                </th>
-                <th className={`border 
+                                py-2`}
+                  >
+                    System Code
+                  </th>
+                  <th
+                    className={`border 
                                 border-gray-300 
                                 dark:text-gray-400 
                                 dark-bg-color 
                                 px-4 
-                                py-2`}>
-                  SQL Name
-                </th>
-                <th className={`border 
+                                py-2`}
+                  >
+                    SQL Name
+                  </th>
+                  <th
+                    className={`border 
                                 border-gray-300  
                                 dark:text-gray-400 
                                 dark-bg-color 
                                 px-4 
-                                py-2`}>
-                  SQL Sequence
-                </th>
-                <th className={`border 
+                                py-2`}
+                  >
+                    SQL Sequence
+                  </th>
+                  <th
+                    className={`border 
                                 border-gray-300  
                                 dark:text-gray-400 
                                 dark-bg-color 
                                 px-4 
-                                py-2`}>
-                  SQL Content
-                </th>
-                <th className={`border 
+                                py-2`}
+                  >
+                    SQL Content
+                  </th>
+                  <th
+                    className={`border 
                                 border-gray-300 
                                 dark:text-gray-400 
                                 dark-bg-color 
                                 px-4 
-                                py-2`}>
-                  Actions
-                </th>
-              </tr> 
-            </thead>
-            <tbody>
-              {queries.map((query) => (
-                <tr key={query.id}>
-                  <td className={`border 
+                                py-2`}
+                  >
+                    Actions
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {queries.map((query) => (
+                  <tr key={query.id}>
+                    <td
+                      className={`border 
                                   border-gray-300  
                                   general-text-bg-color
                                   px-4 
-                                  py-2`}>
-                    {query.system_code}
-                  </td>
-                  <td className={`border 
+                                  py-2`}
+                    >
+                      {query.system_code}
+                    </td>
+                    <td
+                      className={`border 
                                   border-gray-300  
                                   general-text-bg-color
                                   px-4 
-                                  py-2`}>
-                    {query.sql_name}
-                  </td>
-                  <td className={`border 
+                                  py-2`}
+                    >
+                      {query.sql_name}
+                    </td>
+                    <td
+                      className={`border 
                                   border-gray-300 
                                   general-text-bg-color
                                   px-4 
-                                  py-2`}>
-                    {query.sql_seq}
-                  </td>
-                  <td className={`border 
+                                  py-2`}
+                    >
+                      {query.sql_seq}
+                    </td>
+                    <td
+                      className={`border 
                                   border-gray-300 
                                   general-text-bg-color
                                   px-4 
-                                  py-2`}>
-                    <pre>{query.sql_content}</pre>
-                  </td>
-                  <td className={`border 
+                                  py-2`}
+                    >
+                      <pre>{query.sql_content}</pre>
+                    </td>
+                    <td
+                      className={`border 
                                   border-gray-300 
                                   general-text-bg-color
                                   px-4 
-                                  py-2`}>
-                    <button
-                      onClick={() => handleEdit(query)}
-                      className={`bg-yellow-500 
+                                  py-2`}
+                    >
+                      <button
+                        onClick={() => handleEdit(query)}
+                        className={`bg-yellow-500 
                                   text-white 
                                   px-2 
                                   py-1 
@@ -484,12 +510,12 @@ const ServiceSQL = () => {
                                   focus:ring-2 
                                   focus:ring-yellow-500 
                                   focus:ring-opacity-50`}
-                    >
-                      Edit    
-                    </button>
-                    <button
-                      onClick={() => handleDelete(query)}
-                      className={`bg-red-500 
+                      >
+                        Edit
+                      </button>
+                      <button
+                        onClick={() => handleDelete(query)}
+                        className={`bg-red-500 
                                   text-white 
                                   px-2 
                                   py-1 
@@ -499,14 +525,14 @@ const ServiceSQL = () => {
                                   focus:ring-2 
                                   focus:ring-red-500 
                                   focus:ring-opacity-50`}
-                    >
-                      Del.
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+                      >
+                        Del.
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
           <button
             onClick={fetchSQLList}
