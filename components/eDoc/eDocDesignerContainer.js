@@ -537,6 +537,34 @@ export default function EDocDesignerContainer({
     );
   };
 
+  // 현재 페이지를 위로 이동
+  const handleMovePageUp = () => {
+    if (currentPageIdx <= 0) return; // 첫 페이지는 이동 불가
+    setDocumentData((prev) => {
+      const newPages = [...prev.pages];
+      [newPages[currentPageIdx - 1], newPages[currentPageIdx]] = [
+        newPages[currentPageIdx],
+        newPages[currentPageIdx - 1],
+      ];
+      return { ...prev, pages: newPages };
+    });
+    setCurrentPageIdx((prev) => prev - 1);
+  };
+
+  // 현재 페이지를 아래로 이동
+  const handleMovePageDown = () => {
+    if (currentPageIdx >= documentData.pages.length - 1) return; // 마지막 페이지는 이동 불가
+    setDocumentData((prev) => {
+      const newPages = [...prev.pages];
+      [newPages[currentPageIdx + 1], newPages[currentPageIdx]] = [
+        newPages[currentPageIdx],
+        newPages[currentPageIdx + 1],
+      ];
+      return { ...prev, pages: newPages };
+    });
+    setCurrentPageIdx((prev) => prev + 1);
+  };
+
   return (
     <>
       <AIInputModal
@@ -704,20 +732,39 @@ export default function EDocDesignerContainer({
                     setSelectedComponentId(null);
                   }}
                 >
-                  <div
-                    className="general-text-bg-color 
-                            border
-                            border-gray
-                            text-center
-                            text-xs 
-                            rounded 
-                            my-1
-                            select-none 
-                            pointer-events-none"
-                  >
-                    p{idx + 1}
+                  <div className="flex flex-row justify-around">
+                    <div
+                      className="general-text-bg-color 
+                              border
+                              border-gray
+                              text-center
+                              text-xs 
+                              rounded 
+                              my-1
+                              select-none 
+                              pointer-events-none"
+                    >
+                      p{idx + 1}
+                    </div>
+                    <div className="flex flex-row justify-center gap-2 mt-2">
+                      <button
+                        onClick={handleMovePageUp}
+                        className="px-2 py-1 rounded bg-gray-200 hover:bg-gray-300"
+                        disabled={currentPageIdx === 0}
+                      >
+                        ▲
+                      </button>
+                      <button
+                        onClick={handleMovePageDown}
+                        className="px-2 py-1 rounded bg-gray-200 hover:bg-gray-300"
+                        disabled={
+                          currentPageIdx === documentData.pages.length - 1
+                        }
+                      >
+                        ▼
+                      </button>
+                    </div>
                   </div>
-
                   <EDocEditorCanvas
                     documentData={documentData}
                     pageData={page}
