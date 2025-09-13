@@ -7,7 +7,7 @@ export default function Header({ triggerMenuReload, reloadSignal }) {
   return (
     <header className="header">
       {/* 햄버거 메뉴 */}
-      <div className="absolute top-4 right-4 z-50">
+      <div className="absolute top-0 right-0 z-50">
         <DropdownMenu
           triggerMenuReload={triggerMenuReload}
           reloadSignal={reloadSignal}
