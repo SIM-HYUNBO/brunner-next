@@ -106,8 +106,7 @@ neutral, stone
    =============================== */
 
   header {
-    @apply sticky 
-           w-full 
+    @apply w-full 
            top-0 
            left-0 
            right-0 
