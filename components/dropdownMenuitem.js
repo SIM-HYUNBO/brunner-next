@@ -36,14 +36,14 @@ export async function getDropdownMenuItems() {
     items.push({ type: "divider" });
 
     documentList = await commonFunctions.getUsersDocumentList();
-    documentList.forEach((doc) => {
+    documentList?.forEach((doc) => {
       const hRef = `/${doc.id}`;
       items.push({
         label: doc.runtime_data?.title || "(제목 없음)",
         href: hRef,
         type: "item",
       });
-    });    
+    });
   }
 
   return items;
