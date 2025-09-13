@@ -12,17 +12,16 @@ neutral, stone
 ================================== 
 */
 @layer utilities {
-
   :root {
     /* Light Mode 색상 변수 */
-    --theme-light-text: theme('colors.zinc.900');
-    --theme-light-bg: theme('colors.zinc.100');
+    --theme-light-text: theme("colors.zinc.900");
+    --theme-light-bg: theme("colors.zinc.100");
 
-    --theme-medium-text: theme('colors.zinc.600');
-    --theme-medium-bg: theme('colors.zinc.400');
+    --theme-medium-text: theme("colors.zinc.600");
+    --theme-medium-bg: theme("colors.zinc.400");
 
-    --theme-semi-text: theme('colors.zinc.800');
-    --theme-semi-bg: theme('colors.zinc.200');
+    --theme-semi-text: theme("colors.zinc.800");
+    --theme-semi-bg: theme("colors.zinc.200");
 
     --general-text-color: var(--theme-light-text);
     --general-bg-color: var(--theme-light-bg);
@@ -30,14 +29,14 @@ neutral, stone
 
   .dark {
     /* Dark Mode 색상 변수 덮어쓰기 */
-    --theme-dark-text: theme('colors.zinc.100');
-    --theme-dark-bg: theme('colors.zinc.900');
+    --theme-dark-text: theme("colors.zinc.100");
+    --theme-dark-bg: theme("colors.zinc.900");
 
-    --theme-medium-text: theme('colors.zinc.400');
-    --theme-medium-bg: theme('colors.zinc.600');
+    --theme-medium-text: theme("colors.zinc.400");
+    --theme-medium-bg: theme("colors.zinc.600");
 
-    --theme-semi-text: theme('colors.zinc.200');
-    --theme-semi-bg: theme('colors.zinc.800');
+    --theme-semi-text: theme("colors.zinc.200");
+    --theme-semi-bg: theme("colors.zinc.800");
 
     --general-text-color: var(--theme-dark-text);
     --general-bg-color: var(--theme-dark-bg);
@@ -73,10 +72,10 @@ neutral, stone
 
   .medium-text-color {
     color: var(--theme-medium-text);
-  } 
+  }
   .medium-bg-color {
     background-color: var(--theme-medium-bg);
-  } 
+  }
 
   .dark-bg-color {
     background-color: var(--theme-dark-bg);
@@ -95,13 +94,13 @@ neutral, stone
 
   .general-text-color {
     color: var(--general-text-color);
-  } 
+  }
 
   .general-text-bg-color {
     color: var(--general-text-color);
     background-color: var(--general-bg-color);
-  } 
- 
+  }
+
   /* ===============================
      기본 스타일들
    =============================== */
@@ -114,9 +113,8 @@ neutral, stone
            right-0 
            z-50 
            general-text-bg-color
-           relative
-           ;
-  }           
+           relative;
+  }
 
   footer {
     @apply h-20 
@@ -128,18 +126,22 @@ neutral, stone
            flex-col 
            items-center
            justify-center
-           general-text-bg-color
-           ; 
+           general-text-bg-color;
   }
 
-  h1, h2, h3, h4, h5, h6 {
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
     @apply text-green-600 
            dark:text-green-300;
   }
 
   pre {
     @apply general-text-color 
-           whitespace-pre-wrap; 
+           whitespace-pre-wrap;
   }
 
   html {
@@ -153,25 +155,22 @@ neutral, stone
   p {
     @apply semi-text-bg-color;
   }
-  
-  .bg-primary { 
+
+  .bg-primary {
     @apply w-full 
            h-full 
            general-text-bg-color
            min-h-[calc(100vh-5rem)] 
            max-w-full 
-           pb-20
-           ;
+           pb-20;
   }
 
   .page-title {
-    @apply sm:text-4xl 
-           text-3xl
+    @apply text-3xl
            ml-5
            my-10 
            font-medium 
-           text-green-900
-           ;
+           text-green-900;
   }
 
   .Layout {
@@ -180,17 +179,13 @@ neutral, stone
            flex-col 
            min-h-screen 
            justify-center 
-           overflow-x-hidden
-           ;
+           overflow-x-hidden;
 
     @apply w-full 
            md:w-screen 
            lg:w-3/4
-           lg:mx-auto
-           ;
+           lg:mx-auto;
 
-    @apply md:flex-row
-           ;
-  }  
+    @apply md:flex-row;
+  }
 }
-

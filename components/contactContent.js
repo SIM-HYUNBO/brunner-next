@@ -11,7 +11,7 @@ export default function ContactContent() {
   return (
     <>
       <div>
-        <div className={`w-full desktop:w-2/3 items-start text-left`}>
+        <div className={`w-full items-start text-left`}>
           <h2 className={`page-title`}>Contact us ...</h2>
           <div className={`items-center`}>
             <LottiePlayer
