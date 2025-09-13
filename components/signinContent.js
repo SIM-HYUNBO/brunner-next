@@ -61,9 +61,8 @@ export default function SigninContent() {
 
   return (
     <>
-      {loading && <Loading />}
       <BrunnerMessageBox />
-
+      {loading && <Loading />}
       <div
         className={`w-full pr-16 flex flex-col items-start text-left mb-16 md:mb-0`}
       >

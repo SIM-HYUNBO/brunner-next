@@ -45,7 +45,7 @@ export default function HomeContent() {
     <>
       {loading && <Loading />}
       <div className={`w-full relative flex-row`}>
-        <h2 className={`px-5 page-title`}>Noesis Pelagos</h2>
+        <h2 className={`page-title`}>Noesis Pelagos</h2>
         <div className="w-full flex flex-row items-center">
           <div className="flex-1">
             <GoverningMessage
