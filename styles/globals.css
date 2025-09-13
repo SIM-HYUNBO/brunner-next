@@ -106,13 +106,13 @@ neutral, stone
    =============================== */
 
   header {
-    @apply w-full 
+    @apply sticky 
+           w-full 
            top-0 
            left-0 
            right-0 
            z-50 
-           general-text-bg-color
-           relative;
+           general-text-bg-color;
   }
 
   footer {
