@@ -733,19 +733,6 @@ export default function EDocDesignerContainer({
                   }}
                 >
                   <div className="flex flex-row justify-around">
-                    <div
-                      className="general-text-bg-color 
-                              border
-                              border-gray
-                              text-center
-                              text-xs 
-                              rounded 
-                              my-1
-                              select-none 
-                              pointer-events-none"
-                    >
-                      p{idx + 1}
-                    </div>
                     <div className="flex flex-row justify-center gap-2 mt-2">
                       <button
                         onClick={handleMovePageUp}
@@ -754,6 +741,19 @@ export default function EDocDesignerContainer({
                       >
                         ▲
                       </button>
+                      <div
+                        className="general-text-bg-color 
+                              border
+                              border-gray
+                              text-center
+                              text-xs 
+                              rounded 
+                              my-1
+                              select-none 
+                              pointer-events-none"
+                      >
+                        p{idx + 1}
+                      </div>
                       <button
                         onClick={handleMovePageDown}
                         className="px-2 py-1 rounded bg-gray-200 hover:bg-gray-300"
