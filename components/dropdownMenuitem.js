@@ -7,7 +7,7 @@ import * as commonFunctions from "@/components/commonFunctions";
 export async function getDropdownMenuItems() {
   let items = [
     { label: "Home", href: "/", type: "item" },
-    { label: "Page Designer", href: "/mainPages/eDocDesigner", type: "item" },
+    { label: "Designer", href: "/mainPages/eDocDesigner", type: "item" },
     { label: "Contact", href: "/mainPages/contact", type: "item" },
   ];
 

@@ -29,7 +29,6 @@ import * as VideoComponent from "@/components/eDoc/eDocComponent/eDocComponent_V
 import * as LinkTextComponent from "@/components/eDoc/eDocComponent/eDocComponent_LinkText";
 import * as LottieComponent from "@/components/eDoc/eDocComponent/eDocComponent_Lottie";
 
-
 export default function EDocDesignerContainer({
   documentId,
   triggerMenuReload,
@@ -614,7 +613,7 @@ export default function EDocDesignerContainer({
       )}
 
       {loading && <Loading />}
-      <h2 className={`page-title`}>Page Designer</h2>
+      <h2 className={`page-title`}>Designer</h2>
       {/* 상단 메뉴 */}
       <EDocDesignerTopMenu
         mode={mode}
@@ -703,8 +702,8 @@ export default function EDocDesignerContainer({
                     setSelectedComponentId(null);
                   }}
                 >
-                <div
-                  className="general-text-bg-color 
+                  <div
+                    className="general-text-bg-color 
                             border
                             border-gray
                             text-center
@@ -713,9 +712,9 @@ export default function EDocDesignerContainer({
                             my-1
                             select-none 
                             pointer-events-none"
-                >
-                  p{idx + 1}
-                </div>
+                  >
+                    p{idx + 1}
+                  </div>
 
                   <EDocEditorCanvas
                     documentData={documentData}
