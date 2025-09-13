@@ -13,9 +13,5 @@ export default function Contact() {
 
 // 페이지 전용 Layout 적용
 Contact.getLayout = function getLayout(page) {
-  return (
-    <Layout>
-      {page}
-    </Layout>
-  );
+  return (<Layout>{page}</Layout>);
 };
