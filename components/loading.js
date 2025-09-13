@@ -84,8 +84,11 @@ export default function Loading() {
         }
 
         // 문서 좌표로 변환
-        const leftDoc = (chosenRect.left || 0) + window.scrollX;
-        const widthDoc = chosenRect.width || window.innerWidth;
+        const isMobile = window.innerWidth <= 768; // 모바일 기준치 예: 768px
+        const leftDoc = isMobile ? 0 : (chosenRect.left || 0) + window.scrollX;
+        const widthDoc = isMobile
+          ? window.innerWidth
+          : chosenRect.width || window.innerWidth;
 
         // 안전 클램프: topDoc/heightDoc이 음수/0이면 fallback
         if (heightDoc <= 0) {
@@ -129,6 +132,8 @@ export default function Loading() {
           pointerEvents: "auto",
           boxSizing: "border-box",
         });
+
+        setReady(true);
       } catch (err) {
         // 실패해도 전체 화면 오버레이로 안전하게 처리
         setOverlayStyle({
@@ -143,6 +148,8 @@ export default function Loading() {
           pointerEvents: "auto",
           boxSizing: "border-box",
         });
+
+        setReady(true);
       }
     };
 
@@ -172,7 +179,7 @@ export default function Loading() {
     };
   }, []);
 
-  if (typeof document === "undefined") return null;
+  if (typeof document === "undefined" || !ready) return null;
 
   const overlayNode = (
     <div
