@@ -1,157 +1,185 @@
-`use strict`
+`use strict`;
 
-import logger from "./winston/logger"
-import * as constants from "@/components/constants"
-import * as commonFunctions from '@/components/commonFunctions';
-import * as database from "./biz/database/database"
-import * as dynamicSql from './biz/dynamicSql'
-import * as security from './biz/security'
-import * as postInfo from './biz/postInfo'
-import * as postCommentInfo from './biz/postCommentInfo'
-import * as edocComponentTemplate from './biz/eDoc/eDocComponentTemplate'
-import * as edocDocument from './biz/eDoc/eDocDocument'
-import * as edocCustom from './biz/eDoc/eDocCustom'
+import logger from "./winston/logger";
+import * as constants from "@/components/constants";
+import * as commonFunctions from "@/components/commonFunctions";
+import * as database from "./biz/database/database";
+import * as dynamicSql from "./biz/dynamicSql";
+import * as security from "./biz/security";
+import * as postInfo from "./biz/postInfo";
+import * as postCommentInfo from "./biz/postCommentInfo";
+import * as edocComponentTemplate from "./biz/eDoc/eDocComponentTemplate";
+import * as edocDocument from "./biz/eDoc/eDocDocument";
+import * as edocCustom from "./biz/eDoc/eDocCustom";
 
 async function initialize() {
-    var serviceSql = null;
+  var serviceSql = null;
 
-    if (!process.serviceSQL)
-        serviceSql = await dynamicSql.loadAll();
-    else
-        serviceSql = process.serviceSQL;
+  if (!process.serviceSQL) serviceSql = await dynamicSql.loadAll();
+  else serviceSql = process.serviceSQL;
 
-    return serviceSql.size;
+  return serviceSql.size;
 }
 
 var isLoadingDynamicSql = false;
 
 export default async (req, res) => {
-    var response = null;
-    var remoteIp = null;
-    var jRequest = null;
-    var jResponse = {};
-    var commandName = null;
-    var txnId = null;
-    var startTxnTime = null;
-    var endTxnTime = null;
-    var durationMs = null;
+  var response = null;
+  var remoteIp = null;
+  var jRequest = null;
+  var jResponse = {};
+  var commandName = null;
+  var txnId = null;
+  var startTxnTime = null;
+  var endTxnTime = null;
+  var durationMs = null;
+  var exception = null;
 
-    try {
-        var loadedSQLSize = 0;
+  try {
+    var loadedSQLSize = 0;
 
-        if (!isLoadingDynamicSql)
-            loadedSQLSize = await initialize();
-        else
-            throw Error(constants.messages.SERVER_NOW_INITIALIZING);
+    if (!isLoadingDynamicSql) loadedSQLSize = await initialize();
+    else throw Error(constants.messages.SERVER_NOW_INITIALIZING);
 
-        if (!process.serviceSQL || process.serviceSQL.length == 0) {
-            throw Error(constants.messages.SERVER_NOW_INITIALIZING);
-        }
-
-        remoteIp = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
-        jRequest = req.method === "GET" ? 
-                   JSON.parse(req.params.requestJson) : 
-                   req.method === "POST" ? req.body : null;
-        txnId = await generateTxnId();
-        commandName = jRequest.commandName;
-        
-        logger.warn(`START TXN ${commandName}\n`);
-        jRequest._txnId = txnId;
-        logger.info(`method: ${req.method} from ${remoteIp}\n requestBody: ${JSON.stringify(req.body)}\n`);
-        startTxnTime = new Date();
-        
-        response = await executeService(req.method, req);
-        
-        if(response && commonFunctions.isJsonObject(response))
-            jResponse= response;
-        else
-            jResponse = JSON.parse(response.toString())
+    if (!process.serviceSQL || process.serviceSQL.length == 0) {
+      throw Error(constants.messages.SERVER_NOW_INITIALIZING);
     }
-    catch (e) {
-        logger.error(`${e}\n`);
-        jResponse = e;
-    }
-    finally {
-        endTxnTime = new Date();
-        durationMs = endTxnTime - startTxnTime;
-        
-        jResponse._txnId = txnId;
-        jResponse._durationMs = durationMs;
 
-        res.send(`${JSON.stringify(jResponse)}`);
-        logger.warn(`END TXN ${(!commandName) ? "" : commandName} in ${durationMs} milliseconds.\n response: ${JSON.stringify(jResponse)}\n`)
-    }
-}
+    remoteIp = req.headers["x-forwarded-for"] || req.socket.remoteAddress;
+    jRequest =
+      req.method === "GET"
+        ? JSON.parse(req.params.requestJson)
+        : req.method === "POST"
+          ? req.body
+          : null;
+    txnId = await generateTxnId();
+    commandName = jRequest.commandName;
+
+    logger.warn(`START TXN ${commandName}\n`);
+    jRequest._txnId = txnId;
+    logger.info(
+      `method: ${req.method} from ${remoteIp}\n requestBody: ${JSON.stringify(req.body)}\n`
+    );
+    startTxnTime = new Date();
+
+    response = await executeService(req.method, req);
+
+    if (response && commonFunctions.isJsonObject(response))
+      jResponse = response;
+    else jResponse = JSON.parse(response.toString());
+  } catch (e) {
+    logger.error(`${e}\n`);
+    exception = e;
+  } finally {
+    endTxnTime = new Date();
+    durationMs = endTxnTime - startTxnTime;
+
+    jResponse._txnId = txnId;
+    jResponse._durationMs = durationMs;
+    jResponse._exception = exception;
+
+    res.send(`${JSON.stringify(jResponse)}`);
+    logger.warn(
+      `END TXN ${!commandName ? "" : commandName} in ${durationMs} milliseconds.\n response: ${JSON.stringify(jResponse)}\n`
+    );
+
+    saveTxnHistory(remoteIp, txnId, jRequest, jResponse);
+  }
+};
 
 const executeService = async (method, req) => {
-    var jResponse = {};
-    var jRequest = method === "GET" ? JSON.parse(req.params.requestJson) : method === "POST" ? req.body : null;
-    const commandName = jRequest.commandName;
-    
-    if (!commandName) {
-        jResponse.error_code = -1;
-        jResponse.error_message = `${constants.messages.SERVER_NO_COMMAND_NAME}\n${constants.messages.SERVER_NOT_SUPPORTED_MODULE}`;
-        return jResponse;
-    }
+  var jResponse = {};
+  var jRequest =
+    method === "GET"
+      ? JSON.parse(req.params.requestJson)
+      : method === "POST"
+        ? req.body
+        : null;
+  const commandName = jRequest.commandName;
 
-    if (commandName.startsWith(`${constants.modulePrefix.security}.`)) {
-        jResponse = await security.executeService(req.body._txnId, jRequest);
-    } else if (commandName.startsWith(`${constants.modulePrefix.dynamicSql}.`)) {
-        jResponse = await dynamicSql.executeService(req.body._txnId, jRequest);
-    } else if (commandName.startsWith(`${constants.modulePrefix.postInfo}.`)) {
-        jResponse = await postInfo.executeService(req.body._txnId, jRequest);
-    } else if (commandName.startsWith(`${constants.modulePrefix.postCommentInfo}.`)) {
-        jResponse = await postCommentInfo.executeService(req.body._txnId, jRequest);
-    } else if (commandName.startsWith(`${constants.modulePrefix.edocComponentTemplate}.`)) {
-        jResponse = await edocComponentTemplate.executeService(req.body._txnId, jRequest);
-    } else if (commandName.startsWith(`${constants.modulePrefix.edocDocument}.`)) {
-        jResponse = await edocDocument.executeService(req.body._txnId, jRequest);
-    } else if (commandName.startsWith(`${constants.modulePrefix.edocCustom}.`)) {
-        jResponse = await edocCustom.executeService(req.body._txnId, jRequest);
-    } else {
-        jResponse.error_code = -1;
-        jResponse.error_message = `[${commandName}] ${constants.messages.SERVER_NOT_SUPPORTED_MODULE}`;
-    }
+  if (!commandName) {
+    jResponse.error_code = -1;
+    jResponse.error_message = `${constants.messages.SERVER_NO_COMMAND_NAME}\n${constants.messages.SERVER_NOT_SUPPORTED_MODULE}`;
     return jResponse;
-}
+  }
+
+  if (commandName.startsWith(`${constants.modulePrefix.security}.`)) {
+    jResponse = await security.executeService(req.body._txnId, jRequest);
+  } else if (commandName.startsWith(`${constants.modulePrefix.dynamicSql}.`)) {
+    jResponse = await dynamicSql.executeService(req.body._txnId, jRequest);
+  } else if (commandName.startsWith(`${constants.modulePrefix.postInfo}.`)) {
+    jResponse = await postInfo.executeService(req.body._txnId, jRequest);
+  } else if (
+    commandName.startsWith(`${constants.modulePrefix.postCommentInfo}.`)
+  ) {
+    jResponse = await postCommentInfo.executeService(req.body._txnId, jRequest);
+  } else if (
+    commandName.startsWith(`${constants.modulePrefix.edocComponentTemplate}.`)
+  ) {
+    jResponse = await edocComponentTemplate.executeService(
+      req.body._txnId,
+      jRequest
+    );
+  } else if (
+    commandName.startsWith(`${constants.modulePrefix.edocDocument}.`)
+  ) {
+    jResponse = await edocDocument.executeService(req.body._txnId, jRequest);
+  } else if (commandName.startsWith(`${constants.modulePrefix.edocCustom}.`)) {
+    jResponse = await edocCustom.executeService(req.body._txnId, jRequest);
+  } else {
+    jResponse.error_code = -1;
+    jResponse.error_message = `[${commandName}] ${constants.messages.SERVER_NOT_SUPPORTED_MODULE}`;
+  }
+  return jResponse;
+};
 
 const generateTxnId = async () => {
+  const now = new Date();
 
-    const now = new Date();
+  const year = now.getFullYear();
+  const month = String(now.getMonth() + 1).padStart(2, "0");
+  const day = String(now.getDate()).padStart(2, "0");
+  const hours = String(now.getHours()).padStart(2, "0");
+  const minutes = String(now.getMinutes()).padStart(2, "0");
+  const seconds = String(now.getSeconds()).padStart(2, "0");
 
-    const year = now.getFullYear();
-    const month = String(now.getMonth() + 1).padStart(2, '0');
-    const day = String(now.getDate()).padStart(2, '0');
-    const hours = String(now.getHours()).padStart(2, '0');
-    const minutes = String(now.getMinutes()).padStart(2, '0');
-    const seconds = String(now.getSeconds()).padStart(2, '0');
+  const currentDateTime = `${year}${month}${day}${hours}${minutes}${seconds}`;
 
-    const currentDateTime = `${year}${month}${day}${hours}${minutes}${seconds}`;
-
-    const hrtime = process.hrtime(); // 현재 시간을 나노초 단위로 가져옴
-    const txnid = `${currentDateTime}${hrtime[0]}${hrtime[1]}`;
-    return txnid;
-}
+  const hrtime = process.hrtime(); // 현재 시간을 나노초 단위로 가져옴
+  const txnid = `${currentDateTime}${hrtime[0]}${hrtime[1]}`;
+  return txnid;
+};
 
 const saveTxnHistory = async (remoteIp, txnId, jRequest, jResponse) => {
-    var sql = await dynamicSql.getSQL00('insert_TB_COR_TXN_HIST', 1);
-    var insert_TB_COR_TXN_HIST_01 = await database.executeSQL(sql,
-        [
-            txnId,
-            remoteIp,
-            JSON.stringify(jRequest, null, 2),
-            JSON.stringify(jResponse, null, 2),
-        ]);
+  // 성능 문제로 메시지의 모든 내용을 저장하지는 않음.
+  const reducedRequest = {
+    commandName: jRequest.commandName,
+    userId: jRequest.userId,
+    timestamp: jRequest.timestamp,
+  };
+  const reducedResponse = {
+    durationMs: jResponse._durationMs,
+    exception: jResponse._exception,
+  };
 
-    if (insert_TB_COR_TXN_HIST_01.rowCount !== 1) {
-        logger.error(`Failed to execute insert_TB_COR_TXN_HIST_01\n`);
-    }
-    else {
-        // 오래된 이력은 여기서 삭제
-        sql = await dynamicSql.getSQL00('delete_TB_COR_TXN_HIST', 1);
-        var delete_TB_COR_TXN_HIST_01 = await database.executeSQL(sql,
-            [
-            ]);
-        logger.info(`delete_TB_COR_TXN_HIST_01\n${delete_TB_COR_TXN_HIST_01.rowCount} rows deleted.`);
-    }
-}
+  var sql = await dynamicSql.getSQL00("insert_TB_COR_TXN_HIST", 1);
+  var insert_TB_COR_TXN_HIST_01 = await database.executeSQL(sql, [
+    txnId,
+    remoteIp,
+    JSON.stringify(reducedRequest, null, 2),
+    JSON.stringify(reducedResponse, null, 2),
+  ]);
+
+  if (insert_TB_COR_TXN_HIST_01.rowCount !== 1) {
+    logger.error(`Failed to execute insert_TB_COR_TXN_HIST_01\n`);
+  } else {
+    // 오래된 이력은 여기서 삭제
+    sql = await dynamicSql.getSQL00("delete_TB_COR_TXN_HIST", 1);
+    var delete_TB_COR_TXN_HIST_01 = await database.executeSQL(sql, [
+      process.env.TXN_LOG_KEEP_HOURS,
+    ]);
+    logger.info(
+      `delete_TB_COR_TXN_HIST_01\n${delete_TB_COR_TXN_HIST_01.rowCount} rows deleted.`
+    );
+  }
+};
