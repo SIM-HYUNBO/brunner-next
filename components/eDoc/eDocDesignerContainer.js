@@ -212,6 +212,16 @@ export default function EDocDesignerContainer({
       return;
     }
 
+    if (
+      !documentData.id &&
+      documentData.runtime_data.title === "New Document"
+    ) {
+      const result = await openModal(
+        constants.messages.SAVE_DOCUMENT_WITHOUT_TITLE
+      );
+      if (!result) return;
+    }
+
     const jRequest = {
       commandName: constants.commands.EDOC_DOCUMENT_UPSERT_ONE,
       systemCode: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE,

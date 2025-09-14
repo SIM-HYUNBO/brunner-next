@@ -30,6 +30,7 @@ export const messages = {
   NO_DATA_FOUND: `No data found.`,
   NO_PERMISSION: `You do not have permission`,
   REQUIRED_FIELD: `The field value is required.`,
+  SAVE_DOCUMENT_WITHOUT_TITLE: "Save document without title?",
   SERVER_NOT_CONNECTTED: `cannot connect to server`,
   SERVER_NOT_SUPPORTED_MODULE: `Not supported module`,
   SERVER_NOW_INITIALIZING: `Server is now initializing...`,
@@ -92,6 +93,6 @@ export const edocComponentType = {
   _CHECKLIST: `Checklist`,
   _BUTTON: `Button`,
   _VIDEO: `Video`,
-  _LINKTEXT: 'LinkText',
-  _LOTTIE: 'Lottie'
+  _LINKTEXT: "LinkText",
+  _LOTTIE: "Lottie",
 };
