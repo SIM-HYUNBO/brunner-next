@@ -127,7 +127,7 @@ export default function AIInputModal({
 
     if (!apiKey.trim() || !instructions || !aiModel) {
       openModal(
-        "openAI apikey와 모델을 선택하고 지시사항을 모두 입력하고 해주세요."
+        `${constants.messages.REQUIRED_FIELD} [apiKey, instructions, aiModel]`
       );
       return;
     }
