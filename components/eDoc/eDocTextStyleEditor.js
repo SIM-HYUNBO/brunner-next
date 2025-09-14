@@ -1,36 +1,36 @@
-'use strict';
+"use strict";
 
-import React from 'react';
+import React from "react";
 
 // ✅ 사용할 한글 + 영문 폰트 리스트
 export const availableFonts = [
   // Sans-serif 계열
-  'Arial',
-  'Helvetica',
-  'Verdana',
-  'Trebuchet MS',
-  'Noto Sans KR',
-  'Pretendard',
-  'Spoqa Han Sans Neo',
+  "Arial",
+  "Helvetica",
+  "Verdana",
+  "Trebuchet MS",
+  "Noto Sans KR",
+  "Pretendard",
+  "Spoqa Han Sans Neo",
 
   // Serif 계열
-  'Times New Roman',
-  'Georgia',
-  'Noto Serif KR',
-  'Nanum Myeongjo',
+  "Times New Roman",
+  "Georgia",
+  "Noto Serif KR",
+  "Nanum Myeongjo",
 
   // Monospace
-  'Courier New',
-  'Source Code Pro',
+  "Courier New",
+  "Source Code Pro",
 
   // 기타 한글 무료 웹폰트
-  'Nanum Gothic',
-  'Gothic A1',
-  'IBM Plex Sans KR',
-  'SUIT',
-  'Dongle',
-  'Do Hyeon',
-  'Yeon Sung',
+  "Nanum Gothic",
+  "Gothic A1",
+  "IBM Plex Sans KR",
+  "SUIT",
+  "Dongle",
+  "Do Hyeon",
+  "Yeon Sung",
 ];
 
 export default function EDocTextStyleEditor({
@@ -75,8 +75,10 @@ export default function EDocTextStyleEditor({
         <label className="flex items-center space-x-2">
           <input
             type="checkbox"
-            checked={fontWeight === 'bold'}
-            onChange={(e) => onChange({ fontWeight: e.target.checked ? 'bold' : 'normal' })}
+            checked={fontWeight === "bold"}
+            onChange={(e) =>
+              onChange({ fontWeight: e.target.checked ? "bold" : "normal" })
+            }
           />
           <span>굵게</span>
         </label>
@@ -105,10 +107,29 @@ export default function EDocTextStyleEditor({
         <label className="block text-sm font-medium mb-1">배경 색상</label>
         <input
           type="color"
-          value={backgroundColor}
+          value={
+            backgroundColor === "transparent"
+              ? "#ffffff" // 체크 시 표시용 기본색
+              : backgroundColor
+          }
           onChange={(e) => onChange({ backgroundColor: e.target.value })}
-          className="w-full h-10 border rounded"
+          className="w-full h-10 border rounded mb-2"
+          disabled={backgroundColor === "transparent"} // 투명 선택 시 색상 선택 비활성
         />
+
+        <label className="inline-flex items-center gap-1">
+          <input
+            type="checkbox"
+            checked={backgroundColor === "transparent"}
+            onChange={(e) =>
+              onChange({
+                backgroundColor: e.target.checked ? "transparent" : "#ffffff", // 체크 시 투명, 해제 시 기본색
+              })
+            }
+            className="mr-2"
+          />
+          Transparent
+        </label>
       </div>
     </div>
   );

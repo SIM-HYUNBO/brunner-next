@@ -183,12 +183,36 @@ export function renderProperty(
         {renderForceNewLineProperty()}
         {renderPositionAlignProperty()}
         <label>버튼 색상:</label>
-        <input
-          type="color"
-          value={component.runtime_data?.buttonColor || "#4F46E5"}
-          onChange={(e) => updateRuntimeData("buttonColor", e.target.value)}
-          className="w-full border border-gray-300 rounded p-2 mb-2"
-        />
+        <div className="mb-2">
+          <label className="block mb-1">버튼 색상</label>
+
+          <input
+            type="color"
+            value={
+              component.runtime_data?.buttonColor === "transparent"
+                ? "#ffffff" // 체크 시 색상은 표시용 기본값
+                : component.runtime_data?.buttonColor || "#4F46E5"
+            }
+            onChange={(e) => updateRuntimeData("buttonColor", e.target.value)}
+            className="w-full border border-gray-300 rounded p-2 mb-2"
+            disabled={component.runtime_data?.buttonColor === "transparent"} // 투명 선택 시 색상 선택 비활성
+          />
+
+          <label className="inline-flex items-center gap-1">
+            <input
+              type="checkbox"
+              checked={component.runtime_data?.buttonColor === "transparent"}
+              onChange={(e) =>
+                updateRuntimeData(
+                  "buttonColor",
+                  e.target.checked ? "transparent" : "#4F46E5" // 체크 시 투명, 해제 시 기본색
+                )
+              }
+              className="mr-2"
+            />
+            Transparent
+          </label>
+        </div>
         <label>글자 색상:</label>
         <input
           type="color"
