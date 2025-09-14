@@ -120,6 +120,11 @@ export default function AIInputModal({
   }, []);
 
   const handleRequest = async () => {
+    if (!userInfo.isLogin()) {
+      openModal(constants.messages.LOGIN_REQUIRED);
+      return;
+    }
+
     if (!apiKey.trim() || !instructions || !aiModel) {
       openModal(
         "openAI apikey와 모델을 선택하고 지시사항을 모두 입력하고 해주세요."
