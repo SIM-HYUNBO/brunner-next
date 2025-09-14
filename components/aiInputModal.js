@@ -127,7 +127,8 @@ export default function AIInputModal({
 
     if (!apiKey.trim() || !instructions || !aiModel) {
       openModal(
-        `${constants.messages.REQUIRED_FIELD} [apiKey, instructions, aiModel]`
+        `${constants.messages.REQUIRED_FIELD} 
+        [apiKey, instructions, aiModel]`
       );
       return;
     }
