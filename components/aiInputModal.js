@@ -1,19 +1,19 @@
 import React, { useState, useRef, useEffect } from "react";
 import * as constants from "@/components/constants";
-import RequestServer from "@/components/requestServer"
+import RequestServer from "@/components/requestServer";
 import Loading from "@/components/loading";
 import { useModal } from "@/components/brunnerMessageBox";
 import AIModelSelector from "@/components/aiModelSelector";
+import * as userInfo from "@/components/userInfo";
 
-export default function AIInputModal({ 
-  isOpen, 
-  onClose, 
-  commandName, 
-  onAIResponse 
+export default function AIInputModal({
+  isOpen,
+  onClose,
+  commandName,
+  onAIResponse,
 }) {
-  
   const [loading, setLoading] = useState(false);
-  const {BrunnerMessageBox, openModal } = useModal();
+  const { BrunnerMessageBox, openModal } = useModal();
   const [instructions, setInstructions] = useState("");
   const [apiKey, setApiKey] = useState("");
   const [aiModel, setAIModel] = useState();
@@ -34,20 +34,39 @@ export default function AIInputModal({
   // 드래그 시작
   const handleMouseDown = (e) => {
     const tag = e.target.tagName;
-    if (tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT" || tag === "BUTTON") return;
+    if (
+      tag === "INPUT" ||
+      tag === "TEXTAREA" ||
+      tag === "SELECT" ||
+      tag === "BUTTON"
+    )
+      return;
     if (e.target.dataset?.resizeHandle === "true") return;
 
     setDragging(true);
-    dragStart.current = { x: e.clientX - position.x, y: e.clientY - position.y };
+    dragStart.current = {
+      x: e.clientX - position.x,
+      y: e.clientY - position.y,
+    };
   };
 
   const handleMouseMove = (e) => {
     if (dragging) {
-      setPosition({ x: e.clientX - dragStart.current.x, y: e.clientY - dragStart.current.y });
+      setPosition({
+        x: e.clientX - dragStart.current.x,
+        y: e.clientY - dragStart.current.y,
+      });
     }
   };
 
   const handleMouseUp = () => setDragging(false);
+
+  useEffect(() => {
+    if (!userInfo.isLogin()) {
+      openModal(constants.messages.LOGIN_REQUIRED);
+      return;
+    }
+  }, [onClose]);
 
   useEffect(() => {
     if (dragging) {
@@ -102,7 +121,9 @@ export default function AIInputModal({
 
   const handleRequest = async () => {
     if (!apiKey.trim() || !instructions || !aiModel) {
-      openModal("openAI apikey와 모델을 선택하고 지시사항을 모두 입력하고 해주세요.");
+      openModal(
+        "openAI apikey와 모델을 선택하고 지시사항을 모두 입력하고 해주세요."
+      );
       return;
     }
 
@@ -112,11 +133,11 @@ export default function AIInputModal({
       const jRequest = {
         commandName: commandName,
         systemCode: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE,
-        instructionInfo: { 
+        instructionInfo: {
           instructions: instructions,
           apiKey: apiKey,
-          aiModel: aiModel 
-        }
+          aiModel: aiModel,
+        },
       };
 
       setLoading(true);
@@ -128,14 +149,16 @@ export default function AIInputModal({
       }
     } catch (err) {
       setErrorMessage(`문서를 생성하는 중 오류가 발생했습니다. ${err}`);
-    } finally { setLoading(false); }
-  }
+    } finally {
+      setLoading(false);
+    }
+  };
 
   if (!isOpen) return null;
 
   return (
     <div className="fixed inset-0 z-[10000] flex items-center justify-center bg-black/40">
-      {loading && ( <Loading />)}
+      {loading && <Loading />}
       <BrunnerMessageBox />
       <div
         ref={modalRef}
@@ -153,9 +176,15 @@ export default function AIInputModal({
         aria-modal="true"
         aria-label="Open AI Document Auto-generation"
       >
-        <h2 className="text-xl font-bold mb-4 select-none">Open AI Document Auto-generation</h2>
+        <h2 className="text-xl font-bold mb-4 select-none">
+          Open AI Document Auto-generation
+        </h2>
 
-        {errorMessage && <div className="mb-4 text-red-500 text-sm font-medium">{errorMessage}</div>}
+        {errorMessage && (
+          <div className="mb-4 text-red-500 text-sm font-medium">
+            {errorMessage}
+          </div>
+        )}
 
         <label className="block mb-2 font-medium">OpenAI API Key</label>
         <input
@@ -167,15 +196,17 @@ export default function AIInputModal({
         />
 
         <label className="block mb-2 font-medium">Select Model</label>
-        <AIModelSelector model={aiModel} 
-                         setAIModel={setAIModel} 
-                         apiKey={apiKey} />
+        <AIModelSelector
+          model={aiModel}
+          setAIModel={setAIModel}
+          apiKey={apiKey}
+        />
 
-        {aiModel && 
-         <div className="mt-4">
-          선택한 모델: <span className="font-mono">{aiModel}</span>
-         </div>
-        }
+        {aiModel && (
+          <div className="mt-4">
+            선택한 모델: <span className="font-mono">{aiModel}</span>
+          </div>
+        )}
 
         <label className="block mb-2 font-medium">Instructions</label>
         <textarea
@@ -186,23 +217,27 @@ export default function AIInputModal({
         />
 
         <div className="mt-6 flex justify-end gap-2">
-          <button onClick={onClose} 
-                  className="px-4 
+          <button
+            onClick={onClose}
+            className="px-4 
                              py-2 
                              rounded 
                              bg-gray-500
                              text-white 
-                             hover:bg-gray-600">
-          닫기
+                             hover:bg-gray-600"
+          >
+            닫기
           </button>
-          <button onClick={handleRequest} 
-                  className="px-4 
+          <button
+            onClick={handleRequest}
+            className="px-4 
                              py-2 
                              rounded 
                              bg-indigo-500 
                              text-white 
-                             hover:bg-indigo-600">
-          생성하기
+                             hover:bg-indigo-600"
+          >
+            생성하기
           </button>
         </div>
 
