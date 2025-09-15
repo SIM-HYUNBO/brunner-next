@@ -11,7 +11,7 @@ export default function SignoutButton({ handleLogout, triggerMenuReload }) {
   const router = useRouter();
   const { BrunnerMessageBox, openModal } = useModal();
   const [loading, setLoading] = useState(false);
-  
+
   const requestSignout = async () => {
     var jRequest = {};
     var jResponse = null;
@@ -25,7 +25,7 @@ export default function SignoutButton({ handleLogout, triggerMenuReload }) {
     setLoading(false); // 데이터 로딩 끝
 
     if (jResponse.error_code == 0) {
-      localStorage.removeItem('userInfo');
+      localStorage.removeItem("userInfo");
       if (triggerMenuReload) triggerMenuReload();
       router.push("/");
       handleLogout();
@@ -62,20 +62,20 @@ export default function SignoutButton({ handleLogout, triggerMenuReload }) {
             }
           }}
         >
-        <svg
-          className="w-3 h-3"
-          xmlns="http://www.w3.org/2000/svg"
-          fill="none"
-          viewBox="0 0 24 24"
-          strokeWidth="1.5"
-          stroke="currentColor"
-        >
-        <path
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          d="M4.5 12h15m0 0l-6.75-6.75M19.5 12l-6.75 6.75"
-        />
-        </svg>
+          <svg
+            className="w-3 h-3"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            strokeWidth="1.5"
+            stroke="currentColor"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M4.5 12h15m0 0l-6.75-6.75M19.5 12l-6.75 6.75"
+            />
+          </svg>
         </button>
       )}
     </>

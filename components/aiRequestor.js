@@ -1,4 +1,3 @@
-
 export const getAIModelList = async (apiKey) => {
   const serverUrl = "https://api.openai.com/v1/models";
 
@@ -18,10 +17,10 @@ export const getAIModelList = async (apiKey) => {
 
     const data = await aiResponse.json();
     return data.data.map((m) => ({
-        id: m.id,
-        created: m.created,
-        owned_by: m.owned_by,
-      }));
+      id: m.id,
+      created: m.created,
+      owned_by: m.owned_by,
+    }));
   } catch (e) {
     jResponse = {
       commandName: jRequest.commandName,
@@ -64,47 +63,41 @@ Open AI API에서 사용되는 role의 종류는 다음과 같습니다:
 
 */
 
-export const requestPrompt = async (apiKey, 
-                                    aiModel, 
-                                    systemPrompt, 
-                                    userPrompt, 
-                                    assistantPrompt) => {
-    var result = {
-        errror_code: -1,
-        error_message: '',
-        aiResultData : ''
-    };
+export const requestPrompt = async (
+  apiKey,
+  aiModel,
+  systemPrompt,
+  userPrompt,
+  assistantPrompt
+) => {
+  var result = {
+    errror_code: -1,
+    error_message: "",
+    aiResultData: "",
+  };
 
-    const serverUrl = "https://api.openai.com/v1/chat/completions";
+  const serverUrl = "https://api.openai.com/v1/chat/completions";
 
   try {
-
     const temperatureSupportedModels = [
-        "gpt-3.5-turbo",
-        "gpt-4",
-        "gpt-4-turbo",
-        "gpt-4o",
-        "gpt-4o-mini",
-        "GPT-4.1",
-        "GPT-4.5",
-        "GPT-5",
-        ];
+      "gpt-3.5-turbo",
+      "gpt-4",
+      "gpt-4-turbo",
+      "gpt-4o",
+      "gpt-4o-mini",
+      "GPT-4.1",
+      "GPT-4.5",
+      "GPT-5",
+    ];
 
-    const prompts =
-    [
+    const prompts = [
       {
         role: "system",
         content: systemPrompt,
       },
-      { role: "user", 
-        content: userPrompt 
-      },
-      { role: "assistant", 
-        content: assistantPrompt 
-      },
-
+      { role: "user", content: userPrompt },
+      { role: "assistant", content: assistantPrompt },
     ];
-
 
     const bodyPayload = {
       model: aiModel,
@@ -114,7 +107,7 @@ export const requestPrompt = async (apiKey,
     if (temperatureSupportedModels.includes(aiModel)) {
       bodyPayload.temperature = 0.7;
     }
-    
+
     const aiResponse = await fetch(serverUrl, {
       method: "POST",
       headers: {
@@ -130,24 +123,23 @@ export const requestPrompt = async (apiKey,
       : "{}";
 
     if (resJson.error) {
-        result = {
+      result = {
         error_code: -1,
         error_message: resJson.error,
-        aiResultData : null
-        }
-    }
-    else {
-        result = {
+        aiResultData: null,
+      };
+    } else {
+      result = {
         error_code: 0,
         error_message: null,
-        aiResultData : JSON.parse(content)
-        }
+        aiResultData: JSON.parse(content),
+      };
     }
-} catch (e) {
+  } catch (e) {
     result = {
       error_code: -1,
       error_message: `${e}`,
-      aiResultData : null
+      aiResultData: null,
     };
   }
 

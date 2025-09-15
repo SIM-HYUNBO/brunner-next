@@ -223,13 +223,13 @@ export default function EDocEditorCanvas({
                      flex 
                      w-full 
                      justify-center
-                     ${
-                      isSelected
-                        ? "outline outline-2 outline-blue-400"
-                        : ""
-                      }`}
+                     ${isSelected ? "outline outline-2 outline-blue-400" : ""}`}
       style={{
-        marginTop: `${pageData.runtime_data?.pageMargin ? pageData.runtime_data?.pageMargin : 0}px`,
+        marginTop: `${
+          pageData.runtime_data?.pageMargin
+            ? pageData.runtime_data?.pageMargin
+            : 0
+        }px`,
       }}
     >
       <div
@@ -250,11 +250,7 @@ export default function EDocEditorCanvas({
       >
         {pageData.components?.length === 0 ? (
           isViewerMode ? null : (
-            <p
-              className="text-center"
-            >
-              좌측에서 컴포넌트를 추가하세요.
-            </p>
+            <p className="text-center">좌측에서 컴포넌트를 추가하세요.</p>
           )
         ) : (
           RenderComponents()

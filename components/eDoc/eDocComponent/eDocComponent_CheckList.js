@@ -199,25 +199,11 @@ export default function RenderComponent(props) {
       onClick={handleComponentClick}
     >
       {(component.runtime_data?.items || []).map((item, idx) => (
-      <label
-        key={idx}
-        className="flex items-center space-x-2 mb-1"
-        style={{
-          justifyContent,
-          fontFamily: style.fontFamily,
-          fontSize: style.fontSize,
-          fontWeight: style.fontWeight,
-          color: style.color,
-          textDecoration: style.textDecoration,
-        }}
-      >
-        <input
-          type="checkbox"
-          checked={item.checked}
-          readOnly // 캔버스에서는 클릭 불가
-        />
-        <span
+        <label
+          key={idx}
+          className="flex items-center space-x-2 mb-1"
           style={{
+            justifyContent,
             fontFamily: style.fontFamily,
             fontSize: style.fontSize,
             fontWeight: style.fontWeight,
@@ -225,10 +211,24 @@ export default function RenderComponent(props) {
             textDecoration: style.textDecoration,
           }}
         >
-          {item.label || `항목 ${idx + 1}`}
-        </span>
-      </label>
-    ))}
+          <input
+            type="checkbox"
+            checked={item.checked}
+            readOnly // 캔버스에서는 클릭 불가
+          />
+          <span
+            style={{
+              fontFamily: style.fontFamily,
+              fontSize: style.fontSize,
+              fontWeight: style.fontWeight,
+              color: style.color,
+              textDecoration: style.textDecoration,
+            }}
+          >
+            {item.label || `항목 ${idx + 1}`}
+          </span>
+        </label>
+      ))}
     </div>
   );
 }

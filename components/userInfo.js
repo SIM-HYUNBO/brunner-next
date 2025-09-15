@@ -1,20 +1,24 @@
-'use client';
+"use client";
 
 import SignoutButton from "./signoutButton";
 import DarkModeToggleButton from "./darkModeToggleButton";
-import { useState, useEffect } from 'react';
+import { useState, useEffect } from "react";
 
-export default function UserInfo({ handleLogout, reloadSignal, triggerMenuReload }) {
-  const [userName, setUserName] = useState('');
+export default function UserInfo({
+  handleLogout,
+  reloadSignal,
+  triggerMenuReload,
+}) {
+  const [userName, setUserName] = useState("");
 
   // 최초 렌더링 시 userInfo 로딩
   useEffect(() => {
-    if (typeof window !== 'undefined') {
+    if (typeof window !== "undefined") {
       try {
-        const userInfoStr = localStorage.getItem('userInfo');
+        const userInfoStr = localStorage.getItem("userInfo");
         if (userInfoStr) {
           const userInfo = JSON.parse(userInfoStr);
-          setUserName(userInfo?.userName || '');
+          setUserName(userInfo?.userName || "");
         }
       } catch (e) {
         console.error("Invalid userInfo JSON:", e);
@@ -24,12 +28,12 @@ export default function UserInfo({ handleLogout, reloadSignal, triggerMenuReload
 
   // reloadSignal이 바뀔 때 userInfo 갱신
   useEffect(() => {
-    if (typeof window !== 'undefined') {
+    if (typeof window !== "undefined") {
       try {
-        const userInfoStr = localStorage.getItem('userInfo');
+        const userInfoStr = localStorage.getItem("userInfo");
         if (userInfoStr) {
           const userInfo = JSON.parse(userInfoStr);
-          setUserName(userInfo?.userName || '');
+          setUserName(userInfo?.userName || "");
         }
       } catch (e) {
         console.error("Invalid userInfo JSON:", e);
@@ -39,7 +43,6 @@ export default function UserInfo({ handleLogout, reloadSignal, triggerMenuReload
 
   return (
     <div className="relative w-full h-12 mt-1 text-gray-600 dark:text-gray-400">
-      
       {/* 왼쪽 고정: 다크모드 토글 */}
       <div className="absolute inset-y-0 left-0 flex items-center pl-2">
         <DarkModeToggleButton />
@@ -54,7 +57,10 @@ export default function UserInfo({ handleLogout, reloadSignal, triggerMenuReload
 
       {/* 오른쪽 고정: 로그아웃 버튼 */}
       <div className="absolute inset-y-0 right-0 flex items-center pr-2">
-        <SignoutButton handleLogout={handleLogout} triggerMenuReload={triggerMenuReload} />
+        <SignoutButton
+          handleLogout={handleLogout}
+          triggerMenuReload={triggerMenuReload}
+        />
       </div>
     </div>
   );
@@ -63,35 +69,35 @@ export default function UserInfo({ handleLogout, reloadSignal, triggerMenuReload
 // helper 함수들
 
 export const getLoginUserId = () => {
-  if (typeof window !== 'undefined') {
+  if (typeof window !== "undefined") {
     try {
-      const userInfoStr = localStorage.getItem('userInfo');
+      const userInfoStr = localStorage.getItem("userInfo");
       const userInfo = JSON.parse(userInfoStr);
-      return userInfo?.userId || '';
+      return userInfo?.userId || "";
     } catch {
-      return '';
+      return "";
     }
   }
-  return '';
+  return "";
 };
 
 export const getLoginName = () => {
-  if (typeof window !== 'undefined') {
+  if (typeof window !== "undefined") {
     try {
-      const userInfoStr = localStorage.getItem('userInfo');
+      const userInfoStr = localStorage.getItem("userInfo");
       const userInfo = JSON.parse(userInfoStr);
-      return userInfo?.userName || '';
+      return userInfo?.userName || "";
     } catch {
-      return '';
+      return "";
     }
   }
-  return '';
+  return "";
 };
 
 export const isAdminUser = () => {
-  if (typeof window !== 'undefined') {
+  if (typeof window !== "undefined") {
     try {
-      const userInfoStr = localStorage.getItem('userInfo');
+      const userInfoStr = localStorage.getItem("userInfo");
       const userInfo = JSON.parse(userInfoStr);
       return !!userInfo?.adminFlag;
     } catch {
@@ -102,9 +108,9 @@ export const isAdminUser = () => {
 };
 
 export const isLogin = () => {
-  if (typeof window !== 'undefined') {
+  if (typeof window !== "undefined") {
     try {
-      const userInfoStr = localStorage.getItem('userInfo');
+      const userInfoStr = localStorage.getItem("userInfo");
       const userInfo = JSON.parse(userInfoStr);
       return !!userInfo?.userId;
     } catch {

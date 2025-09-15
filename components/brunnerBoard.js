@@ -299,7 +299,7 @@ function BrunnerBoard({ boardType }) {
   return (
     <div className={`w-full max-w-4xl mx-auto`}>
       <BrunnerMessageBox />
-      {loading && ( <Loading />)}
+      {loading && <Loading />}
       <div className={`my-2 flex`}>
         <textarea
           value={postText}

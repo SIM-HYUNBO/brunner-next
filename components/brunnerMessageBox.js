@@ -1,12 +1,12 @@
-import React, {useState} from "react";
+import React, { useState } from "react";
 import Loading from "@/components/loading";
 
 export const useModal = () => {
   const [modalContent, setModalContent] = useState({
     isOpen: false,
     message: "",
-    onConfirm: () => { },
-    onClose: () => { },
+    onConfirm: () => {},
+    onClose: () => {},
   });
 
   // ✅ 로딩 상태 추가
@@ -33,13 +33,14 @@ export const useModal = () => {
     setModalContent({
       isOpen: false,
       message: "",
-      onConfirm: () => { },
-      onClose: () => { },
+      onConfirm: () => {},
+      onClose: () => {},
     });
   };
 
   const BrunnerMessageBox = () => {
-    const isObject = (value) => value && typeof value === 'object' && !Array.isArray(value);
+    const isObject = (value) =>
+      value && typeof value === "object" && !Array.isArray(value);
 
     if (!modalContent.isOpen) return null;
 
@@ -54,32 +55,39 @@ export const useModal = () => {
 
     return (
       <>
-        {loading && ( <Loading />)}
-        <div className="flex 
+        {loading && <Loading />}
+        <div
+          className="flex 
              items-center 
              justify-center 
              z-[1000001] 
              fixed 
-             inset-0">
-          <div className="fixed 
+             inset-0"
+        >
+          <div
+            className="fixed 
                inset-0 
                bg-gray-900 
-               opacity-75">
-          </div>
-          <div className="semi-text-bg-color 
+               opacity-75"
+          ></div>
+          <div
+            className="semi-text-bg-color 
                           rounded-lg 
                           p-8 
                           max-w-md 
                           w-full 
-                          z-50">
-            <p className="text-lg 
+                          z-50"
+          >
+            <p
+              className="text-lg 
                           dark:text-gray-200 
                           text-center 
                           mb-4 
-                          whitespace-pre-line">
-              { isObject(modalContent.message) ? 
-                JSON.stringify(modalContent.message) : 
-                modalContent.message }
+                          whitespace-pre-line"
+            >
+              {isObject(modalContent.message)
+                ? JSON.stringify(modalContent.message)
+                : modalContent.message}
             </p>
             <div className="flex justify-center">
               <button
@@ -89,8 +97,8 @@ export const useModal = () => {
                            font-bold 
                            mr-2
                            px-4 
-                           py-2" 
-                           rounded 
+                           py-2"
+                rounded
                 onClick={handleConfirm}
               >
                 OK

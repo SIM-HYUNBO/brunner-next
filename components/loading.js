@@ -103,7 +103,10 @@ export default function Loading() {
             position: "fixed",
             top: `${fallbackTop}px`,
             left: `${Math.max(0, chosenRect.left || 0)}px`,
-            width: `${Math.max(0, Math.min(window.innerWidth, chosenRect.width || window.innerWidth))}px`,
+            width: `${Math.max(
+              0,
+              Math.min(window.innerWidth, chosenRect.width || window.innerWidth)
+            )}px`,
             height: `${fallbackHeight}px`,
             zIndex: 9999,
             display: "flex",

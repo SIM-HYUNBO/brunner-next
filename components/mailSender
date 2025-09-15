@@ -1,21 +1,22 @@
-
-import nodemailer from 'nodemailer';
+import nodemailer from "nodemailer";
 
 // 이메일 발송을 위한 설정
 export const transporter = nodemailer.createTransport({
-    service: 'gmail', // 또는 'smtp', 'yahoo', 'outlook' 등 사용하고자 하는 이메일 서비스
-    auth: {
-        user: 'hbsim0605@gmail.com', // 발송할 이메일 주소
-        pass: 'qjrc wqdk otau kvpg'   // 이메일 계정 비밀번호 또는 앱 비밀번호
-    }
+  service: "gmail", // 또는 'smtp', 'yahoo', 'outlook' 등 사용하고자 하는 이메일 서비스
+  auth: {
+    user: "hbsim0605@gmail.com", // 발송할 이메일 주소
+    pass: "qjrc wqdk otau kvpg", // 이메일 계정 비밀번호 또는 앱 비밀번호
+  },
 });
 
 // 이메일 발송
 export const sendEmail = async (mailOptions) => {
-    try {
-        const info = await transporter.sendMail(mailOptions);
-        console.log('Email sent:', info.response);
-    } catch (error) {
-        console.error(`Error sending email: message:${error.message}\n stack:${error.stack}\n`);
-    }
+  try {
+    const info = await transporter.sendMail(mailOptions);
+    console.log("Email sent:", info.response);
+  } catch (error) {
+    console.error(
+      `Error sending email: message:${error.message}\n stack:${error.stack}\n`
+    );
+  }
 };

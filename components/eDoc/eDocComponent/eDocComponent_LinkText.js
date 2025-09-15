@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 
 import React from "react";
 import EDocTextStyleEditor from "@/components/eDoc/eDocTextStyleEditor";
@@ -77,7 +77,9 @@ export function renderProperty(
         fontWeight={component.runtime_data?.fontWeight || "normal"}
         underline={component.runtime_data?.underline || true}
         fontColor={component.runtime_data?.fontColor || "#1a0dab"}
-        backgroundColor={component.runtime_data?.backgroundColor || "transparent"}
+        backgroundColor={
+          component.runtime_data?.backgroundColor || "transparent"
+        }
         onChange={(updatedProps) => {
           Object.entries(updatedProps).forEach(([key, value]) => {
             updateRuntimeData(key, value);
