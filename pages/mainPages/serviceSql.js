@@ -1,10 +1,10 @@
 `use strict`;
 
 import Layout from "@/components/layout";
-import AdminContent from "../../components/adminContent";
+import ServiceSqlContent from "../../components/serviceSqlContent";
 
 export default function AdminPage() {
-  return <AdminContent />;
+  return <ServiceSqlContent />;
 }
 
 // 페이지 전용 Layout 적용

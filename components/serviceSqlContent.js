@@ -5,7 +5,7 @@ import ServiceSQL from "@/components/serviceSQL";
 import * as userInfo from "@/components/userInfo";
 import LottiePlayer from "@/components/lottiePlayer";
 
-export default function AdminContent() {
+export default function ServiceSqlContent() {
   const { isMobile, isTablet } = useDeviceType();
 
   return (
