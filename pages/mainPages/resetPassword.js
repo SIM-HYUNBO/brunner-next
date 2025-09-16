@@ -5,7 +5,11 @@ import ResetPasswordContent from "@/components/resetPasswordContent";
 export default function ResetPassword() {
   useInitTheme();
 
-  return <ResetPasswordContent />;
+  return (
+    <>
+      <ResetPasswordContent />
+    </>
+  );
 }
 
 ResetPassword.getLayout = function getLayout(page) {

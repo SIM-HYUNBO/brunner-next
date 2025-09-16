@@ -21,8 +21,6 @@ async function initialize() {
   return serviceSql.size;
 }
 
-var isLoadingDynamicSql = false;
-
 export default async (req, res) => {
   var response = null;
   var remoteIp = null;
@@ -36,6 +34,7 @@ export default async (req, res) => {
   var exception = null;
 
   try {
+    var isLoadingDynamicSql = false;
     var loadedSQLSize = 0;
 
     if (!isLoadingDynamicSql) loadedSQLSize = await initialize();

@@ -5,7 +5,11 @@ import SigninContent from "@/components/signinContent";
 export default function Signin() {
   useInitTheme();
 
-  return <SigninContent />;
+  return (
+    <>
+      <SigninContent />
+    </>
+  );
 }
 
 Signin.getLayout = function getLayout(page) {
