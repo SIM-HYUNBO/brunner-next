@@ -1,9 +1,9 @@
 import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/router";
-import RequestServer from "@/components/requestServer";
-import * as constants from "@/components/constants";
-import { useModal } from "@/components/brunnerMessageBox";
-import Loading from "@/components/loading";
+import RequestServer from "@/components/core/client/requestServer";
+import * as constants from "@/components/core/constants";
+import { useModal } from "@/components/core/client/brunnerMessageBox";
+import Loading from "@/components/core/client/loading";
 
 export default function SignupContent() {
   const [loading, setLoading] = useState(false);

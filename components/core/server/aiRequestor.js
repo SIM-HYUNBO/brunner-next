@@ -34,18 +34,21 @@ export const getAIModelList = async (apiKey) => {
 };
 
 /* 
-
 prompts는 아래와 같은 구조의 JsonObject 배열입니다.
-   prompts: [
-     {
-       role: "system",
-       content: "모델의 행동이나 응답 방식, 방향성 등을 설정하는 역할",
-     },
-     { 
-       role: "user", 
-       content: "모델과 직접 상호작용하는 사용자의 상세 요청 내용" 
-     },
-]
+  prompts: [
+      {
+        role: "system",
+        content: systemPrompt,
+      },
+      {
+        role: "user",
+        content: userPrompt,
+      },
+      {
+        role: "assistant",
+        content: assistantPrompt,
+      },
+  ]
 
 Open AI API에서 prompt는 특정한 역할을 수행하는 여러 요소로 구성됩니다. 
 그 중 'role'은 메시지의 유형을 정의하여 모델이 어떻게 응답해야 할지를 안내합니다. 
@@ -95,8 +98,14 @@ export const requestPrompt = async (
         role: "system",
         content: systemPrompt,
       },
-      { role: "user", content: userPrompt },
-      { role: "assistant", content: assistantPrompt },
+      {
+        role: "user",
+        content: userPrompt,
+      },
+      {
+        role: "assistant",
+        content: assistantPrompt,
+      },
     ];
 
     const bodyPayload = {

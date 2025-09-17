@@ -1,7 +1,7 @@
 `use strict`;
 
-import SignupContent from "../../components/signupContent";
-import Layout from "@/components/layout";
+import SignupContent from "../../components/contents/signupContent";
+import Layout from "@/components/frames/layout";
 import useInitTheme from "@/hooks/useInitTheme";
 
 export default function Signup() {

@@ -1,7 +1,7 @@
 `use strict`;
 
-import Layout from "@/components/layout";
-import ServiceSqlContent from "../../components/serviceSqlContent";
+import Layout from "@/components/frames/layout";
+import ServiceSqlContent from "../../components/contents/serviceSqlContent";
 
 export default function AdminPage() {
   return (

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import Layout from "@/components/layout";
+import Layout from "@/components/frames/layout";
 import EDocDesignerContainer from "@/components/eDoc/eDocDesignerContainer";
 import useInitTheme from "@/hooks/useInitTheme";
 

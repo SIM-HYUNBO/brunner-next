@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useRef } from "react";
 import dynamic from "next/dynamic";
-import BrunnerVideo from "@/components/brunnerVideo";
+import BrunnerVideo from "@/components/core/client/brunnerVideo";
 
 /**
  * 기본 runtime_data 초기화

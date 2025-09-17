@@ -1,7 +1,7 @@
 `use strict`;
 
 import React from "react";
-import * as constants from "@/components/constants";
+import * as constants from "@/components/core/constants";
 /*
  * EDocComponentPalette.js
  * 컴포넌트 템플릿을 보여주는 팔레트 컴포넌트

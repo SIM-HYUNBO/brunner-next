@@ -1,10 +1,10 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
-import * as userInfo from "@/components/userInfo";
-import * as commonFunctions from "@/components/commonFunctions";
-import Layout from "@/components/layout";
+import * as userInfo from "@/components/frames/userInfo";
+import * as commonFunctions from "@/components/core/commonFunctions";
+import Layout from "@/components/frames/layout";
 import EDocContent from "@/components/eDoc/eDocContent";
-import Loading from "@/components/loading";
+import Loading from "@/components/core/client/loading";
 
 export default function EDocument() {
   const router = useRouter();

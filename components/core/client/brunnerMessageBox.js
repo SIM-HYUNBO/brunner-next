@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import Loading from "@/components/loading";
+import Loading from "@/components/core/client/loading";
 
 export const useModal = () => {
   const [modalContent, setModalContent] = useState({

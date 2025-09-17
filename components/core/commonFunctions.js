@@ -1,18 +1,18 @@
 `use strict`;
 
 import { useState, useRef, useEffect } from "react";
-import * as constants from "./constants";
-import * as InputComponent from "./eDoc/eDocComponent/eDocComponent_Input";
-import * as TextComponent from "./eDoc/eDocComponent/eDocComponent_Text";
-import * as ImageComponent from "./eDoc/eDocComponent/eDocComponent_Image";
-import * as TableComponent from "./eDoc/eDocComponent/eDocComponent_Table";
-import * as CheckListComponent from "./eDoc/eDocComponent/eDocComponent_CheckList";
-import * as ButtonComponent from "./eDoc/eDocComponent/eDocComponent_Button";
-import * as VideoComponent from "./eDoc/eDocComponent/eDocComponent_Video";
-import * as LottieComponent from "./eDoc/eDocComponent/eDocComponent_Lottie";
+import * as constants from "@/components/core/constants";
+import * as InputComponent from "@/components/eDoc/eDocComponent/eDocComponent_Input";
+import * as TextComponent from "@/components/eDoc/eDocComponent/eDocComponent_Text";
+import * as ImageComponent from "@/components/eDoc/eDocComponent/eDocComponent_Image";
+import * as TableComponent from "@/components/eDoc/eDocComponent/eDocComponent_Table";
+import * as CheckListComponent from "@/components/eDoc/eDocComponent/eDocComponent_CheckList";
+import * as ButtonComponent from "@/components/eDoc/eDocComponent/eDocComponent_Button";
+import * as VideoComponent from "@/components/eDoc/eDocComponent/eDocComponent_Video";
+import * as LottieComponent from "@/components/eDoc/eDocComponent/eDocComponent_Lottie";
 
-import RequestServer from "@/components/requestServer";
-import * as userInfo from "@/components/userInfo";
+import RequestServer from "@/components/core/client/requestServer";
+import * as userInfo from "@/components/frames/userInfo";
 
 export function isJsonObject(obj) {
   return obj && typeof obj === "object" && !Array.isArray(obj);

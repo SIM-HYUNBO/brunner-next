@@ -2,18 +2,17 @@
 
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
-import { useDeviceType } from "@/components/commonFunctions";
-import * as userInfo from "@/components/userInfo";
-import * as commonFunctions from "@/components/commonFunctions";
-import GoverningMessage from "@/components/governingMessage";
-import LottiePlayer from "@/components/lottiePlayer";
+import * as userInfo from "@/components/frames/userInfo";
+import * as commonFunctions from "@/components/core/commonFunctions";
+import GoverningMessage from "@/components/core/client/governingMessage";
+import LottiePlayer from "@/components/core/client/lottiePlayer";
 import EDocContent from "@/components/eDoc/eDocContent";
-import Loading from "@/components/loading";
+import Loading from "@/components/core/client/loading";
 
 export default function HomeContent() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
-  const { isMobile, isTablet } = useDeviceType();
+  const { isMobile, isTablet } = commonFunctions.useDeviceType();
   const [isMounted, setIsMounted] = useState(false);
   const [mainDocumentId, setMainDocumentId] = useState(false);
 

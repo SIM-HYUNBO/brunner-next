@@ -1,10 +1,10 @@
 import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/router";
-import { useModal } from "@/components/brunnerMessageBox";
+import { useModal } from "@/components/core/client/brunnerMessageBox";
 
-import * as constants from "@/components/constants";
-import RequestServer from "@/components/requestServer";
-import Loading from "@/components/loading";
+import * as constants from "@/components/core/constants";
+import RequestServer from "@/components/core/client/requestServer";
+import Loading from "@/components/core/client/loading";
 
 export default function SigninContent() {
   const [loading, setLoading] = useState(false);

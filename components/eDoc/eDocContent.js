@@ -1,10 +1,10 @@
 "use strict";
 import { useState, useEffect } from "react";
-import * as constants from "@/components/constants";
-import * as commonFunctions from "@/components/commonFunctions";
-import * as userInfo from "@/components/userInfo";
+import * as constants from "@/components/core/constants";
+import * as commonFunctions from "@/components/core/commonFunctions";
+import * as userInfo from "@/components/frames/userInfo";
 import EDocEditorCanvas from "@/components/eDoc/eDocEditorCanvas";
-import BrunnerBoard from "@/components/brunnerBoard";
+import BrunnerBoard from "@/components/core/client/brunnerBoard";
 
 export default function EDocContent({ argDocumentId, argDocumentData }) {
   const [documentData, setDocumentData] = useState(null);

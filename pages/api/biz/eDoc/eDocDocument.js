@@ -1,11 +1,11 @@
 `use strict`;
 
-import logger from "../../winston/logger";
-import * as constants from "@/components/constants";
+import logger from "../../../../components/core/server/winston/logger";
+import * as constants from "@/components/core/constants";
 import * as database from "../database/database";
 import * as dynamicSql from "../dynamicSql";
-import * as commonFunctions from "@/components/commonFunctions";
-import * as aiRequestor from "@/components/aiRequestor";
+import * as commonFunctions from "@/components/core/commonFunctions";
+import * as aiRequestor from "@/components/core/server/aiRequestor";
 
 const executeService = async (txnId, jRequest) => {
   var jResponse = {};

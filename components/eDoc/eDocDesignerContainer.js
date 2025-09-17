@@ -1,10 +1,10 @@
 "use strict";
 
 import { useState, useEffect } from "react";
-import * as constants from "@/components/constants";
-import * as userInfo from "@/components/userInfo";
-import { useModal } from "@/components/brunnerMessageBox";
-import RequestServer from "@/components/requestServer";
+import * as constants from "@/components/core/constants";
+import * as userInfo from "@/components/frames/userInfo";
+import { useModal } from "@/components/core/client/brunnerMessageBox";
+import RequestServer from "@/components/core/client/requestServer";
 
 import EDocComponentPalette from "./eDocComponentPalette";
 import EDocEditorCanvas from "./eDocEditorCanvas";
@@ -12,12 +12,12 @@ import EDocDesignerTopMenu from "./eDocDesignerTopMenu";
 import EDocComponentPropertyEditor from "./eDocComponentPropertyEditor";
 import EDocDocumentPropertyEditor from "./eDocDocumentPropertyEditor";
 import EDocPagePropertyEditor from "./eDocPagePropertyEditor";
-import * as commonFunctions from "@/components/commonFunctions";
+import * as commonFunctions from "@/components/core/commonFunctions";
 
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
-import AIInputModal from "@/components/aiInputModal";
-import Loading from "@/components/loading";
+import AIInputModal from "@/components/core/client/aiInputModal";
+import Loading from "@/components/core/client/loading";
 
 import * as InputComponent from "@/components/eDoc/eDocComponent/eDocComponent_Input";
 import * as TextComponent from "@/components/eDoc/eDocComponent/eDocComponent_Text";

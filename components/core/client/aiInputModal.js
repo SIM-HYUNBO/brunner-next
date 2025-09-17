@@ -1,10 +1,10 @@
 import React, { useState, useRef, useEffect } from "react";
-import * as constants from "@/components/constants";
-import RequestServer from "@/components/requestServer";
-import Loading from "@/components/loading";
-import { useModal } from "@/components/brunnerMessageBox";
-import AIModelSelector from "@/components/aiModelSelector";
-import * as userInfo from "@/components/userInfo";
+import * as constants from "@/components/core/constants";
+import RequestServer from "@/components/core/client/requestServer";
+import Loading from "@/components/core/client/loading";
+import { useModal } from "@/components/core/client/brunnerMessageBox";
+import AIModelSelector from "@/components/core/client/aiModelSelector";
+import * as userInfo from "@/components/frames/userInfo";
 
 export default function AIInputModal({
   isOpen,

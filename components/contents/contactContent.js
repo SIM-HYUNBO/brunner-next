@@ -1,9 +1,9 @@
 `use strict`;
 
 import { useState, useRef, useEffect } from "react";
-import { useDeviceType } from "@/components/commonFunctions";
-import GoverningMessage from "@/components/governingMessage";
-import LottiePlayer from "@/components/lottiePlayer";
+import { useDeviceType } from "@/components/core/commonFunctions";
+import GoverningMessage from "@/components/core/client/governingMessage";
+import LottiePlayer from "@/components/core/client/lottiePlayer";
 
 export default function ContactContent() {
   const { isMobile, isTablet } = useDeviceType();

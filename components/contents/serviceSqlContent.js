@@ -1,9 +1,9 @@
 `use strict`;
 
-import { useDeviceType } from "@/components/commonFunctions";
-import ServiceSQL from "@/components/serviceSQL";
-import * as userInfo from "@/components/userInfo";
-import LottiePlayer from "@/components/lottiePlayer";
+import { useDeviceType } from "@/components/core/commonFunctions";
+import ServiceSQL from "@/components/core/client/serviceSQL";
+import * as userInfo from "@/components/frames/userInfo";
+import LottiePlayer from "@/components/core/client/lottiePlayer";
 
 export default function ServiceSqlContent() {
   const { isMobile, isTablet } = useDeviceType();

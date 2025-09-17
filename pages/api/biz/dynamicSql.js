@@ -1,9 +1,9 @@
-`use strict`
+`use strict`;
 
-import logger from "../winston/logger"
-import * as constants from '@/components/constants'
-import * as database from './database/database'
-import * as db_cor_sql_info from './dynamicSql'
+import logger from "../../../components/core/server/winston/logger";
+import * as constants from "@/components/core/constants";
+import * as database from "./database/database";
+import * as db_cor_sql_info from "./dynamicSql";
 
 const executeService = async (txnId, jRequest) => {
   var jResponse = {};
@@ -18,24 +18,23 @@ const executeService = async (txnId, jRequest) => {
         break;
       case constants.commands.DYNAMIC_SEQ_DELETE_ONE:
         jResponse = await deleteOne(txnId, jRequest);
-        break; 
+        break;
       default:
       case constants.commands.DYNAMIC_SEQ_LOAD_ALL:
-          jResponse = await loadAll(txnId, jRequest);
-          break;
+        jResponse = await loadAll(txnId, jRequest);
+        break;
     }
   } catch (error) {
     jResponse.error_message = error.message;
   } finally {
     return jResponse;
   }
-}
+};
 
 async function selectAll(txnId, jRequest) {
   var jResponse = {};
 
   try {
-
     var SQLs = [];
 
     var sql = await db_cor_sql_info.getSQL00(`select_TB_COR_SQL_INFO`, 1);
@@ -43,26 +42,23 @@ async function selectAll(txnId, jRequest) {
     const sql_result = await database.executeSQL(sql, []);
 
     if (sql_result) {
-      sql_result.rows.forEach(row => {
+      sql_result.rows.forEach((row) => {
         SQLs = sql_result.rows;
       });
       jResponse.data = SQLs;
       jResponse.error_code = 0;
       jResponse.error_message = constants.messages.EMPTY_STRING;
-    }
-    else {
+    } else {
       throw new Error(constants.messages.SERVER_SQL_NOT_LOADED);
     }
-  }
-  catch (err) {
+  } catch (err) {
     logger.error(e);
     jResponse.error_code = -3; // exception
-    jResponse.error_message = e.message
-  }
-  finally {
+    jResponse.error_message = e.message;
+  } finally {
     return jResponse;
   }
-};
+}
 
 async function updateOne(txnId, jRequest) {
   var jResponse = {};
@@ -100,74 +96,79 @@ async function updateOne(txnId, jRequest) {
     }
 
     var sql = await db_cor_sql_info.getSQL00(`select_TB_COR_SQL_INFO`, 2);
-    var select_TB_COR_SQL_INFO_02 = await database.executeSQL(sql,
-      [
-        jRequest.systemCode,
-        jRequest.sqlName,
-        jRequest.sqlSeq
-      ]);
+    var select_TB_COR_SQL_INFO_02 = await database.executeSQL(sql, [
+      jRequest.systemCode,
+      jRequest.sqlName,
+      jRequest.sqlSeq,
+    ]);
 
-    if (jRequest.action === 'Update' && select_TB_COR_SQL_INFO_02.rowCount <= 0) {
+    if (
+      jRequest.action === "Update" &&
+      select_TB_COR_SQL_INFO_02.rowCount <= 0
+    ) {
       jResponse.error_code = -1;
       jResponse.error_message = `The SQL not used.`;
       return jResponse;
     }
-    if (jRequest.action === 'Create' && select_TB_COR_SQL_INFO_02.rowCount > 0) {
+    if (
+      jRequest.action === "Create" &&
+      select_TB_COR_SQL_INFO_02.rowCount > 0
+    ) {
       jResponse.error_code = -1;
       jResponse.error_message = `The SQL already exist.`;
       return jResponse;
     }
 
-    if (jRequest.action === 'Update') {
+    if (jRequest.action === "Update") {
       sql = await db_cor_sql_info.getSQL00(`update_TB_COR_SQL_INFO`, 1);
-      var update_TB_COR_SQL_INFO_01 = await database.executeSQL(sql,
-        [
-          jRequest.sqlContent,
-          jRequest.userId,
-          jRequest.systemCode,
-          jRequest.sqlName,
-          jRequest.sqlSeq
-        ]);
+      var update_TB_COR_SQL_INFO_01 = await database.executeSQL(sql, [
+        jRequest.sqlContent,
+        jRequest.userId,
+        jRequest.systemCode,
+        jRequest.sqlName,
+        jRequest.sqlSeq,
+      ]);
 
       if (update_TB_COR_SQL_INFO_01.rowCount == 1) {
-        setSQL(jRequest.systemCode, jRequest.sqlName, jRequest.sqlSeq, jRequest.sqlContent);
-
-        jResponse.error_code = 0;
-        jResponse.error_message = constants.messages.EMPTY_STRING;
-      }
-      else {
-        jResponse.error_code = -3;
-        jResponse.error_message = `Failed to update serviceSQL.\n`
-      }
-    }
-    else if (jRequest.action === 'Create') {
-      sql = await db_cor_sql_info.getSQL00(`insert_TB_COR_SQL_INFO`, 1);
-      var insert_TB_COR_SQL_INFO_01 = await database.executeSQL(sql,
-        [
+        setSQL(
           jRequest.systemCode,
           jRequest.sqlName,
           jRequest.sqlSeq,
-          jRequest.sqlContent,
-          jRequest.userId
-        ]);
+          jRequest.sqlContent
+        );
+
+        jResponse.error_code = 0;
+        jResponse.error_message = constants.messages.EMPTY_STRING;
+      } else {
+        jResponse.error_code = -3;
+        jResponse.error_message = `Failed to update serviceSQL.\n`;
+      }
+    } else if (jRequest.action === "Create") {
+      sql = await db_cor_sql_info.getSQL00(`insert_TB_COR_SQL_INFO`, 1);
+      var insert_TB_COR_SQL_INFO_01 = await database.executeSQL(sql, [
+        jRequest.systemCode,
+        jRequest.sqlName,
+        jRequest.sqlSeq,
+        jRequest.sqlContent,
+        jRequest.userId,
+      ]);
 
       if (insert_TB_COR_SQL_INFO_01.rowCount == 1) {
         jResponse.error_code = 0;
         jResponse.error_message = constants.messages.EMPTY_STRING;
-      }
-      else {
+      } else {
         jResponse.error_code = -3;
-        jResponse.error_message = `Failed to create serviceSQL.\n`
+        jResponse.error_message = `Failed to create serviceSQL.\n`;
       }
     }
   } catch (e) {
     logger.error(e);
     jResponse.error_code = -3; // exception
-    jResponse.error_message = e.message
+    jResponse.error_message = e.message;
   } finally {
     return jResponse;
   }
-};
+}
 
 async function deleteOne(txnId, jRequest) {
   var jResponse = {};
@@ -199,12 +200,11 @@ async function deleteOne(txnId, jRequest) {
     }
 
     var sql = await db_cor_sql_info.getSQL00(`select_TB_COR_SQL_INFO`, 2);
-    var select_TB_COR_SQL_INFO_02 = await database.executeSQL(sql,
-      [
-        jRequest.systemCode,
-        jRequest.sqlName,
-        jRequest.sqlSeq
-      ]);
+    var select_TB_COR_SQL_INFO_02 = await database.executeSQL(sql, [
+      jRequest.systemCode,
+      jRequest.sqlName,
+      jRequest.sqlSeq,
+    ]);
 
     if (select_TB_COR_SQL_INFO_02.rowCount <= 0) {
       jResponse.error_code = -1;
@@ -213,41 +213,43 @@ async function deleteOne(txnId, jRequest) {
     }
 
     sql = await db_cor_sql_info.getSQL00(`delete_TB_COR_SQL_INFO`, 1);
-    var delete_TB_COR_SQL_INFO_01 = await database.executeSQL(sql,
-      [
-        jRequest.systemCode,
-        jRequest.sqlName,
-        jRequest.sqlSeq
-      ]);
+    var delete_TB_COR_SQL_INFO_01 = await database.executeSQL(sql, [
+      jRequest.systemCode,
+      jRequest.sqlName,
+      jRequest.sqlSeq,
+    ]);
 
     if (delete_TB_COR_SQL_INFO_01.rowCount == 1) {
-      deleteSQL(jRequest.systemCode, jRequest.sqlName, jRequest.sqlSeq, jRequest.sqlContent);
+      deleteSQL(
+        jRequest.systemCode,
+        jRequest.sqlName,
+        jRequest.sqlSeq,
+        jRequest.sqlContent
+      );
 
       jResponse.error_code = 0;
       jResponse.error_message = constants.messages.EMPTY_STRING;
-    }
-    else {
+    } else {
       jResponse.error_code = -3;
-      jResponse.error_message = `Failed to delete serviceSQL.\n`
+      jResponse.error_message = `Failed to delete serviceSQL.\n`;
     }
   } catch (e) {
     logger.error(e);
     jResponse.error_code = -3; // exception
-    jResponse.error_message = e.message
+    jResponse.error_message = e.message;
   } finally {
     return jResponse;
   }
-};
+}
 
 async function loadAll(txnId, jRequest) {
   try {
-
     // 이미 로딩했으면 로딩 안하고 성공 리턴
     if (process && process.serviceSQL && process.serviceSQL.size > 0) {
       return process.serviceSQL;
     }
 
-    logger.info(`Start loading service queries.\n`)
+    logger.info(`Start loading service queries.\n`);
 
     var loadedSQLs = new Map();
 
@@ -261,63 +263,63 @@ async function loadAll(txnId, jRequest) {
     const sql_result = await database.executeSQL(sql, []);
 
     if (sql_result && sql_result.rowCount > 0) {
-      sql_result.rows.forEach(row => {
-        loadedSQLs.set(`${row.system_code}_${row.sql_name}_${row.sql_seq}`, row.sql_content);
+      sql_result.rows.forEach((row) => {
+        loadedSQLs.set(
+          `${row.system_code}_${row.sql_name}_${row.sql_seq}`,
+          row.sql_content
+        );
       });
       process.serviceSQL = loadedSQLs;
       return process.serviceSQL.size;
-    }
-    else {
+    } else {
       throw new Error(constants.messages.SERVER_SQL_NOT_LOADED);
     }
-  }
-  catch (err) {
+  } catch (err) {
     throw err;
+  } finally {
+    return process.serviceSQL;
   }
-  finally {
-    return process.serviceSQL.size;
-  }
-};
+}
 
 const getSQL = async (systemCode, sqlName, sqlSeq) => {
   try {
-
     var sql = process.serviceSQL.get(`${systemCode}_${sqlName}_${sqlSeq}`);
     return sql;
-  }
-  catch (err) {
+  } catch (err) {
     throw err;
   }
 };
 
 const setSQL = async (systemCode, sqlName, sqlSeq, sqlContent) => {
   try {
-
-    var sql = process.serviceSQL.set(`${systemCode}_${sqlName}_${sqlSeq}`, sqlContent);
+    var sql = process.serviceSQL.set(
+      `${systemCode}_${sqlName}_${sqlSeq}`,
+      sqlContent
+    );
     return sql;
-  }
-  catch (err) {
+  } catch (err) {
     throw err;
   }
 };
 
 const deleteSQL = async (systemCode, sqlName, sqlSeq) => {
   try {
-
     var sql = process.serviceSQL.delete(`${systemCode}_${sqlName}_${sqlSeq}`);
     return sql;
-  }
-  catch (err) {
+  } catch (err) {
     throw err;
   }
 };
 
 const getSQL00 = async (sqlName, sqlSeq) => {
   try {
-    var sql = await getSQL(process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE, sqlName, sqlSeq);
+    var sql = await getSQL(
+      process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE,
+      sqlName,
+      sqlSeq
+    );
     return sql;
-  }
-  catch (err) {
+  } catch (err) {
     throw err;
   }
 };

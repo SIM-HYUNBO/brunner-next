@@ -1,8 +1,8 @@
 import { useEffect, useState, useRef } from "react";
 import Link from "next/link";
-import { getDropdownMenuItems } from "@/components/dropdownMenuitem";
-import UserInfo from "@/components/userInfo"; // 예시 import
-import { getIsDarkMode } from "@/components/darkModeToggleButton";
+import { getDropdownMenuItems } from "@/components/frames/dropdownMenuitem";
+import UserInfo from "@/components/frames/userInfo"; // 예시 import
+import { getIsDarkMode } from "@/components/frames/darkModeToggleButton";
 
 export default function DropdownMenu({ reloadSignal, triggerMenuReload }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);

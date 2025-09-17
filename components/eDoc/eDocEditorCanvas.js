@@ -1,7 +1,7 @@
 "use strict";
 
 import React, { useEffect } from "react";
-import * as constants from "@/components/constants";
+import * as constants from "@/components/core/constants";
 import DocComponentRenderer from "@/components/eDoc/eDocComponentRenderer";
 
 export default function EDocEditorCanvas({

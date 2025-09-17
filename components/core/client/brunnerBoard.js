@@ -1,11 +1,11 @@
 `use strict`;
 
 import React, { useState, useEffect } from "react";
-import RequestServer from "@/components/requestServer";
-import * as userInfo from "@/components/userInfo";
-import { useModal } from "@/components/brunnerMessageBox";
-import * as constants from "@/components/constants";
-import Loading from "@/components/loading";
+import RequestServer from "@/components/core/client/requestServer";
+import * as userInfo from "@/components/frames/userInfo";
+import { useModal } from "@/components/core/client/brunnerMessageBox";
+import * as constants from "@/components/core/constants";
+import Loading from "@/components/core/client/loading";
 
 function BrunnerBoard({ boardType }) {
   const [loading, setLoading] = useState(false);

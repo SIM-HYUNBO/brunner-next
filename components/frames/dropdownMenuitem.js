@@ -1,7 +1,7 @@
 // components/leftMenuItems.js
-import * as constants from "@/components/constants";
-import * as userInfo from "@/components/userInfo";
-import * as commonFunctions from "@/components/commonFunctions";
+import * as constants from "@/components/core/constants";
+import * as userInfo from "@/components/frames/userInfo";
+import * as commonFunctions from "@/components/core/commonFunctions";
 
 // 왼쪽 메뉴 전체 구성 반환 함수
 export async function getDropdownMenuItems() {

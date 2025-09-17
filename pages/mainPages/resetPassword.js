@@ -1,6 +1,6 @@
 import useInitTheme from "@/hooks/useInitTheme";
-import Layout from "@/components/layout";
-import ResetPasswordContent from "@/components/resetPasswordContent";
+import Layout from "@/components/frames/layout";
+import ResetPasswordContent from "@/components/contents/resetPasswordContent";
 
 export default function ResetPassword() {
   useInitTheme();

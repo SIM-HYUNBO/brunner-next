@@ -1,11 +1,11 @@
 "use strict";
 
 import { React, useState } from "react";
-import * as constants from "@/components/constants";
-import { useModal } from "@/components/brunnerMessageBox";
-import RequestServer from "@/components/requestServer";
-import * as userInfo from "@/components/userInfo";
-import * as commonFunctions from "@/components/commonFunctions";
+import * as constants from "@/components/core/constants";
+import { useModal } from "@/components/core/client/brunnerMessageBox";
+import RequestServer from "@/components/core/client/requestServer";
+import * as userInfo from "@/components/frames/userInfo";
+import * as commonFunctions from "@/components/core/commonFunctions";
 
 // ✅ 실제 버튼 렌더링
 const RenderComponent = (props) => {

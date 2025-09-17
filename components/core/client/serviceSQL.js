@@ -5,11 +5,11 @@ import React, {
   useCallback,
   forwardRef,
 } from "react";
-import * as constants from "@/components/constants";
-import * as userInfo from "@/components/userInfo";
-import RequestServer from "@/components/requestServer";
-import { useModal } from "@/components/brunnerMessageBox";
-import Loading from "@/components/loading";
+import * as constants from "@/components/core/constants";
+import * as userInfo from "@/components/frames/userInfo";
+import RequestServer from "@/components/core/client/requestServer";
+import { useModal } from "@/components/core/client/brunnerMessageBox";
+import Loading from "@/components/core/client/loading";
 
 const AutoResizeTextarea = forwardRef(
   ({ name, value, onChange, readOnly }, ref) => {

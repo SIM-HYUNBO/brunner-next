@@ -1,5 +1,5 @@
 "use strict";
-import * as constants from "@/components/constants";
+import * as constants from "@/components/core/constants";
 
 export default async function RequestServer(
   jRequest,

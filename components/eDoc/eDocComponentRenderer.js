@@ -1,6 +1,6 @@
 `use strict`;
 
-import * as constants from "@/components/constants";
+import * as constants from "@/components/core/constants";
 
 import TextComponent from "@/components/eDoc/eDocComponent/eDocComponent_Text";
 import InputComponent from "@/components/eDoc/eDocComponent/eDocComponent_Input";

@@ -1,11 +1,11 @@
 `use strict`;
 
-import RequestServer from "@/components/requestServer";
+import RequestServer from "@/components/core/client/requestServer";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
-import { useModal } from "@/components/brunnerMessageBox";
-import * as constants from "@/components/constants";
-import * as userInfo from "@/components/userInfo";
+import { useModal } from "@/components/core/client/brunnerMessageBox";
+import * as constants from "@/components/core/constants";
+import * as userInfo from "@/components/frames/userInfo";
 
 export default function SignoutButton({ handleLogout, triggerMenuReload }) {
   const router = useRouter();
