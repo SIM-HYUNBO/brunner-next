@@ -14,7 +14,7 @@ export async function getDropdownMenuItems() {
   if (userInfo.isAdminUser()) {
     items.push({
       label: "Service SQL",
-      href: "/mainPages/administration",
+      href: "/mainPages/serviceSql",
       type: "item",
     });
   }
