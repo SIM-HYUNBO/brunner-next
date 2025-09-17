@@ -17,8 +17,8 @@ let readyPromise = null;
 let serviceSql = null;
 
 export async function initializeServer() {
-  if (isReady) return Promise.resolve();
-  if (readyPromise) return readyPromise;
+  if (isReady) return Promise.resolve(); // 이미 초기화가 완료되었으면 그냥 통과
+  if (readyPromise) return readyPromise; // 이미 초기화가 시작되었으면 실행중인 함수 promise 반환
 
   console.log("SQL 데이터 로딩 중...");
 
