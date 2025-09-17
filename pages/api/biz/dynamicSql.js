@@ -245,8 +245,8 @@ async function deleteOne(txnId, jRequest) {
 async function loadAll(txnId, jRequest) {
   try {
     // 이미 로딩했으면 로딩 안하고 성공 리턴
-    if (process && process.serviceSQL && process.serviceSQL.size > 0) {
-      return process.serviceSQL;
+    if (process && process.serviceSql && process.serviceSql.size > 0) {
+      return process.serviceSql;
     }
 
     logger.info(`Start loading service queries.\n`);
@@ -269,21 +269,21 @@ async function loadAll(txnId, jRequest) {
           row.sql_content
         );
       });
-      process.serviceSQL = loadedSQLs;
-      return process.serviceSQL.size;
+      process.serviceSql = loadedSQLs;
+      return process.serviceSql.size;
     } else {
       throw new Error(constants.messages.SERVER_SQL_NOT_LOADED);
     }
   } catch (err) {
     throw err;
   } finally {
-    return process.serviceSQL;
+    return process.serviceSql;
   }
 }
 
 const getSQL = async (systemCode, sqlName, sqlSeq) => {
   try {
-    var sql = process.serviceSQL.get(`${systemCode}_${sqlName}_${sqlSeq}`);
+    var sql = process.serviceSql.get(`${systemCode}_${sqlName}_${sqlSeq}`);
     return sql;
   } catch (err) {
     throw err;
@@ -292,7 +292,7 @@ const getSQL = async (systemCode, sqlName, sqlSeq) => {
 
 const setSQL = async (systemCode, sqlName, sqlSeq, sqlContent) => {
   try {
-    var sql = process.serviceSQL.set(
+    var sql = process.serviceSql.set(
       `${systemCode}_${sqlName}_${sqlSeq}`,
       sqlContent
     );
@@ -304,7 +304,7 @@ const setSQL = async (systemCode, sqlName, sqlSeq, sqlContent) => {
 
 const deleteSQL = async (systemCode, sqlName, sqlSeq) => {
   try {
-    var sql = process.serviceSQL.delete(`${systemCode}_${sqlName}_${sqlSeq}`);
+    var sql = process.serviceSql.delete(`${systemCode}_${sqlName}_${sqlSeq}`);
     return sql;
   } catch (err) {
     throw err;

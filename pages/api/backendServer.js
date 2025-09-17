@@ -12,18 +12,34 @@ import * as edocComponentTemplate from "./biz/eDoc/eDocComponentTemplate";
 import * as edocDocument from "./biz/eDoc/eDocDocument";
 import * as edocCustom from "./biz/eDoc/eDocCustom";
 
-/**
- * 서버 시작 시 SQL 캐시 로드
- */
+let isReady = false;
+let readyPromise = null;
 let serviceSql = null;
+
 export async function initializeServer() {
-  if (!process.serviceSQL) {
-    process.serviceSQL = await dynamicSql.loadAll();
-    serviceSql = process.serviceSQL;
-    logger.info(`Dynamic SQL loaded: ${serviceSql.size}`);
-  } else {
-    serviceSql = process.serviceSQL;
-  }
+  if (isReady) return Promise.resolve();
+  if (readyPromise) return readyPromise;
+
+  console.log("SQL 데이터 로딩 중...");
+
+  // 즉시 실행 async 함수로 Promise 생성
+  readyPromise = (async () => {
+    if (!process.serviceSql) {
+      process.serviceSql = await dynamicSql.loadAll();
+      serviceSql = process.serviceSql;
+      logger.info(`Dynamic SQL loaded: ${serviceSql.size}`);
+    } else {
+      serviceSql = process.serviceSql;
+    }
+
+    isReady = true; // 초기화 완료 표시
+  })();
+
+  return readyPromise;
+}
+
+export function waitUntilReady() {
+  return isReady ? Promise.resolve() : readyPromise;
 }
 
 /**
@@ -40,19 +56,7 @@ const moduleMap = {
   [constants.modulePrefix.edocCustom]: edocCustom.executeService,
 };
 
-let initialized = false;
 const executeService = async (method, req) => {
-  if (!initialized)
-    initializeServer()
-      .then(() => {
-        logger.info("Server initialized.");
-        initialized = true;
-      })
-      .catch((err) => {
-        logger.error("Failed to initialize server.");
-        process.exit();
-      });
-
   const jRequest =
     method === "GET" ? JSON.parse(req.params.requestJson) : req.body;
   const commandName = jRequest.commandName;
@@ -66,7 +70,8 @@ const executeService = async (method, req) => {
 
   for (const prefix in moduleMap) {
     if (commandName.startsWith(`${prefix}.`)) {
-      return moduleMap[prefix](req.body._txnId, jRequest);
+      // 서버 초기화는 이미 API 핸들러에서 await 하고 있음
+      return moduleMap[prefix](jRequest._txnId, jRequest);
     }
   }
 
@@ -119,6 +124,10 @@ const saveTxnHistoryAsync = (remoteIp, txnId, jRequest, jResponse) => {
  * 최종 서버 핸들러
  */
 export default async (req, res) => {
+  // ✅ 서버 준비 상태 대기
+  await initializeServer();
+  await waitUntilReady();
+
   const startTxnTime = Date.now();
   const remoteIp = req.headers["x-forwarded-for"] || req.socket.remoteAddress;
   let jRequest =
