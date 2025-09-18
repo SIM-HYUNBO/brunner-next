@@ -3,7 +3,7 @@ import RequestServer from "@/components/requestServer";
 import { useRouter } from "next/router";
 import * as constants from "@/components/constants";
 import { useModal } from "@/components/brunnerMessageBox";
-import Loading from "@/components/loading";
+import Loading from "@/components/core/client/loading";
 
 export default function ResetPasswordContent() {
   const router = useRouter();
