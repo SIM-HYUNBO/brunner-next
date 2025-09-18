@@ -1,6 +1,6 @@
 "use strict";
 
-import logger from "../../components/core/server/winston/logger";
+import logger from "@/components/core/server/winston/logger";
 import * as constants from "@/components/core/constants";
 import * as commonFunctions from "@/components/core/commonFunctions";
 import * as database from "./biz/database/database";
@@ -12,6 +12,63 @@ import * as edocComponentTemplate from "./biz/eDoc/eDocComponentTemplate";
 import * as edocDocument from "./biz/eDoc/eDocDocument";
 import * as edocCustom from "./biz/eDoc/eDocCustom";
 
+/**
+ * 최종 서버 핸들러
+ */
+export default async (req, res) => {
+  // ✅ 서버 준비 상태 대기
+  await initializeServer();
+  await waitUntilReady();
+
+  const remoteIp = req.headers["x-forwarded-for"] || req.socket.remoteAddress;
+  let jRequest =
+    req.method === "GET" ? JSON.parse(req.params.requestJson) : req.body;
+  const txnId = await generateTxnId();
+  jRequest._txnId = txnId;
+  const commandName = jRequest.commandName || "";
+
+  let jResponse = {};
+  let exception = null;
+
+  logger.warn(`START TXN ${commandName} from ${remoteIp}`);
+
+  const startTxnTime = Date.now();
+  try {
+    const response = await executeService(req.method, req);
+    jResponse = commonFunctions.isJsonObject(response)
+      ? response
+      : JSON.parse(response.toString());
+  } catch (e) {
+    exception = e.message || e;
+    jResponse = { error_code: -1, error_message: exception };
+    logger.error(`Error in TXN ${commandName}: ${exception}`);
+  } finally {
+    const durationMs = Date.now() - startTxnTime;
+    jResponse._txnId = txnId;
+    jResponse._durationMs = durationMs;
+    jResponse._exception = exception;
+
+    res.json(jResponse);
+    logger.warn(
+      `END TXN ${commandName} in ${durationMs} ms. Response: ${JSON.stringify(
+        jResponse
+      )}`
+    );
+
+    saveTxnHistoryAsync(remoteIp, txnId, jRequest, jResponse);
+  }
+};
+
+/**
+ * 트랜잭션 ID 생성
+ */
+const generateTxnId = async () => {
+  const now = new Date();
+  const currentDateTime = now.toISOString().replace(/[-:.TZ]/g, "");
+  const hrtime = process.hrtime();
+  return `${currentDateTime}${hrtime[0]}${hrtime[1]}`;
+};
+
 let isReady = false;
 let readyPromise = null;
 let serviceSql = null;
@@ -20,14 +77,14 @@ export async function initializeServer() {
   if (isReady) return Promise.resolve(); // 이미 초기화가 완료되었으면 그냥 통과
   if (readyPromise) return readyPromise; // 이미 초기화가 시작되었으면 실행중인 함수 promise 반환
 
-  console.log("SQL 데이터 로딩 중...");
+  console.log("Loading Service SQL ...");
 
   // 즉시 실행 async 함수로 Promise 생성
   readyPromise = (async () => {
     if (!process.serviceSql) {
       process.serviceSql = await dynamicSql.loadAll();
       serviceSql = process.serviceSql;
-      logger.info(`Dynamic SQL loaded: ${serviceSql.size}`);
+      logger.info(`Service SQL loaded: ${serviceSql.size}`);
     } else {
       serviceSql = process.serviceSql;
     }
@@ -82,16 +139,6 @@ const executeService = async (method, req) => {
 };
 
 /**
- * 트랜잭션 ID 생성
- */
-const generateTxnId = async () => {
-  const now = new Date();
-  const currentDateTime = now.toISOString().replace(/[-:.TZ]/g, "");
-  const hrtime = process.hrtime();
-  return `${currentDateTime}${hrtime[0]}${hrtime[1]}`;
-};
-
-/**
  * 트랜잭션 로그 비동기 저장
  */
 const saveTxnHistoryAsync = (remoteIp, txnId, jRequest, jResponse) => {
@@ -115,54 +162,7 @@ const saveTxnHistoryAsync = (remoteIp, txnId, jRequest, jResponse) => {
         JSON.stringify(reducedResponse),
       ]);
     } catch (e) {
-      logger.error(`Failed to save transaction history: ${e}`);
+      logger.error(`${constants.messages.FAILED_TO_SAVE_TXN_HISTORY}: ${e}`);
     }
   });
-};
-
-/**
- * 최종 서버 핸들러
- */
-export default async (req, res) => {
-  // ✅ 서버 준비 상태 대기
-  await initializeServer();
-  await waitUntilReady();
-
-  const startTxnTime = Date.now();
-  const remoteIp = req.headers["x-forwarded-for"] || req.socket.remoteAddress;
-  let jRequest =
-    req.method === "GET" ? JSON.parse(req.params.requestJson) : req.body;
-  const txnId = await generateTxnId();
-  jRequest._txnId = txnId;
-  const commandName = jRequest.commandName || "";
-
-  let jResponse = {};
-  let exception = null;
-
-  logger.warn(`START TXN ${commandName} from ${remoteIp}`);
-
-  try {
-    const response = await executeService(req.method, req);
-    jResponse = commonFunctions.isJsonObject(response)
-      ? response
-      : JSON.parse(response.toString());
-  } catch (e) {
-    exception = e.message || e;
-    jResponse = { error_code: -1, error_message: exception };
-    logger.error(`Error in TXN ${commandName}: ${exception}`);
-  } finally {
-    const durationMs = Date.now() - startTxnTime;
-    jResponse._txnId = txnId;
-    jResponse._durationMs = durationMs;
-    jResponse._exception = exception;
-
-    res.json(jResponse);
-    logger.warn(
-      `END TXN ${commandName} in ${durationMs} ms. Response: ${JSON.stringify(
-        jResponse
-      )}`
-    );
-
-    saveTxnHistoryAsync(remoteIp, txnId, jRequest, jResponse);
-  }
 };

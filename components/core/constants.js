@@ -20,6 +20,7 @@ export const messages = {
   FAILED_TO_DELETE_DATA: `Failed to delete data.`,
   FAILED_TO_INSERT_DATA: `Failed to insert data.`,
   FAILED_TO_SAVE_DATA: `Failed to save data.`,
+  FAILED_TO_SAVE_TXN_HISTORY: `Failed to save transaction history.`,
   FAILED_TO_UPDATE_DATA: `Failed to update data.`,
   FAILED_REQUESTED: `Failed to request service.`,
   INVALIED_NUMBER_AMOUNT: `Invalid number or amount.`,
