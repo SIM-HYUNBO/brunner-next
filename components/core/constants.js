@@ -96,3 +96,16 @@ export const edocComponentType = {
   _LINKTEXT: "LinkText",
   _LOTTIE: "Lottie",
 };
+
+export const workflowActions = {
+  httpRequest: "httpRequest",
+  showToast: "showToast",
+  navigate: "navigate",
+  wait: "wait",
+  log: "log",
+  setVar: "setVar",
+  mergeObjects: "mergeObjects",
+  branch: "branch",
+  mathOp: "mathOp",
+  callWorkflow: "callWorkflow",
+};
