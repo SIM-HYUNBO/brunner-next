@@ -1,7 +1,6 @@
 `use strict`;
 
 import useInitTheme from "@/hooks/useInitTheme";
-
 import Layout from "@/components/frames/layout";
 import ContactContent from "@/components/contents/contactContent";
 

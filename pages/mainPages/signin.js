@@ -1,3 +1,5 @@
+`use strict`;
+
 import useInitTheme from "@/hooks/useInitTheme";
 import Layout from "@/components/frames/layout";
 import SigninContent from "@/components/contents/signinContent";

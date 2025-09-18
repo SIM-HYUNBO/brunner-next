@@ -2,8 +2,11 @@
 
 import Layout from "@/components/frames/layout";
 import ServiceSqlContent from "../../components/contents/serviceSqlContent";
+import useInitTheme from "@/hooks/useInitTheme";
 
 export default function AdminPage() {
+  useInitTheme();
+
   return (
     <>
       <ServiceSqlContent />
