@@ -1,6 +1,6 @@
 `use strict`;
 
-import constants from "@/components/core/constants";
+import * as constants from "@/components/core/constants";
 
 const actionMap = new Map();
 
@@ -9,7 +9,7 @@ export function registerBuiltInActions(opts = {}) {
   registerAction(
     constants.workflowActions.httpRequest,
     async (actionName, params, ctx) => {
-      console.log(`Execute Workflow Action [${actionName}]`);
+      actionLogging(actionName, params, ctx);
       const res = await fetch(params.url, {
         method: params.method || "GET",
         headers: params.headers || {},
@@ -28,7 +28,7 @@ export function registerBuiltInActions(opts = {}) {
   registerAction(
     constants.workflowActions.showToast,
     (actionName, params, ctx) => {
-      console.log(`Execute Workflow Action [${actionName}]`);
+      actionLogging(actionName, params, ctx);
       const fn = opts.toast || ((m) => console.log("toast:", m));
       fn(params.message);
     }
@@ -38,7 +38,7 @@ export function registerBuiltInActions(opts = {}) {
   registerAction(
     constants.workflowActions.navigate,
     (actionName, params, ctx) => {
-      console.log(`Execute Workflow Action [${actionName}]`);
+      actionLogging(actionName, params, ctx);
       if (!ctx.router) throw new Error("navigate requires router");
       return ctx.router.push(params.target);
     }
@@ -46,13 +46,13 @@ export function registerBuiltInActions(opts = {}) {
 
   // 🔸 4. wait (고침: Promise 반환하도록 수정)
   registerAction(constants.workflowActions.wait, (actionName, params) => {
-    console.log(`Execute Workflow Action [${actionName}]`);
+    actionLogging(actionName, params, ctx);
     return new Promise((r) => setTimeout(r, params.ms || 300));
   });
 
   // 🔸 5. log
   registerAction(constants.workflowActions.log, async (actionName, params) => {
-    console.log(`Execute Workflow Action [${actionName}]`, params.message);
+    actionLogging(actionName, params, ctx);
     return params.message;
   });
 
@@ -60,6 +60,8 @@ export function registerBuiltInActions(opts = {}) {
   registerAction(
     constants.workflowActions.setVar,
     async (actionName, params, ctx) => {
+      actionLogging(actionName, params, ctx);
+
       const keys = params.path.split(".");
       let target = ctx;
       for (let i = 0; i < keys.length - 1; i++) {
@@ -74,6 +76,7 @@ export function registerBuiltInActions(opts = {}) {
   registerAction(
     constants.workflowActions.mergeObjects,
     async (actionName, params) => {
+      actionLogging(actionName, params, ctx);
       return { ...params.base, ...params.extra };
     }
   );
@@ -82,6 +85,7 @@ export function registerBuiltInActions(opts = {}) {
   registerAction(
     constants.workflowActions.branch,
     async (actionName, params) => {
+      actionLogging(actionName, params, ctx);
       return params.condition ? params.trueValue : params.falseValue;
     }
   );
@@ -90,6 +94,8 @@ export function registerBuiltInActions(opts = {}) {
   registerAction(
     constants.workflowActions.mathOp,
     async (actionName, params) => {
+      actionLogging(actionName, params, ctx);
+
       const { op, a, b } = params;
       switch (op) {
         case "add":
@@ -110,6 +116,8 @@ export function registerBuiltInActions(opts = {}) {
   registerAction(
     constants.workflowActions.callWorkflow,
     async (actionName, params, ctx) => {
+      actionLogging(actionName, params, ctx);
+
       if (!ctx.runWorkflow)
         throw new Error("callWorkflow requires ctx.runWorkflow");
       return await ctx.runWorkflow(params.workflow, {
@@ -117,6 +125,15 @@ export function registerBuiltInActions(opts = {}) {
         input: params.input ?? {},
       });
     }
+  );
+}
+
+function actionLogging(actionName, params, ctx) {
+  console.log(
+    `Execute Workflow Action 
+[${actionName}, 
+params:${JSON.stringify(params, null, 2)}, 
+context:${JSON.stringify(ctx, null, 2)}]`
   );
 }
 
