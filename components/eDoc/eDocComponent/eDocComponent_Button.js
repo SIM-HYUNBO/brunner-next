@@ -6,6 +6,8 @@ import { useModal } from "@/components/core/client/brunnerMessageBox";
 import RequestServer from "@/components/core/client/requestServer";
 import * as userInfo from "@/components/frames/userInfo";
 import * as commonFunctions from "@/components/core/commonFunctions";
+import { runWorkflow } from "@/components/workflow/workflow";
+import { message } from "hawk/lib/client";
 
 // ✅ 실제 버튼 렌더링
 const RenderComponent = (props) => {
@@ -23,15 +25,8 @@ const RenderComponent = (props) => {
   const { BrunnerMessageBox, openModal } = useModal();
   const [loading, setLoading] = useState(false);
 
-  const {
-    buttonText,
-    apiEndpoint,
-    apiMethod,
-    buttonColor,
-    textColor,
-    padding,
-    borderRadius,
-  } = component.runtime_data || {};
+  const { buttonText, buttonColor, textColor, padding, borderRadius } =
+    component.runtime_data || {};
 
   const style = {
     backgroundColor: buttonColor || "#4F46E5",
@@ -43,44 +38,17 @@ const RenderComponent = (props) => {
   };
 
   const handleClick = async (comp) => {
-    const runtimeData = comp.runtime_data;
-    if (
-      !runtimeData ||
-      !runtimeData?.apiMethod ||
-      !["GET", "POST"].includes(runtimeData?.apiMethod.toUpperCase())
-    ) {
-      openModal(constants.messages.NOT_SUPPORTED_API_METHOD);
-      return;
-    }
-    if (!runtimeData?.apiEndpoint) {
-      openModal(constants.messages.NOT_SET_API_ENDPOINT);
-      return;
-    }
-    if (!runtimeData?.commandName) {
-      openModal(`${constants.messages.REQUIRED_FIELD} [commandName]`);
-      return;
-    }
+    // 버튼 클릭은 워크플로우의 액션 실행하는 걸로 변경
+    const { workflow } = comp.runtime_data || {};
+    if (!workflow) return;
 
     try {
-      const jRequest = {
-        commandName: `${constants.modulePrefix.edocCustom}.${runtimeData?.commandName}`, // ✅ 런타임에서 설정한 값
-        systemCode: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE,
-        userId: userInfo.getLoginUserId(),
-        bindingData: commonFunctions.getDocumentBindingData(documentData), // 문서내 바인딩 데이터 추출해서 전송
-      };
-
-      setLoading(true);
-      const jResponse = await RequestServer(jRequest, apiMethod, apiEndpoint);
-      setLoading(false);
-
-      if (jResponse.error_code === 0) {
-        await openModal(`${jResponse.error_message}].`);
-        // 필요하다면 후속처리
-      } else {
-        await openModal(jResponse.error_message);
-      }
-    } catch (error) {
-      await openModal(`message:${error.message}`);
+      const wf = JSON.parse(workflow);
+      await runWorkflow(wf, { contextData: documentData });
+    } catch (err) {
+      openModal(
+        `${constants.messages.FAILED_TO_EXECUTE_WORKFLOW}\n ${err.message}`
+      );
     }
   };
 
@@ -109,9 +77,7 @@ const RenderComponent = (props) => {
 // ✅ 기본 런타임 데이터 초기화 — commandName 추가
 export const initDefaultRuntimeData = (defaultRuntimeData) => {
   defaultRuntimeData.buttonText = "버튼";
-  defaultRuntimeData.apiEndpoint = "";
-  defaultRuntimeData.apiMethod = "POST";
-  defaultRuntimeData.commandName = "";
+  defaultRuntimeData.actionName = "";
   defaultRuntimeData.buttonColor = "#4F46E5";
   defaultRuntimeData.textColor = "#FFFFFF";
   defaultRuntimeData.padding = "10px 20px";
@@ -153,39 +119,22 @@ export function renderProperty(
           onChange={(e) => updateRuntimeData("buttonText", e.target.value)}
           className="w-full border border-gray-300 rounded p-2 mb-2"
         />
-        <label>API Endpoint:</label>
-        <input
-          type="text"
-          placeholder="http://localhost:3000/api/backendServer/"
-          value={component.runtime_data?.apiEndpoint || ""}
-          onChange={(e) => updateRuntimeData("apiEndpoint", e.target.value)}
-          className="w-full border border-gray-300 rounded p-2 mb-2"
-        />
-        <label>API Method:</label>
-        <select
-          value={component.runtime_data?.apiMethod || "POST"}
-          onChange={(e) => updateRuntimeData("apiMethod", e.target.value)}
-          className="w-full border border-gray-300 rounded p-2 mb-2"
-        >
-          <option value="POST">POST</option>
-          <option value="GET">GET</option>
-        </select>
-        <label>Command Name:</label> {/* ✅ 추가 */}
-        <input
-          type="text"
-          placeholder={component.runtime_data?.commandName || ""}
-          value={component.runtime_data?.commandName || ""}
-          onChange={(e) => updateRuntimeData("commandName", e.target.value)}
-          className="w-full border border-gray-300 rounded p-2 mb-2"
+        <label>Workflow Description:</label> {/* ✅ 추가 */}
+        <textarea
+          value={component.runtime_data?.workflow}
+          onChange={(e) => updateRuntimeData("workflow", e.target.value)}
+          className="w-full flex-grow border p-2 rounded mb-4 resize-none"
+          placeholder={`{ "steps": [
+              { "actionName": "callApi", "params": { "url": "api/save", "method": "POST", "body": { "data": "{{input.data}}" } } },
+              { "actionName": "showToast", "params": { "message": "work complete." } },
+              { "actionName": "navigate", "params":{ "target": "/dashboard" }}]}`}
         />
         {/* 폭, 줄바꿈, 위치정렬 속성 */}
         {renderWidthProperty()}
         {renderForceNewLineProperty()}
         {renderPositionAlignProperty()}
-        <label>버튼 색상:</label>
         <div className="mb-2">
           <label className="block mb-1">버튼 색상</label>
-
           <input
             type="color"
             value={

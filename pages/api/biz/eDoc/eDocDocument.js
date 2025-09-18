@@ -493,10 +493,8 @@ JSON 문서 포맷은 아래와 같고 상기 컴포넌트의 기본값을 모�
           "template_json": {
             "type": "Button",
             "padding": "10px 20px",
-            "apiMethod": "POST",
             "textColor": "#FFFFFF",
             "buttonText": "버튼",
-            "apiEndpoint": "/api/submit",
             "buttonColor": "#4F46E5",
             "borderRadius": "6px"
           },
@@ -509,9 +507,7 @@ JSON 문서 포맷은 아래와 같고 상기 컴포넌트의 기본값을 모�
             "height": "",
             "forceNewLine": true,
             "buttonText": "버튼",
-            "apiEndpoint": "",
-            "apiMethod": "POST",
-            "commandName": "",
+            "actionName": "",
             "buttonColor": "#4F46E5",
             "textColor": "#FFFFFF",
             "padding": "10px 20px",

@@ -1,9 +1,9 @@
 import { useState, useEffect, useRef } from "react";
-import RequestServer from "@/components/core/client/requestServer";
+import RequestServer from "@/components/requestServer";
 import { useRouter } from "next/router";
-import * as constants from "@/components/core/constants";
-import { useModal } from "@/components/core/client/brunnerMessageBox";
-import Loading from "@/components/core/client/loading";
+import * as constants from "@/components/constants";
+import { useModal } from "@/components/brunnerMessageBox";
+import Loading from "@/components/loading";
 
 export default function ResetPasswordContent() {
   const router = useRouter();
