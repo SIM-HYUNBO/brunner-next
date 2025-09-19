@@ -13,11 +13,11 @@ import type { Connection, Edge, Node, NodeChange, EdgeChange } from "reactflow";
 import "reactflow/dist/base.css";
 import { nanoid } from "nanoid";
 import "reactflow/dist/style.css";
-import { runWorkflow } from "@/components/workflow/workflowEngine";
 import * as constants from "@/components/core/constants";
 import { useModal } from "@/components/core/client/brunnerMessageBox";
-import { NodePropertyEditor } from "@/components/workflow/nodePropertyEditor";
+import { runWorkflow } from "@/components/workflow/workflowEngine";
 import { actionMap } from "@/components/workflow/actionRegistry";
+import { NodePropertyEditor } from "@/components/workflow/nodePropertyEditor";
 
 // 노드 데이터 타입
 export interface ActionNodeData {
@@ -163,7 +163,7 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
 
   const { BrunnerMessageBox, openModal } = useModal();
 
-  async function executeReactFlowWorkflow(
+  async function executeWorkflow(
     nodes: Node<any>[],
     edges: Edge<any>[],
     context: any = {}
@@ -336,7 +336,7 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
       </ReactFlowProvider>
       <button
         onClick={() => {
-          executeReactFlowWorkflow(nodes, edges, { input: {} });
+          executeWorkflow(nodes, edges, { input: {} });
         }}
       >
         Run workflow
