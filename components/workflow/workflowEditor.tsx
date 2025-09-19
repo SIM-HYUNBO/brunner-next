@@ -14,6 +14,7 @@ import "reactflow/dist/base.css";
 import { nanoid } from "nanoid";
 import "reactflow/dist/style.css";
 import * as constants from "@/components/core/constants";
+import { getIsDarkMode } from "@/components/core/client/frames/darkModeToggleButton";
 import { useModal } from "@/components/core/client/brunnerMessageBox";
 import { runWorkflow } from "@/components/workflow/workflowEngine";
 import { actionMap } from "@/components/workflow/actionRegistry";
@@ -92,7 +93,10 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
             id: nanoid(),
             data: { condition: "" },
             markerEnd: { type: "arrowclosed" }, // ✅ 수정
-            style: { stroke: "#222", strokeWidth: 2 },
+            style: {
+              stroke: "#ccc",
+              strokeWidth: 2,
+            },
           } as Edge<ConditionEdgeData>,
           eds
         )
@@ -299,7 +303,7 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
                 edges.map((e) => ({
                   ...e,
                   markerEnd: { type: "arrowclosed" },
-                  style: { stroke: "#222", strokeWidth: 2 },
+                  style: { stroke: "#ccc", strokeWidth: 2 },
                 })) as Edge<any>[]
               }
               onNodesChange={onNodesChange}
