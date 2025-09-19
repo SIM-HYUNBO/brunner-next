@@ -2,7 +2,7 @@
 import { useEffect } from "react";
 import { useTheme } from "next-themes";
 
-export default function useInitTheme() {
+export default function useInitTheme(): void {
   const { theme, setTheme } = useTheme();
 
   useEffect(() => {

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import DropdownMenu from "@/components/frames/dropdownMenu";
+import DropdownMenu from "@/components/core/client/frames/dropdownMenu";
 
 export default function Header({ triggerMenuReload, reloadSignal }) {
   return (

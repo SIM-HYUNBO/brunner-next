@@ -2,7 +2,7 @@
 
 import { useDeviceType } from "@/components/core/commonFunctions";
 import ServiceSQL from "@/components/core/client/serviceSQL";
-import * as userInfo from "@/components/frames/userInfo";
+import * as userInfo from "@/components/core/client/frames/userInfo";
 import LottiePlayer from "@/components/core/client/lottiePlayer";
 
 export default function ServiceSqlContent() {

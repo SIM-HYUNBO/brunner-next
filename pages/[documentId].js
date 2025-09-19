@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
-import * as userInfo from "@/components/frames/userInfo";
+import * as userInfo from "@/components/core/client/frames/userInfo";
 import * as commonFunctions from "@/components/core/commonFunctions";
-import Layout from "@/components/frames/layout";
+import Layout from "@/components/core/client/frames/layout";
 import EDocContent from "@/components/eDoc/eDocContent";
 import Loading from "@/components/core/client/loading";
 

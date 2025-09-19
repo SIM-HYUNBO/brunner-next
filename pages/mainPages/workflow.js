@@ -2,18 +2,19 @@
 
 import useInitTheme from "@/hooks/useInitTheme";
 import Layout from "@/components/core/client/frames/layout";
-import SigninContent from "@/components/contents/signinContent";
+import WorkflowContent from "@/components/contents/workflowContent";
 
-export default function Signin() {
+export default function Workflow() {
   useInitTheme();
 
   return (
     <>
-      <SigninContent />
+      <WorkflowContent />
     </>
   );
 }
 
-Signin.getLayout = function getLayout(page) {
+// 페이지 전용 Layout 적용
+Workflow.getLayout = function getLayout(page) {
   return <Layout>{page}</Layout>;
 };

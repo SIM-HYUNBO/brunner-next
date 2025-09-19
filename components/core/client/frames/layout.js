@@ -3,12 +3,12 @@
 import React, { useEffect, useState } from "react";
 import Header from "./header";
 import Footer from "./footer";
-import BodySection from "@/components/frames/bodySection";
+import BodySection from "@/components/core/client/frames/bodySection";
 import Script from "next/script";
 import Head from "next/head";
 import RequestServer from "@/components/core/client/requestServer";
 import * as constants from "@/components/core/constants";
-import * as userInfo from "@/components/frames/userInfo";
+import * as userInfo from "@/components/core/client/frames/userInfo";
 
 export default function Layout({ children, reloadSignal, triggerMenuReload }) {
   const [documentList, setDocumentList] = useState([]);

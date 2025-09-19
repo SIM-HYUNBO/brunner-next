@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import * as constants from "@/components/core/constants";
 import RequestServer from "@/components/core/client/requestServer";
-import * as userInfo from "@/components/frames/userInfo";
+import * as userInfo from "@/components/core/client/frames/userInfo";
 import { useModal } from "@/components/core/client/brunnerMessageBox";
 
 export default function AIModelSelector({ model, setAIModel, apiKey }) {

@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
-import * as userInfo from "@/components/frames/userInfo";
+import * as userInfo from "@/components/core/client/frames/userInfo";
 import * as commonFunctions from "@/components/core/commonFunctions";
 import GoverningMessage from "@/components/core/client/governingMessage";
 import LottiePlayer from "@/components/core/client/lottiePlayer";

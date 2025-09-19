@@ -1,7 +1,7 @@
 `use strict`;
 
 import React from "react";
-import Layout from "@/components/frames/layout";
+import Layout from "@/components/core/client/frames/layout";
 import HomeContent from "@/components/contents/homeContent";
 
 // Home 페이지

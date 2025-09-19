@@ -4,7 +4,7 @@ import RequestServer from "@/components/core/client/requestServer";
 import Loading from "@/components/core/client/loading";
 import { useModal } from "@/components/core/client/brunnerMessageBox";
 import AIModelSelector from "@/components/core/client/aiModelSelector";
-import * as userInfo from "@/components/frames/userInfo";
+import * as userInfo from "@/components/core/client/frames/userInfo";
 
 export default function AIInputModal({
   isOpen,

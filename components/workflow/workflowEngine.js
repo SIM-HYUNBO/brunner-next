@@ -1,14 +1,14 @@
-`use strict`;
-
 import {
   getAction,
   registerBuiltInActions,
 } from "@/components/workflow/actionRegistry";
 
+// 객체 경로로 값 가져오기
 function getByPath(obj, path) {
   return path.split(".").reduce((o, k) => (o ? o[k] : undefined), obj);
 }
 
+/** value (객체)의 모든 템플릿 {{}} 데이터를 실제 값으로 치환 */
 function interpolate(value, ctx) {
   if (typeof value === "string") {
     return value.replace(/\{\{([^}]+)\}\}/g, (_, key) => {
@@ -25,14 +25,17 @@ function interpolate(value, ctx) {
   return value;
 }
 
+// 조건 평가
 function evalCondition(cond, ctx) {
   if (!cond) return true;
   const res = interpolate(cond, ctx).trim().toLowerCase();
   return res !== "" && res !== "false" && res !== "0";
 }
 
+// 워크플로우 실행
 export async function runWorkflow(workflow, context) {
   registerBuiltInActions();
+
   const ctxInterp = {
     input: context.input || {},
     globals: context.globals || {},
@@ -45,6 +48,7 @@ export async function runWorkflow(workflow, context) {
 
     const action = getAction(step.actionName);
     if (!action) throw new Error(`Unknown action: ${step.actionName}`);
+
     const params = interpolate(step.params || {}, ctxInterp);
 
     try {
@@ -59,5 +63,6 @@ export async function runWorkflow(workflow, context) {
       }
     }
   }
+
   return ctxInterp.lastResult;
 }

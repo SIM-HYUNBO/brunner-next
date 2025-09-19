@@ -12,7 +12,7 @@ import * as VideoComponent from "@/components/eDoc/eDocComponent/eDocComponent_V
 import * as LottieComponent from "@/components/eDoc/eDocComponent/eDocComponent_Lottie";
 
 import RequestServer from "@/components/core/client/requestServer";
-import * as userInfo from "@/components/frames/userInfo";
+import * as userInfo from "@/components/core/client/frames/userInfo";
 
 export function isJsonObject(obj) {
   return obj && typeof obj === "object" && !Array.isArray(obj);
@@ -140,7 +140,7 @@ export const getAdminDocumentList = async () => {
 
 export const getUsersDocumentList = async () => {
   const userId = userInfo.getLoginUserId();
-  if (!userId || userInfo.isAdminUser()) return null;
+  if (!userId) return null;
 
   const jRequest = {
     commandName: constants.commands.EDOC_USER_DOCUMENT_SELECT_ALL,

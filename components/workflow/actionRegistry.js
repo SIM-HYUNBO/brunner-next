@@ -5,7 +5,24 @@ import * as constants from "@/components/core/constants";
 const actionMap = new Map();
 
 export function registerBuiltInActions(opts = {}) {
-  // 🔸 1. callApi
+  // 🔸 1. start
+  registerAction(
+    constants.workflowActions.start,
+    async (actionName, params, ctx) => {
+      actionLogging(actionName, params, ctx);
+      return { workflowStatus: "started" };
+    }
+  );
+  // 🔸 2. end
+  registerAction(
+    constants.workflowActions.end,
+    async (actionName, params, ctx) => {
+      actionLogging(actionName, params, ctx);
+      return { workflowStatus: "end" };
+    }
+  );
+
+  // 🔸 3. callApi
   registerAction(
     constants.workflowActions.httpRequest,
     async (actionName, params, ctx) => {
@@ -24,7 +41,7 @@ export function registerBuiltInActions(opts = {}) {
     }
   );
 
-  // 🔸 2. showToast
+  // 🔸 4. showToast
   registerAction(
     constants.workflowActions.showToast,
     (actionName, params, ctx) => {
@@ -34,7 +51,7 @@ export function registerBuiltInActions(opts = {}) {
     }
   );
 
-  // 🔸 3. navigate
+  // 🔸 5. navigate
   registerAction(
     constants.workflowActions.navigate,
     (actionName, params, ctx) => {
@@ -44,19 +61,22 @@ export function registerBuiltInActions(opts = {}) {
     }
   );
 
-  // 🔸 4. wait (고침: Promise 반환하도록 수정)
-  registerAction(constants.workflowActions.wait, (actionName, params) => {
+  // 🔸 6. wait (고침: Promise 반환하도록 수정)
+  registerAction(constants.workflowActions.wait, (actionName, params, ctx) => {
     actionLogging(actionName, params, ctx);
     return new Promise((r) => setTimeout(r, params.ms || 300));
   });
 
-  // 🔸 5. log
-  registerAction(constants.workflowActions.log, async (actionName, params) => {
-    actionLogging(actionName, params, ctx);
-    return params.message;
-  });
+  // 🔸 7. log
+  registerAction(
+    constants.workflowActions.log,
+    async (actionName, params, ctx) => {
+      actionLogging(actionName, params, ctx);
+      return params.message;
+    }
+  );
 
-  // 🔸 6. setVar
+  // 🔸 8. setVar
   registerAction(
     constants.workflowActions.setVar,
     async (actionName, params, ctx) => {
@@ -72,28 +92,28 @@ export function registerBuiltInActions(opts = {}) {
     }
   );
 
-  // 🔸 7. mergeObjects
+  // 🔸 9. mergeObjects
   registerAction(
     constants.workflowActions.mergeObjects,
-    async (actionName, params) => {
+    async (actionName, params, ctx) => {
       actionLogging(actionName, params, ctx);
       return { ...params.base, ...params.extra };
     }
   );
 
-  // 🔸 8. branch
+  // 🔸 10. branch
   registerAction(
     constants.workflowActions.branch,
-    async (actionName, params) => {
+    async (actionName, params, ctx) => {
       actionLogging(actionName, params, ctx);
       return params.condition ? params.trueValue : params.falseValue;
     }
   );
 
-  // 🔸 9. mathOp
+  // 🔸 11. mathOp
   registerAction(
     constants.workflowActions.mathOp,
-    async (actionName, params) => {
+    async (actionName, params, ctx) => {
       actionLogging(actionName, params, ctx);
 
       const { op, a, b } = params;
@@ -112,7 +132,7 @@ export function registerBuiltInActions(opts = {}) {
     }
   );
 
-  // 🔸 10. callWorkflow
+  // 🔸 12. callWorkflow
   registerAction(
     constants.workflowActions.callWorkflow,
     async (actionName, params, ctx) => {

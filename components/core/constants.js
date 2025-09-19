@@ -98,6 +98,8 @@ export const edocComponentType = {
 };
 
 export const workflowActions = {
+  start: "start",
+  end: "end",
   httpRequest: "httpRequest",
   showToast: "showToast",
   navigate: "navigate",

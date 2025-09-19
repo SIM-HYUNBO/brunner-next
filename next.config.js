@@ -5,17 +5,17 @@ const nextConfig = {
   images: {
     remotePatterns: [
       {
-        protocol: 'https',
-        hostname: 'www.notion.so',
+        protocol: "https",
+        hostname: "www.notion.so",
       },
       {
-        protocol: 'https',
-        hostname: 'images.unsplash.com',
+        protocol: "https",
+        hostname: "images.unsplash.com",
       },
       {
-        protocol: 'https',
-        hostname: 's3.us-west-2.amazononaws.com',
-      }
+        protocol: "https",
+        hostname: "s3.us-west-2.amazononaws.com",
+      },
     ],
   },
   webpack: function (config, options) {
@@ -28,7 +28,7 @@ const nextConfig = {
       config.resolve.fallback = { fs: false, dns: false };
     }
     return config;
-  }
-}
+  },
+};
 
-module.exports = nextConfig
+export default nextConfig;
