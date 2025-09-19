@@ -18,7 +18,6 @@ import { useModal } from "@/components/core/client/brunnerMessageBox";
 import { runWorkflow } from "@/components/workflow/workflowEngine";
 import { actionMap } from "@/components/workflow/actionRegistry";
 import { NodePropertyEditor } from "@/components/workflow/nodePropertyEditor";
-import type { Edge } from "reactflow";
 
 // 노드 데이터 타입
 export interface ActionNodeData {
@@ -92,6 +91,8 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
             ...connection,
             id: nanoid(),
             data: { condition: "" },
+            markerEnd: { type: "arrowclosed" }, // ✅ 수정
+            style: { stroke: "#222", strokeWidth: 2 },
           } as Edge<ConditionEdgeData>,
           eds
         )
@@ -291,19 +292,13 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
                   color: "#000",
                 },
               }))}
-              edges={edges.map((e) => ({
-                ...e,
-                markerEnd: {
-                  type: "arrowclosed", // 화살표 표시
-                  color: "#222",
-                  width: 15,
-                  height: 15,
-                },
-                style: {
-                  stroke: "#222", // 선 색상
-                  strokeWidth: 2,
-                },
-              }))}
+              edges={
+                edges.map((e) => ({
+                  ...e,
+                  markerEnd: { type: "arrowclosed" },
+                  style: { stroke: "#222", strokeWidth: 2 },
+                })) as Edge<any>[]
+              }
               onNodesChange={onNodesChange}
               onEdgesChange={onEdgesChange}
               onConnect={onConnect}
