@@ -51,6 +51,8 @@ export const messages = {
   USER_ID_LENGTH_CHECK: `The [userId] length should be from 5 to 10.`,
   USER_NAME_LENGTH_CHECK: `The [password] length should be more than 5.`,
   USER_PASSWORD_LENGTH_CHECK: `The [password] length should be more than 5.`,
+  WORKFLOW_NODES_NOT_CONNECTED: `From the Start node, nodes are not connected to the End node. Workflow cannot run.`,
+  WORKFLOW_STARTNODE_NOT_FOUND: `Start node not found`,
 };
 
 export const commands = {
@@ -58,6 +60,15 @@ export const commands = {
   DYNAMIC_SEQ_UPDATE_ONE: `dynamicSql.updateOne`,
   DYNAMIC_SEQ_DELETE_ONE: `dynamicSql.deleteOne`,
   DYNAMIC_SEQ_LOAD_ALL: `dynamicSql.loadAll`,
+
+  EDOC_COMPONENT_TEMPLATES_SELECT_ALL: `edocComponentTemplate.selectAll`,
+  EDOC_DOCUMENT_UPSERT_ONE: `edocDocument.upsertOne`,
+  EDOC_DOCUMENT_SELECT_ONE: `edocDocument.selectOne`,
+  EDOC_DOCUMENT_DELETE_ONE: `edocDocument.deleteOne`,
+  EDOC_USER_DOCUMENT_SELECT_ALL: `edocDocument.slectUserAll`,
+  EDOC_ADMIN_DOCUMENT_SELECT_ALL: `edocDocument.slectAdminAll`,
+  EDOC_AI_GET_MODEL_LIST: `edocDocument.getAIModelList`,
+  EDOC_AI_GENERATE_DOCUMENT: `edocDocument.generateAIDocument`,
 
   SECURITY_DELETE_ACCOUNT: `security.deleteAccount`,
   SECURITY_RESET_PASSWORD: `security.resetPassword`,
@@ -74,15 +85,6 @@ export const commands = {
   POST_COMMENT_INFO_INSERT_ONE: `postCommentInfo.insertOne`,
   POST_COMMENT_INFO_UPDATE_ONE: `postCommentInfo.updateOne`,
   POST_COMMENT_INFO_DELETE_ONE: `postCommentInfo.deleteOne`,
-
-  EDOC_COMPONENT_TEMPLATES_SELECT_ALL: `edocComponentTemplate.selectAll`,
-  EDOC_DOCUMENT_UPSERT_ONE: `edocDocument.upsertOne`,
-  EDOC_DOCUMENT_SELECT_ONE: `edocDocument.selectOne`,
-  EDOC_DOCUMENT_DELETE_ONE: `edocDocument.deleteOne`,
-  EDOC_USER_DOCUMENT_SELECT_ALL: `edocDocument.slectUserAll`,
-  EDOC_ADMIN_DOCUMENT_SELECT_ALL: `edocDocument.slectAdminAll`,
-  EDOC_AI_GET_MODEL_LIST: `edocDocument.getAIModelList`,
-  EDOC_AI_GENERATE_DOCUMENT: `edocDocument.generateAIDocument`,
 };
 
 export const edocComponentType = {
@@ -98,16 +100,21 @@ export const edocComponentType = {
 };
 
 export const workflowActions = {
-  start: "start",
-  end: "end",
-  httpRequest: "httpRequest",
-  showToast: "showToast",
-  navigate: "navigate",
-  wait: "wait",
-  log: "log",
-  setVar: "setVar",
-  mergeObjects: "mergeObjects",
-  branch: "branch",
-  mathOp: "mathOp",
-  callWorkflow: "callWorkflow",
+  start: "Start",
+  end: "End",
+  httpRequest: "HttpRequest",
+  showToast: "ShowToast",
+  navigate: "Navigate",
+  wait: "Wait",
+  log: "Log",
+  setVar: "SetVar",
+  mergeObjects: "MergeObjects",
+  branch: "Branch",
+  mathOp: "MathOp",
+  callWorkflow: "CallWorkflow",
+};
+
+export const workflowNodeStatus = {
+  idle: "idle",
+  running: "running",
 };

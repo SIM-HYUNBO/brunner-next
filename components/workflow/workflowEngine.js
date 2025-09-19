@@ -3,6 +3,8 @@ import {
   registerBuiltInActions,
 } from "@/components/workflow/actionRegistry";
 
+registerBuiltInActions();
+
 // 객체 경로로 값 가져오기
 function getByPath(obj, path) {
   return path.split(".").reduce((o, k) => (o ? o[k] : undefined), obj);
@@ -34,8 +36,6 @@ function evalCondition(cond, ctx) {
 
 // 워크플로우 실행
 export async function runWorkflow(workflow, context) {
-  registerBuiltInActions();
-
   const ctxInterp = {
     input: context.input || {},
     globals: context.globals || {},

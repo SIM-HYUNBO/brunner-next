@@ -15,12 +15,16 @@ import { nanoid } from "nanoid";
 import "reactflow/dist/style.css";
 import { runWorkflow } from "@/components/workflow/workflowEngine";
 import * as constants from "@/components/core/constants";
+import { useModal } from "@/components/core/client/brunnerMessageBox";
+import { NodePropertyEditor } from "@/components/workflow/nodePropertyEditor";
+import { actionMap } from "@/components/workflow/actionRegistry";
 
 // 노드 데이터 타입
 export interface ActionNodeData {
   label: string;
   actionName: string;
   params: Record<string, any>;
+  status: string;
 }
 
 // 엣지 데이터 타입
@@ -43,6 +47,7 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
         label: "Start",
         actionName: constants.workflowActions.start,
         params: {},
+        status: constants.workflowNodeStatus.idle,
       },
     },
     {
@@ -53,6 +58,7 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
         label: "End",
         actionName: constants.workflowActions.end,
         params: {},
+        status: constants.workflowNodeStatus.idle,
       },
     },
   ],
@@ -113,6 +119,7 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
           label: `Node ${id}`,
           actionName: constants.workflowActions.wait,
           params: { ms: 1000 },
+          status: constants.workflowNodeStatus.idle,
         },
       },
     ]);
@@ -154,44 +161,135 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
     alert(JSON.stringify(workflow, null, 2));
   };
 
-  // nodes: Node<ActionNodeData>[]
-  // edges: Edge<ConditionEdgeData>[]
+  const { BrunnerMessageBox, openModal } = useModal();
+
   async function executeReactFlowWorkflow(
-    nodes: any,
-    edges: any,
-    context = {}
+    nodes: Node<any>[],
+    edges: Edge<any>[],
+    context: any = {}
   ) {
-    // 1️⃣ Edge의 조건을 Node.if에 적용
-    edges.forEach((edge: any) => {
-      const targetNode = nodes.find((n: any) => n.id === edge.target);
-      if (targetNode && edge.data?.condition) {
-        targetNode.data.if = edge.data.condition;
-      }
+    // 1️⃣ Start 노드 찾기
+    const startNode = nodes.find(
+      (n) => n.data.actionName === constants.workflowActions.start
+    );
+    if (!startNode) {
+      openModal(constants.messages.WORKFLOW_STARTNODE_NOT_FOUND);
+      return;
+    }
+
+    // 2️⃣ Edge 맵 생성 (sourceId -> [edges])
+    const edgeMap: any = {};
+    edges.forEach((e) => {
+      if (!edgeMap[e.source]) edgeMap[e.source] = [];
+      edgeMap[e.source].push(e);
     });
 
-    // 2️⃣ nodes → workflow.steps
-    const workflowJson = {
-      steps: nodes.map((node: any) => ({
-        actionName: node.data.actionName,
-        params: node.data.params,
-        if: node.data.if,
-        continueOnError: node.data.continueOnError,
-      })),
-    };
+    // 3️⃣ 연결 확인: Start → End 경로 존재 여부
+    function hasPathToEnd(
+      nodeId: string,
+      visited = new Set<string>()
+    ): boolean {
+      if (visited.has(nodeId)) return false;
+      visited.add(nodeId);
 
-    // 3️⃣ runWorkflow 실행
-    const result = await runWorkflow(workflowJson, context);
-    console.log("Workflow result:", result);
-    return result;
+      const outgoingEdges = edgeMap[nodeId] || [];
+      for (const edge of outgoingEdges) {
+        const targetNode = nodes.find((n) => n.id === edge.target);
+        if (!targetNode) continue;
+        if (targetNode.data.actionName === constants.workflowActions.end)
+          return true;
+        if (hasPathToEnd(targetNode.id, visited)) return true;
+      }
+      return false;
+    }
+
+    if (!hasPathToEnd(startNode.id)) {
+      openModal(constants.messages.WORKFLOW_NODES_NOT_CONNECTED);
+      return;
+    }
+
+    // 4️⃣ 순차 실행 (DFS)
+    const visitedNodes = new Set<string>();
+
+    async function traverse(nodeId: string) {
+      if (visitedNodes.has(nodeId)) return;
+      visitedNodes.add(nodeId);
+
+      const node = nodes.find((n) => n.id === nodeId);
+      if (!node) return;
+
+      // 조건(if) 확인 후 실행
+      const shouldRun = !node.data.if || Boolean(node.data.if);
+      if (shouldRun) {
+        setNodes((nds) =>
+          nds.map((n) =>
+            n.id === nodeId
+              ? {
+                  ...n,
+                  data: {
+                    ...n.data,
+                    status: constants.workflowNodeStatus.running,
+                  },
+                }
+              : n
+          )
+        );
+
+        await runWorkflow(
+          {
+            steps: [
+              { actionName: node.data.actionName, params: node.data.params },
+            ],
+          },
+          context
+        );
+
+        setNodes((nds) =>
+          nds.map((n) =>
+            n.id === nodeId
+              ? {
+                  ...n,
+                  data: {
+                    ...n.data,
+                    status: constants.workflowNodeStatus.idle,
+                  },
+                }
+              : n
+          )
+        );
+      }
+
+      const outgoingEdges = edgeMap[nodeId] || [];
+      for (const edge of outgoingEdges) {
+        // edge condition 체크
+        if (!edge.data?.condition || Boolean(edge.data.condition)) {
+          await traverse(edge.target);
+        }
+      }
+    }
+
+    // Start 노드부터 실행
+    await traverse(startNode.id);
   }
 
   return (
     <>
+      <BrunnerMessageBox />
       <ReactFlowProvider>
         <div style={{ display: "flex", height: "100%" }}>
           <div style={{ flex: 1 }}>
             <ReactFlow
-              nodes={nodes}
+              nodes={nodes.map((n) => ({
+                ...n,
+                style: {
+                  background:
+                    n.data.status === constants.workflowNodeStatus.running
+                      ? "#FFD700"
+                      : "#fff",
+                  border: "1px solid #222",
+                  color: "#000",
+                },
+              }))}
               edges={edges}
               onNodesChange={onNodesChange}
               onEdgesChange={onEdgesChange}
@@ -217,6 +315,22 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
               Edit Edge Condition
             </button>
             <button onClick={exportWorkflow}>Export JSON</button>
+            <NodePropertyEditor
+              node={selectedNode}
+              onUpdate={(id, updates) => {
+                setNodes((nds) =>
+                  nds.map((n) =>
+                    n.id === id
+                      ? {
+                          ...n,
+                          data: { ...n.data, ...updates },
+                        }
+                      : n
+                  )
+                );
+              }}
+              actions={Array.from(actionMap.keys())}
+            />
           </div>
         </div>
       </ReactFlowProvider>
