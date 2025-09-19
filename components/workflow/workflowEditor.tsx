@@ -287,6 +287,9 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
                   background:
                     n.data.status === constants.workflowNodeStatus.running
                       ? "#FFD700"
+                      : n.data.actionName === constants.workflowActions.start ||
+                        n.data.actionName === constants.workflowActions.end
+                      ? "#ADFF2F"
                       : "#fff",
                   border: "1px solid #222",
                   color: "#000",
