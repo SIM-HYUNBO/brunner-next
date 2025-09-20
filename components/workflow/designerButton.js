@@ -4,7 +4,7 @@ import React, { useState, useMemo } from "react";
 import { useRouter } from "next/router";
 import { runWorkflow } from "@component/workflow/workflow";
 
-export default function DesignerButton({ label, workflow, input }) {
+export default function DesignerButton({ label, jWorkflowData, input }) {
   const router = useRouter();
   const [globals, setGlobals] = useState({});
 
@@ -21,7 +21,7 @@ export default function DesignerButton({ label, workflow, input }) {
 
   const handleClick = async () => {
     try {
-      await runWorkflow(workflow, context);
+      await runWorkflow(jWorkflowData, context);
     } catch (err) {
       console.error("Workflow error:", err);
     }

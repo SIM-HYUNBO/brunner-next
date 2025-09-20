@@ -169,11 +169,10 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
 
   const { BrunnerMessageBox, openModal } = useModal();
 
-  async function executeWorkflow(
-    nodes: Node<any>[],
-    edges: Edge<any>[],
-    context: any = {}
-  ) {
+  async function executeWorkflow(workflow: any = {}, context: any = {}) {
+    const nodes: Node<any>[] = workflow.nodes;
+    const edges: Edge<any>[] = workflow.edges;
+
     // 1️⃣ Start 노드 찾기
     const startNode = nodes.find(
       (n) => n.data.actionName === constants.workflowActions.start
@@ -278,6 +277,28 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
     await traverse(startNode.id);
   }
 
+  async function executeWorkflowFromJson(
+    workflowJson: string,
+    context: any = {}
+  ) {
+    try {
+      const jWorkflow = JSON.parse(workflowJson);
+
+      if (!jWorkflow.nodes || !jWorkflow.edges) {
+        throw new Error("JSON에 nodes 또는 edges가 없습니다.");
+      }
+
+      await executeWorkflow(jWorkflow, context);
+    } catch (err) {
+      openModal("❌ 워크플로우 JSON 파싱 실패: " + String(err));
+    }
+  }
+
+  const getWorkflowJson = (): string => {
+    const workflow = { nodes, edges };
+    return JSON.stringify(workflow, null, 2); // 보기 좋게 들여쓰기 포함
+  };
+
   return (
     <>
       <BrunnerMessageBox />
@@ -324,14 +345,32 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
             style={{ width: 250, padding: 10, borderLeft: "1px solid #ccc" }}
           >
             <h3>Editor</h3>
-            <button onClick={addNode}>Add Node</button>
-            <button onClick={updateNodeParams} disabled={!selectedNode}>
+            <button
+              className="w-full semi-text-bg-color border"
+              onClick={addNode}
+            >
+              Add Node
+            </button>
+            <button
+              className="w-full semi-text-bg-color border"
+              onClick={updateNodeParams}
+              disabled={!selectedNode}
+            >
               Edit Node Params
             </button>
-            <button onClick={updateEdgeCondition} disabled={!selectedEdge}>
+            <button
+              className="w-full semi-text-bg-color border"
+              onClick={updateEdgeCondition}
+              disabled={!selectedEdge}
+            >
               Edit Edge Condition
             </button>
-            <button onClick={exportWorkflow}>Export JSON</button>
+            <button
+              className="w-full semi-text-bg-color border"
+              onClick={exportWorkflow}
+            >
+              Export JSON
+            </button>
             <NodePropertyEditor
               node={selectedNode}
               onUpdate={(id, updates) => {
@@ -353,7 +392,8 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
       </ReactFlowProvider>
       <button
         onClick={() => {
-          executeWorkflow(nodes, edges, { input: {} });
+          executeWorkflow({ nodes, edges }, { input: {} });
+          // executeWorkflowFromJson(getWorkflowJson(), { input: {} });
         }}
       >
         Run workflow
