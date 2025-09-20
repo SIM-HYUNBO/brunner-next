@@ -33,41 +33,58 @@ function interpolate(value: any, ctx: any): any {
 }
 
 // 조건 평가
-function evalCondition(cond: string, ctx: any) {
+function evalCondition(cond: any, ctx: any) {
   if (!cond) return true;
   const res = interpolate(cond, ctx).trim().toLowerCase();
   return res !== "" && res !== "false" && res !== "0";
 }
 
 // 워크플로우 실행
-export async function runWorkflow(workflow: any, context: any) {
+export async function runWorkflowStep(
+  nodeId: string,
+  step: {
+    actionName: string;
+    params?: Record<string, any>;
+    if?: string | boolean;
+    continueOnError?: boolean;
+  },
+  workflowData: any
+) {
+  // 실행 컨텍스트 생성
   const ctxInterp = {
-    input: context.input || {},
-    globals: context.globals || {},
-    user: context.user || {},
-    lastResult: undefined,
+    input: workflowData.input || {},
+    globals: workflowData.globals || {},
+    user: workflowData.user || {},
+    lastResult: workflowData.lastResult,
   };
 
-  for (const step of workflow.steps) {
-    if (!evalCondition(step.if, ctxInterp)) continue;
-
-    const action = getAction(step.actionName);
-    if (!action) throw new Error(`Unknown action: ${step.actionName}`);
-
-    const params = interpolate(step.params || {}, ctxInterp);
-
-    try {
-      const result: any = await action(step.actionName, params, context);
-      ctxInterp.lastResult = result;
-    } catch (err) {
-      if (step.continueOnError) {
-        console.error("Step error ignored:", err);
-        continue;
-      } else {
-        throw err;
-      }
-    }
+  // 조건(if) 확인
+  if (!evalCondition(step.if, ctxInterp)) {
+    return workflowData; // 조건 불일치 → 실행하지 않음
   }
 
-  return ctxInterp.lastResult;
+  // 액션 찾기
+  const action = getAction(step.actionName);
+  if (!action) throw new Error(`Unknown action: ${step.actionName}`);
+
+  // 파라미터 보간 처리
+  const actionData = interpolate(step.params || {}, ctxInterp);
+
+  try {
+    const result: any = await action(
+      nodeId,
+      step.actionName,
+      actionData,
+      workflowData
+    );
+
+    return workflowData;
+  } catch (err) {
+    if (step.continueOnError) {
+      console.error("Step error ignored:", err);
+      return workflowData;
+    } else {
+      throw err;
+    }
+  }
 }

@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useRef } from "react";
 import {
   ReactFlow,
   ReactFlowProvider,
@@ -16,7 +16,7 @@ import "reactflow/dist/style.css";
 import * as constants from "@/components/core/constants";
 import { getIsDarkMode } from "@/components/core/client/frames/darkModeToggleButton";
 import { useModal } from "@/components/core/client/brunnerMessageBox";
-import { runWorkflow } from "@/components/workflow/workflowEngine";
+import * as workflowEngine from "@/components/workflow/workflowEngine";
 import { actionMap } from "@/components/workflow/actionRegistry";
 import { NodePropertyEditor } from "@/components/workflow/nodePropertyEditor";
 
@@ -41,22 +41,22 @@ interface WorkflowEditorProps {
 export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
   initialNodes = [
     {
-      id: "1",
+      id: constants.workflowActions.start,
       type: "default",
       position: { x: 100, y: 100 },
       data: {
-        label: "Start",
+        label: constants.workflowActions.start,
         actionName: constants.workflowActions.start,
         params: {},
         status: constants.workflowNodeStatus.idle,
       },
     },
     {
-      id: "2",
+      id: constants.workflowActions.end,
       type: "default",
       position: { x: 100, y: 500 },
       data: {
-        label: "End",
+        label: constants.workflowActions.end,
         actionName: constants.workflowActions.end,
         params: {},
         status: constants.workflowNodeStatus.idle,
@@ -65,6 +65,13 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
   ],
   initialEdges = [],
 }) => {
+  const stepCounterRef = useRef(0);
+
+  const generateStepId = useCallback(() => {
+    stepCounterRef.current += 1;
+    return stepCounterRef.current;
+  }, []);
+
   const [nodes, setNodes] = useState<Node<ActionNodeData>[]>(initialNodes);
   const [edges, setEdges] = useState<Edge<ConditionEdgeData>[]>(initialEdges);
   const [selectedNode, setSelectedNode] = useState<Node<ActionNodeData> | null>(
@@ -84,25 +91,24 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
     []
   );
 
-  const onConnect = useCallback(
-    (connection: Connection) =>
-      setEdges((eds) =>
-        addEdge(
-          {
-            ...connection,
-            id: nanoid(),
-            data: { condition: "" },
-            markerEnd: { type: "arrowclosed" }, // ✅ 수정
-            style: {
-              stroke: "#ccc",
-              strokeWidth: 2,
-            },
-          } as Edge<ConditionEdgeData>,
-          eds
-        )
-      ),
-    []
-  );
+  const onConnect = useCallback(async (connection: Connection) => {
+    var stepId = generateStepId().toString();
+    setEdges((eds: any) =>
+      addEdge(
+        {
+          ...connection,
+          id: stepId,
+          data: { condition: "" },
+          markerEnd: { type: "arrowclosed" }, // ✅ 수정
+          style: {
+            stroke: "#ccc",
+            strokeWidth: 2,
+          },
+        } as Edge<ConditionEdgeData>,
+        eds
+      )
+    );
+  }, []);
 
   const onNodeClick = useCallback(
     (_: any, node: Node<ActionNodeData>) => setSelectedNode(node),
@@ -113,9 +119,9 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
     []
   );
 
-  const addNode = () => {
-    const id = nanoid();
-    setNodes((nds) => [
+  const addNode = async () => {
+    const id = generateStepId().toString();
+    setNodes((nds: any) => [
       ...nds,
       {
         id,
@@ -169,7 +175,7 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
 
   const { BrunnerMessageBox, openModal } = useModal();
 
-  async function executeWorkflow(workflow: any = {}, context: any = {}) {
+  async function executeWorkflow(workflow: any = {}, workflowData: any = {}) {
     const nodes: Node<any>[] = workflow.nodes;
     const edges: Edge<any>[] = workflow.edges;
 
@@ -240,13 +246,13 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
           )
         );
 
-        await runWorkflow(
+        var result = await workflowEngine.runWorkflowStep(
+          nodeId,
           {
-            steps: [
-              { actionName: node.data.actionName, params: node.data.params },
-            ],
+            actionName: node.data.actionName,
+            params: node.data.params,
           },
-          context
+          workflowData
         );
 
         setNodes((nds) =>
@@ -392,7 +398,7 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
       </ReactFlowProvider>
       <button
         onClick={() => {
-          executeWorkflow({nodes, edges}, { input: {} });
+          // executeWorkflow({ nodes, edges }, { input: {} });
           executeWorkflowFromJson(getWorkflowJson(), { input: {} });
         }}
       >
