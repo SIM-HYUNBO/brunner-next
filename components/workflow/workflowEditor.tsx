@@ -312,8 +312,8 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
               onNodeClick={onNodeClick}
               onEdgeClick={onEdgeClick}
               fitView
-              snapToGrid={true}      // ✅ 격자에 스냅
-              snapGrid={[20, 20]}    // x, y 방향 간격
+              snapToGrid={true} // ✅ 격자에 스냅
+              snapGrid={[20, 20]} // x, y 방향 간격
             >
               <MiniMap />
               <Controls />

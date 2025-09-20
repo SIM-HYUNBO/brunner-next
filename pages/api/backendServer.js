@@ -22,7 +22,7 @@ export default async (req, res) => {
 
   const remoteIp = req.headers["x-forwarded-for"] || req.socket.remoteAddress;
   let jRequest =
-    req.method === "GET" ? JSON.parse(req.params.requestJson) : req.body;
+    req.method === constants.httpMethod.GET ? JSON.parse(req.params.requestJson) : req.body;
   const txnId = await generateTxnId();
   jRequest._txnId = txnId;
   const commandName = jRequest.commandName || "";
@@ -115,7 +115,7 @@ const moduleMap = {
 
 const executeService = async (method, req) => {
   const jRequest =
-    method === "GET" ? JSON.parse(req.params.requestJson) : req.body;
+    method === constants.httpMethod.GET ? JSON.parse(req.params.requestJson) : req.body;
   const commandName = jRequest.commandName;
 
   if (!commandName) {

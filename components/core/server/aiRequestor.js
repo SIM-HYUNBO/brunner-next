@@ -1,9 +1,11 @@
+import * as constants from "@/components/core/constants";
+
 export const getAIModelList = async (apiKey) => {
   const serverUrl = "https://api.openai.com/v1/models";
 
   try {
     const aiResponse = await fetch(serverUrl, {
-      method: "GET",
+      method: constants.httpMethod.GET,
       headers: {
         Authorization: `Bearer ${apiKey}`,
         "Content-Type": "application/json",
@@ -118,7 +120,7 @@ export const requestPrompt = async (
     }
 
     const aiResponse = await fetch(serverUrl, {
-      method: "POST",
+      method: constants.httpMethod.POST,
       headers: {
         Authorization: `Bearer ${apiKey}`,
         "Content-Type": "application/json",

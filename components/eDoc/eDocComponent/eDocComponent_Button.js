@@ -125,7 +125,7 @@ export function renderProperty(
           onChange={(e) => updateRuntimeData("workflow", e.target.value)}
           className="w-full flex-grow border p-2 rounded mb-4 resize-none"
           placeholder={`{ "steps": [
-              { "actionName": "callApi", "params": { "url": "api/save", "method": "POST", "body": { "data": "{{input.data}}" } } },
+              { "actionName": "callApi", "params": { "url": "api/save", "method": ${constants.httpMethod.POST}, "body": { "data": "{{input.data}}" } } },
               { "actionName": "showToast", "params": { "message": "work complete." } },
               { "actionName": "navigate", "params":{ "target": "/dashboard" }}]}`}
         />

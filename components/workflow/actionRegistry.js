@@ -1,7 +1,6 @@
 `use strict`;
 
 import * as constants from "@/components/core/constants";
-
 export const actionMap = new Map();
 
 export function registerBuiltInActions(opts = {}) {
@@ -28,7 +27,7 @@ export function registerBuiltInActions(opts = {}) {
     async (actionName, actionData, workflowData) => {
       actionLogging(actionName, actionData, workflowData);
       const res = await fetch(actionData.url, {
-        method: actionData.method || "GET",
+        method: actionData.method || constants.httpMethod.GET,
         headers: actionData.headers || {},
         body: actionData.body ? JSON.stringify(actionData.body) : undefined,
       });
@@ -152,12 +151,12 @@ export function registerBuiltInActions(opts = {}) {
 }
 
 function actionLogging(actionName, actionData, workflowData) {
-  console.log(
-    `Execute Workflow Action 
+  const log = `Execute Workflow Action 
 [${actionName}, 
 actionData:${JSON.stringify(actionData, null, 2)}, 
-workflowData:${JSON.stringify(workflowData, null, 2)}]`
-  );
+workflowData:${JSON.stringify(workflowData, null, 2)}]`;
+
+  console.log(log);
 }
 
 // 공용 유틸

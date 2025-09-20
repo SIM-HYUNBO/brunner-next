@@ -3,7 +3,7 @@ import * as constants from "@/components/core/constants";
 
 export default async function RequestServer(
   jRequest,
-  method = "POST",
+  method = constants.httpMethod.POST,
   serverUrl = `/api/backendServer/`
 ) {
   let res = null;

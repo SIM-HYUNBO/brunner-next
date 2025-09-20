@@ -62,8 +62,7 @@
     "tls": "^0.0.1",
     "uuid": "^10.0.0",
     "winston": "^3.13.0",
-    "winston-daily-rotate-file": "^5.0.0",
-    "ws": "^8.18.0"
+    "winston-daily-rotate-file": "^5.0.0"
   },
   "devDependencies": {
     "@babel/cli": "^7.21.5",
@@ -73,6 +72,7 @@
     "@types/node": "^24.5.2",
     "@types/react": "^19.1.13",
     "@types/react-dom": "^19.1.9",
+    "@types/ws": "^8.18.1",
     "postcss-import": "^15.1.0",
     "tailwindcss": "^3.3.1",
     "typescript": "^5.9.2"

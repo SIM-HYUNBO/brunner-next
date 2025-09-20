@@ -118,3 +118,8 @@ export const workflowNodeStatus = {
   idle: "idle",
   running: "running",
 };
+
+export const httpMethod = {
+  GET:"GET",
+  POST:"POST"
+}
