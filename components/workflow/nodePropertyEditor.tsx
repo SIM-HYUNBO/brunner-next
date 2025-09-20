@@ -1,6 +1,7 @@
 // NodePropertyEditor.tsx
 import React, { useState, useEffect } from "react";
 import type { Node } from "reactflow";
+import * as actionRegistry from "@/components/workflow/actionRegistry";
 
 interface NodePropertyEditorProps {
   node: Node<any> | null;
@@ -18,12 +19,20 @@ export const NodePropertyEditor: React.FC<NodePropertyEditorProps> = ({
     JSON.stringify(node?.data.params || {}, null, 2)
   );
 
+  // 노드 선택 시 초기값 설정
   useEffect(() => {
     if (node) {
       setActionName(node.data.actionName);
-      setParams(JSON.stringify(node.data.params, null, 2));
+      setParams(JSON.stringify(node.data.params || {}, null, 2));
     }
   }, [node]);
+
+  // 액션 변경 시 기본 params 자동 적용
+  useEffect(() => {
+    if (!actionName) return;
+    const defaultParams = actionRegistry.getDefaultParams(actionName) || {};
+    setParams(JSON.stringify(defaultParams, null, 2));
+  }, [actionName]);
 
   if (!node) return <div>노드를 선택하세요</div>;
 
@@ -54,12 +63,16 @@ export const NodePropertyEditor: React.FC<NodePropertyEditorProps> = ({
       />
 
       <button
-        onClick={() =>
-          onUpdate(node.id, {
-            actionName,
-            params: JSON.parse(params),
-          })
-        }
+        onClick={() => {
+          try {
+            onUpdate(node.id, {
+              actionName,
+              params: JSON.parse(params),
+            });
+          } catch {
+            alert("Params가 올바른 JSON 형식이 아닙니다.");
+          }
+        }}
       >
         적용
       </button>

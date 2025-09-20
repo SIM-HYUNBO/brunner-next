@@ -392,8 +392,8 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
       </ReactFlowProvider>
       <button
         onClick={() => {
-          executeWorkflow({ nodes, edges }, { input: {} });
-          // executeWorkflowFromJson(getWorkflowJson(), { input: {} });
+          executeWorkflow({nodes, edges}, { input: {} });
+          executeWorkflowFromJson(getWorkflowJson(), { input: {} });
         }}
       >
         Run workflow
