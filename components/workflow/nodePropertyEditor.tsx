@@ -33,6 +33,7 @@ export const NodePropertyEditor: React.FC<NodePropertyEditorProps> = ({
 
       <label>Action Name</label>
       <select
+        className="w-full"
         value={actionName}
         onChange={(e) => setActionName(e.target.value)}
       >
@@ -45,6 +46,7 @@ export const NodePropertyEditor: React.FC<NodePropertyEditorProps> = ({
 
       <label>Params (JSON)</label>
       <textarea
+        className="w-full"
         value={params}
         onChange={(e) => setParams(e.target.value)}
         rows={8}
