@@ -104,7 +104,7 @@ export const workflowActions = {
   END: "End",
   HTTPREQUEST: "HttpRequest",
   SLEEP: "Sleep",
-  ASSIGN: "Assign",
+  SET: "Set",
   MERGE: "MergeObjects",
   BRANCH: "Branch",
   MATHOP: "MathOp",

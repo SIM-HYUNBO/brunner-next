@@ -86,7 +86,7 @@ export async function initializeServer() {
     if (!process.serviceSql) {
       process.serviceSql = await dynamicSql.loadAll();
       serviceSql = process.serviceSql;
-      logger.info(`Service SQL loaded: ${serviceSql.size}`);
+      logger.info(`Service SQL loaded: ${serviceSql?.size}`);
     } else {
       serviceSql = process.serviceSql;
     }

@@ -8,10 +8,16 @@ export type WorkflowContext = Record<string, any> & {
   input?: any;
 };
 
+interface SetActionItem {
+  path: string;
+  value: any;
+}
+type SetActionData = SetActionItem | SetActionItem[];
+
 export type ActionHandler = (
   nodeId: string,
   actionName: string,
-  actionData: Record<string, any>,
+  actionData: any,
   workflowData: WorkflowContext
 ) => Promise<WorkflowContext> | WorkflowContext;
 
@@ -87,24 +93,44 @@ export function registerBuiltInActions(opts: Record<string, any> = {}): void {
   );
   defaultParamsMap.set(constants.workflowActions.SLEEP, { ms: 300 });
 
-  // 🔸 5. setVar
+  // 🔸 5. Set
   registerAction(
-    constants.workflowActions.ASSIGN,
+    constants.workflowActions.SET,
     async (nodeId, actionName, actionData, workflowData) => {
-      const keys = actionData.path.split(".");
-      let target: Record<string, any> = workflowData;
-      for (let i = 0; i < keys.length - 1; i++)
-        target = target[keys[i]] ?? (target[keys[i]] = {});
-      target[keys[keys.length - 1]] = actionData.value;
+      const actions = Array.isArray(actionData) ? actionData : [actionData]; // 배열로 강제 변환
+
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+
+      for (const { path, value } of actions) {
+        const keys: string[] = path.split(".");
+        let target: Record<string, any> = workflowData;
+
+        for (let i = 0; i < keys.length - 1; i++) {
+          const key = keys[i];
+          if (!key) continue;
+
+          if (typeof target[key] !== "object" || target[key] === null) {
+            target[key] = {};
+          }
+
+          target = target[key];
+        }
+
+        const lastKey = keys[keys.length - 1];
+        if (lastKey) {
+          target[lastKey] = value;
+        }
+      }
 
       actionLogging(nodeId, actionName, actionData, workflowData);
       return workflowData;
     }
   );
-  defaultParamsMap.set(constants.workflowActions.ASSIGN, {
-    path: "",
-    value: null,
-  });
+
+  defaultParamsMap.set(constants.workflowActions.SET, [
+    { path: "team.leader", value: "Alice" },
+    { path: "team.members", value: ["Bob", "Charlie"] },
+  ]);
 
   // 🔸 6. mergeObjects
   registerAction(
