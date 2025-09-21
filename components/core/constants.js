@@ -100,18 +100,15 @@ export const edocComponentType = {
 };
 
 export const workflowActions = {
-  start: "Start",
-  end: "End",
-  httpRequest: "HttpRequest",
-  showToast: "ShowToast",
-  navigate: "Navigate",
-  wait: "Wait",
-  log: "Log",
-  setVar: "SetVar",
-  mergeObjects: "MergeObjects",
-  branch: "Branch",
-  mathOp: "MathOp",
-  callWorkflow: "CallWorkflow",
+  START: "Start",
+  END: "End",
+  HTTPREQUEST: "HttpRequest",
+  SLEEP: "Sleep",
+  ASSIGN: "Assign",
+  MERGE: "MergeObjects",
+  BRANCH: "Branch",
+  MATHOP: "MathOp",
+  CALL: "CallWorkflow",
 };
 
 export const workflowNodeStatus = {
@@ -120,6 +117,6 @@ export const workflowNodeStatus = {
 };
 
 export const httpMethod = {
-  GET:"GET",
-  POST:"POST"
-}
+  GET: "GET",
+  POST: "POST",
+};

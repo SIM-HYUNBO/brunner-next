@@ -23,7 +23,7 @@ export function registerBuiltInActions(opts: Record<string, any> = {}): void {
 
   // 🔸 1. start
   registerAction(
-    constants.workflowActions.start,
+    constants.workflowActions.START,
     async (nodeId, actionName, actionData, workflowData) => {
       workflowData._system = {};
       workflowData._system.workflowStatus = "started";
@@ -32,11 +32,11 @@ export function registerBuiltInActions(opts: Record<string, any> = {}): void {
       return workflowData;
     }
   );
-  defaultParamsMap.set(constants.workflowActions.start, {});
+  defaultParamsMap.set(constants.workflowActions.START, {});
 
   // 🔸 2. end
   registerAction(
-    constants.workflowActions.end,
+    constants.workflowActions.END,
     async (nodeId, actionName, actionData, workflowData) => {
       workflowData._system.workflowStatus = "end";
       workflowData._system.endTime = new Date().toISOString();
@@ -44,11 +44,11 @@ export function registerBuiltInActions(opts: Record<string, any> = {}): void {
       return workflowData;
     }
   );
-  defaultParamsMap.set(constants.workflowActions.end, {});
+  defaultParamsMap.set(constants.workflowActions.END, {});
 
   // 🔸 3. httpRequest
   registerAction(
-    constants.workflowActions.httpRequest,
+    constants.workflowActions.HTTPREQUEST,
     async (nodeId, actionName, actionData, workflowData) => {
       const res = await fetch(actionData.url, {
         method: actionData.method || "GET",
@@ -69,7 +69,7 @@ export function registerBuiltInActions(opts: Record<string, any> = {}): void {
       return workflowData;
     }
   );
-  defaultParamsMap.set(constants.workflowActions.httpRequest, {
+  defaultParamsMap.set(constants.workflowActions.HTTPREQUEST, {
     url: "/api/backendServer",
     method: constants.httpMethod.POST,
     headers: { "content-type": "application/json" },
@@ -78,18 +78,18 @@ export function registerBuiltInActions(opts: Record<string, any> = {}): void {
 
   // 🔸 4. wait
   registerAction(
-    constants.workflowActions.wait,
+    constants.workflowActions.SLEEP,
     async (nodeId, actionName, actionData, workflowData) => {
       await new Promise((resolve) => setTimeout(resolve, actionData.ms || 300));
       actionLogging(nodeId, actionName, actionData, workflowData);
       return workflowData;
     }
   );
-  defaultParamsMap.set(constants.workflowActions.wait, { ms: 300 });
+  defaultParamsMap.set(constants.workflowActions.SLEEP, { ms: 300 });
 
   // 🔸 5. setVar
   registerAction(
-    constants.workflowActions.setVar,
+    constants.workflowActions.ASSIGN,
     async (nodeId, actionName, actionData, workflowData) => {
       const keys = actionData.path.split(".");
       let target: Record<string, any> = workflowData;
@@ -101,14 +101,14 @@ export function registerBuiltInActions(opts: Record<string, any> = {}): void {
       return workflowData;
     }
   );
-  defaultParamsMap.set(constants.workflowActions.setVar, {
+  defaultParamsMap.set(constants.workflowActions.ASSIGN, {
     path: "",
     value: null,
   });
 
   // 🔸 6. mergeObjects
   registerAction(
-    constants.workflowActions.mergeObjects,
+    constants.workflowActions.MERGE,
     async (nodeId, actionName, actionData, workflowData) => {
       const base = getByPath(workflowData, actionData.basePath) || {};
       const extra = getByPath(workflowData, actionData.extraPath) || {};
@@ -120,7 +120,7 @@ export function registerBuiltInActions(opts: Record<string, any> = {}): void {
       return workflowData;
     }
   );
-  defaultParamsMap.set(constants.workflowActions.mergeObjects, {
+  defaultParamsMap.set(constants.workflowActions.MERGE, {
     basePath: "",
     extraPath: "",
     outputPath: "",
@@ -128,7 +128,7 @@ export function registerBuiltInActions(opts: Record<string, any> = {}): void {
 
   // 🔸 7. branch
   registerAction(
-    constants.workflowActions.branch,
+    constants.workflowActions.BRANCH,
     async (nodeId, actionName, actionData, workflowData) => {
       const value = actionData.condition
         ? actionData.trueValue
@@ -140,7 +140,7 @@ export function registerBuiltInActions(opts: Record<string, any> = {}): void {
       return workflowData;
     }
   );
-  defaultParamsMap.set(constants.workflowActions.branch, {
+  defaultParamsMap.set(constants.workflowActions.BRANCH, {
     condition: true,
     trueValue: null,
     falseValue: null,
@@ -149,7 +149,7 @@ export function registerBuiltInActions(opts: Record<string, any> = {}): void {
 
   // 🔸 8. mathOp
   registerAction(
-    constants.workflowActions.mathOp,
+    constants.workflowActions.MATHOP,
     async (nodeId, actionName, actionData, workflowData) => {
       const left = resolveValue(actionData.left, workflowData);
       const right = resolveValue(actionData.right, workflowData);
@@ -177,14 +177,30 @@ export function registerBuiltInActions(opts: Record<string, any> = {}): void {
       return workflowData;
     }
   );
-  defaultParamsMap.set(constants.workflowActions.mathOp, {
+  // 🔸 9. call
+  registerAction(
+    constants.workflowActions.CALL,
+    async (nodeId, actionName, actionData, workflowData) => {
+      let result: any = null;
+
+      // Call other workflow
+
+      if (actionData.outputPath)
+        setByPath(workflowData, actionData.outputPath, result);
+
+      actionLogging(nodeId, actionName, actionData, workflowData);
+      return workflowData;
+    }
+  );
+
+  defaultParamsMap.set(constants.workflowActions.MATHOP, {
     op: "add",
     left: "${}",
     right: "${}",
     outputPath: "",
   });
 
-  defaultParamsMap.set(constants.workflowActions.callWorkflow, {
+  defaultParamsMap.set(constants.workflowActions.CALL, {
     workflow: {},
     input: {},
   });

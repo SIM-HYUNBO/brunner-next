@@ -41,23 +41,23 @@ interface WorkflowEditorProps {
 export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
   initialNodes = [
     {
-      id: constants.workflowActions.start,
+      id: constants.workflowActions.START,
       type: "default",
       position: { x: 100, y: 100 },
       data: {
-        label: constants.workflowActions.start,
-        actionName: constants.workflowActions.start,
+        label: constants.workflowActions.START,
+        actionName: constants.workflowActions.START,
         params: {},
         status: constants.workflowNodeStatus.idle,
       },
     },
     {
-      id: constants.workflowActions.end,
+      id: constants.workflowActions.END,
       type: "default",
       position: { x: 100, y: 500 },
       data: {
-        label: constants.workflowActions.end,
-        actionName: constants.workflowActions.end,
+        label: constants.workflowActions.END,
+        actionName: constants.workflowActions.END,
         params: {},
         status: constants.workflowNodeStatus.idle,
       },
@@ -181,7 +181,7 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
 
     // 1️⃣ Start 노드 찾기
     const startNode = nodes.find(
-      (n) => n.data.actionName === constants.workflowActions.start
+      (n) => n.data.actionName === constants.workflowActions.START
     );
     if (!startNode) {
       openModal(constants.messages.WORKFLOW_STARTNODE_NOT_FOUND);
@@ -207,7 +207,7 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
       for (const edge of outgoingEdges) {
         const targetNode = nodes.find((n) => n.id === edge.target);
         if (!targetNode) continue;
-        if (targetNode.data.actionName === constants.workflowActions.end)
+        if (targetNode.data.actionName === constants.workflowActions.END)
           return true;
         if (hasPathToEnd(targetNode.id, visited)) return true;
       }
@@ -318,8 +318,8 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
                   background:
                     n.data.status === constants.workflowNodeStatus.running
                       ? "#FFD700"
-                      : n.data.actionName === constants.workflowActions.start ||
-                        n.data.actionName === constants.workflowActions.end
+                      : n.data.actionName === constants.workflowActions.START ||
+                        n.data.actionName === constants.workflowActions.END
                       ? "#ADFF2F"
                       : "#fff",
                   border: "1px solid #222",
