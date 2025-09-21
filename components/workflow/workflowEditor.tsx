@@ -417,7 +417,7 @@ ${workflowJson}
           executeWorkflowFromJson(getWorkflowJson(), { input: {} })
         }
       >
-        Run workflow
+        Run
       </button>
     </>
   );
