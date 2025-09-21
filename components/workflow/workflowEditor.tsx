@@ -11,10 +11,9 @@ import {
 } from "reactflow";
 import type { Connection, Edge, Node, NodeChange, EdgeChange } from "reactflow";
 import "reactflow/dist/base.css";
-import { nanoid } from "nanoid";
 import "reactflow/dist/style.css";
+import { nanoid } from "nanoid";
 import * as constants from "@/components/core/constants";
-import { getIsDarkMode } from "@/components/core/client/frames/darkModeToggleButton";
 import { useModal } from "@/components/core/client/brunnerMessageBox";
 import * as workflowEngine from "@/components/workflow/workflowEngine";
 import { actionMap } from "@/components/workflow/actionRegistry";
@@ -67,6 +66,10 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
 }) => {
   const stepCounterRef = useRef(0);
 
+  const [workflowId, setWorkflowId] = useState(nanoid());
+  const [workflowName, setWorkflowName] = useState("새 워크플로우");
+  const [workflowDescription, setWorkflowDescription] = useState("설명 없음");
+
   const generateStepId = useCallback(() => {
     stepCounterRef.current += 1;
     return stepCounterRef.current;
@@ -92,18 +95,15 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
   );
 
   const onConnect = useCallback(async (connection: Connection) => {
-    var stepId = generateStepId().toString();
+    const stepId = generateStepId().toString();
     setEdges((eds: any) =>
       addEdge(
         {
           ...connection,
           id: stepId,
           data: { condition: "" },
-          markerEnd: { type: "arrowclosed" }, // ✅ 수정
-          style: {
-            stroke: "#ccc",
-            strokeWidth: 2,
-          },
+          markerEnd: { type: "arrowclosed" },
+          style: { stroke: "#ccc", strokeWidth: 2 },
         } as Edge<ConditionEdgeData>,
         eds
       )
@@ -111,15 +111,15 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
   }, []);
 
   const onNodeClick = useCallback(
-    (_: any, node: Node<ActionNodeData>) => setSelectedNode(node),
+    (_event: any, node: Node<ActionNodeData>) => setSelectedNode(node),
     []
   );
   const onEdgeClick = useCallback(
-    (_: any, edge: Edge<ConditionEdgeData>) => setSelectedEdge(edge),
+    (_event: any, edge: Edge<ConditionEdgeData>) => setSelectedEdge(edge),
     []
   );
 
-  const addNode = async () => {
+  const addNode = () => {
     const id = generateStepId().toString();
     setNodes((nds: any) => [
       ...nds,
@@ -129,7 +129,7 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
         position: { x: Math.random() * 400 + 50, y: Math.random() * 400 + 50 },
         data: {
           label: `Node ${id}`,
-          actionName: constants.workflowActions.wait,
+          actionName: constants.workflowActions.SLEEP,
           params: { ms: 1000 },
           status: constants.workflowNodeStatus.idle,
         },
@@ -168,9 +168,28 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
     }
   };
 
+  const getWorkflowJson = (): string => {
+    const workflow = {
+      workflowId,
+      workflowName,
+      workflowDescription,
+      nodes,
+      edges,
+    };
+    return JSON.stringify(workflow, null, 2);
+  };
+
   const exportWorkflow = () => {
-    const workflow = { nodes, edges };
-    alert(JSON.stringify(workflow, null, 2));
+    const workflowJson = getWorkflowJson();
+    const win = window.open("", "_blank");
+    if (win) {
+      win.document.write(`
+        <pre style="white-space: pre-wrap; word-wrap: break-word;">
+${workflowJson}
+        </pre>
+      `);
+      win.document.close();
+    }
   };
 
   const { BrunnerMessageBox, openModal } = useModal();
@@ -179,7 +198,6 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
     const nodes: Node<any>[] = workflow.nodes;
     const edges: Edge<any>[] = workflow.edges;
 
-    // 1️⃣ Start 노드 찾기
     const startNode = nodes.find(
       (n) => n.data.actionName === constants.workflowActions.START
     );
@@ -188,14 +206,13 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
       return;
     }
 
-    // 2️⃣ Edge 맵 생성 (sourceId -> [edges])
-    const edgeMap: any = {};
+    const edgeMap: Record<string, Edge<any>[]> = {};
     edges.forEach((e) => {
+      if (!e.source) return; // source가 없으면 건너뛰기
       if (!edgeMap[e.source]) edgeMap[e.source] = [];
-      edgeMap[e.source].push(e);
+      edgeMap[e.source].push(e); // ✅ 그냥 이렇게
     });
 
-    // 3️⃣ 연결 확인: Start → End 경로 존재 여부
     function hasPathToEnd(
       nodeId: string,
       visited = new Set<string>()
@@ -203,14 +220,15 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
       if (visited.has(nodeId)) return false;
       visited.add(nodeId);
 
-      const outgoingEdges = edgeMap[nodeId] || [];
+      const outgoingEdges = edgeMap[nodeId] ?? []; // 없으면 빈 배열
       for (const edge of outgoingEdges) {
         const targetNode = nodes.find((n) => n.id === edge.target);
-        if (!targetNode) continue;
-        if (targetNode.data.actionName === constants.workflowActions.END)
+        if (!targetNode) continue; // targetNode 없으면 건너뛰기
+        if (targetNode.data?.actionName === constants.workflowActions.END)
           return true;
         if (hasPathToEnd(targetNode.id, visited)) return true;
       }
+
       return false;
     }
 
@@ -219,7 +237,6 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
       return;
     }
 
-    // 4️⃣ 순차 실행 (DFS)
     const visitedNodes = new Set<string>();
 
     async function traverse(nodeId: string) {
@@ -229,7 +246,6 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
       const node = nodes.find((n) => n.id === nodeId);
       if (!node) return;
 
-      // 조건(if) 확인 후 실행
       const shouldRun = !node.data.if || Boolean(node.data.if);
       if (shouldRun) {
         setNodes((nds) =>
@@ -246,12 +262,9 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
           )
         );
 
-        var result = await workflowEngine.runWorkflowStep(
+        await workflowEngine.runWorkflowStep(
           nodeId,
-          {
-            actionName: node.data.actionName,
-            params: node.data.params,
-          },
+          { actionName: node.data.actionName, params: node.data.params },
           workflowData
         );
 
@@ -272,14 +285,12 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
 
       const outgoingEdges = edgeMap[nodeId] || [];
       for (const edge of outgoingEdges) {
-        // edge condition 체크
         if (!edge.data?.condition || Boolean(edge.data.condition)) {
           await traverse(edge.target);
         }
       }
     }
 
-    // Start 노드부터 실행
     await traverse(startNode.id);
   }
 
@@ -290,20 +301,22 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
     try {
       const jWorkflow = JSON.parse(workflowJson);
 
-      if (!jWorkflow.nodes || !jWorkflow.edges) {
-        throw new Error("JSON에 nodes 또는 edges가 없습니다.");
-      }
+      if (jWorkflow.workflowId) setWorkflowId(jWorkflow.workflowId);
+      if (jWorkflow.workflowName) setWorkflowName(jWorkflow.workflowName);
+      if (jWorkflow.workflowDescription)
+        setWorkflowDescription(jWorkflow.workflowDescription);
 
-      await executeWorkflow(jWorkflow, context);
+      if (!jWorkflow.nodes || !jWorkflow.edges)
+        throw new Error("JSON에 nodes 또는 edges가 없습니다.");
+
+      await executeWorkflow(
+        { nodes: jWorkflow.nodes, edges: jWorkflow.edges },
+        context
+      );
     } catch (err) {
       openModal("❌ 워크플로우 JSON 파싱 실패: " + String(err));
     }
   }
-
-  const getWorkflowJson = (): string => {
-    const workflow = { nodes, edges };
-    return JSON.stringify(workflow, null, 2); // 보기 좋게 들여쓰기 포함
-  };
 
   return (
     <>
@@ -339,8 +352,8 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
               onNodeClick={onNodeClick}
               onEdgeClick={onEdgeClick}
               fitView
-              snapToGrid={true} // ✅ 격자에 스냅
-              snapGrid={[20, 20]} // x, y 방향 간격
+              snapToGrid
+              snapGrid={[20, 20]}
             >
               <MiniMap />
               <Controls />
@@ -378,16 +391,19 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
               Export JSON
             </button>
             <NodePropertyEditor
+              workflowId={workflowId}
+              workflowName={workflowName}
+              workflowDescription={workflowDescription}
+              onWorkflowUpdate={({ workflowName, workflowDescription }) => {
+                if (workflowName !== undefined) setWorkflowName(workflowName);
+                if (workflowDescription !== undefined)
+                  setWorkflowDescription(workflowDescription);
+              }}
               node={selectedNode}
               onUpdate={(id, updates) => {
                 setNodes((nds) =>
                   nds.map((n) =>
-                    n.id === id
-                      ? {
-                          ...n,
-                          data: { ...n.data, ...updates },
-                        }
-                      : n
+                    n.id === id ? { ...n, data: { ...n.data, ...updates } } : n
                   )
                 );
               }}
@@ -397,10 +413,9 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
         </div>
       </ReactFlowProvider>
       <button
-        onClick={() => {
-          // executeWorkflow({ nodes, edges }, { input: {} });
-          executeWorkflowFromJson(getWorkflowJson(), { input: {} });
-        }}
+        onClick={() =>
+          executeWorkflowFromJson(getWorkflowJson(), { input: {} })
+        }
       >
         Run workflow
       </button>

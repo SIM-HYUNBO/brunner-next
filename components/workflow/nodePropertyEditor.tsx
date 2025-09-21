@@ -7,17 +7,35 @@ interface NodePropertyEditorProps {
   node: Node<any> | null;
   onUpdate: (id: string, updates: any) => void;
   actions: string[]; // 등록된 액션 리스트
+
+  // 🔹 새로 추가된 props
+  workflowId: string;
+  workflowName: string;
+  workflowDescription: string;
+  onWorkflowUpdate?: (updates: {
+    workflowId?: string;
+    workflowName?: string;
+    workflowDescription?: string;
+  }) => void;
 }
 
 export const NodePropertyEditor: React.FC<NodePropertyEditorProps> = ({
   node,
   onUpdate,
   actions,
+  workflowId,
+  workflowName,
+  workflowDescription,
+  onWorkflowUpdate,
 }) => {
   const [actionName, setActionName] = useState(node?.data.actionName || "");
   const [params, setParams] = useState(
     JSON.stringify(node?.data.params || {}, null, 2)
   );
+
+  // 워크플로우 정보 로컬 상태 (수정 가능하게)
+  const [wfName, setWfName] = useState(workflowName);
+  const [wfDesc, setWfDesc] = useState(workflowDescription);
 
   // 노드 선택 시 초기값 설정
   useEffect(() => {
@@ -34,12 +52,63 @@ export const NodePropertyEditor: React.FC<NodePropertyEditorProps> = ({
     setParams(JSON.stringify(defaultParams, null, 2));
   }, [actionName]);
 
-  if (!node) return <div>노드를 선택하세요</div>;
+  if (!node)
+    return (
+      <div style={{ padding: 10 }}>
+        <h3>워크플로우 정보</h3>
+        <div>ID: {workflowId}</div>
+        <div>
+          이름:
+          <input
+            className="w-full"
+            value={wfName}
+            onChange={(e) => setWfName(e.target.value)}
+            onBlur={() => onWorkflowUpdate?.({ workflowName: wfName })}
+          />
+        </div>
+        <div>
+          설명:
+          <textarea
+            className="w-full"
+            value={wfDesc}
+            rows={3}
+            onChange={(e) => setWfDesc(e.target.value)}
+            onBlur={() => onWorkflowUpdate?.({ workflowDescription: wfDesc })}
+          />
+        </div>
+        <div style={{ marginTop: 10, fontStyle: "italic" }}>
+          노드를 선택하세요
+        </div>
+      </div>
+    );
 
   return (
     <div style={{ padding: 10 }}>
-      <h3>Node 설정</h3>
+      {/* 🔹 워크플로우 정보 영역 */}
+      <h3>Workflow Info</h3>
+      <div>ID: {workflowId}</div>
+      <div>
+        Name:
+        <input
+          className="w-full"
+          value={wfName}
+          onChange={(e) => setWfName(e.target.value)}
+          onBlur={() => onWorkflowUpdate?.({ workflowName: wfName })}
+        />
+      </div>
+      <div>
+        Description:
+        <textarea
+          className="w-full"
+          value={wfDesc}
+          rows={3}
+          onChange={(e) => setWfDesc(e.target.value)}
+          onBlur={() => onWorkflowUpdate?.({ workflowDescription: wfDesc })}
+        />
+      </div>
 
+      {/* 🔹 노드 편집 영역 */}
+      <h3 style={{ marginTop: 20 }}>Node Info.</h3>
       <label>Action Name</label>
       <select
         className="w-full"
@@ -63,6 +132,7 @@ export const NodePropertyEditor: React.FC<NodePropertyEditorProps> = ({
       />
 
       <button
+        style={{ marginTop: 10 }}
         onClick={() => {
           try {
             onUpdate(node.id, {
