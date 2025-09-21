@@ -210,7 +210,7 @@ ${workflowJson}
     edges.forEach((e) => {
       if (!e.source) return; // source가 없으면 건너뛰기
       if (!edgeMap[e.source]) edgeMap[e.source] = [];
-      edgeMap[e.source].push(e); // ✅ 그냥 이렇게
+      edgeMap[e.source]!.push(e); // ✅ 그냥 이렇게
     });
 
     function hasPathToEnd(
