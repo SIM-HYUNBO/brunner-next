@@ -1,14 +1,12 @@
-// NodePropertyEditor.tsx
 import React, { useState, useEffect } from "react";
 import type { Node } from "reactflow";
+import type { NodeInputField } from "@/components/workflow/workflowEditor";
 import * as actionRegistry from "@/components/workflow/actionRegistry";
 
 interface NodePropertyEditorProps {
   node: Node<any> | null;
   onUpdate: (id: string, updates: any) => void;
-  actions: string[]; // 등록된 액션 리스트
-
-  // 🔹 새로 추가된 props
+  actions: string[];
   workflowId: string;
   workflowName: string;
   workflowDescription: string;
@@ -29,33 +27,31 @@ export const NodePropertyEditor: React.FC<NodePropertyEditorProps> = ({
   onWorkflowUpdate,
 }) => {
   const [actionName, setActionName] = useState(node?.data.actionName || "");
-  const [params, setParams] = useState(
-    JSON.stringify(node?.data.params || {}, null, 2)
+  const [inputs, setInputs] = useState<NodeInputField[]>(
+    node?.data.inputs ?? []
   );
-
-  // 워크플로우 정보 로컬 상태 (수정 가능하게)
   const [wfName, setWfName] = useState(workflowName);
   const [wfDesc, setWfDesc] = useState(workflowDescription);
 
-  // 노드 선택 시 초기값 설정
+  // 노드 변경 시 초기값 갱신
   useEffect(() => {
-    if (node) {
-      setActionName(node.data.actionName);
-      setParams(JSON.stringify(node.data.params || {}, null, 2));
-    }
+    if (!node) return;
+    setActionName(node.data.actionName);
+    setInputs(node.data.inputs ?? []);
   }, [node]);
 
-  // 액션 변경 시 기본 params 자동 적용
+  // 액션 변경 시 기본 입력값 적용 (선택적)
   useEffect(() => {
-    if (!actionName) return;
-    const defaultParams = actionRegistry.getDefaultParams(actionName) || {};
-    setParams(JSON.stringify(defaultParams, null, 2));
-  }, [actionName]);
+    if (!actionName || !node) return;
+
+    const defaults = actionRegistry.getDefaultInputs?.(actionName) ?? [];
+    setInputs(defaults); // 이전값 상관없이 덮어쓰기
+  }, [actionName, node]);
 
   if (!node)
     return (
       <div style={{ padding: 10 }}>
-        <h3>Workflow Info.</h3>
+        <h3>Workflow Info</h3>
         <div>ID: {workflowId}</div>
         <div>
           이름:
@@ -76,37 +72,25 @@ export const NodePropertyEditor: React.FC<NodePropertyEditorProps> = ({
             onBlur={() => onWorkflowUpdate?.({ workflowDescription: wfDesc })}
           />
         </div>
-        <div style={{ marginTop: 10, fontStyle: "italic" }}>Select a node.</div>
+        <div style={{ marginTop: 10, fontStyle: "italic" }}>
+          Select a node to edit its properties.
+        </div>
       </div>
     );
 
+  const updateInput = (
+    index: number,
+    key: keyof NodeInputField,
+    value: any
+  ) => {
+    setInputs((prev) =>
+      prev.map((input, i) => (i === index ? { ...input, [key]: value } : input))
+    );
+  };
+
   return (
     <div style={{ padding: 10 }}>
-      {/* 🔹 워크플로우 정보 영역 */}
-      <h3>Workflow Info</h3>
-      <div>ID: {workflowId}</div>
-      <div>
-        Name:
-        <input
-          className="w-full"
-          value={wfName}
-          onChange={(e) => setWfName(e.target.value)}
-          onBlur={() => onWorkflowUpdate?.({ workflowName: wfName })}
-        />
-      </div>
-      <div>
-        Description:
-        <textarea
-          className="w-full"
-          value={wfDesc}
-          rows={3}
-          onChange={(e) => setWfDesc(e.target.value)}
-          onBlur={() => onWorkflowUpdate?.({ workflowDescription: wfDesc })}
-        />
-      </div>
-
-      {/* 🔹 노드 편집 영역 */}
-      <h3 style={{ marginTop: 20 }}>Node Info.</h3>
+      <h3>Node Editor</h3>
       <label>Action Name</label>
       <select
         className="w-full"
@@ -120,26 +104,57 @@ export const NodePropertyEditor: React.FC<NodePropertyEditorProps> = ({
         ))}
       </select>
 
-      <label>Params (JSON)</label>
-      <textarea
-        className="w-full"
-        value={params}
-        onChange={(e) => setParams(e.target.value)}
-        rows={8}
-        style={{ width: "100%" }}
-      />
+      <h4 className="mt-3">Inputs</h4>
+      {inputs.map((input, idx) => (
+        <div
+          key={idx}
+          className="border p-2 my-1 rounded bg-gray-50 flex flex-col gap-1"
+        >
+          <input
+            className="border px-2 py-1"
+            placeholder="Key"
+            value={input.key}
+            onChange={(e) => updateInput(idx, "key", e.target.value)}
+          />
+          <select
+            value={input.type}
+            onChange={(e) =>
+              updateInput(idx, "type", e.target.value as NodeInputField["type"])
+            }
+          >
+            <option value="direct">Direct</option>
+            <option value="ref">Reference</option>
+          </select>
+          {input.type === "direct" ? (
+            <input
+              className="border px-2 py-1"
+              placeholder="Value"
+              value={input.value ?? ""}
+              onChange={(e) => updateInput(idx, "value", e.target.value)}
+            />
+          ) : (
+            <input
+              className="border px-2 py-1"
+              placeholder="Source Node ID"
+              value={input.sourceNodeId ?? ""}
+              onChange={(e) => updateInput(idx, "sourceNodeId", e.target.value)}
+            />
+          )}
+        </div>
+      ))}
 
       <button
-        className="flex w-auto justify-right semi-text-bg-color border border-gray-400 px-5"
+        className="mt-2 border px-3 py-1 bg-blue-200"
+        onClick={() =>
+          setInputs((prev) => [...prev, { key: "", type: "direct", value: "" }])
+        }
+      >
+        + Add Input
+      </button>
+
+      <button
         onClick={() => {
-          try {
-            onUpdate(node.id, {
-              actionName,
-              params: JSON.parse(params),
-            });
-          } catch {
-            alert("Params가 올바른 JSON 형식이 아닙니다.");
-          }
+          onUpdate(node.id, { actionName, inputs }); // params가 아닌 inputs 업데이트
         }}
       >
         Apply

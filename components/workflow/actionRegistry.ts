@@ -1,6 +1,7 @@
 "use strict";
 
 import * as constants from "@/components/core/constants";
+import type { NodeInputField } from "@/components/workflow/workflowEditor";
 
 export type WorkflowContext = Record<string, any> & {
   runWorkflow?: (workflow: any, workflowData: WorkflowContext) => Promise<any>;
@@ -22,6 +23,41 @@ export type ActionHandler = (
 
 export const actionMap = new Map<string, ActionHandler>();
 export const defaultParamsMap = new Map<string, Record<string, any>>();
+
+// 기본 입력값 반환 함수 (없으면 빈 배열 반환)
+export function getDefaultInputs(actionName: string): NodeInputField[] {
+  switch (actionName) {
+    case constants.workflowActions.SLEEP:
+      return [{ key: "ms", type: "direct", value: 1000 }];
+    case constants.workflowActions.HTTPREQUEST:
+      return [
+        { key: "url", type: "direct", value: "https://api.example.com" },
+        { key: "method", type: "direct", value: "GET" },
+      ];
+    case constants.workflowActions.SET:
+      return [
+        { key: "path", type: "direct", value: "" }, // 변수 경로
+        { key: "value", type: "direct", value: "" }, // 설정할 값
+      ];
+    case constants.workflowActions.MERGE:
+      return [
+        { key: "path", type: "direct", value: "" }, // 병합 대상 객체 경로
+        { key: "value", type: "direct", value: {} }, // 병합할 객체
+      ];
+    case constants.workflowActions.BRANCH:
+      return [
+        { key: "condition", type: "direct", value: "" },
+        // 선택적으로 다른 노드를 지정할 수 있음
+        { key: "trueNodeId", type: "direct", value: "" },
+        { key: "falseNodeId", type: "direct", value: "" },
+      ];
+    case constants.workflowActions.MATHOP:
+    case constants.workflowActions.CALL:
+      return []; // 기본 입력값 없음
+    default:
+      return [];
+  }
+}
 
 export function registerBuiltInActions(opts: Record<string, any> = {}): void {
   const mapToObj = (map: Map<any, any>) => {
