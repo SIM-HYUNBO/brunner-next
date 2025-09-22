@@ -410,25 +410,15 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
                 workflowName={workflowName}
                 workflowDescription={workflowDescription}
                 node={selectedNode}
-                onUpdate={(id, updates) =>
-                  setNodes((nds) =>
-                    nds.map((n) =>
-                      n.id === id
-                        ? { ...n, data: { ...n.data, ...updates } }
-                        : n
-                    )
-                  )
-                }
                 onWorkflowUpdate={({ workflowName, workflowDescription }) => {
                   if (workflowName !== undefined) setWorkflowName(workflowName);
                   if (workflowDescription !== undefined)
                     setWorkflowDescription(workflowDescription);
                 }}
-                actions={Array.from(actionMap.keys())}
               />
 
               <button
-                className="w-full border"
+                className="w-full semi-text-bg-color border"
                 onClick={executeWorkflowFromJson}
               >
                 Run
