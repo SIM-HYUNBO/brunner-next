@@ -55,7 +55,7 @@ export const NodePropertyEditor: React.FC<NodePropertyEditorProps> = ({
   if (!node)
     return (
       <div style={{ padding: 10 }}>
-        <h3>워크플로우 정보</h3>
+        <h3>Workflow Info.</h3>
         <div>ID: {workflowId}</div>
         <div>
           이름:
@@ -76,9 +76,7 @@ export const NodePropertyEditor: React.FC<NodePropertyEditorProps> = ({
             onBlur={() => onWorkflowUpdate?.({ workflowDescription: wfDesc })}
           />
         </div>
-        <div style={{ marginTop: 10, fontStyle: "italic" }}>
-          노드를 선택하세요
-        </div>
+        <div style={{ marginTop: 10, fontStyle: "italic" }}>Select a node.</div>
       </div>
     );
 
@@ -132,7 +130,7 @@ export const NodePropertyEditor: React.FC<NodePropertyEditorProps> = ({
       />
 
       <button
-        style={{ marginTop: 10 }}
+        className="flex w-auto justify-right semi-text-bg-color border border-gray-400 px-5"
         onClick={() => {
           try {
             onUpdate(node.id, {
@@ -144,7 +142,7 @@ export const NodePropertyEditor: React.FC<NodePropertyEditorProps> = ({
           }
         }}
       >
-        적용
+        Apply
       </button>
     </div>
   );

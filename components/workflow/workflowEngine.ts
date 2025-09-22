@@ -68,21 +68,17 @@ export async function runWorkflowStep(
   if (!action) throw new Error(`Unknown action: ${step.actionName}`);
 
   // 파라미터 보간 처리
-  const actionData = interpolate(step.params || {}, ctxInterp);
+  const stepParams = interpolate(step.params || {}, ctxInterp);
+  let result: any = null;
 
   try {
-    const result: any = await action(
-      nodeId,
-      step.actionName,
-      actionData,
-      workflowData
-    );
+    result = await action(nodeId, stepParams, workflowData);
 
-    return workflowData;
+    return result;
   } catch (err) {
     if (step.continueOnError) {
       console.error("Step error ignored:", err);
-      return workflowData;
+      return err;
     } else {
       throw err;
     }

@@ -116,6 +116,11 @@ export const workflowNodeStatus = {
   running: "running",
 };
 
+export const workflowStatus = {
+  Started: "Started",
+  End: "End",
+};
+
 export const httpMethod = {
   GET: "GET",
   POST: "POST",

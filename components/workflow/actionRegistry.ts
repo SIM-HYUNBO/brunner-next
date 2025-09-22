@@ -8,15 +8,14 @@ export type WorkflowContext = Record<string, any> & {
   input?: any;
 };
 
-interface SetActionItem {
+interface SetStepParamItem {
   path: string;
   value: any;
 }
-type SetActionData = SetActionItem | SetActionItem[];
+type SetStepParams = SetStepParamItem | SetStepParamItem[];
 
 export type ActionHandler = (
   nodeId: string,
-  actionName: string,
   actionData: any,
   workflowData: WorkflowContext
 ) => Promise<WorkflowContext> | WorkflowContext;
@@ -25,17 +24,27 @@ export const actionMap = new Map<string, ActionHandler>();
 export const defaultParamsMap = new Map<string, Record<string, any>>();
 
 export function registerBuiltInActions(opts: Record<string, any> = {}): void {
+  const mapToObj = (map: Map<any, any>) => {
+    return Object.fromEntries(map);
+  };
+
   // step 실행 기록 유틸
 
   // 🔸 1. start
   registerAction(
     constants.workflowActions.START,
-    async (nodeId, actionName, actionData, workflowData) => {
-      workflowData._system = {};
-      workflowData._system.workflowStatus = "started";
-      workflowData._system.startTime = new Date().toISOString();
-      actionLogging(nodeId, actionName, actionData, workflowData);
-      return workflowData;
+    async (nodeId: string, stepParams: any, workflowData: any) => {
+      workflowData.__SYSTEM = {};
+      workflowData.__ACTION_RETURNS = new Map();
+
+      workflowData.__SYSTEM.workflowStatus = constants.workflowStatus.Started;
+      workflowData.__SYSTEM.startTime = new Date().toISOString();
+      workflowData.__ACTION_RETURNS.set(nodeId, {
+        startTime: workflowData.__SYSTEM.startTime,
+      });
+
+      actionLogging(nodeId, stepParams, workflowData);
+      return workflowData.__ACTION_RETURNS.get(nodeId);
     }
   );
   defaultParamsMap.set(constants.workflowActions.START, {});
@@ -43,10 +52,20 @@ export function registerBuiltInActions(opts: Record<string, any> = {}): void {
   // 🔸 2. end
   registerAction(
     constants.workflowActions.END,
-    async (nodeId, actionName, actionData, workflowData) => {
-      workflowData._system.workflowStatus = "end";
-      workflowData._system.endTime = new Date().toISOString();
-      actionLogging(nodeId, actionName, actionData, workflowData);
+    async (nodeId: string, stepParams: any, workflowData: any) => {
+      workflowData.__SYSTEM.workflowStatus = constants.workflowStatus.End;
+      workflowData.__SYSTEM.endTime = new Date().toISOString();
+      workflowData.__SYSTEM.durationMs =
+        new Date(workflowData.__SYSTEM.endTime).getTime() -
+        new Date(workflowData.__SYSTEM.startTime).getTime();
+
+      workflowData.__ACTION_RETURNS.set(nodeId, {
+        endTime: workflowData.__SYSTEM.endTime,
+        durationMs: workflowData.__SYSTEM.durationMs,
+      });
+
+      actionLogging(nodeId, stepParams, workflowData);
+      workflowData.__ACTION_RETURNS = mapToObj(workflowData.__ACTION_RETURNS);
       return workflowData;
     }
   );
@@ -55,24 +74,18 @@ export function registerBuiltInActions(opts: Record<string, any> = {}): void {
   // 🔸 3. httpRequest
   registerAction(
     constants.workflowActions.HTTPREQUEST,
-    async (nodeId, actionName, actionData, workflowData) => {
-      const res = await fetch(actionData.url, {
-        method: actionData.method || "GET",
-        headers: actionData.headers || {},
-        body: actionData.body ? JSON.stringify(actionData.body) : null,
+    async (nodeId: string, stepParams: any, workflowData: any) => {
+      const res = await fetch(stepParams.url, {
+        method: stepParams.method || "GET",
+        headers: stepParams.headers || {},
+        body: stepParams.body ? JSON.stringify(stepParams.body) : null,
       });
+      const result = await res.text();
+      const jResult = JSON.parse(result);
 
-      const text = await res.text().catch(() => null);
-      let data: any;
-      try {
-        data = text ? JSON.parse(text) : null;
-      } catch {
-        data = text;
-      }
-
-      workflowData.httpResponse = { status: res.status, data };
-      actionLogging(nodeId, actionName, actionData, workflowData);
-      return workflowData;
+      workflowData.__ACTION_RETURNS.set(nodeId, jResult);
+      actionLogging(nodeId, stepParams, workflowData);
+      return workflowData.__ACTION_RETURNS.get(nodeId);
     }
   );
   defaultParamsMap.set(constants.workflowActions.HTTPREQUEST, {
@@ -85,10 +98,14 @@ export function registerBuiltInActions(opts: Record<string, any> = {}): void {
   // 🔸 4. wait
   registerAction(
     constants.workflowActions.SLEEP,
-    async (nodeId, actionName, actionData, workflowData) => {
-      await new Promise((resolve) => setTimeout(resolve, actionData.ms || 300));
-      actionLogging(nodeId, actionName, actionData, workflowData);
-      return workflowData;
+    async (nodeId: string, stepParams: any, workflowData: any) => {
+      await new Promise((resolve) => setTimeout(resolve, stepParams.ms || 300));
+
+      // 별도 리턴은 없음
+      workflowData.__ACTION_RETURNS.set(nodeId, null);
+
+      actionLogging(nodeId, stepParams, workflowData);
+      return workflowData.__ACTION_RETURNS.get(nodeId);
     }
   );
   defaultParamsMap.set(constants.workflowActions.SLEEP, { ms: 300 });
@@ -96,10 +113,10 @@ export function registerBuiltInActions(opts: Record<string, any> = {}): void {
   // 🔸 5. Set
   registerAction(
     constants.workflowActions.SET,
-    async (nodeId, actionName, actionData, workflowData) => {
-      const actions = Array.isArray(actionData) ? actionData : [actionData]; // 배열로 강제 변환
+    async (nodeId: string, stepParams: SetStepParams, workflowData: any) => {
+      const actions = Array.isArray(stepParams) ? stepParams : [stepParams]; // 배열로 강제 변환
 
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      let ret: any = {};
 
       for (const { path, value } of actions) {
         const keys: string[] = path.split(".");
@@ -119,11 +136,13 @@ export function registerBuiltInActions(opts: Record<string, any> = {}): void {
         const lastKey = keys[keys.length - 1];
         if (lastKey) {
           target[lastKey] = value;
+          ret[lastKey] = value;
         }
       }
+      workflowData.__ACTION_RETURNS.set(nodeId, ret);
 
-      actionLogging(nodeId, actionName, actionData, workflowData);
-      return workflowData;
+      actionLogging(nodeId, stepParams, workflowData);
+      return workflowData.__ACTION_RETURNS.get(nodeId);
     }
   );
 
@@ -135,15 +154,17 @@ export function registerBuiltInActions(opts: Record<string, any> = {}): void {
   // 🔸 6. mergeObjects
   registerAction(
     constants.workflowActions.MERGE,
-    async (nodeId, actionName, actionData, workflowData) => {
-      const base = getByPath(workflowData, actionData.basePath) || {};
-      const extra = getByPath(workflowData, actionData.extraPath) || {};
+    async (nodeId: string, stepParams: any, workflowData: any) => {
+      const base = getByPath(workflowData, stepParams.basePath) || {};
+      const extra = getByPath(workflowData, stepParams.extraPath) || {};
       const result = { ...base, ...extra };
-      if (actionData.outputPath)
-        setByPath(workflowData, actionData.outputPath, result);
+      if (stepParams.outputPath)
+        setByPath(workflowData, stepParams.outputPath, result);
 
-      actionLogging(nodeId, actionName, actionData, workflowData);
-      return workflowData;
+      actionLogging(nodeId, stepParams, workflowData);
+
+      workflowData.__ACTION_RETURNS.set(nodeId, result);
+      return workflowData.__ACTION_RETURNS.get(nodeId);
     }
   );
   defaultParamsMap.set(constants.workflowActions.MERGE, {
@@ -155,15 +176,18 @@ export function registerBuiltInActions(opts: Record<string, any> = {}): void {
   // 🔸 7. branch
   registerAction(
     constants.workflowActions.BRANCH,
-    async (nodeId, actionName, actionData, workflowData) => {
-      const value = actionData.condition
-        ? actionData.trueValue
-        : actionData.falseValue;
-      if (actionData.outputPath)
-        setByPath(workflowData, actionData.outputPath, value);
+    async (nodeId: string, stepParams: any, workflowData: any) => {
+      const value = stepParams.condition
+        ? stepParams.trueValue
+        : stepParams.falseValue;
 
-      actionLogging(nodeId, actionName, actionData, workflowData);
-      return workflowData;
+      if (stepParams.outputPath)
+        setByPath(workflowData, stepParams.outputPath, value);
+
+      actionLogging(nodeId, stepParams, workflowData);
+
+      workflowData.__ACTION_RETURNS.set(nodeId, value);
+      return workflowData.__ACTION_RETURNS.get(nodeId);
     }
   );
   defaultParamsMap.set(constants.workflowActions.BRANCH, {
@@ -176,11 +200,12 @@ export function registerBuiltInActions(opts: Record<string, any> = {}): void {
   // 🔸 8. mathOp
   registerAction(
     constants.workflowActions.MATHOP,
-    async (nodeId, actionName, actionData, workflowData) => {
-      const left = resolveValue(actionData.left, workflowData);
-      const right = resolveValue(actionData.right, workflowData);
+    async (nodeId: string, stepParams: any, workflowData: any) => {
+      const actionName = "";
+      const left = resolveValue(stepParams.left, workflowData);
+      const right = resolveValue(stepParams.right, workflowData);
       let result: number | null;
-      switch (actionData.op) {
+      switch (stepParams.op) {
         case "add":
           result = left + right;
           break;
@@ -194,28 +219,33 @@ export function registerBuiltInActions(opts: Record<string, any> = {}): void {
           result = right !== 0 ? left / right : null;
           break;
         default:
-          throw new Error(`Unknown math op: ${actionData.op}`);
+          throw new Error(`Unknown math op: ${stepParams.op}`);
       }
-      if (actionData.outputPath)
-        setByPath(workflowData, actionData.outputPath, result);
+      if (stepParams.outputPath)
+        setByPath(workflowData, stepParams.outputPath, result);
 
-      actionLogging(nodeId, actionName, actionData, workflowData);
-      return workflowData;
+      actionLogging(nodeId, stepParams, workflowData);
+
+      workflowData.__ACTION_RETURNS.set(nodeId, result);
+      return workflowData.__ACTION_RETURNS.get(nodeId);
     }
   );
   // 🔸 9. call
   registerAction(
     constants.workflowActions.CALL,
-    async (nodeId, actionName, actionData, workflowData) => {
+    async (nodeId: string, stepParams: any, workflowData: any) => {
+      // 다른 워크플로우를 호출하고 결과값을 저장
       let result: any = null;
 
       // Call other workflow
 
-      if (actionData.outputPath)
-        setByPath(workflowData, actionData.outputPath, result);
+      if (stepParams.outputPath)
+        setByPath(workflowData, stepParams.outputPath, result);
 
-      actionLogging(nodeId, actionName, actionData, workflowData);
-      return workflowData;
+      actionLogging(nodeId, stepParams, workflowData);
+
+      workflowData.__ACTION_RETURNS.set(nodeId, result);
+      return workflowData.__ACTION_RETURNS.get(nodeId);
     }
   );
 
@@ -233,15 +263,12 @@ export function registerBuiltInActions(opts: Record<string, any> = {}): void {
 }
 
 // --- 공용 유틸 ---
-function actionLogging(
-  nodeId: string,
-  actionName: string,
-  actionData: any,
-  workflowData: any
-) {
+function actionLogging(nodeId: string, stepParams: any, workflowData: any) {
   console.log(
-    `Execute Workflow Node [${nodeId}] Action [${actionName}, actionData:${JSON.stringify(
-      actionData,
+    `Execute Workflow Node [${nodeId}] Action [${
+      stepParams.actionName
+    }, stepParams:${JSON.stringify(
+      stepParams,
       null,
       2
     )}, workflowData:${JSON.stringify(workflowData, null, 2)}]`

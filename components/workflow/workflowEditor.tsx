@@ -69,6 +69,8 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
   const [workflowId, setWorkflowId] = useState(nanoid());
   const [workflowName, setWorkflowName] = useState("새 워크플로우");
   const [workflowDescription, setWorkflowDescription] = useState("설명 없음");
+  const [workflowInputData, setWorkflowInputData] = useState({});
+  const [workflowOutputData, setWorkflowOutputData] = useState({});
 
   const generateStepId = useCallback(() => {
     stepCounterRef.current += 1;
@@ -194,7 +196,10 @@ ${workflowJson}
 
   const { BrunnerMessageBox, openModal } = useModal();
 
-  async function executeWorkflow(workflow: any = {}, workflowData: any = {}) {
+  async function executeWorkflow(
+    workflow: any = {},
+    workflowData: any = {}
+  ): Promise<any> {
     const nodes: Node<any>[] = workflow.nodes;
     const edges: Edge<any>[] = workflow.edges;
 
@@ -203,7 +208,7 @@ ${workflowJson}
     );
     if (!startNode) {
       openModal(constants.messages.WORKFLOW_STARTNODE_NOT_FOUND);
-      return;
+      return null;
     }
 
     const edgeMap: Record<string, Edge<any>[]> = {};
@@ -239,12 +244,12 @@ ${workflowJson}
 
     const visitedNodes = new Set<string>();
 
-    async function traverse(nodeId: string) {
-      if (visitedNodes.has(nodeId)) return;
+    async function traverse(nodeId: string): Promise<any> {
+      if (visitedNodes.has(nodeId)) return null;
       visitedNodes.add(nodeId);
 
       const node = nodes.find((n) => n.id === nodeId);
-      if (!node) return;
+      if (!node) return null;
 
       const shouldRun = !node.data.if || Boolean(node.data.if);
       if (shouldRun) {
@@ -262,9 +267,9 @@ ${workflowJson}
           )
         );
 
-        await workflowEngine.runWorkflowStep(
+        var result = await workflowEngine.runWorkflowStep(
           nodeId,
-          { actionName: node.data.actionName, params: node.data.params },
+          node.data,
           workflowData
         );
 
@@ -286,18 +291,20 @@ ${workflowJson}
       const outgoingEdges = edgeMap[nodeId] || [];
       for (const edge of outgoingEdges) {
         if (!edge.data?.condition || Boolean(edge.data.condition)) {
-          await traverse(edge.target);
+          return await traverse(edge.target);
         }
       }
+
+      return result;
     }
 
-    await traverse(startNode.id);
+    return await traverse(startNode.id);
   }
 
   async function executeWorkflowFromJson(
     workflowJson: string,
     context: any = {}
-  ) {
+  ): Promise<any> {
     try {
       const jWorkflow = JSON.parse(workflowJson);
 
@@ -309,10 +316,7 @@ ${workflowJson}
       if (!jWorkflow.nodes || !jWorkflow.edges)
         throw new Error("JSON에 nodes 또는 edges가 없습니다.");
 
-      await executeWorkflow(
-        { nodes: jWorkflow.nodes, edges: jWorkflow.edges },
-        context
-      );
+      return await executeWorkflow(jWorkflow, context);
     } catch (err) {
       openModal("❌ 워크플로우 JSON 파싱 실패: " + String(err));
     }
@@ -322,103 +326,135 @@ ${workflowJson}
     <>
       <BrunnerMessageBox />
       <ReactFlowProvider>
-        <div style={{ display: "flex", height: "100%" }}>
-          <div style={{ flex: 1 }}>
-            <ReactFlow
-              nodes={nodes.map((n) => ({
-                ...n,
-                style: {
-                  background:
-                    n.data.status === constants.workflowNodeStatus.running
-                      ? "#FFD700"
-                      : n.data.actionName === constants.workflowActions.START ||
-                        n.data.actionName === constants.workflowActions.END
-                      ? "#ADFF2F"
-                      : "#fff",
-                  border: "1px solid #222",
-                  color: "#000",
-                },
-              }))}
-              edges={
-                edges.map((e) => ({
-                  ...e,
-                  markerEnd: { type: "arrowclosed" },
-                  style: { stroke: "#ccc", strokeWidth: 2 },
-                })) as Edge<any>[]
-              }
-              onNodesChange={onNodesChange}
-              onEdgesChange={onEdgesChange}
-              onConnect={onConnect}
-              onNodeClick={onNodeClick}
-              onEdgeClick={onEdgeClick}
-              fitView
-              snapToGrid
-              snapGrid={[20, 20]}
-            >
-              <MiniMap />
-              <Controls />
-              <Background />
-            </ReactFlow>
+        <div className="flex flex-col">
+          <div className="flex flex-row w-full ">
+            <div className="flex flex-1">
+              <ReactFlow
+                nodes={nodes.map((n) => ({
+                  ...n,
+                  style: {
+                    background:
+                      n.data.status === constants.workflowNodeStatus.running
+                        ? "#FFD700"
+                        : n.data.actionName ===
+                            constants.workflowActions.START ||
+                          n.data.actionName === constants.workflowActions.END
+                        ? "#ADFF2F"
+                        : "#fff",
+                    border: "1px solid #222",
+                    color: "#000",
+                  },
+                }))}
+                edges={
+                  edges.map((e) => ({
+                    ...e,
+                    markerEnd: { type: "arrowclosed" },
+                    style: { stroke: "#ccc", strokeWidth: 2 },
+                  })) as Edge<any>[]
+                }
+                onNodesChange={onNodesChange}
+                onEdgesChange={onEdgesChange}
+                onConnect={onConnect}
+                onNodeClick={onNodeClick}
+                onEdgeClick={onEdgeClick}
+                fitView
+                snapToGrid
+                snapGrid={[20, 20]}
+              >
+                <MiniMap />
+                <Controls />
+                <Background />
+              </ReactFlow>
+            </div>
+            <div className="flex flex-col justify-between h-full">
+              <h3>Editor</h3>
+              <button
+                className="w-full semi-text-bg-color border"
+                onClick={addNode}
+              >
+                Add Node
+              </button>
+              <button
+                className="w-full semi-text-bg-color border"
+                onClick={updateNodeParams}
+                disabled={!selectedNode}
+              >
+                Edit Node Params
+              </button>
+              <button
+                className="w-full semi-text-bg-color border"
+                onClick={updateEdgeCondition}
+                disabled={!selectedEdge}
+              >
+                Edit Edge Condition
+              </button>
+              <button
+                className="w-full semi-text-bg-color border"
+                onClick={exportWorkflow}
+              >
+                Export JSON
+              </button>
+              <NodePropertyEditor
+                workflowId={workflowId}
+                workflowName={workflowName}
+                workflowDescription={workflowDescription}
+                onWorkflowUpdate={({ workflowName, workflowDescription }) => {
+                  if (workflowName !== undefined) setWorkflowName(workflowName);
+                  if (workflowDescription !== undefined)
+                    setWorkflowDescription(workflowDescription);
+                }}
+                node={selectedNode}
+                onUpdate={(id, updates) => {
+                  setNodes((nds) =>
+                    nds.map((n) =>
+                      n.id === id
+                        ? { ...n, data: { ...n.data, ...updates } }
+                        : n
+                    )
+                  );
+                }}
+                actions={Array.from(actionMap.keys())}
+              />
+              <button
+                className="flex w-full justify-center semi-text-bg-color border border-gray-500"
+                onClick={async () => {
+                  const output = await executeWorkflowFromJson(
+                    getWorkflowJson(),
+                    workflowInputData
+                  );
+                  setWorkflowOutputData(output); // 실행 결과 화면에 반영
+                }}
+              >
+                Run
+              </button>
+            </div>
           </div>
-          <div
-            style={{ width: 250, padding: 10, borderLeft: "1px solid #ccc" }}
-          >
-            <h3>Editor</h3>
-            <button
-              className="w-full semi-text-bg-color border"
-              onClick={addNode}
-            >
-              Add Node
-            </button>
-            <button
-              className="w-full semi-text-bg-color border"
-              onClick={updateNodeParams}
-              disabled={!selectedNode}
-            >
-              Edit Node Params
-            </button>
-            <button
-              className="w-full semi-text-bg-color border"
-              onClick={updateEdgeCondition}
-              disabled={!selectedEdge}
-            >
-              Edit Edge Condition
-            </button>
-            <button
-              className="w-full semi-text-bg-color border"
-              onClick={exportWorkflow}
-            >
-              Export JSON
-            </button>
-            <NodePropertyEditor
-              workflowId={workflowId}
-              workflowName={workflowName}
-              workflowDescription={workflowDescription}
-              onWorkflowUpdate={({ workflowName, workflowDescription }) => {
-                if (workflowName !== undefined) setWorkflowName(workflowName);
-                if (workflowDescription !== undefined)
-                  setWorkflowDescription(workflowDescription);
-              }}
-              node={selectedNode}
-              onUpdate={(id, updates) => {
-                setNodes((nds) =>
-                  nds.map((n) =>
-                    n.id === id ? { ...n, data: { ...n.data, ...updates } } : n
-                  )
-                );
-              }}
-              actions={Array.from(actionMap.keys())}
-            />
+
+          {/* 입력/출력 데이터 확인 */}
+          <div className="flex flex-row">
+            <div className="flex flex-col mt-5 mr-2 w-[calc(50%-10px)] h-full">
+              <h4>Input Data</h4>
+              <textarea
+                className="w-full h-[250px]"
+                onChange={(e) => {
+                  try {
+                    setWorkflowInputData(JSON.parse(e.target.value));
+                  } catch {}
+                }}
+              >
+                {}
+              </textarea>
+            </div>
+            <div className="flex flex-col mt-5 ml-2 w-[calc(50%-10px)] h-full">
+              <h4>Output Data</h4>
+              <textarea
+                className="w-full h-[250px]"
+                value={JSON.stringify(workflowOutputData, null, 2)}
+              ></textarea>
+            </div>
           </div>
         </div>
       </ReactFlowProvider>
-      <button
-        onClick={() =>
-          executeWorkflowFromJson(getWorkflowJson(), { input: {} })
-        }
-      >
-        Run
-      </button>
     </>
   );
 };
