@@ -19,6 +19,7 @@ import { useModal } from "@/components/core/client/brunnerMessageBox";
 import * as workflowEngine from "@/components/workflow/workflowEngine";
 import { actionMap } from "@/components/workflow/actionRegistry";
 import { NodePropertyEditor } from "@/components/workflow/nodePropertyEditor";
+import { InputMappingModal } from "@/components/workflow/inputMappingModal";
 
 // -------------------- 타입 정의 --------------------
 export interface NodeInputField {
@@ -152,27 +153,6 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
     ]);
   };
 
-  const updateNodeInputs = () => {
-    if (!selectedNode) return;
-    const newInputsStr = prompt(
-      "Enter JSON inputs:",
-      JSON.stringify(selectedNode.data.inputs ?? [], null, 2)
-    );
-    if (!newInputsStr) return;
-    try {
-      const newInputs = JSON.parse(newInputsStr) as NodeInputField[];
-      setNodes((nds) =>
-        nds.map((n) =>
-          n.id === selectedNode.id
-            ? { ...n, data: { ...n.data, inputs: newInputs } }
-            : n
-        )
-      );
-    } catch {
-      alert("잘못된 JSON 형식입니다.");
-    }
-  };
-
   const updateEdgeCondition = () => {
     if (!selectedEdge) return;
     const cond = prompt("Enter condition:", selectedEdge.data?.condition || "");
@@ -204,6 +184,8 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
       win.document.close();
     }
   };
+
+  const [isInputModalOpen, setIsInputModalOpen] = useState(false);
 
   // -------------------- 워크플로우 실행 --------------------
   async function executeWorkflow(workflow: any = {}, workflowData: any = {}) {
@@ -389,13 +371,6 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
               </button>
               <button
                 className="w-full border"
-                onClick={updateNodeInputs}
-                disabled={!selectedNode}
-              >
-                Edit Node Inputs
-              </button>
-              <button
-                className="w-full border"
                 onClick={updateEdgeCondition}
                 disabled={!selectedEdge}
               >
@@ -415,17 +390,31 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
                   if (workflowDescription !== undefined)
                     setWorkflowDescription(workflowDescription);
                 }}
+                onNodeUpdate={(id, updates) => {
+                  setNodes((nds) =>
+                    nds.map((n) =>
+                      n.id === id
+                        ? { ...n, data: { ...n.data, ...updates } } // actionName, inputs 등 업데이트
+                        : n
+                    )
+                  );
+                }}
               />
-
               <button
-                className="w-full semi-text-bg-color border"
+                className="border px-3 py-1 bg-yellow-200"
+                onClick={() => setIsInputModalOpen(true)}
+                disabled={!selectedNode}
+              >
+                Edit Inputs
+              </button>
+              <button
+                className="w-full semi-text-bg-color border mt-5"
                 onClick={executeWorkflowFromJson}
               >
                 Run
               </button>
             </div>
           </div>
-
           <div className="flex flex-row mt-5">
             <div className="flex flex-col mr-2 w-[calc(50%-10px)]">
               <h4>Input Data</h4>
@@ -449,6 +438,23 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
           </div>
         </div>
       </ReactFlowProvider>
+      <InputMappingModal
+        isOpen={isInputModalOpen}
+        actionName={selectedNode?.data.actionName ?? ""} // 추가
+        inputs={selectedNode?.data.inputs ?? []}
+        onClose={() => setIsInputModalOpen(false)}
+        onSave={(newInputs) => {
+          if (!selectedNode) return;
+          setNodes((nds: any) =>
+            nds.map((n: any) =>
+              n.id === selectedNode.id
+                ? { ...n, data: { ...n.data, inputs: newInputs } }
+                : n
+            )
+          );
+          setIsInputModalOpen(false);
+        }}
+      />
     </>
   );
 };
