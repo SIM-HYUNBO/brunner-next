@@ -4,7 +4,7 @@ import * as actionRegistry from "@/components/workflow/actionRegistry";
 
 interface InputMappingModalProps {
   isOpen: boolean;
-  actionName: string; // 읽기 전용
+  actionName?: string; // 현재 노드 유형 표시
   inputs: NodeInputField[];
   onClose: () => void;
   onSave: (inputs: NodeInputField[]) => void;
@@ -12,18 +12,19 @@ interface InputMappingModalProps {
 
 export const InputMappingModal: React.FC<InputMappingModalProps> = ({
   isOpen,
-  actionName,
+  actionName = "",
   inputs,
   onClose,
   onSave,
 }) => {
-  const [localInputs, setLocalInputs] = useState<NodeInputField[]>([]);
+  const [localInputs, setLocalInputs] = useState<NodeInputField[]>([...inputs]);
+  const [selectedAction, setSelectedAction] = useState(actionName);
 
-  // 모달 열릴 때 actionName 기반 기본 입력값 초기화
+  // 노드 유형이 바뀌거나 모달이 열릴 때 기본값 초기화
   useEffect(() => {
-    if (!isOpen) return;
-    setLocalInputs([...inputs]); // 부모로부터 받은 최신 inputs로 초기화
-  }, [isOpen, inputs]);
+    const defaults = actionRegistry.getDefaultInputs?.(selectedAction) ?? [];
+    setLocalInputs(defaults.length ? defaults : inputs);
+  }, [selectedAction, inputs]);
 
   const updateInput = (
     index: number,
@@ -47,18 +48,24 @@ export const InputMappingModal: React.FC<InputMappingModalProps> = ({
 
   return (
     <div className="fixed inset-0 bg-black/50 flex justify-center items-center z-50">
-      <div className="bg-white rounded-lg w-[600px] max-h-[80vh] overflow-auto p-5">
+      <div
+        className="bg-white rounded-lg p-5 max-h-[80vh] overflow-auto"
+        style={{ width: "600px", minWidth: "400px", resize: "both" }}
+      >
         <h2 className="text-xl font-bold mb-3">Input Mapping</h2>
 
-        {/* 액션 유형 읽기 전용 */}
+        {/* 노드 유형 표시 (읽기 전용) */}
         <div className="mb-3">
           <label>Action Type:</label>
-          <div className="mt-1 px-2 py-1 border rounded bg-gray-100">
-            {actionName}
-          </div>
+          <input
+            type="text"
+            className="w-full border px-2 py-1 mt-1 bg-gray-100"
+            value={selectedAction}
+            readOnly
+          />
         </div>
 
-        {/* 아코디언 + 테이블 */}
+        {/* Inputs 아코디언 + 테이블 */}
         <details open className="border rounded p-2">
           <summary className="cursor-pointer font-semibold">Inputs</summary>
           <table className="table-auto w-full mt-2 border">
@@ -97,12 +104,23 @@ export const InputMappingModal: React.FC<InputMappingModalProps> = ({
                   </td>
                   <td className="border px-2 py-1">
                     {input.type === "direct" ? (
-                      <input
-                        className="w-full border px-1 py-0.5"
-                        value={input.value ?? ""}
-                        onChange={(e) =>
-                          updateInput(idx, "value", e.target.value)
+                      <textarea
+                        className="w-full border px-1 py-1 resize-none"
+                        rows={3}
+                        value={
+                          typeof input.value === "object"
+                            ? JSON.stringify(input.value, null, 2)
+                            : input.value ?? ""
                         }
+                        onChange={(e) => {
+                          let newValue: any;
+                          try {
+                            newValue = JSON.parse(e.target.value);
+                          } catch {
+                            newValue = e.target.value;
+                          }
+                          updateInput(idx, "value", newValue);
+                        }}
                       />
                     ) : (
                       <input
@@ -134,6 +152,7 @@ export const InputMappingModal: React.FC<InputMappingModalProps> = ({
           </button>
         </details>
 
+        {/* 버튼 */}
         <div className="mt-4 flex justify-end gap-2">
           <button className="px-3 py-1 border rounded" onClick={onClose}>
             Cancel

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import type { Node } from "reactflow";
 import type { NodeInputField } from "@/components/workflow/workflowEditor";
 import { InputMappingModal } from "@/components/workflow/inputMappingModal";
@@ -33,6 +33,7 @@ export const NodePropertyEditor: React.FC<NodePropertyEditorProps> = ({
     node?.data.inputs ?? []
   );
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const prevActionName = useRef<string>("");
 
   // 워크플로우 정보 갱신
   useEffect(() => {
@@ -43,9 +44,21 @@ export const NodePropertyEditor: React.FC<NodePropertyEditorProps> = ({
   // 노드 변경 시 초기값 갱신
   useEffect(() => {
     if (!node) return;
-    setActionName(node.data.actionName);
-    setInputs(node.data.inputs ?? []);
-  }, [node]);
+
+    const action = node.data.actionName;
+    setActionName(action);
+
+    const defaults = actionRegistry.getDefaultInputs?.(action) ?? [];
+
+    if (prevActionName.current !== action) {
+      setInputs(defaults);
+      prevActionName.current = action;
+    } else if (!node.data.inputs || node.data.inputs.length === 0) {
+      setInputs(defaults);
+    } else {
+      setInputs(node.data.inputs);
+    }
+  }, [node?.id, node?.data.actionName]);
 
   if (!node)
     return (
@@ -97,34 +110,41 @@ export const NodePropertyEditor: React.FC<NodePropertyEditorProps> = ({
             </option>
           ))}
         </select>
-        <button
-          className="mt-2 px-3 py-1 bg-blue-200 rounded"
-          onClick={() => {
-            if (!node) return;
+        <div className="flex flex-row justify-between">
+          <button
+            className="mt-2 px-3 py-1 bg-blue-200 rounded"
+            onClick={() => {
+              if (!node) return;
+              let newInputs = inputs;
 
-            // 부모 노드 업데이트
-            onNodeUpdate?.(node.id, { actionName, inputs });
+              if (prevActionName.current != actionName) {
+                newInputs = actionRegistry.getDefaultInputs(actionName);
+                node.data.input = newInputs;
+                prevActionName.current = actionName;
+              }
 
-            // 로컬 state는 이미 actionName, inputs를 사용하므로 따로 setState 필요 없음
-          }}
-        >
-          Apply
-        </button>
-      </div>
+              // 부모 노드 업데이트
+              onNodeUpdate?.(node.id, { actionName, newInputs });
 
-      <div className="mt-4">
-        <button
-          className="px-3 py-1 bg-green-200 rounded"
-          onClick={() => setIsModalOpen(true)}
-        >
-          Edit Inputs
-        </button>
+              setActionName(actionName);
+              setInputs(newInputs);
+            }}
+          >
+            Apply
+          </button>
+          <button
+            className="px-3 py-1 mt-2 bg-green-200 rounded"
+            onClick={() => setIsModalOpen(true)}
+          >
+            Edit Inputs
+          </button>
+        </div>
       </div>
 
       {/* Input Mapping Modal */}
       <InputMappingModal
         isOpen={isModalOpen}
-        actionName={node.data.actionName} // 읽기 전용, 모달에서는 변경 불가
+        actionName={actionName} // 읽기 전용, 모달에서는 변경 불가
         inputs={inputs}
         onClose={() => setIsModalOpen(false)}
         onSave={(newInputs: NodeInputField[]) => {

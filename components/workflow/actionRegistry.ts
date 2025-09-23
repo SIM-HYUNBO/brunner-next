@@ -41,7 +41,7 @@ export function getDefaultInputs(actionName: string): NodeInputField[] {
       ];
     case constants.workflowActions.MERGE:
       return [
-        { key: "path", type: "direct", value: "" }, // 병합 대상 객체 경로
+        { key: "targetPath", type: "direct", value: "" }, // 병합 대상 객체 경로
         { key: "value", type: "direct", value: {} }, // 병합할 객체
       ];
     case constants.workflowActions.BRANCH:

@@ -369,13 +369,6 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
               <button className="w-full border" onClick={addNode}>
                 Add Node
               </button>
-              <button
-                className="w-full border"
-                onClick={updateEdgeCondition}
-                disabled={!selectedEdge}
-              >
-                Edit Edge Condition
-              </button>
               <button className="w-full border" onClick={exportWorkflow}>
                 Export JSON
               </button>
@@ -391,24 +384,22 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
                     setWorkflowDescription(workflowDescription);
                 }}
                 onNodeUpdate={(id, updates) => {
-                  setNodes((nds) =>
-                    nds.map((n) =>
+                  setNodes((nds) => {
+                    const newNodes = nds.map((n) =>
                       n.id === id
                         ? { ...n, data: { ...n.data, ...updates } } // actionName, inputs 등 업데이트
                         : n
-                    )
-                  );
+                    );
+
+                    const updated =
+                      newNodes.find((n: any) => n.id === id) || null;
+                    setSelectedNode(updated);
+                    return newNodes;
+                  });
                 }}
               />
               <button
-                className="border px-3 py-1 bg-yellow-200"
-                onClick={() => setIsInputModalOpen(true)}
-                disabled={!selectedNode}
-              >
-                Edit Inputs
-              </button>
-              <button
-                className="w-full semi-text-bg-color border mt-5"
+                className="w-full bg-yellow-200 border mt-5"
                 onClick={executeWorkflowFromJson}
               >
                 Run
@@ -438,23 +429,6 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
           </div>
         </div>
       </ReactFlowProvider>
-      <InputMappingModal
-        isOpen={isInputModalOpen}
-        actionName={selectedNode?.data.actionName ?? ""} // 추가
-        inputs={selectedNode?.data.inputs ?? []}
-        onClose={() => setIsInputModalOpen(false)}
-        onSave={(newInputs) => {
-          if (!selectedNode) return;
-          setNodes((nds: any) =>
-            nds.map((n: any) =>
-              n.id === selectedNode.id
-                ? { ...n, data: { ...n.data, inputs: newInputs } }
-                : n
-            )
-          );
-          setIsInputModalOpen(false);
-        }}
-      />
     </>
   );
 };
