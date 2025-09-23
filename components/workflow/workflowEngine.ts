@@ -52,7 +52,7 @@ export async function runWorkflowStep(
 ) {
   // 실행 컨텍스트 생성
   const ctxInterp = {
-    input: workflowData.input || {},
+    inputs: workflowData.inputs || {},
     globals: workflowData.globals || {},
     user: workflowData.user || {},
     lastResult: workflowData.lastResult,

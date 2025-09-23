@@ -17,12 +17,17 @@ import { nanoid } from "nanoid";
 import * as constants from "@/components/core/constants";
 import { useModal } from "@/components/core/client/brunnerMessageBox";
 import * as workflowEngine from "@/components/workflow/workflowEngine";
-import { actionMap } from "@/components/workflow/actionRegistry";
 import { NodePropertyEditor } from "@/components/workflow/nodePropertyEditor";
-import { InputMappingModal } from "@/components/workflow/inputMappingModal";
+import * as actionRegistry from "@/components/workflow/actionRegistry";
 
 // -------------------- 타입 정의 --------------------
 export interface NodeInputField {
+  key: string;
+  type: "direct" | "ref";
+  value?: any;
+  sourceNodeId?: string;
+}
+export interface NodeOutputField {
   key: string;
   type: "direct" | "ref";
   value?: any;
@@ -34,6 +39,7 @@ export interface ActionNodeData {
   actionName: string;
   status: string;
   inputs: NodeInputField[];
+  outputs: NodeOutputField[];
 }
 
 export interface ConditionEdgeData {
@@ -82,7 +88,9 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
   const [workflowInputData, setWorkflowInputData] = useState({});
   const [workflowOutputData, setWorkflowOutputData] = useState({});
 
-  const [nodes, setNodes] = useState<Node<ActionNodeData>[]>(initialNodes);
+  const [nodes, setNodes] = useState<Node<ActionNodeData>[]>(
+    initialNodes as Node<ActionNodeData>[]
+  );
   const [edges, setEdges] = useState<Edge<ConditionEdgeData>[]>(initialEdges);
   const [selectedNode, setSelectedNode] = useState<Node<ActionNodeData> | null>(
     null
@@ -147,7 +155,12 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
           label: `Node ${id}`,
           actionName: constants.workflowActions.SLEEP,
           status: constants.workflowNodeStatus.idle,
-          inputs: [],
+          inputs: actionRegistry.getDefaultInputs(
+            constants.workflowActions.SLEEP
+          ),
+          outputs: actionRegistry.getDefaultOutputs(
+            constants.workflowActions.SLEEP
+          ),
         },
       },
     ]);
@@ -378,6 +391,7 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
                 workflowName={workflowName}
                 workflowDescription={workflowDescription}
                 node={selectedNode}
+                nodes={nodes}
                 onWorkflowUpdate={({ workflowName, workflowDescription }) => {
                   if (workflowName !== undefined) setWorkflowName(workflowName);
                   if (workflowDescription !== undefined)
@@ -387,7 +401,10 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
                   setNodes((nds) => {
                     const newNodes = nds.map((n) =>
                       n.id === id
-                        ? { ...n, data: { ...n.data, ...updates } } // actionName, inputs 등 업데이트
+                        ? {
+                            ...n,
+                            data: { ...n.data, ...updates },
+                          } // actionName, inputs 등 업데이트
                         : n
                     );
 

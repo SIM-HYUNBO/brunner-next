@@ -1,7 +1,10 @@
 "use strict";
 
 import * as constants from "@/components/core/constants";
-import type { NodeInputField } from "@/components/workflow/workflowEditor";
+import type {
+  NodeInputField,
+  NodeOutputField,
+} from "@/components/workflow/workflowEditor";
 
 export type WorkflowContext = Record<string, any> & {
   runWorkflow?: (workflow: any, workflowData: WorkflowContext) => Promise<any>;
@@ -51,6 +54,32 @@ export function getDefaultInputs(actionName: string): NodeInputField[] {
         { key: "trueNodeId", type: "direct", value: "" },
         { key: "falseNodeId", type: "direct", value: "" },
       ];
+    case constants.workflowActions.MATHOP:
+    case constants.workflowActions.CALL:
+      return []; // 기본 입력값 없음
+    default:
+      return [];
+  }
+}
+
+export function getDefaultOutputs(actionName: string): NodeOutputField[] {
+  switch (actionName) {
+    case constants.workflowActions.SLEEP:
+      return [{ key: "ms", type: "direct", value: 1000 }];
+    case constants.workflowActions.HTTPREQUEST:
+      return [{ key: "response", type: "direct", value: {} }];
+    case constants.workflowActions.SET:
+      return [
+        { key: "path", type: "direct", value: "" }, // 변수 경로
+        { key: "value", type: "direct", value: "" }, // 설정할 값
+      ];
+    case constants.workflowActions.MERGE:
+      return [
+        { key: "targetPath", type: "direct", value: "" }, // 병합 대상 객체 경로
+        { key: "value", type: "direct", value: {} }, // 병합할 객체
+      ];
+    case constants.workflowActions.BRANCH:
+      return [{ key: "resultNodeId", type: "direct", value: true }];
     case constants.workflowActions.MATHOP:
     case constants.workflowActions.CALL:
       return []; // 기본 입력값 없음

@@ -1,11 +1,15 @@
 import React, { useState, useEffect, useRef } from "react";
 import type { Node } from "reactflow";
-import type { NodeInputField } from "@/components/workflow/workflowEditor";
+import type {
+  NodeInputField,
+  NodeOutputField,
+} from "@/components/workflow/workflowEditor";
 import { InputMappingModal } from "@/components/workflow/inputMappingModal";
 import * as actionRegistry from "@/components/workflow/actionRegistry";
 
 interface NodePropertyEditorProps {
   node: Node<any> | null;
+  nodes: Node<any>[];
   workflowId: string;
   workflowName: string;
   workflowDescription: string;
@@ -17,8 +21,36 @@ interface NodePropertyEditorProps {
   onNodeUpdate?: (id: string, updates: any) => void;
 }
 
+interface WorkflowVariable {
+  nodeId: string;
+  key: string;
+  type: "direct" | "ref";
+  value?: any;
+}
+
+export function collectAllWorkflowVariables(
+  nodes: Node<any>[]
+): WorkflowVariable[] {
+  const variables: WorkflowVariable[] = [];
+
+  nodes.forEach((node) => {
+    const outputs: NodeInputField[] = node.data.outputs ?? [];
+
+    outputs.forEach((output) => {
+      variables.push({
+        nodeId: node.id,
+        key: output.key,
+        type: output.type,
+        value: output.value,
+      });
+    });
+  });
+  return variables;
+}
+
 export const NodePropertyEditor: React.FC<NodePropertyEditorProps> = ({
   node,
+  nodes,
   workflowId,
   workflowName,
   workflowDescription,
@@ -31,6 +63,9 @@ export const NodePropertyEditor: React.FC<NodePropertyEditorProps> = ({
   const [actionName, setActionName] = useState(node?.data.actionName || "");
   const [inputs, setInputs] = useState<NodeInputField[]>(
     node?.data.inputs ?? []
+  );
+  const [outputs, setOutputs] = useState<NodeInputField[]>(
+    node?.data.outputs ?? []
   );
   const [isModalOpen, setIsModalOpen] = useState(false);
   const prevActionName = useRef<string>("");
@@ -48,15 +83,19 @@ export const NodePropertyEditor: React.FC<NodePropertyEditorProps> = ({
     const action = node.data.actionName;
     setActionName(action);
 
-    const defaults = actionRegistry.getDefaultInputs?.(action) ?? [];
+    const defaultInputs = actionRegistry.getDefaultInputs?.(action) ?? [];
+    const defaultOutputs = actionRegistry.getDefaultOutputs?.(action) ?? [];
 
     if (prevActionName.current !== action) {
-      setInputs(defaults);
+      setInputs(defaultInputs);
+      setOutputs(defaultOutputs);
       prevActionName.current = action;
     } else if (!node.data.inputs || node.data.inputs.length === 0) {
-      setInputs(defaults);
+      setInputs(defaultInputs);
+      setOutputs(defaultOutputs);
     } else {
       setInputs(node.data.inputs);
+      setOutputs(node.data.outputs);
     }
   }, [node?.id, node?.data.actionName]);
 
@@ -90,6 +129,8 @@ export const NodePropertyEditor: React.FC<NodePropertyEditorProps> = ({
       </div>
     );
 
+  const allWworkflowVariables = collectAllWorkflowVariables(nodes);
+
   return (
     <div style={{ padding: 10 }}>
       <h3>Node Editor</h3>
@@ -116,18 +157,25 @@ export const NodePropertyEditor: React.FC<NodePropertyEditorProps> = ({
             onClick={() => {
               if (!node) return;
               let newInputs = inputs;
-
+              let newOutputs = outputs;
               if (prevActionName.current != actionName) {
                 newInputs = actionRegistry.getDefaultInputs(actionName);
-                node.data.input = newInputs;
+                newOutputs = actionRegistry.getDefaultOutputs(actionName);
+                node.data.inputs = newInputs;
+                node.data.outputs = newOutputs;
                 prevActionName.current = actionName;
               }
 
               // 부모 노드 업데이트
-              onNodeUpdate?.(node.id, { actionName, newInputs });
+              onNodeUpdate?.(node.id, {
+                actionName,
+                inputs: newInputs,
+                outputs: newOutputs,
+              });
 
               setActionName(actionName);
               setInputs(newInputs);
+              setOutputs(newOutputs);
             }}
           >
             Apply
@@ -146,10 +194,16 @@ export const NodePropertyEditor: React.FC<NodePropertyEditorProps> = ({
         isOpen={isModalOpen}
         actionName={actionName} // 읽기 전용, 모달에서는 변경 불가
         inputs={inputs}
+        outputs={outputs}
+        workflowVariables={allWworkflowVariables}
         onClose={() => setIsModalOpen(false)}
-        onSave={(newInputs: NodeInputField[]) => {
+        onSave={(
+          newInputs: NodeInputField[],
+          newOutputs: NodeOutputField[]
+        ) => {
           setInputs(newInputs);
-          onNodeUpdate?.(node.id, { inputs: newInputs });
+          setOutputs(newOutputs);
+          onNodeUpdate?.(node.id, { inputs: newInputs, outputs: newOutputs });
           setIsModalOpen(false);
         }}
       />

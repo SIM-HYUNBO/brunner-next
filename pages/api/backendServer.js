@@ -57,7 +57,7 @@ export default async (req, res) => {
       )}`
     );
 
-    saveTxnHistoryAsync(remoteIp, txnId, jRequest, jResponse);
+    // saveTxnHistoryAsync(remoteIp, txnId, jRequest, jResponse);
   }
 };
 
