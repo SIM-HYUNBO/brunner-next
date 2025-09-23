@@ -170,7 +170,7 @@ export const NodePropertyEditor: React.FC<NodePropertyEditorProps> = ({
               onNodeUpdate?.(node.id, {
                 actionName,
                 inputs: newInputs,
-                outputs: newOutputs,
+                output: newOutputs,
               });
 
               setActionName(actionName);
