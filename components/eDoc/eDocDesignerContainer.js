@@ -743,10 +743,10 @@ export default function EDocDesignerContainer({
                   }}
                 >
                   <div className="flex flex-row justify-around">
-                    <div className="flex flex-row justify-center gap-2 mt-2">
+                    <div className="flex flex-row justify-center items-center gap-2 mt-2">
                       <button
                         onClick={handleMovePageUp}
-                        className="px-2 py-1 rounded bg-gray-200 hover:bg-gray-300"
+                        className="mb-1 px-2 py-1 rounded bg-gray-200 hover:bg-gray-300"
                         disabled={currentPageIdx === 0}
                       >
                         ▲
@@ -756,9 +756,10 @@ export default function EDocDesignerContainer({
                               border
                               border-gray
                               text-center
+                              items-center
                               text-xs 
                               rounded 
-                              my-1
+                              mb-1
                               select-none 
                               pointer-events-none"
                       >
@@ -766,7 +767,7 @@ export default function EDocDesignerContainer({
                       </div>
                       <button
                         onClick={handleMovePageDown}
-                        className="px-2 py-1 rounded bg-gray-200 hover:bg-gray-300"
+                        className="mb-1 px-2 py-1 rounded bg-gray-200 hover:bg-gray-300"
                         disabled={
                           currentPageIdx === documentData.pages.length - 1
                         }

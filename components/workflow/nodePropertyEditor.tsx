@@ -157,7 +157,19 @@ export const NodePropertyEditor: React.FC<NodePropertyEditorProps> = ({
         </select>
         <div className="flex flex-row justify-between">
           <button
-            className="mt-2 px-3 py-1 bg-blue-200 rounded"
+            className="px-3 py-1 mt-2 bg-green-200 rounded"
+            onClick={() => setIsModalOpen(true)}
+          >
+            Inputs
+          </button>
+          <button
+            className="px-3 py-1 mt-2 ml-1 bg-green-200 rounded"
+            onClick={() => toggleEditingOutputs()}
+          >
+            Outputs
+          </button>
+          <button
+            className="mt-2 ml-1 px-3 py-1 bg-blue-200 rounded"
             onClick={() => {
               if (!node) return;
               let newInputs = inputs;
@@ -183,18 +195,6 @@ export const NodePropertyEditor: React.FC<NodePropertyEditorProps> = ({
             }}
           >
             Apply
-          </button>
-          <button
-            className="px-3 py-1 mt-2 bg-green-200 rounded"
-            onClick={() => setIsModalOpen(true)}
-          >
-            Edit Inputs
-          </button>
-          <button
-            className="px-3 py-1 mt-2 bg-green-200 rounded"
-            onClick={() => toggleEditingOutputs()}
-          >
-            Edit Outputs
           </button>
         </div>
       </div>
