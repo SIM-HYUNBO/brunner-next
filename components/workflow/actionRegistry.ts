@@ -112,16 +112,9 @@ export function registerBuiltInActions(opts: Record<string, any> = {}): void {
   registerAction(
     constants.workflowActions.START,
     async (nodeId: string, stepInputs: any, workflowData: any) => {
-      // workflowData.__SYSTEM = {};
-      // workflowData.__ACTION_RETURNS = new Map();
-
-      // workflowData.__SYSTEM.workflowStatus = constants.workflowStatus.Started;
-      // workflowData.__SYSTEM.startTime = new Date().toISOString();
-      // workflowData.__ACTION_RETURNS.set(nodeId, {
-      //   startTime: workflowData.__SYSTEM.startTime,
-      // });
-
       actionLogging(nodeId, stepInputs, workflowData);
+
+      // START는 입력받은 파라미터 데이터를 그대로 출력 파라미터에 저장
       return stepInputs;
     }
   );
@@ -131,19 +124,8 @@ export function registerBuiltInActions(opts: Record<string, any> = {}): void {
   registerAction(
     constants.workflowActions.END,
     async (nodeId: string, stepInputs: any, workflowData: any) => {
-      // workflowData.__SYSTEM.workflowStatus = constants.workflowStatus.End;
-      // workflowData.__SYSTEM.endTime = new Date().toISOString();
-      // workflowData.__SYSTEM.durationMs =
-      //   new Date(workflowData.__SYSTEM.endTime).getTime() -
-      //   new Date(workflowData.__SYSTEM.startTime).getTime();
-
-      // workflowData.__ACTION_RETURNS.set(nodeId, {
-      //   endTime: workflowData.__SYSTEM.endTime,
-      //   durationMs: workflowData.__SYSTEM.durationMs,
-      // });
-
       actionLogging(nodeId, stepInputs, workflowData);
-      workflowData.__ACTION_RETURNS = mapToObj(workflowData.__ACTION_RETURNS);
+
       return workflowData;
     }
   );
