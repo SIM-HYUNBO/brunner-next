@@ -3,9 +3,10 @@ import type { Node } from "reactflow";
 import type {
   NodeInputField,
   NodeOutputField,
-} from "@/components/workflow/workflowEditor";
-import { InputMappingModal } from "@/components/workflow/inputMappingModal";
+} from "@/components/workflow/actionRegistry";
+import { NodeInputParameterModal } from "@/components/workflow/nodeInputParameterModal";
 import * as actionRegistry from "@/components/workflow/actionRegistry";
+import NodeOutputParameterModal from "@/components/workflow/nodeOutputParameterModal";
 
 interface NodePropertyEditorProps {
   node: Node<any> | null;
@@ -24,7 +25,7 @@ interface NodePropertyEditorProps {
 interface WorkflowVariable {
   nodeId: string;
   key: string;
-  type: "direct" | "ref";
+  type: string;
   value?: any;
 }
 
@@ -64,11 +65,14 @@ export const NodePropertyEditor: React.FC<NodePropertyEditorProps> = ({
   const [inputs, setInputs] = useState<NodeInputField[]>(
     node?.data.inputs ?? []
   );
-  const [outputs, setOutputs] = useState<NodeInputField[]>(
+  const [outputs, setOutputs] = useState<NodeOutputField[]>(
     node?.data.outputs ?? []
   );
   const [isModalOpen, setIsModalOpen] = useState(false);
   const prevActionName = useRef<string>("");
+  const [editingOutputs, setEditingOutputs] = useState(false);
+  const toggleEditingOutputs = () =>
+    setEditingOutputs((prev: boolean) => !prev);
 
   // 워크플로우 정보 갱신
   useEffect(() => {
@@ -186,11 +190,17 @@ export const NodePropertyEditor: React.FC<NodePropertyEditorProps> = ({
           >
             Edit Inputs
           </button>
+          <button
+            className="px-3 py-1 mt-2 bg-green-200 rounded"
+            onClick={() => toggleEditingOutputs()}
+          >
+            Edit Outputs
+          </button>
         </div>
       </div>
 
       {/* Input Mapping Modal */}
-      <InputMappingModal
+      <NodeInputParameterModal
         isOpen={isModalOpen}
         actionName={actionName} // 읽기 전용, 모달에서는 변경 불가
         inputs={inputs}
@@ -203,10 +213,20 @@ export const NodePropertyEditor: React.FC<NodePropertyEditorProps> = ({
         ) => {
           setInputs(newInputs);
           setOutputs(newOutputs);
-          onNodeUpdate?.(node.id, { inputs: newInputs, outputs: newOutputs });
+          onNodeUpdate?.(node.id, { inputs: newInputs });
           setIsModalOpen(false);
         }}
       />
+      {editingOutputs && (
+        <NodeOutputParameterModal
+          outputs={node.data.outputs}
+          onChange={(updated) => {
+            setOutputs(updated);
+            onNodeUpdate?.(node.id, { outputs: updated });
+          }}
+          onClose={() => setEditingOutputs(false)}
+        />
+      )}
     </div>
   );
 };

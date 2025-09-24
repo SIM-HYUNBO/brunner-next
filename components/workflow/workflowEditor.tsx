@@ -20,31 +20,12 @@ import * as workflowEngine from "@/components/workflow/workflowEngine";
 import { NodePropertyEditor } from "@/components/workflow/nodePropertyEditor";
 import * as actionRegistry from "@/components/workflow/actionRegistry";
 
-// -------------------- 타입 정의 --------------------
-export interface NodeInputField {
-  key: string;
-  type: "direct" | "ref";
-  value?: any;
-  sourceNodeId?: string;
-}
-export interface NodeOutputField {
-  key: string;
-  type: "direct" | "ref";
-  value?: any;
-  sourceNodeId?: string;
-}
-
-export interface ActionNodeData {
-  label: string;
-  actionName: string;
-  status: string;
-  inputs: NodeInputField[];
-  outputs: NodeOutputField[];
-}
-
-export interface ConditionEdgeData {
-  condition?: string;
-}
+import type {
+  NodeInputField,
+  NodeOutputField,
+  ActionNodeData,
+  ConditionEdgeData,
+} from "@/components/workflow/actionRegistry";
 
 interface WorkflowEditorProps {
   initialNodes?: Node<ActionNodeData>[];
@@ -62,7 +43,12 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
         label: constants.workflowActions.START,
         actionName: constants.workflowActions.START,
         status: constants.workflowNodeStatus.idle,
-        inputs: [],
+        inputs: actionRegistry.getDefaultInputs(
+          constants.workflowActions.START
+        ),
+        outputs: actionRegistry.getDefaultOutputs(
+          constants.workflowActions.START
+        ),
       },
     },
     {
@@ -73,20 +59,28 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
         label: constants.workflowActions.END,
         actionName: constants.workflowActions.END,
         status: constants.workflowNodeStatus.idle,
-        inputs: [],
+        inputs: actionRegistry.getDefaultInputs(constants.workflowActions.END),
+        outputs: actionRegistry.getDefaultOutputs(
+          constants.workflowActions.END
+        ),
       },
     },
   ],
   initialEdges = [],
 }) => {
+  React.useEffect(() => {
+    const initInputValue = `[{ "key1": "test", "key2": 123 }]`;
+    setWorkflowInputData(initInputValue);
+  }, []);
+
   const stepCounterRef = useRef(0);
   const { BrunnerMessageBox, openModal } = useModal();
 
   const [workflowId, setWorkflowId] = useState(nanoid());
   const [workflowName, setWorkflowName] = useState("새 워크플로우");
   const [workflowDescription, setWorkflowDescription] = useState("설명 없음");
-  const [workflowInputData, setWorkflowInputData] = useState({});
-  const [workflowOutputData, setWorkflowOutputData] = useState({});
+  const [workflowInputData, setWorkflowInputData] = useState<string>("");
+  const [workflowOutputData, setWorkflowOutputData] = useState([]);
 
   const [nodes, setNodes] = useState<Node<ActionNodeData>[]>(
     initialNodes as Node<ActionNodeData>[]
@@ -201,7 +195,7 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
   const [isInputModalOpen, setIsInputModalOpen] = useState(false);
 
   // -------------------- 워크플로우 실행 --------------------
-  async function executeWorkflow(workflow: any = {}, workflowData: any = {}) {
+  async function executeWorkflow(workflow: any = [], workflowInputs: any = []) {
     const nodesList: Node<any>[] = workflow.nodes;
     const edgesList: Edge<any>[] = workflow.edges;
 
@@ -212,6 +206,8 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
       openModal(constants.messages.WORKFLOW_STARTNODE_NOT_FOUND);
       return null;
     }
+
+    startNode.data.inputs = workflowInputs;
 
     const edgeMap: Record<string, Edge<any>[]> = {};
     edgesList.forEach((e) => {
@@ -230,7 +226,7 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
       const node = nodesList.find((n) => n.id === nodeId);
       if (!node) return;
 
-      const stepParams = node.data.inputs
+      const stepInputs = node.data.inputs
         ? Object.fromEntries(
             node.data.inputs.map((input: NodeInputField) => {
               if (input.type === "direct") return [input.key, input.value];
@@ -293,11 +289,7 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
           }
 
           default:
-            result = await workflowEngine.runWorkflowStep(
-              nodeId,
-              { ...node.data, params: stepParams },
-              context
-            );
+            result = await workflowEngine.runWorkflowStep(node, context);
             context[nodeId] = result;
         }
 
@@ -325,7 +317,7 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
       const workflowJson = JSON.parse(json);
       const output: any = await executeWorkflow(
         workflowJson,
-        workflowInputData
+        JSON.parse(workflowInputData)
       );
       setWorkflowOutputData(output);
     } catch (err) {
@@ -433,6 +425,7 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
                     setWorkflowInputData(JSON.parse(e.target.value));
                   } catch {}
                 }}
+                value={workflowInputData}
               />
             </div>
             <div className="flex flex-col ml-2 w-[calc(50%-10px)]">

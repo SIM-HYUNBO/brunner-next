@@ -2,6 +2,7 @@ import {
   getAction,
   registerBuiltInActions,
 } from "@/components/workflow/actionRegistry";
+import type { Connection, Edge, Node, NodeChange, EdgeChange } from "reactflow";
 
 registerBuiltInActions();
 
@@ -40,16 +41,7 @@ function evalCondition(cond: any, ctx: any) {
 }
 
 // 워크플로우 실행
-export async function runWorkflowStep(
-  nodeId: string,
-  step: {
-    actionName: string;
-    params?: Record<string, any>;
-    if?: string | boolean;
-    continueOnError?: boolean;
-  },
-  workflowData: any
-) {
+export async function runWorkflowStep(node: Node<any>, workflowData: any) {
   // 실행 컨텍스트 생성
   const ctxInterp = {
     inputs: workflowData.inputs || {},
@@ -59,28 +51,56 @@ export async function runWorkflowStep(
   };
 
   // 조건(if) 확인
-  if (!evalCondition(step.if, ctxInterp)) {
+  if (!evalCondition(node.data.if, ctxInterp)) {
     return workflowData; // 조건 불일치 → 실행하지 않음
   }
 
   // 액션 찾기
-  const action = getAction(step.actionName);
-  if (!action) throw new Error(`Unknown action: ${step.actionName}`);
+  const action = getAction(node.data.actionName);
+  if (!action) throw new Error(`Unknown action: ${node.data.actionName}`);
 
   // 파라미터 보간 처리
-  const stepParams = interpolate(step.params || {}, ctxInterp);
+  const stepInputs = interpolate(node.data.inputs || {}, ctxInterp);
   let result: any = null;
 
   try {
-    result = await action(nodeId, stepParams, workflowData);
-
+    result = await action(node.id, stepInputs, workflowData);
+    mergeDeepOverwrite(node.data.outputs, result);
     return result;
   } catch (err) {
-    if (step.continueOnError) {
+    if (node.data.continueOnError) {
       console.error("Step error ignored:", err);
       return err;
     } else {
       throw err;
     }
   }
+}
+
+function mergeDeepOverwrite(
+  target: Record<string, any>,
+  source: Record<string, any>
+) {
+  for (const key in source) {
+    if (
+      source[key] &&
+      typeof source[key] === "object" &&
+      !Array.isArray(source[key])
+    ) {
+      // A에 해당 키가 없거나 객체가 아니면 (새 객체 생성)
+      if (
+        !target[key] ||
+        typeof target[key] !== "object" ||
+        Array.isArray(target[key])
+      ) {
+        target[key] = {};
+      }
+      // 재귀 호출
+      mergeDeepOverwrite(target[key], source[key]);
+    } else {
+      // 기본 값 덮어쓰기
+      target[key] = source[key];
+    }
+  }
+  return target;
 }
