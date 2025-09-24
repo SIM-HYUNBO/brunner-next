@@ -126,6 +126,7 @@ export function registerBuiltInActions(opts: Record<string, any> = {}): void {
     async (nodeId: string, stepInputs: any, workflowData: any) => {
       actionLogging(nodeId, stepInputs, workflowData);
 
+      // END는 출력 파라미터 데이터를 최종 출력으로 저장해야 함.
       return workflowData;
     }
   );
