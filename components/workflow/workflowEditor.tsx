@@ -19,6 +19,8 @@ import { useModal } from "@/components/core/client/brunnerMessageBox";
 import * as workflowEngine from "@/components/workflow/workflowEngine";
 import { NodePropertyEditor } from "@/components/workflow/nodePropertyEditor";
 import * as actionRegistry from "@/components/workflow/actionRegistry";
+import { TableJsonDataEditor } from "@/components/workflow/tableJsonDataEditor";
+import { TableJsonDataManager } from "@/components/workflow/tableJsonDataManager";
 
 import type {
   NodeInputField,
@@ -32,7 +34,6 @@ interface WorkflowEditorProps {
   initialEdges?: Edge<ConditionEdgeData>[];
 }
 
-// -------------------- WorkflowEditor --------------------
 export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
   initialNodes = [
     {
@@ -68,22 +69,18 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
   ],
   initialEdges = [],
 }) => {
-  React.useEffect(() => {
-    const initInputValue = `[{ "key1": "test", "key2": 123 }]`;
-    setWorkflowInputData(initInputValue);
-  }, []);
-
   const stepCounterRef = useRef(0);
   const { BrunnerMessageBox, openModal } = useModal();
 
   const [workflowId, setWorkflowId] = useState(nanoid());
   const [workflowName, setWorkflowName] = useState("새 워크플로우");
   const [workflowDescription, setWorkflowDescription] = useState("설명 없음");
-  const [workflowInputData, setWorkflowInputData] = useState<string>("");
-  const [workflowOutputData, setWorkflowOutputData] = useState([]);
-  const [textInputValue, setTextInputValue] = useState(
-    JSON.stringify(workflowInputData)
+  const [workflowInputData, setWorkflowInputData] = useState<string>(
+    `[{ "key1": "test", "key2": 123 }]`
   );
+  const [workflowOutputData, setWorkflowOutputData] = useState<
+    Record<string, any>
+  >({});
 
   const [nodes, setNodes] = useState<Node<ActionNodeData>[]>(
     initialNodes as Node<ActionNodeData>[]
@@ -95,6 +92,10 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
   const [selectedEdge, setSelectedEdge] =
     useState<Edge<ConditionEdgeData> | null>(null);
   const [runningNodeIds, setRunningNodeIds] = useState<string[]>([]);
+
+  // -------------------- TableJsonDataEditor 관련 --------------------
+  const tableManager = useRef(new TableJsonDataManager()).current;
+  const [isTableEditorOpen, setIsTableEditorOpen] = useState(false);
 
   const generateStepId = useCallback(() => {
     stepCounterRef.current += 1;
@@ -195,9 +196,6 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
     }
   };
 
-  const [isInputModalOpen, setIsInputModalOpen] = useState(false);
-
-  // -------------------- 워크플로우 실행 --------------------
   async function executeWorkflow(workflow: any = [], workflowInputs: any = []) {
     const nodesList: Node<any>[] = workflow.nodes;
     const edgesList: Edge<any>[] = workflow.edges;
@@ -314,27 +312,13 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
     return context;
   }
 
-  const executeWorkflowFromJson = async () => {
-    const json = getWorkflowJson();
+  const executeWorkflowFromTableEditor = async () => {
     try {
-      const workflowJson = JSON.parse(json);
-      const output: any = await executeWorkflow(
-        workflowJson,
-        JSON.parse(workflowInputData)
-      );
-      setWorkflowOutputData(output);
+      const workflowInputs = tableManager.getData(); // 객체 형태
+      await executeWorkflow(JSON.parse(getWorkflowJson()), workflowInputs);
     } catch (err) {
-      openModal("❌ 워크플로우 실행 실패: " + String(err));
+      openModal("❌ 실행 실패: " + String(err));
     }
-  };
-
-  const handleInputValueChange = (e: any) => {
-    const value = e.target.value;
-    setTextInputValue(value);
-    try {
-      const parsed = JSON.parse(value);
-      setWorkflowInputData(value);
-    } catch {}
   };
 
   // -------------------- JSX 렌더링 --------------------
@@ -405,13 +389,9 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
                   setNodes((nds) => {
                     const newNodes = nds.map((n) =>
                       n.id === id
-                        ? {
-                            ...n,
-                            data: { ...n.data, ...updates },
-                          } // actionName, inputs 등 업데이트
+                        ? { ...n, data: { ...n.data, ...updates } }
                         : n
                     );
-
                     const updated =
                       newNodes.find((n: any) => n.id === id) || null;
                     setSelectedNode(updated);
@@ -421,20 +401,38 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
               />
               <button
                 className="w-full bg-yellow-200 border mt-5"
-                onClick={executeWorkflowFromJson}
+                onClick={executeWorkflowFromTableEditor}
               >
                 Run
               </button>
             </div>
           </div>
+
+          {/* -------------------- Input / Output Data -------------------- */}
           <div className="flex flex-row mt-5">
             <div className="flex flex-col mr-2 w-[calc(50%-10px)]">
               <h4>Input Data</h4>
-              <textarea
-                className="w-full h-[250px]"
-                value={textInputValue}
-                onChange={handleInputValueChange}
-              />
+              <button
+                className="w-full border bg-blue-200 mb-2"
+                onClick={() => setIsTableEditorOpen(true)}
+              >
+                Table Editor 열기
+              </button>
+
+              {isTableEditorOpen && (
+                <div className="absolute top-0 left-0 w-full h-full bg-white z-50 p-4 overflow-auto">
+                  <button
+                    className="border mb-2"
+                    onClick={() => setIsTableEditorOpen(false)}
+                  >
+                    닫기
+                  </button>
+                  <TableJsonDataEditor
+                    manager={tableManager}
+                    readData={workflowInputData}
+                  />
+                </div>
+              )}
             </div>
             <div className="flex flex-col ml-2 w-[calc(50%-10px)]">
               <h4>Output Data</h4>

@@ -10,14 +10,12 @@ export interface TableJsonValidationResult {
 }
 
 export class TableJsonDataManager {
-  private data: Record<string, JsonObject[]>;
+  private data: Record<string, JsonObject[]> = {};
 
   constructor(initialData?: string | Record<string, JsonObject[]>) {
-    this.data = {};
     if (initialData) this.load(initialData);
   }
 
-  /** ---------- 데이터 로드 ---------- */
   load(input: string | Record<string, JsonObject[]>): void {
     if (typeof input === "string") {
       try {
@@ -34,16 +32,51 @@ export class TableJsonDataManager {
     }
   }
 
-  /** ---------- CRUD ---------- */
+  getData(): Record<string, JsonObject[]> {
+    return this.data;
+  }
 
-  getTable(tableKey: string): JsonObject[] | undefined { return this.data[tableKey]; }
+  getTable(tableKey: string): JsonObject[] | undefined {
+    return this.data[tableKey];
+  }
 
   addTable(tableKey: string, rows: JsonObject[] = []): void {
-    if (this.data[tableKey]) throw new Error(`Table "${tableKey}" already exists`);
+    if (this.data[tableKey])
+      throw new Error(`Table "${tableKey}" already exists`);
     this.data[tableKey] = rows;
   }
 
-  removeTable(tableKey: string): void { delete this.data[tableKey]; }
+  removeTable(tableKey: string): void {
+    delete this.data[tableKey];
+  }
+
+  renameTable(oldName: string, newName: string): void {
+    if (!this.data[oldName])
+      throw new Error(`Table "${oldName}" does not exist`);
+    this.data[newName] = this.data[oldName];
+    delete this.data[oldName];
+  }
+
+  addColumn(tableKey: string, columnName: string): void {
+    const table = this.data[tableKey];
+    if (!table) throw new Error(`Table "${tableKey}" does not exist`);
+    table.forEach((row) => (row[columnName] = ""));
+  }
+
+  removeColumn(tableKey: string, columnName: string): void {
+    const table = this.data[tableKey];
+    if (!table) throw new Error(`Table "${tableKey}" does not exist`);
+    table.forEach((row) => delete row[columnName]);
+  }
+
+  renameColumn(tableKey: string, oldName: string, newName: string): void {
+    const table = this.data[tableKey];
+    if (!table) throw new Error(`Table "${tableKey}" does not exist`);
+    table.forEach((row) => {
+      row[newName] = row[oldName];
+      delete row[oldName];
+    });
+  }
 
   addRow(tableKey: string, row: JsonObject): void {
     const table = this.data[tableKey];
@@ -51,59 +84,88 @@ export class TableJsonDataManager {
     table.push(row);
   }
 
-  updateRow(tableKey: string, rowIndex: number, newRow: JsonObject): void {
+  removeRow(tableKey: string, index: number): void {
     const table = this.data[tableKey];
     if (!table) throw new Error(`Table "${tableKey}" does not exist`);
-    if (rowIndex < 0 || rowIndex >= table.length) throw new Error(`Row index out of bounds`);
-    table[rowIndex] = newRow;
+    if (index < 0 || index >= table.length)
+      throw new Error(`Row index out of bounds`);
+    table.splice(index, 1);
   }
 
-  removeRow(tableKey: string, rowIndex: number): void {
+  updateRow(tableKey: string, index: number, newRow: JsonObject): void {
     const table = this.data[tableKey];
     if (!table) throw new Error(`Table "${tableKey}" does not exist`);
-    if (rowIndex < 0 || rowIndex >= table.length) throw new Error(`Row index out of bounds`);
-    table.splice(rowIndex, 1);
+    if (index < 0 || index >= table.length)
+      throw new Error(`Row index out of bounds`);
+    table[index] = newRow;
   }
 
-  getData(): Record<string, JsonObject[]> { return this.data; }
-
-  /** ---------- 유효성 검사 ---------- */
   validate(): TableJsonValidationResult {
     const data = this.data;
     if (typeof data !== "object" || data === null) {
-      return { valid: false, error: { tableKey: "", message: "Top-level data is not an object" } };
+      return {
+        valid: false,
+        error: { tableKey: "", message: "Top-level data is not an object" },
+      };
     }
     const tableKeys = Object.keys(data);
-
-    for (let t = 0; t < tableKeys.length; t++) {
-      const tableKey = tableKeys[t];
+    for (const tableKey of tableKeys) {
       const arr = data[tableKey];
-
       if (!Array.isArray(arr) || arr.length === 0) {
-        return { valid: false, error: { tableKey, message: "Value is not a non-empty array" } };
+        return {
+          valid: false,
+          error: { tableKey, message: "Value is not a non-empty array" },
+        };
       }
-
       const firstObj = arr[0];
-      if (typeof firstObj !== "object" || firstObj === null || Array.isArray(firstObj)) {
-        return { valid: false, error: { tableKey, arrayIndex: 0, message: "Array element is not an object" } };
+      if (
+        typeof firstObj !== "object" ||
+        firstObj === null ||
+        Array.isArray(firstObj)
+      ) {
+        return {
+          valid: false,
+          error: {
+            tableKey,
+            arrayIndex: 0,
+            message: "Array element is not an object",
+          },
+        };
       }
-
       const firstKeys = new Set(Object.keys(firstObj));
-
       for (let i = 0; i < arr.length; i++) {
         const item = arr[i];
         if (typeof item !== "object" || item === null || Array.isArray(item)) {
-          return { valid: false, error: { tableKey, arrayIndex: i, message: "Array element is not an object" } };
+          return {
+            valid: false,
+            error: {
+              tableKey,
+              arrayIndex: i,
+              message: "Array element is not an object",
+            },
+          };
         }
-
         const itemKeys = Object.keys(item);
         if (itemKeys.length !== firstKeys.size) {
-          return { valid: false, error: { tableKey, arrayIndex: i, message: "Object keys count mismatch" } };
+          return {
+            valid: false,
+            error: {
+              tableKey,
+              arrayIndex: i,
+              message: "Object keys count mismatch",
+            },
+          };
         }
-
-        for (let k = 0; k < itemKeys.length; k++) {
-          if (!firstKeys.has(itemKeys[k])) {
-            return { valid: false, error: { tableKey, arrayIndex: i, message: `Object key mismatch: missing or extra key "${itemKeys[k]}"` } };
+        for (const key of itemKeys) {
+          if (!firstKeys.has(key)) {
+            return {
+              valid: false,
+              error: {
+                tableKey,
+                arrayIndex: i,
+                message: `Object key mismatch: "${key}"`,
+              },
+            };
           }
         }
       }
@@ -115,43 +177,11 @@ export class TableJsonDataManager {
     const result = this.validate();
     if (result.valid) return null;
     const err = result.error!;
-    const idxPart = err.arrayIndex !== undefined ? ` 배열 ${err.arrayIndex + 1}번째 객체` : "";
+    const idxPart =
+      err.arrayIndex !== undefined
+        ? ` 배열 ${err.arrayIndex + 1}번째 객체`
+        : "";
     const tablePart = err.tableKey ? `${err.tableKey}${idxPart}` : "데이터";
     return `${tablePart}: ${err.message}`;
-  }
-
-  /** ---------- 고급 기능 ---------- */
-  filterRows(tableKey: string, predicate: (row: JsonObject) => boolean): JsonObject[] {
-    const table = this.data[tableKey];
-    if (!table) throw new Error(`Table "${tableKey}" does not exist`);
-    return table.filter(predicate);
-  }
-
-  sortRows(tableKey: string, compareFn: (a: JsonObject, b: JsonObject) => number): void {
-    const table = this.data[tableKey];
-    if (!table) throw new Error(`Table "${tableKey}" does not exist`);
-    table.sort(compareFn);
-  }
-
-  batchUpdateRows(tableKey: string, updateFn: (row: JsonObject, index: number) => JsonObject): void {
-    const table = this.data[tableKey];
-    if (!table) throw new Error(`Table "${tableKey}" does not exist`);
-    for (let i = 0; i < table.length; i++) {
-      table[i] = updateFn(table[i], i);
-    }
-  }
-
-  cloneTable(sourceTableKey: string, targetTableKey: string): void {
-    const table = this.data[sourceTableKey];
-    if (!table) throw new Error(`Table "${sourceTableKey}" does not exist`);
-    this.data[targetTableKey] = table.map(row => ({ ...row }));
-  }
-
-  mergeTable(sourceTableKey: string, targetTableKey: string): void {
-    const src = this.data[sourceTableKey];
-    const tgt = this.data[targetTableKey];
-    if (!src) throw new Error(`Table "${sourceTableKey}" does not exist`);
-    if (!tgt) throw new Error(`Table "${targetTableKey}" does not exist`);
-    tgt.push(...src.map(row => ({ ...row })));
   }
 }
