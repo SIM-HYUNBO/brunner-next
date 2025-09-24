@@ -81,6 +81,9 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
   const [workflowDescription, setWorkflowDescription] = useState("설명 없음");
   const [workflowInputData, setWorkflowInputData] = useState<string>("");
   const [workflowOutputData, setWorkflowOutputData] = useState([]);
+  const [textInputValue, setTextInputValue] = useState(
+    JSON.stringify(workflowInputData)
+  );
 
   const [nodes, setNodes] = useState<Node<ActionNodeData>[]>(
     initialNodes as Node<ActionNodeData>[]
@@ -325,6 +328,15 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
     }
   };
 
+  const handleInputValueChange = (e: any) => {
+    const value = e.target.value;
+    setTextInputValue(value);
+    try {
+      const parsed = JSON.parse(value);
+      setWorkflowInputData(value);
+    } catch {}
+  };
+
   // -------------------- JSX 렌더링 --------------------
   return (
     <>
@@ -420,12 +432,8 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
               <h4>Input Data</h4>
               <textarea
                 className="w-full h-[250px]"
-                onChange={(e) => {
-                  try {
-                    setWorkflowInputData(JSON.parse(e.target.value));
-                  } catch {}
-                }}
-                value={workflowInputData}
+                value={textInputValue}
+                onChange={handleInputValueChange}
               />
             </div>
             <div className="flex flex-col ml-2 w-[calc(50%-10px)]">

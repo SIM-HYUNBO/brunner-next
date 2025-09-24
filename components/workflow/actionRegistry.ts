@@ -180,10 +180,9 @@ export function registerBuiltInActions(opts: Record<string, any> = {}): void {
       await new Promise((resolve) => setTimeout(resolve, stepInputs.ms || 300));
 
       // 별도 리턴은 없음
-      workflowData.__ACTION_RETURNS.set(nodeId, null);
 
       actionLogging(nodeId, stepInputs, workflowData);
-      return workflowData.__ACTION_RETURNS.get(nodeId);
+      return workflowData;
     }
   );
   defaultParamsMap.set(constants.workflowActions.SLEEP, { ms: 300 });
@@ -220,7 +219,7 @@ export function registerBuiltInActions(opts: Record<string, any> = {}): void {
       workflowData.__ACTION_RETURNS.set(nodeId, ret);
 
       actionLogging(nodeId, stepInputs, workflowData);
-      return workflowData.__ACTION_RETURNS.get(nodeId);
+      return workflowData;
     }
   );
 
@@ -242,7 +241,7 @@ export function registerBuiltInActions(opts: Record<string, any> = {}): void {
       actionLogging(nodeId, stepInputs, workflowData);
 
       workflowData.__ACTION_RETURNS.set(nodeId, result);
-      return workflowData.__ACTION_RETURNS.get(nodeId);
+      return workflowData;
     }
   );
   defaultParamsMap.set(constants.workflowActions.MERGE, {
@@ -265,7 +264,7 @@ export function registerBuiltInActions(opts: Record<string, any> = {}): void {
       actionLogging(nodeId, stepInputs, workflowData);
 
       workflowData.__ACTION_RETURNS.set(nodeId, value);
-      return workflowData.__ACTION_RETURNS.get(nodeId);
+      return workflowData;
     }
   );
   defaultParamsMap.set(constants.workflowActions.BRANCH, {
@@ -305,7 +304,7 @@ export function registerBuiltInActions(opts: Record<string, any> = {}): void {
       actionLogging(nodeId, stepInputs, workflowData);
 
       workflowData.__ACTION_RETURNS.set(nodeId, result);
-      return workflowData.__ACTION_RETURNS.get(nodeId);
+      return workflowData;
     }
   );
   // 🔸 9. call
@@ -323,7 +322,7 @@ export function registerBuiltInActions(opts: Record<string, any> = {}): void {
       actionLogging(nodeId, stepInputs, workflowData);
 
       workflowData.__ACTION_RETURNS.set(nodeId, result);
-      return workflowData.__ACTION_RETURNS.get(nodeId);
+      return workflowData;
     }
   );
 
