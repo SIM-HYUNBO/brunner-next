@@ -31,7 +31,7 @@ import * as LottieComponent from "@/components/eDoc/eDocComponent/eDocComponent_
 
 export default function EDocDesignerContainer({
   documentId,
-  triggerMenuReload,
+  triggermenureload,
 }) {
   const { BrunnerMessageBox, openModal } = useModal();
 
@@ -233,7 +233,7 @@ export default function EDocDesignerContainer({
     setLoading(false);
 
     if (jResponse.error_code === 0) {
-      if (triggerMenuReload) triggerMenuReload();
+      if (triggermenureload) triggermenureload();
       openModal(constants.messages.SUCCESS_SAVED);
       setDocumentData(jResponse.documentData);
       setCurrentPageIdx(0);
@@ -262,7 +262,7 @@ export default function EDocDesignerContainer({
     setLoading(false);
 
     if (jResponse.error_code === 0) {
-      if (triggerMenuReload) triggerMenuReload();
+      if (triggermenureload) triggermenureload();
       openModal(constants.messages.SUCCESS_DELETED);
       setDocumentData({
         id: null,

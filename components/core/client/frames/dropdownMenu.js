@@ -4,7 +4,7 @@ import { getDropdownMenuItems } from "@/components/core/client/frames/dropdownMe
 import UserInfo from "@/components/core/client/frames/userInfo"; // 예시 import
 import { getIsDarkMode } from "@/components/core/client/frames/darkModeToggleButton";
 
-export default function DropdownMenu({ reloadSignal, triggerMenuReload }) {
+export default function DropdownMenu({ reloadSignal, triggermenureload }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [menuItems, setMenuItems] = useState([]);
   const [openSections, setOpenSections] = useState({});
@@ -67,7 +67,7 @@ export default function DropdownMenu({ reloadSignal, triggerMenuReload }) {
   };
 
   const handleLogout = async () => {
-    if (triggerMenuReload) triggerMenuReload();
+    if (triggermenureload) triggermenureload();
     const items = await getDropdownMenuItems();
     setMenuItems(items);
   };
@@ -160,7 +160,7 @@ export default function DropdownMenu({ reloadSignal, triggerMenuReload }) {
           <hr className="border-gray-300 dark:border-gray-600" />
           <UserInfo
             handleLogout={handleLogout}
-            triggerMenuReload={triggerMenuReload}
+            triggermenureload={triggermenureload}
           />
         </div>
       )}

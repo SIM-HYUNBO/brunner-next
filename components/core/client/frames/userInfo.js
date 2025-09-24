@@ -7,7 +7,7 @@ import { useState, useEffect } from "react";
 export default function UserInfo({
   handleLogout,
   reloadSignal,
-  triggerMenuReload,
+  triggermenureload,
 }) {
   const [userName, setUserName] = useState("");
 
@@ -59,7 +59,7 @@ export default function UserInfo({
       <div className="absolute inset-y-0 right-0 flex items-center pr-2">
         <SignoutButton
           handleLogout={handleLogout}
-          triggerMenuReload={triggerMenuReload}
+          triggermenureload={triggermenureload}
         />
       </div>
     </div>

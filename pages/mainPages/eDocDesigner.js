@@ -7,16 +7,16 @@ import useInitTheme from "@/hooks/useInitTheme";
 
 export default function EDocDesigner() {
   const [reloadSignal, setReloadSignal] = useState(0);
-  const triggerMenuReload = () => setReloadSignal((prev) => prev + 1);
+  const triggermenureload = () => setReloadSignal((prev) => prev + 1);
   const documentId = null;
 
   useInitTheme();
 
   return (
-    <Layout reloadSignal={reloadSignal} triggerMenuReload={triggerMenuReload}>
+    <Layout reloadSignal={reloadSignal} triggermenureload={triggermenureload}>
       <EDocDesignerContainer
         documentId={documentId}
-        triggerMenuReload={triggerMenuReload}
+        triggermenureload={triggermenureload}
       />
     </Layout>
   );

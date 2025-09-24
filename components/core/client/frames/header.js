@@ -3,13 +3,13 @@ import Link from "next/link";
 import Image from "next/image";
 import DropdownMenu from "@/components/core/client/frames/dropdownMenu";
 
-export default function Header({ triggerMenuReload, reloadSignal }) {
+export default function Header({ triggermenureload, reloadSignal }) {
   return (
     <header className="header">
       {/* 햄버거 메뉴 */}
       <div className="absolute top-0 right-0 z-50">
         <DropdownMenu
-          triggerMenuReload={triggerMenuReload}
+          triggermenureload={triggermenureload}
           reloadSignal={reloadSignal}
         />
       </div>

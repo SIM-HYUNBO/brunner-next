@@ -10,7 +10,7 @@ import RequestServer from "@/components/core/client/requestServer";
 import * as constants from "@/components/core/constants";
 import * as userInfo from "@/components/core/client/frames/userInfo";
 
-export default function Layout({ children, reloadSignal, triggerMenuReload }) {
+export default function Layout({ children, reloadSignal, triggermenureload }) {
   const [documentList, setDocumentList] = useState([]);
 
   const reloadMenu = async () => {
@@ -51,7 +51,7 @@ export default function Layout({ children, reloadSignal, triggerMenuReload }) {
 
   return (
     <>
-      <BodySection>
+      <BodySection triggermenureload={triggermenureload}>
         <Head>
           <title>Noesis Pelagos - Brunner-Next</title>
           <meta
@@ -78,12 +78,12 @@ export default function Layout({ children, reloadSignal, triggerMenuReload }) {
           <div className="flex flex-col w-full">
             <main className="flex-grow md:overflow-x: auto">
               <Header
-                triggerMenuReload={triggerMenuReload}
+                triggermenureload={triggermenureload}
                 reloadSignal={reloadSignal}
               />
               {React.Children.map(children, (child) =>
                 React.isValidElement(child)
-                  ? React.cloneElement(child, { triggerMenuReload })
+                  ? React.cloneElement(child, { triggermenureload })
                   : child
               )}
               <Footer />
