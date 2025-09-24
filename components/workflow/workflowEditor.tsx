@@ -1,5 +1,5 @@
 import * as React from "react";
-import { useState, useCallback, useRef } from "react";
+import { useState, useCallback, useRef, useMemo } from "react";
 import {
   ReactFlow,
   ReactFlowProvider,
@@ -19,12 +19,11 @@ import { useModal } from "@/components/core/client/brunnerMessageBox";
 import * as workflowEngine from "@/components/workflow/workflowEngine";
 import { NodePropertyEditor } from "@/components/workflow/nodePropertyEditor";
 import * as actionRegistry from "@/components/workflow/actionRegistry";
-import { TableJsonDataEditor } from "@/components/workflow/tableJsonDataEditor";
+import { TableJsonDataEditorModal } from "@/components/workflow/tableJsonDataEditorModal";
 import { TableJsonDataManager } from "@/components/workflow/tableJsonDataManager";
 
 import type {
   NodeInputField,
-  NodeOutputField,
   ActionNodeData,
   ConditionEdgeData,
 } from "@/components/workflow/actionRegistry";
@@ -76,7 +75,7 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
   const [workflowName, setWorkflowName] = useState("새 워크플로우");
   const [workflowDescription, setWorkflowDescription] = useState("설명 없음");
   const [workflowInputData, setWorkflowInputData] = useState<string>(
-    `[{ "key1": "test", "key2": 123 }]`
+    `{"table1":[{ "key1": "test", "key2": 123 }]}`
   );
   const [workflowOutputData, setWorkflowOutputData] = useState<
     Record<string, any>
@@ -89,13 +88,20 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
   const [selectedNode, setSelectedNode] = useState<Node<ActionNodeData> | null>(
     null
   );
-  const [selectedEdge, setSelectedEdge] =
-    useState<Edge<ConditionEdgeData> | null>(null);
   const [runningNodeIds, setRunningNodeIds] = useState<string[]>([]);
 
   // -------------------- TableJsonDataEditor 관련 --------------------
   const tableManager = useRef(new TableJsonDataManager()).current;
   const [isTableEditorOpen, setIsTableEditorOpen] = useState(false);
+
+  const workflowInputDataObj = useMemo(() => {
+    try {
+      const parsed = JSON.parse(workflowInputData);
+      return Object.keys(parsed).length ? parsed : { table1: [] };
+    } catch {
+      return { table1: [] };
+    }
+  }, [workflowInputData]);
 
   const generateStepId = useCallback(() => {
     stepCounterRef.current += 1;
@@ -135,10 +141,6 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
     (_event: any, node: Node<ActionNodeData>) => setSelectedNode(node),
     []
   );
-  const onEdgeClick = useCallback(
-    (_event: any, edge: Edge<ConditionEdgeData>) => setSelectedEdge(edge),
-    []
-  );
 
   // -------------------- 노드 / 엣지 조작 --------------------
   const addNode = () => {
@@ -164,20 +166,6 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
     ]);
   };
 
-  const updateEdgeCondition = () => {
-    if (!selectedEdge) return;
-    const cond = prompt("Enter condition:", selectedEdge.data?.condition || "");
-    if (cond !== null) {
-      setEdges((eds) =>
-        eds.map((e) =>
-          e.id === selectedEdge.id
-            ? { ...e, data: { ...e.data, condition: cond } }
-            : e
-        )
-      );
-    }
-  };
-
   const getWorkflowJson = (): string =>
     JSON.stringify(
       { workflowId, workflowName, workflowDescription, nodes, edges },
@@ -185,21 +173,9 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
       2
     );
 
-  const exportWorkflow = () => {
-    const workflowJson = getWorkflowJson();
-    const win = window.open("", "_blank");
-    if (win) {
-      win.document.write(
-        `<pre style="white-space: pre-wrap; word-wrap: break-word;">${workflowJson}</pre>`
-      );
-      win.document.close();
-    }
-  };
-
   async function executeWorkflow(workflow: any = [], workflowInputs: any = []) {
     const nodesList: Node<any>[] = workflow.nodes;
     const edgesList: Edge<any>[] = workflow.edges;
-
     const startNode = nodesList.find(
       (n) => n.data.actionName === constants.workflowActions.START
     );
@@ -227,84 +203,21 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
       const node = nodesList.find((n) => n.id === nodeId);
       if (!node) return;
 
-      const stepInputs = node.data.inputs
-        ? Object.fromEntries(
-            node.data.inputs.map((input: NodeInputField) => {
-              if (input.type === "direct") return [input.key, input.value];
-              if (input.type === "ref")
-                return [input.key, context[input.sourceNodeId!]];
-              return [input.key, undefined];
-            })
-          )
-        : {};
-
       const shouldRun = !node.data.if || Boolean(node.data.if);
       let result: any = null;
 
       if (shouldRun) {
         setRunningNodeIds((prev) => [...prev, nodeId]);
-
-        switch (node.data.actionName) {
-          case constants.workflowActions.MATHOP: {
-            const a = Number(
-              node.data.inputs.find((i: NodeInputField) => i.key === "a")
-                ?.value ?? 0
-            );
-            const b = Number(
-              node.data.inputs.find((i: NodeInputField) => i.key === "b")
-                ?.value ?? 0
-            );
-            const operator = node.data.inputs.find(
-              (i: NodeInputField) => i.key === "operator"
-            )?.value;
-            switch (operator) {
-              case "+":
-                result = a + b;
-                break;
-              case "-":
-                result = a - b;
-                break;
-              case "*":
-                result = a * b;
-                break;
-              case "/":
-                result = b !== 0 ? a / b : 0;
-                break;
-              default:
-                result = 0;
-            }
-            context[nodeId] = result;
-            break;
-          }
-
-          case constants.workflowActions.BRANCH: {
-            const condition = node.data.inputs.find(
-              (i: any) => i.key === "condition"
-            )?.value;
-            const outgoing = edgeMap[nodeId] || [];
-            if (outgoing.length > 0) {
-              const targetEdge = condition ? outgoing[0] : outgoing[1];
-              if (targetEdge) await traverse(targetEdge.target);
-            }
-            break;
-          }
-
-          default:
-            result = await workflowEngine.runWorkflowStep(node, context);
-            context[nodeId] = result;
-        }
-
+        result = await workflowEngine.runWorkflowStep(node, context);
+        context[nodeId] = result;
         setRunningNodeIds((prev) => prev.filter((id) => id !== nodeId));
       }
 
-      if (node.data.actionName !== constants.workflowActions.BRANCH) {
-        const outgoingEdges = edgeMap[nodeId] || [];
-        for (const edge of outgoingEdges) {
-          if (!edge.data?.condition || Boolean(edge.data.condition))
-            await traverse(edge.target);
-        }
+      const outgoingEdges = edgeMap[nodeId] || [];
+      for (const edge of outgoingEdges) {
+        if (!edge.data?.condition || Boolean(edge.data.condition))
+          await traverse(edge.target);
       }
-
       return result;
     }
 
@@ -314,7 +227,7 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
 
   const executeWorkflowFromTableEditor = async () => {
     try {
-      const workflowInputs = tableManager.getData(); // 객체 형태
+      const workflowInputs = tableManager.getData();
       await executeWorkflow(JSON.parse(getWorkflowJson()), workflowInputs);
     } catch (err) {
       openModal("❌ 실행 실패: " + String(err));
@@ -354,7 +267,6 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
                 onEdgesChange={onEdgesChange}
                 onConnect={onConnect}
                 onNodeClick={onNodeClick}
-                onEdgeClick={onEdgeClick}
                 fitView
                 snapToGrid
                 snapGrid={[20, 20]}
@@ -367,10 +279,13 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
 
             <div className="flex flex-col justify-between h-full ml-4">
               <h3>Editor</h3>
-              <button className="w-full border" onClick={addNode}>
+              <button className="w-full border mb-2" onClick={addNode}>
                 Add Node
               </button>
-              <button className="w-full border" onClick={exportWorkflow}>
+              <button
+                className="w-full border mb-2"
+                onClick={() => console.log(getWorkflowJson())}
+              >
                 Export JSON
               </button>
 
@@ -392,13 +307,12 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
                         ? { ...n, data: { ...n.data, ...updates } }
                         : n
                     );
-                    const updated =
-                      newNodes.find((n: any) => n.id === id) || null;
-                    setSelectedNode(updated);
+                    setSelectedNode(newNodes.find((n) => n.id === id) || null);
                     return newNodes;
                   });
                 }}
               />
+
               <button
                 className="w-full bg-yellow-200 border mt-5"
                 onClick={executeWorkflowFromTableEditor}
@@ -408,7 +322,7 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
             </div>
           </div>
 
-          {/* -------------------- Input / Output Data -------------------- */}
+          {/* -------------------- Table Editor 버튼 및 모달 -------------------- */}
           <div className="flex flex-row mt-5">
             <div className="flex flex-col mr-2 w-[calc(50%-10px)]">
               <h4>Input Data</h4>
@@ -420,20 +334,18 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
               </button>
 
               {isTableEditorOpen && (
-                <div className="absolute top-0 left-0 w-full h-full bg-white z-50 p-4 overflow-auto">
-                  <button
-                    className="border mb-2"
-                    onClick={() => setIsTableEditorOpen(false)}
-                  >
-                    닫기
-                  </button>
-                  <TableJsonDataEditor
-                    manager={tableManager}
-                    readData={workflowInputData}
-                  />
-                </div>
+                <TableJsonDataEditorModal
+                  open={isTableEditorOpen}
+                  value={workflowInputDataObj}
+                  onConfirm={(newData) => {
+                    setWorkflowInputData(JSON.stringify(newData, null, 2));
+                    setIsTableEditorOpen(false);
+                  }}
+                  onCancel={() => setIsTableEditorOpen(false)}
+                />
               )}
             </div>
+
             <div className="flex flex-col ml-2 w-[calc(50%-10px)]">
               <h4>Output Data</h4>
               <textarea
