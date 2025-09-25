@@ -1,5 +1,18 @@
 export type JsonObject = { [key: string]: any };
 
+export interface ColumnSchema {
+  name: string;
+  type:
+    | "string"
+    | "number"
+    | "boolean"
+    | "object"
+    | "array"
+    | "null"
+    | "date"
+    | "datetime";
+}
+
 export interface JsonDatasetValidationResult {
   valid: boolean;
   error?: {
@@ -11,6 +24,7 @@ export interface JsonDatasetValidationResult {
 
 export class JsonDatasetManager {
   private data: Record<string, JsonObject[]> = {};
+  private columns: Record<string, ColumnSchema[]> = {};
 
   constructor(initialData?: string | Record<string, JsonObject[]>) {
     if (initialData) this.load(initialData);
@@ -26,10 +40,20 @@ export class JsonDatasetManager {
     } else {
       this.data = input;
     }
-    const valid = this.validate();
-    if (!valid.valid) {
-      throw new Error(this.validateMessage() ?? "Invalid JsonDataset");
+
+    // 초기 컬럼 스키마 생성 (모든 컬럼 type = string 기본)
+    for (const tableKey of Object.keys(this.data)) {
+      const rows = this.data[tableKey];
+      if (rows && rows[0]) {
+        this.columns[tableKey] = rows[0]
+          ? Object.keys(rows[0]).map((name) => ({ name, type: "string" }))
+          : [];
+      }
     }
+
+    const valid = this.validate();
+    if (!valid.valid)
+      throw new Error(this.validateMessage() ?? "Invalid JsonDataset");
   }
 
   getData(): Record<string, JsonObject[]> {
@@ -40,33 +64,48 @@ export class JsonDatasetManager {
     return this.data[tableKey];
   }
 
+  getColumns(tableKey: string): ColumnSchema[] {
+    return this.columns[tableKey] ?? [];
+  }
+
   addTable(tableKey: string, rows: JsonObject[] = []): void {
-    // if (this.data[tableKey])
-    //   throw new Error(`Table "${tableKey}" already exists`);
     this.data[tableKey] = rows;
+    this.columns[tableKey] = rows[0]
+      ? Object.keys(rows[0]).map((name) => ({ name, type: "string" }))
+      : [];
   }
 
   removeTable(tableKey: string): void {
     delete this.data[tableKey];
+    delete this.columns[tableKey];
   }
 
   renameTable(oldName: string, newName: string): void {
     if (!this.data[oldName])
       throw new Error(`Table "${oldName}" does not exist`);
     this.data[newName] = this.data[oldName];
+    this.columns[newName] = this.columns[oldName] ?? [];
     delete this.data[oldName];
+    delete this.columns[oldName];
   }
 
-  addColumn(tableKey: string, columnName: string): void {
+  addColumn(tableKey: string, column: ColumnSchema): void {
     const table = this.data[tableKey];
     if (!table) throw new Error(`Table "${tableKey}" does not exist`);
-    table.forEach((row) => (row[columnName] = ""));
+    // 각 row에 컬럼 추가
+    table.forEach((row) => (row[column.name] = null));
+    if (!this.columns[tableKey]) this.columns[tableKey] = [];
+    this.columns[tableKey].push(column);
   }
 
   removeColumn(tableKey: string, columnName: string): void {
     const table = this.data[tableKey];
     if (!table) throw new Error(`Table "${tableKey}" does not exist`);
     table.forEach((row) => delete row[columnName]);
+    if (this.columns[tableKey])
+      this.columns[tableKey] = this.columns[tableKey].filter(
+        (c) => c.name !== columnName
+      );
   }
 
   renameColumn(tableKey: string, oldName: string, newName: string): void {
@@ -76,6 +115,10 @@ export class JsonDatasetManager {
       row[newName] = row[oldName];
       delete row[oldName];
     });
+    if (this.columns[tableKey]) {
+      const col = this.columns[tableKey].find((c) => c.name === oldName);
+      if (col) col.name = newName;
+    }
   }
 
   addRow(tableKey: string, row: JsonObject): void {
