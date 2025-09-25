@@ -7,6 +7,7 @@ import type {
 import { NodeInputParameterModal } from "@/components/workflow/nodeInputParameterModal";
 import * as actionRegistry from "@/components/workflow/actionRegistry";
 import NodeOutputParameterModal from "@/components/workflow/nodeOutputParameterModal";
+import * as constants from "@/components/core/constants";
 
 interface NodePropertyEditorProps {
   node: Node<any> | null;
@@ -149,9 +150,9 @@ export const NodePropertyEditor: React.FC<NodePropertyEditorProps> = ({
           value={actionName}
           onChange={(e) => setActionName(e.target.value)}
         >
-          {Array.from(actionRegistry.actionMap.keys()).map((a) => (
-            <option key={a} value={a}>
-              {a}
+          {Object.values(constants.workflowActions).map((actionName) => (
+            <option key={actionName} value={actionName}>
+              {actionName}
             </option>
           ))}
         </select>
