@@ -1,5 +1,5 @@
 import * as React from "react";
-import { useState, useCallback, useRef, useMemo } from "react";
+import { useState, useEffect, useCallback, useRef, useMemo } from "react";
 import {
   ReactFlow,
   ReactFlowProvider,
@@ -19,8 +19,11 @@ import { useModal } from "@/components/core/client/brunnerMessageBox";
 import * as workflowEngine from "@/components/workflow/workflowEngine";
 import { NodePropertyEditor } from "@/components/workflow/nodePropertyEditor";
 import * as actionRegistry from "@/components/workflow/actionRegistry";
-import { TableJsonDataEditorModal } from "@/components/workflow/tableJsonDataEditorModal";
-import { TableJsonDataManager } from "@/components/workflow/tableJsonDataManager";
+import { JsonDatasetEditorModal } from "@/components/workflow/jsonDatasetEditorModal";
+import {
+  JsonDatasetManager,
+  type JsonObject,
+} from "@/components/workflow/jsonDatasetManager";
 
 import type {
   NodeInputField,
@@ -68,18 +71,30 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
   ],
   initialEdges = [],
 }) => {
+  useEffect(() => {
+    setWorkflowId(nanoid());
+  }, []);
+
   const stepCounterRef = useRef(0);
   const { BrunnerMessageBox, openModal } = useModal();
 
-  const [workflowId, setWorkflowId] = useState(nanoid());
+  const [workflowId, setWorkflowId] = useState<string | null>(null);
   const [workflowName, setWorkflowName] = useState("새 워크플로우");
   const [workflowDescription, setWorkflowDescription] = useState("설명 없음");
   const [workflowInputData, setWorkflowInputData] = useState<string>(
-    `{"table1":[{ "key1": "test", "key2": 123 }]}`
+    JSON.stringify(
+      JSON.parse(`{"INPUT_TABLE":[{ "key1": "test", "key2": 123 }]}`),
+      null,
+      2
+    )
   );
-  const [workflowOutputData, setWorkflowOutputData] = useState<
-    Record<string, any>
-  >({});
+  const [workflowOutputData, setWorkflowOutputData] = useState<string>(
+    JSON.stringify(
+      JSON.parse(`{"OUTPUT_TABLE":[{ "key1": "test", "key2": 123 }]}`),
+      null,
+      2
+    )
+  );
 
   const [nodes, setNodes] = useState<Node<ActionNodeData>[]>(
     initialNodes as Node<ActionNodeData>[]
@@ -90,9 +105,10 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
   );
   const [runningNodeIds, setRunningNodeIds] = useState<string[]>([]);
 
-  // -------------------- TableJsonDataEditor 관련 --------------------
-  const tableManager = useRef(new TableJsonDataManager()).current;
-  const [isTableEditorOpen, setIsTableEditorOpen] = useState(false);
+  // -------------------- JsonDatasetEditor 관련 --------------------
+  const tableManager = useRef(new JsonDatasetManager()).current;
+  const [isInputDataEditorOpen, setIsInputDataEditorOpen] = useState(false);
+  const [isOutputDataEditorOpen, setIsOutputDataEditorOpen] = useState(false);
 
   const workflowInputDataObj = useMemo(() => {
     try {
@@ -102,6 +118,14 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
       return { table1: [] };
     }
   }, [workflowInputData]);
+  const workflowOutputDataObj = useMemo(() => {
+    try {
+      const parsed = JSON.parse(workflowOutputData);
+      return Object.keys(parsed).length ? parsed : { table1: [] };
+    } catch {
+      return { table1: [] };
+    }
+  }, [workflowOutputData]);
 
   const generateStepId = useCallback(() => {
     stepCounterRef.current += 1;
@@ -328,29 +352,54 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
               <h4>Input Data</h4>
               <button
                 className="w-full border bg-blue-200 mb-2"
-                onClick={() => setIsTableEditorOpen(true)}
+                onClick={() => setIsInputDataEditorOpen(true)}
               >
-                Table Editor 열기
+                Edit Data
               </button>
 
-              {isTableEditorOpen && (
-                <TableJsonDataEditorModal
-                  open={isTableEditorOpen}
+              {isInputDataEditorOpen && (
+                <JsonDatasetEditorModal
+                  open={isInputDataEditorOpen}
+                  mode="data"
                   value={workflowInputDataObj}
                   onConfirm={(newData) => {
                     setWorkflowInputData(JSON.stringify(newData, null, 2));
-                    setIsTableEditorOpen(false);
+                    setIsInputDataEditorOpen(false);
                   }}
-                  onCancel={() => setIsTableEditorOpen(false)}
+                  onCancel={() => setIsInputDataEditorOpen(false)}
                 />
               )}
+              <textarea
+                className="w-full h-[250px] mt-2 border p-2 font-mono text-sm"
+                value={workflowInputData}
+                readOnly
+              />
             </div>
 
             <div className="flex flex-col ml-2 w-[calc(50%-10px)]">
               <h4>Output Data</h4>
+              <button
+                className="w-full border bg-blue-200 mb-2"
+                onClick={() => setIsOutputDataEditorOpen(true)}
+              >
+                Edit Schema
+              </button>
+
+              {isOutputDataEditorOpen && (
+                <JsonDatasetEditorModal
+                  open={isOutputDataEditorOpen}
+                  mode="schema"
+                  value={workflowOutputDataObj}
+                  onConfirm={(newData) => {
+                    setWorkflowOutputData(JSON.stringify(newData, null, 2));
+                    setIsOutputDataEditorOpen(false);
+                  }}
+                  onCancel={() => setIsOutputDataEditorOpen(false)}
+                />
+              )}
               <textarea
-                className="w-full h-[250px]"
-                value={JSON.stringify(workflowOutputData, null, 2)}
+                className="w-full h-[250px] mt-2 border p-2 font-mono text-sm"
+                value={workflowOutputData}
                 readOnly
               />
             </div>

@@ -1,6 +1,6 @@
 export type JsonObject = { [key: string]: any };
 
-export interface TableJsonValidationResult {
+export interface JsonDatasetValidationResult {
   valid: boolean;
   error?: {
     tableKey: string;
@@ -9,7 +9,7 @@ export interface TableJsonValidationResult {
   };
 }
 
-export class TableJsonDataManager {
+export class JsonDatasetManager {
   private data: Record<string, JsonObject[]> = {};
 
   constructor(initialData?: string | Record<string, JsonObject[]>) {
@@ -28,7 +28,7 @@ export class TableJsonDataManager {
     }
     const valid = this.validate();
     if (!valid.valid) {
-      throw new Error(this.validateMessage() ?? "Invalid TableJsonData");
+      throw new Error(this.validateMessage() ?? "Invalid JsonDataset");
     }
   }
 
@@ -41,8 +41,8 @@ export class TableJsonDataManager {
   }
 
   addTable(tableKey: string, rows: JsonObject[] = []): void {
-    if (this.data[tableKey])
-      throw new Error(`Table "${tableKey}" already exists`);
+    // if (this.data[tableKey])
+    //   throw new Error(`Table "${tableKey}" already exists`);
     this.data[tableKey] = rows;
   }
 
@@ -100,7 +100,7 @@ export class TableJsonDataManager {
     table[index] = newRow;
   }
 
-  validate(): TableJsonValidationResult {
+  validate(): JsonDatasetValidationResult {
     const data = this.data;
     if (typeof data !== "object" || data === null) {
       return {

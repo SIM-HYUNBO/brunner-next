@@ -11,7 +11,7 @@ import NodeOutputParameterModal from "@/components/workflow/nodeOutputParameterM
 interface NodePropertyEditorProps {
   node: Node<any> | null;
   nodes: Node<any>[];
-  workflowId: string;
+  workflowId: string | null;
   workflowName: string;
   workflowDescription: string;
   onWorkflowUpdate?: (updates: {

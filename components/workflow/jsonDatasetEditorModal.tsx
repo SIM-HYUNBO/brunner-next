@@ -1,0 +1,327 @@
+import * as React from "react";
+import { useState, useEffect, useRef } from "react";
+import { JsonDatasetManager } from "@/components/workflow/jsonDatasetManager";
+import type { JsonObject } from "@/components/workflow/jsonDatasetManager";
+
+type JsonDatasetEditorMode = "schema" | "data";
+
+interface JsonDatasetEditorModalProps {
+  open: boolean;
+  mode: JsonDatasetEditorMode;
+  value?: Record<string, JsonObject[]>;
+  onConfirm: (data: Record<string, JsonObject[]>) => void;
+  onCancel?: () => void;
+}
+
+export const JsonDatasetEditorModal: React.FC<JsonDatasetEditorModalProps> = ({
+  open,
+  mode,
+  value = {},
+  onConfirm,
+  onCancel,
+}) => {
+  const [internalData, setInternalData] = useState(value);
+  const [selectedTable, setSelectedTable] = useState<string | null>(
+    Object.keys(value)[0] || null
+  );
+  const [manager, setManager] = useState(() => new JsonDatasetManager(value));
+  const modalRef = useRef<HTMLDivElement>(null);
+
+  const isSchemaMode = mode === "schema";
+  const isDataMode = mode === "data";
+
+  // 모달 중앙 표시 + 드래그 상태
+  const [position, setPosition] = useState({ x: 0, y: 0 });
+  const [dragging, setDragging] = useState(false);
+  const dragStart = useRef({ x: 0, y: 0 });
+
+  const startDrag = (e: React.MouseEvent) => {
+    e.preventDefault();
+    setDragging(true);
+    dragStart.current = {
+      x: e.clientX - position.x,
+      y: e.clientY - position.y,
+    };
+  };
+
+  const onDrag = (e: MouseEvent) => {
+    if (!dragging) return;
+    setPosition({
+      x: e.clientX - dragStart.current.x,
+      y: e.clientY - dragStart.current.y,
+    });
+  };
+
+  const stopDrag = () => setDragging(false);
+
+  useEffect(() => {
+    if (dragging) {
+      window.addEventListener("mousemove", onDrag);
+      window.addEventListener("mouseup", stopDrag);
+    } else {
+      window.removeEventListener("mousemove", onDrag);
+      window.removeEventListener("mouseup", stopDrag);
+    }
+    return () => {
+      window.removeEventListener("mousemove", onDrag);
+      window.removeEventListener("mouseup", stopDrag);
+    };
+  }, [dragging]);
+
+  // 모달 열릴 때 데이터 초기화
+  useEffect(() => {
+    const initData =
+      value && Object.keys(value).length > 0 ? value : { table1: [] };
+    setInternalData(initData);
+    const newManager = new JsonDatasetManager(initData);
+    setManager(newManager);
+    setSelectedTable(Object.keys(newManager.getData())[0] || null);
+    // 중앙 위치 초기화
+    setPosition({
+      x: window.innerWidth / 2 - 400,
+      y: window.innerHeight / 2 - 300,
+    });
+  }, [open, value]);
+
+  // 데이터 모드에서 스키마와 맞지 않는 데이터 보정
+  useEffect(() => {
+    if (isDataMode && selectedTable) {
+      const tableData = manager.getTable(selectedTable) ?? [];
+      const schemaCols = tableData[0] ? Object.keys(tableData[0]) : [];
+      const newData: JsonObject[] = tableData.map((row) => {
+        const newRow: JsonObject = {};
+        schemaCols.forEach((col) => {
+          newRow[col] = row[col] ?? "";
+        });
+        return newRow;
+      });
+      manager.addTable(selectedTable, newData);
+      setInternalData({ ...manager.getData() });
+    }
+  }, [isDataMode, manager, selectedTable]);
+
+  if (!open) return null;
+
+  const tableKeys = Object.keys(manager.getData());
+
+  const selectTable = (key: string) => setSelectedTable(key);
+
+  const addTable = () => {
+    if (!isSchemaMode) return;
+    const newKey = `table_${tableKeys.length + 1}`;
+    manager.addTable(newKey, []);
+    setSelectedTable(newKey);
+    setInternalData({ ...manager.getData() });
+  };
+
+  const removeTable = (key: string) => {
+    if (!isSchemaMode) return;
+    manager.removeTable(key);
+    const newKeys = Object.keys(manager.getData());
+    setSelectedTable(newKeys[0] || null);
+    setInternalData({ ...manager.getData() });
+  };
+
+  const renameTable = (oldKey: string) => {
+    if (!isSchemaMode) return;
+    const newKey = prompt("새 테이블 이름:", oldKey);
+    if (!newKey || newKey === oldKey || manager.getData()[newKey]) return;
+    const data = manager.getTable(oldKey) ?? [];
+    manager.removeTable(oldKey);
+    manager.addTable(newKey, data);
+    setSelectedTable(newKey);
+    setInternalData({ ...manager.getData() });
+  };
+
+  const addRow = () => {
+    if (!selectedTable || !isDataMode) return;
+    const table = manager.getTable(selectedTable) ?? [];
+    const cols = table[0] ? Object.keys(table[0]) : [];
+    const newRow: JsonObject = {};
+    cols.forEach((c) => (newRow[c] = ""));
+    manager.addRow(selectedTable, newRow);
+    setInternalData({ ...manager.getData() });
+  };
+
+  const removeRow = (index: number) => {
+    if (!selectedTable || !isDataMode) return;
+    manager.removeRow(selectedTable, index);
+    setInternalData({ ...manager.getData() });
+  };
+
+  const updateCell = (rowIndex: number, colKey: string, value: any) => {
+    if (!selectedTable || !isDataMode) return;
+    const table = manager.getTable(selectedTable) ?? [];
+    const newRow = { ...table[rowIndex], [colKey]: value };
+    manager.updateRow(selectedTable, rowIndex, newRow);
+    setInternalData({ ...manager.getData() });
+  };
+
+  const addColumn = () => {
+    if (!selectedTable || !isSchemaMode) return;
+    const colName = prompt("컬럼 이름:");
+    if (!colName) return;
+    const table = manager.getTable(selectedTable) ?? [];
+    table.forEach((row, i) => {
+      row[colName] = "";
+      manager.updateRow(selectedTable, i, row);
+    });
+    setInternalData({ ...manager.getData() });
+  };
+
+  const removeColumn = (colKey: string) => {
+    if (!selectedTable || !isSchemaMode) return;
+    const table = manager.getTable(selectedTable) ?? [];
+    table.forEach((row, i) => {
+      delete row[colKey];
+      manager.updateRow(selectedTable, i, row);
+    });
+    setInternalData({ ...manager.getData() });
+  };
+
+  return (
+    <div
+      className="fixed inset-0 bg-black bg-opacity-50 z-50"
+      onClick={onCancel}
+    >
+      <div
+        ref={modalRef}
+        className="bg-white p-4 w-[800px] max-h-[600px] overflow-auto absolute shadow-lg"
+        style={{ left: position.x, top: position.y }}
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div
+          className="flex justify-between mb-2 cursor-move"
+          onMouseDown={startDrag}
+        >
+          <h3>
+            JsonDataset Editor ({isSchemaMode ? "Schema Mode" : "Data Mode"})
+          </h3>
+        </div>
+
+        {/* 테이블 선택 */}
+        <div className="flex mb-2 flex-wrap">
+          {tableKeys.map((key) => (
+            <button
+              key={key}
+              className={`mr-2 mb-2 px-2 py-1 h-8 border ${
+                key === selectedTable ? "bg-blue-200" : ""
+              }`}
+              onClick={() => selectTable(key)}
+              onDoubleClick={() => renameTable(key)}
+            >
+              {key}
+            </button>
+          ))}
+          {isSchemaMode && (
+            <>
+              <button
+                onClick={addTable}
+                className="px-2 py-1 border bg-green-200 h-8"
+              >
+                + Table
+              </button>
+              {selectedTable && (
+                <button
+                  onClick={() => removeTable(selectedTable)}
+                  className="px-2 py-1 border bg-red-200 ml-1 h-8"
+                >
+                  Delete
+                </button>
+              )}
+            </>
+          )}
+        </div>
+
+        {/* 테이블 */}
+        {selectedTable && (
+          <div className="overflow-auto max-h-[400px] border p-1">
+            <table className="table-auto border-collapse border border-gray-400 w-full text-sm">
+              <thead>
+                <tr>
+                  {Object.keys(manager.getTable(selectedTable)?.[0] || {}).map(
+                    (col) => (
+                      <th
+                        key={col}
+                        className="border border-gray-500 px-2 py-1 bg-gray-300 text-gray-900"
+                      >
+                        {col}
+                        {isSchemaMode && (
+                          <button
+                            onClick={() => removeColumn(col)}
+                            className="text-red-500 ml-1"
+                          >
+                            x
+                          </button>
+                        )}
+                      </th>
+                    )
+                  )}
+                  {isSchemaMode && (
+                    <th className="border border-gray-500 px-2 py-1">
+                      <button onClick={addColumn} className="bg-green-200 px-1">
+                        + Column
+                      </button>
+                    </th>
+                  )}
+                </tr>
+              </thead>
+              <tbody>
+                {manager.getTable(selectedTable)?.map((row, i) => (
+                  <tr key={i} className="border border-gray-400">
+                    {Object.keys(row).map((col) => (
+                      <td
+                        key={col}
+                        className="border border-gray-400 px-2 py-1"
+                      >
+                        <input
+                          value={row[col]}
+                          onChange={(e) => updateCell(i, col, e.target.value)}
+                          className={`w-full border-none outline-none text-gray-800 bg-white ${
+                            isSchemaMode ? "cursor-not-allowed" : ""
+                          }`}
+                          readOnly={isSchemaMode}
+                        />
+                      </td>
+                    ))}
+                    {isDataMode && (
+                      <td className="border border-gray-400 px-2 py-1">
+                        <button
+                          onClick={() => removeRow(i)}
+                          className="bg-red-200 px-1"
+                        >
+                          Del.
+                        </button>
+                      </td>
+                    )}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+            {isDataMode && (
+              <button onClick={addRow} className="bg-green-200 px-2 py-1 mt-1">
+                + Row
+              </button>
+            )}
+          </div>
+        )}
+
+        {/* 완료 */}
+        <div className="flex justify-end mt-4 space-x-2">
+          <button
+            onClick={() => onCancel?.()}
+            className="px-4 py-2 border bg-gray-300"
+          >
+            Close
+          </button>
+          <button
+            onClick={() => onConfirm({ ...internalData })}
+            className="px-4 py-2 border bg-blue-300"
+          >
+            Apply
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
