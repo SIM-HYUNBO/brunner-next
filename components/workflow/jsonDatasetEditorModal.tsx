@@ -161,11 +161,17 @@ export const JsonDatasetEditorModal: React.FC<JsonDatasetEditorModalProps> = ({
     if (!selectedTable || !isSchemaMode) return;
     const colName = prompt("컬럼 이름:");
     if (!colName) return;
-    const table = manager.getTable(selectedTable) ?? [];
-    table.forEach((row, i) => {
-      row[colName] = "";
-      manager.updateRow(selectedTable, i, row);
-    });
+    let table: JsonObject[] = manager.getTable(selectedTable) ?? [];
+    if (table.length === 0) {
+      const newRow: JsonObject = { [colName]: null };
+      manager.addRow(selectedTable, newRow);
+    } else {
+      // 기존에 행이 있으면 각 행에 컬럼을 추가
+      for (let i = 0; i < table.length; i++) {
+        const updated = { ...table[i], [colName]: null };
+        manager.updateRow(selectedTable, i, updated);
+      }
+    }
     setInternalData({ ...manager.getData() });
   };
 
