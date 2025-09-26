@@ -148,20 +148,55 @@ export const JsonDatasetEditorModal: React.FC<JsonDatasetEditorModalProps> = ({
   // ---------------- 컬럼 관리 ----------------
   const addColumn = () => {
     if (!selectedTable || !isSchemaMode) return;
+
     const colName = prompt("컬럼 이름:");
     if (!colName) return;
+
     const type = (prompt(
       "타입 선택 (string, number, boolean, object, array, null, date, datetime):",
       "string"
     ) ?? "string") as JsonColumnType;
 
+    // 1️⃣ 컬럼 추가 (manager 내부에서 null 초기화)
     manager.addColumn(selectedTable, { name: colName, type });
 
-    const table = manager.getTable(selectedTable) ?? [];
-    table.forEach((row, i) => {
-      row[colName] = type === "date" || type === "datetime" ? "" : null;
-      manager.updateRow(selectedTable, i, row);
-    });
+    let table = manager.getTable(selectedTable) ?? [];
+
+    // 2️⃣ 타입별 초기값 결정
+    const getDefaultValue = (type: JsonColumnType) => {
+      switch (type) {
+        case "string":
+        case "date":
+        case "datetime":
+          return "";
+        case "number":
+          return 0;
+        case "boolean":
+          return false;
+        case "object":
+          return {};
+        case "array":
+          return [];
+        case "null":
+          return null;
+        default:
+          return null;
+      }
+    };
+
+    if (table.length === 0) {
+      // 행이 없으면 새 행 하나 추가, 새 컬럼만 초기값 적용
+      const newRow: Record<string, any> = {};
+      newRow[colName] = getDefaultValue(type);
+      manager.addRow(selectedTable, newRow);
+    } else {
+      // 기존 행이 있으면 새 컬럼만 초기화
+      table.forEach((row, i) => {
+        row[colName] = getDefaultValue(type);
+        manager.updateRow(selectedTable, i, row);
+      });
+    }
+
     setInternalData({ ...manager.getData() });
   };
 

@@ -12,15 +12,15 @@ export interface DatasetColumn {
   sourceNodeId?: string; // 바인딩 되어 있을때
 }
 
-export interface DatasetColumnWithUI extends DatasetColumn {
+export interface DatasetColumnWithBinding extends DatasetColumn {
   bindingType: "direct" | "ref";
   sourceNodeId?: string;
 }
 
-export interface NodeDataTableWithUI {
+export interface NodeDataTableWithBinding {
   table: string;
   value: Record<string, any>[]; // 실제 데이터
-  columns: DatasetColumnWithUI[]; // 컬럼 정보
+  columns: DatasetColumnWithBinding[]; // 컬럼 정보
 }
 
 // -------------------- 타입 정의 --------------------
@@ -36,6 +36,10 @@ export interface ActionNodeData {
   status: string;
   inputs: NodeDataTable[];
   outputs: NodeDataTable[];
+}
+
+export interface ConditionEdgeData {
+  condition?: string;
 }
 
 export type WorkflowContext = Record<string, any> & {

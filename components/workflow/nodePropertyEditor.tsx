@@ -1,8 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import type { Node } from "reactflow";
 import type { NodeDataTable } from "@/components/workflow/actionRegistry";
-import { NodeInputParameterModal } from "@/components/workflow/nodeInputParameterModal";
-import NodeOutputParameterModal from "@/components/workflow/nodeOutputParameterModal";
 import * as actionRegistry from "@/components/workflow/actionRegistry";
 import * as constants from "@/components/core/constants";
 
@@ -193,33 +191,6 @@ export const NodePropertyEditor: React.FC<NodePropertyEditorProps> = ({
           </button>
         </div>
       </div>
-
-      {/* Input Mapping Modal */}
-      <NodeInputParameterModal
-        isOpen={isModalOpen}
-        actionName={actionName}
-        inputs={inputs}
-        outputs={outputs}
-        workflowVariables={allWorkflowVariables}
-        onClose={() => setIsModalOpen(false)}
-        onSave={(newInputs: NodeDataTable[], newOutputs: NodeDataTable[]) => {
-          setInputs(newInputs);
-          setOutputs(newOutputs);
-          onNodeUpdate?.(node.id, { inputs: newInputs, outputs: newOutputs });
-          setIsModalOpen(false);
-        }}
-      />
-
-      {editingOutputs && (
-        <NodeOutputParameterModal
-          outputs={outputs}
-          onChange={(updated: NodeDataTable[]) => {
-            setOutputs(updated);
-            onNodeUpdate?.(node.id, { outputs: updated });
-          }}
-          onClose={() => setEditingOutputs(false)}
-        />
-      )}
     </div>
   );
 };

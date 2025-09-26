@@ -38,9 +38,16 @@ export class JsonDatasetManager {
   // ---------------- Table / Column ----------------
   addTable(tableKey: string, rows: JsonObject[] = []) {
     this.data[tableKey] = rows;
-    this.columns[tableKey] = rows[0]
-      ? Object.keys(rows[0]).map((name) => ({ name, type: "string" }))
-      : [];
+
+    if (rows.length > 0 && rows[0] != null) {
+      const firstRow = rows[0] as Record<string, any>; // 타입 단언
+      this.columns[tableKey] = Object.keys(firstRow).map((name) => ({
+        name,
+        type: this.inferType(firstRow[name]),
+      }));
+    } else {
+      this.columns[tableKey] = [];
+    }
   }
 
   removeTable(tableKey: string) {
@@ -60,38 +67,64 @@ export class JsonDatasetManager {
     return this.columns[tableKey] ?? [];
   }
 
-  addColumn(tableKey: string, column: ColumnSchema) {
-    if (!this.data[tableKey]) this.addTable(tableKey);
-    (this.data[tableKey] ?? []).forEach((row) => (row[column.name] = null));
+  // 테이블과 컬럼 배열 존재를 보장
+  private ensureTable(tableKey: string): Record<string, any>[] {
+    if (!this.data[tableKey]) this.data[tableKey] = [];
     if (!this.columns[tableKey]) this.columns[tableKey] = [];
-    this.columns[tableKey]?.push(column);
+    return this.data[tableKey]!; // !를 붙여서 undefined 아님을 단언
   }
 
-  removeColumn(tableKey: string, columnName: string) {
-    (this.data[tableKey] ?? []).forEach((row) => delete row[columnName]);
-    if (this.columns[tableKey]) {
-      this.columns[tableKey] = (this.columns[tableKey] ?? []).filter(
-        (c) => c.name !== columnName
-      );
+  // 컬럼 추가
+  addColumn(tableKey: string, column: ColumnSchema): void {
+    const tableRows = this.ensureTable(tableKey);
+
+    // 모든 행에 새 컬럼 추가
+    for (const row of tableRows) {
+      (row as Record<string, any>)[column.name] = null;
     }
+
+    // 컬럼 배열 보장 후 추가
+    this.columns[tableKey]!.push(column);
+  }
+
+  // 컬럼 제거
+  removeColumn(tableKey: string, columnName: string) {
+    const tableRows = this.data[tableKey];
+    if (tableRows) {
+      for (const row of tableRows) {
+        delete (row as Record<string, any>)[columnName];
+      }
+    }
+
+    const columns = this.ensureColumns(tableKey);
+    this.columns[tableKey] = columns.filter((c) => c.name !== columnName);
+  }
+
+  private ensureColumns(tableKey: string): ColumnSchema[] {
+    if (!this.columns[tableKey]) this.columns[tableKey] = [];
+    return this.columns[tableKey]!; // non-null 단언
   }
 
   addRow(tableKey: string, row: JsonObject) {
     if (!this.data[tableKey]) this.addTable(tableKey);
-    this.data[tableKey]?.push(row);
+    this.data[tableKey]!.push(row);
   }
 
   removeRow(tableKey: string, index: number) {
-    if (!this.data[tableKey]) return;
-    if (index >= 0 && index < (this.data[tableKey]?.length ?? 0)) {
-      this.data[tableKey]?.splice(index, 1);
+    const tableRows = this.data[tableKey];
+    if (!tableRows) return;
+
+    if (index >= 0 && index < tableRows.length) {
+      tableRows.splice(index, 1);
     }
   }
 
   updateRow(tableKey: string, index: number, newRow: JsonObject) {
-    if (!this.data[tableKey]) return;
-    if (index >= 0 && index < (this.data[tableKey]?.length ?? 0)) {
-      this.data[tableKey]![index] = newRow;
+    const tableRows = this.data[tableKey];
+    if (!tableRows) return;
+
+    if (index >= 0 && index < tableRows.length) {
+      tableRows[index] = newRow;
     }
   }
 
@@ -116,40 +149,35 @@ export class JsonDatasetManager {
     const result: NodeDataTable[] = [];
 
     for (const tableKey of Object.keys(this.data)) {
-      if (tableKey.startsWith(`${nodeId}_`)) {
-        const tableData = this.data[tableKey] ?? [];
+      if (!tableKey.startsWith(`${nodeId}_`)) continue;
 
-        const sampleRow = tableData.find(
-          (row) => row && typeof row === "object"
-        );
+      const tableData = this.data[tableKey] ?? [];
+      const sampleRow = tableData.find((row) => row && typeof row === "object");
 
-        const columns: DatasetColumn[] = sampleRow
-          ? Object.keys(sampleRow).map((key) => {
-              const rawType = typeof sampleRow[key];
+      const columns: DatasetColumn[] = sampleRow
+        ? Object.keys(sampleRow).map((key) => {
+            const rawType = typeof sampleRow[key];
+            const allowedTypes: DatasetColumn["type"][] = [
+              "string",
+              "number",
+              "boolean",
+              "object",
+            ];
+            const type: DatasetColumn["type"] = allowedTypes.includes(
+              rawType as any
+            )
+              ? (rawType as DatasetColumn["type"])
+              : "object";
 
-              // 'DatasetColumn["type"]'에 맞게 변환
-              const allowedTypes: DatasetColumn["type"][] = [
-                "string",
-                "number",
-                "boolean",
-                "object",
-              ];
-              const type: DatasetColumn["type"] = allowedTypes.includes(
-                rawType as any
-              )
-                ? (rawType as DatasetColumn["type"])
-                : "object"; // fallback 타입
+            return { key, type };
+          })
+        : [];
 
-              return { key, type };
-            })
-          : [];
-
-        result.push({
-          table: tableKey.replace(`${nodeId}_`, ""),
-          value: tableData,
-          columns,
-        });
-      }
+      result.push({
+        table: tableKey.replace(`${nodeId}_`, ""),
+        value: tableData,
+        columns,
+      });
     }
 
     return result;
@@ -176,32 +204,53 @@ export class JsonDatasetManager {
 
     for (const tableKey of Object.keys(this.data)) {
       const rows = this.data[tableKey] ?? [];
-      this.columns[tableKey] = rows[0]
-        ? Object.keys(rows[0]).map((name) => ({ name, type: "string" }))
-        : [];
-    }
 
-    const valid = this.validate();
-    if (!valid.valid)
-      throw new Error(this.validateMessage() ?? "Invalid JsonDataset");
+      if (rows.length > 0 && rows[0] != null) {
+        const firstRow = rows[0] as Record<string, any>; // 명확히 타입 단언
+        this.columns[tableKey] = Object.keys(firstRow).map((name) => ({
+          name,
+          type: this.inferType(firstRow[name]),
+        }));
+      } else {
+        this.columns[tableKey] = [];
+      }
+    }
+  }
+  // ---------------- Type 추론 ----------------
+  private inferType(value: any): ColumnSchema["type"] {
+    if (value === null) return "null";
+    if (Array.isArray(value)) return "array";
+    switch (typeof value) {
+      case "string":
+        return "string";
+      case "number":
+        return "number";
+      case "boolean":
+        return "boolean";
+      case "object":
+        return "object";
+      default:
+        return "string";
+    }
   }
 
   // ---------------- Validation ----------------
   validate(): JsonDatasetValidationResult {
-    const data = this.data;
-    if (typeof data !== "object" || data === null) {
+    if (typeof this.data !== "object" || this.data === null) {
       return {
         valid: false,
         error: { tableKey: "", message: "Top-level data is not an object" },
       };
     }
-    for (const tableKey of Object.keys(data)) {
-      const arr = data[tableKey] ?? [];
+
+    for (const tableKey of Object.keys(this.data)) {
+      const arr = this.data[tableKey] ?? [];
       if (!Array.isArray(arr))
         return {
           valid: false,
           error: { tableKey, message: "Value is not an array" },
         };
+
       for (let i = 0; i < arr.length; i++) {
         if (typeof arr[i] !== "object" || arr[i] === null) {
           return {
@@ -215,6 +264,7 @@ export class JsonDatasetManager {
         }
       }
     }
+
     return { valid: true };
   }
 

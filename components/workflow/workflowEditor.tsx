@@ -26,7 +26,6 @@ import {
 } from "@/components/workflow/jsonDatasetManager";
 
 import type {
-  NodeInputField,
   ActionNodeData,
   ConditionEdgeData,
 } from "@/components/workflow/actionRegistry";
@@ -71,44 +70,36 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
   ],
   initialEdges = [],
 }) => {
-  useEffect(() => {
-    setWorkflowId(nanoid());
-  }, []);
-
   const stepCounterRef = useRef(0);
   const { BrunnerMessageBox, openModal } = useModal();
+  const tableManager = useRef(new JsonDatasetManager()).current;
 
   const [workflowId, setWorkflowId] = useState<string | null>(null);
   const [workflowName, setWorkflowName] = useState("새 워크플로우");
   const [workflowDescription, setWorkflowDescription] = useState("설명 없음");
+
   const [workflowInputData, setWorkflowInputData] = useState<string>(
-    JSON.stringify(
-      JSON.parse(`{"INPUT_TABLE":[{ "key1": "test", "key2": 123 }]}`),
-      null,
-      2
-    )
+    JSON.stringify({ INPUT_TABLE: [{ key1: "test", key2: 123 }] }, null, 2)
   );
   const [workflowOutputData, setWorkflowOutputData] = useState<string>(
-    JSON.stringify(
-      JSON.parse(`{"OUTPUT_TABLE":[{ "key1": "test", "key2": 123 }]}`),
-      null,
-      2
-    )
+    JSON.stringify({ OUTPUT_TABLE: [{ key1: "test", key2: 123 }] }, null, 2)
   );
 
-  const [nodes, setNodes] = useState<Node<ActionNodeData>[]>(
-    initialNodes as Node<ActionNodeData>[]
-  );
+  const [nodes, setNodes] = useState<Node<ActionNodeData>[]>(initialNodes);
   const [edges, setEdges] = useState<Edge<ConditionEdgeData>[]>(initialEdges);
   const [selectedNode, setSelectedNode] = useState<Node<ActionNodeData> | null>(
     null
   );
   const [runningNodeIds, setRunningNodeIds] = useState<string[]>([]);
 
-  // -------------------- JsonDatasetEditor 관련 --------------------
-  const tableManager = useRef(new JsonDatasetManager()).current;
   const [isInputDataEditorOpen, setIsInputDataEditorOpen] = useState(false);
-  const [isOutputDataEditorOpen, setIsOutputDataEditorOpen] = useState(false);
+  const [isInputSchemaEditorOpen, setIsInputSchemaEditorOpen] = useState(false);
+  const [isOutputSchemaEditorOpen, setIsOutputSchemaEditorOpen] =
+    useState(false);
+
+  useEffect(() => {
+    setWorkflowId(nanoid());
+  }, []);
 
   const workflowInputDataObj = useMemo(() => {
     try {
@@ -118,6 +109,7 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
       return { table1: [] };
     }
   }, [workflowInputData]);
+
   const workflowOutputDataObj = useMemo(() => {
     try {
       const parsed = JSON.parse(workflowOutputData);
@@ -132,7 +124,6 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
     return stepCounterRef.current.toString();
   }, []);
 
-  // -------------------- ReactFlow 핸들러 --------------------
   const onNodesChange = useCallback(
     (changes: NodeChange[]) =>
       setNodes((nds) => applyNodeChanges(changes, nds)),
@@ -166,7 +157,6 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
     []
   );
 
-  // -------------------- 노드 / 엣지 조작 --------------------
   const addNode = () => {
     const id = generateStepId();
     setNodes((nds) => [
@@ -197,68 +187,6 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
       2
     );
 
-  async function executeWorkflow(workflow: any = [], workflowInputs: any = []) {
-    const nodesList: Node<any>[] = workflow.nodes;
-    const edgesList: Edge<any>[] = workflow.edges;
-    const startNode = nodesList.find(
-      (n) => n.data.actionName === constants.workflowActions.START
-    );
-    if (!startNode) {
-      openModal(constants.messages.WORKFLOW_STARTNODE_NOT_FOUND);
-      return null;
-    }
-
-    startNode.data.inputs = workflowInputs;
-
-    const edgeMap: Record<string, Edge<any>[]> = {};
-    edgesList.forEach((e) => {
-      if (!e.source) return;
-      if (!edgeMap[e.source]) edgeMap[e.source] = [];
-      edgeMap[e.source]!.push(e);
-    });
-
-    const visitedNodes = new Set<string>();
-    const context: Record<string, any> = {};
-
-    async function traverse(nodeId: string) {
-      if (visitedNodes.has(nodeId)) return;
-      visitedNodes.add(nodeId);
-
-      const node = nodesList.find((n) => n.id === nodeId);
-      if (!node) return;
-
-      const shouldRun = !node.data.if || Boolean(node.data.if);
-      let result: any = null;
-
-      if (shouldRun) {
-        setRunningNodeIds((prev) => [...prev, nodeId]);
-        result = await workflowEngine.runWorkflowStep(node, context);
-        context[nodeId] = result;
-        setRunningNodeIds((prev) => prev.filter((id) => id !== nodeId));
-      }
-
-      const outgoingEdges = edgeMap[nodeId] || [];
-      for (const edge of outgoingEdges) {
-        if (!edge.data?.condition || Boolean(edge.data.condition))
-          await traverse(edge.target);
-      }
-      return result;
-    }
-
-    await traverse(startNode.id);
-    return context;
-  }
-
-  const executeWorkflowFromTableEditor = async () => {
-    try {
-      const workflowInputs = tableManager.getData();
-      await executeWorkflow(JSON.parse(getWorkflowJson()), workflowInputs);
-    } catch (err) {
-      openModal("❌ 실행 실패: " + String(err));
-    }
-  };
-
-  // -------------------- JSX 렌더링 --------------------
   return (
     <>
       <BrunnerMessageBox />
@@ -267,25 +195,28 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
           <div className="flex flex-row w-full">
             <div className="flex flex-1">
               <ReactFlow
-                nodes={nodes.map((n) => ({
-                  ...n,
-                  style: {
-                    background: runningNodeIds.includes(n.id)
-                      ? "#FFD700"
-                      : n.data.actionName === constants.workflowActions.START ||
-                        n.data.actionName === constants.workflowActions.END
-                      ? "#ADFF2F"
-                      : "#fff",
-                    border: "1px solid #222",
-                    color: "#000",
-                  },
-                }))}
+                nodes={
+                  nodes.map((n) => ({
+                    ...n,
+                    style: {
+                      background: runningNodeIds.includes(n.id)
+                        ? "#FFD700"
+                        : n.data.actionName ===
+                            constants.workflowActions.START ||
+                          n.data.actionName === constants.workflowActions.END
+                        ? "#ADFF2F"
+                        : "#fff",
+                      border: "1px solid #222",
+                      color: "#000",
+                    },
+                  })) as Node<ActionNodeData>[]
+                }
                 edges={
                   edges.map((e) => ({
                     ...e,
                     markerEnd: { type: "arrowclosed" },
                     style: { stroke: "#ccc", strokeWidth: 2 },
-                  })) as Edge<ConditionEdgeData>[]
+                  })) as Edge<any>[]
                 }
                 onNodesChange={onNodesChange}
                 onEdgesChange={onEdgesChange}
@@ -336,26 +267,40 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
                   });
                 }}
               />
-
-              <button
-                className="w-full bg-yellow-200 border mt-5"
-                onClick={executeWorkflowFromTableEditor}
-              >
-                Run
-              </button>
             </div>
           </div>
 
-          {/* -------------------- Table Editor 버튼 및 모달 -------------------- */}
           <div className="flex flex-row mt-5">
+            {/* Input Table */}
             <div className="flex flex-col mr-2 w-[calc(50%-10px)]">
               <h4>Input Data</h4>
-              <button
-                className="w-full border bg-blue-200 mb-2"
-                onClick={() => setIsInputDataEditorOpen(true)}
-              >
-                Edit Data
-              </button>
+              <div className="flex mb-2 space-x-2">
+                <button
+                  className="border bg-green-200 px-3 py-1"
+                  onClick={() => setIsInputSchemaEditorOpen(true)}
+                >
+                  Edit Schema
+                </button>
+                <button
+                  className="border bg-blue-200 px-3 py-1"
+                  onClick={() => setIsInputDataEditorOpen(true)}
+                >
+                  Edit Data
+                </button>
+              </div>
+
+              {isInputSchemaEditorOpen && (
+                <JsonDatasetEditorModal
+                  open={isInputSchemaEditorOpen}
+                  mode="schema"
+                  value={workflowInputDataObj}
+                  onConfirm={(newSchema) => {
+                    setWorkflowInputData(JSON.stringify(newSchema, null, 2));
+                    setIsInputSchemaEditorOpen(false);
+                  }}
+                  onCancel={() => setIsInputSchemaEditorOpen(false)}
+                />
+              )}
 
               {isInputDataEditorOpen && (
                 <JsonDatasetEditorModal
@@ -369,6 +314,7 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
                   onCancel={() => setIsInputDataEditorOpen(false)}
                 />
               )}
+
               <textarea
                 className="w-full h-[250px] mt-2 border p-2 font-mono text-sm"
                 value={workflowInputData}
@@ -376,27 +322,33 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
               />
             </div>
 
+            {/* Output Table */}
             <div className="flex flex-col ml-2 w-[calc(50%-10px)]">
               <h4>Output Data</h4>
-              <button
-                className="w-full border bg-blue-200 mb-2"
-                onClick={() => setIsOutputDataEditorOpen(true)}
-              >
-                Edit Schema
-              </button>
 
-              {isOutputDataEditorOpen && (
+              {/* 기존 Edit Schema 버튼 유지 */}
+              <div className="flex mb-2">
+                <button
+                  className="border bg-green-200 px-3 py-1"
+                  onClick={() => setIsOutputSchemaEditorOpen(true)}
+                >
+                  Edit Schema
+                </button>
+              </div>
+
+              {isOutputSchemaEditorOpen && (
                 <JsonDatasetEditorModal
-                  open={isOutputDataEditorOpen}
+                  open={isOutputSchemaEditorOpen}
                   mode="schema"
                   value={workflowOutputDataObj}
-                  onConfirm={(newData) => {
-                    setWorkflowOutputData(JSON.stringify(newData, null, 2));
-                    setIsOutputDataEditorOpen(false);
+                  onConfirm={(newSchema) => {
+                    setWorkflowOutputData(JSON.stringify(newSchema, null, 2));
+                    setIsOutputSchemaEditorOpen(false);
                   }}
-                  onCancel={() => setIsOutputDataEditorOpen(false)}
+                  onCancel={() => setIsOutputSchemaEditorOpen(false)}
                 />
               )}
+
               <textarea
                 className="w-full h-[250px] mt-2 border p-2 font-mono text-sm"
                 value={workflowOutputData}
