@@ -22,15 +22,148 @@ export interface JsonDatasetValidationResult {
   };
 }
 
+import type {
+  NodeDataTable,
+  DatasetColumn,
+} from "@/components/workflow/actionRegistry";
+
 export class JsonDatasetManager {
   private data: Record<string, JsonObject[]> = {};
   private columns: Record<string, ColumnSchema[]> = {};
 
-  constructor(initialData?: string | Record<string, JsonObject[]>) {
+  constructor(initialData?: Record<string, JsonObject[]> | string) {
     if (initialData) this.load(initialData);
   }
 
-  load(input: string | Record<string, JsonObject[]>): void {
+  // ---------------- Table / Column ----------------
+  addTable(tableKey: string, rows: JsonObject[] = []) {
+    this.data[tableKey] = rows;
+    this.columns[tableKey] = rows[0]
+      ? Object.keys(rows[0]).map((name) => ({ name, type: "string" }))
+      : [];
+  }
+
+  removeTable(tableKey: string) {
+    delete this.data[tableKey];
+    delete this.columns[tableKey];
+  }
+
+  getData(): Record<string, JsonObject[]> {
+    return this.data;
+  }
+
+  getTable(tableKey: string): JsonObject[] {
+    return this.data[tableKey] ?? [];
+  }
+
+  getColumns(tableKey: string): ColumnSchema[] {
+    return this.columns[tableKey] ?? [];
+  }
+
+  addColumn(tableKey: string, column: ColumnSchema) {
+    if (!this.data[tableKey]) this.addTable(tableKey);
+    (this.data[tableKey] ?? []).forEach((row) => (row[column.name] = null));
+    if (!this.columns[tableKey]) this.columns[tableKey] = [];
+    this.columns[tableKey]?.push(column);
+  }
+
+  removeColumn(tableKey: string, columnName: string) {
+    (this.data[tableKey] ?? []).forEach((row) => delete row[columnName]);
+    if (this.columns[tableKey]) {
+      this.columns[tableKey] = (this.columns[tableKey] ?? []).filter(
+        (c) => c.name !== columnName
+      );
+    }
+  }
+
+  addRow(tableKey: string, row: JsonObject) {
+    if (!this.data[tableKey]) this.addTable(tableKey);
+    this.data[tableKey]?.push(row);
+  }
+
+  removeRow(tableKey: string, index: number) {
+    if (!this.data[tableKey]) return;
+    if (index >= 0 && index < (this.data[tableKey]?.length ?? 0)) {
+      this.data[tableKey]?.splice(index, 1);
+    }
+  }
+
+  updateRow(tableKey: string, index: number, newRow: JsonObject) {
+    if (!this.data[tableKey]) return;
+    if (index >= 0 && index < (this.data[tableKey]?.length ?? 0)) {
+      this.data[tableKey]![index] = newRow;
+    }
+  }
+
+  setField(nodeId: string, table: string, value: JsonObject[]) {
+    const key = nodeId + "_" + table;
+    if (!this.data[key]) this.addTable(key, value);
+    else this.data[key] = value;
+  }
+
+  getField(nodeId: string, table: string): JsonObject[] {
+    return this.data[nodeId + "_" + table] ?? [];
+  }
+
+  // ---------------- NodeDatasetField CRUD ----------------
+  initNode(nodeId: string, fields: NodeDataTable[]) {
+    for (const field of fields) {
+      this.addTable(nodeId + "_" + field.table, field.value ?? []);
+    }
+  }
+
+  getNodeDataset(nodeId: string): NodeDataTable[] {
+    const result: NodeDataTable[] = [];
+
+    for (const tableKey of Object.keys(this.data)) {
+      if (tableKey.startsWith(`${nodeId}_`)) {
+        const tableData = this.data[tableKey] ?? [];
+
+        const sampleRow = tableData.find(
+          (row) => row && typeof row === "object"
+        );
+
+        const columns: DatasetColumn[] = sampleRow
+          ? Object.keys(sampleRow).map((key) => {
+              const rawType = typeof sampleRow[key];
+
+              // 'DatasetColumn["type"]'에 맞게 변환
+              const allowedTypes: DatasetColumn["type"][] = [
+                "string",
+                "number",
+                "boolean",
+                "object",
+              ];
+              const type: DatasetColumn["type"] = allowedTypes.includes(
+                rawType as any
+              )
+                ? (rawType as DatasetColumn["type"])
+                : "object"; // fallback 타입
+
+              return { key, type };
+            })
+          : [];
+
+        result.push({
+          table: tableKey.replace(`${nodeId}_`, ""),
+          value: tableData,
+          columns,
+        });
+      }
+    }
+
+    return result;
+  }
+
+  resetNode(nodeId: string, fields: NodeDataTable[]) {
+    for (const tableKey of Object.keys(this.data)) {
+      if (tableKey.startsWith(nodeId + "_")) delete this.data[tableKey];
+    }
+    this.initNode(nodeId, fields);
+  }
+
+  // ---------------- Load / 초기화 ----------------
+  load(input: string | Record<string, JsonObject[]>) {
     if (typeof input === "string") {
       try {
         this.data = JSON.parse(input);
@@ -41,14 +174,11 @@ export class JsonDatasetManager {
       this.data = input;
     }
 
-    // 초기 컬럼 스키마 생성 (모든 컬럼 type = string 기본)
     for (const tableKey of Object.keys(this.data)) {
-      const rows = this.data[tableKey];
-      if (rows && rows[0]) {
-        this.columns[tableKey] = rows[0]
-          ? Object.keys(rows[0]).map((name) => ({ name, type: "string" }))
-          : [];
-      }
+      const rows = this.data[tableKey] ?? [];
+      this.columns[tableKey] = rows[0]
+        ? Object.keys(rows[0]).map((name) => ({ name, type: "string" }))
+        : [];
     }
 
     const valid = this.validate();
@@ -56,93 +186,7 @@ export class JsonDatasetManager {
       throw new Error(this.validateMessage() ?? "Invalid JsonDataset");
   }
 
-  getData(): Record<string, JsonObject[]> {
-    return this.data;
-  }
-
-  getTable(tableKey: string): JsonObject[] | undefined {
-    return this.data[tableKey];
-  }
-
-  getColumns(tableKey: string): ColumnSchema[] {
-    return this.columns[tableKey] ?? [];
-  }
-
-  addTable(tableKey: string, rows: JsonObject[] = []): void {
-    this.data[tableKey] = rows;
-    this.columns[tableKey] = rows[0]
-      ? Object.keys(rows[0]).map((name) => ({ name, type: "string" }))
-      : [];
-  }
-
-  removeTable(tableKey: string): void {
-    delete this.data[tableKey];
-    delete this.columns[tableKey];
-  }
-
-  renameTable(oldName: string, newName: string): void {
-    if (!this.data[oldName])
-      throw new Error(`Table "${oldName}" does not exist`);
-    this.data[newName] = this.data[oldName];
-    this.columns[newName] = this.columns[oldName] ?? [];
-    delete this.data[oldName];
-    delete this.columns[oldName];
-  }
-
-  addColumn(tableKey: string, column: ColumnSchema): void {
-    const table = this.data[tableKey];
-    if (!table) throw new Error(`Table "${tableKey}" does not exist`);
-    // 각 row에 컬럼 추가
-    table.forEach((row) => (row[column.name] = null));
-    if (!this.columns[tableKey]) this.columns[tableKey] = [];
-    this.columns[tableKey].push(column);
-  }
-
-  removeColumn(tableKey: string, columnName: string): void {
-    const table = this.data[tableKey];
-    if (!table) throw new Error(`Table "${tableKey}" does not exist`);
-    table.forEach((row) => delete row[columnName]);
-    if (this.columns[tableKey])
-      this.columns[tableKey] = this.columns[tableKey].filter(
-        (c) => c.name !== columnName
-      );
-  }
-
-  renameColumn(tableKey: string, oldName: string, newName: string): void {
-    const table = this.data[tableKey];
-    if (!table) throw new Error(`Table "${tableKey}" does not exist`);
-    table.forEach((row) => {
-      row[newName] = row[oldName];
-      delete row[oldName];
-    });
-    if (this.columns[tableKey]) {
-      const col = this.columns[tableKey].find((c) => c.name === oldName);
-      if (col) col.name = newName;
-    }
-  }
-
-  addRow(tableKey: string, row: JsonObject): void {
-    const table = this.data[tableKey];
-    if (!table) throw new Error(`Table "${tableKey}" does not exist`);
-    table.push(row);
-  }
-
-  removeRow(tableKey: string, index: number): void {
-    const table = this.data[tableKey];
-    if (!table) throw new Error(`Table "${tableKey}" does not exist`);
-    if (index < 0 || index >= table.length)
-      throw new Error(`Row index out of bounds`);
-    table.splice(index, 1);
-  }
-
-  updateRow(tableKey: string, index: number, newRow: JsonObject): void {
-    const table = this.data[tableKey];
-    if (!table) throw new Error(`Table "${tableKey}" does not exist`);
-    if (index < 0 || index >= table.length)
-      throw new Error(`Row index out of bounds`);
-    table[index] = newRow;
-  }
-
+  // ---------------- Validation ----------------
   validate(): JsonDatasetValidationResult {
     const data = this.data;
     if (typeof data !== "object" || data === null) {
@@ -151,65 +195,23 @@ export class JsonDatasetManager {
         error: { tableKey: "", message: "Top-level data is not an object" },
       };
     }
-    const tableKeys = Object.keys(data);
-    for (const tableKey of tableKeys) {
-      const arr = data[tableKey];
-      if (!Array.isArray(arr) || arr.length === 0) {
+    for (const tableKey of Object.keys(data)) {
+      const arr = data[tableKey] ?? [];
+      if (!Array.isArray(arr))
         return {
           valid: false,
-          error: { tableKey, message: "Value is not a non-empty array" },
+          error: { tableKey, message: "Value is not an array" },
         };
-      }
-      const firstObj = arr[0];
-      if (
-        typeof firstObj !== "object" ||
-        firstObj === null ||
-        Array.isArray(firstObj)
-      ) {
-        return {
-          valid: false,
-          error: {
-            tableKey,
-            arrayIndex: 0,
-            message: "Array element is not an object",
-          },
-        };
-      }
-      const firstKeys = new Set(Object.keys(firstObj));
       for (let i = 0; i < arr.length; i++) {
-        const item = arr[i];
-        if (typeof item !== "object" || item === null || Array.isArray(item)) {
+        if (typeof arr[i] !== "object" || arr[i] === null) {
           return {
             valid: false,
             error: {
               tableKey,
               arrayIndex: i,
-              message: "Array element is not an object",
+              message: "Array element is not object",
             },
           };
-        }
-        const itemKeys = Object.keys(item);
-        if (itemKeys.length !== firstKeys.size) {
-          return {
-            valid: false,
-            error: {
-              tableKey,
-              arrayIndex: i,
-              message: "Object keys count mismatch",
-            },
-          };
-        }
-        for (const key of itemKeys) {
-          if (!firstKeys.has(key)) {
-            return {
-              valid: false,
-              error: {
-                tableKey,
-                arrayIndex: i,
-                message: `Object key mismatch: "${key}"`,
-              },
-            };
-          }
         }
       }
     }

@@ -1,12 +1,9 @@
 import React, { useState, useEffect, useRef } from "react";
 import type { Node } from "reactflow";
-import type {
-  NodeInputField,
-  NodeOutputField,
-} from "@/components/workflow/actionRegistry";
+import type { NodeDataTable } from "@/components/workflow/actionRegistry";
 import { NodeInputParameterModal } from "@/components/workflow/nodeInputParameterModal";
-import * as actionRegistry from "@/components/workflow/actionRegistry";
 import NodeOutputParameterModal from "@/components/workflow/nodeOutputParameterModal";
+import * as actionRegistry from "@/components/workflow/actionRegistry";
 import * as constants from "@/components/core/constants";
 
 interface NodePropertyEditorProps {
@@ -36,13 +33,13 @@ export function collectAllWorkflowVariables(
   const variables: WorkflowVariable[] = [];
 
   nodes.forEach((node) => {
-    const outputs: NodeInputField[] = node.data.outputs ?? [];
+    const outputs: NodeDataTable[] = node.data.outputs ?? [];
 
     outputs.forEach((output) => {
       variables.push({
         nodeId: node.id,
-        key: output.key,
-        type: output.type,
+        key: output.table,
+        type: "dataset",
         value: output.value,
       });
     });
@@ -63,10 +60,10 @@ export const NodePropertyEditor: React.FC<NodePropertyEditorProps> = ({
   const [wfDesc, setWfDesc] = useState(workflowDescription);
 
   const [actionName, setActionName] = useState(node?.data.actionName || "");
-  const [inputs, setInputs] = useState<NodeInputField[]>(
+  const [inputs, setInputs] = useState<NodeDataTable[]>(
     node?.data.inputs ?? []
   );
-  const [outputs, setOutputs] = useState<NodeOutputField[]>(
+  const [outputs, setOutputs] = useState<NodeDataTable[]>(
     node?.data.outputs ?? []
   );
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -75,13 +72,11 @@ export const NodePropertyEditor: React.FC<NodePropertyEditorProps> = ({
   const toggleEditingOutputs = () =>
     setEditingOutputs((prev: boolean) => !prev);
 
-  // 워크플로우 정보 갱신
   useEffect(() => {
     setWfName(workflowName);
     setWfDesc(workflowDescription);
   }, [workflowName, workflowDescription]);
 
-  // 노드 변경 시 초기값 갱신
   useEffect(() => {
     if (!node) return;
 
@@ -134,7 +129,7 @@ export const NodePropertyEditor: React.FC<NodePropertyEditorProps> = ({
       </div>
     );
 
-  const allWworkflowVariables = collectAllWorkflowVariables(nodes);
+  const allWorkflowVariables = collectAllWorkflowVariables(nodes);
 
   return (
     <div style={{ padding: 10 }}>
@@ -183,11 +178,10 @@ export const NodePropertyEditor: React.FC<NodePropertyEditorProps> = ({
                 prevActionName.current = actionName;
               }
 
-              // 부모 노드 업데이트
               onNodeUpdate?.(node.id, {
                 actionName,
                 inputs: newInputs,
-                output: newOutputs,
+                outputs: newOutputs,
               });
 
               setActionName(actionName);
@@ -203,25 +197,23 @@ export const NodePropertyEditor: React.FC<NodePropertyEditorProps> = ({
       {/* Input Mapping Modal */}
       <NodeInputParameterModal
         isOpen={isModalOpen}
-        actionName={actionName} // 읽기 전용, 모달에서는 변경 불가
+        actionName={actionName}
         inputs={inputs}
         outputs={outputs}
-        workflowVariables={allWworkflowVariables}
+        workflowVariables={allWorkflowVariables}
         onClose={() => setIsModalOpen(false)}
-        onSave={(
-          newInputs: NodeInputField[],
-          newOutputs: NodeOutputField[]
-        ) => {
+        onSave={(newInputs: NodeDataTable[], newOutputs: NodeDataTable[]) => {
           setInputs(newInputs);
           setOutputs(newOutputs);
-          onNodeUpdate?.(node.id, { inputs: newInputs });
+          onNodeUpdate?.(node.id, { inputs: newInputs, outputs: newOutputs });
           setIsModalOpen(false);
         }}
       />
+
       {editingOutputs && (
         <NodeOutputParameterModal
-          outputs={node.data.outputs}
-          onChange={(updated) => {
+          outputs={outputs}
+          onChange={(updated: NodeDataTable[]) => {
             setOutputs(updated);
             onNodeUpdate?.(node.id, { outputs: updated });
           }}

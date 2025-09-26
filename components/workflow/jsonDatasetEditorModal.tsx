@@ -1,7 +1,6 @@
 import * as React from "react";
 import { useState, useEffect, useRef } from "react";
 import { JsonDatasetManager } from "@/components/workflow/jsonDatasetManager";
-
 import type {
   JsonObject,
   ColumnSchema,
@@ -33,7 +32,8 @@ export const JsonDatasetEditorModal: React.FC<JsonDatasetEditorModalProps> = ({
   onConfirm,
   onCancel,
 }) => {
-  const [internalData, setInternalData] = useState(value);
+  const [internalData, setInternalData] =
+    useState<Record<string, JsonObject[]>>(value);
   const [selectedTable, setSelectedTable] = useState<string | null>(
     Object.keys(value)[0] || null
   );
@@ -43,7 +43,7 @@ export const JsonDatasetEditorModal: React.FC<JsonDatasetEditorModalProps> = ({
   const isSchemaMode = mode === "schema";
   const isDataMode = mode === "data";
 
-  // 모달 중앙 표시 + 드래그 상태
+  // 드래그 상태
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const [dragging, setDragging] = useState(false);
   const dragStart = useRef({ x: 0, y: 0 });
@@ -81,7 +81,7 @@ export const JsonDatasetEditorModal: React.FC<JsonDatasetEditorModalProps> = ({
     };
   }, [dragging]);
 
-  // 모달 열릴 때 데이터 초기화
+  // 모달 열릴 때 초기화
   useEffect(() => {
     const initData =
       value && Object.keys(value).length > 0 ? value : { table1: [] };
@@ -98,11 +98,11 @@ export const JsonDatasetEditorModal: React.FC<JsonDatasetEditorModalProps> = ({
   // 데이터 모드에서 스키마와 맞지 않는 데이터 보정
   useEffect(() => {
     if (isDataMode && selectedTable) {
-      const tableData = manager.getTable(selectedTable) ?? [];
+      const tableData = manager.getTable(selectedTable) ?? []; // 이미 빈 배열 반환 보장
       const schemaCols = manager.getColumns(selectedTable) ?? [];
-      const newData: JsonObject[] = tableData.map((row) => {
+      const newData: JsonObject[] = tableData?.map((row) => {
         const newRow: JsonObject = {};
-        schemaCols.forEach((col: any) => {
+        schemaCols.forEach((col) => {
           newRow[col.name] = row[col.name] ?? null;
         });
         return newRow;
@@ -117,7 +117,7 @@ export const JsonDatasetEditorModal: React.FC<JsonDatasetEditorModalProps> = ({
   const tableKeys = Object.keys(manager.getData());
   const selectTable = (key: string) => setSelectedTable(key);
 
-  // 테이블 관리
+  // ---------------- 테이블 관리 ----------------
   const addTable = () => {
     if (!isSchemaMode) return;
     const newKey = `table_${tableKeys.length + 1}`;
@@ -145,16 +145,16 @@ export const JsonDatasetEditorModal: React.FC<JsonDatasetEditorModalProps> = ({
     setInternalData({ ...manager.getData() });
   };
 
-  // 컬럼 관리
+  // ---------------- 컬럼 관리 ----------------
   const addColumn = () => {
     if (!selectedTable || !isSchemaMode) return;
     const colName = prompt("컬럼 이름:");
     if (!colName) return;
-    const type = prompt(
+    const type = (prompt(
       "타입 선택 (string, number, boolean, object, array, null, date, datetime):",
       "string"
-    ) as JsonColumnType;
-    if (!type) return;
+    ) ?? "string") as JsonColumnType;
+
     manager.addColumn(selectedTable, { name: colName, type });
 
     const table = manager.getTable(selectedTable) ?? [];
@@ -176,7 +176,7 @@ export const JsonDatasetEditorModal: React.FC<JsonDatasetEditorModalProps> = ({
     setInternalData({ ...manager.getData() });
   };
 
-  // 행 관리
+  // ---------------- 행 관리 ----------------
   const addRow = () => {
     if (!selectedTable || !isDataMode) return;
     const table = manager.getTable(selectedTable) ?? [];
@@ -229,7 +229,7 @@ export const JsonDatasetEditorModal: React.FC<JsonDatasetEditorModalProps> = ({
           </h3>
         </div>
 
-        {/* 테이블 선택 */}
+        {/* 테이블 선택 버튼 */}
         <div className="flex mb-2 flex-wrap">
           {tableKeys.map((key) => (
             <button
@@ -263,7 +263,7 @@ export const JsonDatasetEditorModal: React.FC<JsonDatasetEditorModalProps> = ({
           )}
         </div>
 
-        {/* 테이블 */}
+        {/* 테이블 뷰 */}
         {selectedTable && (
           <div className="overflow-auto max-h-[400px] border p-1">
             <table className="table-auto border-collapse border border-gray-400 w-full text-sm">
@@ -295,7 +295,7 @@ export const JsonDatasetEditorModal: React.FC<JsonDatasetEditorModalProps> = ({
                 </tr>
               </thead>
               <tbody>
-                {manager.getTable(selectedTable)?.map((row, i) => (
+                {(manager.getTable(selectedTable) ?? []).map((row, i) => (
                   <tr key={i} className="border border-gray-400">
                     {(manager.getColumns(selectedTable) ?? []).map((col) => (
                       <td
@@ -305,7 +305,7 @@ export const JsonDatasetEditorModal: React.FC<JsonDatasetEditorModalProps> = ({
                         {col.type === "date" || col.type === "datetime" ? (
                           <input
                             type="datetime-local"
-                            value={row[col.name] || ""}
+                            value={row[col.name] ?? ""}
                             onChange={(e) =>
                               updateCell(i, col.name, e.target.value)
                             }
@@ -346,7 +346,7 @@ export const JsonDatasetEditorModal: React.FC<JsonDatasetEditorModalProps> = ({
           </div>
         )}
 
-        {/* 완료 */}
+        {/* 완료 버튼 */}
         <div className="flex justify-end mt-4 space-x-2">
           <button
             onClick={() => onCancel?.()}
