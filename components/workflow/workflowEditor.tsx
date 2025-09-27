@@ -247,8 +247,11 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
 
   const executeWorkflowFromTableEditor = async () => {
     try {
-      if (!jWorkflow) initWorkflow(); // 상태 없으면 초기화
-      await workflowEngine.executeWorkflow(jWorkflow!, setRunningNodeIds);
+      initWorkflow(); // 상태 없으면 초기화
+      await workflowEngine.executeWorkflow(
+        jWorkflow.current,
+        setRunningNodeIds
+      );
       jWorkflow.current = { ...jWorkflow! }; // 실행 후 상태 갱신
     } catch (err) {
       openModal("❌ 실행 실패: " + String(err));
@@ -257,12 +260,14 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
 
   const executeWorkflowStepByStep = async () => {
     try {
-      if (!jWorkflow.current) initWorkflow(); // 상태 없으면 초기화
+      if (
+        !jWorkflow.current ||
+        runningNodeIds.includes(constants.workflowActions.END)
+      )
+        initWorkflow(); // 상태 없으면 초기화
 
-      await workflowEngine.executeNextNode(
-        jWorkflow.current,
-        setRunningNodeIds
-      );
+      let workflowData = jWorkflow.current;
+      await workflowEngine.executeNextNode(workflowData, setRunningNodeIds);
       jWorkflow.current = { ...jWorkflow.current }; // 실행 후 상태 반영
     } catch (err) {
       openModal("❌ 실행 실패: " + String(err));
