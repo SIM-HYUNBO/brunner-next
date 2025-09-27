@@ -369,68 +369,69 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
 
           <div className="flex flex-row mt-5">
             {/* Input Table */}
-            <div className="flex flex-col mr-2 w-[calc(50%-10px)]">
-              <h4>Input Data</h4>
-              <div className="flex mb-2 space-x-2">
-                <button
-                  className="border semi-text-bg-color px-3 py-1"
-                  onClick={() => setIsInputSchemaEditorOpen(true)}
-                >
-                  Edit Schema
-                </button>
-                <button
-                  className="border semi-text-bg-color px-3 py-1"
-                  onClick={() => setIsInputDataEditorOpen(true)}
-                >
-                  Edit Data
-                </button>
+            <div className="flex flex-col w-[calc(50%-10px)]">
+              <div className="flex flex-row space-x-2">
+                <div className="flex flex-row mb-2 space-x-2">
+                  <h4>Input Data</h4>
+                  <button
+                    className="border semi-text-bg-color px-3 py-1"
+                    onClick={() => setIsInputSchemaEditorOpen(true)}
+                  >
+                    Edit Schema
+                  </button>
+                  <button
+                    className="border semi-text-bg-color px-3 py-1"
+                    onClick={() => setIsInputDataEditorOpen(true)}
+                  >
+                    Edit Data
+                  </button>
+                </div>
+
+                {isInputSchemaEditorOpen && (
+                  <JsonDatasetEditorModal
+                    open={isInputSchemaEditorOpen}
+                    mode="schema"
+                    value={workflowInputDataObj}
+                    onConfirm={(newSchema) => {
+                      setWorkflowInputData(JSON.stringify(newSchema, null, 2));
+                      setIsInputSchemaEditorOpen(false);
+                    }}
+                    onCancel={() => setIsInputSchemaEditorOpen(false)}
+                  />
+                )}
+
+                {isInputDataEditorOpen && (
+                  <JsonDatasetEditorModal
+                    open={isInputDataEditorOpen}
+                    mode="data"
+                    value={workflowInputDataObj}
+                    onConfirm={(newData) => {
+                      setWorkflowInputData(JSON.stringify(newData, null, 2));
+                      setIsInputDataEditorOpen(false);
+                    }}
+                    onCancel={() => setIsInputDataEditorOpen(false)}
+                  />
+                )}
               </div>
-
-              {isInputSchemaEditorOpen && (
-                <JsonDatasetEditorModal
-                  open={isInputSchemaEditorOpen}
-                  mode="schema"
-                  value={workflowInputDataObj}
-                  onConfirm={(newSchema) => {
-                    setWorkflowInputData(JSON.stringify(newSchema, null, 2));
-                    setIsInputSchemaEditorOpen(false);
-                  }}
-                  onCancel={() => setIsInputSchemaEditorOpen(false)}
-                />
-              )}
-
-              {isInputDataEditorOpen && (
-                <JsonDatasetEditorModal
-                  open={isInputDataEditorOpen}
-                  mode="data"
-                  value={workflowInputDataObj}
-                  onConfirm={(newData) => {
-                    setWorkflowInputData(JSON.stringify(newData, null, 2));
-                    setIsInputDataEditorOpen(false);
-                  }}
-                  onCancel={() => setIsInputDataEditorOpen(false)}
-                />
-              )}
-
               <textarea
                 className="w-full h-[250px] mt-2 border p-2 font-mono text-sm"
                 value={workflowInputData}
                 readOnly
               />
             </div>
-
             {/* Output Table */}
             <div className="flex flex-col ml-2 w-[calc(50%-10px)]">
-              <h4>Output Data</h4>
-
               {/* 기존 Edit Schema 버튼 유지 */}
               <div className="flex mb-2">
-                <button
-                  className="border semi-text-bg-color px-3 py-1"
-                  onClick={() => setIsOutputSchemaEditorOpen(true)}
-                >
-                  Edit Schema
-                </button>
+                <div className="flex flex-row space-x-2">
+                  <h4>Output Data</h4>
+                  <button
+                    className="border semi-text-bg-color px-3 py-1"
+                    onClick={() => setIsOutputSchemaEditorOpen(true)}
+                  >
+                    Edit Schema
+                  </button>
+                </div>
               </div>
 
               {isOutputSchemaEditorOpen && (
