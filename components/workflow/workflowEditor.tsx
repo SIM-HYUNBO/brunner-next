@@ -279,6 +279,7 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
           <div className="flex flex-row w-full">
             <div className="flex flex-1">
               <ReactFlow
+                className="w-full h-[600px] semi-text-bg-color border border-gray-300 rounded-lg shadow-sm"
                 nodes={
                   nodes.map((n) => ({
                     ...n,
@@ -352,13 +353,13 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
                 }}
               />
               <button
-                className="w-full bg-yellow-200 border mt-5"
+                className="w-full semi-text-bg-color border mt-5"
                 onClick={executeWorkflowFromTableEditor}
               >
                 Run
               </button>
               <button
-                className="w-full bg-yellow-200 border mt-5"
+                className="w-full semi-text-bg-color border mt-5"
                 onClick={executeWorkflowStepByStep}
               >
                 Run By Node
@@ -372,13 +373,13 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
               <h4>Input Data</h4>
               <div className="flex mb-2 space-x-2">
                 <button
-                  className="border bg-green-200 px-3 py-1"
+                  className="border semi-text-bg-color px-3 py-1"
                   onClick={() => setIsInputSchemaEditorOpen(true)}
                 >
                   Edit Schema
                 </button>
                 <button
-                  className="border bg-blue-200 px-3 py-1"
+                  className="border semi-text-bg-color px-3 py-1"
                   onClick={() => setIsInputDataEditorOpen(true)}
                 >
                   Edit Data
@@ -425,7 +426,7 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
               {/* 기존 Edit Schema 버튼 유지 */}
               <div className="flex mb-2">
                 <button
-                  className="border bg-green-200 px-3 py-1"
+                  className="border semi-text-bg-color px-3 py-1"
                   onClick={() => setIsOutputSchemaEditorOpen(true)}
                 >
                   Edit Schema

@@ -154,19 +154,19 @@ export const NodePropertyEditor: React.FC<NodePropertyEditorProps> = ({
         </select>
         <div className="flex flex-row justify-between">
           <button
-            className="px-3 py-1 mt-2 bg-green-200 rounded"
+            className="px-3 py-1 mt-2 semi-text-bg-color rounded"
             onClick={() => setIsModalOpen(true)}
           >
             Inputs
           </button>
           <button
-            className="px-3 py-1 mt-2 ml-1 bg-green-200 rounded"
+            className="px-3 py-1 mt-2 ml-1 semi-text-bg-color rounded"
             onClick={() => toggleEditingOutputs()}
           >
             Outputs
           </button>
           <button
-            className="mt-2 ml-1 px-3 py-1 bg-blue-200 rounded"
+            className="mt-2 ml-1 px-3 py-1 semi-text-bg-color rounded"
             onClick={() => {
               if (!node) return;
               let newInputs = inputs;
