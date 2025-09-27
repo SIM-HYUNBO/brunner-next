@@ -88,12 +88,12 @@ export const NodePropertyEditor: React.FC<NodePropertyEditorProps> = ({
       setInputs(defaultInputs);
       setOutputs(defaultOutputs);
       prevActionName.current = action;
-    } else if (!node.data.inputs || node.data.inputs.length === 0) {
+    } else if (!node.data.design.inputs || node.data.design.inputs.length === 0) {
       setInputs(defaultInputs);
       setOutputs(defaultOutputs);
     } else {
-      setInputs(node.data.inputs);
-      setOutputs(node.data.outputs);
+      setInputs(node.data.design.inputs);
+      setOutputs(node.data.design.outputs);
     }
   }, [node?.id, node?.data.actionName]);
 
@@ -171,8 +171,8 @@ export const NodePropertyEditor: React.FC<NodePropertyEditorProps> = ({
               if (prevActionName.current != actionName) {
                 newInputs = actionRegistry.getDefaultInputs(actionName);
                 newOutputs = actionRegistry.getDefaultOutputs(actionName);
-                node.data.inputs = newInputs;
-                node.data.outputs = newOutputs;
+                node.data.design.inputs = newInputs;
+                node.data.design.outputs = newOutputs;
                 prevActionName.current = actionName;
               }
 

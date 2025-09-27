@@ -34,8 +34,14 @@ export interface ActionNodeData {
   label: string;
   actionName: string;
   status: string;
-  inputs: NodeDataTable[];
-  outputs: NodeDataTable[];
+  design: {
+    inputs: NodeDataTable[];
+    outputs: NodeDataTable[];
+  };
+  run: {
+    inputs: NodeDataTable[];
+    outputs: NodeDataTable[];
+  };
 }
 
 export interface ConditionEdgeData {
@@ -64,6 +70,7 @@ export const defaultParamsMap = new Map<string, NodeDataTable[]>();
 export function getDefaultInputs(actionName: string): NodeDataTable[] {
   switch (actionName) {
     case constants.workflowActions.START:
+      return [{ table: "OUTDATA", columns: [], value: [] }];
     case constants.workflowActions.SLEEP:
     case constants.workflowActions.HTTPREQUEST:
     case constants.workflowActions.SET:
@@ -72,8 +79,9 @@ export function getDefaultInputs(actionName: string): NodeDataTable[] {
     case constants.workflowActions.MATHOP:
     case constants.workflowActions.CALL:
     case constants.workflowActions.END:
+      return [{ table: "OUTDATA", columns: [], value: [] }];
     default:
-      return [{ table: "INDATA", columns: [], value: [] }];
+      throw new Error(constants.messages.WORKFLOW_NOT_SUPPORTED_NODE_TYPE);
   }
 }
 
@@ -137,7 +145,6 @@ export function registerBuiltInActions(): void {
     constants.workflowActions.END,
     async (nodeId, nodeData, stepInputs, workflow) => {
       logAction(nodeId, nodeData, stepInputs);
-      // nodeData["design"].outputs = nodeData.design.inputs;
       return;
     }
   );

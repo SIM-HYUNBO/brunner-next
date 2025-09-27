@@ -40,12 +40,18 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
         label: constants.workflowActions.START,
         actionName: constants.workflowActions.START,
         status: constants.workflowNodeStatus.idle,
-        inputs: actionRegistry.getDefaultInputs(
-          constants.workflowActions.START
-        ),
-        outputs: actionRegistry.getDefaultOutputs(
-          constants.workflowActions.START
-        ),
+        design: {
+          inputs: actionRegistry.getDefaultInputs(
+            constants.workflowActions.START
+          ),
+          outputs: actionRegistry.getDefaultOutputs(
+            constants.workflowActions.START
+          ),
+        },
+        run: {
+          inputs: [],
+          outputs: [],
+        },
       },
     },
     {
@@ -56,10 +62,18 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
         label: constants.workflowActions.END,
         actionName: constants.workflowActions.END,
         status: constants.workflowNodeStatus.idle,
-        inputs: actionRegistry.getDefaultInputs(constants.workflowActions.END),
-        outputs: actionRegistry.getDefaultOutputs(
-          constants.workflowActions.END
-        ),
+        design: {
+          inputs: actionRegistry.getDefaultInputs(
+            constants.workflowActions.END
+          ),
+          outputs: actionRegistry.getDefaultOutputs(
+            constants.workflowActions.END
+          ),
+        },
+        run: {
+          inputs: [],
+          outputs: [],
+        },
       },
     },
   ],
@@ -77,7 +91,7 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
   );
 
   // 디자인한 input 데이터 스키마 정보
-  const [designedInputTables, setDesignedInputTables] =
+  const [designedInputData, setDesignedInputData] =
     useState<workflowEngine.DesignTable>({
       INPUT_TABLE: [
         { name: "key1", type: "string" },
@@ -85,7 +99,7 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
       ],
     });
 
-  const [workflowOutputData, setWorkflowOutputData] = useState<string>(
+  const [designedOutputData, setDesignedOutputData] = useState<string>(
     JSON.stringify({ OUTPUT_TABLE: [{ key1: "test", key2: 123 }] }, null, 2)
   );
 
@@ -116,12 +130,12 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
 
   const workflowOutputDataObj = useMemo(() => {
     try {
-      const parsed = JSON.parse(workflowOutputData);
+      const parsed = JSON.parse(designedOutputData);
       return Object.keys(parsed).length ? parsed : { table1: [] };
     } catch {
       return { table1: [] };
     }
-  }, [workflowOutputData]);
+  }, [designedOutputData]);
 
   const generateStepId = useCallback(() => {
     stepCounterRef.current += 1;
@@ -173,23 +187,45 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
           label: `Node ${id}`,
           actionName: constants.workflowActions.SLEEP,
           status: constants.workflowNodeStatus.idle,
-          inputs: actionRegistry.getDefaultInputs(
-            constants.workflowActions.SLEEP
-          ),
-          outputs: actionRegistry.getDefaultOutputs(
-            constants.workflowActions.SLEEP
-          ),
+          design: {
+            inputs: actionRegistry.getDefaultInputs(
+              constants.workflowActions.SLEEP
+            ),
+            outputs: actionRegistry.getDefaultOutputs(
+              constants.workflowActions.SLEEP
+            ),
+          },
+          run: {
+            inputs: [],
+            outputs: [],
+          },
         },
-      },
+      } as Node<ActionNodeData>,
     ]);
   };
 
-  const getWorkflowJson = (): string =>
-    JSON.stringify(
-      { workflowId, workflowName, workflowDescription, nodes, edges },
-      null,
-      2
-    );
+  const getWorkflowJson = (): string => {
+    const workflowObject = {
+      workflowId: workflowId,
+      workflowName: workflowName,
+      workflowDescription: workflowDescription,
+      data: {
+        design: {
+          input: designedInputData,
+          output: JSON.parse(designedOutputData),
+        },
+        run: {
+          input: workflowInputDataObj,
+          output: [],
+        },
+      },
+      nodes,
+      edges,
+    };
+
+    return JSON.stringify(workflowObject, null, 2);
+  };
+
   const exportWorkflow = () => {
     const workflowJson = getWorkflowJson();
     const win = window.open("", "_blank");
@@ -201,68 +237,13 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
     }
   };
 
-  async function executeWorkflow(workflow: any = [], actualTables: any = []) {
-    const nodesList: Node<any>[] = workflow.nodes;
-    const edgesList: Edge<any>[] = workflow.edges;
-    const startNode = nodesList.find(
-      (n) => n.data.actionName === constants.workflowActions.START
-    );
-    if (!startNode) {
-      openModal(constants.messages.WORKFLOW_STARTNODE_NOT_FOUND);
-      return null;
-    }
-
-    startNode.data.design = {};
-    startNode.data.design.inputs = designedInputTables;
-
-    // 입력 검증
-    if (
-      !workflowEngine.validationDataFormat(designedInputTables, actualTables)
-    ) {
-      openModal(`Invalid data structure.`);
-      return null;
-    }
-
-    const edgeMap: Record<string, Edge<any>[]> = {};
-    edgesList.forEach((e) => {
-      if (!e.source) return;
-      if (!edgeMap[e.source]) edgeMap[e.source] = [];
-      edgeMap[e.source]!.push(e);
-    });
-
-    const visitedNodes = new Set<string>();
-    async function traverse(nodeId: string) {
-      if (visitedNodes.has(nodeId)) return;
-      visitedNodes.add(nodeId);
-
-      const node = nodesList.find((n) => n.id === nodeId);
-      if (!node) return;
-
-      const shouldRun = !node.data.if || Boolean(node.data.if);
-      let result: any = null;
-
-      if (shouldRun) {
-        setRunningNodeIds((prev) => [...prev, nodeId]);
-        result = await workflowEngine.runWorkflowStep(node, workflow);
-        setRunningNodeIds((prev) => prev.filter((id) => id !== nodeId));
-      }
-
-      const outgoingEdges = edgeMap[nodeId] || [];
-      for (const edge of outgoingEdges) {
-        if (!edge.data?.condition || Boolean(edge.data.condition))
-          await traverse(edge.target);
-      }
-      return result;
-    }
-
-    await traverse(startNode.id);
-    return workflow;
-  }
-
   const executeWorkflowFromTableEditor = async () => {
     try {
       const jWorkflow = getWorkflowJson();
-      await executeWorkflow(JSON.parse(jWorkflow), workflowInputDataObj);
+      await workflowEngine.executeWorkflow(
+        JSON.parse(jWorkflow),
+        setRunningNodeIds
+      );
     } catch (err) {
       openModal("❌ 실행 실패: " + String(err));
     }
@@ -429,7 +410,7 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
                   mode="schema"
                   value={workflowOutputDataObj}
                   onConfirm={(newSchema) => {
-                    setWorkflowOutputData(JSON.stringify(newSchema, null, 2));
+                    setDesignedOutputData(JSON.stringify(newSchema, null, 2));
                     setIsOutputSchemaEditorOpen(false);
                   }}
                   onCancel={() => setIsOutputSchemaEditorOpen(false)}
@@ -438,7 +419,7 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
 
               <textarea
                 className="w-full h-[250px] mt-2 border p-2 font-mono text-sm"
-                value={workflowOutputData}
+                value={designedOutputData}
                 readOnly
               />
             </div>

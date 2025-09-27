@@ -3,6 +3,8 @@ import {
   registerBuiltInActions,
 } from "@/components/workflow/actionRegistry";
 import type { Connection, Edge, Node, NodeChange, EdgeChange } from "reactflow";
+import * as constants from "@/components/core/constants";
+import { exceptions } from "winston";
 
 registerBuiltInActions();
 
@@ -40,6 +42,66 @@ function evalCondition(cond: any, ctx: any) {
   return res !== "" && res !== "false" && res !== "0";
 }
 
+export async function executeWorkflow(
+  workflow: any = [],
+  setRunningNodeIds: any = null
+) {
+  const nodesList: Node<any>[] = workflow.nodes;
+  const edgesList: Edge<any>[] = workflow.edges;
+
+  // 입력 검증
+  if (
+    !validationDataFormat(workflow.data.design.input, workflow.data.run.input)
+  ) {
+    throw new Error(`Invalid data structure.`);
+    return null;
+  }
+
+  const startNode = nodesList.find(
+    (n) => n.data.actionName === constants.workflowActions.START
+  );
+
+  if (!startNode) {
+    throw new Error(constants.messages.WORKFLOW_STARTNODE_NOT_FOUND);
+    return null;
+  }
+
+  const edgeMap: Record<string, Edge<any>[]> = {};
+  edgesList.forEach((e) => {
+    if (!e.source) return;
+    if (!edgeMap[e.source]) edgeMap[e.source] = [];
+    edgeMap[e.source]!.push(e);
+  });
+
+  const visitedNodes = new Set<string>();
+  async function traverse(nodeId: string) {
+    if (visitedNodes.has(nodeId)) return;
+    visitedNodes.add(nodeId);
+
+    const node = nodesList.find((n) => n.id === nodeId);
+    if (!node) return;
+
+    const shouldRun = !node.data.if || Boolean(node.data.if);
+    let result: any = null;
+
+    if (shouldRun && setRunningNodeIds) {
+      setRunningNodeIds((prev: any) => [...prev, nodeId]);
+      result = await runWorkflowStep(node, workflow);
+      setRunningNodeIds((prev: any) => prev.filter((id: any) => id !== nodeId));
+    }
+
+    const outgoingEdges = edgeMap[nodeId] || [];
+    for (const edge of outgoingEdges) {
+      if (!edge.data?.condition || Boolean(edge.data.condition))
+        await traverse(edge.target);
+    }
+    return result;
+  }
+
+  await traverse(startNode.id);
+  return workflow;
+}
+
 // 워크플로우 실행
 export async function runWorkflowStep(node: Node<any>, workflowData: any) {
   // 실행 컨텍스트 생성
@@ -60,12 +122,12 @@ export async function runWorkflowStep(node: Node<any>, workflowData: any) {
   if (!action) throw new Error(`Unknown action: ${node.data.actionName}`);
 
   // 파라미터 보간 처리 (왜 필요한지...)
-  const stepInputs = interpolate(node.data.inputs || {}, ctxInterp);
+  const stepInputs = interpolate(node.data.design.inputs || {}, ctxInterp);
   let result: any = null;
 
   try {
     result = await action(node.id, node.data, stepInputs, workflowData);
-    mergeDeepOverwrite(node.data.outputs, result);
+    mergeDeepOverwrite(node.data.run.outputs, result);
     return result;
   } catch (err) {
     if (node.data.continueOnError) {

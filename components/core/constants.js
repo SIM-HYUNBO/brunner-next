@@ -53,6 +53,7 @@ export const messages = {
   USER_PASSWORD_LENGTH_CHECK: `The [password] length should be more than 5.`,
   WORKFLOW_NODES_NOT_CONNECTED: `From the Start node, nodes are not connected to the End node. Workflow cannot run.`,
   WORKFLOW_STARTNODE_NOT_FOUND: `Start node not found`,
+  WORKFLOW_NOT_SUPPORTED_NODE_TYPE: `Not supported node type`,
 };
 
 export const commands = {
