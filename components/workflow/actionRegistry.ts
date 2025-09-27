@@ -34,6 +34,7 @@ export interface ActionNodeData {
   label: string;
   actionName: string;
   status: string;
+  nodeStatus: string;
   design: {
     inputs: NodeDataTable[];
     outputs: NodeDataTable[];
@@ -153,7 +154,8 @@ const nodeActionLogging = (node: Node<any>, stepInputs: WorkflowContext) => {
 const preNodeCheck = (node: Node<any>, workflowData: any) => {
   // 조건(if) 확인
   workflowData.currentNodeId = node.id;
-  node.data.status = constants.workflowNodeStatus.running;
+  node.data.status = constants.workflownodeStatus.running;
+  node.data.nodeStatus = constants.workflownodeStatus.running;
 
   if (!evalCondition(node.data.if, workflowData)) {
     return false; // 조건 불일치 → 실행하지 않음
@@ -168,7 +170,12 @@ const preNodeCheck = (node: Node<any>, workflowData: any) => {
 };
 
 const postNodeCheck = (node: Node<any>, workflowData: any) => {
-  node.data.status = constants.workflowNodeStatus.idle;
+  node.data.status = constants.workflownodeStatus.idle;
+  setTimeout(() => {
+    // 노드색깔 변경만 0.5초 유지
+    node.data.nodeStatus = constants.workflownodeStatus.idle;
+  }, 500);
+
   if (node.data.actionName === constants.workflowActions.END)
     workflowData.currentNodeId = null;
 };

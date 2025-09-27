@@ -113,7 +113,7 @@ export const workflowActions = {
   CALL: "CallWorkflow",
 };
 
-export const workflowNodeStatus = {
+export const workflownodeStatus = {
   idle: "idle",
   running: "running",
 };
