@@ -260,10 +260,7 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
 
   const executeWorkflowStepByStep = async () => {
     try {
-      if (
-        !jWorkflow.current ||
-        runningNodeIds.includes(constants.workflowActions.END)
-      )
+      if (!jWorkflow.current || !jWorkflow.current.currentNodeId)
         initWorkflow(); // 상태 없으면 초기화
 
       let workflowData = jWorkflow.current;
