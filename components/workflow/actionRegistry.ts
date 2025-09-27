@@ -56,12 +56,7 @@ export type WorkflowContext = Record<string, any> & {
 };
 
 // -------------------- 액션 타입 --------------------
-export type ActionHandler = (
-  nodeId: string,
-  nodeData: NodeDataTable[],
-  stepInputs: NodeDataTable[],
-  workflow: any
-) => Promise<void>;
+export type ActionHandler = (node: Node<any>, workflow: any) => Promise<void>;
 
 export const actionMap = new Map<string, ActionHandler>();
 export const defaultParamsMap = new Map<string, NodeDataTable[]>();
@@ -70,7 +65,7 @@ export const defaultParamsMap = new Map<string, NodeDataTable[]>();
 export function getDefaultInputs(actionName: string): NodeDataTable[] {
   switch (actionName) {
     case constants.workflowActions.START:
-      return [{ table: "OUTDATA", columns: [], value: [] }];
+      return [{ table: "INDATA", columns: [], value: [] }];
     case constants.workflowActions.SLEEP:
     case constants.workflowActions.HTTPREQUEST:
     case constants.workflowActions.SET:
@@ -114,59 +109,100 @@ export function getDefaultParams(actionName: string): NodeDataTable[] {
   return defaultParamsMap.get(actionName) || [];
 }
 
+// 객체 경로로 값 가져오기
+function getByPath(obj: any, path: string) {
+  return path.split(".").reduce((o, k) => (o ? o[k] : undefined), obj);
+}
+
+/** value (객체)의 모든 템플릿 {{}} 데이터를 실제 값으로 치환 */
+function interpolate(value: any, ctx: any): any {
+  if (typeof value === "string") {
+    return value.replace(/\{\{([^}]+)\}\}/g, (_, key) => {
+      const v = getByPath(ctx, key.trim());
+      return v == null ? "" : String(v);
+    });
+  }
+
+  if (Array.isArray(value)) return value.map((v: any) => interpolate(v, ctx));
+
+  if (value && typeof value === "object") {
+    const out: Record<string, any> = {};
+    Object.keys(value).forEach((k) => {
+      out[k] = interpolate(value[k], ctx);
+    });
+    return out;
+  }
+
+  return value;
+}
+
+// 조건 평가
+export function evalCondition(cond: any, workflowData: any) {
+  if (!cond) return true;
+  const res = interpolate(cond, workflowData).trim().toLowerCase();
+  return res !== "" && res !== "false" && res !== "0";
+}
+
+const nodeActionLogging = (node: Node<any>, stepInputs: WorkflowContext) => {
+  console.log(
+    `Execute Node [${node.id}] Inputs:`,
+    JSON.stringify(node.data, null, 2)
+  );
+};
+
+const prevNodeCheck = (node: Node<any>, workflowData: any) => {
+  // 조건(if) 확인
+  if (!evalCondition(node.data.if, workflowData)) {
+    return false; // 조건 불일치 → 실행하지 않음
+  }
+  // 파라미터 보간 처리
+  node.data.run.inputs = interpolate(
+    node.data.design.inputs || {},
+    workflowData
+  );
+  nodeActionLogging(node, node.data.run.inputs);
+  return true;
+};
+
 // -------------------- Built-in 액션 등록 --------------------
 export function registerBuiltInActions(): void {
-  const logAction = (
-    nodeId: string,
-    nodeData: NodeDataTable[],
-    stepInputs: WorkflowContext
-  ) => {
-    console.log(
-      `Execute Node [${nodeId}] Inputs:`,
-      JSON.stringify(nodeData, null, 2)
-    );
-  };
-
   // START
   registerAction(
     constants.workflowActions.START,
-    async (nodeId, nodeData, stepInputs, workflow) => {
-      const nodesList: Node<any>[] = workflow.nodes;
-      const node = nodesList.find((n) => n.id === nodeId);
+    async (node, workflowData) => {
       if (!node) return;
-      logAction(nodeId, nodeData, stepInputs);
+      if (!prevNodeCheck(node, workflowData)) return;
+
       return;
     }
   );
   defaultParamsMap.set(constants.workflowActions.START, []);
 
   // END
-  registerAction(
-    constants.workflowActions.END,
-    async (nodeId, nodeData, stepInputs, workflow) => {
-      logAction(nodeId, nodeData, stepInputs);
-      return;
-    }
-  );
+  registerAction(constants.workflowActions.END, async (node, workflowData) => {
+    if (!node) return;
+    if (!prevNodeCheck(node, workflowData)) return;
+
+    return;
+  });
   defaultParamsMap.set(constants.workflowActions.END, []);
 
   // SET
-  registerAction(
-    constants.workflowActions.SET,
-    async (nodeId, nodeData, stepInputs, workflow) => {
-      logAction(nodeId, nodeData, stepInputs);
-      // nodeData["design"].outputs = nodeData.design.inputs;
-      return;
-    }
-  );
+  registerAction(constants.workflowActions.SET, async (node, workflowData) => {
+    if (!node) return;
+    if (!prevNodeCheck(node, workflowData)) return;
+
+    return;
+  });
   defaultParamsMap.set(constants.workflowActions.SET, []);
 
   // HTTPREQUEST
   registerAction(
     constants.workflowActions.HTTPREQUEST,
-    async (nodeId, nodeData, stepInputs, workflow) => {
-      logAction(nodeId, nodeData, stepInputs);
-      // nodeData["design"].outputs = nodeData.design.inputs;
+    async (node, workflowData) => {
+      if (!node) return;
+      if (!prevNodeCheck(node, workflowData)) return;
+
       return;
     }
   );
@@ -175,9 +211,10 @@ export function registerBuiltInActions(): void {
   // SLEEP
   registerAction(
     constants.workflowActions.SLEEP,
-    async (nodeId, nodeData, stepInputs, workflow) => {
-      logAction(nodeId, nodeData, stepInputs);
-      // nodeData["design"].outputs = nodeData.design.inputs;
+    async (node, workflowData) => {
+      if (!node) return;
+      if (!prevNodeCheck(node, workflowData)) return;
+
       return;
     }
   );
@@ -186,9 +223,10 @@ export function registerBuiltInActions(): void {
   // MERGE
   registerAction(
     constants.workflowActions.MERGE,
-    async (nodeId, nodeData, stepInputs, workflow) => {
-      logAction(nodeId, nodeData, stepInputs);
-      // nodeData["design"].outputs = nodeData.design.inputs;
+    async (node, workflowData) => {
+      if (!node) return;
+      if (!prevNodeCheck(node, workflowData)) return;
+
       return;
     }
   );
@@ -197,9 +235,10 @@ export function registerBuiltInActions(): void {
   // BRANCH
   registerAction(
     constants.workflowActions.BRANCH,
-    async (nodeId, nodeData, stepInputs, workflow) => {
-      logAction(nodeId, nodeData, stepInputs);
-      // nodeData["design"].outputs = nodeData.design.inputs;
+    async (node, workflowData) => {
+      if (!node) return;
+      if (!prevNodeCheck(node, workflowData)) return;
+
       return;
     }
   );
@@ -208,22 +247,21 @@ export function registerBuiltInActions(): void {
   // MATHOP
   registerAction(
     constants.workflowActions.MATHOP,
-    async (nodeId, nodeData, stepInputs, workflow) => {
-      logAction(nodeId, nodeData, stepInputs);
-      // nodeData["design"].outputs = nodeData.design.inputs;
+    async (node, workflowData) => {
+      if (!node) return;
+      if (!prevNodeCheck(node, workflowData)) return;
+
       return;
     }
   );
   defaultParamsMap.set(constants.workflowActions.MATHOP, []);
 
   // CALL
-  registerAction(
-    constants.workflowActions.CALL,
-    async (nodeId, nodeData, stepInputs, workflow) => {
-      logAction(nodeId, nodeData, stepInputs);
-      // nodeData["design"].outputs = nodeData.design.inputs;
-      return;
-    }
-  );
+  registerAction(constants.workflowActions.CALL, async (node, workflowData) => {
+    if (!node) return;
+    if (!prevNodeCheck(node, workflowData)) return;
+
+    return;
+  });
   defaultParamsMap.set(constants.workflowActions.CALL, []);
 }
