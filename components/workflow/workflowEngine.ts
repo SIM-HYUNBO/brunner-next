@@ -4,6 +4,7 @@ import {
 } from "@/components/workflow/actionRegistry";
 import type { Connection, Edge, Node, NodeChange, EdgeChange } from "reactflow";
 import * as constants from "@/components/core/constants";
+import * as actionRegistry from "@/components/workflow/actionRegistry";
 
 registerBuiltInActions();
 
@@ -68,7 +69,7 @@ export async function executeWorkflow(
 }
 
 // 워크플로우 실행
-export async function runWorkflowStep(node: Node<any>, workflowData: any) {
+async function runWorkflowStep(node: Node<any>, workflowData: any) {
   // 액션 찾기
   const action = getAction(node.data.actionName);
   if (!action) throw new Error(`Unknown action: ${node.data.actionName}`);
@@ -86,6 +87,47 @@ export async function runWorkflowStep(node: Node<any>, workflowData: any) {
       throw err;
     }
   }
+}
+
+export async function executeNextNode(
+  workflowData: any,
+  setRunningNodeIds: any = null
+) {
+  // 실행할 노드 찾기
+  let node: Node<any> | null;
+
+  if (!workflowData.currentNodeId) {
+    node =
+      workflowData.nodes.find(
+        (n: any) => n.data.actionName === constants.workflowActions.START
+      ) || null;
+  } else {
+    const edge = workflowData.edges.find(
+      (e: any) => e.source === workflowData.currentNodeId
+    );
+    node = edge
+      ? workflowData.nodes.find((n: any) => n.id === edge.target) || null
+      : null;
+  }
+
+  if (!node) {
+    throw new Error(constants.messages.WORKFLOW_NODE_NOT_FOUND);
+    return;
+  }
+
+  workflowData.currentNodeId = node.id;
+
+  try {
+    const runInputs = actionRegistry.interpolate(
+      node.data.design.inputs || {},
+      workflowData
+    );
+    node.data.run = { ...node.data.run, inputs: runInputs };
+
+    setRunningNodeIds((prev: any) => [...prev, node.id]);
+    await runWorkflowStep(node, workflowData);
+    setRunningNodeIds((prev: any) => prev.filter((id: any) => id !== node.id));
+  } catch (err) {}
 }
 
 export function mergeDeepOverwrite(

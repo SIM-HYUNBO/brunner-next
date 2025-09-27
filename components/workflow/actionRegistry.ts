@@ -115,7 +115,7 @@ function getByPath(obj: any, path: string) {
 }
 
 /** value (객체)의 모든 템플릿 {{}} 데이터를 실제 값으로 치환 */
-function interpolate(value: any, ctx: any): any {
+export function interpolate(value: any, ctx: any): any {
   if (typeof value === "string") {
     return value.replace(/\{\{([^}]+)\}\}/g, (_, key) => {
       const v = getByPath(ctx, key.trim());
@@ -150,8 +150,11 @@ const nodeActionLogging = (node: Node<any>, stepInputs: WorkflowContext) => {
   );
 };
 
-const prevNodeCheck = (node: Node<any>, workflowData: any) => {
+const preNodeCheck = (node: Node<any>, workflowData: any) => {
   // 조건(if) 확인
+  workflowData.currentNodeId = node.id;
+  node.data.status = constants.workflowNodeStatus.running;
+
   if (!evalCondition(node.data.if, workflowData)) {
     return false; // 조건 불일치 → 실행하지 않음
   }
@@ -164,6 +167,12 @@ const prevNodeCheck = (node: Node<any>, workflowData: any) => {
   return true;
 };
 
+const postNodeCheck = (node: Node<any>, workflowData: any) => {
+  node.data.status = constants.workflowNodeStatus.idle;
+  if (node.data.actionName === constants.workflowActions.END)
+    workflowData.currentNodeId = null;
+};
+
 // -------------------- Built-in 액션 등록 --------------------
 export function registerBuiltInActions(): void {
   // START
@@ -171,8 +180,12 @@ export function registerBuiltInActions(): void {
     constants.workflowActions.START,
     async (node, workflowData) => {
       if (!node) return;
-      if (!prevNodeCheck(node, workflowData)) return;
+      if (!preNodeCheck(node, workflowData)) {
+        postNodeCheck(node, workflowData);
+        return;
+      }
 
+      postNodeCheck(node, workflowData);
       return;
     }
   );
@@ -181,8 +194,12 @@ export function registerBuiltInActions(): void {
   // END
   registerAction(constants.workflowActions.END, async (node, workflowData) => {
     if (!node) return;
-    if (!prevNodeCheck(node, workflowData)) return;
+    if (!preNodeCheck(node, workflowData)) {
+      postNodeCheck(node, workflowData);
+      return;
+    }
 
+    postNodeCheck(node, workflowData);
     return;
   });
   defaultParamsMap.set(constants.workflowActions.END, []);
@@ -190,8 +207,12 @@ export function registerBuiltInActions(): void {
   // SET
   registerAction(constants.workflowActions.SET, async (node, workflowData) => {
     if (!node) return;
-    if (!prevNodeCheck(node, workflowData)) return;
+    if (!preNodeCheck(node, workflowData)) {
+      postNodeCheck(node, workflowData);
+      return;
+    }
 
+    postNodeCheck(node, workflowData);
     return;
   });
   defaultParamsMap.set(constants.workflowActions.SET, []);
@@ -201,8 +222,12 @@ export function registerBuiltInActions(): void {
     constants.workflowActions.HTTPREQUEST,
     async (node, workflowData) => {
       if (!node) return;
-      if (!prevNodeCheck(node, workflowData)) return;
+      if (!preNodeCheck(node, workflowData)) {
+        postNodeCheck(node, workflowData);
+        return;
+      }
 
+      postNodeCheck(node, workflowData);
       return;
     }
   );
@@ -213,9 +238,19 @@ export function registerBuiltInActions(): void {
     constants.workflowActions.SLEEP,
     async (node, workflowData) => {
       if (!node) return;
-      if (!prevNodeCheck(node, workflowData)) return;
+      if (!preNodeCheck(node, workflowData)) {
+        postNodeCheck(node, workflowData);
+        return;
+      }
 
-      return;
+      return new Promise((resolve) => {
+        setTimeout(() => {
+          // console.log(`✅ ${ms}ms 대기 완료`);
+          resolve();
+          postNodeCheck(node, workflowData);
+          return;
+        }, 3000);
+      });
     }
   );
   defaultParamsMap.set(constants.workflowActions.SLEEP, []);
@@ -225,8 +260,12 @@ export function registerBuiltInActions(): void {
     constants.workflowActions.MERGE,
     async (node, workflowData) => {
       if (!node) return;
-      if (!prevNodeCheck(node, workflowData)) return;
+      if (!preNodeCheck(node, workflowData)) {
+        postNodeCheck(node, workflowData);
+        return;
+      }
 
+      postNodeCheck(node, workflowData);
       return;
     }
   );
@@ -237,8 +276,12 @@ export function registerBuiltInActions(): void {
     constants.workflowActions.BRANCH,
     async (node, workflowData) => {
       if (!node) return;
-      if (!prevNodeCheck(node, workflowData)) return;
+      if (!preNodeCheck(node, workflowData)) {
+        postNodeCheck(node, workflowData);
+        return;
+      }
 
+      postNodeCheck(node, workflowData);
       return;
     }
   );
@@ -249,8 +292,12 @@ export function registerBuiltInActions(): void {
     constants.workflowActions.MATHOP,
     async (node, workflowData) => {
       if (!node) return;
-      if (!prevNodeCheck(node, workflowData)) return;
+      if (!preNodeCheck(node, workflowData)) {
+        postNodeCheck(node, workflowData);
+        return;
+      }
 
+      postNodeCheck(node, workflowData);
       return;
     }
   );
@@ -259,8 +306,12 @@ export function registerBuiltInActions(): void {
   // CALL
   registerAction(constants.workflowActions.CALL, async (node, workflowData) => {
     if (!node) return;
-    if (!prevNodeCheck(node, workflowData)) return;
+    if (!preNodeCheck(node, workflowData)) {
+      postNodeCheck(node, workflowData);
+      return;
+    }
 
+    postNodeCheck(node, workflowData);
     return;
   });
   defaultParamsMap.set(constants.workflowActions.CALL, []);

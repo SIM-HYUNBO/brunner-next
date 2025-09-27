@@ -79,6 +79,7 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
   ],
   initialEdges = [],
 }) => {
+  const jWorkflow = useRef<any | null>(null);
   const stepCounterRef = useRef(0);
   const { BrunnerMessageBox, openModal } = useModal();
 
@@ -89,6 +90,12 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
   const [workflowInputData, setWorkflowInputData] = useState<string>(
     JSON.stringify({ INPUT_TABLE: [{ key1: "test", key2: 123 }] }, null, 2)
   );
+
+  const initWorkflow = () => {
+    const wf = JSON.parse(getWorkflowJson());
+    wf.currentNodeId = null; // 단계 실행용 현재 노드 ID
+    jWorkflow.current = wf;
+  };
 
   // 디자인한 input 데이터 스키마 정보
   const [designedInputData, setDesignedInputData] =
@@ -209,6 +216,7 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
       workflowId: workflowId,
       workflowName: workflowName,
       workflowDescription: workflowDescription,
+      currentNodeId: null,
       data: {
         design: {
           input: designedInputData,
@@ -239,11 +247,23 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
 
   const executeWorkflowFromTableEditor = async () => {
     try {
-      const jWorkflow = getWorkflowJson();
-      await workflowEngine.executeWorkflow(
-        JSON.parse(jWorkflow),
+      if (!jWorkflow) initWorkflow(); // 상태 없으면 초기화
+      await workflowEngine.executeWorkflow(jWorkflow!, setRunningNodeIds);
+      jWorkflow.current = { ...jWorkflow! }; // 실행 후 상태 갱신
+    } catch (err) {
+      openModal("❌ 실행 실패: " + String(err));
+    }
+  };
+
+  const executeWorkflowStepByStep = async () => {
+    try {
+      if (!jWorkflow.current) initWorkflow(); // 상태 없으면 초기화
+
+      await workflowEngine.executeNextNode(
+        jWorkflow.current,
         setRunningNodeIds
       );
+      jWorkflow.current = { ...jWorkflow.current }; // 실행 후 상태 반영
     } catch (err) {
       openModal("❌ 실행 실패: " + String(err));
     }
@@ -286,7 +306,7 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
                 onNodeClick={onNodeClick}
                 fitView
                 snapToGrid
-                snapGrid={[20, 20]}
+                snapGrid={[30, 30]}
               >
                 <MiniMap />
                 <Controls />
@@ -334,6 +354,12 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
                 onClick={executeWorkflowFromTableEditor}
               >
                 Run
+              </button>
+              <button
+                className="w-full bg-yellow-200 border mt-5"
+                onClick={executeWorkflowStepByStep}
+              >
+                Run By Node
               </button>
             </div>
           </div>
