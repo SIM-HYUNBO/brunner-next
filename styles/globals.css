@@ -116,11 +116,11 @@ neutral, stone
   }
 
   footer {
-    @apply h-20 
+    @apply h-10 
            w-full
            relative 
            bottom-0 
-           mt-10
+           mt-6
            flex 
            flex-col 
            items-center

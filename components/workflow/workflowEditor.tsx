@@ -276,7 +276,7 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
       <BrunnerMessageBox />
       <ReactFlowProvider>
         <div className="flex flex-col">
-          <div className="flex flex-row w-full">
+          <div className="flex flex-row w-full h-5/6">
             <div className="flex flex-1">
               <ReactFlow
                 className="w-full h-[600px] semi-text-bg-color border border-gray-300 rounded-lg shadow-sm"
@@ -352,22 +352,24 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
                   });
                 }}
               />
-              <button
-                className="w-full semi-text-bg-color border mt-5"
-                onClick={executeWorkflowFromTableEditor}
-              >
-                Run
-              </button>
-              <button
-                className="w-full semi-text-bg-color border mt-5"
-                onClick={executeWorkflowStepByStep}
-              >
-                Run By Node
-              </button>
+              <div className="flex flex-row space-x-1">
+                <button
+                  className="w-full semi-text-bg-color border mt-5"
+                  onClick={executeWorkflowFromTableEditor}
+                >
+                  Run
+                </button>
+                <button
+                  className="w-full semi-text-bg-color border mt-5"
+                  onClick={executeWorkflowStepByStep}
+                >
+                  Run By Node
+                </button>
+              </div>
             </div>
           </div>
 
-          <div className="flex flex-row mt-5">
+          <div className="flex flex-row mt-2">
             {/* Input Table */}
             <div className="flex flex-col w-[calc(50%-10px)]">
               <div className="flex flex-row space-x-2">
@@ -414,7 +416,7 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
                 )}
               </div>
               <textarea
-                className="w-full h-[250px] mt-2 border p-2 font-mono text-sm"
+                className="w-full h-[200px] mt-2 border p-2 font-mono text-sm"
                 value={workflowInputData}
                 readOnly
               />
@@ -448,7 +450,7 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
               )}
 
               <textarea
-                className="w-full h-[250px] mt-2 border p-2 font-mono text-sm"
+                className="w-full h-[200px] mt-2 border p-2 font-mono text-sm"
                 value={designedOutputData}
                 readOnly
               />
