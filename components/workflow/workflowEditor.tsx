@@ -39,8 +39,7 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
       data: {
         label: constants.workflowActions.START,
         actionName: constants.workflowActions.START,
-        status: constants.workflownodeStatus.idle,
-        nodeStatus: constants.workflownodeStatus.idle,
+        status: constants.workflowRunStatus.idle,
         design: {
           inputs: actionRegistry.getDefaultInputs(
             constants.workflowActions.START
@@ -62,8 +61,7 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
       data: {
         label: constants.workflowActions.END,
         actionName: constants.workflowActions.END,
-        status: constants.workflownodeStatus.idle,
-        nodeStatus: constants.workflownodeStatus.idle,
+        status: constants.workflowRunStatus.idle,
         design: {
           inputs: actionRegistry.getDefaultInputs(
             constants.workflowActions.END
@@ -195,8 +193,7 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
         data: {
           label: `Node ${id}`,
           actionName: constants.workflowActions.SLEEP,
-          status: constants.workflownodeStatus.idle,
-          nodeStatus: constants.workflownodeStatus.idle,
+          status: constants.workflowRunStatus.idle,
           design: {
             inputs: actionRegistry.getDefaultInputs(
               constants.workflowActions.SLEEP

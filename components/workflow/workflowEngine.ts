@@ -126,7 +126,12 @@ export async function executeNextNode(
 
     setRunningNodeIds((prev: any) => [...prev, node.id]);
     await runWorkflowStep(node, workflowData);
-    setRunningNodeIds((prev: any) => prev.filter((id: any) => id !== node.id));
+    setTimeout(() => {
+      // 비즈니스 트랜잭션에서는 노드 실행상태 확인을 위해 실행중인 노드 색깔 표시를 0.01초 유지
+      setRunningNodeIds((prev: any) =>
+        prev.filter((id: any) => id !== node.id)
+      );
+    }, 10);
   } catch (err) {}
 }
 

@@ -137,7 +137,7 @@ export const NodePropertyEditor: React.FC<NodePropertyEditorProps> = ({
       <h3>Node Editor</h3>
       <div>ID: {node.id}</div>
       <div>Label: {node.data.label}</div>
-      <div>Status: {node.data.nodeStatus}</div>
+      <div>Status: {node.data.status}</div>
 
       <div className="mt-2">
         <label>Action Name:</label>
