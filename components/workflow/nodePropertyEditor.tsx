@@ -23,28 +23,29 @@ interface NodePropertyEditorProps {
   onNodeUpdate?: (id: string, updates: any) => void;
 }
 
-interface WorkflowVariable {
+export interface WorkflowVariable {
   nodeId: string;
-  key: string;
-  type: string;
-  value?: any;
+  table: string; // 테이블 이름
+  columns: DatasetColumn[]; // 컬럼 정보
+  rows?: Record<string, any>[];
 }
 
 export function collectAllWorkflowVariables(
   nodes: Node<any>[]
 ): WorkflowVariable[] {
   const variables: WorkflowVariable[] = [];
+
   nodes.forEach((node) => {
-    const outputs: NodeDataTable[] = node.data.outputs ?? [];
-    outputs.forEach((output) => {
+    node.data.design.outputs?.forEach((output: NodeDataTable) => {
       variables.push({
         nodeId: node.id,
-        key: output.table,
-        type: "dataset",
-        value: output.rows,
+        table: output.table,
+        columns: output.columns,
+        rows: output.rows,
       });
     });
   });
+
   return variables;
 }
 
@@ -237,7 +238,7 @@ export const NodePropertyEditor: React.FC<NodePropertyEditorProps> = ({
               return {
                 table,
                 columns,
-                value: [Array.isArray(data) ? data : []],
+                rows: [Array.isArray(data) ? data : []],
               };
             });
 
@@ -282,7 +283,7 @@ export const NodePropertyEditor: React.FC<NodePropertyEditorProps> = ({
               return {
                 table,
                 columns,
-                value: Array.isArray(data) ? data : [],
+                rows: Array.isArray(data) ? data : [],
               };
             });
 
