@@ -23,32 +23,6 @@ interface NodePropertyEditorProps {
   onNodeUpdate?: (id: string, updates: any) => void;
 }
 
-export interface WorkflowVariable {
-  nodeId: string;
-  table: string; // 테이블 이름
-  columns: DatasetColumn[]; // 컬럼 정보
-  rows?: Record<string, any>[];
-}
-
-export function collectAllWorkflowVariables(
-  nodes: Node<any>[]
-): WorkflowVariable[] {
-  const variables: WorkflowVariable[] = [];
-
-  nodes.forEach((node) => {
-    node.data.design.outputs?.forEach((output: NodeDataTable) => {
-      variables.push({
-        nodeId: node.id,
-        table: output.table,
-        columns: output.columns,
-        rows: output.rows,
-      });
-    });
-  });
-
-  return variables;
-}
-
 export const NodePropertyEditor: React.FC<NodePropertyEditorProps> = ({
   node,
   nodes,
