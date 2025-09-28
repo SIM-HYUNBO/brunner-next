@@ -7,6 +7,7 @@ import type {
 import * as actionRegistry from "@/components/workflow/actionRegistry";
 import * as constants from "@/components/core/constants";
 import { JsonDatasetEditorModal } from "@/components/workflow/jsonDatasetEditorModal";
+import type { JsonColumnType } from "@/components/workflow/jsonDatasetEditorModal";
 
 interface NodePropertyEditorProps {
   node: Node<any> | null;
@@ -210,7 +211,7 @@ export const NodePropertyEditor: React.FC<NodePropertyEditorProps> = ({
           value={inputs.reduce((acc, table: any) => {
             acc[table.table] = table.columns.map((col: any) => ({
               key: col.key,
-              type: col.type,
+              type: col.type as JsonColumnType,
             }));
             return acc;
           }, {} as Record<string, DatasetColumn[]>)}
@@ -255,7 +256,7 @@ export const NodePropertyEditor: React.FC<NodePropertyEditorProps> = ({
           value={outputs.reduce((acc, table) => {
             acc[table.table] = table.columns.map((col) => ({
               key: col.key,
-              type: col.type,
+              type: col.type as JsonColumnType,
             }));
             return acc;
           }, {} as Record<string, DatasetColumn[]>)}

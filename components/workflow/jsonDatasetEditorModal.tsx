@@ -4,14 +4,7 @@ import { JsonDatasetManager } from "@/components/workflow/jsonDatasetManager";
 import type { JsonObject } from "@/components/workflow/jsonDatasetManager";
 
 type JsonDatasetEditorMode = "schema" | "data";
-type JsonColumnType =
-  | "string"
-  | "number"
-  | "boolean"
-  | "null"
-  | "date"
-  | "datetime";
-
+export type JsonColumnType = "string" | "number" | "boolean";
 interface JsonDatasetEditorModalProps {
   open: boolean;
   mode: JsonDatasetEditorMode;
@@ -78,15 +71,11 @@ export const JsonDatasetEditorModal: React.FC<JsonDatasetEditorModalProps> = ({
   const getDefaultValue = (type: JsonColumnType) => {
     switch (type) {
       case "string":
-      case "date":
-      case "datetime":
         return "";
       case "number":
         return 0;
       case "boolean":
         return false;
-      case "null":
-        return null;
     }
   };
 
@@ -171,10 +160,8 @@ export const JsonDatasetEditorModal: React.FC<JsonDatasetEditorModalProps> = ({
     if (!selectedTable || !isSchemaMode) return;
     const colName = prompt("컬럼 이름:");
     if (!colName) return;
-    const type = (prompt(
-      "타입 선택 (string, number, boolean, null, date, datetime):",
-      "string"
-    ) ?? "string") as JsonColumnType;
+    const type = (prompt("타입 선택 (string, number, boolean):", "string") ??
+      "string") as JsonColumnType;
 
     manager.addColumn(selectedTable, { name: colName, type });
 
