@@ -15,12 +15,14 @@ export async function executeWorkflow(
   const nodesList: Node<any>[] = workflow.nodes;
   const edgesList: Edge<any>[] = workflow.edges;
 
-  // 입력 검증
+  // 워크 플로우 입력 데이터 검증
   if (
-    !validationDataFormat(workflow.data.design.inputs, workflow.data.run.inputs)
+    !validationJsonDataset(
+      workflow.data.design.inputs,
+      workflow.data.run.inputs
+    )
   ) {
-    throw new Error(`Invalid data structure.`);
-    return null;
+    throw new Error(constants.messages.WORKFLOW_INVALID_DATA_STRUCTURE);
   }
 
   const startNode = nodesList.find(
@@ -29,7 +31,6 @@ export async function executeWorkflow(
 
   if (!startNode) {
     throw new Error(constants.messages.WORKFLOW_STARTNODE_NOT_FOUND);
-    return null;
   }
 
   const edgeMap: Record<string, Edge<any>[]> = {};
@@ -40,6 +41,7 @@ export async function executeWorkflow(
   });
 
   const visitedNodes = new Set<string>();
+
   async function traverse(nodeId: string) {
     if (visitedNodes.has(nodeId)) return;
     visitedNodes.add(nodeId);
@@ -48,12 +50,18 @@ export async function executeWorkflow(
     if (!node) return;
 
     const shouldRun = !node.data.if || Boolean(node.data.if);
-    let result: any = null;
+    let result: Promise<any> | null = null;
 
     if (shouldRun && setRunningNodeIds) {
-      setRunningNodeIds((prev: any) => [...prev, nodeId]);
+      setRunningNodeIds((prev: any) => {
+        [...prev, nodeId];
+      });
+
       result = await runWorkflowStep(node, workflow);
-      setRunningNodeIds((prev: any) => prev.filter((id: any) => id !== nodeId));
+
+      setRunningNodeIds((prev: any) => {
+        prev.filter((id: any) => id !== nodeId);
+      });
     }
 
     const outgoingEdges = edgeMap[nodeId] || [];
@@ -183,11 +191,11 @@ export type ColumnDesign = {
 };
 
 type DesignColumn = { name: string; type: string };
-export type DesignTable = Record<string, DesignColumn[]>;
+export type DesignedDataset = Record<string, DesignColumn[]>;
 type ActualDataset = Record<string, Record<string, any>[]>;
 
-export function validationDataFormat(
-  designedTables: DesignTable,
+export function validationJsonDataset(
+  designedTables: DesignedDataset,
   actualTables: ActualDataset
 ): boolean {
   for (const tableName in designedTables) {

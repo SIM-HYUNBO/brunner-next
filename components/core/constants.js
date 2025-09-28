@@ -51,6 +51,7 @@ export const messages = {
   USER_ID_LENGTH_CHECK: `The [userId] length should be from 5 to 10.`,
   USER_NAME_LENGTH_CHECK: `The [password] length should be more than 5.`,
   USER_PASSWORD_LENGTH_CHECK: `The [password] length should be more than 5.`,
+  WORKFLOW_INVALID_DATA_STRUCTURE: `Invalid data structure.`,
   WORKFLOW_NODE_NOT_FOUND: `Failed to find Node.`,
   WORKFLOW_NODES_NOT_CONNECTED: `From the Start node, nodes are not connected to the End node. Workflow cannot run.`,
   WORKFLOW_NOT_SUPPORTED_NODE_TYPE: `Not supported node type`,

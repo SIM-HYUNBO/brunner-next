@@ -104,6 +104,7 @@ function getByPath(obj: any, path: string) {
 
 /** value (객체)의 모든 템플릿 {{}} 데이터를 실제 값으로 치환 */
 export function interpolate(value: any, ctx: any): any {
+  /*
   if (typeof value === "string") {
     return value.replace(/\{\{([^}]+)\}\}/g, (_, key) => {
       const v = getByPath(ctx, key.trim());
@@ -120,6 +121,7 @@ export function interpolate(value: any, ctx: any): any {
     });
     return out;
   }
+  */
 
   return value;
 }
@@ -139,7 +141,6 @@ const nodeActionLogging = (node: Node<any>, stepInputs: WorkflowContext) => {
 };
 
 const preNodeCheck = (node: Node<any>, workflowData: any) => {
-  // 조건(if) 확인
   workflowData.currentNodeId = node.id;
   node.data.status = constants.workflowRunStatus.running;
 
@@ -173,6 +174,8 @@ export function registerBuiltInActions(): void {
         postNodeCheck(node, workflowData);
         return;
       }
+
+      // Node main action
 
       postNodeCheck(node, workflowData);
       return;

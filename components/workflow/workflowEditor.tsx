@@ -101,7 +101,7 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
 
   // 디자인한 input 데이터 스키마 정보
   const [designedInputData, setDesignedInputData] =
-    useState<workflowEngine.DesignTable>({
+    useState<workflowEngine.DesignedDataset>({
       INPUT_TABLE: [
         { name: "key1", type: "string" },
         { name: "key2", type: "number" },
@@ -399,7 +399,7 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
                     onConfirm={(newSchema) => {
                       // 1️⃣ 디자인 상태 업데이트
                       setDesignedInputData(
-                        newSchema as workflowEngine.DesignTable
+                        newSchema as workflowEngine.DesignedDataset
                       );
 
                       // 2️⃣ workflowInputDataObj를 새로운 디자인에 맞춰 초기화
