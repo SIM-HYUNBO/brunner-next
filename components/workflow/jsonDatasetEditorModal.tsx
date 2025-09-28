@@ -1,18 +1,13 @@
 import * as React from "react";
 import { useState, useEffect, useRef } from "react";
 import { JsonDatasetManager } from "@/components/workflow/jsonDatasetManager";
-import type {
-  JsonObject,
-  ColumnSchema,
-} from "@/components/workflow/jsonDatasetManager";
+import type { JsonObject } from "@/components/workflow/jsonDatasetManager";
 
 type JsonDatasetEditorMode = "schema" | "data";
 type JsonColumnType =
   | "string"
   | "number"
   | "boolean"
-  | "object"
-  | "array"
   | "null"
   | "date"
   | "datetime";
@@ -20,7 +15,7 @@ type JsonColumnType =
 interface JsonDatasetEditorModalProps {
   open: boolean;
   mode: JsonDatasetEditorMode;
-  value?: Record<string, JsonObject[]>;
+  value?: Record<string, any[]>; // 컬럼 정의 배열 또는 JsonObject[]
   onConfirm: (data: Record<string, JsonObject[]>) => void;
   onCancel?: () => void;
 }
@@ -32,18 +27,16 @@ export const JsonDatasetEditorModal: React.FC<JsonDatasetEditorModalProps> = ({
   onConfirm,
   onCancel,
 }) => {
-  const [internalData, setInternalData] =
-    useState<Record<string, JsonObject[]>>(value);
-  const [selectedTable, setSelectedTable] = useState<string | null>(
-    Object.keys(value)[0] || null
-  );
-  const [manager, setManager] = useState(() => new JsonDatasetManager(value));
+  const [internalData, setInternalData] = useState<
+    Record<string, JsonObject[]>
+  >({});
+  const [selectedTable, setSelectedTable] = useState<string | null>(null);
+  const [manager, setManager] = useState(() => new JsonDatasetManager({}));
   const modalRef = useRef<HTMLDivElement>(null);
 
   const isSchemaMode = mode === "schema";
   const isDataMode = mode === "data";
 
-  // 드래그 상태
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const [dragging, setDragging] = useState(false);
   const dragStart = useRef({ x: 0, y: 0 });
@@ -81,43 +74,72 @@ export const JsonDatasetEditorModal: React.FC<JsonDatasetEditorModalProps> = ({
     };
   }, [dragging]);
 
-  // 모달 열릴 때 초기화
+  // ---------------- 유틸: 타입별 기본값 ----------------
+  const getDefaultValue = (type: JsonColumnType) => {
+    switch (type) {
+      case "string":
+      case "date":
+      case "datetime":
+        return "";
+      case "number":
+        return 0;
+      case "boolean":
+        return false;
+      case "null":
+        return null;
+    }
+  };
+
+  // ---------------- 모달 초기화 ----------------
   useEffect(() => {
-    const initData =
-      value && Object.keys(value).length > 0 ? value : { table1: [] };
+    const initData: Record<string, JsonObject[]> = {};
+
+    Object.entries(value).forEach(([tableName, arr]: any) => {
+      if (
+        Array.isArray(arr) &&
+        arr.length > 0 &&
+        "key" in arr[0] &&
+        "type" in arr[0]
+      ) {
+        // 컬럼 정의 배열이면 첫 행 생성
+        const firstRow: JsonObject = {};
+        arr.forEach((col: any) => {
+          // object/array 제거
+          if (
+            [
+              "string",
+              "number",
+              "boolean",
+              "null",
+              "date",
+              "datetime",
+            ].includes(col.type)
+          ) {
+            firstRow[col.key] = getDefaultValue(col.type as JsonColumnType);
+          }
+        });
+        initData[tableName] = [firstRow];
+      } else {
+        // 기존 JsonObject[] 형식이면 그대로 사용
+        initData[tableName] = arr as JsonObject[];
+      }
+    });
+
     setInternalData(initData);
     const newManager = new JsonDatasetManager(initData);
     setManager(newManager);
     setSelectedTable(Object.keys(newManager.getData())[0] || null);
+
     setPosition({
       x: window.innerWidth / 2 - 400,
       y: window.innerHeight / 2 - 300,
     });
-  }, [open, value]);
+  }, [value]);
 
-  // 데이터 모드에서 스키마와 맞지 않는 데이터 보정
-  useEffect(() => {
-    if (isDataMode && selectedTable) {
-      const tableData = manager.getTable(selectedTable) ?? []; // 이미 빈 배열 반환 보장
-      const schemaCols = manager.getColumns(selectedTable) ?? [];
-      const newData: JsonObject[] = tableData?.map((row) => {
-        const newRow: JsonObject = {};
-        schemaCols.forEach((col) => {
-          newRow[col.name] = row[col.name] ?? null;
-        });
-        return newRow;
-      });
-      manager.addTable(selectedTable, newData);
-      setInternalData({ ...manager.getData() });
-    }
-  }, [isDataMode, manager, selectedTable]);
-
-  if (!open) return null;
-
+  // ---------------- 테이블/컬럼 관리 ----------------
   const tableKeys = Object.keys(manager.getData());
   const selectTable = (key: string) => setSelectedTable(key);
 
-  // ---------------- 테이블 관리 ----------------
   const addTable = () => {
     if (!isSchemaMode) return;
     const newKey = `table_${tableKeys.length + 1}`;
@@ -145,58 +167,28 @@ export const JsonDatasetEditorModal: React.FC<JsonDatasetEditorModalProps> = ({
     setInternalData({ ...manager.getData() });
   };
 
-  // ---------------- 컬럼 관리 ----------------
   const addColumn = () => {
     if (!selectedTable || !isSchemaMode) return;
-
     const colName = prompt("컬럼 이름:");
     if (!colName) return;
-
     const type = (prompt(
-      "타입 선택 (string, number, boolean, object, array, null, date, datetime):",
+      "타입 선택 (string, number, boolean, null, date, datetime):",
       "string"
     ) ?? "string") as JsonColumnType;
 
-    // 1️⃣ 컬럼 추가 (manager 내부에서 null 초기화)
     manager.addColumn(selectedTable, { name: colName, type });
 
     let table = manager.getTable(selectedTable) ?? [];
-
-    // 2️⃣ 타입별 초기값 결정
-    const getDefaultValue = (type: JsonColumnType) => {
-      switch (type) {
-        case "string":
-        case "date":
-        case "datetime":
-          return "";
-        case "number":
-          return 0;
-        case "boolean":
-          return false;
-        case "object":
-          return {};
-        case "array":
-          return [];
-        case "null":
-          return null;
-        default:
-          return null;
-      }
-    };
-
     if (table.length === 0) {
-      // 행이 없으면 새 행 하나 추가, 새 컬럼만 초기값 적용
       const newRow: Record<string, any> = {};
       newRow[colName] = getDefaultValue(type);
       manager.addRow(selectedTable, newRow);
     } else {
-      // 기존 행이 있으면 새 컬럼만 초기화
       table.forEach((row, i) => {
         row[colName] = getDefaultValue(type);
         manager.updateRow(selectedTable, i, row);
       });
     }
-
     setInternalData({ ...manager.getData() });
   };
 
@@ -215,12 +207,18 @@ export const JsonDatasetEditorModal: React.FC<JsonDatasetEditorModalProps> = ({
   const addRow = () => {
     if (!selectedTable || !isDataMode) return;
     const table = manager.getTable(selectedTable) ?? [];
-    const cols = manager.getColumns(selectedTable) ?? [];
+    const cols =
+      manager
+        .getColumns(selectedTable)
+        ?.filter((col) =>
+          ["string", "number", "boolean", "null", "date", "datetime"].includes(
+            col.type
+          )
+        ) ?? [];
     const newRow: JsonObject = {};
-    cols.forEach((col) => {
-      newRow[col.name] =
-        col.type === "date" || col.type === "datetime" ? "" : null;
-    });
+    cols.forEach(
+      (col) => (newRow[col.name] = getDefaultValue(col.type as JsonColumnType))
+    );
     manager.addRow(selectedTable, newRow);
     setInternalData({ ...manager.getData() });
   };
@@ -238,6 +236,19 @@ export const JsonDatasetEditorModal: React.FC<JsonDatasetEditorModalProps> = ({
     manager.updateRow(selectedTable, rowIndex, newRow);
     setInternalData({ ...manager.getData() });
   };
+
+  // ---------------- 렌더링 ----------------
+  if (!open) return null;
+
+  const visibleColumns = selectedTable
+    ? manager
+        .getColumns(selectedTable)
+        ?.filter((col) =>
+          ["string", "number", "boolean", "null", "date", "datetime"].includes(
+            col.type
+          )
+        ) ?? []
+    : [];
 
   return (
     <div
@@ -264,7 +275,7 @@ export const JsonDatasetEditorModal: React.FC<JsonDatasetEditorModalProps> = ({
           </h3>
         </div>
 
-        {/* 테이블 선택 버튼 */}
+        {/* 테이블 선택 */}
         <div className="flex mb-2 flex-wrap">
           {tableKeys.map((key) => (
             <button
@@ -301,66 +312,72 @@ export const JsonDatasetEditorModal: React.FC<JsonDatasetEditorModalProps> = ({
         {/* 테이블 뷰 */}
         {selectedTable && (
           <div className="overflow-auto max-h-[400px] border p-1">
-            <table className="table-auto border-collapse border border-gray-400 w-full text-sm">
-              <thead>
-                <tr>
-                  {(manager.getColumns(selectedTable) ?? []).map((col) => (
-                    <th
-                      key={col.name}
-                      className="border border-gray-500 px-2 py-1 bg-gray-300 text-gray-900"
-                    >
-                      {col.name} ({col.type})
-                      {isSchemaMode && (
+            {isSchemaMode ? (
+              <table className="table-auto border-collapse border w-full text-sm">
+                <thead>
+                  <tr>
+                    {visibleColumns.map((col) => (
+                      <th
+                        key={col.name}
+                        className="border px-2 py-1 bg-gray-300"
+                      >
+                        {col.name} ({col.type})
                         <button
                           onClick={() => removeColumn(col.name)}
                           className="text-red-500 ml-1"
                         >
                           x
                         </button>
-                      )}
-                    </th>
-                  ))}
-                  {isSchemaMode && (
-                    <th className="border border-gray-500 px-2 py-1">
+                      </th>
+                    ))}
+                    <th className="border px-2 py-1">
                       <button onClick={addColumn} className="bg-green-200 px-1">
                         + Column
                       </button>
                     </th>
-                  )}
-                </tr>
-              </thead>
-              <tbody>
-                {(manager.getTable(selectedTable) ?? []).map((row, i) => (
-                  <tr key={i} className="border border-gray-400">
-                    {(manager.getColumns(selectedTable) ?? []).map((col) => (
-                      <td
-                        key={col.name}
-                        className="border border-gray-400 px-2 py-1"
-                      >
-                        {col.type === "date" || col.type === "datetime" ? (
-                          <input
-                            type="datetime-local"
-                            value={row[col.name] ?? ""}
-                            onChange={(e) =>
-                              updateCell(i, col.name, e.target.value)
-                            }
-                            className="w-full border-none outline-none bg-white"
-                            readOnly={isSchemaMode}
-                          />
-                        ) : (
-                          <input
-                            value={row[col.name] ?? ""}
-                            onChange={(e) =>
-                              updateCell(i, col.name, e.target.value)
-                            }
-                            className="w-full border-none outline-none bg-white"
-                            readOnly={isSchemaMode}
-                          />
-                        )}
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    {visibleColumns.map((col) => (
+                      <td key={col.name} className="border px-2 py-1">
+                        {String(getDefaultValue(col.type as JsonColumnType))}
                       </td>
                     ))}
-                    {isDataMode && (
-                      <td className="border border-gray-400 px-2 py-1">
+                    <td className="border px-2 py-1"></td>
+                  </tr>
+                </tbody>
+              </table>
+            ) : (
+              <table className="table-auto border-collapse border w-full text-sm">
+                <thead>
+                  <tr>
+                    {manager.getColumns(selectedTable)?.map((col) => (
+                      <th
+                        key={col.name}
+                        className="border px-2 py-1 bg-gray-300"
+                      >
+                        {col.name} ({col.type})
+                      </th>
+                    ))}
+                    <th className="border px-2 py-1">Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {manager.getTable(selectedTable)?.map((row, i) => (
+                    <tr key={i}>
+                      {manager.getColumns(selectedTable)?.map((col) => (
+                        <td key={col.name} className="border px-2 py-1">
+                          <input
+                            value={String(row[col.name] ?? "")}
+                            onChange={(e) =>
+                              updateCell(i, col.name, e.target.value)
+                            }
+                            className="w-full border-none outline-none bg-white"
+                          />
+                        </td>
+                      ))}
+                      <td className="border px-2 py-1">
                         <button
                           onClick={() => removeRow(i)}
                           className="bg-red-200 px-1"
@@ -368,11 +385,11 @@ export const JsonDatasetEditorModal: React.FC<JsonDatasetEditorModalProps> = ({
                           Del.
                         </button>
                       </td>
-                    )}
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            )}
             {isDataMode && (
               <button onClick={addRow} className="bg-green-200 px-2 py-1 mt-1">
                 + Row
