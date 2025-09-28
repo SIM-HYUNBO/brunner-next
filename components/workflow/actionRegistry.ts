@@ -74,7 +74,7 @@ export function getDefaultInputs(actionName: string): NodeDataTable[] {
     case constants.workflowActions.MATHOP:
     case constants.workflowActions.CALL:
     case constants.workflowActions.END:
-      return [{ table: "OUTDATA", columns: [], value: [] }];
+      return [{ table: "INDATA", columns: [], value: [] }];
     default:
       throw new Error(constants.messages.WORKFLOW_NOT_SUPPORTED_NODE_TYPE);
   }

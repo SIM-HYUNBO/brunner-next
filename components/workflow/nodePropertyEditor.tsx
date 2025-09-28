@@ -1,8 +1,12 @@
 import React, { useState, useEffect, useRef } from "react";
 import type { Node } from "reactflow";
-import type { NodeDataTable } from "@/components/workflow/actionRegistry";
+import type {
+  NodeDataTable,
+  DatasetColumn,
+} from "@/components/workflow/actionRegistry";
 import * as actionRegistry from "@/components/workflow/actionRegistry";
 import * as constants from "@/components/core/constants";
+import { JsonDatasetEditorModal } from "@/components/workflow/jsonDatasetEditorModal";
 
 interface NodePropertyEditorProps {
   node: Node<any> | null;
@@ -29,10 +33,8 @@ export function collectAllWorkflowVariables(
   nodes: Node<any>[]
 ): WorkflowVariable[] {
   const variables: WorkflowVariable[] = [];
-
   nodes.forEach((node) => {
     const outputs: NodeDataTable[] = node.data.outputs ?? [];
-
     outputs.forEach((output) => {
       variables.push({
         nodeId: node.id,
@@ -59,16 +61,16 @@ export const NodePropertyEditor: React.FC<NodePropertyEditorProps> = ({
 
   const [actionName, setActionName] = useState(node?.data.actionName || "");
   const [inputs, setInputs] = useState<NodeDataTable[]>(
-    node?.data.inputs ?? []
+    node?.data.design?.inputs ?? []
   );
   const [outputs, setOutputs] = useState<NodeDataTable[]>(
-    node?.data.outputs ?? []
+    node?.data.design?.outputs ?? []
   );
-  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const [isInputModalOpen, setIsInputModalOpen] = useState(false);
+  const [isOutputModalOpen, setIsOutputModalOpen] = useState(false);
+
   const prevActionName = useRef<string>("");
-  const [editingOutputs, setEditingOutputs] = useState(false);
-  const toggleEditingOutputs = () =>
-    setEditingOutputs((prev: boolean) => !prev);
 
   useEffect(() => {
     setWfName(workflowName);
@@ -89,7 +91,7 @@ export const NodePropertyEditor: React.FC<NodePropertyEditorProps> = ({
       setOutputs(defaultOutputs);
       prevActionName.current = action;
     } else if (
-      !node.data.design.inputs ||
+      !node.data.design?.inputs ||
       node.data.design.inputs.length === 0
     ) {
       setInputs(defaultInputs);
@@ -98,7 +100,12 @@ export const NodePropertyEditor: React.FC<NodePropertyEditorProps> = ({
       setInputs(node.data.design.inputs);
       setOutputs(node.data.design.outputs);
     }
-  }, [node?.id, node?.data.actionName]);
+  }, [
+    node?.id,
+    node?.data.actionName,
+    node?.data.design?.inputs,
+    node?.data.design?.outputs,
+  ]);
 
   if (!node)
     return (
@@ -130,7 +137,26 @@ export const NodePropertyEditor: React.FC<NodePropertyEditorProps> = ({
       </div>
     );
 
-  const allWorkflowVariables = collectAllWorkflowVariables(nodes);
+  const normalizeColumnType = (type: string): DatasetColumn["type"] => {
+    return ["string", "number", "boolean"].includes(type)
+      ? (type as DatasetColumn["type"])
+      : "string";
+  };
+
+  const updateNodeDesign = (
+    newInputs: NodeDataTable[],
+    newOutputs: NodeDataTable[]
+  ) => {
+    setInputs(newInputs);
+    setOutputs(newOutputs);
+    onNodeUpdate?.(node!.id, {
+      design: {
+        ...node!.data.design,
+        inputs: newInputs,
+        outputs: newOutputs,
+      },
+    });
+  };
 
   return (
     <div style={{ padding: 10 }}>
@@ -152,48 +178,105 @@ export const NodePropertyEditor: React.FC<NodePropertyEditorProps> = ({
             </option>
           ))}
         </select>
-        <div className="flex flex-row justify-between">
+
+        <div className="flex flex-row justify-between mt-2">
           <button
-            className="px-3 py-1 mt-2 semi-text-bg-color rounded border"
-            onClick={() => setIsModalOpen(true)}
+            className="px-3 py-1 semi-text-bg-color rounded border"
+            onClick={() => setIsInputModalOpen(true)}
           >
-            Inputs
+            Edit Node Inputs
           </button>
           <button
-            className="px-3 py-1 mt-2 ml-1 semi-text-bg-color rounded border"
-            onClick={() => toggleEditingOutputs()}
+            className="px-3 py-1 semi-text-bg-color rounded border"
+            onClick={() => setIsOutputModalOpen(true)}
           >
-            Outputs
+            Edit Node Outputs
           </button>
           <button
-            className="mt-2 ml-1 px-3 py-1 semi-text-bg-color rounded border"
+            className="px-3 py-1 semi-text-bg-color rounded border"
             onClick={() => {
-              if (!node) return;
-              let newInputs = inputs;
-              let newOutputs = outputs;
-              if (prevActionName.current != actionName) {
-                newInputs = actionRegistry.getDefaultInputs(actionName);
-                newOutputs = actionRegistry.getDefaultOutputs(actionName);
-                node.data.design.inputs = newInputs;
-                node.data.design.outputs = newOutputs;
-                prevActionName.current = actionName;
-              }
+              const newInputs =
+                prevActionName.current !== actionName
+                  ? actionRegistry.getDefaultInputs(actionName)
+                  : inputs;
+              const newOutputs =
+                prevActionName.current !== actionName
+                  ? actionRegistry.getDefaultOutputs(actionName)
+                  : outputs;
 
-              onNodeUpdate?.(node.id, {
-                actionName,
-                inputs: newInputs,
-                outputs: newOutputs,
-              });
-
+              prevActionName.current = actionName;
               setActionName(actionName);
-              setInputs(newInputs);
-              setOutputs(newOutputs);
+              updateNodeDesign(newInputs, newOutputs);
             }}
           >
             Apply
           </button>
         </div>
       </div>
+
+      {/* Input Modal */}
+      {isInputModalOpen && (
+        <JsonDatasetEditorModal
+          open={isInputModalOpen}
+          mode="schema"
+          value={inputs.reduce((acc, table) => {
+            acc[table.table] = table.columns.map((col) => ({
+              key: col.key,
+              type: col.type,
+            }));
+            return acc;
+          }, {} as Record<string, DatasetColumn[]>)}
+          onConfirm={(newValue) => {
+            const newInputsArr: NodeDataTable[] = Object.entries(newValue).map(
+              ([table, cols]) => ({
+                table,
+                value: [],
+                columns: (cols as { key: string; type: string }[]).map(
+                  (col) => ({
+                    key: col.key,
+                    type: normalizeColumnType(col.type),
+                  })
+                ),
+              })
+            );
+            updateNodeDesign(newInputsArr, outputs);
+            setIsInputModalOpen(false);
+          }}
+          onCancel={() => setIsInputModalOpen(false)}
+        />
+      )}
+
+      {/* Output Modal */}
+      {isOutputModalOpen && (
+        <JsonDatasetEditorModal
+          open={isOutputModalOpen}
+          mode="schema"
+          value={outputs.reduce((acc, table) => {
+            acc[table.table] = table.columns.map((col) => ({
+              key: col.key,
+              type: col.type,
+            }));
+            return acc;
+          }, {} as Record<string, DatasetColumn[]>)}
+          onConfirm={(newValue) => {
+            const newOutputsArr: NodeDataTable[] = Object.entries(newValue).map(
+              ([table, cols]) => ({
+                table,
+                value: [],
+                columns: (cols as { key: string; type: string }[]).map(
+                  (col) => ({
+                    key: col.key,
+                    type: normalizeColumnType(col.type),
+                  })
+                ),
+              })
+            );
+            updateNodeDesign(inputs, newOutputsArr);
+            setIsOutputModalOpen(false);
+          }}
+          onCancel={() => setIsOutputModalOpen(false)}
+        />
+      )}
     </div>
   );
 };
