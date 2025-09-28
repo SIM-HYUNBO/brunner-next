@@ -48,11 +48,13 @@ export const NodePropertyEditor: React.FC<NodePropertyEditorProps> = ({
 
   const prevActionName = useRef<string>("");
 
+  // 🧠 워크플로우 정보 변경 감지
   useEffect(() => {
     setWfName(workflowName);
     setWfDesc(workflowDescription);
   }, [workflowName, workflowDescription]);
 
+  // 🧠 노드 변경 시 입력/출력 초기화
   useEffect(() => {
     if (!node) return;
 
@@ -83,6 +85,26 @@ export const NodePropertyEditor: React.FC<NodePropertyEditorProps> = ({
     node?.data.design?.outputs,
   ]);
 
+  // 🧩 유틸: 컬럼 타입 추론
+  const inferColumns = (data: any) => {
+    const firstRow = Array.isArray(data) && data.length > 0 ? data[0] : {};
+    return Object.entries(firstRow).map(([key, value]) => {
+      let type: "string" | "number" | "boolean" | "object" = "string";
+      if (typeof value === "number") type = "number";
+      else if (typeof value === "boolean") type = "boolean";
+      else if (typeof value === "object" && value !== null) type = "object";
+      return { key, type, value };
+    });
+  };
+
+  // 🧩 컬럼 타입 정규화
+  const normalizeColumnType = (type: string): DatasetColumn["type"] => {
+    return ["string", "number", "boolean"].includes(type)
+      ? (type as DatasetColumn["type"])
+      : "string";
+  };
+
+  // 🧩 노드 정보 없을 때 (워크플로우 정보 편집)
   if (!node)
     return (
       <div style={{ padding: 10 }}>
@@ -113,12 +135,7 @@ export const NodePropertyEditor: React.FC<NodePropertyEditorProps> = ({
       </div>
     );
 
-  const normalizeColumnType = (type: string): DatasetColumn["type"] => {
-    return ["string", "number", "boolean"].includes(type)
-      ? (type as DatasetColumn["type"])
-      : "string";
-  };
-
+  // 🧩 실제 렌더링
   return (
     <div style={{ padding: 10 }}>
       <h3>Node Editor</h3>
@@ -133,9 +150,9 @@ export const NodePropertyEditor: React.FC<NodePropertyEditorProps> = ({
           value={actionName}
           onChange={(e) => setActionName(e.target.value)}
         >
-          {Object.values(constants.workflowActions).map((actionName) => (
-            <option key={actionName} value={actionName}>
-              {actionName}
+          {Object.values(constants.workflowActions).map((a) => (
+            <option key={a} value={a}>
+              {a}
             </option>
           ))}
         </select>
@@ -166,11 +183,14 @@ export const NodePropertyEditor: React.FC<NodePropertyEditorProps> = ({
                   : outputs;
 
               prevActionName.current = actionName;
-              setActionName(actionName);
               setInputs(newInputs);
               setOutputs(newOutputs);
-              node.data.design.inputs = newInputs;
-              node.data.design.outputs = newOutputs;
+
+              // ✅ 부모로 안전하게 업데이트 전달
+              onNodeUpdate?.(node.id, {
+                actionName,
+                design: { inputs: newInputs, outputs: newOutputs },
+              });
             }}
           >
             Apply
@@ -178,13 +198,13 @@ export const NodePropertyEditor: React.FC<NodePropertyEditorProps> = ({
         </div>
       </div>
 
-      {/* Input Modal */}
+      {/* ✅ Input Modal */}
       {isInputModalOpen && (
         <JsonDatasetEditorModal
           open={isInputModalOpen}
           mode="schema"
-          value={inputs.reduce((acc, table: any) => {
-            acc[table.table] = table.columns.map((col: any) => ({
+          value={inputs.reduce((acc, table) => {
+            acc[table.table] = table.columns.map((col) => ({
               key: col.key,
               type: col.type as JsonColumnType,
             }));
@@ -193,37 +213,24 @@ export const NodePropertyEditor: React.FC<NodePropertyEditorProps> = ({
           onConfirm={(newSchema) => {
             const newInputsArray: NodeDataTable[] = Object.entries(
               newSchema
-            ).map(([table, data]) => {
-              // data가 배열인 경우 첫 번째 요소를 기준으로 스키마 추출
-              const firstRow: any =
-                Array.isArray(data) && data.length > 0 ? data[0] : {};
-
-              const columns = Object.entries(firstRow).map(([key, value]) => {
-                let type: "string" | "number" | "boolean" | "object" = "string";
-
-                if (typeof value === "number") type = "number";
-                else if (typeof value === "boolean") type = "boolean";
-                else if (typeof value === "object" && value !== null)
-                  type = "object";
-
-                return { key, type, value };
-              });
-
-              return {
-                table,
-                columns,
-                rows: [Array.isArray(data) ? data : []],
-              };
-            });
+            ).map(([table, data]) => ({
+              table,
+              columns: inferColumns(data),
+              rows: Array.isArray(data) ? data : [],
+            }));
 
             setInputs(newInputsArray);
             setIsInputModalOpen(false);
+
+            onNodeUpdate?.(node.id, {
+              design: { inputs: newInputsArray, outputs },
+            });
           }}
           onCancel={() => setIsInputModalOpen(false)}
         />
       )}
 
-      {/* Output Modal */}
+      {/* ✅ Output Modal */}
       {isOutputModalOpen && (
         <JsonDatasetEditorModal
           open={isOutputModalOpen}
@@ -238,31 +245,18 @@ export const NodePropertyEditor: React.FC<NodePropertyEditorProps> = ({
           onConfirm={(newSchema) => {
             const newOutputsArray: NodeDataTable[] = Object.entries(
               newSchema
-            ).map(([table, data]) => {
-              // data가 배열인 경우 첫 번째 요소를 기준으로 스키마 추출
-              const firstRow: any =
-                Array.isArray(data) && data.length > 0 ? data[0] : {};
-
-              const columns = Object.entries(firstRow).map(([key, value]) => {
-                let type: "string" | "number" | "boolean" | "object" = "string";
-
-                if (typeof value === "number") type = "number";
-                else if (typeof value === "boolean") type = "boolean";
-                else if (typeof value === "object" && value !== null)
-                  type = "object";
-
-                return { key, type, value };
-              });
-
-              return {
-                table,
-                columns,
-                rows: Array.isArray(data) ? data : [],
-              };
-            });
+            ).map(([table, data]) => ({
+              table,
+              columns: inferColumns(data),
+              rows: Array.isArray(data) ? data : [],
+            }));
 
             setOutputs(newOutputsArray);
             setIsOutputModalOpen(false);
+
+            onNodeUpdate?.(node.id, {
+              design: { inputs, outputs: newOutputsArray },
+            });
           }}
           onCancel={() => setIsOutputModalOpen(false)}
         />
