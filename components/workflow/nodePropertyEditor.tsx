@@ -41,7 +41,7 @@ export function collectAllWorkflowVariables(
         nodeId: node.id,
         key: output.table,
         type: "dataset",
-        value: output.value,
+        value: output.rows,
       });
     });
   });

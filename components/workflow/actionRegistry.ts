@@ -7,27 +7,15 @@ import * as workflowEngine from "@/components/workflow/workflowEngine";
 export interface DatasetColumn {
   key: string; // 항상 있어야 함
   type: "string" | "number" | "boolean" | "object"; // 항상 있어야 함
-  value?: any;
   bindingType?: "direct" | "ref";
   sourceNodeId?: string; // 바인딩 되어 있을때
-}
-
-export interface DatasetColumnWithBinding extends DatasetColumn {
-  bindingType: "direct" | "ref";
-  sourceNodeId?: string;
-}
-
-export interface NodeDataTableWithBinding {
-  table: string;
-  value: Record<string, any>[]; // 실제 데이터
-  columns: DatasetColumnWithBinding[]; // 컬럼 정보
 }
 
 // -------------------- 타입 정의 --------------------
 export interface NodeDataTable {
   table: string;
   columns: DatasetColumn[];
-  value: Record<string, any>[];
+  rows: Record<string, any>[];
 }
 
 export interface ActionNodeData {
@@ -65,7 +53,7 @@ export const defaultParamsMap = new Map<string, NodeDataTable[]>();
 export function getDefaultInputs(actionName: string): NodeDataTable[] {
   switch (actionName) {
     case constants.workflowActions.START:
-      return [{ table: "INDATA", columns: [], value: [] }];
+      return [{ table: "INDATA", columns: [], rows: [] }];
     case constants.workflowActions.SLEEP:
     case constants.workflowActions.HTTPREQUEST:
     case constants.workflowActions.SET:
@@ -74,7 +62,7 @@ export function getDefaultInputs(actionName: string): NodeDataTable[] {
     case constants.workflowActions.MATHOP:
     case constants.workflowActions.CALL:
     case constants.workflowActions.END:
-      return [{ table: "INDATA", columns: [], value: [] }];
+      return [{ table: "INDATA", columns: [], rows: [] }];
     default:
       throw new Error(constants.messages.WORKFLOW_NOT_SUPPORTED_NODE_TYPE);
   }
@@ -92,7 +80,7 @@ export function getDefaultOutputs(actionName: string): NodeDataTable[] {
     case constants.workflowActions.CALL:
     case constants.workflowActions.END:
     default:
-      return [{ table: "OUTDATA", columns: [], value: [] }];
+      return [{ table: "OUTDATA", columns: [], rows: [] }];
   }
 }
 

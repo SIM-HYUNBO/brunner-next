@@ -141,7 +141,7 @@ export class JsonDatasetManager {
   // ---------------- NodeDatasetField CRUD ----------------
   initNode(nodeId: string, fields: NodeDataTable[]) {
     for (const field of fields) {
-      this.addTable(nodeId + "_" + field.table, field.value ?? []);
+      this.addTable(nodeId + "_" + field.table, field.rows ?? []);
     }
   }
 
@@ -175,7 +175,7 @@ export class JsonDatasetManager {
 
       result.push({
         table: tableKey.replace(`${nodeId}_`, ""),
-        value: tableData,
+        rows: tableData,
         columns,
       });
     }
