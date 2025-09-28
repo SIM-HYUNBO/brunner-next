@@ -17,7 +17,7 @@ export async function executeWorkflow(
 
   // 입력 검증
   if (
-    !validationDataFormat(workflow.data.design.input, workflow.data.run.input)
+    !validationDataFormat(workflow.data.design.inputs, workflow.data.run.inputs)
   ) {
     throw new Error(`Invalid data structure.`);
     return null;
@@ -73,6 +73,11 @@ async function runWorkflowStep(node: Node<any>, workflowData: any) {
   // 액션 찾기
   const action = getAction(node.data.actionName);
   if (!action) throw new Error(`Unknown action: ${node.data.actionName}`);
+  if (node.data.actionName === constants.workflowActions.START) {
+    node.data.run.inputs = JSON.parse(
+      JSON.stringify(workflowData.data.run.inputs)
+    );
+  }
 
   let result: any = null;
 
@@ -172,67 +177,41 @@ interface WorkflowInputTable {
   rows: Record<string, any>[];
 }
 
-/**
- * workflowInputs 검증 (포맷 + 컬럼 타입)
- * @param designTables 디자인 테이블 (컬럼 스키마)
- * @param inputs 실제 workflowInputs
- * @returns true: 유효, false: 포맷/타입 불일치
- */
-// 컬럼 정의
-export interface ColumnDesign {
+export type ColumnDesign = {
   name: string;
   type: "string" | "number" | "boolean" | "object";
-}
+};
 
-// 디자인 테이블: 여러 개 테이블 정의
-export interface DesignTable {
-  [tableKey: string]: ColumnDesign[];
-}
+type DesignColumn = { name: string; type: string };
+export type DesignTable = Record<string, DesignColumn[]>;
+type ActualDataset = Record<string, Record<string, any>[]>;
 
-// 입력 데이터셋: 각 테이블마다 행 배열
-export interface InputDataset {
-  [tableKey: string]: Record<string, any>[];
-}
-// 타입 안전하게 변환된 검증 함수
 export function validationDataFormat(
   designedTables: DesignTable,
-  actualTables: InputDataset
+  actualTables: ActualDataset
 ): boolean {
-  for (const tableKey of Object.keys(actualTables)) {
-    const rows = actualTables[tableKey];
-    const design = designedTables[tableKey];
+  for (const tableName in designedTables) {
+    const designedColumns = designedTables[tableName];
+    const actualRows = actualTables[tableName];
 
-    // 디자인 정의가 없으면 실패
-    if (!design) return false;
+    // 테이블 존재 여부
+    if (!actualRows) return false;
+    if (!designedColumns) continue; // 안전하게 건너뜀
 
-    for (const row of rows ?? []) {
-      for (const col of design) {
-        if (!(col.name in row)) return false;
+    // 각 행 검증
+    for (const row of actualRows) {
+      for (const column of designedColumns) {
+        const value = row[column.name];
 
-        const value = row[col.name];
-        switch (col.type) {
-          case "string":
-            if (typeof value !== "string") return false;
-            break;
-          case "number":
-            if (typeof value !== "number") return false;
-            break;
-          case "boolean":
-            if (typeof value !== "boolean") return false;
-            break;
-          case "object":
-            if (
-              typeof value !== "object" ||
-              value === null ||
-              Array.isArray(value)
-            )
-              return false;
-            break;
-          default:
-            return false;
-        }
+        // 컬럼 존재 여부
+        if (value === undefined) return false;
+
+        // 타입 검증
+        const valueType = typeof value;
+        if (valueType !== column.type) return false;
       }
     }
   }
+
   return true;
 }

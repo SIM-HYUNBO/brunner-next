@@ -13,6 +13,49 @@ interface JsonDatasetEditorModalProps {
   onCancel?: () => void;
 }
 
+// ------------------- CellEditor -------------------
+const CellEditor: React.FC<{
+  initialValue: any;
+  colType: "string" | "number" | "boolean";
+  onUpdate: (newValue: any) => void;
+}> = ({ initialValue, colType, onUpdate }) => {
+  const [cellValue, setCellValue] = useState(String(initialValue));
+
+  const parseValue = (val: string) => {
+    switch (colType) {
+      case "number":
+        const num = Number(val);
+        return isNaN(num) ? 0 : num;
+      case "boolean":
+        return val === "true";
+      case "string":
+      default:
+        return val;
+    }
+  };
+
+  const commitChange = () => onUpdate(parseValue(cellValue));
+
+  return (
+    <input
+      type="text"
+      value={cellValue}
+      onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+        setCellValue(e.target.value)
+      }
+      onBlur={commitChange}
+      onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => {
+        if (e.key === "Enter") {
+          e.preventDefault();
+          commitChange();
+        }
+      }}
+      className="w-full border-none outline-none bg-white"
+    />
+  );
+};
+
+// ------------------- JsonDatasetEditorModal -------------------
 export const JsonDatasetEditorModal: React.FC<JsonDatasetEditorModalProps> = ({
   open,
   mode,
@@ -87,13 +130,11 @@ export const JsonDatasetEditorModal: React.FC<JsonDatasetEditorModalProps> = ({
       if (
         Array.isArray(arr) &&
         arr.length > 0 &&
-        "key" in arr[0] &&
+        "name" in arr[0] &&
         "type" in arr[0]
       ) {
-        // 컬럼 정의 배열이면 첫 행 생성
         const firstRow: JsonObject = {};
         arr.forEach((col: any) => {
-          // object/array 제거
           if (
             [
               "string",
@@ -104,12 +145,11 @@ export const JsonDatasetEditorModal: React.FC<JsonDatasetEditorModalProps> = ({
               "datetime",
             ].includes(col.type)
           ) {
-            firstRow[col.key] = getDefaultValue(col.type as JsonColumnType);
+            firstRow[col.name] = getDefaultValue(col.type as JsonColumnType);
           }
         });
         initData[tableName] = [firstRow];
       } else {
-        // 기존 JsonObject[] 형식이면 그대로 사용
         initData[tableName] = arr as JsonObject[];
       }
     });
@@ -355,12 +395,14 @@ export const JsonDatasetEditorModal: React.FC<JsonDatasetEditorModalProps> = ({
                     <tr key={i}>
                       {manager.getColumns(selectedTable)?.map((col) => (
                         <td key={col.name} className="border px-2 py-1">
-                          <input
-                            value={String(row[col.name] ?? "")}
-                            onChange={(e) =>
-                              updateCell(i, col.name, e.target.value)
+                          <CellEditor
+                            initialValue={row[col.name]}
+                            colType={
+                              col.type as "string" | "number" | "boolean"
                             }
-                            className="w-full border-none outline-none bg-white"
+                            onUpdate={(newValue) =>
+                              updateCell(i, col.name, newValue)
+                            }
                           />
                         </td>
                       ))}
@@ -387,10 +429,7 @@ export const JsonDatasetEditorModal: React.FC<JsonDatasetEditorModalProps> = ({
 
         {/* 완료 버튼 */}
         <div className="flex justify-end mt-4 space-x-2">
-          <button
-            onClick={() => onCancel?.()}
-            className="px-4 py-2 border bg-gray-300"
-          >
+          <button onClick={onCancel} className="px-4 py-2 border bg-gray-300">
             Close
           </button>
           <button

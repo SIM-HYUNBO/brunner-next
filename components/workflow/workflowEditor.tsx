@@ -30,6 +30,8 @@ interface WorkflowEditorProps {
   initialEdges?: Edge<ConditionEdgeData>[];
 }
 
+type InputDataset = Record<string, Record<string, any>[]>;
+
 export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
   initialNodes = [
     {
@@ -219,12 +221,12 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
       currentNodeId: null,
       data: {
         design: {
-          input: designedInputData,
-          output: JSON.parse(designedOutputData),
+          inputs: designedInputData,
+          outputs: JSON.parse(designedOutputData),
         },
         run: {
-          input: workflowInputDataObj,
-          output: [],
+          inputs: workflowInputDataObj,
+          outputs: [],
         },
       },
       nodes,
@@ -393,9 +395,48 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
                   <JsonDatasetEditorModal
                     open={isInputSchemaEditorOpen}
                     mode="schema"
-                    value={workflowInputDataObj}
+                    value={designedInputData} // workflowInputDataObj 대신 designedInputData 사용
                     onConfirm={(newSchema) => {
-                      setWorkflowInputData(JSON.stringify(newSchema, null, 2));
+                      // 1️⃣ 디자인 상태 업데이트
+                      setDesignedInputData(
+                        newSchema as workflowEngine.DesignTable
+                      );
+
+                      // 2️⃣ workflowInputDataObj를 새로운 디자인에 맞춰 초기화
+                      const newDataObj: Record<string, any> = {};
+
+                      for (const [tableName, rows] of Object.entries(
+                        newSchema
+                      )) {
+                        if (Array.isArray(rows) && rows.length > 0) {
+                          // 첫 번째 row를 기준으로 초기값 생성
+                          const firstRow = rows[0];
+                          const newRow: Record<string, any> = {};
+                          for (const key in firstRow) {
+                            const value = firstRow[key];
+                            switch (typeof value) {
+                              case "string":
+                                newRow[key] = "";
+                                break;
+                              case "number":
+                                newRow[key] = 0;
+                                break;
+                              case "boolean":
+                                newRow[key] = false;
+                                break;
+                              case "object":
+                              default:
+                                newRow[key] = {};
+                                break;
+                            }
+                          }
+                          newDataObj[tableName] = [newRow];
+                        } else {
+                          newDataObj[tableName] = [];
+                        }
+                      }
+
+                      setWorkflowInputData(JSON.stringify(newDataObj, null, 2));
                       setIsInputSchemaEditorOpen(false);
                     }}
                     onCancel={() => setIsInputSchemaEditorOpen(false)}
@@ -417,7 +458,26 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
               </div>
               <textarea
                 className="w-full h-[200px] mt-2 border p-2 font-mono text-sm"
-                value={workflowInputData}
+                value={(() => {
+                  const dataObj = JSON.parse(workflowInputData) as InputDataset;
+
+                  // 숫자/불린 타입 변환
+                  for (const tableKey of Object.keys(dataObj)) {
+                    const rows = dataObj[tableKey];
+                    rows?.forEach((row) => {
+                      Object.keys(row).forEach((key) => {
+                        const value = row[key];
+                        if (!isNaN(Number(value))) {
+                          row[key] = Number(value);
+                        } else if (value === "true") row[key] = true;
+                        else if (value === "false") row[key] = false;
+                      });
+                    });
+                  }
+
+                  // JSON.stringify로 포맷팅
+                  return JSON.stringify(dataObj, null, 2);
+                })()}
                 readOnly
               />
             </div>
