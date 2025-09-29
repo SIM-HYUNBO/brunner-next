@@ -6,6 +6,7 @@ interface ScriptEditorModalProps {
   timeoutMs: number;
   onConfirm: (script: string, timeoutMs: number) => void;
   onCancel: () => void;
+  onHelp: () => void;
 }
 
 export const ScriptEditorModal: React.FC<ScriptEditorModalProps> = ({
@@ -14,6 +15,7 @@ export const ScriptEditorModal: React.FC<ScriptEditorModalProps> = ({
   timeoutMs,
   onConfirm,
   onCancel,
+  onHelp,
 }) => {
   const [internalScript, setInternalScript] = useState(script);
   const [internalTimeout, setInternalTimeout] = useState(timeoutMs);
@@ -70,6 +72,17 @@ export const ScriptEditorModal: React.FC<ScriptEditorModalProps> = ({
           <textarea
             className="flex-1 w-full p-2 border font-mono resize-none"
             value={internalScript}
+            placeholder={`
+const body = {
+      title: "sim",
+      body: "hyunbo",
+      age: 50
+  }
+
+const response = await api.postJson("https://jsonplaceholder.typicode.com/posts",
+                                     JSON.stringify(body));
+api.alert(JSON.stringify(response));
+`}
             onChange={(e) => setInternalScript(e.target.value)}
             onPaste={(e) => {
               e.stopPropagation();
@@ -94,6 +107,9 @@ export const ScriptEditorModal: React.FC<ScriptEditorModalProps> = ({
           </button>
           <button className="px-3 py-1 border rounded" onClick={onCancel}>
             Cancel
+          </button>
+          <button className="px-3 py-1 border rounded" onClick={onHelp}>
+            Help
           </button>
         </div>
 

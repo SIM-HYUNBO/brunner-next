@@ -10,6 +10,7 @@ import { JsonDatasetEditorModal } from "@/components/workflow/jsonDatasetEditorM
 import type { JsonColumnType } from "@/components/workflow/jsonDatasetEditorModal";
 import { NodePropertyEditor } from "@/components/workflow/nodePropertyEditor";
 import { ScriptEditorModal } from "@/components/workflow/scriptEditorModal";
+import { useModal } from "@/components/core/client/brunnerMessageBox";
 
 interface NodePropertyPanelProps {
   node: Node<any> | null;
@@ -52,7 +53,7 @@ export const NodePropertyPanel: React.FC<NodePropertyPanelProps> = ({
   const [timeoutMs, setTimeoutMs] = useState(5000);
 
   const prevActionName = useRef<string>("");
-
+  const { BrunnerMessageBox, openModal } = useModal();
   // 🧠 워크플로우 정보 변경 감지
   useEffect(() => {
     setWfName(workflowName);
@@ -90,6 +91,25 @@ export const NodePropertyPanel: React.FC<NodePropertyPanelProps> = ({
     node?.data.design?.inputs,
     node?.data.design?.outputs,
   ]);
+
+  const showHelp = () => {
+    const apiGuid: string = `
+api.log: (...args) => print console log.
+api.sleep: (ms) => sleep during miliseconds.
+api.alert: (msg) => display alert message.
+api.getVar: (path) => get workflow runtime variable value.
+api.setVar: (path, value) => set wworkflow runtime variable value.
+api.now: () => get current time.
+api.timestamp: () => get current time.
+api.random: (min, max) => get random number between min to max,
+api.clone:(obj) => clone json object,
+api.jsonParse: (str) => parse json object.
+api.jsonStringify: (obj) => serialize json object.
+api.formatDate: (date, fmt) => format date time.
+api.postJson: async (url, body) => http post request.
+    `;
+    openModal(apiGuid);
+  };
 
   // 🧩 유틸: 컬럼 타입 추론
   const inferColumns = (data: any) => {
@@ -144,6 +164,7 @@ export const NodePropertyPanel: React.FC<NodePropertyPanelProps> = ({
   // 🧩 실제 렌더링
   return (
     <div style={{ padding: 10 }}>
+      <BrunnerMessageBox />
       <h3>Node Editor</h3>
       <div>ID: {node.id}</div>
       <div>Label: {node.data.label}</div>
@@ -184,7 +205,6 @@ export const NodePropertyPanel: React.FC<NodePropertyPanelProps> = ({
                 className="border px-2 py-1 w-[100px]"
                 value={timeoutMs}
                 readOnly
-                // onChange={(e) => setTimeoutMs(Number(e.target.value))}
               />
             </div>
           </div>
@@ -204,6 +224,7 @@ export const NodePropertyPanel: React.FC<NodePropertyPanelProps> = ({
               setIsScriptModalOpen(false);
             }}
             onCancel={() => setIsScriptModalOpen(false)}
+            onHelp={() => showHelp()}
           />
         )}
         <div className="flex flex-row justify-between mt-2">
