@@ -8,8 +8,10 @@ import * as actionRegistry from "@/components/workflow/actionRegistry";
 import * as constants from "@/components/core/constants";
 import { JsonDatasetEditorModal } from "@/components/workflow/jsonDatasetEditorModal";
 import type { JsonColumnType } from "@/components/workflow/jsonDatasetEditorModal";
+import { NodePropertyEditor } from "@/components/workflow/nodePropertyEditor";
+import { ScriptEditorModal } from "@/components/workflow/scriptEditorModal";
 
-interface NodePropertyEditorProps {
+interface NodePropertyPanelProps {
   node: Node<any> | null;
   nodes: Node<any>[];
   workflowId: string | null;
@@ -23,7 +25,7 @@ interface NodePropertyEditorProps {
   onNodeUpdate?: (id: string, updates: any) => void;
 }
 
-export const NodePropertyEditor: React.FC<NodePropertyEditorProps> = ({
+export const NodePropertyPanel: React.FC<NodePropertyPanelProps> = ({
   node,
   nodes,
   workflowId,
@@ -43,24 +45,25 @@ export const NodePropertyEditor: React.FC<NodePropertyEditorProps> = ({
     node?.data.design?.outputs ?? []
   );
 
-  // SCRIPT 노드 전용
-  const [script, setScript] = useState(node?.data.script || "");
-  const [timeoutMs, setTimeoutMs] = useState(node?.data.timeoutMs ?? 5000);
-
   const [isInputModalOpen, setIsInputModalOpen] = useState(false);
   const [isOutputModalOpen, setIsOutputModalOpen] = useState(false);
+  const [isScriptModalOpen, setIsScriptModalOpen] = useState(false);
+  const [script, setScript] = useState("");
+  const [timeoutMs, setTimeoutMs] = useState(5000);
 
   const prevActionName = useRef<string>("");
 
-  // 워크플로우 정보 동기화
+  // 🧠 워크플로우 정보 변경 감지
   useEffect(() => {
     setWfName(workflowName);
     setWfDesc(workflowDescription);
   }, [workflowName, workflowDescription]);
 
-  // 노드 변경 시 초기화
+  // 🧠 노드 변경 시 입력/출력 초기화
   useEffect(() => {
-    if (!node) return;
+    if (!node || node.data.actionName !== constants.workflowActions.SCRIPT)
+      return;
+
     const action = node.data.actionName;
     setActionName(action);
 
@@ -81,15 +84,14 @@ export const NodePropertyEditor: React.FC<NodePropertyEditorProps> = ({
       setInputs(node.data.design.inputs);
       setOutputs(node.data.design.outputs);
     }
+  }, [
+    node?.id,
+    node?.data.actionName,
+    node?.data.design?.inputs,
+    node?.data.design?.outputs,
+  ]);
 
-    // SCRIPT 노드 속성 동기화
-    if (action === constants.workflowActions.SCRIPT) {
-      setScript(node.data.script || "");
-      setTimeoutMs(node.data.timeoutMs ?? 5000);
-    }
-  }, [node]);
-
-  // 컬럼 타입 추론
+  // 🧩 유틸: 컬럼 타입 추론
   const inferColumns = (data: any) => {
     const firstRow = Array.isArray(data) && data.length > 0 ? data[0] : {};
     return Object.entries(firstRow).map(([key, value]) => {
@@ -101,7 +103,15 @@ export const NodePropertyEditor: React.FC<NodePropertyEditorProps> = ({
     });
   };
 
-  if (!node) {
+  // 🧩 컬럼 타입 정규화
+  const normalizeColumnType = (type: string): DatasetColumn["type"] => {
+    return ["string", "number", "boolean"].includes(type)
+      ? (type as DatasetColumn["type"])
+      : "string";
+  };
+
+  // 🧩 노드 정보 없을 때 (워크플로우 정보 편집)
+  if (!node)
     return (
       <div style={{ padding: 10 }}>
         <h3>Workflow Info</h3>
@@ -130,8 +140,8 @@ export const NodePropertyEditor: React.FC<NodePropertyEditorProps> = ({
         </div>
       </div>
     );
-  }
 
+  // 🧩 실제 렌더링
   return (
     <div style={{ padding: 10 }}>
       <h3>Node Editor</h3>
@@ -152,22 +162,82 @@ export const NodePropertyEditor: React.FC<NodePropertyEditorProps> = ({
             </option>
           ))}
         </select>
-      </div>
-
-      {/* Inputs/Outputs 버튼 */}
-      <div className="flex flex-row justify-between mt-2">
-        <button
-          className="px-3 py-1 semi-text-bg-color rounded border"
-          onClick={() => setIsInputModalOpen(true)}
-        >
-          Node Inputs
-        </button>
-        <button
-          className="px-3 py-1 semi-text-bg-color rounded border"
-          onClick={() => setIsOutputModalOpen(true)}
-        >
-          Node Outputs
-        </button>
+        {node && node.data.actionName === constants.workflowActions.SCRIPT && (
+          <div className="flex flex-col mt-2">
+            <label>Script Preview:</label>
+            <textarea
+              readOnly
+              value={script}
+              rows={5}
+              className="w-full border p-2 font-mono bg-gray-100"
+            />
+            <div className="flex flex-row space-x-1">
+              <button
+                className="mt-1 px-3 py-1 border rounded semi-text-bg-color"
+                onClick={() => setIsScriptModalOpen(true)}
+              >
+                Edit Script
+              </button>
+              <label className="mt-2">Timeout (ms):</label>
+              <input
+                type="number"
+                className="border px-2 py-1 w-[100px]"
+                value={timeoutMs}
+                readOnly
+                // onChange={(e) => setTimeoutMs(Number(e.target.value))}
+              />
+            </div>
+          </div>
+        )}
+        {isScriptModalOpen && (
+          <ScriptEditorModal
+            open={isScriptModalOpen}
+            script={script}
+            timeoutMs={timeoutMs}
+            onConfirm={(newScript, newTimeout) => {
+              setScript(newScript);
+              setTimeoutMs(newTimeout);
+              onNodeUpdate?.(node.id, {
+                script: newScript,
+                timeoutMs: newTimeout,
+              });
+              setIsScriptModalOpen(false);
+            }}
+            onCancel={() => setIsScriptModalOpen(false)}
+          />
+        )}
+        <div className="flex flex-row justify-between mt-2">
+          {/* Input Data */}
+          <button
+            className="px-3 py-1 semi-text-bg-color rounded border"
+            onClick={() => setIsInputModalOpen(true)}
+          >
+            Node Inputs
+          </button>
+          {/* Output Data */}
+          <button
+            className="px-3 py-1 semi-text-bg-color rounded border"
+            onClick={() => setIsOutputModalOpen(true)}
+          >
+            Node Outputs
+          </button>
+        </div>
+        {/* Node Property Editor */}
+        {node && (
+          <div className="mt-4">
+            <NodePropertyEditor
+              node={node}
+              nodes={nodes}
+              workflowId={workflowId}
+              workflowName={workflowName}
+              workflowDescription={workflowDescription}
+              onNodeUpdate={(id, updates) => {
+                onNodeUpdate?.(id, updates);
+              }}
+            />
+          </div>
+        )}
+        {/* Apply */}
         <button
           className="px-3 py-1 semi-text-bg-color rounded border"
           onClick={() => {
@@ -184,24 +254,18 @@ export const NodePropertyEditor: React.FC<NodePropertyEditorProps> = ({
             setInputs(newInputs);
             setOutputs(newOutputs);
 
-            // SCRIPT 속성 포함 업데이트
-            const updates: any = {
+            // ✅ 부모로 안전하게 업데이트 전달
+            onNodeUpdate?.(node.id, {
               actionName,
               design: { inputs: newInputs, outputs: newOutputs },
-            };
-            if (actionName === constants.workflowActions.SCRIPT) {
-              updates.script = script;
-              updates.timeoutMs = timeoutMs;
-            }
-
-            onNodeUpdate?.(node.id, updates);
+            });
           }}
         >
           Apply
         </button>
       </div>
 
-      {/* Input Modal */}
+      {/* ✅ Input Modal */}
       {isInputModalOpen && (
         <JsonDatasetEditorModal
           open={isInputModalOpen}
@@ -221,8 +285,10 @@ export const NodePropertyEditor: React.FC<NodePropertyEditorProps> = ({
               columns: inferColumns(data),
               rows: Array.isArray(data) ? data : [],
             }));
+
             setInputs(newInputsArray);
             setIsInputModalOpen(false);
+
             onNodeUpdate?.(node.id, {
               design: { inputs: newInputsArray, outputs },
             });
@@ -231,7 +297,7 @@ export const NodePropertyEditor: React.FC<NodePropertyEditorProps> = ({
         />
       )}
 
-      {/* Output Modal */}
+      {/* ✅ Output Modal */}
       {isOutputModalOpen && (
         <JsonDatasetEditorModal
           open={isOutputModalOpen}
@@ -251,8 +317,10 @@ export const NodePropertyEditor: React.FC<NodePropertyEditorProps> = ({
               columns: inferColumns(data),
               rows: Array.isArray(data) ? data : [],
             }));
+
             setOutputs(newOutputsArray);
             setIsOutputModalOpen(false);
+
             onNodeUpdate?.(node.id, {
               design: { inputs, outputs: newOutputsArray },
             });

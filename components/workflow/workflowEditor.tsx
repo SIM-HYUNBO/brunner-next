@@ -17,7 +17,7 @@ import { nanoid } from "nanoid";
 import * as constants from "@/components/core/constants";
 import { useModal } from "@/components/core/client/brunnerMessageBox";
 import * as workflowEngine from "@/components/workflow/workflowEngine";
-import { NodePropertyEditor } from "@/components/workflow/nodePropertyEditor";
+import { NodePropertyPanel } from "@/components/workflow/nodePropertyPanel";
 import * as actionRegistry from "@/components/workflow/actionRegistry";
 import { JsonDatasetEditorModal } from "@/components/workflow/jsonDatasetEditorModal";
 import type {
@@ -317,19 +317,16 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
             </ReactFlow>
           </div>
 
-          <div className="flex flex-col justify-between h-full ml-4">
+          <div className="flex flex-col justify-top h-full">
             <h3>Editor</h3>
-            <button className="w-full border mb-2" onClick={addNode}>
+            <button className="w-full border" onClick={addNode}>
               Add Node
             </button>
-            <button
-              className="w-full border mb-2"
-              onClick={() => exportWorkflow()}
-            >
+            <button className="w-full border" onClick={() => exportWorkflow()}>
               Export JSON
             </button>
 
-            <NodePropertyEditor
+            <NodePropertyPanel
               workflowId={workflowId}
               workflowName={workflowName}
               workflowDescription={workflowDescription}
@@ -350,15 +347,15 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
                 });
               }}
             />
-            <div className="flex flex-row space-x-1">
+            <div className="flex flex-row ml-2 space-x-1">
               <button
-                className="w-full semi-text-bg-color border mt-5"
+                className="w-full semi-text-bg-color border"
                 onClick={executeWorkflowFromTableEditor}
               >
                 Run
               </button>
               <button
-                className="w-full semi-text-bg-color border mt-5"
+                className="w-full semi-text-bg-color border"
                 onClick={executeWorkflowStepByStep}
               >
                 Run By Node
@@ -372,7 +369,7 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
           <div className="flex flex-col w-[calc(50%-10px)]">
             <div className="flex flex-row space-x-2">
               <div className="flex flex-row mb-2 space-x-2">
-                <h4>Input Data</h4>
+                <h4>Workflow Inputs</h4>
                 <button
                   className="border semi-text-bg-color px-3 py-1"
                   onClick={() => setIsInputSchemaEditorOpen(true)}
@@ -480,7 +477,7 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
             {/* 기존 Edit Schema 버튼 유지 */}
             <div className="flex mb-2">
               <div className="flex flex-row space-x-2">
-                <h4>Output Data</h4>
+                <h4>Workflow Outputs</h4>
                 <button
                   className="border semi-text-bg-color px-3 py-1"
                   onClick={() => setIsOutputSchemaEditorOpen(true)}
