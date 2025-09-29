@@ -194,14 +194,14 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
         position: { x: Math.random() * 400 + 50, y: Math.random() * 400 + 50 },
         data: {
           label: `Node ${id}`,
-          actionName: constants.workflowActions.SLEEP,
+          actionName: constants.workflowActions.SCRIPT,
           status: constants.workflowRunStatus.idle,
           design: {
             inputs: actionRegistry.getDefaultInputs(
-              constants.workflowActions.SLEEP
+              constants.workflowActions.SCRIPT
             ),
             outputs: actionRegistry.getDefaultOutputs(
-              constants.workflowActions.SLEEP
+              constants.workflowActions.SCRIPT
             ),
           },
           run: {
@@ -277,244 +277,237 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
     <>
       <BrunnerMessageBox />
       <ReactFlowProvider>
-        <div className="flex flex-col">
-          <div className="flex flex-row w-full h-5/6">
-            <div className="flex flex-1">
-              <ReactFlow
-                className="w-full h-[600px] semi-text-bg-color border border-gray-300 rounded-lg shadow-sm"
-                nodes={
-                  nodes.map((n) => ({
-                    ...n,
-                    style: {
-                      background: runningNodeIds.includes(n.id)
-                        ? "#FFD700"
-                        : n.data.actionName ===
-                            constants.workflowActions.START ||
-                          n.data.actionName === constants.workflowActions.END
-                        ? "#ADFF2F"
-                        : "#fff",
-                      border: "1px solid #222",
-                      color: "#000",
-                    },
-                  })) as Node<ActionNodeData>[]
-                }
-                edges={
-                  edges.map((e) => ({
-                    ...e,
-                    markerEnd: { type: "arrowclosed" },
-                    style: { stroke: "#ccc", strokeWidth: 2 },
-                  })) as Edge<any>[]
-                }
-                onNodesChange={onNodesChange}
-                onEdgesChange={onEdgesChange}
-                onConnect={onConnect}
-                onNodeClick={onNodeClick}
-                fitView
-                snapToGrid
-                snapGrid={[30, 30]}
-              >
-                <MiniMap />
-                <Controls />
-                <Background />
-              </ReactFlow>
-            </div>
-
-            <div className="flex flex-col justify-between h-full ml-4">
-              <h3>Editor</h3>
-              <button className="w-full border mb-2" onClick={addNode}>
-                Add Node
-              </button>
-              <button
-                className="w-full border mb-2"
-                onClick={() => exportWorkflow()}
-              >
-                Export JSON
-              </button>
-
-              <NodePropertyEditor
-                workflowId={workflowId}
-                workflowName={workflowName}
-                workflowDescription={workflowDescription}
-                node={selectedNode}
-                nodes={nodes}
-                onWorkflowUpdate={({ workflowName, workflowDescription }) => {
-                  if (workflowName !== undefined) setWorkflowName(workflowName);
-                  if (workflowDescription !== undefined)
-                    setWorkflowDescription(workflowDescription);
-                }}
-                onNodeUpdate={(id, updates) => {
-                  setNodes((nds) => {
-                    const newNodes = nds.map((n) =>
-                      n.id === id
-                        ? { ...n, data: { ...n.data, ...updates } }
-                        : n
-                    );
-                    setSelectedNode(newNodes.find((n) => n.id === id) || null);
-                    return newNodes;
-                  });
-                }}
-              />
-              <div className="flex flex-row space-x-1">
-                <button
-                  className="w-full semi-text-bg-color border mt-5"
-                  onClick={executeWorkflowFromTableEditor}
-                >
-                  Run
-                </button>
-                <button
-                  className="w-full semi-text-bg-color border mt-5"
-                  onClick={executeWorkflowStepByStep}
-                >
-                  Run By Node
-                </button>
-              </div>
-            </div>
+        <div className="flex flex-row w-full h-full">
+          <div className="flex flex-1">
+            <ReactFlow
+              className="w-full semi-text-bg-color border border-gray-300 rounded-lg shadow-sm"
+              nodes={
+                nodes.map((n) => ({
+                  ...n,
+                  style: {
+                    background: runningNodeIds?.includes(n.id)
+                      ? "#FFD700"
+                      : n.data.actionName === constants.workflowActions.START ||
+                        n.data.actionName === constants.workflowActions.END
+                      ? "#ADFF2F"
+                      : "#fff",
+                    border: "1px solid #222",
+                    color: "#000",
+                  },
+                })) as Node<ActionNodeData>[]
+              }
+              edges={
+                edges.map((e) => ({
+                  ...e,
+                  markerEnd: { type: "arrowclosed" },
+                  style: { stroke: "#ccc", strokeWidth: 2 },
+                })) as Edge<any>[]
+              }
+              onNodesChange={onNodesChange}
+              onEdgesChange={onEdgesChange}
+              onConnect={onConnect}
+              onNodeClick={onNodeClick}
+              fitView
+              snapToGrid
+              snapGrid={[30, 30]}
+            >
+              <MiniMap />
+              <Controls />
+              <Background />
+            </ReactFlow>
           </div>
 
-          <div className="flex flex-row mt-2">
-            {/* Input Table */}
-            <div className="flex flex-col w-[calc(50%-10px)]">
-              <div className="flex flex-row space-x-2">
-                <div className="flex flex-row mb-2 space-x-2">
-                  <h4>Input Data</h4>
-                  <button
-                    className="border semi-text-bg-color px-3 py-1"
-                    onClick={() => setIsInputSchemaEditorOpen(true)}
-                  >
-                    Edit Schema
-                  </button>
-                  <button
-                    className="border semi-text-bg-color px-3 py-1"
-                    onClick={() => setIsInputDataEditorOpen(true)}
-                  >
-                    Edit Data
-                  </button>
-                </div>
+          <div className="flex flex-col justify-between h-full ml-4">
+            <h3>Editor</h3>
+            <button className="w-full border mb-2" onClick={addNode}>
+              Add Node
+            </button>
+            <button
+              className="w-full border mb-2"
+              onClick={() => exportWorkflow()}
+            >
+              Export JSON
+            </button>
 
-                {isInputSchemaEditorOpen && (
-                  <JsonDatasetEditorModal
-                    open={isInputSchemaEditorOpen}
-                    mode="schema"
-                    value={designedInputData} // workflowInputDataObj 대신 designedInputData 사용
-                    onConfirm={(newSchema) => {
-                      // 1️⃣ 디자인 상태 업데이트
-                      setDesignedInputData(
-                        newSchema as workflowEngine.DesignedDataset
-                      );
-
-                      // 2️⃣ workflowInputDataObj를 새로운 디자인에 맞춰 초기화
-                      const newDataObj: Record<string, any> = {};
-
-                      for (const [tableName, rows] of Object.entries(
-                        newSchema
-                      )) {
-                        if (Array.isArray(rows) && rows.length > 0) {
-                          // 첫 번째 row를 기준으로 초기값 생성
-                          const firstRow = rows[0];
-                          const newRow: Record<string, any> = {};
-                          for (const key in firstRow) {
-                            const value = firstRow[key];
-                            switch (typeof value) {
-                              case "string":
-                                newRow[key] = "";
-                                break;
-                              case "number":
-                                newRow[key] = 0;
-                                break;
-                              case "boolean":
-                                newRow[key] = false;
-                                break;
-                              case "object":
-                              default:
-                                newRow[key] = {};
-                                break;
-                            }
-                          }
-                          newDataObj[tableName] = [newRow];
-                        } else {
-                          newDataObj[tableName] = [];
-                        }
-                      }
-
-                      setWorkflowInputData(JSON.stringify(newDataObj, null, 2));
-                      setIsInputSchemaEditorOpen(false);
-                    }}
-                    onCancel={() => setIsInputSchemaEditorOpen(false)}
-                  />
-                )}
-
-                {isInputDataEditorOpen && (
-                  <JsonDatasetEditorModal
-                    open={isInputDataEditorOpen}
-                    mode="data"
-                    value={workflowInputDataObj}
-                    onConfirm={(newData) => {
-                      setWorkflowInputData(JSON.stringify(newData, null, 2));
-                      setIsInputDataEditorOpen(false);
-                    }}
-                    onCancel={() => setIsInputDataEditorOpen(false)}
-                  />
-                )}
-              </div>
-              <textarea
-                className="w-full h-[200px] mt-2 border p-2 font-mono text-sm"
-                value={(() => {
-                  const dataObj = JSON.parse(workflowInputData) as InputDataset;
-
-                  // 숫자/불린 타입 변환
-                  for (const tableKey of Object.keys(dataObj)) {
-                    const rows = dataObj[tableKey];
-                    rows?.forEach((row) => {
-                      Object.keys(row).forEach((key) => {
-                        const value = row[key];
-                        if (!isNaN(Number(value))) {
-                          row[key] = Number(value);
-                        } else if (value === "true") row[key] = true;
-                        else if (value === "false") row[key] = false;
-                      });
-                    });
-                  }
-
-                  // JSON.stringify로 포맷팅
-                  return JSON.stringify(dataObj, null, 2);
-                })()}
-                readOnly
-              />
+            <NodePropertyEditor
+              workflowId={workflowId}
+              workflowName={workflowName}
+              workflowDescription={workflowDescription}
+              node={selectedNode}
+              nodes={nodes}
+              onWorkflowUpdate={({ workflowName, workflowDescription }) => {
+                if (workflowName !== undefined) setWorkflowName(workflowName);
+                if (workflowDescription !== undefined)
+                  setWorkflowDescription(workflowDescription);
+              }}
+              onNodeUpdate={(id, updates) => {
+                setNodes((nds) => {
+                  const newNodes = nds.map((n) =>
+                    n.id === id ? { ...n, data: { ...n.data, ...updates } } : n
+                  );
+                  setSelectedNode(newNodes.find((n) => n.id === id) || null);
+                  return newNodes;
+                });
+              }}
+            />
+            <div className="flex flex-row space-x-1">
+              <button
+                className="w-full semi-text-bg-color border mt-5"
+                onClick={executeWorkflowFromTableEditor}
+              >
+                Run
+              </button>
+              <button
+                className="w-full semi-text-bg-color border mt-5"
+                onClick={executeWorkflowStepByStep}
+              >
+                Run By Node
+              </button>
             </div>
-            {/* Output Table */}
-            <div className="flex flex-col ml-2 w-[calc(50%-10px)]">
-              {/* 기존 Edit Schema 버튼 유지 */}
-              <div className="flex mb-2">
-                <div className="flex flex-row space-x-2">
-                  <h4>Output Data</h4>
-                  <button
-                    className="border semi-text-bg-color px-3 py-1"
-                    onClick={() => setIsOutputSchemaEditorOpen(true)}
-                  >
-                    Edit Schema
-                  </button>
-                </div>
+          </div>
+        </div>
+
+        <div className="flex flex-row mt-2">
+          {/* Input Table */}
+          <div className="flex flex-col w-[calc(50%-10px)]">
+            <div className="flex flex-row space-x-2">
+              <div className="flex flex-row mb-2 space-x-2">
+                <h4>Input Data</h4>
+                <button
+                  className="border semi-text-bg-color px-3 py-1"
+                  onClick={() => setIsInputSchemaEditorOpen(true)}
+                >
+                  Edit Schema
+                </button>
+                <button
+                  className="border semi-text-bg-color px-3 py-1"
+                  onClick={() => setIsInputDataEditorOpen(true)}
+                >
+                  Edit Data
+                </button>
               </div>
 
-              {isOutputSchemaEditorOpen && (
+              {isInputSchemaEditorOpen && (
                 <JsonDatasetEditorModal
-                  open={isOutputSchemaEditorOpen}
+                  open={isInputSchemaEditorOpen}
                   mode="schema"
-                  value={workflowOutputDataObj}
+                  value={designedInputData} // workflowInputDataObj 대신 designedInputData 사용
                   onConfirm={(newSchema) => {
-                    setDesignedOutputData(JSON.stringify(newSchema, null, 2));
-                    setIsOutputSchemaEditorOpen(false);
+                    // 1️⃣ 디자인 상태 업데이트
+                    setDesignedInputData(
+                      newSchema as workflowEngine.DesignedDataset
+                    );
+
+                    // 2️⃣ workflowInputDataObj를 새로운 디자인에 맞춰 초기화
+                    const newDataObj: Record<string, any> = {};
+
+                    for (const [tableName, rows] of Object.entries(newSchema)) {
+                      if (Array.isArray(rows) && rows.length > 0) {
+                        // 첫 번째 row를 기준으로 초기값 생성
+                        const firstRow = rows[0];
+                        const newRow: Record<string, any> = {};
+                        for (const key in firstRow) {
+                          const value = firstRow[key];
+                          switch (typeof value) {
+                            case "string":
+                              newRow[key] = "";
+                              break;
+                            case "number":
+                              newRow[key] = 0;
+                              break;
+                            case "boolean":
+                              newRow[key] = false;
+                              break;
+                            case "object":
+                            default:
+                              newRow[key] = {};
+                              break;
+                          }
+                        }
+                        newDataObj[tableName] = [newRow];
+                      } else {
+                        newDataObj[tableName] = [];
+                      }
+                    }
+
+                    setWorkflowInputData(JSON.stringify(newDataObj, null, 2));
+                    setIsInputSchemaEditorOpen(false);
                   }}
-                  onCancel={() => setIsOutputSchemaEditorOpen(false)}
+                  onCancel={() => setIsInputSchemaEditorOpen(false)}
                 />
               )}
 
-              <textarea
-                className="w-full h-[200px] mt-2 border p-2 font-mono text-sm"
-                value={designedOutputData}
-                readOnly
-              />
+              {isInputDataEditorOpen && (
+                <JsonDatasetEditorModal
+                  open={isInputDataEditorOpen}
+                  mode="data"
+                  value={workflowInputDataObj}
+                  onConfirm={(newData) => {
+                    setWorkflowInputData(JSON.stringify(newData, null, 2));
+                    setIsInputDataEditorOpen(false);
+                  }}
+                  onCancel={() => setIsInputDataEditorOpen(false)}
+                />
+              )}
             </div>
+            <textarea
+              className="w-full h-[200px] mt-2 border p-2 font-mono text-sm"
+              value={(() => {
+                const dataObj = JSON.parse(workflowInputData) as InputDataset;
+
+                // 숫자/불린 타입 변환
+                for (const tableKey of Object.keys(dataObj)) {
+                  const rows = dataObj[tableKey];
+                  rows?.forEach((row) => {
+                    Object.keys(row).forEach((key) => {
+                      const value = row[key];
+                      if (!isNaN(Number(value))) {
+                        row[key] = Number(value);
+                      } else if (value === "true") row[key] = true;
+                      else if (value === "false") row[key] = false;
+                    });
+                  });
+                }
+
+                // JSON.stringify로 포맷팅
+                return JSON.stringify(dataObj, null, 2);
+              })()}
+              readOnly
+            />
+          </div>
+          {/* Output Table */}
+          <div className="flex flex-col ml-2 w-[calc(50%-10px)]">
+            {/* 기존 Edit Schema 버튼 유지 */}
+            <div className="flex mb-2">
+              <div className="flex flex-row space-x-2">
+                <h4>Output Data</h4>
+                <button
+                  className="border semi-text-bg-color px-3 py-1"
+                  onClick={() => setIsOutputSchemaEditorOpen(true)}
+                >
+                  Edit Schema
+                </button>
+              </div>
+            </div>
+
+            {isOutputSchemaEditorOpen && (
+              <JsonDatasetEditorModal
+                open={isOutputSchemaEditorOpen}
+                mode="schema"
+                value={workflowOutputDataObj}
+                onConfirm={(newSchema) => {
+                  setDesignedOutputData(JSON.stringify(newSchema, null, 2));
+                  setIsOutputSchemaEditorOpen(false);
+                }}
+                onCancel={() => setIsOutputSchemaEditorOpen(false)}
+              />
+            )}
+
+            <textarea
+              className="w-full h-[200px] mt-2 border p-2 font-mono text-sm"
+              value={designedOutputData}
+              readOnly
+            />
           </div>
         </div>
       </ReactFlowProvider>

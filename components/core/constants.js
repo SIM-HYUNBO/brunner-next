@@ -105,12 +105,7 @@ export const edocComponentType = {
 export const workflowActions = {
   START: "Start",
   END: "End",
-  HTTPREQUEST: "HttpRequest",
-  SLEEP: "Sleep",
-  SET: "Set",
-  MERGE: "MergeObjects",
-  BRANCH: "Branch",
-  MATHOP: "MathOp",
+  SCRIPT: "Java Script",
   CALL: "CallWorkflow",
 };
 

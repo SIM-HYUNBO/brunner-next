@@ -54,14 +54,10 @@ export function getDefaultInputs(actionName: string): NodeDataTable[] {
   switch (actionName) {
     case constants.workflowActions.START:
       return [{ table: "INDATA", columns: [], rows: [] }];
-    case constants.workflowActions.SLEEP:
-    case constants.workflowActions.HTTPREQUEST:
-    case constants.workflowActions.SET:
-    case constants.workflowActions.MERGE:
-    case constants.workflowActions.BRANCH:
-    case constants.workflowActions.MATHOP:
     case constants.workflowActions.CALL:
     case constants.workflowActions.END:
+      return [{ table: "INDATA", columns: [], rows: [] }];
+    case constants.workflowActions.SCRIPT:
       return [{ table: "INDATA", columns: [], rows: [] }];
     default:
       throw new Error(constants.messages.WORKFLOW_NOT_SUPPORTED_NODE_TYPE);
@@ -71,12 +67,6 @@ export function getDefaultInputs(actionName: string): NodeDataTable[] {
 export function getDefaultOutputs(actionName: string): NodeDataTable[] {
   switch (actionName) {
     case constants.workflowActions.START:
-    case constants.workflowActions.SLEEP:
-    case constants.workflowActions.HTTPREQUEST:
-    case constants.workflowActions.SET:
-    case constants.workflowActions.MERGE:
-    case constants.workflowActions.BRANCH:
-    case constants.workflowActions.MATHOP:
     case constants.workflowActions.CALL:
     case constants.workflowActions.END:
     default:
@@ -102,27 +92,8 @@ function getByPath(obj: any, path: string) {
   return path.split(".").reduce((o, k) => (o ? o[k] : undefined), obj);
 }
 
-/** value (객체)의 모든 템플릿 {{}} 데이터를 실제 값으로 치환 */
+/* value (객체)의 모든 템플릿 {{}} 데이터(변수값)를 실제 값으로 치환 */
 export function interpolate(value: any, ctx: any): any {
-  /*
-  if (typeof value === "string") {
-    return value.replace(/\{\{([^}]+)\}\}/g, (_, key) => {
-      const v = getByPath(ctx, key.trim());
-      return v == null ? "" : String(v);
-    });
-  }
-
-  if (Array.isArray(value)) return value.map((v: any) => interpolate(v, ctx));
-
-  if (value && typeof value === "object") {
-    const out: Record<string, any> = {};
-    Object.keys(value).forEach((k) => {
-      out[k] = interpolate(value[k], ctx);
-    });
-    return out;
-  }
-  */
-
   return value;
 }
 
@@ -196,105 +167,6 @@ export function registerBuiltInActions(): void {
   });
   defaultParamsMap.set(constants.workflowActions.END, []);
 
-  // SET
-  registerAction(constants.workflowActions.SET, async (node, workflowData) => {
-    if (!node) return;
-    if (!preNodeCheck(node, workflowData)) {
-      postNodeCheck(node, workflowData);
-      return;
-    }
-
-    postNodeCheck(node, workflowData);
-    return;
-  });
-  defaultParamsMap.set(constants.workflowActions.SET, []);
-
-  // HTTPREQUEST
-  registerAction(
-    constants.workflowActions.HTTPREQUEST,
-    async (node, workflowData) => {
-      if (!node) return;
-      if (!preNodeCheck(node, workflowData)) {
-        postNodeCheck(node, workflowData);
-        return;
-      }
-
-      postNodeCheck(node, workflowData);
-      return;
-    }
-  );
-  defaultParamsMap.set(constants.workflowActions.HTTPREQUEST, []);
-
-  // SLEEP
-  registerAction(
-    constants.workflowActions.SLEEP,
-    async (node, workflowData) => {
-      if (!node) return;
-      if (!preNodeCheck(node, workflowData)) {
-        postNodeCheck(node, workflowData);
-        return;
-      }
-
-      return new Promise((resolve) => {
-        setTimeout(() => {
-          // console.log(`✅ ${ms}ms 대기 완료`);
-          resolve();
-          postNodeCheck(node, workflowData);
-          return;
-        }, 3000);
-      });
-    }
-  );
-  defaultParamsMap.set(constants.workflowActions.SLEEP, []);
-
-  // MERGE
-  registerAction(
-    constants.workflowActions.MERGE,
-    async (node, workflowData) => {
-      if (!node) return;
-      if (!preNodeCheck(node, workflowData)) {
-        postNodeCheck(node, workflowData);
-        return;
-      }
-
-      postNodeCheck(node, workflowData);
-      return;
-    }
-  );
-  defaultParamsMap.set(constants.workflowActions.MERGE, []);
-
-  // BRANCH
-  registerAction(
-    constants.workflowActions.BRANCH,
-    async (node, workflowData) => {
-      if (!node) return;
-      if (!preNodeCheck(node, workflowData)) {
-        postNodeCheck(node, workflowData);
-        return;
-      }
-
-      postNodeCheck(node, workflowData);
-      return;
-    }
-  );
-  defaultParamsMap.set(constants.workflowActions.BRANCH, []);
-
-  // MATHOP
-  registerAction(
-    constants.workflowActions.MATHOP,
-    async (node, workflowData) => {
-      if (!node) return;
-      if (!preNodeCheck(node, workflowData)) {
-        postNodeCheck(node, workflowData);
-        return;
-      }
-
-      postNodeCheck(node, workflowData);
-      return;
-    }
-  );
-  defaultParamsMap.set(constants.workflowActions.MATHOP, []);
-
   // CALL
   registerAction(constants.workflowActions.CALL, async (node, workflowData) => {
     if (!node) return;
@@ -307,4 +179,84 @@ export function registerBuiltInActions(): void {
     return;
   });
   defaultParamsMap.set(constants.workflowActions.CALL, []);
+
+  // SCRIPT
+  registerAction(
+    constants.workflowActions.SCRIPT,
+    async (node, workflowData) => {
+      const result = await new Promise((resolve, reject) => {
+        const userScript = node.data?.script || `api.alert("no script")`;
+        const timeoutMs = node.data?.timeoutMs || 5000;
+
+        const blob = new Blob(
+          [
+            `
+          onmessage = async (e) => {
+            const { script, actionData, workflowData, timeoutMs } = e.data;
+            const logs = [];
+            try {
+              const safeApi = {
+                log: (...args) => logs.push(args.join(" ")),
+                sleep: (ms) => new Promise(r => setTimeout(r, ms)),
+                alert: (msg) => postMessage({"type":"alert", "message":msg})
+              };
+
+              const fn = new Function("actionData", "workflowData", "api", script);
+
+              const output = await Promise.race([
+                fn(actionData, workflowData, safeApi),
+                new Promise((_, reject) => setTimeout(() => reject(new Error("timeout")), timeoutMs))
+              ]);
+
+              postMessage({ ok: true, result: output, logs });
+            } catch (err) {
+              postMessage({ ok: false, error: err.message, logs });
+            }
+          };
+        `,
+          ],
+          { type: "application/javascript" }
+        );
+
+        const worker = new Worker(URL.createObjectURL(blob));
+
+        // 스크립트 타임아웃 처리
+        const timer = setTimeout(() => {
+          worker.terminate();
+          reject(new Error("timeout"));
+        }, timeoutMs + 100);
+
+        worker.onmessage = (e) => {
+          const msg = e.data;
+
+          if (msg.type === "alert") {
+            alert(msg.message);
+            return;
+          }
+
+          clearTimeout(timer);
+          worker.terminate();
+
+          // 로그는 콘솔에 출력하거나 워크플로우 런타임에 저장
+          if (msg.logs?.length) {
+            msg.logs.forEach((line: string) => console.log("[SCRIPT]", line));
+          }
+
+          if (msg.ok) resolve(msg.result);
+          else reject(new Error(msg.error));
+        };
+
+        // 스크립트 실행
+        worker.postMessage({
+          script: userScript,
+          actionData: node.data || {},
+          workflowData: workflowData.data || {},
+          timeoutMs,
+        });
+      });
+
+      workflowData.data.run.outputs = [result];
+      postNodeCheck(node, workflowData);
+    }
+  );
 }

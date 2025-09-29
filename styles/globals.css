@@ -116,7 +116,7 @@ neutral, stone
   }
 
   footer {
-    @apply h-10 
+    @apply h-5 
            w-full
            relative 
            bottom-0 
@@ -160,8 +160,7 @@ neutral, stone
            h-full 
            general-text-bg-color
            min-h-[calc(100vh-5rem)] 
-           max-w-full 
-           pb-20;
+           max-w-full;
   }
 
   .page-title {
@@ -177,9 +176,10 @@ neutral, stone
            px-2
            flex 
            flex-col 
-           min-h-screen 
+           min-h-screen
            justify-center 
-           overflow-x-hidden;
+           overflow-x-hidden
+           bottom-0;
 
     @apply w-full 
            md:w-screen 

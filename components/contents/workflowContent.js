@@ -6,7 +6,9 @@ import { WorkflowEditor } from "../workflow/workflowEditor";
 export default function WorkflowContent() {
   return (
     <>
-      <WorkflowEditor />
+      <div className="flex flex-col h-full">
+        <WorkflowEditor />
+      </div>
     </>
   );
 }

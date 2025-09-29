@@ -54,13 +54,13 @@ export async function executeWorkflow(
 
     if (shouldRun && setRunningNodeIds) {
       setRunningNodeIds((prev: any) => {
-        [...prev, nodeId];
+        return [...(prev || []), nodeId];
       });
 
       result = await runWorkflowStep(node, workflow);
 
       setRunningNodeIds((prev: any) => {
-        prev.filter((id: any) => id !== nodeId);
+        return (prev || []).filter((id: any) => id !== nodeId);
       });
     }
 
