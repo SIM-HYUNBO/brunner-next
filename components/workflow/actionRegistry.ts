@@ -88,8 +88,17 @@ export function getDefaultParams(actionName: string): NodeDataTable[] {
 }
 
 // 객체 경로로 값 가져오기
-function getByPath(obj: any, path: string) {
+export function getByPath(obj: any, path: string) {
   return path.split(".").reduce((o, k) => (o ? o[k] : undefined), obj);
+}
+export function setByPath(obj: any, path: string, value: any) {
+  const keys = path.split(".");
+  let target = obj;
+  for (let i: number = 0; i < keys.length - 1; i++) {
+    if (!target[String(keys[i])]) target[String(keys[i])] = {};
+    target = target[String(keys[i])];
+  }
+  target[String(keys[keys.length - 1])] = value;
 }
 
 /* value (객체)의 모든 템플릿 {{}} 데이터(변수값)를 실제 값으로 치환 */
@@ -147,6 +156,8 @@ export function registerBuiltInActions(): void {
       }
 
       // Node main action
+      workflowData.data.run.system = {};
+      workflowData.data.run.system.startTime = new Date();
 
       postNodeCheck(node, workflowData);
       return;
@@ -161,6 +172,10 @@ export function registerBuiltInActions(): void {
       postNodeCheck(node, workflowData);
       return;
     }
+    workflowData.data.run.system.endTime = new Date();
+    workflowData.data.run.system.durationMs =
+      workflowData.data.run.system.endTime.getTime() -
+      workflowData.data.run.system.startTime.getTime();
 
     postNodeCheck(node, workflowData);
     return;
@@ -181,63 +196,119 @@ export function registerBuiltInActions(): void {
   defaultParamsMap.set(constants.workflowActions.CALL, []);
 
   // SCRIPT
+
+  // safe Api
+
+  /* 
+    log(...) – 워커 내부 로그 저장
+    alert(msg) – 메인 스레드 alert
+    sleep(ms) – 비동기 지연
+    getVar(path) / setVar(path, value) – 워크플로우 변수(workflowData) 아래 패스로 경로 접근
+    now() – 현재 Date 객체
+    timestamp() – 현재 timestamp (ms)
+    random(min, max) – 난수 생성
+    clone(obj) – 안전한 깊은 복사
+    jsonParse(str) / jsonStringify(obj) – JSON 처리
+    formatDate(date, fmt) – 날짜 포맷(간단 예시)
+  */
   registerAction(
     constants.workflowActions.SCRIPT,
     async (node, workflowData) => {
       const result = await new Promise((resolve, reject) => {
-        const userScript = node.data?.script || `api.alert("no script")`;
+        const userScript =
+          node.data?.script ||
+          `
+        const body = {
+          title: "sim",
+          body: "hyunbo",
+          age: 50
+        }
+
+        const response = await api.postJson("https://jsonplaceholder.typicode.com/posts",
+                                             JSON.stringify(body)
+                                           );
+        api.alert(JSON.stringify(response));
+        `;
+
         const timeoutMs = node.data?.timeoutMs || 5000;
 
         const blob = new Blob(
           [
             `
-          onmessage = async (e) => {
-            const { script, actionData, workflowData, timeoutMs } = e.data;
-            const logs = [];
-            try {
-              const safeApi = {
-                log: (...args) => logs.push(args.join(" ")),
-                sleep: (ms) => new Promise(r => setTimeout(r, ms)),
-                alert: (msg) => postMessage({"type":"alert", "message":msg})
-              };
+      // 객체 경로로 값 가져오기
+      function getByPath(obj, path) {
+        return path.split(".").reduce((o, k) => (o !=null ? o[k] : undefined), obj);
+      }
+      function setByPath(obj, path, value) {
+        const keys = path.split(".");
+        let target = obj;
+        for (let i = 0; i < keys.length - 1; i++) {
+          if (!target[String(keys[i])]) target[String(keys[i])] = {};
+          target = target[String(keys[i])];
+        }
+        target[String(keys[keys.length - 1])] = value;
+      }
 
-              const fn = new Function("actionData", "workflowData", "api", script);
+        onmessage = async (e) => {
+          const { script, actionData, workflowData, timeoutMs } = e.data;
+          const logs = [];
+          try {
+            const safeApi = {
+              log: (...args) => logs.push(args.join(" ")),
+              sleep: (ms) => new Promise(r => setTimeout(r, ms)),
+              alert: (msg) => postMessage({type:"alert", message:msg}),
+              getVar: (path) => getByPath(workflowData, path),
+              setVar: (path, value) => {
+                setByPath(workflowData, path, value);
+              },
+              now: () => new Date(),
+              timestamp: () => Date.now(),
+              random: (min=0, max=1) => Math.random() * (max - min) + min,
+              clone: (obj) => JSON.parse(JSON.stringify(obj)),
+              jsonParse: (str) => JSON.parse(str),
+              jsonStringify: (obj) => JSON.stringify(obj),
+              formatDate: (date, fmt) => date.toISOString(),
+              postJson: async (url, body) => {
+                const res = await fetch(url, {
+                method: "POST",
+                headers: {"Conent-Type":"application/json"},
+                body: JSON.stringify(body),
+                });
+                return await(res.json());
+              }
+            };
 
-              const output = await Promise.race([
-                fn(actionData, workflowData, safeApi),
-                new Promise((_, reject) => setTimeout(() => reject(new Error("timeout")), timeoutMs))
-              ]);
+            const AsyncFunction = Object.getPrototypeOf(async function(){}).constructor;
+            const fn = new AsyncFunction("actionData", "workflowData", "api", script);
 
-              postMessage({ ok: true, result: output, logs });
-            } catch (err) {
-              postMessage({ ok: false, error: err.message, logs });
-            }
-          };
-        `,
+            const output = await Promise.race([
+              fn(actionData, workflowData, safeApi),
+              new Promise((_, reject) => setTimeout(() => reject(new Error("timeout")), timeoutMs))
+            ]);
+
+            postMessage({ ok: true, result: output, logs });
+          } catch (err) {
+            postMessage({ ok: false, error: err.message, logs });
+          }
+        };
+      `,
           ],
           { type: "application/javascript" }
         );
 
         const worker = new Worker(URL.createObjectURL(blob));
 
-        // 스크립트 타임아웃 처리
-        const timer = setTimeout(() => {
-          worker.terminate();
-          reject(new Error("timeout"));
-        }, timeoutMs + 100);
-
         worker.onmessage = (e) => {
           const msg = e.data;
 
           if (msg.type === "alert") {
             alert(msg.message);
-            return;
+            return; // Worker 계속 실행
           }
 
-          clearTimeout(timer);
           worker.terminate();
 
-          // 로그는 콘솔에 출력하거나 워크플로우 런타임에 저장
+          // 로그 출력
           if (msg.logs?.length) {
             msg.logs.forEach((line: string) => console.log("[SCRIPT]", line));
           }
