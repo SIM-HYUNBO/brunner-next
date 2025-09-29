@@ -24,6 +24,7 @@ import type {
   ActionNodeData,
   ConditionEdgeData,
 } from "@/components/workflow/actionRegistry";
+import { DBConnectionManagerModal } from "@/components/workflow/dbConnectionManagerModal";
 
 interface WorkflowEditorProps {
   initialNodes?: Node<ActionNodeData>[];
@@ -123,6 +124,7 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
   const [isInputSchemaEditorOpen, setIsInputSchemaEditorOpen] = useState(false);
   const [isOutputSchemaEditorOpen, setIsOutputSchemaEditorOpen] =
     useState(false);
+  const [dbModalOpen, setDbModalOpen] = useState(false);
 
   useEffect(() => {
     setWorkflowId(nanoid());
@@ -316,9 +318,18 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
               <Background />
             </ReactFlow>
           </div>
-
+          <DBConnectionManagerModal
+            open={dbModalOpen}
+            onOpenChange={setDbModalOpen}
+          />
           <div className="flex flex-col justify-top h-full">
             <h3>Editor</h3>
+            <button
+              onClick={() => setDbModalOpen(true)}
+              className="px-3 py-1 rounded bg-blue-600 text-white hover:bg-blue-700"
+            >
+              DB 연결 관리
+            </button>
             <button className="w-full border" onClick={addNode}>
               Add Node
             </button>
