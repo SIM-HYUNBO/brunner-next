@@ -3,7 +3,8 @@
 import logger from "../../../components/core/server/winston/logger";
 import * as constants from "@/components/core/constants";
 import * as database from "./database/database";
-import * as db_cor_sql_info from "./dynamicSql";
+import * as dynamicSql from "./dynamicSql";
+import { dbConnectionManager } from "./workflow/dbConnectionManager";
 
 const executeService = async (txnId, jRequest) => {
   var jResponse = {};
@@ -37,7 +38,7 @@ async function selectAll(txnId, jRequest) {
   try {
     var SQLs = [];
 
-    var sql = await db_cor_sql_info.getSQL00(`select_TB_COR_SQL_INFO`, 1);
+    var sql = await dynamicSql.getSQL00(`select_TB_COR_SQL_INFO`, 1);
 
     const sql_result = await database.executeSQL(sql, []);
 
@@ -95,7 +96,7 @@ async function updateOne(txnId, jRequest) {
       return jResponse;
     }
 
-    var sql = await db_cor_sql_info.getSQL00(`select_TB_COR_SQL_INFO`, 2);
+    var sql = await dynamicSql.getSQL00(`select_TB_COR_SQL_INFO`, 2);
     var select_TB_COR_SQL_INFO_02 = await database.executeSQL(sql, [
       jRequest.systemCode,
       jRequest.sqlName,
@@ -120,7 +121,7 @@ async function updateOne(txnId, jRequest) {
     }
 
     if (jRequest.action === "Update") {
-      sql = await db_cor_sql_info.getSQL00(`update_TB_COR_SQL_INFO`, 1);
+      sql = await dynamicSql.getSQL00(`update_TB_COR_SQL_INFO`, 1);
       var update_TB_COR_SQL_INFO_01 = await database.executeSQL(sql, [
         jRequest.sqlContent,
         jRequest.userId,
@@ -144,7 +145,7 @@ async function updateOne(txnId, jRequest) {
         jResponse.error_message = `Failed to update serviceSQL.\n`;
       }
     } else if (jRequest.action === "Create") {
-      sql = await db_cor_sql_info.getSQL00(`insert_TB_COR_SQL_INFO`, 1);
+      sql = await dynamicSql.getSQL00(`insert_TB_COR_SQL_INFO`, 1);
       var insert_TB_COR_SQL_INFO_01 = await database.executeSQL(sql, [
         jRequest.systemCode,
         jRequest.sqlName,
@@ -199,7 +200,7 @@ async function deleteOne(txnId, jRequest) {
       return jResponse;
     }
 
-    var sql = await db_cor_sql_info.getSQL00(`select_TB_COR_SQL_INFO`, 2);
+    var sql = await dynamicSql.getSQL00(`select_TB_COR_SQL_INFO`, 2);
     var select_TB_COR_SQL_INFO_02 = await database.executeSQL(sql, [
       jRequest.systemCode,
       jRequest.sqlName,
@@ -212,7 +213,7 @@ async function deleteOne(txnId, jRequest) {
       return jResponse;
     }
 
-    sql = await db_cor_sql_info.getSQL00(`delete_TB_COR_SQL_INFO`, 1);
+    sql = await dynamicSql.getSQL00(`delete_TB_COR_SQL_INFO`, 1);
     var delete_TB_COR_SQL_INFO_01 = await database.executeSQL(sql, [
       jRequest.systemCode,
       jRequest.sqlName,
@@ -277,6 +278,8 @@ async function loadAll(txnId, jRequest) {
   } catch (err) {
     throw err;
   } finally {
+    // ✅ 싱글톤 인스턴스
+    dbConnectionManager.loadAllFromDatabase(database, dynamicSql);
     return process.serviceSql;
   }
 }
@@ -284,6 +287,7 @@ async function loadAll(txnId, jRequest) {
 const getSQL = async (systemCode, sqlName, sqlSeq) => {
   try {
     var sql = process.serviceSql.get(`${systemCode}_${sqlName}_${sqlSeq}`);
+    if (!sql) throw new Error(constants.messages.DATABASE_FAILED);
     return sql;
   } catch (err) {
     throw err;

@@ -1,11 +1,13 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import * as constants from "@/components/core/constants";
 import RequestServer from "@/components/core/client/requestServer";
 import Loading from "@/components/core/client/loading";
 import { useModal } from "@/components/core/client/brunnerMessageBox";
 import * as userInfo from "@/components/core/client/frames/userInfo";
+import { v4 as uuidv4 } from "uuid";
 
 export interface DBConnectionInfo {
+  systemCode: string;
   id: string;
   name: string;
   type: "postgres" | "mysql" | "mssql" | "oracle";
@@ -35,6 +37,8 @@ export const DBConnectionManagerModal: React.FC<
     mssql: 1433,
     oracle: 1521,
   };
+
+  const editingRef = useRef<DBConnectionInfo | null>(null);
 
   useEffect(() => {
     if (open) loadConnections();
@@ -96,11 +100,12 @@ export const DBConnectionManagerModal: React.FC<
       if (jResponse.error_code === 0) {
         const savedConnection: DBConnectionInfo = {
           ...editing,
-          id: jResponse.connection?.id || editing.id,
+          id: jResponse?.id || editing.id,
         };
+        editingRef.current = savedConnection;
         setEditing(savedConnection);
-        alert(`${editing.name} 저장 완료`);
-        setEditing(null);
+        alert(`${editingRef.current.name} 저장 완료`);
+        // setEditing(null);
         loadConnections();
       } else {
         alert("저장 실패: " + jResponse.error_message);
@@ -184,6 +189,7 @@ export const DBConnectionManagerModal: React.FC<
           <button
             onClick={() =>
               setEditing({
+                systemCode: `${process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE}`,
                 id: "",
                 name: "",
                 type: "postgres",

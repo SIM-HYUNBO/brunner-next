@@ -3,7 +3,8 @@
 import logger from "../../../components/core/server/winston/logger";
 import * as constants from "@/components/core/constants";
 import * as commonFunctions from "@/components/core/commonFunctions";
-import { dbConnectionManager } from "@/components/workflow/dbConnectionManager";
+import { dbConnectionManager } from "@/pages/api/biz/workflow/dbConnectionManager";
+import * as dynamicSql from "./dynamicSql";
 
 /**
  * Workflow 모듈의 서비스 실행 함수
@@ -22,8 +23,9 @@ const executeService = async (txnId, jRequest) => {
 
       // ✅ 2. 연결정보 추가
       case constants.commands.WORKFLOW_INSERT_DB_CONNECTION_ONE: {
-        await dbConnectionManager.register(jRequest.connection);
+        const result = await dbConnectionManager.register(jRequest.connection);
         jResponse.message = "DB 연결정보가 추가되었습니다.";
+        jResponse.id = result.insertedId;
         break;
       }
 

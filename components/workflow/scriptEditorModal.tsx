@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
-
+import CodeMirror, { oneDark, oneDarkTheme } from "@uiw/react-codemirror";
+import { javascript } from "@codemirror/lang-javascript";
 interface ScriptEditorModalProps {
   open: boolean;
   script: string;
@@ -69,9 +70,13 @@ export const ScriptEditorModal: React.FC<ScriptEditorModalProps> = ({
 
         <div className="flex-1 p-2 flex flex-col">
           <label className="block mt-1">Script:</label>
-          <textarea
-            className="flex-1 w-full p-2 border font-mono resize-none"
+          <CodeMirror
             value={internalScript}
+            height="100%"
+            extensions={[javascript()]}
+            theme={oneDark}
+            onChange={(value) => setInternalScript(value)}
+            className="flex-1 w-full p-2 border font-mono resize-none"
             placeholder={`
 const body = {
       title: "sim",
@@ -83,10 +88,6 @@ const response = await api.postJson("https://jsonplaceholder.typicode.com/posts"
                                      JSON.stringify(body));
 api.alert(JSON.stringify(response));
 `}
-            onChange={(e) => setInternalScript(e.target.value)}
-            onPaste={(e) => {
-              e.stopPropagation();
-            }}
           />
 
           <label className="block mt-2">Timeout (ms):</label>
@@ -100,15 +101,21 @@ api.alert(JSON.stringify(response));
 
         <div className="p-2 flex justify-end gap-2 border-t">
           <button
-            className="px-3 py-1 border rounded"
+            className="px-3 py-1 border rounded semi-text-bg-color"
             onClick={() => onConfirm(internalScript, internalTimeout)}
           >
             OK
           </button>
-          <button className="px-3 py-1 border rounded" onClick={onCancel}>
+          <button
+            className="px-3 py-1 border rounded semi-text-bg-color"
+            onClick={onCancel}
+          >
             Cancel
           </button>
-          <button className="px-3 py-1 border rounded" onClick={onHelp}>
+          <button
+            className="px-3 py-1 border rounded semi-text-bg-color"
+            onClick={onHelp}
+          >
             Help
           </button>
         </div>

@@ -1,4 +1,8 @@
 // src/engine/db/DBConnectionManager.ts
+import * as constants from "@/components/core/constants";
+import * as database from "./../database/database";
+import * as dynamicSql from "./../dynamicSql";
+
 import { Pool as PgPool } from "pg";
 import mysql from "mysql2/promise";
 import mssql from "mssql";
@@ -33,15 +37,29 @@ export class DBConnectionManager {
   private connections: Map<string, DBConnectionConfig> = new Map();
   private pools: Map<string, DBConnectionPool> = new Map();
 
+  async loadAllFromDatabase(database: any, dynamicSql: any) {
+    const dbConnections = await this.selectDBConnections(
+      process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE ?? "00",
+      database,
+      dynamicSql
+    );
+    for (const conn of dbConnections) {
+      await this.register(conn);
+    }
+  }
+
   // ✅ 연결정보 등록
   async register(config: DBConnectionConfig) {
+    var result = null;
     if (this.connections.has(config.id)) {
-      this.update(config);
+      result = await this.update(config);
     } else {
       const pool = await this.createPool(config);
       this.connections.set(config.id, config);
       this.pools.set(config.id, { type: config.type, pool });
+      result = await this.insertDBConnection(config, database, dynamicSql);
     }
+    return result;
   }
 
   // ✅ 연결정보 수정
@@ -52,6 +70,7 @@ export class DBConnectionManager {
 
     await this.remove(config.id);
     await this.register(config);
+    await this.updateDBConnection(config, database, dynamicSql);
   }
 
   // ✅ 연결정보 삭제
@@ -62,6 +81,7 @@ export class DBConnectionManager {
     }
     this.connections.delete(id);
     this.pools.delete(id);
+    await this.deleteDBConnection(id, database, dynamicSql);
   }
 
   // ✅ 등록된 연결정보 목록 조회
@@ -180,7 +200,121 @@ export class DBConnectionManager {
       return false;
     }
   }
+
+  // ✅ DB 연결정보 조회
+  async selectDBConnections(
+    systemCode: string,
+    database: any,
+    dynamicSql: any
+  ) {
+    const jResponse: any = {};
+    try {
+      const sql = await dynamicSql.getSQL00("select_TB_WF_DBCONNECTIONS", 1);
+      const sqlResult = await database.executeSQL(sql, [systemCode]); // 필요 시 파라미터 사용
+
+      return sqlResult.rows;
+    } catch (err: any) {
+      throw err;
+    }
+  }
+
+  // ✅ DB 연결정보 등록
+  async insertDBConnection(
+    dbConnectionConfig: any,
+    database: any,
+    dynamicSql: any
+  ) {
+    var result: any = {};
+    var sqlResult = null;
+
+    try {
+      const sql = await dynamicSql.getSQL00("insert_TB_WF_DBCONNECTIONS", 1);
+      sqlResult = await database.executeSQL(sql, [
+        dbConnectionConfig.systemCode,
+        dbConnectionConfig.name,
+        dbConnectionConfig.type,
+        dbConnectionConfig.host,
+        dbConnectionConfig.port,
+        dbConnectionConfig.username,
+        dbConnectionConfig.password,
+        dbConnectionConfig.database,
+        JSON.stringify(dbConnectionConfig.additional_info || {}),
+      ]);
+
+      if (sqlResult.rows && sqlResult.rows.length > 0) {
+        result.insertedId = sqlResult.rows[0]?.id;
+      }
+      result.error_code = 0;
+      result.error_message = constants.messages.EMPTY_STRING;
+    } catch (err: any) {
+      console.error(err);
+      result.error_code = -1;
+      result.error_message = err.message;
+    }
+    return result;
+  }
+
+  // ✅ DB 연결정보 수정
+  async updateDBConnection(
+    dbConnectionConfig: any,
+    database: any,
+    dynamicSql: any
+  ) {
+    var result: any = {};
+    try {
+      var sql = await dynamicSql.getSQL00("update_TB_WF_DBCONNECTIONS", 1);
+      var sqlResult = await database.executeSQL(sql, [
+        dbConnectionConfig.name,
+        dbConnectionConfig.type,
+        dbConnectionConfig.host,
+        dbConnectionConfig.port,
+        dbConnectionConfig.username,
+        dbConnectionConfig.password,
+        dbConnectionConfig.database,
+        JSON.stringify(dbConnectionConfig.additional_info || {}),
+        dbConnectionConfig.id,
+      ]);
+
+      if (sqlResult.rowCount === 1) {
+        result.error_code = 0;
+        result.error_message = constants.messages.EMPTY_STRING;
+      } else {
+        result.error_code = -1;
+        result.error_message = constants.messages.FAILED_TO_UPDATE_DATA;
+      }
+    } catch (err: any) {
+      console.error(err);
+      result.error_code = -1;
+      result.error_message = err.message;
+    }
+    return result;
+  }
+
+  // ✅ DB 연결정보 삭제
+  async deleteDBConnection(
+    dbConnectionId: any,
+    database: any,
+    dynamicSql: any
+  ) {
+    const result: any = {};
+    try {
+      const sql = await dynamicSql.getSQL00("delete_TB_WF_DBCONNECTIONS", 1);
+      const sqlResult = await database.executeSQL(sql, [dbConnectionId]);
+
+      if (sqlResult.rowCount === 1) {
+        result.error_code = 0;
+        result.error_message = constants.messages.EMPTY_STRING;
+      } else {
+        result.error_code = -1;
+        result.error_message = constants.messages.FAILED_TO_DELETE_DATA;
+      }
+    } catch (err: any) {
+      console.error(err);
+      result.error_code = -1;
+      result.error_message = err.message;
+    }
+    return result;
+  }
 }
 
-// ✅ 싱글톤 인스턴스
 export const dbConnectionManager = new DBConnectionManager();
