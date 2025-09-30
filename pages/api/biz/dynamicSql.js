@@ -4,7 +4,7 @@ import logger from "../../../components/core/server/winston/logger";
 import * as constants from "@/components/core/constants";
 import * as database from "./database/database";
 import * as dynamicSql from "./dynamicSql";
-import { dbConnectionManager } from "./workflow/dbConnectionManager";
+import { DBConnectionManager } from "./workflow/dbConnectionManager";
 
 const executeService = async (txnId, jRequest) => {
   var jResponse = {};
@@ -279,7 +279,7 @@ async function loadAll(txnId, jRequest) {
     throw err;
   } finally {
     // ✅ 싱글톤 인스턴스
-    dbConnectionManager.loadAllFromDatabase(database, dynamicSql);
+    DBConnectionManager.getInstance().loadAllFromDatabase(database, dynamicSql);
     return process.serviceSql;
   }
 }
