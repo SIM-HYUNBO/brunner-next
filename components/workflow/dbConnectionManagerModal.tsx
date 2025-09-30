@@ -86,9 +86,10 @@ export const DBConnectionManagerModal: React.FC<
   const handleSave = async () => {
     if (!editing) return;
     try {
-      const commandName = editing.id
-        ? constants.commands.WORKFLOW_UPDATE_DB_CONNECTION_ONE
-        : constants.commands.WORKFLOW_INSERT_DB_CONNECTION_ONE;
+      const commandName =
+        editingRef.current?.id || editing.id
+          ? constants.commands.WORKFLOW_UPDATE_DB_CONNECTION_ONE
+          : constants.commands.WORKFLOW_INSERT_DB_CONNECTION_ONE;
 
       const jRequest = {
         commandName,
@@ -100,7 +101,7 @@ export const DBConnectionManagerModal: React.FC<
       if (jResponse.error_code === 0) {
         const savedConnection: DBConnectionInfo = {
           ...editing,
-          id: jResponse?.id || editing.id,
+          id: jResponse?.id || editingRef.current?.id || editing.id,
         };
         editingRef.current = savedConnection;
         setEditing(savedConnection);
