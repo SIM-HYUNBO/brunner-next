@@ -16,8 +16,8 @@ const executeService = async (txnId, jRequest) => {
     switch (jRequest.commandName) {
       // ✅ 1. DB 연결정보 전체 조회
       case constants.commands.WORKFLOW_SELECT_DB_CONNECTIONS_ALL: {
-        const connections = await dbConnectionManager.list();
-        jResponse.connections = connections;
+        const result = await dbConnectionManager.list();
+        jResponse.connections = result;
         break;
       }
 
@@ -31,15 +31,24 @@ const executeService = async (txnId, jRequest) => {
 
       // ✅ 3. 연결정보 수정
       case constants.commands.WORKFLOW_UPDATE_DB_CONNECTION_ONE: {
-        await dbConnectionManager.update(jRequest.connection);
-        jResponse.message = "DB 연결정보가 수정되었습니다.";
+        const result = await dbConnectionManager.update(jRequest.connection);
+        if(result.error_code === 0)
+          jResponse.message = "DB 연결정보가 수정되었습니다.";
+        else
+          jResponse.message = result.error_message;
+
         break;
       }
 
       // ✅ 4. 연결정보 삭제
       case constants.commands.WORKFLOW_DELETE_DB_CONNECTION_ONE: {
-        await dbConnectionManager.remove(jRequest.id);
-        jResponse.message = "DB 연결정보가 삭제되었습니다.";
+        const result = await dbConnectionManager.remove(jRequest.id);
+        
+        if(result.error_code === 0)
+          jResponse.message = "DB 연결정보가 삭제되었습니다.";
+        else 
+          jResponse.message = result.error_message;
+
         break;
       }
 

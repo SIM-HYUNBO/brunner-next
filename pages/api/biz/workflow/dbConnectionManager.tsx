@@ -63,15 +63,40 @@ export class DBConnectionManager {
   }
 
   // ✅ 연결정보 수정
-  async update(config: DBConnectionConfig) {
-    if (!this.connections.has(config.id)) {
-      throw new Error(`DB connection with ID ${config.id} not found`);
-    }
-
-    await this.remove(config.id);
-    await this.register(config);
-    await this.updateDBConnection(config, database, dynamicSql);
+async update(config: DBConnectionConfig) {
+  if (!this.connections.has(config.id)) {
+    throw new Error(`DB connection with ID ${config.id} not found`);
   }
+
+  // 기존 연결정보 가져오기
+  const existingConfig = this.connections.get(config.id)!;
+
+  // 필요한 경우 연결 풀 교체 (host, port, username, password, database 등 핵심 정보가 바뀐 경우)
+  const needNewPool =
+    existingConfig.type !== config.type ||
+    existingConfig.host !== config.host ||
+    existingConfig.port !== config.port ||
+    existingConfig.username !== config.username ||
+    existingConfig.password !== config.password ||
+    existingConfig.database !== config.database;
+
+  if (needNewPool) {
+    // 기존 풀 닫기
+    const oldPool = this.pools.get(config.id);
+    if (oldPool) await this.closePool(oldPool);
+
+    // 새 풀 생성
+    const newPool = await this.createPool(config);
+    this.pools.set(config.id, { type: config.type, pool: newPool });
+  }
+
+  // connections Map 업데이트 (부분 필드 업데이트 가능)
+  this.connections.set(config.id, { ...existingConfig, ...config });
+
+  // DB에 업데이트
+  return await this.updateDBConnection(config, database, dynamicSql);
+}
+
 
   // ✅ 연결정보 삭제
   async remove(id: string) {
@@ -81,7 +106,8 @@ export class DBConnectionManager {
     }
     this.connections.delete(id);
     this.pools.delete(id);
-    await this.deleteDBConnection(id, database, dynamicSql);
+    const result = await this.deleteDBConnection(id, database, dynamicSql);
+    return result;
   }
 
   // ✅ 등록된 연결정보 목록 조회

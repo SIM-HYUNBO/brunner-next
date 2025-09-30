@@ -326,7 +326,7 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
             <h3>Editor</h3>
             <button
               onClick={() => setDbModalOpen(true)}
-              className="px-3 py-1 rounded bg-blue-600 text-white hover:bg-blue-700"
+              className="px-3 py-1 rounded semi-text-bg-color"
             >
               DB 연결 관리
             </button>
