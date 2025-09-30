@@ -36,12 +36,12 @@ export class DBConnectionManager {
   // ✅ 연결정보 등록
   async register(config: DBConnectionConfig) {
     if (this.connections.has(config.id)) {
-      throw new Error(`DB connection with ID ${config.id} already exists`);
+      this.update(config);
+    } else {
+      const pool = await this.createPool(config);
+      this.connections.set(config.id, config);
+      this.pools.set(config.id, { type: config.type, pool });
     }
-
-    const pool = await this.createPool(config);
-    this.connections.set(config.id, config);
-    this.pools.set(config.id, { type: config.type, pool });
   }
 
   // ✅ 연결정보 수정
@@ -98,6 +98,7 @@ export class DBConnectionManager {
           user: config.username,
           password: config.password,
           database: config.database,
+          ssl: true,
           max: 10,
         });
 

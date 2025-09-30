@@ -11,7 +11,7 @@ export interface DBConnectionInfo {
   type: "postgres" | "mysql" | "mssql" | "oracle";
   host: string;
   port: number;
-  user: string;
+  username: string;
   password: string;
   database: string;
 }
@@ -29,10 +29,28 @@ export const DBConnectionManagerModal: React.FC<
   const [connections, setConnections] = useState<DBConnectionInfo[]>([]);
   const [editing, setEditing] = useState<DBConnectionInfo | null>(null);
   const [testing, setTesting] = useState(false);
+  const defaultPorts: Record<string, number> = {
+    postgres: 5432,
+    mysql: 3306,
+    mssql: 1433,
+    oracle: 1521,
+  };
 
   useEffect(() => {
     if (open) loadConnections();
   }, [open]);
+
+  useEffect(() => {
+    if (editing) {
+      const defaultPort = defaultPorts[editing.type];
+      if (defaultPort && editing.port != defaultPort) {
+        setEditing({
+          ...editing,
+          port: defaultPort,
+        });
+      }
+    }
+  }, [editing?.type]);
 
   const loadConnections = async () => {
     try {
@@ -76,6 +94,11 @@ export const DBConnectionManagerModal: React.FC<
       const jResponse = await RequestServer(jRequest);
 
       if (jResponse.error_code === 0) {
+        const savedConnection: DBConnectionInfo = {
+          ...editing,
+          id: jResponse.connection?.id || editing.id,
+        };
+        setEditing(savedConnection);
         alert(`${editing.name} 저장 완료`);
         setEditing(null);
         loadConnections();
@@ -166,7 +189,7 @@ export const DBConnectionManagerModal: React.FC<
                 type: "postgres",
                 host: "",
                 port: 5432,
-                user: "",
+                username: "",
                 password: "",
                 database: "",
               })
@@ -235,7 +258,10 @@ export const DBConnectionManagerModal: React.FC<
                 <select
                   value={editing.type}
                   onChange={(e) =>
-                    setEditing({ ...editing, type: e.target.value as any })
+                    setEditing({
+                      ...editing,
+                      type: e.target.value as DBConnectionInfo["type"],
+                    })
                   }
                   className="border rounded px-2 py-1 w-full"
                 >
@@ -274,9 +300,9 @@ export const DBConnectionManagerModal: React.FC<
                 <label className="block font-medium text-sm mb-1">User</label>
                 <input
                   type="text"
-                  value={editing.user}
+                  value={editing.username}
                   onChange={(e) =>
-                    setEditing({ ...editing, user: e.target.value })
+                    setEditing({ ...editing, username: e.target.value })
                   }
                   className="border rounded px-2 py-1 w-full"
                 />

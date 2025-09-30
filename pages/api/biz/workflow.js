@@ -22,7 +22,7 @@ const executeService = async (txnId, jRequest) => {
 
       // ✅ 2. 연결정보 추가
       case constants.commands.WORKFLOW_INSERT_DB_CONNECTION_ONE: {
-        await dbConnectionManager.insert(jRequest.connection);
+        await dbConnectionManager.register(jRequest.connection);
         jResponse.message = "DB 연결정보가 추가되었습니다.";
         break;
       }
@@ -36,7 +36,7 @@ const executeService = async (txnId, jRequest) => {
 
       // ✅ 4. 연결정보 삭제
       case constants.commands.WORKFLOW_DELETE_DB_CONNECTION_ONE: {
-        await dbConnectionManager.delete(jRequest.id);
+        await dbConnectionManager.remove(jRequest.id);
         jResponse.message = "DB 연결정보가 삭제되었습니다.";
         break;
       }
@@ -47,7 +47,7 @@ const executeService = async (txnId, jRequest) => {
           jRequest.connection
         );
 
-        if (result.success) {
+        if (result) {
           jResponse.message = "DB 연결 테스트 성공";
         } else {
           jResponse.error_code = -1;
