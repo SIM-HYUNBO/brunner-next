@@ -233,7 +233,10 @@ export const DBConnectionManagerModal: React.FC<
                     ✏️ 수정
                   </button>
                   <button
-                    onClick={() => handleDelete(conn.id)}
+                    onClick={() => {
+                      if (editingRef.current)
+                        handleDelete(editingRef.current.id);
+                    }}
                     className="px-2 py-1 rounded border hover:bg-red-100 text-red-600"
                   >
                     🗑 삭제
