@@ -8,6 +8,7 @@ export const modulePrefix = {
   edocComponentTemplate: `edocComponentTemplate`,
   edocDocument: `edocDocument`,
   edocCustom: `edocCustom`,
+  workflow: `workflow`,
 };
 
 export const messages = {
@@ -88,6 +89,12 @@ export const commands = {
   POST_COMMENT_INFO_INSERT_ONE: `postCommentInfo.insertOne`,
   POST_COMMENT_INFO_UPDATE_ONE: `postCommentInfo.updateOne`,
   POST_COMMENT_INFO_DELETE_ONE: `postCommentInfo.deleteOne`,
+
+  WORKFLOW_SELECT_DB_CONNECTIONS_ALL: `workflow.selectDBConnectionAll`,
+  WORKFLOW_INSERT_DB_CONNECTION_ONE: `workflow.insertDBConnectionOne`,
+  WORKFLOW_UPDATE_DB_CONNECTION_ONE: `workflow.updateDBConnectionOne`,
+  WORKFLOW_DELETE_DB_CONNECTION_ONE: `workflow.deleteDBConnectionOne`,
+  WORKFLOW_TEST_DB_CONNECTION: `workflow.testDBConnectionOne`,
 };
 
 export const edocComponentType = {

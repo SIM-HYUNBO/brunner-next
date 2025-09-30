@@ -11,6 +11,7 @@ import * as postCommentInfo from "./biz/postCommentInfo";
 import * as edocComponentTemplate from "./biz/eDoc/eDocComponentTemplate";
 import * as edocDocument from "./biz/eDoc/eDocDocument";
 import * as edocCustom from "./biz/eDoc/eDocCustom";
+import * as workflow from "./biz/workflow";
 
 /**
  * 최종 서버 핸들러
@@ -113,6 +114,7 @@ const moduleMap = {
     edocComponentTemplate.executeService,
   [constants.modulePrefix.edocDocument]: edocDocument.executeService,
   [constants.modulePrefix.edocCustom]: edocCustom.executeService,
+  [constants.modulePrefix.workflow]: workflow.executeService,
 };
 
 const executeService = async (method, req) => {
