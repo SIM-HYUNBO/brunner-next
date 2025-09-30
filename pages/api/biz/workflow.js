@@ -3,7 +3,7 @@
 import logger from "../../../components/core/server/winston/logger";
 import * as constants from "@/components/core/constants";
 import * as commonFunctions from "@/components/core/commonFunctions";
-import { dbConnectionManager } from "@/pages/api/biz/workflow/dbConnectionManager";
+import { DBConnectionManager } from "@/pages/api/biz/workflow/dbConnectionManager";
 import * as dynamicSql from "./dynamicSql";
 
 /**
@@ -16,14 +16,14 @@ const executeService = async (txnId, jRequest) => {
     switch (jRequest.commandName) {
       // ✅ 1. DB 연결정보 전체 조회
       case constants.commands.WORKFLOW_SELECT_DB_CONNECTIONS_ALL: {
-        const result = await dbConnectionManager.list();
+        const result = await DBConnectionManager.getInstance().list();
         jResponse.connections = result;
         break;
       }
 
       // ✅ 2. 연결정보 추가
       case constants.commands.WORKFLOW_INSERT_DB_CONNECTION_ONE: {
-        const result = await dbConnectionManager.register(jRequest.connection);
+        const result = await DBConnectionManager.getInstance().register(jRequest.connection);
         jResponse.message = "DB 연결정보가 추가되었습니다.";
         jResponse.id = result.insertedId;
         break;
@@ -31,7 +31,7 @@ const executeService = async (txnId, jRequest) => {
 
       // ✅ 3. 연결정보 수정
       case constants.commands.WORKFLOW_UPDATE_DB_CONNECTION_ONE: {
-        const result = await dbConnectionManager.update(jRequest.connection);
+        const result = await DBConnectionManager.getInstance().update(jRequest.connection);
         if(result.error_code === 0)
           jResponse.message = "DB 연결정보가 수정되었습니다.";
         else
@@ -42,7 +42,7 @@ const executeService = async (txnId, jRequest) => {
 
       // ✅ 4. 연결정보 삭제
       case constants.commands.WORKFLOW_DELETE_DB_CONNECTION_ONE: {
-        const result = await dbConnectionManager.remove(jRequest.id);
+        const result = await DBConnectionManager.getInstance().remove(jRequest.id);
         
         if(result.error_code === 0)
           jResponse.message = "DB 연결정보가 삭제되었습니다.";
@@ -54,7 +54,7 @@ const executeService = async (txnId, jRequest) => {
 
       // ✅ 5. 연결 테스트
       case constants.commands.WORKFLOW_TEST_DB_CONNECTION: {
-        const result = await dbConnectionManager.testConnection(
+        const result = await DBConnectionManager.getInstance().testConnection(
           jRequest.connection
         );
 

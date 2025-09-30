@@ -34,6 +34,14 @@ export interface DBConnectionPool {
 // DBConnectionManager 본체
 // ---------------------------
 export class DBConnectionManager {
+  private constructor (){}
+  private static instance:DBConnectionManager;
+  public static getInstance():DBConnectionManager {
+    if(!DBConnectionManager.instance)
+      DBConnectionManager.instance = new DBConnectionManager();
+    return DBConnectionManager.instance;
+  }
+
   private connections: Map<string, DBConnectionConfig> = new Map();
   private pools: Map<string, DBConnectionPool> = new Map();
 
@@ -44,12 +52,12 @@ export class DBConnectionManager {
       dynamicSql
     );
     for (const conn of dbConnections) {
-      await this.register(conn);
+      await this.register(conn, true);
     }
   }
 
   // ✅ 연결정보 등록
-  async register(config: DBConnectionConfig) {
+  async register(config: DBConnectionConfig, onlyLoad:boolean = false) {
     var result = null;
     if (this.connections.has(config.id)) {
       result = await this.update(config);
@@ -57,7 +65,9 @@ export class DBConnectionManager {
       const pool = await this.createPool(config);
       this.connections.set(config.id, config);
       this.pools.set(config.id, { type: config.type, pool });
-      result = await this.insertDBConnection(config, database, dynamicSql);
+      
+      if(onlyLoad == false)
+        result = await this.insertDBConnection(config, database, dynamicSql);
     }
     return result;
   }
@@ -256,14 +266,14 @@ async update(config: DBConnectionConfig) {
     try {
       const sql = await dynamicSql.getSQL00("insert_TB_WF_DBCONNECTIONS", 1);
       sqlResult = await database.executeSQL(sql, [
-        dbConnectionConfig.systemCode,
+        dbConnectionConfig.system_code,
         dbConnectionConfig.name,
         dbConnectionConfig.type,
         dbConnectionConfig.host,
         dbConnectionConfig.port,
         dbConnectionConfig.username,
         dbConnectionConfig.password,
-        dbConnectionConfig.database,
+        dbConnectionConfig.database_name,
         JSON.stringify(dbConnectionConfig.additional_info || {}),
       ]);
 
@@ -342,5 +352,3 @@ async update(config: DBConnectionConfig) {
     return result;
   }
 }
-
-export const dbConnectionManager = new DBConnectionManager();
