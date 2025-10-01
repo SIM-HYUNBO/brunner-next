@@ -5,10 +5,10 @@ import Loading from "@/components/core/client/loading";
 import { useModal } from "@/components/core/client/brunnerMessageBox";
 import * as userInfo from "@/components/core/client/frames/userInfo";
 import { v4 as uuidv4 } from "uuid";
-import { Rnd } from "react-rnd"; // ✅ 추가
+import { Rnd } from "react-rnd";
 
 export interface DBConnectionInfo {
-  systemCode: string;
+  system_code: string;
   id: string;
   name: string;
   type: "postgres" | "mysql" | "mssql" | "oracle";
@@ -16,7 +16,7 @@ export interface DBConnectionInfo {
   port: number;
   username: string;
   password: string;
-  database: string;
+  database_name: string;
 }
 
 interface DBConnectionManagerModalProps {
@@ -32,6 +32,7 @@ export const DBConnectionManagerModal: React.FC<
   const [connections, setConnections] = useState<DBConnectionInfo[]>([]);
   const [editing, setEditing] = useState<DBConnectionInfo | null>(null);
   const [testing, setTesting] = useState(false);
+  const editingRef = useRef<DBConnectionInfo | null>(null);
 
   const defaultPorts: Record<string, number> = {
     postgres: 5432,
@@ -40,9 +41,6 @@ export const DBConnectionManagerModal: React.FC<
     oracle: 1521,
   };
 
-  const editingRef = useRef<DBConnectionInfo | null>(null);
-
-  // ✅ 모달 위치 및 크기 상태
   const [modalSize, setModalSize] = useState({ width: 700, height: 600 });
   const [modalPosition, setModalPosition] = useState({ x: 0, y: 100 });
 
@@ -53,11 +51,8 @@ export const DBConnectionManagerModal: React.FC<
   useEffect(() => {
     if (editing) {
       const defaultPort = defaultPorts[editing.type];
-      if (defaultPort && editing.port != defaultPort) {
-        setEditing({
-          ...editing,
-          port: defaultPort,
-        });
+      if (defaultPort && editing.port !== defaultPort) {
+        setEditing({ ...editing, port: defaultPort });
       }
     }
   }, [editing?.type]);
@@ -171,7 +166,6 @@ export const DBConnectionManagerModal: React.FC<
 
       {open && (
         <div className="fixed inset-0 bg-black/50 flex justify-center items-start z-50">
-          {/* ✅ react-rnd로 감싸기 */}
           <Rnd
             size={{ width: modalSize.width, height: modalSize.height }}
             position={{ x: modalPosition.x, y: modalPosition.y }}
@@ -186,9 +180,10 @@ export const DBConnectionManagerModal: React.FC<
             minWidth={500}
             minHeight={400}
             bounds="window"
-            dragHandleClassName="modal-drag-handle" // ✅ 드래그 핸들
+            dragHandleClassName="modal-drag-handle"
             className="bg-white rounded-lg shadow-lg flex flex-col overflow-hidden"
           >
+            {/* 헤더 */}
             <div className="flex justify-between items-center p-3 border-b cursor-move modal-drag-handle bg-gray-100">
               <h2 className="text-lg font-bold flex items-center gap-2">
                 🗄 DB 연결정보 관리
@@ -201,11 +196,12 @@ export const DBConnectionManagerModal: React.FC<
               </button>
             </div>
 
+            {/* 본문 */}
             <div className="p-4 overflow-y-auto flex-1">
               <button
                 onClick={() =>
                   setEditing({
-                    systemCode: `${process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE}`,
+                    system_code: `${process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE}`,
                     id: "",
                     name: "",
                     type: "postgres",
@@ -213,7 +209,7 @@ export const DBConnectionManagerModal: React.FC<
                     port: 5432,
                     username: "",
                     password: "",
-                    database: "",
+                    database_name: "",
                   })
                 }
                 className="mb-4 w-full py-2 rounded bg-blue-600 text-white hover:bg-blue-700"
@@ -221,36 +217,38 @@ export const DBConnectionManagerModal: React.FC<
                 ➕ 새 연결 추가
               </button>
 
+              {/* 연결 리스트 */}
               <div className="space-y-2 max-h-60 overflow-y-auto mb-4">
                 {connections.map((conn) => (
                   <div
                     key={conn.id}
-                    className="flex justify-between items-center border p-2 rounded hover:bg-gray-100 transition"
+                    className="flex flex-row justify-between items-center border p-2 rounded hover:bg-gray-100 transition gap-2"
                   >
-                    <div>
-                      <div className="font-medium">{conn.name}</div>
-                      <div className="text-sm text-gray-500">
+                    <div className="flex flex-col min-w-0">
+                      <div className="font-medium truncate">{conn.name}</div>
+                      <div className="text-sm text-gray-500 truncate">
                         {conn.type.toUpperCase()} — {conn.host}:{conn.port}/
-                        {conn.database}
+                        {conn.database_name}
                       </div>
                     </div>
-                    <div className="flex gap-2">
+
+                    <div className="flex flex-row flex-wrap gap-2 shrink-0">
                       <button
                         onClick={() => handleTest(conn)}
                         disabled={testing}
-                        className="px-2 py-1 rounded border hover:bg-gray-50"
+                        className="px-2 py-1 rounded border hover:bg-gray-50 whitespace-nowrap"
                       >
                         🔄 테스트
                       </button>
                       <button
                         onClick={() => setEditing(conn)}
-                        className="px-2 py-1 rounded border hover:bg-gray-50"
+                        className="px-2 py-1 rounded border hover:bg-gray-50 whitespace-nowrap"
                       >
                         ✏️ 수정
                       </button>
                       <button
                         onClick={() => handleDelete(conn.id)}
-                        className="px-2 py-1 rounded border hover:bg-red-100 text-red-600"
+                        className="px-2 py-1 rounded border hover:bg-red-100 text-red-600 whitespace-nowrap"
                       >
                         🗑 삭제
                       </button>
@@ -259,18 +257,43 @@ export const DBConnectionManagerModal: React.FC<
                 ))}
               </div>
 
+              {/* 수정/추가 폼 */}
               {editing && (
                 <div className="border-t pt-4 space-y-3">
+                  {/* DB 종류 선택 */}
+                  <div className="flex items-center gap-2 mb-2">
+                    <label className="font-medium text-sm w-24">DB 종류</label>
+                    <select
+                      value={editing.type}
+                      onChange={(e) =>
+                        setEditing({
+                          ...editing,
+                          type: e.target.value as DBConnectionInfo["type"],
+                        })
+                      }
+                      className="border rounded px-2 py-1 flex-1"
+                    >
+                      <option value="postgres">PostgreSQL</option>
+                      <option value="mysql">MySQL</option>
+                      <option value="mssql">MSSQL</option>
+                      <option value="oracle">Oracle</option>
+                    </select>
+                  </div>
+
+                  {/* 입력 필드 */}
                   {[
-                    { label: "이름", key: "name", type: "text" },
+                    { label: "Name(Alias)", key: "name", type: "text" },
                     { label: "Host", key: "host", type: "text" },
                     { label: "Port", key: "port", type: "number" },
                     { label: "User", key: "username", type: "text" },
                     { label: "Password", key: "password", type: "password" },
                     { label: "Database", key: "database", type: "text" },
                   ].map((field) => (
-                    <div key={field.key}>
-                      <label className="block font-medium text-sm mb-1">
+                    <div
+                      key={field.key}
+                      className="flex items-center gap-2 mb-2"
+                    >
+                      <label className="font-medium text-sm w-24">
                         {field.label}
                       </label>
                       <input
@@ -285,31 +308,10 @@ export const DBConnectionManagerModal: React.FC<
                                 : e.target.value,
                           })
                         }
-                        className="border rounded px-2 py-1 w-full"
+                        className="border rounded px-2 py-1 flex-1"
                       />
                     </div>
                   ))}
-
-                  <div>
-                    <label className="block font-medium text-sm mb-1">
-                      DB 종류
-                    </label>
-                    <select
-                      value={editing.type}
-                      onChange={(e) =>
-                        setEditing({
-                          ...editing,
-                          type: e.target.value as DBConnectionInfo["type"],
-                        })
-                      }
-                      className="border rounded px-2 py-1 w-full"
-                    >
-                      <option value="postgres">PostgreSQL</option>
-                      <option value="mysql">MySQL</option>
-                      <option value="mssql">MSSQL</option>
-                      <option value="oracle">Oracle</option>
-                    </select>
-                  </div>
 
                   <div className="flex justify-end gap-2 mt-2">
                     <button

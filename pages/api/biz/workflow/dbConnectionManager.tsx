@@ -34,12 +34,19 @@ export interface DBConnectionPool {
 // DBConnectionManager 본체
 // ---------------------------
 export class DBConnectionManager {
-  private constructor (){}
-  private static instance:DBConnectionManager;
-  public static getInstance():DBConnectionManager {
-    if(!DBConnectionManager.instance)
-      DBConnectionManager.instance = new DBConnectionManager();
-    return DBConnectionManager.instance;
+  private initTime;
+  private constructor() {
+    this.initTime = new Date();
+  }
+
+  public static getInstance(): DBConnectionManager {
+    if (!(globalThis as any)._dbConnectionManager) {
+      console.log("🆕 Creating global DBConnectionManager instance");
+      (globalThis as any)._dbConnectionManager = new DBConnectionManager();
+    } else {
+      console.log("♻️ Reusing global DBConnectionManager instance");
+    }
+    return (globalThis as any)._dbConnectionManager;
   }
 
   private connections: Map<string, DBConnectionConfig> = new Map();
@@ -57,7 +64,7 @@ export class DBConnectionManager {
   }
 
   // ✅ 연결정보 등록
-  async register(config: DBConnectionConfig, onlyLoad:boolean = false) {
+  async register(config: DBConnectionConfig, onlyLoad: boolean = false) {
     var result = null;
     if (this.connections.has(config.id)) {
       result = await this.update(config);
@@ -65,48 +72,49 @@ export class DBConnectionManager {
       const pool = await this.createPool(config);
       this.connections.set(config.id, config);
       this.pools.set(config.id, { type: config.type, pool });
-      
-      if(onlyLoad == false)
+
+      console.log(`onlyload =${onlyLoad}`);
+      if (!onlyLoad) {
         result = await this.insertDBConnection(config, database, dynamicSql);
+      }
     }
     return result;
   }
 
   // ✅ 연결정보 수정
-async update(config: DBConnectionConfig) {
-  if (!this.connections.has(config.id)) {
-    throw new Error(`DB connection with ID ${config.id} not found`);
+  async update(config: DBConnectionConfig) {
+    if (!this.connections.has(config.id)) {
+      throw new Error(`DB connection with ID ${config.id} not found`);
+    }
+
+    // 기존 연결정보 가져오기
+    const existingConfig = this.connections.get(config.id)!;
+
+    // 필요한 경우 연결 풀 교체 (host, port, username, password, database 등 핵심 정보가 바뀐 경우)
+    const needNewPool =
+      existingConfig.type !== config.type ||
+      existingConfig.host !== config.host ||
+      existingConfig.port !== config.port ||
+      existingConfig.username !== config.username ||
+      existingConfig.password !== config.password ||
+      existingConfig.database !== config.database;
+
+    if (needNewPool) {
+      // 기존 풀 닫기
+      const oldPool = this.pools.get(config.id);
+      if (oldPool) await this.closePool(oldPool);
+
+      // 새 풀 생성
+      const newPool = await this.createPool(config);
+      this.pools.set(config.id, { type: config.type, pool: newPool });
+    }
+
+    // connections Map 업데이트 (부분 필드 업데이트 가능)
+    this.connections.set(config.id, { ...existingConfig, ...config });
+
+    // DB에 업데이트
+    return await this.updateDBConnection(config, database, dynamicSql);
   }
-
-  // 기존 연결정보 가져오기
-  const existingConfig = this.connections.get(config.id)!;
-
-  // 필요한 경우 연결 풀 교체 (host, port, username, password, database 등 핵심 정보가 바뀐 경우)
-  const needNewPool =
-    existingConfig.type !== config.type ||
-    existingConfig.host !== config.host ||
-    existingConfig.port !== config.port ||
-    existingConfig.username !== config.username ||
-    existingConfig.password !== config.password ||
-    existingConfig.database !== config.database;
-
-  if (needNewPool) {
-    // 기존 풀 닫기
-    const oldPool = this.pools.get(config.id);
-    if (oldPool) await this.closePool(oldPool);
-
-    // 새 풀 생성
-    const newPool = await this.createPool(config);
-    this.pools.set(config.id, { type: config.type, pool: newPool });
-  }
-
-  // connections Map 업데이트 (부분 필드 업데이트 가능)
-  this.connections.set(config.id, { ...existingConfig, ...config });
-
-  // DB에 업데이트
-  return await this.updateDBConnection(config, database, dynamicSql);
-}
-
 
   // ✅ 연결정보 삭제
   async remove(id: string) {

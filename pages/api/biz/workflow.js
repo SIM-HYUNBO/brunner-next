@@ -3,7 +3,7 @@
 import logger from "../../../components/core/server/winston/logger";
 import * as constants from "@/components/core/constants";
 import * as commonFunctions from "@/components/core/commonFunctions";
-import { DBConnectionManager } from "@/pages/api/biz/workflow/dbConnectionManager";
+import { DBConnectionManager } from "./workflow/dbConnectionManager";
 import * as dynamicSql from "./dynamicSql";
 
 /**
@@ -23,31 +23,38 @@ const executeService = async (txnId, jRequest) => {
 
       // ✅ 2. 연결정보 추가
       case constants.commands.WORKFLOW_INSERT_DB_CONNECTION_ONE: {
-        const result = await DBConnectionManager.getInstance().register(jRequest.connection);
-        jResponse.message = "DB 연결정보가 추가되었습니다.";
+        const result = await DBConnectionManager.getInstance().register(
+          jRequest.connection
+        );
+        if (result.error_code == 0)
+          jResponse.message = "DB 연결정보가 추가(저장)되었습니다.";
+        else jResponse.message = result.error_message;
+
         jResponse.id = result.insertedId;
         break;
       }
 
       // ✅ 3. 연결정보 수정
       case constants.commands.WORKFLOW_UPDATE_DB_CONNECTION_ONE: {
-        const result = await DBConnectionManager.getInstance().update(jRequest.connection);
-        if(result.error_code === 0)
+        const result = await DBConnectionManager.getInstance().update(
+          jRequest.connection
+        );
+        if (result.error_code === 0)
           jResponse.message = "DB 연결정보가 수정되었습니다.";
-        else
-          jResponse.message = result.error_message;
+        else jResponse.message = result.error_message;
 
         break;
       }
 
       // ✅ 4. 연결정보 삭제
       case constants.commands.WORKFLOW_DELETE_DB_CONNECTION_ONE: {
-        const result = await DBConnectionManager.getInstance().remove(jRequest.id);
-        
-        if(result.error_code === 0)
+        const result = await DBConnectionManager.getInstance().remove(
+          jRequest.id
+        );
+
+        if (result.error_code === 0)
           jResponse.message = "DB 연결정보가 삭제되었습니다.";
-        else 
-          jResponse.message = result.error_message;
+        else jResponse.message = result.error_message;
 
         break;
       }
