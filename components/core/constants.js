@@ -95,6 +95,7 @@ export const commands = {
   WORKFLOW_UPDATE_DB_CONNECTION_ONE: `workflow.updateDBConnectionOne`,
   WORKFLOW_DELETE_DB_CONNECTION_ONE: `workflow.deleteDBConnectionOne`,
   WORKFLOW_TEST_DB_CONNECTION: `workflow.testDBConnectionOne`,
+  WORKFLOW_EXECUTE_WORKFLOW: "workflow.executeWorkflow",
 };
 
 export const edocComponentType = {
@@ -107,6 +108,11 @@ export const edocComponentType = {
   _VIDEO: `Video`,
   _LINKTEXT: "LinkText",
   _LOTTIE: "Lottie",
+};
+
+export const httpMethod = {
+  GET: "GET",
+  POST: "POST",
 };
 
 export const workflowActions = {
@@ -126,7 +132,7 @@ export const workflowStatus = {
   End: "End",
 };
 
-export const httpMethod = {
-  GET: "GET",
-  POST: "POST",
+export const transactionMode = {
+  Business: "Business",
+  System: "System",
 };

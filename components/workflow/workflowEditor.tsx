@@ -24,6 +24,8 @@ import type {
   ConditionEdgeData,
 } from "@/components/workflow/actionRegistry";
 import { DBConnectionManagerModal } from "@/components/workflow/dbConnectionManagerModal";
+import RequestServer from "@/components/core/client/requestServer";
+import * as userInfo from "@/components/core/client/frames/userInfo";
 
 interface WorkflowEditorProps {
   initialNodes?: Node<ActionNodeData>[];
@@ -108,13 +110,12 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
   };
 
   // 디자인한 input 데이터 스키마 정보
-  const [designedInputData, setDesignedInputData] =
-    useState<DesignedDataset>({
-      INPUT_TABLE: [
-        { name: "key1", type: "string" },
-        { name: "key2", type: "number" },
-      ],
-    });
+  const [designedInputData, setDesignedInputData] = useState<DesignedDataset>({
+    INPUT_TABLE: [
+      { name: "key1", type: "string" },
+      { name: "key2", type: "number" },
+    ],
+  });
 
   const [designedOutputData, setDesignedOutputData] = useState<string>(
     JSON.stringify({ OUTPUT_TABLE: [{ key1: "test", key2: 123 }] }, null, 2)
@@ -256,72 +257,58 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
     }
   };
 
-  // 서버에 실행요청 해서 진행하게 변경할 것
   const executeWorkflowFromTableEditor = async () => {
-    /*
     try {
       initWorkflow(); // 상태 없으면 초기화
-      await workflowEngine.executeWorkflow(
-        jWorkflow.current,
-        setRunningNodeIds
-      );
-      jWorkflow.current = { ...jWorkflow! }; // 실행 후 상태 갱신
+
+      var jResponse = null;
+
+      var jRequest = {
+        commandName: constants.commands.WORKFLOW_EXECUTE_WORKFLOW,
+        systemCode: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE,
+        userId: userInfo.getLoginUserId(),
+        workflowId: workflowId,
+        transactionMode: constants.transactionMode.System,
+        currentNodeId: null,
+        inputs: workflowInputDataObj,
+      };
+
+      // 서버에 실행요청 해서 진행하게 변경할 것
+      jResponse = await RequestServer(jRequest);
+
+      if (jResponse.error_code == 0 && jResponse.jWorkflow) {
+        jWorkflow.current = { ...jResponse.jWorkflow }; // 실행 후 상태 갱신
+      }
     } catch (err) {
       openModal("❌ 실행 실패: " + String(err));
     }
-    */
   };
 
   // 서버에 실행 요청해서 진행하게 변경할 것
   const executeWorkflowStepByStep = async () => {
-    /*
     try {
-      if (!jWorkflow.current) initWorkflow(); // 상태 없으면 초기화
+      var jResponse = null;
 
-      const workflowInstance = new workflowEngine.WorkflowInstance(
-        jWorkflow.current.workflowId
-      );
+      var jRequest = {
+        commandName: constants.commands.WORKFLOW_EXECUTE_WORKFLOW,
+        systemCode: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE,
+        userId: userInfo.getLoginUserId(),
+        workflowId: workflowId,
+        transactionMode: constants.transactionMode.Business,
+        currentNodeId: jWorkflow.current.currentNodeId ?? null,
+        inputs: workflowInputDataObj,
+      };
 
-      // TransactionNode 생성 및 DB 연결/트랜잭션 준비
-      const txNode = new workflowEngine.TransactionNode();
-      await txNode.start(jWorkflow.current);
+      // 서버에 실행요청 해서 진행하게 변경할 것
+      jResponse = await RequestServer(jRequest);
 
-      const currentNodeId = jWorkflow.current.currentNodeId;
-
-      // 다음 노드 찾기
-      let nextNode;
-      if (!currentNodeId) {
-        // 시작 노드
-        nextNode = jWorkflow.current.nodes.find(
-          (n: any) => n.data.actionName === constants.workflowActions.START
-        );
-      } else {
-        // 현재 노드에서 이어지는 첫 번째 엣지
-        const edge = jWorkflow.current.edges.find(
-          (e: any) => e.source === currentNodeId
-        );
-        nextNode = edge
-          ? jWorkflow.current.nodes.find((n: any) => n.id === edge.target)
-          : null;
+      if (jResponse.error_code == 0 && jResponse.jWorkflow) {
+        jWorkflow.current = { ...jResponse.jWorkflow }; // 실행 후 상태 갱신
       }
-
-      if (!nextNode) throw new Error("실행할 노드가 없습니다.");
-
-      jWorkflow.current.currentNodeId = nextNode.id;
-
-      // 기존 워크플로우 엔진 함수 사용
-      await workflowEngine.runWorkflowStep(
-        nextNode,
-        jWorkflow.current,
-        txNode.get(nextNode.data.connectionId)
-      );
-
-      await txNode.commit();
     } catch (err) {
       console.error(err);
       openModal("❌ 실행 실패: " + String(err));
     }
-    */
   };
 
   return (
@@ -451,9 +438,7 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
                   value={designedInputData} // workflowInputDataObj 대신 designedInputData 사용
                   onConfirm={(newSchema) => {
                     // 1️⃣ 디자인 상태 업데이트
-                    setDesignedInputData(
-                      newSchema as DesignedDataset
-                    );
+                    setDesignedInputData(newSchema as DesignedDataset);
 
                     // 2️⃣ workflowInputDataObj를 새로운 디자인에 맞춰 초기화
                     const newDataObj: Record<string, any> = {};
