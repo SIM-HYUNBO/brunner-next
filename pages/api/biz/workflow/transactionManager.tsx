@@ -2,7 +2,7 @@
 import { DBConnectionManager } from "./dbConnectionManager";
 import { executeWorkflow } from "@/components/workflow/workflowEngine"; // 실제 워크플로우 실행 함수
 import type { TxInstancesMap } from "@/components/workflow/workflowEngine";
-import { DbType } from "oracledb";
+
 // ---------------------------
 // 1️⃣ 트랜잭션 컨텍스트
 // ---------------------------
@@ -47,48 +47,89 @@ export class WorkflowInstance {
 // 3️⃣ START / END 노드 트랜잭션 처리
 // ---------------------------
 export class TransactionNode {
-  async start(
-    workflow: WorkflowInstance,
-    connectionId: string,
-    dbType: DBType,
-    mode: TransactionMode
-  ) {
-    const pool = DBConnectionManager.getInstance().getPool(connectionId);
-    let connection;
+  txContexts: Map<string, TransactionContext> = new Map();
 
-    // DB별 연결/트랜잭션 시작
-    if (dbType === "postgres") {
-      connection = await pool.connect(); // client
-      await connection.query("BEGIN");
-    } else if (dbType === "mysql") {
-      connection = await pool.getConnection(); // conn
-      await connection.beginTransaction();
-    } else {
-      throw new Error(`Unsupported DBType: ${dbType}`);
+  // 트랜잭션 시작 (DB별)
+  async start(workflow: any, txInstances?: TxInstancesMap) {
+    for (const [connectionId, dbType] of Object.entries(workflow.connections)) {
+      if (txInstances?.has(connectionId)) {
+        const dbType =
+          DBConnectionManager.getInstance().getDBType(connectionId);
+
+        // 이미 존재하면 재사용
+        this.txContexts.set(connectionId, {
+          connectionId,
+          dbType,
+          txInstance: txInstances.get(connectionId),
+          mode: "BUSINESS",
+          isDistributed: false,
+        });
+        continue;
+      }
+
+      const pool = DBConnectionManager.getInstance().getPool(connectionId);
+      let connection;
+
+      if (dbType === "postgres") {
+        connection = await pool.connect();
+        await connection.query("BEGIN");
+      } else if (dbType === "mysql") {
+        connection = await pool.getConnection();
+        await connection.beginTransaction();
+      } else if (dbType === "mssql") {
+        connection = await pool.request();
+        await connection.beginTransaction();
+      } else if (dbType === "oracle") {
+        connection = await pool.getConnection();
+        await connection.execute("BEGIN");
+      } else {
+        throw new Error(`Unsupported DBType: ${dbType}`);
+      }
+
+      this.txContexts.set(connectionId, {
+        connectionId,
+        dbType,
+        txInstance: connection,
+        mode: "BUSINESS",
+        isDistributed: false,
+      });
     }
-
-    const txContext = new TransactionContext(connectionId, dbType, mode);
-    txContext.txInstance = connection;
-    workflow.addTransactionContext(txContext);
   }
 
-  async end(workflow: WorkflowInstance, success: boolean) {
-    for (const txContext of workflow.txContexts.values()) {
-      const tx = txContext.txInstance;
-      const dbType = txContext.dbType;
+  get(connectionId: string) {
+    return this.txContexts.get(connectionId)?.txInstance;
+  }
 
+  // 커밋
+  async commit() {
+    for (const ctx of this.txContexts.values()) {
+      const tx = ctx.txInstance;
       try {
-        if (dbType === "postgres") {
-          if (success) await tx.query("COMMIT");
-          else await tx.query("ROLLBACK");
-          tx.release();
-        } else if (dbType === "mysql") {
-          if (success) await tx.commit();
-          else await tx.rollback();
-          tx.release();
-        }
+        if (ctx.dbType === "postgres") await tx.query("COMMIT");
+        else if (ctx.dbType === "mysql") await tx.commit();
+        else if (ctx.dbType === "mssql") await tx.commit();
+        else if (ctx.dbType === "oracle") await tx.execute("COMMIT");
       } catch (e) {
-        console.error("트랜잭션 종료 중 오류:", e);
+        console.error("커밋 실패:", e);
+      } finally {
+        tx.release?.();
+      }
+    }
+  }
+
+  // 롤백
+  async rollback() {
+    for (const ctx of this.txContexts.values()) {
+      const tx = ctx.txInstance;
+      try {
+        if (ctx.dbType === "postgres") await tx.query("ROLLBACK");
+        else if (ctx.dbType === "mysql") await tx.rollback();
+        else if (ctx.dbType === "mssql") await tx.rollback();
+        else if (ctx.dbType === "oracle") await tx.execute("ROLLBACK");
+      } catch (e) {
+        console.error("롤백 실패:", e);
+      } finally {
+        tx.release?.();
       }
     }
   }
