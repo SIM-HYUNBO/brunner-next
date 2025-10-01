@@ -44,7 +44,11 @@ export type WorkflowContext = Record<string, any> & {
 };
 
 // -------------------- 액션 타입 --------------------
-export type ActionHandler = (node: Node<any>, workflow: any) => Promise<void>;
+export type ActionHandler = (
+  node: Node<any>,
+  workflow: any,
+  txInstance?: any
+) => Promise<void>;
 
 export const actionMap = new Map<string, ActionHandler>();
 export const defaultParamsMap = new Map<string, NodeDataTable[]>();

@@ -3,6 +3,8 @@ import * as constants from "@/components/core/constants";
 import * as database from "./../database/database";
 import * as dynamicSql from "./../dynamicSql";
 
+import type { DBType } from "@/components/workflow/workflowEngine";
+
 import { Pool as PgPool } from "pg";
 import mysql from "mysql2/promise";
 import mssql from "mssql";
@@ -11,7 +13,6 @@ import oracledb from "oracledb";
 // ---------------------------
 // 타입 정의
 // ---------------------------
-export type DBType = "postgres" | "mysql" | "mssql" | "oracle";
 
 export interface DBConnectionConfig {
   id: string;
@@ -358,5 +359,20 @@ export class DBConnectionManager {
       result.error_message = err.message;
     }
     return result;
+  }
+  async get(id: string) {
+    return this.connections.get(id)!;
+  }
+
+  public getPool(id: string): any {
+    const info = this.pools.get(id);
+    if (!info || !info.pool) throw new Error("Pool not found");
+
+    return info.pool;
+  }
+  public getDBType(connectionId: string): DBType {
+    const info = this.pools.get(connectionId);
+    if (!info) throw new Error("DB not found");
+    return info.type;
   }
 }
