@@ -3,8 +3,6 @@ import * as constants from "@/components/core/constants";
 import * as database from "./../database/database";
 import * as dynamicSql from "./../dynamicSql";
 
-import type { DBType } from "@/components/workflow/workflowEngine";
-
 import { Pool as PgPool } from "pg";
 import mysql from "mysql2/promise";
 import mssql from "mssql";
@@ -14,6 +12,7 @@ import oracledb from "oracledb";
 // 타입 정의
 // ---------------------------
 
+export type DBType = "postgres" | "mysql" | "mssql" | "oracle";
 export interface DBConnectionConfig {
   id: string;
   name: string;

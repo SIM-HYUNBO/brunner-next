@@ -16,7 +16,7 @@ import "reactflow/dist/style.css";
 import { nanoid } from "nanoid";
 import * as constants from "@/components/core/constants";
 import { useModal } from "@/components/core/client/brunnerMessageBox";
-import * as workflowEngine from "@/components/workflow/workflowEngine";
+import * as workflowEngine from "@/pages/api/biz/workflow/workflowEngine";
 import { NodePropertyPanel } from "@/components/workflow/nodePropertyPanel";
 import * as actionRegistry from "@/components/workflow/actionRegistry";
 import { JsonDatasetEditorModal } from "@/components/workflow/jsonDatasetEditorModal";
@@ -264,13 +264,49 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
 
   const executeWorkflowStepByStep = async () => {
     try {
-      if (!jWorkflow.current || !jWorkflow.current.currentNodeId)
-        initWorkflow(); // 상태 없으면 초기화
+      if (!jWorkflow.current) initWorkflow(); // 상태 없으면 초기화
 
-      let workflowData = jWorkflow.current;
-      await workflowEngine.executeNextNode(workflowData, setRunningNodeIds);
-      jWorkflow.current = { ...jWorkflow.current }; // 실행 후 상태 반영
+      const workflowInstance = new workflowEngine.WorkflowInstance(
+        jWorkflow.current.workflowId
+      );
+
+      // TransactionNode 생성 및 DB 연결/트랜잭션 준비
+      const txNode = new workflowEngine.TransactionNode();
+      await txNode.start(jWorkflow.current);
+
+      const currentNodeId = jWorkflow.current.currentNodeId;
+
+      // 다음 노드 찾기
+      let nextNode;
+      if (!currentNodeId) {
+        // 시작 노드
+        nextNode = jWorkflow.current.nodes.find(
+          (n: any) => n.data.actionName === constants.workflowActions.START
+        );
+      } else {
+        // 현재 노드에서 이어지는 첫 번째 엣지
+        const edge = jWorkflow.current.edges.find(
+          (e: any) => e.source === currentNodeId
+        );
+        nextNode = edge
+          ? jWorkflow.current.nodes.find((n: any) => n.id === edge.target)
+          : null;
+      }
+
+      if (!nextNode) throw new Error("실행할 노드가 없습니다.");
+
+      jWorkflow.current.currentNodeId = nextNode.id;
+
+      // 기존 워크플로우 엔진 함수 사용
+      await workflowEngine.runWorkflowStep(
+        nextNode,
+        jWorkflow.current,
+        txNode.get(nextNode.data.connectionId)
+      );
+
+      await txNode.commit();
     } catch (err) {
+      console.error(err);
       openModal("❌ 실행 실패: " + String(err));
     }
   };
