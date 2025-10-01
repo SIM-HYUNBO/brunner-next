@@ -4,7 +4,6 @@ import RequestServer from "@/components/core/client/requestServer";
 import Loading from "@/components/core/client/loading";
 import { useModal } from "@/components/core/client/brunnerMessageBox";
 import * as userInfo from "@/components/core/client/frames/userInfo";
-import { v4 as uuidv4 } from "uuid";
 import { Rnd } from "react-rnd";
 
 export interface DBConnectionInfo {

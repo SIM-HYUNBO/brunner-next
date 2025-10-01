@@ -2,7 +2,7 @@
 
 import * as constants from "@/components/core/constants";
 import type { Connection, Edge, Node, NodeChange, EdgeChange } from "reactflow";
-import * as workflowEngine from "@/components/workflow/workflowEngine";
+
 // 컬럼 단위 정의
 export interface DatasetColumn {
   key: string; // 항상 있어야 함
