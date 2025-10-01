@@ -68,7 +68,9 @@ export async function executeWorkflow(
     }
   }
 
-  const startNode = nodesList.find((n: any) => n.data.actionName === "START");
+  const startNode = nodesList.find(
+    (n: any) => n.data.actionName === constants.workflowActions.START
+  );
   if (!startNode) throw new Error("Start node not found");
 
   await traverse(startNode.id);
