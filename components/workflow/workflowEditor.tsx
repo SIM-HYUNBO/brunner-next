@@ -16,7 +16,6 @@ import "reactflow/dist/style.css";
 import { nanoid } from "nanoid";
 import * as constants from "@/components/core/constants";
 import { useModal } from "@/components/core/client/brunnerMessageBox";
-import * as workflowEngine from "@/pages/api/biz/workflow/workflowEngine";
 import { NodePropertyPanel } from "@/components/workflow/nodePropertyPanel";
 import * as actionRegistry from "@/components/workflow/actionRegistry";
 import { JsonDatasetEditorModal } from "@/components/workflow/jsonDatasetEditorModal";
@@ -30,6 +29,14 @@ interface WorkflowEditorProps {
   initialNodes?: Node<ActionNodeData>[];
   initialEdges?: Edge<ConditionEdgeData>[];
 }
+
+export type DesignColumn = {
+  name: string;
+  type: "string" | "number" | "boolean" | "object";
+};
+
+// 테이블 이름(string) → 컬럼 정의 배열
+export type DesignedDataset = Record<string, DesignColumn[]>;
 
 type InputDataset = Record<string, Record<string, any>[]>;
 
@@ -102,7 +109,7 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
 
   // 디자인한 input 데이터 스키마 정보
   const [designedInputData, setDesignedInputData] =
-    useState<workflowEngine.DesignedDataset>({
+    useState<DesignedDataset>({
       INPUT_TABLE: [
         { name: "key1", type: "string" },
         { name: "key2", type: "number" },
@@ -249,7 +256,9 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
     }
   };
 
+  // 서버에 실행요청 해서 진행하게 변경할 것
   const executeWorkflowFromTableEditor = async () => {
+    /*
     try {
       initWorkflow(); // 상태 없으면 초기화
       await workflowEngine.executeWorkflow(
@@ -260,9 +269,12 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
     } catch (err) {
       openModal("❌ 실행 실패: " + String(err));
     }
+    */
   };
 
+  // 서버에 실행 요청해서 진행하게 변경할 것
   const executeWorkflowStepByStep = async () => {
+    /*
     try {
       if (!jWorkflow.current) initWorkflow(); // 상태 없으면 초기화
 
@@ -309,6 +321,7 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
       console.error(err);
       openModal("❌ 실행 실패: " + String(err));
     }
+    */
   };
 
   return (
@@ -439,7 +452,7 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
                   onConfirm={(newSchema) => {
                     // 1️⃣ 디자인 상태 업데이트
                     setDesignedInputData(
-                      newSchema as workflowEngine.DesignedDataset
+                      newSchema as DesignedDataset
                     );
 
                     // 2️⃣ workflowInputDataObj를 새로운 디자인에 맞춰 초기화

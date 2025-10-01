@@ -1,7 +1,7 @@
-// workflowEngineWithTransaction.ts
+// /pages/api/biz/workflow/workflowEngineServer.ts
 import { getAction } from "@/components/workflow/actionRegistry";
-import type { Node } from "reactflow";
 import { DBConnectionManager } from "./dbConnectionManager";
+import type { Node } from "reactflow";
 import type { DBType } from "./dbConnectionManager";
 
 // ---------------------------
@@ -46,7 +46,7 @@ export class WorkflowInstance {
 }
 
 // ---------------------------
-// 3️⃣ START/END 노드 트랜잭션 처리
+// 3️⃣ 트랜잭션 노드
 // ---------------------------
 export class TransactionNode {
   txContexts: Map<string, TransactionContext> = new Map();
@@ -111,6 +111,10 @@ export class TransactionNode {
       tx.release?.();
     }
   }
+
+  get(connectionId: string) {
+    return this.txContexts.get(connectionId)?.txInstance;
+  }
 }
 
 // ---------------------------
@@ -118,7 +122,6 @@ export class TransactionNode {
 // ---------------------------
 export async function executeWorkflow(
   workflow: any,
-  setRunningNodeIds: any = null,
   txInstances: Map<string, any> = new Map()
 ) {
   const nodesList = workflow.nodes;
@@ -144,15 +147,7 @@ export async function executeWorkflow(
       ? txInstances.get(node.data.connectionId)
       : undefined;
 
-    if (setRunningNodeIds)
-      setRunningNodeIds((prev: any) => [...(prev || []), nodeId]);
-
     await runWorkflowStep(node, workflow, txInstance);
-
-    if (setRunningNodeIds)
-      setRunningNodeIds((prev: any) =>
-        (prev || []).filter((id: any) => id !== nodeId)
-      );
 
     for (const edge of edgeMap[nodeId] || []) {
       if (!edge.data?.condition || Boolean(edge.data.condition)) {
@@ -168,7 +163,7 @@ export async function executeWorkflow(
 }
 
 // ---------------------------
-// 5️⃣ 노드 단위 실행 (TransactionContext 사용)
+// 5️⃣ 노드 단위 실행
 // ---------------------------
 export async function runWorkflowStep(
   node: Node<any>,
@@ -178,11 +173,5 @@ export async function runWorkflowStep(
   const action = getAction(node.data.actionName);
   if (!action) throw new Error(`Unknown action: ${node.data.actionName}`);
 
-  if (txInstance) {
-    // DB 트랜잭션이 있을 경우
-    await action(node, workflowData, txInstance);
-  } else {
-    // 일반 실행
-    await action(node, workflowData, null);
-  }
+  await action(node, workflowData, txInstance ?? null);
 }
