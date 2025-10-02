@@ -282,6 +282,29 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
     }
   };
 
+  const deleteWorkflow = async () => {
+    try {
+      var jResponse = null;
+
+      var jRequest = {
+        commandName: constants.commands.WORKFLOW_DELETE_WORKFLOW,
+        systemCode: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE,
+        userId: userInfo.getLoginUserId(),
+        workflowId: workflowId,
+      };
+
+      // 서버에 실행요청 해서 진행하게 변경할 것
+      jResponse = await RequestServer(jRequest);
+
+      if (jResponse.error_code == 0) {
+        openModal("Successfully delete workflow.");
+      }
+    } catch (err) {
+      console.error(err);
+      openModal("❌ 실행 실패: " + String(err));
+    }
+  };
+
   const executeWorkflowFromTableEditor = async () => {
     try {
       initWorkflow(); // 상태 없으면 초기화
@@ -432,11 +455,19 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
               >
                 Run By Node
               </button>
+            </div>
+            <div className="flex flex-row ml-1 mt-1 space-x-1">
               <button
                 className="w-full semi-text-bg-color border"
                 onClick={saveWorkflow}
               >
                 Save
+              </button>
+              <button
+                className="w-full semi-text-bg-color border text-red-700"
+                onClick={deleteWorkflow}
+              >
+                Delete
               </button>
             </div>
           </div>

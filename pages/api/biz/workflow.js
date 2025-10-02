@@ -34,6 +34,24 @@ const executeService = async (txnId, jRequest) => {
         break;
       }
 
+      case constants.commands.WORKFLOW_DELETE_WORKFLOW: {
+        const result = await workflowEngineServer.deleteWorkflow(
+          jRequest.systemCode,
+          jRequest.userId,
+          jRequest.workflowId
+        );
+
+        if (result.error_code == 0) {
+          jResponse.error_code = result.error_code;
+          jResponse.message = "워크플로우 삭제 성공";
+        } else {
+          jResponse.error_code = -1;
+          jResponse.error_message =
+            result.error_message || " 워크플로우 삭제 실패";
+        }
+        break;
+      }
+
       // ✅ 1. DB 연결정보 전체 조회
       case constants.commands.WORKFLOW_SELECT_DB_CONNECTIONS_ALL: {
         const result = await DBConnectionManager.getInstance().list();

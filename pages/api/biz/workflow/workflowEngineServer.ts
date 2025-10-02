@@ -1,5 +1,6 @@
 `use strict`;
 
+import * as constants from "@/components/core/constants";
 import * as database from "../database/database";
 import * as dynamicSql from "../dynamicSql";
 import { getAction } from "@/components/workflow/actionRegistry";
@@ -195,12 +196,12 @@ export async function saveWorkflow(
     workflowId,
   ]);
 
-  var upsert_TB_COR_USER_MST_01: any = null;
+  var upsert_TB_COR_WORKFLOW_MST_01: any = null;
   if (select_TB_COR_WORKFLOW_MST.rowCount > 0) {
     // update
     sql = await dynamicSql.getSQL00(`update_TB_COR_WORKFLOW_MST`, 1);
 
-    upsert_TB_COR_USER_MST_01 = await database.executeSQL(sql, [
+    upsert_TB_COR_WORKFLOW_MST_01 = await database.executeSQL(sql, [
       systemCode,
       workflowId,
       workflowData,
@@ -210,7 +211,7 @@ export async function saveWorkflow(
     // insert
     sql = await dynamicSql.getSQL00(`insert_TB_COR_WORKFLOW_MST`, 1);
 
-    upsert_TB_COR_USER_MST_01 = await database.executeSQL(sql, [
+    upsert_TB_COR_WORKFLOW_MST_01 = await database.executeSQL(sql, [
       systemCode,
       workflowId,
       workflowData,
@@ -218,15 +219,58 @@ export async function saveWorkflow(
     ]);
   }
 
-  if (upsert_TB_COR_USER_MST_01.rowCount == 1) {
+  if (upsert_TB_COR_WORKFLOW_MST_01.rowCount == 1) {
     result.error_code = 0;
     result.error_message = "";
   } else {
     result.error_code = -1;
-    result.error_message = upsert_TB_COR_USER_MST_01.message;
+    result.error_message = upsert_TB_COR_WORKFLOW_MST_01.message;
   }
 
-  logger.info(`\nRESULT:rowCount=\n${upsert_TB_COR_USER_MST_01.rowCount}\n`);
+  logger.info(
+    `\nRESULT:rowCount=\n${upsert_TB_COR_WORKFLOW_MST_01.rowCount}\n`
+  );
+
+  return result;
+}
+
+export async function deleteWorkflow(
+  systemCode: string,
+  userId: string,
+  workflowId: string
+) {
+  var result = { error_code: -1, error_message: "" };
+
+  var sql = await dynamicSql.getSQL00(`select_TB_COR_WORKFLOW_MST`, 1);
+  var select_TB_COR_WORKFLOW_MST: any = await database.executeSQL(sql, [
+    systemCode,
+    workflowId,
+  ]);
+
+  var delete_TB_COR_WORKFLOW_MST_01: any = null;
+  if (select_TB_COR_WORKFLOW_MST.rowCount <= 0) {
+    result.error_code = -1;
+    result.error_message = constants.messages.NO_DATA_FOUND;
+  } else {
+    // delete
+    sql = await dynamicSql.getSQL00(`delete_TB_COR_WORKFLOW_MST`, 1);
+
+    delete_TB_COR_WORKFLOW_MST_01 = await database.executeSQL(sql, [
+      systemCode,
+      workflowId,
+    ]);
+
+    if (delete_TB_COR_WORKFLOW_MST_01.rowCount == 1) {
+      result.error_code = 0;
+      result.error_message = "";
+    } else {
+      result.error_code = -1;
+      result.error_message = delete_TB_COR_WORKFLOW_MST_01.message;
+    }
+    logger.info(
+      `\nRESULT:rowCount=\n${delete_TB_COR_WORKFLOW_MST_01.rowCount}\n`
+    );
+  }
 
   return result;
 }
