@@ -253,7 +253,10 @@ export class DBConnectionManager {
   ) {
     const jResponse: any = {};
     try {
-      const sql = await dynamicSql.getSQL00("select_TB_WF_DBCONNECTIONS", 1);
+      const sql = await dynamicSql.getSQL00(
+        "select_TB_COR_WORKFLOW_DBCONNECTIONS",
+        1
+      );
       const sqlResult = await database.executeSQL(sql, [systemCode]); // 필요 시 파라미터 사용
 
       return sqlResult.rows;
@@ -272,7 +275,10 @@ export class DBConnectionManager {
     var sqlResult = null;
 
     try {
-      const sql = await dynamicSql.getSQL00("insert_TB_WF_DBCONNECTIONS", 1);
+      const sql = await dynamicSql.getSQL00(
+        "insert_TB_COR_WORKFLOW_DBCONNECTIONS",
+        1
+      );
       sqlResult = await database.executeSQL(sql, [
         dbConnectionConfig.system_code,
         dbConnectionConfig.name,
@@ -306,7 +312,10 @@ export class DBConnectionManager {
   ) {
     var result: any = {};
     try {
-      var sql = await dynamicSql.getSQL00("update_TB_WF_DBCONNECTIONS", 1);
+      var sql = await dynamicSql.getSQL00(
+        "update_TB_COR_WORKFLOW_DBCONNECTIONS",
+        1
+      );
       var sqlResult = await database.executeSQL(sql, [
         dbConnectionConfig.name,
         dbConnectionConfig.type,
@@ -342,7 +351,10 @@ export class DBConnectionManager {
   ) {
     const result: any = {};
     try {
-      const sql = await dynamicSql.getSQL00("delete_TB_WF_DBCONNECTIONS", 1);
+      const sql = await dynamicSql.getSQL00(
+        "delete_TB_COR_WORKFLOW_DBCONNECTIONS",
+        1
+      );
       const sqlResult = await database.executeSQL(sql, [dbConnectionId]);
 
       if (sqlResult.rowCount === 1) {

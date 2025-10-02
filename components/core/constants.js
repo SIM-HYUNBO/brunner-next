@@ -96,6 +96,7 @@ export const commands = {
   WORKFLOW_DELETE_DB_CONNECTION_ONE: `workflow.deleteDBConnectionOne`,
   WORKFLOW_TEST_DB_CONNECTION: `workflow.testDBConnectionOne`,
   WORKFLOW_EXECUTE_WORKFLOW: "workflow.executeWorkflow",
+  WORKFLOW_SAVE_WORKFLOW: "workflow.saveflow",
 };
 
 export const edocComponentType = {

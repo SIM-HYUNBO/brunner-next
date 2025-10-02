@@ -1,8 +1,13 @@
-// /pages/api/biz/workflow/workflowEngineServer.ts
+`use strict`;
+
+import * as database from "../database/database";
+import * as dynamicSql from "../dynamicSql";
 import { getAction } from "@/components/workflow/actionRegistry";
 import { DBConnectionManager } from "./dbConnectionManager";
 import type { Node } from "reactflow";
 import type { DBType } from "./dbConnectionManager";
+
+const logger = require("./../../../../components/core/server/winston/logger");
 
 // ---------------------------
 // 1️⃣ 트랜잭션 컨텍스트
@@ -174,4 +179,54 @@ export async function runWorkflowStep(
   if (!action) throw new Error(`Unknown action: ${node.data.actionName}`);
 
   await action(node, workflowData, txInstance ?? null);
+}
+
+export async function saveWorkflow(
+  systemCode: string,
+  userId: string,
+  workflowId: string,
+  workflowData: any
+) {
+  var result = { error_code: -1, error_message: "" };
+
+  var sql = await dynamicSql.getSQL00(`select_TB_COR_WORKFLOW_MST`, 1);
+  var select_TB_COR_WORKFLOW_MST: any = await database.executeSQL(sql, [
+    systemCode,
+    workflowId,
+  ]);
+
+  var upsert_TB_COR_USER_MST_01: any = null;
+  if (select_TB_COR_WORKFLOW_MST.rowCount > 0) {
+    // update
+    sql = await dynamicSql.getSQL00(`update_TB_COR_WORKFLOW_MST`, 1);
+
+    upsert_TB_COR_USER_MST_01 = await database.executeSQL(sql, [
+      systemCode,
+      workflowId,
+      workflowData,
+      userId,
+    ]);
+  } else {
+    // insert
+    sql = await dynamicSql.getSQL00(`insert_TB_COR_WORKFLOW_MST`, 1);
+
+    upsert_TB_COR_USER_MST_01 = await database.executeSQL(sql, [
+      systemCode,
+      workflowId,
+      workflowData,
+      userId,
+    ]);
+  }
+
+  if (upsert_TB_COR_USER_MST_01.rowCount == 1) {
+    result.error_code = 0;
+    result.error_message = "";
+  } else {
+    result.error_code = -1;
+    result.error_message = upsert_TB_COR_USER_MST_01.message;
+  }
+
+  logger.info(`\nRESULT:rowCount=\n${upsert_TB_COR_USER_MST_01.rowCount}\n`);
+
+  return result;
 }

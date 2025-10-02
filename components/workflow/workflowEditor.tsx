@@ -26,6 +26,7 @@ import type {
 import { DBConnectionManagerModal } from "@/components/workflow/dbConnectionManagerModal";
 import RequestServer from "@/components/core/client/requestServer";
 import * as userInfo from "@/components/core/client/frames/userInfo";
+import { v4 as uuidv4 } from "uuid";
 
 interface WorkflowEditorProps {
   initialNodes?: Node<ActionNodeData>[];
@@ -135,7 +136,7 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
   const [dbModalOpen, setDbModalOpen] = useState(false);
 
   useEffect(() => {
-    setWorkflowId(nanoid());
+    setWorkflowId(uuidv4());
   }, []);
 
   const workflowInputDataObj = useMemo(() => {
@@ -254,6 +255,30 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
         `<pre style="white-space: pre-wrap; word-wrap: break-word;">${workflowJson}</pre>`
       );
       win.document.close();
+    }
+  };
+
+  const saveWorkflow = async () => {
+    try {
+      var jResponse = null;
+
+      var jRequest = {
+        commandName: constants.commands.WORKFLOW_SAVE_WORKFLOW,
+        systemCode: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE,
+        userId: userInfo.getLoginUserId(),
+        workflowId: workflowId,
+        workflowData: JSON.parse(getWorkflowJson()),
+      };
+
+      // 서버에 실행요청 해서 진행하게 변경할 것
+      jResponse = await RequestServer(jRequest);
+
+      if (jResponse.error_code == 0 && jResponse.jWorkflow) {
+        jWorkflow.current = { ...jResponse.jWorkflow }; // 실행 후 상태 갱신
+      }
+    } catch (err) {
+      console.error(err);
+      openModal("❌ 실행 실패: " + String(err));
     }
   };
 
@@ -394,7 +419,7 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
                 });
               }}
             />
-            <div className="flex flex-row ml-2 space-x-1">
+            <div className="flex flex-row ml-1 space-x-1">
               <button
                 className="w-full semi-text-bg-color border"
                 onClick={executeWorkflowFromTableEditor}
@@ -406,6 +431,12 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
                 onClick={executeWorkflowStepByStep}
               >
                 Run By Node
+              </button>
+              <button
+                className="w-full semi-text-bg-color border"
+                onClick={saveWorkflow}
+              >
+                Save
               </button>
             </div>
           </div>

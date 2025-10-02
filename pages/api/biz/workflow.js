@@ -4,6 +4,7 @@ import logger from "../../../components/core/server/winston/logger";
 import * as constants from "@/components/core/constants";
 import * as commonFunctions from "@/components/core/commonFunctions";
 import { DBConnectionManager } from "./workflow/dbConnectionManager";
+import * as workflowEngineServer from "./workflow/workflowEngineServer";
 import * as dynamicSql from "./dynamicSql";
 
 /**
@@ -14,6 +15,25 @@ const executeService = async (txnId, jRequest) => {
 
   try {
     switch (jRequest.commandName) {
+      case constants.commands.WORKFLOW_SAVE_WORKFLOW: {
+        const result = await workflowEngineServer.saveWorkflow(
+          jRequest.systemCode,
+          jRequest.userId,
+          jRequest.workflowId,
+          jRequest.workflowData
+        );
+
+        if (result.error_code == 0) {
+          jResponse.error_code = result.error_code;
+          jResponse.message = "워크플로우 저장 성공";
+        } else {
+          jResponse.error_code = -1;
+          jResponse.error_message =
+            result.error_message || " 워크플로우 저장 실패";
+        }
+        break;
+      }
+
       // ✅ 1. DB 연결정보 전체 조회
       case constants.commands.WORKFLOW_SELECT_DB_CONNECTIONS_ALL: {
         const result = await DBConnectionManager.getInstance().list();
