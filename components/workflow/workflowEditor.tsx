@@ -27,6 +27,7 @@ import { DBConnectionManagerModal } from "@/components/workflow/dbConnectionMana
 import RequestServer from "@/components/core/client/requestServer";
 import * as userInfo from "@/components/core/client/frames/userInfo";
 import { v4 as uuidv4 } from "uuid";
+import WorkflowSelector from "./workflowSelector";
 
 interface WorkflowEditorProps {
   initialNodes?: Node<ActionNodeData>[];
@@ -38,9 +39,7 @@ export type DesignColumn = {
   type: "string" | "number" | "boolean" | "object";
 };
 
-// 테이블 이름(string) → 컬럼 정의 배열
 export type DesignedDataset = Record<string, DesignColumn[]>;
-
 type InputDataset = Record<string, Record<string, any>[]>;
 
 export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
@@ -61,10 +60,7 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
             constants.workflowActions.START
           ),
         },
-        run: {
-          inputs: [],
-          outputs: [],
-        },
+        run: { inputs: [], outputs: [] },
       },
     },
     {
@@ -83,10 +79,7 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
             constants.workflowActions.END
           ),
         },
-        run: {
-          inputs: [],
-          outputs: [],
-        },
+        run: { inputs: [], outputs: [] },
       },
     },
   ],
@@ -105,12 +98,20 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
   );
 
   const initWorkflow = () => {
-    const wf = JSON.parse(getWorkflowJson());
-    wf.currentNodeId = null; // 단계 실행용 현재 노드 ID
-    jWorkflow.current = wf;
+    jWorkflow.current = {
+      workflowId: uuidv4(),
+      workflowName: "new workflow",
+      workflowDescription: "new workflow",
+      currentNodeId: null,
+      data: {
+        design: { inputs: [], outputs: [] },
+        run: { inputs: [], outputs: [] },
+      },
+      nodes,
+      edges,
+    };
   };
 
-  // 디자인한 input 데이터 스키마 정보
   const [designedInputData, setDesignedInputData] = useState<DesignedDataset>({
     INPUT_TABLE: [
       { name: "key1", type: "string" },
@@ -215,36 +216,14 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
               constants.workflowActions.SCRIPT
             ),
           },
-          run: {
-            inputs: [],
-            outputs: [],
-          },
+          run: { inputs: [], outputs: [] },
         },
       } as Node<ActionNodeData>,
     ]);
   };
 
   const getWorkflowJson = (): string => {
-    const workflowObject = {
-      workflowId: workflowId,
-      workflowName: workflowName,
-      workflowDescription: workflowDescription,
-      currentNodeId: null,
-      data: {
-        design: {
-          inputs: designedInputData,
-          outputs: JSON.parse(designedOutputData),
-        },
-        run: {
-          inputs: workflowInputDataObj,
-          outputs: [],
-        },
-      },
-      nodes,
-      edges,
-    };
-
-    return JSON.stringify(workflowObject, null, 2);
+    return JSON.stringify(jWorkflow.current, null, 2);
   };
 
   const exportWorkflow = () => {
@@ -260,21 +239,16 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
 
   const saveWorkflow = async () => {
     try {
-      var jResponse = null;
-
-      var jRequest = {
+      const jRequest = {
         commandName: constants.commands.WORKFLOW_SAVE_WORKFLOW,
         systemCode: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE,
         userId: userInfo.getLoginUserId(),
         workflowId: workflowId,
         workflowData: JSON.parse(getWorkflowJson()),
       };
-
-      // 서버에 실행요청 해서 진행하게 변경할 것
-      jResponse = await RequestServer(jRequest);
-
+      const jResponse = await RequestServer(jRequest);
       if (jResponse.error_code == 0 && jResponse.jWorkflow) {
-        jWorkflow.current = { ...jResponse.jWorkflow }; // 실행 후 상태 갱신
+        jWorkflow.current = { ...jResponse.jWorkflow };
       }
     } catch (err) {
       console.error(err);
@@ -284,21 +258,14 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
 
   const deleteWorkflow = async () => {
     try {
-      var jResponse = null;
-
-      var jRequest = {
+      const jRequest = {
         commandName: constants.commands.WORKFLOW_DELETE_WORKFLOW,
         systemCode: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE,
         userId: userInfo.getLoginUserId(),
         workflowId: workflowId,
       };
-
-      // 서버에 실행요청 해서 진행하게 변경할 것
-      jResponse = await RequestServer(jRequest);
-
-      if (jResponse.error_code == 0) {
-        openModal("Successfully delete workflow.");
-      }
+      const jResponse = await RequestServer(jRequest);
+      if (jResponse.error_code == 0) openModal("Successfully delete workflow.");
     } catch (err) {
       console.error(err);
       openModal("❌ 실행 실패: " + String(err));
@@ -307,11 +274,8 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
 
   const executeWorkflowFromTableEditor = async () => {
     try {
-      initWorkflow(); // 상태 없으면 초기화
-
-      var jResponse = null;
-
-      var jRequest = {
+      initWorkflow();
+      const jRequest = {
         commandName: constants.commands.WORKFLOW_EXECUTE_WORKFLOW,
         systemCode: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE,
         userId: userInfo.getLoginUserId(),
@@ -320,39 +284,28 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
         currentNodeId: null,
         inputs: workflowInputDataObj,
       };
-
-      // 서버에 실행요청 해서 진행하게 변경할 것
-      jResponse = await RequestServer(jRequest);
-
-      if (jResponse.error_code == 0 && jResponse.jWorkflow) {
-        jWorkflow.current = { ...jResponse.jWorkflow }; // 실행 후 상태 갱신
-      }
+      const jResponse = await RequestServer(jRequest);
+      if (jResponse.error_code == 0 && jResponse.jWorkflow)
+        jWorkflow.current = { ...jResponse.jWorkflow };
     } catch (err) {
       openModal("❌ 실행 실패: " + String(err));
     }
   };
 
-  // 서버에 실행 요청해서 진행하게 변경할 것
   const executeWorkflowStepByStep = async () => {
     try {
-      var jResponse = null;
-
-      var jRequest = {
+      const jRequest = {
         commandName: constants.commands.WORKFLOW_EXECUTE_WORKFLOW,
         systemCode: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE,
         userId: userInfo.getLoginUserId(),
         workflowId: workflowId,
         transactionMode: constants.transactionMode.Business,
-        currentNodeId: jWorkflow.current.currentNodeId ?? null,
+        currentNodeId: jWorkflow.current?.currentNodeId ?? null,
         inputs: workflowInputDataObj,
       };
-
-      // 서버에 실행요청 해서 진행하게 변경할 것
-      jResponse = await RequestServer(jRequest);
-
-      if (jResponse.error_code == 0 && jResponse.jWorkflow) {
-        jWorkflow.current = { ...jResponse.jWorkflow }; // 실행 후 상태 갱신
-      }
+      const jResponse = await RequestServer(jRequest);
+      if (jResponse.error_code == 0 && jResponse.jWorkflow)
+        jWorkflow.current = { ...jResponse.jWorkflow };
     } catch (err) {
       console.error(err);
       openModal("❌ 실행 실패: " + String(err));
@@ -367,21 +320,19 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
           <div className="flex flex-1">
             <ReactFlow
               className="w-full semi-text-bg-color border border-gray-300 rounded-lg shadow-sm"
-              nodes={
-                nodes.map((n) => ({
-                  ...n,
-                  style: {
-                    background: runningNodeIds?.includes(n.id)
-                      ? "#FFD700"
-                      : n.data.actionName === constants.workflowActions.START ||
-                        n.data.actionName === constants.workflowActions.END
-                      ? "#ADFF2F"
-                      : "#fff",
-                    border: "1px solid #222",
-                    color: "#000",
-                  },
-                })) as Node<ActionNodeData>[]
-              }
+              nodes={nodes.map((n) => ({
+                ...n,
+                style: {
+                  background: runningNodeIds.includes(n.id)
+                    ? "#FFD700"
+                    : n.data.actionName === constants.workflowActions.START ||
+                      n.data.actionName === constants.workflowActions.END
+                    ? "#ADFF2F"
+                    : "#fff",
+                  border: "1px solid #222",
+                  color: "#000",
+                },
+              }))}
               edges={
                 edges.map((e) => ({
                   ...e,
@@ -402,10 +353,12 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
               <Background />
             </ReactFlow>
           </div>
+
           <DBConnectionManagerModal
             open={dbModalOpen}
             onOpenChange={setDbModalOpen}
           />
+
           <div className="flex flex-col justify-top h-full">
             <h3>Editor</h3>
             <button
@@ -417,7 +370,7 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
             <button className="w-full border" onClick={addNode}>
               Add Node
             </button>
-            <button className="w-full border" onClick={() => exportWorkflow()}>
+            <button className="w-full border" onClick={exportWorkflow}>
               Export JSON
             </button>
 
@@ -442,6 +395,7 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
                 });
               }}
             />
+
             <div className="flex flex-row ml-1 space-x-1">
               <button
                 className="w-full semi-text-bg-color border"
@@ -456,6 +410,13 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
                 Run By Node
               </button>
             </div>
+
+            <WorkflowSelector
+              onSelect={(wfSelected: any) => {
+                jWorkflow.current = wfSelected;
+              }}
+            />
+
             <div className="flex flex-row ml-1 mt-1 space-x-1">
               <button
                 className="w-full semi-text-bg-color border"
@@ -497,17 +458,12 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
                 <JsonDatasetEditorModal
                   open={isInputSchemaEditorOpen}
                   mode="schema"
-                  value={designedInputData} // workflowInputDataObj 대신 designedInputData 사용
+                  value={designedInputData}
                   onConfirm={(newSchema) => {
-                    // 1️⃣ 디자인 상태 업데이트
                     setDesignedInputData(newSchema as DesignedDataset);
-
-                    // 2️⃣ workflowInputDataObj를 새로운 디자인에 맞춰 초기화
                     const newDataObj: Record<string, any> = {};
-
                     for (const [tableName, rows] of Object.entries(newSchema)) {
                       if (Array.isArray(rows) && rows.length > 0) {
-                        // 첫 번째 row를 기준으로 초기값 생성
                         const firstRow = rows[0];
                         const newRow: Record<string, any> = {};
                         for (const key in firstRow) {
@@ -533,7 +489,6 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
                         newDataObj[tableName] = [];
                       }
                     }
-
                     setWorkflowInputData(JSON.stringify(newDataObj, null, 2));
                     setIsInputSchemaEditorOpen(false);
                   }}
@@ -554,34 +509,30 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
                 />
               )}
             </div>
+
             <textarea
               className="w-full h-[200px] mt-2 border p-2 font-mono text-sm"
               value={(() => {
                 const dataObj = JSON.parse(workflowInputData) as InputDataset;
-
-                // 숫자/불린 타입 변환
                 for (const tableKey of Object.keys(dataObj)) {
                   const rows = dataObj[tableKey];
                   rows?.forEach((row) => {
                     Object.keys(row).forEach((key) => {
                       const value = row[key];
-                      if (!isNaN(Number(value))) {
-                        row[key] = Number(value);
-                      } else if (value === "true") row[key] = true;
+                      if (!isNaN(Number(value))) row[key] = Number(value);
+                      else if (value === "true") row[key] = true;
                       else if (value === "false") row[key] = false;
                     });
                   });
                 }
-
-                // JSON.stringify로 포맷팅
                 return JSON.stringify(dataObj, null, 2);
               })()}
               readOnly
             />
           </div>
+
           {/* Output Table */}
           <div className="flex flex-col ml-2 w-[calc(50%-10px)]">
-            {/* 기존 Edit Schema 버튼 유지 */}
             <div className="flex mb-2">
               <div className="flex flex-row space-x-2">
                 <h4>Workflow Outputs</h4>
@@ -593,7 +544,6 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
                 </button>
               </div>
             </div>
-
             {isOutputSchemaEditorOpen && (
               <JsonDatasetEditorModal
                 open={isOutputSchemaEditorOpen}
@@ -606,7 +556,6 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
                 onCancel={() => setIsOutputSchemaEditorOpen(false)}
               />
             )}
-
             <textarea
               className="w-full h-[200px] mt-2 border p-2 font-mono text-sm"
               value={designedOutputData}

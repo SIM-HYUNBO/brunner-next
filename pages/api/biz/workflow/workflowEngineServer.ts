@@ -274,3 +274,26 @@ export async function deleteWorkflow(
 
   return result;
 }
+
+export async function getWorkflowList(systemCode: string, userId: string) {
+  try {
+    // 워크플로우 목록 조회 쿼리 (DB 구조에 맞게 수정 가능)
+    const sql = await dynamicSql.getSQL00(`select_TB_COR_WORKFLOW_MST`, 2);
+
+    var select_TB_COR_WORKFLOW_MST: any = await database.executeSQL(sql, [
+      systemCode,
+    ]);
+
+    return {
+      error_code: 0,
+      list: select_TB_COR_WORKFLOW_MST, // [{id, workflow_data}, ...]
+    };
+  } catch (err: any) {
+    console.error("getWorkflowList 오류:", err);
+    return {
+      error_code: -1,
+      error_message: String(err.message || err),
+      list: [],
+    };
+  }
+}

@@ -15,6 +15,23 @@ const executeService = async (txnId, jRequest) => {
 
   try {
     switch (jRequest.commandName) {
+      // ✅ 워크플로우 목록 조회
+      case constants.commands.WORKFLOW_SELECT_WORKFLOW_LIST: {
+        const result = await workflowEngineServer.getWorkflowList(
+          jRequest.systemCode,
+          jRequest.userId
+        );
+
+        if (result.error_code === 0) {
+          jResponse.error_code = 0;
+          jResponse.list = result.list; // [{ id, name, description }]
+          jResponse.message = "";
+        } else {
+          jResponse.error_code = -1;
+          jResponse.error_message = result.error_message;
+        }
+        break;
+      }
       case constants.commands.WORKFLOW_SAVE_WORKFLOW: {
         const result = await workflowEngineServer.saveWorkflow(
           jRequest.systemCode,

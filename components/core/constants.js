@@ -98,6 +98,7 @@ export const commands = {
   WORKFLOW_EXECUTE_WORKFLOW: "workflow.executeWorkflow",
   WORKFLOW_SAVE_WORKFLOW: "workflow.saveflow",
   WORKFLOW_DELETE_WORKFLOW: "workflow.deleteWorkflow",
+  WORKFLOW_SELECT_WORKFLOW_LIST: "workflow.selectWorkflowList",
 };
 
 export const edocComponentType = {
