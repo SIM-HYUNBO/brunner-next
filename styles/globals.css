@@ -175,10 +175,9 @@ neutral, stone
     @apply bg-primary 
            px-2
            flex 
-           flex-col 
+           flex-col
            min-h-screen
            justify-center 
-           overflow-x-hidden
            bottom-0;
 
     @apply w-full 
