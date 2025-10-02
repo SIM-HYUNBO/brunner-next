@@ -98,7 +98,7 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
   );
 
   const initWorkflow = () => {
-    jWorkflow.current = {
+    setCurrentWorkflow({
       workflowId: uuidv4(),
       workflowName: "new workflow",
       workflowDescription: "new workflow",
@@ -109,7 +109,7 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
       },
       nodes,
       edges,
-    };
+    });
   };
 
   const [designedInputData, setDesignedInputData] = useState<DesignedDataset>({
@@ -138,7 +138,18 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
 
   useEffect(() => {
     setWorkflowId(uuidv4());
+    initWorkflow();
   }, []);
+
+  useEffect(() => {
+    if (!jWorkflow.current) return;
+    jWorkflow.current.nodes = nodes;
+  }, [nodes]);
+
+  useEffect(() => {
+    if (!jWorkflow.current) return;
+    jWorkflow.current.edges = edges;
+  }, [edges]);
 
   const workflowInputDataObj = useMemo(() => {
     try {
@@ -237,6 +248,44 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
     }
   };
 
+  const setCurrentWorkflow = (newVal: any) => {
+    if (!newVal) return;
+
+    // jWorkflow에 교체
+    jWorkflow.current = newVal;
+
+    // 상태값도 새 워크플로우에 맞춰 업데이트
+    setWorkflowId(newVal.workflowId ?? uuidv4());
+    setWorkflowName(newVal.workflowName ?? "새 워크플로우");
+    setWorkflowDescription(newVal.workflowDescription ?? "설명 없음");
+
+    // 노드와 엣지 상태 반영
+    setNodes(newVal.nodes ?? []);
+    setEdges(newVal.edges ?? []);
+
+    // 입력 데이터 적용
+    setWorkflowInputData(
+      newVal.data?.run?.inputs
+        ? JSON.stringify(newVal.data.run.inputs, null, 2)
+        : JSON.stringify(
+            { INPUT_TABLE: [{ key1: "test", key2: 123 }] },
+            null,
+            2
+          )
+    );
+
+    // 출력 데이터 적용
+    setDesignedOutputData(
+      newVal.data?.run?.outputs
+        ? JSON.stringify(newVal.data.run.outputs, null, 2)
+        : JSON.stringify({ OUTPUT_TABLE: [] }, null, 2)
+    );
+
+    // 실행 상태 초기화
+    setRunningNodeIds([]);
+    stepCounterRef.current = 0;
+  };
+
   const saveWorkflow = async () => {
     try {
       const jRequest = {
@@ -247,8 +296,8 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
         workflowData: JSON.parse(getWorkflowJson()),
       };
       const jResponse = await RequestServer(jRequest);
-      if (jResponse.error_code == 0 && jResponse.jWorkflow) {
-        jWorkflow.current = { ...jResponse.jWorkflow };
+      if (jResponse.error_code == 0) {
+        openModal("Successfully updated workflow.");
       }
     } catch (err) {
       console.error(err);
@@ -286,7 +335,7 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
       };
       const jResponse = await RequestServer(jRequest);
       if (jResponse.error_code == 0 && jResponse.jWorkflow)
-        jWorkflow.current = { ...jResponse.jWorkflow };
+        setCurrentWorkflow({ ...jResponse.jWorkflow });
     } catch (err) {
       openModal("❌ 실행 실패: " + String(err));
     }
@@ -305,7 +354,7 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
       };
       const jResponse = await RequestServer(jRequest);
       if (jResponse.error_code == 0 && jResponse.jWorkflow)
-        jWorkflow.current = { ...jResponse.jWorkflow };
+        setCurrentWorkflow({ ...jResponse.jWorkflow });
     } catch (err) {
       console.error(err);
       openModal("❌ 실행 실패: " + String(err));
@@ -413,7 +462,7 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
 
             <WorkflowSelector
               onSelect={(wfSelected: any) => {
-                jWorkflow.current = wfSelected;
+                setCurrentWorkflow(wfSelected.workflow_data);
               }}
             />
 

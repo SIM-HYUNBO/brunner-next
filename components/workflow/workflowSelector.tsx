@@ -16,6 +16,9 @@ export default function WorkflowSelector({ onSelect }: WorkflowSelectorProps) {
 
   // 선택 완료 시 콜백
   const handleSelectWorkflow = (workflow: any) => {
+    // 선택한 Workflow의 정보를 서버에서 조회
+
+    // 조회한 데이터로 갱신
     setSelectedWorkflow(workflow); // 내부 상태 갱신
     if (onSelect) onSelect(workflow); // prop으로 전달된 함수 호출
     setModalOpen(false); // 모달 닫기
