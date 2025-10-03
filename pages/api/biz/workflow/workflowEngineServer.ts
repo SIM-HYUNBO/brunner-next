@@ -416,7 +416,6 @@ export class TransactionNode {
   async start(workflow: any, txInstances?: Map<string, any>) {
     const dbManager = DBConnectionManager.getInstance();
 
-    // workflow.connections가 있으면 그대로 사용, 없으면 DBManager에 등록된 전체 연결 사용
     const connections: Record<string, DBType> =
       workflow.dbConnections && Object.keys(workflow.dbConnections).length > 0
         ? workflow.dbConnections
