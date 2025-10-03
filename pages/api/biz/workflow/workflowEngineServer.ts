@@ -13,6 +13,13 @@ import type { PoolConnection } from "mysql2/promise";
 import type * as mssql from "mssql";
 import type * as oracledb from "oracledb";
 
+type MssqlConnectionPool = {
+  request: () => {
+    input: (name: string, value: any) => any;
+    query: (sql: string) => Promise<{ recordset: any[] }>;
+  };
+};
+
 const logger = require("./../../../../components/core/server/winston/logger");
 
 export type WorkflowContext = Record<string, any> & {
@@ -101,7 +108,7 @@ export function registerBuiltInActions(): void {
   // START
   registerAction(
     constants.workflowActions.START,
-    async (node, workflowData, txInstance) => {
+    async (node, workflowData, txContext) => {
       if (!node) return;
       if (!preNodeCheck(node, workflowData)) {
         postNodeCheck(node, workflowData);
@@ -120,7 +127,7 @@ export function registerBuiltInActions(): void {
   // END
   registerAction(
     constants.workflowActions.END,
-    async (node, workflowData, txInstance) => {
+    async (node, workflowData, txContext) => {
       if (!node) return;
       if (!preNodeCheck(node, workflowData)) {
         postNodeCheck(node, workflowData);
@@ -139,7 +146,7 @@ export function registerBuiltInActions(): void {
   // CALL
   registerAction(
     constants.workflowActions.CALL,
-    async (node, workflowData, txInstance) => {
+    async (node, workflowData, txContext) => {
       if (!node) return;
       if (!preNodeCheck(node, workflowData)) {
         postNodeCheck(node, workflowData);
@@ -170,7 +177,7 @@ export function registerBuiltInActions(): void {
   */
   registerAction(
     constants.workflowActions.SCRIPT,
-    async (node: any, workflowData: any, txInstance) => {
+    async (node: any, workflowData: any, txContext) => {
       const userScript: string =
         node.data?.script ||
         `
@@ -236,6 +243,49 @@ export function registerBuiltInActions(): void {
           });
           return await res.json();
         },
+        sql: async (connectionId: string, query: string, params?: any[]) => {
+          const tx = txContext.get(connectionId)?.dbConnection;
+          if (!tx)
+            throw new Error(`DB 연결을 찾을 수 없습니다: ${connectionId}`);
+
+          const dbType = txContext.get(connectionId)?.dbType;
+
+          switch (dbType) {
+            case "mysql":
+              const [result] = await (tx as PoolConnection).query(
+                query,
+                params || []
+              );
+              return result;
+
+            case "postgres":
+              const resultPg = await (tx as PoolClient).query(
+                query,
+                params || []
+              );
+              return resultPg.rows;
+
+            case "mssql":
+              const request = (tx as MssqlConnectionPool).request();
+              if (params)
+                params.forEach((p, i) => request.input(`param${i + 1}`, p));
+              const resultMs = await request.query(query);
+              return resultMs.recordset;
+
+            case "oracle":
+              const resultOra = await (tx as oracledb.Connection).execute(
+                query,
+                params || [],
+                {
+                  outFormat: (require("oracledb") as any).OUT_FORMAT_OBJECT,
+                }
+              );
+              return resultOra.rows;
+
+            default:
+              throw new Error(`지원하지 않는 DB 타입: ${dbType}`);
+          }
+        },
       };
 
       const AsyncFunction = Object.getPrototypeOf(async function () {})
@@ -269,7 +319,7 @@ export function registerBuiltInActions(): void {
 
   registerAction(
     constants.workflowActions.SQL,
-    async (node, workflowData, txInstance) => {
+    async (node, workflowData, txContext) => {
       if (!node) return;
 
       if (!preNodeCheck(node, workflowData)) {
