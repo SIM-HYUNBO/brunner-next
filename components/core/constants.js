@@ -122,6 +122,7 @@ export const workflowActions = {
   START: "Start",
   END: "End",
   SCRIPT: "Java Script",
+  SQL: "SQL",
   CALL: "CallWorkflow",
 };
 

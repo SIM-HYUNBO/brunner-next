@@ -49,7 +49,7 @@ export class DBConnectionManager {
     return (globalThis as any)._dbConnectionManager;
   }
 
-  private connections: Map<string, DBConnectionConfig> = new Map();
+  private dbConnectionConfig: Map<string, DBConnectionConfig> = new Map();
   private pools: Map<string, DBConnectionPool> = new Map();
 
   async loadAllFromDatabase(database: any, dynamicSql: any) {
@@ -66,11 +66,11 @@ export class DBConnectionManager {
   // ✅ 연결정보 등록
   async register(config: DBConnectionConfig, onlyLoad: boolean = false) {
     var result = null;
-    if (this.connections.has(config.id)) {
+    if (this.dbConnectionConfig.has(config.id)) {
       result = await this.update(config);
     } else {
       const pool = await this.createPool(config);
-      this.connections.set(config.id, config);
+      this.dbConnectionConfig.set(config.id, config);
       this.pools.set(config.id, { type: config.type, pool });
 
       console.log(`onlyload =${onlyLoad}`);
@@ -83,12 +83,12 @@ export class DBConnectionManager {
 
   // ✅ 연결정보 수정
   async update(config: DBConnectionConfig) {
-    if (!this.connections.has(config.id)) {
+    if (!this.dbConnectionConfig.has(config.id)) {
       throw new Error(`DB connection with ID ${config.id} not found`);
     }
 
     // 기존 연결정보 가져오기
-    const existingConfig = this.connections.get(config.id)!;
+    const existingConfig = this.dbConnectionConfig.get(config.id)!;
 
     // 필요한 경우 연결 풀 교체 (host, port, username, password, database 등 핵심 정보가 바뀐 경우)
     const needNewPool =
@@ -110,7 +110,7 @@ export class DBConnectionManager {
     }
 
     // connections Map 업데이트 (부분 필드 업데이트 가능)
-    this.connections.set(config.id, { ...existingConfig, ...config });
+    this.dbConnectionConfig.set(config.id, { ...existingConfig, ...config });
 
     // DB에 업데이트
     return await this.updateDBConnection(config, database, dynamicSql);
@@ -122,7 +122,7 @@ export class DBConnectionManager {
     if (poolObj) {
       await this.closePool(poolObj);
     }
-    this.connections.delete(id);
+    this.dbConnectionConfig.delete(id);
     this.pools.delete(id);
     const result = await this.deleteDBConnection(id, database, dynamicSql);
     return result;
@@ -130,7 +130,7 @@ export class DBConnectionManager {
 
   // ✅ 등록된 연결정보 목록 조회
   list(): DBConnectionConfig[] {
-    return Array.from(this.connections.values());
+    return Array.from(this.dbConnectionConfig.values());
   }
 
   // ✅ 연결 획득
@@ -372,7 +372,7 @@ export class DBConnectionManager {
     return result;
   }
   async get(id: string) {
-    return this.connections.get(id)!;
+    return this.dbConnectionConfig.get(id)!;
   }
 
   public getPool(id: string): any {

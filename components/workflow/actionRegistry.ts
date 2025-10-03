@@ -3,6 +3,7 @@
 import * as constants from "@/components/core/constants";
 import type { Connection, Edge, Node, NodeChange, EdgeChange } from "reactflow";
 import * as commonData from "@/components/core/commonData";
+import { DBConnectionManager } from "@/pages/api/biz/workflow/dbConnectionManager";
 
 export type WorkflowContext = Record<string, any> & {
   runWorkflow?: (workflow: any, workflowData: WorkflowContext) => Promise<any>;
@@ -112,7 +113,7 @@ export function registerBuiltInActions(): void {
       return;
     }
   );
-  defaultParamsMap.set(constants.workflowActions.START, []);
+  defaultParamsMap.set(constants.workflowActions.END, [{ key: "dbConnectionId", type: "string" }]);
 
   // END
   registerAction(constants.workflowActions.END, async (node, workflowData) => {
@@ -129,7 +130,7 @@ export function registerBuiltInActions(): void {
     postNodeCheck(node, workflowData);
     return;
   });
-  defaultParamsMap.set(constants.workflowActions.END, []);
+  defaultParamsMap.set(constants.workflowActions.END, [{ key: "dbConnectionId", type: "string" }]);
 
   // CALL
   registerAction(constants.workflowActions.CALL, async (node, workflowData) => {
@@ -142,7 +143,7 @@ export function registerBuiltInActions(): void {
     postNodeCheck(node, workflowData);
     return;
   });
-  defaultParamsMap.set(constants.workflowActions.CALL, []);
+  defaultParamsMap.set(constants.workflowActions.CALL, [{ key: "dbConnectionId", type: "string" }]);
 
   // SCRIPT
 
@@ -259,4 +260,97 @@ export function registerBuiltInActions(): void {
       }
     }
   );
-}
+defaultParamsMap.set(constants.workflowActions.SCRIPT, [{ key: "dbConnectionId", type: "string" }]);
+  
+ registerAction(constants.workflowActions.SQL, async (node, workflowData) => {
+  if (!node) return;
+
+  if (!preNodeCheck(node, workflowData)) {
+    postNodeCheck(node, workflowData);
+    return;
+  }
+
+  const { connectionId, query, params } = node.data?.run?.inputs || {};
+
+  if (!connectionId) throw new Error("connectionId가 필요합니다.");
+  if (!query) throw new Error("SQL query가 필요합니다.");
+
+  const dbManager = DBConnectionManager.getInstance();
+
+  const dbConfig = await dbManager.get(connectionId);
+  if (!dbConfig) throw new Error(`DB 연결정보를 찾을 수 없습니다: ${connectionId}`);
+
+  const dbType = dbConfig.type;
+
+  let connection: any = null;
+  let rows: any = null;
+
+  try {
+    // ✅ 연결 가져오기
+    connection = await dbManager.getConnection(connectionId);
+
+    switch (dbType) {
+      case "mysql": {
+        const [result] = await connection.query(query, params || []);
+        rows = result;
+        break;
+      }
+
+      case "postgres": {
+        const result = await connection.query(query, params || []);
+        rows = result.rows;
+        break;
+      }
+
+      case "mssql": {
+        const request = connection.request();
+        if (params && Array.isArray(params)) {
+          params.forEach((p, i) => {
+            request.input(`param${i + 1}`, p);
+          });
+        }
+        const result = await request.query(query);
+        rows = result.recordset;
+        break;
+      }
+
+      case "oracle": {
+        const result = await connection.execute(query, params || [], {
+          outFormat: (require("oracledb") as any).OUT_FORMAT_OBJECT,
+        });
+        rows = result.rows;
+        break;
+      }
+
+      default:
+        throw new Error(`지원하지 않는 DB 타입입니다: ${dbType}`);
+    }
+
+    // ✅ 결과 저장
+    node.data.run.outputs = rows;
+    // workflowData.data.run.outputs = rows;
+
+    console.log(`[SQL_NODE] ${dbType.toUpperCase()} 쿼리 실행 완료`);
+  } catch (err: any) {
+    console.error(`[SQL_NODE ERROR][${dbType}]`, err);
+    throw err;
+  } finally {
+    // ✅ 커넥션 반환
+    if (connection) {
+      try {
+        if (dbType === "mysql" || dbType === "postgres") connection.release();
+        else if (dbType === "oracle") await connection.close();
+        // mssql은 풀로 관리되므로 별도 close 없음
+      } catch (closeErr) {
+        console.warn("Connection close error:", closeErr);
+      }
+    }
+    postNodeCheck(node, workflowData);
+  }
+});
+// ✅ 기본 파라미터 정의
+defaultParamsMap.set(constants.workflowActions.SQL, [
+  { key: "dbConnectionId", type: "string" },
+  { key: "sqlStmt", type: "string" },
+  { key: "params", type: "object" },
+]);
