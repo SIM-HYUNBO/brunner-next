@@ -1,11 +1,11 @@
 import React, { useState, useEffect, useRef } from "react";
 import type { Node } from "reactflow";
+import * as constants from "@/components/core/constants";
 import type {
   NodeDataTable,
   DatasetColumn,
-} from "@/components/workflow/actionRegistry";
-import * as actionRegistry from "@/components/workflow/actionRegistry";
-import * as constants from "@/components/core/constants";
+} from "@/components/core/commonData";
+import * as commmonFunctions from "@/components/core/commonFunctions";
 import { JsonDatasetEditorModal } from "@/components/workflow/jsonDatasetEditorModal";
 import type { JsonColumnType } from "@/components/workflow/jsonDatasetEditorModal";
 
@@ -64,8 +64,8 @@ export const NodePropertyEditor: React.FC<NodePropertyEditorProps> = ({
     const action = node.data.actionName;
     setActionName(action);
 
-    const defaultInputs = actionRegistry.getDefaultInputs?.(action) ?? [];
-    const defaultOutputs = actionRegistry.getDefaultOutputs?.(action) ?? [];
+    const defaultInputs = commmonFunctions.getDefaultInputs?.(action) ?? [];
+    const defaultOutputs = commmonFunctions.getDefaultOutputs?.(action) ?? [];
 
     if (prevActionName.current !== action) {
       setInputs(defaultInputs);
@@ -173,11 +173,11 @@ export const NodePropertyEditor: React.FC<NodePropertyEditorProps> = ({
           onClick={() => {
             const newInputs =
               prevActionName.current !== actionName
-                ? actionRegistry.getDefaultInputs(actionName)
+                ? commmonFunctions.getDefaultInputs(actionName)
                 : inputs;
             const newOutputs =
               prevActionName.current !== actionName
-                ? actionRegistry.getDefaultOutputs(actionName)
+                ? commmonFunctions.getDefaultOutputs(actionName)
                 : outputs;
 
             prevActionName.current = actionName;

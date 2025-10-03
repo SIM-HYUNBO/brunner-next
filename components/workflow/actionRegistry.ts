@@ -2,45 +2,13 @@
 
 import * as constants from "@/components/core/constants";
 import type { Connection, Edge, Node, NodeChange, EdgeChange } from "reactflow";
-
-// 컬럼 단위 정의
-export interface DatasetColumn {
-  key: string; // 항상 있어야 함
-  type: "string" | "number" | "boolean" | "object"; // 항상 있어야 함
-  bindingType?: "direct" | "ref";
-  sourceNodeId?: string; // 바인딩 되어 있을때
-}
-
-// -------------------- 타입 정의 --------------------
-export interface NodeDataTable {
-  table: string;
-  columns: DatasetColumn[];
-  rows: Record<string, any>[];
-}
-
-export interface ActionNodeData {
-  label: string;
-  actionName: string;
-  status: string;
-  design: {
-    inputs: NodeDataTable[];
-    outputs: NodeDataTable[];
-  };
-  run: {
-    inputs: NodeDataTable[];
-    outputs: NodeDataTable[];
-  };
-}
-
-export interface ConditionEdgeData {
-  condition?: string;
-}
+import * as commonData from "@/components/core/commonData";
 
 export type WorkflowContext = Record<string, any> & {
   runWorkflow?: (workflow: any, workflowData: WorkflowContext) => Promise<any>;
   router?: any;
-  input?: NodeDataTable[];
-  output?: NodeDataTable[];
+  input?: commonData.NodeDataTable[];
+  output?: commonData.NodeDataTable[];
 };
 
 // -------------------- 액션 타입 --------------------
@@ -51,32 +19,7 @@ export type ActionHandler = (
 ) => Promise<void>;
 
 export const actionMap = new Map<string, ActionHandler>();
-export const defaultParamsMap = new Map<string, NodeDataTable[]>();
-
-// -------------------- 기본 입력/출력 --------------------
-export function getDefaultInputs(actionName: string): NodeDataTable[] {
-  switch (actionName) {
-    case constants.workflowActions.START:
-      return [{ table: "INDATA", columns: [], rows: [] }];
-    case constants.workflowActions.CALL:
-    case constants.workflowActions.END:
-      return [{ table: "INDATA", columns: [], rows: [] }];
-    case constants.workflowActions.SCRIPT:
-      return [{ table: "INDATA", columns: [], rows: [] }];
-    default:
-      throw new Error(constants.messages.WORKFLOW_NOT_SUPPORTED_NODE_TYPE);
-  }
-}
-
-export function getDefaultOutputs(actionName: string): NodeDataTable[] {
-  switch (actionName) {
-    case constants.workflowActions.START:
-    case constants.workflowActions.CALL:
-    case constants.workflowActions.END:
-    default:
-      return [{ table: "OUTDATA", columns: [], rows: [] }];
-  }
-}
+export const defaultParamsMap = new Map<string, commonData.NodeDataTable[]>();
 
 // -------------------- 액션 등록 --------------------
 export function registerAction(name: string, handler: ActionHandler): void {
@@ -87,7 +30,9 @@ export function getAction(name: string): ActionHandler | undefined {
   return actionMap.get(name);
 }
 
-export function getDefaultParams(actionName: string): NodeDataTable[] {
+export function getDefaultParams(
+  actionName: string
+): commonData.NodeDataTable[] {
   return defaultParamsMap.get(actionName) || [];
 }
 
@@ -207,7 +152,8 @@ export function registerBuiltInActions(): void {
     log(...) – 워커 내부 로그 저장
     alert(msg) – 메인 스레드 alert
     sleep(ms) – 비동기 지연
-    getVar(path) / setVar(path, value) – 워크플로우 변수(workflowData) 아래 패스로 경로 접근
+    getGlobalVar(path) / setGlobalVar(path, value) – 워크플로우 전역 변수(workflowData) 아래 패스로 경로 접근
+    getVar(path) / setVar(path, value) – 해당 노드 변수(node) 아래 패스로 경로 접근
     now() – 현재 Date 객체
     timestamp() – 현재 timestamp (ms)
     random(min, max) – 난수 생성
@@ -217,121 +163,100 @@ export function registerBuiltInActions(): void {
   */
   registerAction(
     constants.workflowActions.SCRIPT,
-    async (node, workflowData) => {
-      const result = await new Promise((resolve, reject) => {
-        const userScript =
-          node.data?.script ||
-          `
-        const body = {
-          title: "sim",
-          body: "hyunbo",
-          age: 50
-        }
-
-        const response = await api.postJson("https://jsonplaceholder.typicode.com/posts",
-                                             JSON.stringify(body)
-                                           );
-        api.alert(JSON.stringify(response));
-        `;
-
-        const timeoutMs = node.data?.timeoutMs || 5000;
-
-        const blob = new Blob(
-          [
-            `
-      // 객체 경로로 값 가져오기
-      function getByPath(obj, path) {
-        return path.split(".").reduce((o, k) => (o !=null ? o[k] : undefined), obj);
+    async (node: any, workflowData: any) => {
+      const userScript: string =
+        node.data?.script ||
+        `
+      const body = {
+        title: "sim",
+        body: "hyunbo",
+        age: 50
       }
-      function setByPath(obj, path, value) {
-        const keys = path.split(".");
-        let target = obj;
+
+      const response = await api.postJson(
+        "https://jsonplaceholder.typicode.com/posts",
+        body
+      );
+      api.setVar("data.run.output", response);
+      `;
+
+      const timeoutMs: number = node.data?.timeoutMs || 5000;
+
+      // 유틸 함수들 타입 명시
+      function getByPath(obj: Record<string, any>, path: string): any {
+        return path
+          .split(".")
+          .reduce((o, k) => (o != null ? o[k] : undefined), obj);
+      }
+
+      function setByPath(
+        obj: Record<string, any>,
+        path: string,
+        value: any
+      ): void {
+        const keys: string[] = path.split(".");
+        let target: Record<string, any> = obj;
         for (let i = 0; i < keys.length - 1; i++) {
           if (!target[String(keys[i])]) target[String(keys[i])] = {};
-          target = target[String(keys[i])];
+          target = target[String(keys[i])] as Record<string, any>;
         }
         target[String(keys[keys.length - 1])] = value;
       }
 
-        onmessage = async (e) => {
-          const { script, actionData, workflowData, timeoutMs } = e.data;
-          const logs = [];
-          try {
-            const safeApi = {
-              log: (...args) => logs.push(args.join(" ")),
-              sleep: (ms) => new Promise(r => setTimeout(r, ms)),
-              alert: (msg) => postMessage({type:"alert", message:msg}),
-              getVar: (path) => getByPath(workflowData, path),
-              setVar: (path, value) => {
-                setByPath(workflowData, path, value);
-              },
-              now: () => new Date(),
-              timestamp: () => Date.now(),
-              random: (min=0, max=1) => Math.random() * (max - min) + min,
-              clone: (obj) => JSON.parse(JSON.stringify(obj)),
-              jsonParse: (str) => JSON.parse(str),
-              jsonStringify: (obj) => JSON.stringify(obj),
-              formatDate: (date, fmt) => date.toISOString(),
-              postJson: async (url, body) => {
-                const res = await fetch(url, {
-                method: "POST",
-                headers: {"Conent-Type":"application/json"},
-                body: JSON.stringify(body),
-                });
-                return await(res.json());
-              }
-            };
+      const logs: string[] = [];
 
-            const AsyncFunction = Object.getPrototypeOf(async function(){}).constructor;
-            const fn = new AsyncFunction("actionData", "workflowData", "api", script);
+      const safeApi = {
+        log: (...args: any[]) => logs.push(args.join(" ")),
+        sleep: (ms: number) => new Promise((r) => setTimeout(r, ms)),
+        getGlobalVar: (path: string) => getByPath(workflowData, path),
+        setGlobalVar: (path: string, value: any) =>
+          setByPath(workflowData, path, value),
+        getVar: (path: string) => getByPath(node, path),
+        setVar: (path: string, value: any) => setByPath(node, path, value),
+        now: (): Date => new Date(),
+        timestamp: (): number => Date.now(),
+        random: (min: number = 0, max: number = 1): number =>
+          Math.random() * (max - min) + min,
+        clone: (obj: any): any => JSON.parse(JSON.stringify(obj)),
+        jsonParse: (str: string): any => JSON.parse(str),
+        jsonStringify: (obj: any): string => JSON.stringify(obj),
+        formatDate: (date: Date, fmt: string): string => date.toISOString(),
+        postJson: async (url: string, body: any): Promise<any> => {
+          const res = await fetch(url, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(body),
+          });
+          return await res.json();
+        },
+      };
 
-            const output = await Promise.race([
-              fn(actionData, workflowData, safeApi),
-              new Promise((_, reject) => setTimeout(() => reject(new Error("timeout")), timeoutMs))
-            ]);
+      const AsyncFunction = Object.getPrototypeOf(async function () {})
+        .constructor as any;
+      const fn = new AsyncFunction(
+        "actionData",
+        "workflowData",
+        "api",
+        userScript
+      );
 
-            postMessage({ ok: true, result: output, logs });
-          } catch (err) {
-            postMessage({ ok: false, error: err.message, logs });
-          }
-        };
-      `,
-          ],
-          { type: "application/javascript" }
-        );
+      try {
+        const result = await Promise.race([
+          fn(node.data || {}, workflowData.data || {}, safeApi),
+          new Promise((_, reject) =>
+            setTimeout(() => reject(new Error("timeout")), timeoutMs)
+          ),
+        ]);
 
-        const worker = new Worker(URL.createObjectURL(blob));
+        logs.forEach((line: string) => console.log("[SCRIPT]", line));
 
-        worker.onmessage = (e) => {
-          const msg = e.data;
-
-          if (msg.type === "alert") {
-            alert(msg.message);
-            return; // Worker 계속 실행
-          }
-
-          worker.terminate();
-
-          // 로그 출력
-          if (msg.logs?.length) {
-            msg.logs.forEach((line: string) => console.log("[SCRIPT]", line));
-          }
-
-          if (msg.ok) resolve(msg.result);
-          else reject(new Error(msg.error));
-        };
-
-        // 스크립트 실행
-        worker.postMessage({
-          script: userScript,
-          actionData: node.data || {},
-          workflowData: workflowData.data || {},
-          timeoutMs,
-        });
-      });
-
-      workflowData.data.run.outputs = [result];
-      postNodeCheck(node, workflowData);
+        workflowData.data.run.outputs = [result];
+        postNodeCheck(node, workflowData);
+      } catch (err: any) {
+        console.error("[SCRIPT ERROR]", err.message);
+        alert("스크립트 실행 오류: " + err.message);
+        throw err;
+      }
     }
   );
 }

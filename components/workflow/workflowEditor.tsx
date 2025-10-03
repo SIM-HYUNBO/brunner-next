@@ -17,17 +17,17 @@ import { nanoid } from "nanoid";
 import * as constants from "@/components/core/constants";
 import { useModal } from "@/components/core/client/brunnerMessageBox";
 import { NodePropertyPanel } from "@/components/workflow/nodePropertyPanel";
-import * as actionRegistry from "@/components/workflow/actionRegistry";
 import { JsonDatasetEditorModal } from "@/components/workflow/jsonDatasetEditorModal";
 import type {
   ActionNodeData,
   ConditionEdgeData,
-} from "@/components/workflow/actionRegistry";
+} from "@/components/core/commonData";
 import { DBConnectionManagerModal } from "@/components/workflow/dbConnectionManagerModal";
 import RequestServer from "@/components/core/client/requestServer";
 import * as userInfo from "@/components/core/client/frames/userInfo";
 import { v4 as uuidv4 } from "uuid";
 import WorkflowSelector from "./workflowSelector";
+import * as commonFunctions from "@/components/core/commonFunctions";
 
 interface WorkflowEditorProps {
   initialNodes?: Node<ActionNodeData>[];
@@ -53,10 +53,10 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
         actionName: constants.workflowActions.START,
         status: constants.workflowRunStatus.idle,
         design: {
-          inputs: actionRegistry.getDefaultInputs(
+          inputs: commonFunctions.getDefaultInputs(
             constants.workflowActions.START
           ),
-          outputs: actionRegistry.getDefaultOutputs(
+          outputs: commonFunctions.getDefaultOutputs(
             constants.workflowActions.START
           ),
         },
@@ -72,10 +72,10 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
         actionName: constants.workflowActions.END,
         status: constants.workflowRunStatus.idle,
         design: {
-          inputs: actionRegistry.getDefaultInputs(
+          inputs: commonFunctions.getDefaultInputs(
             constants.workflowActions.END
           ),
-          outputs: actionRegistry.getDefaultOutputs(
+          outputs: commonFunctions.getDefaultOutputs(
             constants.workflowActions.END
           ),
         },
@@ -220,10 +220,10 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
           actionName: constants.workflowActions.SCRIPT,
           status: constants.workflowRunStatus.idle,
           design: {
-            inputs: actionRegistry.getDefaultInputs(
+            inputs: commonFunctions.getDefaultInputs(
               constants.workflowActions.SCRIPT
             ),
-            outputs: actionRegistry.getDefaultOutputs(
+            outputs: commonFunctions.getDefaultOutputs(
               constants.workflowActions.SCRIPT
             ),
           },

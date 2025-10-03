@@ -155,3 +155,28 @@ export const getUsersDocumentList = async () => {
 
   return null;
 };
+
+// -------------------- 기본 입력/출력 --------------------
+export function getDefaultInputs(actionName) {
+  switch (actionName) {
+    case constants.workflowActions.START:
+      return [{ table: "INDATA", columns: [], rows: [] }];
+    case constants.workflowActions.CALL:
+    case constants.workflowActions.END:
+      return [{ table: "INDATA", columns: [], rows: [] }];
+    case constants.workflowActions.SCRIPT:
+      return [{ table: "INDATA", columns: [], rows: [] }];
+    default:
+      throw new Error(constants.messages.WORKFLOW_NOT_SUPPORTED_NODE_TYPE);
+  }
+}
+
+export function getDefaultOutputs(actionName) {
+  switch (actionName) {
+    case constants.workflowActions.START:
+    case constants.workflowActions.CALL:
+    case constants.workflowActions.END:
+    default:
+      return [{ table: "OUTDATA", columns: [], rows: [] }];
+  }
+}

@@ -135,6 +135,7 @@ const executeService = async (txnId, jRequest) => {
           workflowId
         );
 
+        var txNode = null;
         try {
           // -----------------------
           // 1️⃣ 요청 검증
@@ -164,7 +165,7 @@ const executeService = async (txnId, jRequest) => {
           // -----------------------
           // 2️⃣ 트랜잭션 노드 생성
           // -----------------------
-          const txNode = new workflowEngineServer.TransactionNode();
+          txNode = new workflowEngineServer.TransactionNode();
 
           // 트랜잭션 시작: workflowData에 연결정보 포함되어 있어야 함
           await txNode.start(workflowData);
@@ -207,7 +208,7 @@ const executeService = async (txnId, jRequest) => {
           // 5️⃣ 에러 발생 시 롤백
           // -----------------------
           try {
-            await txNode?.rollback();
+            if (txNode) await txNode?.rollback();
           } catch (rollbackErr) {
             console.error("Rollback failed:", rollbackErr);
           }

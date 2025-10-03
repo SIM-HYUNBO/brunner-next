@@ -25,7 +25,7 @@ export interface JsonDatasetValidationResult {
 import type {
   NodeDataTable,
   DatasetColumn,
-} from "@/components/workflow/actionRegistry";
+} from "@/components/core/commonData";
 
 export class JsonDatasetManager {
   private data: Record<string, JsonObject[]> = {};
