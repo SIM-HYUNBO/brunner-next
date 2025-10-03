@@ -177,7 +177,7 @@ export function registerBuiltInActions(): void {
       const body = {
         title: "sim",
         body: "hyunbo",
-        age: 50
+        age: 40
       }
 
       const response = await api.postJson(

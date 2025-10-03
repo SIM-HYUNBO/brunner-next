@@ -81,7 +81,7 @@ export const ScriptEditorModal: React.FC<ScriptEditorModalProps> = ({
 const body = {
       title: "sim",
       body: "hyunbo",
-      age: 50
+      age: 40
   }
 
 const response = await api.postJson("https://jsonplaceholder.typicode.com/posts",
