@@ -21,7 +21,7 @@ export interface DBConnectionConfig {
   port: number;
   username: string;
   password: string;
-  database: string;
+  database_name: string;
   options?: Record<string, any>;
 }
 
@@ -97,7 +97,7 @@ export class DBConnectionManager {
       existingConfig.port !== config.port ||
       existingConfig.username !== config.username ||
       existingConfig.password !== config.password ||
-      existingConfig.database !== config.database;
+      existingConfig.database_name !== config.database_name;
 
     if (needNewPool) {
       // 기존 풀 닫기
@@ -161,7 +161,7 @@ export class DBConnectionManager {
           port: config.port,
           user: config.username,
           password: config.password,
-          database: config.database,
+          database: config.database_name,
           ssl: true,
           max: 10,
         });
@@ -172,7 +172,7 @@ export class DBConnectionManager {
           port: config.port,
           user: config.username,
           password: config.password,
-          database: config.database,
+          database: config.database_name,
           connectionLimit: 10,
         });
 
@@ -180,7 +180,7 @@ export class DBConnectionManager {
         return await mssql.connect({
           user: config.username,
           password: config.password,
-          database: config.database,
+          database: config.database_name,
           server: config.host,
           port: config.port,
           pool: { max: 10, min: 0, idleTimeoutMillis: 30000 },
@@ -191,7 +191,7 @@ export class DBConnectionManager {
         return await oracledb.createPool({
           user: config.username,
           password: config.password,
-          connectString: `${config.host}:${config.port}/${config.database}`,
+          connectString: `${config.host}:${config.port}/${config.database_name}`,
           poolMax: 10,
           poolMin: 0,
         });
@@ -317,15 +317,16 @@ export class DBConnectionManager {
         1
       );
       var sqlResult = await database.executeSQL(sql, [
+        dbConnectionConfig.system_code,
+        dbConnectionConfig.id,
         dbConnectionConfig.name,
         dbConnectionConfig.type,
         dbConnectionConfig.host,
         dbConnectionConfig.port,
         dbConnectionConfig.username,
         dbConnectionConfig.password,
-        dbConnectionConfig.database,
+        dbConnectionConfig.database_name,
         JSON.stringify(dbConnectionConfig.additional_info || {}),
-        dbConnectionConfig.id,
       ]);
 
       if (sqlResult.rowCount === 1) {

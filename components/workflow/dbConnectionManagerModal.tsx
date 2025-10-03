@@ -286,7 +286,7 @@ export const DBConnectionManagerModal: React.FC<
                     { label: "Port", key: "port", type: "number" },
                     { label: "User", key: "username", type: "text" },
                     { label: "Password", key: "password", type: "password" },
-                    { label: "Database", key: "database", type: "text" },
+                    { label: "Database", key: "database_name", type: "text" },
                   ].map((field) => (
                     <div
                       key={field.key}

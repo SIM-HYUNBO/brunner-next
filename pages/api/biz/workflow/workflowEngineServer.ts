@@ -26,7 +26,7 @@ export type WorkflowContext = Record<string, any> & {
 export type ActionHandler = (
   node: Node<any>,
   workflow: any,
-  txInstance?: TransactionContext
+  txContext: Map<string, TransactionContext>
 ) => Promise<void>;
 
 export const actionMap = new Map<string, ActionHandler>();
@@ -413,7 +413,7 @@ export class WorkflowInstance {
 export class TransactionNode {
   txContexts: Map<string, TransactionContext> = new Map();
 
-  async start(workflow: any, txInstances?: Map<string, any>) {
+  async start(workflow: any, dbConnections?: Map<string, any>) {
     const dbManager = DBConnectionManager.getInstance();
 
     const connections: Record<string, DBType> =
@@ -424,11 +424,11 @@ export class TransactionNode {
           );
 
     for (const [connectionId, dbType] of Object.entries(connections)) {
-      if (txInstances?.has(connectionId)) {
+      if (dbConnections?.has(connectionId)) {
         this.txContexts.set(connectionId, {
           connectionId,
           dbType: dbType as DBType,
-          dbConnection: txInstances.get(connectionId),
+          dbConnection: dbConnections.get(connectionId),
           mode: "BUSINESS",
           isDistributed: false,
         });
@@ -443,10 +443,22 @@ export class TransactionNode {
           connection = await pool.connect();
           await connection.query("BEGIN");
           break;
+
         case "mysql":
           connection = await pool.getConnection();
           await connection.beginTransaction();
           break;
+
+        case "mssql":
+          connection = await pool.request().query("BEGIN TRANSACTION");
+          connection = pool; // MSSQL은 풀에서 request 사용, connection 그대로 사용
+          break;
+
+        case "oracle":
+          connection = await pool.getConnection();
+          await connection.execute("BEGIN");
+          break;
+
         default:
           throw new Error(`Unsupported DBType: ${dbType}`);
       }
@@ -465,8 +477,22 @@ export class TransactionNode {
     for (const ctx of this.txContexts.values()) {
       const tx = ctx.dbConnection;
       if (!tx) continue;
-      if (ctx.dbType === "postgres") await tx.query("COMMIT");
-      else if (ctx.dbType === "mysql") await tx.commit();
+
+      switch (ctx.dbType) {
+        case "postgres":
+          await tx.query("COMMIT");
+          break;
+        case "mysql":
+          await tx.commit();
+          break;
+        case "mssql":
+          await tx.request().query("COMMIT TRANSACTION");
+          break;
+        case "oracle":
+          await tx.execute("COMMIT");
+          break;
+      }
+
       tx.release?.();
     }
   }
@@ -475,8 +501,22 @@ export class TransactionNode {
     for (const ctx of this.txContexts.values()) {
       const tx = ctx.dbConnection;
       if (!tx) continue;
-      if (ctx.dbType === "postgres") await tx.query("ROLLBACK");
-      else if (ctx.dbType === "mysql") await tx.rollback();
+
+      switch (ctx.dbType) {
+        case "postgres":
+          await tx.query("ROLLBACK");
+          break;
+        case "mysql":
+          await tx.rollback();
+          break;
+        case "mssql":
+          await tx.request().query("ROLLBACK TRANSACTION");
+          break;
+        case "oracle":
+          await tx.execute("ROLLBACK");
+          break;
+      }
+
       tx.release?.();
     }
   }
@@ -495,7 +535,7 @@ export function initializeWorkflowEngine() {
 // ---------------------------
 export async function executeWorkflow(
   workflow: any,
-  txInstances: Map<string, TransactionContext> = new Map()
+  txContext: Map<string, TransactionContext> = new Map()
 ) {
   const nodesList = workflow.nodes;
   const edgesList = workflow.edges;
@@ -509,20 +549,17 @@ export async function executeWorkflow(
 
   const visitedNodes = new Set<string>();
 
-  async function traverse(nodeId: string) {
+  async function traverse(
+    nodeId: string,
+    txContext: Map<string, TransactionContext> = new Map()
+  ) {
     if (visitedNodes.has(nodeId)) return;
     visitedNodes.add(nodeId);
 
     const node = nodesList.find((n: any) => n.id === nodeId);
     if (!node) return;
 
-    const txContext = node.data.connectionId
-      ? txInstances.get(node.data.connectionId)
-      : undefined;
-
-    const dbConnection = txContext?.dbConnection;
-
-    await runWorkflowStep(node, workflow, dbConnection);
+    await runWorkflowStep(node, workflow, txContext);
 
     for (const edge of edgeMap[nodeId] || []) {
       if (!edge.data?.condition || Boolean(edge.data.condition)) {
@@ -536,7 +573,7 @@ export async function executeWorkflow(
   );
   if (!startNode) throw new Error("Start node not found");
 
-  await traverse(startNode.id);
+  await traverse(startNode.id, txContext);
 }
 
 // ---------------------------
@@ -545,12 +582,12 @@ export async function executeWorkflow(
 export async function runWorkflowStep(
   node: Node<any>,
   workflowData: any,
-  txInstance: TransactionContext | undefined
+  txContext: Map<string, TransactionContext> = new Map()
 ) {
   const action = getAction(node.data.actionName);
   if (!action) throw new Error(`Unknown action: ${node.data.actionName}`);
 
-  await action(node, workflowData, txInstance ?? undefined);
+  await action(node, workflowData, txContext ?? undefined);
 }
 
 export async function saveWorkflow(
