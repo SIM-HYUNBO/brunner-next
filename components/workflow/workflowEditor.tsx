@@ -323,7 +323,6 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
 
   const executeWorkflowFromTableEditor = async () => {
     try {
-      initWorkflow();
       const jRequest = {
         commandName: constants.commands.WORKFLOW_EXECUTE_WORKFLOW,
         systemCode: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE,

@@ -3,7 +3,10 @@
 import * as constants from "@/components/core/constants";
 import * as database from "../database/database";
 import * as dynamicSql from "../dynamicSql";
-import { getAction } from "@/components/workflow/actionRegistry";
+import {
+  registerBuiltInActions,
+  getAction,
+} from "@/components/workflow/actionRegistry";
 import { DBConnectionManager } from "./dbConnectionManager";
 import type { Node } from "reactflow";
 import type { DBType } from "./dbConnectionManager";
@@ -123,6 +126,10 @@ export class TransactionNode {
   }
 }
 
+export function initializeWorkflowEngine() {
+  registerBuiltInActions(); // 여기서 actionMap을 채움
+}
+
 // ---------------------------
 // 4️⃣ 워크플로우 실행
 // ---------------------------
@@ -162,7 +169,9 @@ export async function executeWorkflow(
     }
   }
 
-  const startNode = nodesList.find((n: any) => n.data.actionName === "START");
+  const startNode = nodesList.find(
+    (n: any) => n.data.actionName === constants.workflowActions.START
+  );
   if (!startNode) throw new Error("Start node not found");
 
   await traverse(startNode.id);
@@ -297,3 +306,30 @@ export async function getWorkflowList(systemCode: string, userId: string) {
     };
   }
 }
+
+export async function getWorkflowById(systemCode: string, workflowId: string) {
+  try {
+    // 1️⃣ SQL 조회
+    const sql = await dynamicSql.getSQL00("select_TB_COR_WORKFLOW_MST", 1);
+    const result: any = await database.executeSQL(sql, [
+      systemCode,
+      workflowId,
+    ]);
+
+    // 2️⃣ 조회 결과 확인
+    if (!result || result.rowCount === 0) {
+      return {
+        error_code: -1,
+        error_message: "워크플로우를 찾을 수 없습니다.",
+        workflowData: null,
+      };
+    }
+
+    // 3️⃣ 워크플로우 데이터 반환
+    return result.rows[0].workflow_data;
+  } catch (err: any) {
+    return null;
+  }
+}
+
+await initializeWorkflowEngine();
