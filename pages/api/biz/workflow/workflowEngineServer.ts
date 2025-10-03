@@ -418,8 +418,8 @@ export class TransactionNode {
 
     // workflow.connections가 있으면 그대로 사용, 없으면 DBManager에 등록된 전체 연결 사용
     const connections: Record<string, DBType> =
-      workflow.connections && Object.keys(workflow.connections).length
-        ? workflow.connections
+      workflow.dbConnections && Object.keys(workflow.dbConnections).length > 0
+        ? workflow.dbConnections
         : Object.fromEntries(
             dbManager.list().map((conn) => [conn.id, conn.type])
           );
