@@ -178,21 +178,45 @@ export function registerBuiltInActions(): void {
   registerAction(
     constants.workflowActions.SCRIPT,
     async (node: any, workflowData: any, txContext) => {
-      const userScript: string =
-        node.data?.script ||
-        `
-      const body = {
-        title: "sim",
-        body: "hyunbo",
-        age: 40
-      }
+      const userScript = node.data.script || "";
 
-      const response = await api.postJson(
-        "https://jsonplaceholder.typicode.com/posts",
-        body
-      );
-      api.setVar("data.run.output", response);
-      `;
+      // const userScript: string =
+      //   node.data?.script ||
+      //   `
+      //   // POST 요청 예제
+
+      //   const body = {
+      //     title: "sim",
+      //     body: "hyunbo",
+      //     age: 40
+      //   }
+
+      //   const response = await api.postJson(
+      //     "https://jsonplaceholder.typicode.com/posts",
+      //     body
+      //   );
+      //   api.setVar("data.run.output", response);
+      //   `;
+
+      // const userScript = `
+      //   // SQL 실행 예제
+      //   // node.data.run.inputs에서 connectionId, query, params를 가져와서 사용
+
+      //   const connectionId = "my_postgres_conn"; // DB 연결 ID
+      //   const query = "SELECT * FROM users WHERE age > @param1";
+      //   const params = [30]; // 파라미터
+
+      //   try {
+      //     const result = await api.sql(connectionId, query, params);
+      //     api.log("SQL 결과:", result);
+
+      //     // 노드 변수에 결과 저장
+      //     api.setVar("data.run.output", result);
+      //   } catch (err) {
+      //     api.log("SQL 실행 오류:", err.message);
+      //     api.setVar("data.run.output", err);
+      //   }
+      // `;
 
       const timeoutMs: number = node.data?.timeoutMs || 5000;
 
@@ -613,7 +637,7 @@ export async function executeWorkflow(
 
     for (const edge of edgeMap[nodeId] || []) {
       if (!edge.data?.condition || Boolean(edge.data.condition)) {
-        await traverse(edge.target);
+        await traverse(edge.target, txContext);
       }
     }
   }
