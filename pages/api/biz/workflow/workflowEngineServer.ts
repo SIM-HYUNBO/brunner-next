@@ -6,7 +6,7 @@ import * as dynamicSql from "../dynamicSql";
 import type { Connection, Edge, Node, NodeChange, EdgeChange } from "reactflow";
 import * as commonData from "@/components/core/commonData";
 import { DBConnectionManager } from "@/pages/api/biz/workflow/dbConnectionManager";
-import type { DBType } from "./dbConnectionManager";
+import type { DBConnectionConfig, DBType } from "./dbConnectionManager";
 
 import type { PoolClient } from "pg";
 import type { PoolConnection } from "mysql2/promise";
@@ -199,23 +199,25 @@ export function registerBuiltInActions(): void {
       //   `;
 
       // const userScript = `
-      //   // SQL 실행 예제
-      //   // node.data.run.inputs에서 connectionId, query, params를 가져와서 사용
+      // SQL 실행 예제
+      // node.data.run.inputs에서 connectionId, query, params를 가져와서 사용
 
-      //   const connectionId = "my_postgres_conn"; // DB 연결 ID
-      //   const query = "SELECT * FROM users WHERE age > @param1";
-      //   const params = [30]; // 파라미터
+      // const databaseId = "brunner"; // DB 연결 ID
+      // const query = `
+      // SELECT *
+      //   FROM brunner.tb_cor_user_mst
+      //  WHERE user_id = $1`;
+      // const params = ['fredric']; // 파라미터
 
-      //   try {
-      //     const result = await api.sql(connectionId, query, params);
-      //     api.log("SQL 결과:", result);
-
-      //     // 노드 변수에 결과 저장
-      //     api.setVar("data.run.output", result);
-      //   } catch (err) {
-      //     api.log("SQL 실행 오류:", err.message);
-      //     api.setVar("data.run.output", err);
-      //   }
+      // try {
+      //   const result = await api.sql(databaseId, query, params);
+      //   api.log("SQL 결과:", result);
+      //   return result; // 노드 실행 결과 리턴한 값은 node.data.run.output에 자동 저장됨
+      // } catch (err) {
+      //   api.log("SQL 실행 오류:", err.message);
+      //   api.setVar("data.run.output", err);
+      //   return err; // 노드 실행 결과 리턴한 값은 node.data.run.output에 자동 저장됨
+      // }
       // `;
 
       const timeoutMs: number = node.data?.timeoutMs || 5000;
@@ -268,11 +270,28 @@ export function registerBuiltInActions(): void {
           return await res.json();
         },
         sql: async (connectionId: string, query: string, params?: any[]) => {
-          const tx = txContext.get(connectionId)?.dbConnection;
+          let txContextEntry = getTxContextEntry(txContext, connectionId);
+
+          if (!txContextEntry) {
+            // UUID 형식 체크
+            const isUUID =
+              /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(
+                connectionId
+              );
+
+            if (!isUUID) {
+              // 이름으로 조회
+              txContextEntry = Array.from(txContext.values()).find(
+                (ctx) => ctx.connectionName === connectionId
+              );
+            }
+          }
+
+          const tx = txContextEntry?.dbConnection;
           if (!tx)
             throw new Error(`DB 연결을 찾을 수 없습니다: ${connectionId}`);
 
-          const dbType = txContext.get(connectionId)?.dbType;
+          const dbType = txContextEntry?.dbType;
 
           switch (dbType) {
             case "mysql":
@@ -312,6 +331,31 @@ export function registerBuiltInActions(): void {
         },
       };
 
+      function getTxContextEntry(
+        txContext: Map<string, TransactionContext>,
+        connectionIdOrName: string
+      ): TransactionContext | undefined {
+        // UUID 형식 체크
+        const uuidRegex =
+          /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+        const isId = uuidRegex.test(connectionIdOrName);
+
+        // 1️⃣ id 기준 조회
+        if (isId && txContext.has(connectionIdOrName)) {
+          return txContext.get(connectionIdOrName);
+        }
+
+        // 2️⃣ id로 못 찾으면 이름 기준 조회
+        for (const ctx of txContext.values()) {
+          if (ctx.connectionName === connectionIdOrName) {
+            return ctx;
+          }
+        }
+
+        // 3️⃣ 못 찾으면 undefined
+        return undefined;
+      }
+
       const AsyncFunction = Object.getPrototypeOf(async function () {})
         .constructor as any;
       const fn = new AsyncFunction(
@@ -331,7 +375,7 @@ export function registerBuiltInActions(): void {
 
         logs.forEach((line: string) => console.log("[SCRIPT]", line));
 
-        workflowData.data.run.outputs = [result];
+        node.data.run.outputs = result;
         postNodeCheck(node, workflowData);
       } catch (err: any) {
         console.error("[SCRIPT ERROR]", err.message);
@@ -445,6 +489,7 @@ type DBConnection =
 // ---------------------------
 export class TransactionContext {
   connectionId: string;
+  connectionName: string;
   dbType: DBType;
   dbConnection: DBConnection;
   mode: "SYSTEM" | "BUSINESS";
@@ -452,10 +497,12 @@ export class TransactionContext {
 
   constructor(
     connectionId: string,
+    connectionName: string,
     dbType: DBType,
     mode: "SYSTEM" | "BUSINESS"
   ) {
     this.connectionId = connectionId;
+    this.connectionName = connectionName;
     this.dbType = dbType;
     this.mode = mode;
   }
@@ -490,27 +537,51 @@ export class TransactionNode {
   async start(workflow: any, dbConnections?: Map<string, any>) {
     const dbManager = DBConnectionManager.getInstance();
 
-    const connections: Record<string, DBType> =
+    // ① workflow.dbConnections 있으면 사용, 없으면 dbManager.list()에서 풀 정보 가져오기
+    const connections: Record<
+      string,
+      { dbType: DBType; connectionName: string }
+    > =
       workflow.dbConnections && Object.keys(workflow.dbConnections).length > 0
-        ? workflow.dbConnections
+        ? Object.fromEntries(
+            Object.entries(workflow.dbConnections).map(([id, type]) => [
+              id,
+              { dbType: type as DBType, connectionName: "" }, // 타입 단언
+            ])
+          )
         : Object.fromEntries(
-            dbManager.list().map((conn) => [conn.id, conn.type])
+            dbManager.list().map((conn) => [
+              conn.id,
+              { dbType: conn.type as DBType, connectionName: conn.name }, // 타입 단언
+            ])
           );
 
-    for (const [connectionId, dbType] of Object.entries(connections)) {
+    for (const [connectionId, info] of Object.entries(connections)) {
+      const dbType = info.dbType;
+      let connectionName = info.connectionName || "";
+      let connection;
+
+      // ② 이미 주어진 connectionId가 있으면 사용
       if (dbConnections?.has(connectionId)) {
+        connection = dbConnections.get(connectionId);
+
+        // pools에서 name 가져오기
+        const poolInfo = dbManager.list().find((c) => c.id === connectionId);
+        if (poolInfo) connectionName = poolInfo.name;
+
         this.txContexts.set(connectionId, {
           connectionId,
-          dbType: dbType as DBType,
-          dbConnection: dbConnections.get(connectionId),
+          connectionName,
+          dbType,
+          dbConnection: connection,
           mode: "BUSINESS",
           isDistributed: false,
         });
         continue;
       }
 
+      // ③ 새 연결 생성
       const pool = dbManager.getPool(connectionId);
-      let connection;
 
       switch (dbType) {
         case "postgres":
@@ -524,8 +595,8 @@ export class TransactionNode {
           break;
 
         case "mssql":
-          connection = await pool.request().query("BEGIN TRANSACTION");
-          connection = pool; // MSSQL은 풀에서 request 사용, connection 그대로 사용
+          connection = pool; // MSSQL은 풀 그대로 사용
+          await connection.request().query("BEGIN TRANSACTION");
           break;
 
         case "oracle":
@@ -537,8 +608,13 @@ export class TransactionNode {
           throw new Error(`Unsupported DBType: ${dbType}`);
       }
 
+      // pools에서 name 가져오기
+      const poolInfo = dbManager.list().find((c) => c.id === connectionId);
+      if (poolInfo) connectionName = poolInfo.name;
+
       this.txContexts.set(connectionId, {
         connectionId,
+        connectionName,
         dbType,
         dbConnection: connection,
         mode: "BUSINESS",

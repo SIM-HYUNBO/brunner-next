@@ -26,6 +26,7 @@ export interface DBConnectionConfig {
 }
 
 export interface DBConnectionPool {
+  name: string;
   type: DBType;
   pool: any;
 }
@@ -71,7 +72,7 @@ export class DBConnectionManager {
     } else {
       const pool = await this.createPool(config);
       this.dbConnectionConfig.set(config.id, config);
-      this.pools.set(config.id, { type: config.type, pool });
+      this.pools.set(config.id, { name: config.name, type: config.type, pool });
 
       console.log(`onlyload =${onlyLoad}`);
       if (!onlyLoad) {
@@ -106,7 +107,11 @@ export class DBConnectionManager {
 
       // 새 풀 생성
       const newPool = await this.createPool(config);
-      this.pools.set(config.id, { type: config.type, pool: newPool });
+      this.pools.set(config.id, {
+        name: config.name,
+        type: config.type,
+        pool: newPool,
+      });
     }
 
     // connections Map 업데이트 (부분 필드 업데이트 가능)
@@ -237,7 +242,7 @@ export class DBConnectionManager {
           await conn.close();
           break;
       }
-      await this.closePool({ type: config.type, pool });
+      await this.closePool({ name: config.name, type: config.type, pool });
       return true;
     } catch (err) {
       console.error(`DB connection test failed:`, err);
@@ -372,8 +377,42 @@ export class DBConnectionManager {
     }
     return result;
   }
-  async get(id: string) {
-    return this.dbConnectionConfig.get(id)!;
+
+  async get(idOrName: string) {
+    // UUID 형식 판별 (v1~v5)
+    const isUUID =
+      /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(
+        idOrName
+      );
+
+    let config = null;
+
+    if (isUUID) {
+      // ID로 먼저 조회
+      config = this.dbConnectionConfig.get(idOrName) ?? null;
+
+      // ID로 못 찾으면 이름으로 재검색
+      if (!config) {
+        config =
+          Array.from(this.dbConnectionConfig.values()).find(
+            (c) => c.name === idOrName
+          ) ?? null;
+      }
+    } else {
+      // UUID가 아니면 이름으로 검색
+      config =
+        Array.from(this.dbConnectionConfig.values()).find(
+          (c) => c.name === idOrName
+        ) ?? null;
+    }
+
+    if (!config) return null;
+
+    // ✅ 실제 연결 풀에서 가져오기
+    const pool = this.getPool(config.id);
+    if (!pool) return null;
+
+    return pool; // 실제 DB 연결 풀 반환
   }
 
   public getPool(id: string): any {
