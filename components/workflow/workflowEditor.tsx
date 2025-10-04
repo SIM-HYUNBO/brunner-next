@@ -62,6 +62,7 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
         },
         run: { inputs: [], outputs: [] },
         script: "",
+        timeoutMs: 5000,
       },
     },
     {
@@ -82,6 +83,7 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
         },
         run: { inputs: [], outputs: [] },
         script: "",
+        timeoutMs: 5000,
       },
     },
   ],
@@ -138,6 +140,7 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
     useState(false);
   const [dbModalOpen, setDbModalOpen] = useState(false);
   const [selectedNodeScript, setSelectedNodeScript] = useState<string>("");
+  const [selectedNodeTimeoutMs, setSelectedNodeTimeoutMs] = useState(5000);
 
   useEffect(() => {
     setWorkflowId(uuidv4());
@@ -148,13 +151,16 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
   useEffect(() => {
     if (!selectedNode) {
       setSelectedNodeScript("");
+      setSelectedNodeTimeoutMs(5000);
       return;
     }
 
     if (selectedNode.data.actionName === constants.workflowActions.SCRIPT) {
       setSelectedNodeScript(selectedNode.data.script ?? "");
+      setSelectedNodeTimeoutMs(selectedNode.data.timeoutMs ?? 5000);
     } else {
       setSelectedNodeScript(""); // 스크립트 노드가 아니면 초기화
+      setSelectedNodeTimeoutMs(selectedNode.data.timeoutMs ?? 5000);
     }
   }, [selectedNode]);
 
@@ -246,6 +252,7 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
           },
           run: { inputs: [], outputs: [] },
           script: "",
+          timeoutMs: 0,
         },
       } as Node<ActionNodeData>,
     ]);
@@ -447,6 +454,7 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
               node={selectedNode}
               nodes={nodes}
               script={selectedNodeScript} // 여기 전달
+              timeoutMs={selectedNodeTimeoutMs}
               onWorkflowUpdate={({ workflowName, workflowDescription }) => {
                 if (workflowName !== undefined) setWorkflowName(workflowName);
                 if (workflowDescription !== undefined)

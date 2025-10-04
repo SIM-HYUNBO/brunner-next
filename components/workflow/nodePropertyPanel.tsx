@@ -16,6 +16,7 @@ interface NodePropertyPanelProps {
   node: Node<any> | null;
   nodes: Node<any>[];
   script: string;
+  timeoutMs: number | 5000;
   workflowId: string | null;
   workflowName: string;
   workflowDescription: string;
@@ -31,6 +32,7 @@ export const NodePropertyPanel: React.FC<NodePropertyPanelProps> = ({
   node,
   nodes,
   script,
+  timeoutMs,
   workflowId,
   workflowName,
   workflowDescription,
@@ -52,7 +54,7 @@ export const NodePropertyPanel: React.FC<NodePropertyPanelProps> = ({
   const [isOutputModalOpen, setIsOutputModalOpen] = useState(false);
   const [isScriptModalOpen, setIsScriptModalOpen] = useState(false);
   const [localScript, setLocalScript] = useState("");
-  const [timeoutMs, setTimeoutMs] = useState(5000);
+  const [localTimeoutMs, setLocalTimeoutMs] = useState(5000);
 
   const prevActionName = useRef<string>("");
   const { BrunnerMessageBox, openModal } = useModal();
@@ -63,8 +65,12 @@ export const NodePropertyPanel: React.FC<NodePropertyPanelProps> = ({
   }, [workflowName, workflowDescription]);
 
   useEffect(() => {
-    setLocalScript(script); // prop 변경 시 동기화
+    setLocalScript(localScript); // prop 변경 시 동기화
   }, [script]);
+
+  useEffect(() => {
+    setLocalTimeoutMs(localTimeoutMs); // prop 변경 시 동기화
+  }, [timeoutMs]);
 
   // 🧠 노드 변경 시 입력/출력 초기화
   useEffect(() => {
@@ -194,7 +200,7 @@ api.postJson: async (url, body) => http post request.
             <label>Script Preview:</label>
             <textarea
               readOnly
-              value={script}
+              value={localScript}
               rows={5}
               className="w-full border p-2 font-mono bg-gray-100"
             />
@@ -209,7 +215,7 @@ api.postJson: async (url, body) => http post request.
               <input
                 type="number"
                 className="border px-2 py-1 w-[100px]"
-                value={timeoutMs}
+                value={localTimeoutMs}
                 readOnly
               />
             </div>
@@ -218,11 +224,11 @@ api.postJson: async (url, body) => http post request.
         {isScriptModalOpen && (
           <ScriptEditorModal
             open={isScriptModalOpen}
-            script={script}
-            timeoutMs={timeoutMs}
+            script={localScript}
+            timeoutMs={localTimeoutMs}
             onConfirm={(newScript, newTimeout) => {
               setLocalScript(newScript);
-              setTimeoutMs(newTimeout);
+              setLocalTimeoutMs(newTimeout);
               onNodeUpdate?.(node.id, {
                 script: newScript,
                 timeoutMs: newTimeout,

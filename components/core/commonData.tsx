@@ -26,6 +26,7 @@ export interface ActionNodeData {
     outputs: NodeDataTable[];
   };
   script: string;
+  timeoutMs: number;
 }
 
 export interface ConditionEdgeData {
