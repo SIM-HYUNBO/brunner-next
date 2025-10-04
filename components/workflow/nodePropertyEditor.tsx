@@ -137,7 +137,7 @@ export const NodePropertyEditor: React.FC<NodePropertyEditorProps> = ({
   }
 
   return (
-    <div style={{ padding: 10 }}>
+    <div>
       <h3>Node Editor</h3>
       <div>ID: {node.id}</div>
       <div>Label: {node.data.label}</div>
@@ -159,21 +159,21 @@ export const NodePropertyEditor: React.FC<NodePropertyEditorProps> = ({
       </div>
 
       {/* Inputs/Outputs 버튼 */}
-      <div className="flex flex-row justify-between mt-2">
+      <div className="flex flex-row mt-2 space-x-1">
         <button
-          className="px-3 py-1 semi-text-bg-color rounded border"
+          className="px-1 py-1 semi-text-bg-color rounded border"
           onClick={() => setIsInputModalOpen(true)}
         >
           Node Inputs
         </button>
         <button
-          className="px-3 py-1 semi-text-bg-color rounded border"
+          className="px-1 py-1 semi-text-bg-color rounded border"
           onClick={() => setIsOutputModalOpen(true)}
         >
           Node Outputs
         </button>
         <button
-          className="px-3 py-1 semi-text-bg-color rounded border"
+          className="py-1 semi-text-bg-color rounded border"
           onClick={() => {
             const newInputs =
               prevActionName.current !== actionName

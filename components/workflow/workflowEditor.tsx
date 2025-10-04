@@ -434,21 +434,62 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
             onOpenChange={setDbModalOpen}
           />
 
-          <div className="flex flex-col justify-top h-full">
+          <div className="flex flex-col justify-top h-full ml-1">
             <h3>Editor</h3>
+            <WorkflowSelector
+              onSelect={(wfSelected: any) => {
+                setCurrentWorkflow(wfSelected.workflow_data);
+              }}
+            />
             <button
               onClick={() => setDbModalOpen(true)}
-              className="px-3 py-1 rounded semi-text-bg-color"
+              className="ml-1 px-1 py-1 rounded semi-text-bg-color"
             >
               DB 연결 관리
             </button>
-            <button className="w-full border" onClick={addNode}>
-              Add Node
-            </button>
-            <button className="w-full border" onClick={exportWorkflow}>
-              Export JSON
-            </button>
+            <div className="flex flex-row ml-1 mt-2">
+              <button
+                className="w-full border semi-text-bg-color"
+                onClick={addNode}
+              >
+                Add Node
+              </button>
+              <button
+                className="w-full border ml-1 semi-text-bg-color"
+                onClick={exportWorkflow}
+              >
+                Export JSON
+              </button>
+            </div>
+            <div className="flex flex-row ml-1 mt-1 space-x-1">
+              <button
+                className="w-full semi-text-bg-color border"
+                onClick={executeWorkflowFromTableEditor}
+              >
+                Run
+              </button>
+              <button
+                className="w-full semi-text-bg-color border"
+                onClick={executeWorkflowStepByStep}
+              >
+                Run By Node
+              </button>
+            </div>
 
+            <div className="flex flex-row ml-1 mt-1 space-x-1">
+              <button
+                className="w-full semi-text-bg-color border"
+                onClick={saveWorkflow}
+              >
+                Save
+              </button>
+              <button
+                className="w-full semi-text-bg-color border text-red-700"
+                onClick={deleteWorkflow}
+              >
+                Delete
+              </button>
+            </div>
             <NodePropertyPanel
               workflowId={workflowId}
               workflowName={workflowName}
@@ -505,42 +546,6 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
                 });
               }}
             />
-
-            <div className="flex flex-row ml-1 space-x-1">
-              <button
-                className="w-full semi-text-bg-color border"
-                onClick={executeWorkflowFromTableEditor}
-              >
-                Run
-              </button>
-              <button
-                className="w-full semi-text-bg-color border"
-                onClick={executeWorkflowStepByStep}
-              >
-                Run By Node
-              </button>
-            </div>
-
-            <WorkflowSelector
-              onSelect={(wfSelected: any) => {
-                setCurrentWorkflow(wfSelected.workflow_data);
-              }}
-            />
-
-            <div className="flex flex-row ml-1 mt-1 space-x-1">
-              <button
-                className="w-full semi-text-bg-color border"
-                onClick={saveWorkflow}
-              >
-                Save
-              </button>
-              <button
-                className="w-full semi-text-bg-color border text-red-700"
-                onClick={deleteWorkflow}
-              >
-                Delete
-              </button>
-            </div>
           </div>
         </div>
 

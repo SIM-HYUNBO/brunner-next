@@ -177,26 +177,51 @@ api.postJson: async (url, body) => http post request.
   return (
     <div style={{ padding: 10 }}>
       <BrunnerMessageBox />
-      <h3>Node Editor</h3>
-      <div>ID: {node.id}</div>
-      <div>Label: {node.data.label}</div>
-      <div>Status: {node.data.status}</div>
+      <div className="">
+        {/* Node Property Editor */}
+        {node && (
+          <div>
+            <NodePropertyEditor
+              node={node}
+              nodes={nodes}
+              workflowId={workflowId}
+              workflowName={workflowName}
+              workflowDescription={workflowDescription}
+              onNodeUpdate={(id, updates) => {
+                onNodeUpdate?.(id, updates);
+              }}
+            />
+          </div>
+        )}
+        {/* Apply */}
+        <button
+          className="px-1 py-1 mt-2 semi-text-bg-color rounded border"
+          onClick={() => {
+            const newInputs =
+              prevActionName.current !== actionName
+                ? commmonFunctions.getDefaultInputs(actionName)
+                : inputs;
+            const newOutputs =
+              prevActionName.current !== actionName
+                ? commmonFunctions.getDefaultOutputs(actionName)
+                : outputs;
 
-      <div className="mt-2">
-        <label>Action Name:</label>
-        <select
-          className="w-full border px-2 py-1 mt-1"
-          value={actionName}
-          onChange={(e) => setActionName(e.target.value)}
+            prevActionName.current = actionName;
+            setInputs(newInputs);
+            setOutputs(newOutputs);
+
+            // ✅ 부모로 안전하게 업데이트 전달
+            onNodeUpdate?.(node.id, {
+              actionName,
+              design: { inputs: newInputs, outputs: newOutputs },
+            });
+          }}
         >
-          {Object.values(constants.workflowActions).map((a) => (
-            <option key={a} value={a}>
-              {a}
-            </option>
-          ))}
-        </select>
+          Apply Node
+        </button>
         {node && node.data.actionName === constants.workflowActions.SCRIPT && (
-          <div className="flex flex-col mt-2">
+          <div className="flex flex-col mt-5">
+            <h3>Script Node Editor</h3>
             <label>Script Preview:</label>
             <textarea
               readOnly
@@ -239,63 +264,6 @@ api.postJson: async (url, body) => http post request.
             onHelp={() => showHelp()}
           />
         )}
-        <div className="flex flex-row justify-between mt-2">
-          {/* Input Data */}
-          <button
-            className="px-3 py-1 semi-text-bg-color rounded border"
-            onClick={() => setIsInputModalOpen(true)}
-          >
-            Node Inputs
-          </button>
-          {/* Output Data */}
-          <button
-            className="px-3 py-1 semi-text-bg-color rounded border"
-            onClick={() => setIsOutputModalOpen(true)}
-          >
-            Node Outputs
-          </button>
-        </div>
-        {/* Node Property Editor */}
-        {node && (
-          <div className="mt-4">
-            <NodePropertyEditor
-              node={node}
-              nodes={nodes}
-              workflowId={workflowId}
-              workflowName={workflowName}
-              workflowDescription={workflowDescription}
-              onNodeUpdate={(id, updates) => {
-                onNodeUpdate?.(id, updates);
-              }}
-            />
-          </div>
-        )}
-        {/* Apply */}
-        <button
-          className="px-3 py-1 semi-text-bg-color rounded border"
-          onClick={() => {
-            const newInputs =
-              prevActionName.current !== actionName
-                ? commmonFunctions.getDefaultInputs(actionName)
-                : inputs;
-            const newOutputs =
-              prevActionName.current !== actionName
-                ? commmonFunctions.getDefaultOutputs(actionName)
-                : outputs;
-
-            prevActionName.current = actionName;
-            setInputs(newInputs);
-            setOutputs(newOutputs);
-
-            // ✅ 부모로 안전하게 업데이트 전달
-            onNodeUpdate?.(node.id, {
-              actionName,
-              design: { inputs: newInputs, outputs: newOutputs },
-            });
-          }}
-        >
-          Apply
-        </button>
       </div>
 
       {/* ✅ Input Modal */}

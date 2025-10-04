@@ -25,13 +25,13 @@ export default function WorkflowSelector({ onSelect }: WorkflowSelectorProps) {
   };
 
   return (
-    <div className="p-6">
+    <div className="px-2">
       {/* 모달 열기 버튼 */}
       <button
         onClick={() => setModalOpen(true)}
-        className="px-4 py-2 rounded-md bg-blue-600 text-white hover:bg-blue-700"
+        className="rounded-md semi-text-bg-color"
       >
-        워크플로우 선택
+        Select ...
       </button>
 
       {/* 선택된 워크플로우 표시 */}

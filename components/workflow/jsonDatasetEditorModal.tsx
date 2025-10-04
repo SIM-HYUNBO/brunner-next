@@ -65,7 +65,9 @@ export const JsonDatasetEditorModal: React.FC<JsonDatasetEditorModalProps> = ({
   onConfirm,
   onCancel,
 }) => {
-  const [internalData, setInternalData] = useState<Record<string, JsonObject[]>>({});
+  const [internalData, setInternalData] = useState<
+    Record<string, JsonObject[]>
+  >({});
   const [selectedTable, setSelectedTable] = useState<string | null>(null);
   const [manager, setManager] = useState(() => new JsonDatasetManager({}));
 
@@ -86,7 +88,10 @@ export const JsonDatasetEditorModal: React.FC<JsonDatasetEditorModalProps> = ({
 
   const onDrag = (e: MouseEvent) => {
     if (!dragging) return;
-    setPos({ x: e.clientX - dragStart.current.x, y: e.clientY - dragStart.current.y });
+    setPos({
+      x: e.clientX - dragStart.current.x,
+      y: e.clientY - dragStart.current.y,
+    });
   };
 
   const stopDrag = () => setDragging(false);
@@ -128,9 +133,12 @@ export const JsonDatasetEditorModal: React.FC<JsonDatasetEditorModalProps> = ({
   /* ---------------- 유틸 함수 ---------------- */
   const getDefaultValue = (type: JsonColumnType) => {
     switch (type) {
-      case "string": return "";
-      case "number": return 0;
-      case "boolean": return false;
+      case "string":
+        return "";
+      case "number":
+        return 0;
+      case "boolean":
+        return false;
     }
   };
 
@@ -171,7 +179,7 @@ export const JsonDatasetEditorModal: React.FC<JsonDatasetEditorModalProps> = ({
   const addColumn = () => {
     if (!selectedTable || !isSchemaMode) return;
     const name = prompt("컬럼 이름:");
-    if(!name) return;
+    if (!name) return;
     const type = (prompt("타입 선택 (string, number, boolean):", "string") ??
       "string") as JsonColumnType;
 
@@ -200,7 +208,9 @@ export const JsonDatasetEditorModal: React.FC<JsonDatasetEditorModalProps> = ({
     if (!selectedTable || !isDataMode) return;
     const cols = manager.getColumns(selectedTable) ?? [];
     const newRow: JsonObject = {};
-    cols.forEach((c) => (newRow[c.name] = getDefaultValue(c.type as JsonColumnType)));
+    cols.forEach(
+      (c) => (newRow[c.name] = getDefaultValue(c.type as JsonColumnType))
+    );
     manager.addRow(selectedTable, newRow);
     setInternalData({ ...manager.getData() });
   };
@@ -225,7 +235,10 @@ export const JsonDatasetEditorModal: React.FC<JsonDatasetEditorModalProps> = ({
   const columns = selectedTable ? manager.getColumns(selectedTable) ?? [] : [];
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 z-50" onClick={onCancel}>
+    <div
+      className="fixed inset-0 bg-black bg-opacity-50 z-50"
+      onClick={onCancel}
+    >
       <div
         ref={modalRef}
         className="bg-white p-4 w-[800px] max-h-[600px] overflow-auto absolute shadow-lg"
@@ -233,8 +246,13 @@ export const JsonDatasetEditorModal: React.FC<JsonDatasetEditorModalProps> = ({
         onClick={(e) => e.stopPropagation()}
       >
         {/* 헤더 */}
-        <div className="flex justify-between mb-2 cursor-move" onMouseDown={startDrag}>
-          <h3>JSON Dataset Editor ({mode === "schema" ? "Schema" : "Data"} Mode)</h3>
+        <div
+          className="flex justify-between mb-2 cursor-move"
+          onMouseDown={startDrag}
+        >
+          <h3>
+            JSON Dataset Editor ({mode === "schema" ? "Schema" : "Data"} Mode)
+          </h3>
         </div>
 
         {/* 테이블 선택 */}
@@ -253,7 +271,10 @@ export const JsonDatasetEditorModal: React.FC<JsonDatasetEditorModalProps> = ({
           ))}
           {isSchemaMode && (
             <>
-              <button onClick={addTable} className="px-2 py-1 border bg-green-200 h-8">
+              <button
+                onClick={addTable}
+                className="px-2 py-1 border bg-green-200 h-8"
+              >
                 + Table
               </button>
               {selectedTable && (
@@ -276,7 +297,10 @@ export const JsonDatasetEditorModal: React.FC<JsonDatasetEditorModalProps> = ({
                 <thead>
                   <tr>
                     {columns.map((col) => (
-                      <th key={col.name} className="border px-2 py-1 bg-gray-300">
+                      <th
+                        key={col.name}
+                        className="border px-2 py-1 bg-gray-300"
+                      >
                         {col.name} ({col.type})
                         <button
                           onClick={() => removeColumn(col.name)}
@@ -309,7 +333,10 @@ export const JsonDatasetEditorModal: React.FC<JsonDatasetEditorModalProps> = ({
                 <thead>
                   <tr>
                     {columns.map((col) => (
-                      <th key={col.name} className="border px-2 py-1 bg-gray-300">
+                      <th
+                        key={col.name}
+                        className="border px-2 py-1 bg-gray-300"
+                      >
                         {col.name} ({col.type})
                       </th>
                     ))}
