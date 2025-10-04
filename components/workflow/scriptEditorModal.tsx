@@ -1,6 +1,8 @@
 import React, { useState, useRef, useEffect } from "react";
-import CodeMirror, { oneDark, oneDarkTheme } from "@uiw/react-codemirror";
+import CodeMirror from "@uiw/react-codemirror";
 import { javascript } from "@codemirror/lang-javascript";
+import { oneDark } from "@codemirror/theme-one-dark";
+
 interface ScriptEditorModalProps {
   open: boolean;
   scriptContents: string;
@@ -23,22 +25,35 @@ export const ScriptEditorModal: React.FC<ScriptEditorModalProps> = ({
 
   const [width, setWidth] = useState(800);
   const [height, setHeight] = useState(500);
-  const resizerRef = useRef<HTMLDivElement | null>(null);
+  const [position, setPosition] = useState({ x: 200, y: 100 });
+
   const isResizing = useRef(false);
+  const isDragging = useRef(false);
   const lastPos = useRef({ x: 0, y: 0 });
 
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
-      if (!isResizing.current) return;
-      const dx = e.clientX - lastPos.current.x;
-      const dy = e.clientY - lastPos.current.y;
-      setWidth((w) => Math.max(400, w + dx));
-      setHeight((h) => Math.max(300, h + dy));
-      lastPos.current = { x: e.clientX, y: e.clientY };
+      if (isResizing.current) {
+        const dx = e.clientX - lastPos.current.x;
+        const dy = e.clientY - lastPos.current.y;
+        setWidth((w) => Math.max(400, w + dx));
+        setHeight((h) => Math.max(300, h + dy));
+        lastPos.current = { x: e.clientX, y: e.clientY };
+      } else if (isDragging.current) {
+        const dx = e.clientX - lastPos.current.x;
+        const dy = e.clientY - lastPos.current.y;
+        setPosition((pos) => ({
+          x: pos.x + dx,
+          y: pos.y + dy,
+        }));
+        lastPos.current = { x: e.clientX, y: e.clientY };
+      }
     };
 
     const handleMouseUp = () => {
       isResizing.current = false;
+      isDragging.current = false;
+      document.body.style.userSelect = "";
     };
 
     window.addEventListener("mousemove", handleMouseMove);
@@ -55,86 +70,92 @@ export const ScriptEditorModal: React.FC<ScriptEditorModalProps> = ({
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
       <div
-        className="bg-white rounded flex flex-col"
+        className="bg-white rounded shadow-lg flex flex-col border border-gray-400"
         style={{
           width,
           height,
+          position: "absolute",
+          left: position.x,
+          top: position.y,
           minWidth: 400,
           minHeight: 300,
-          maxWidth: "90vw",
-          maxHeight: "90vh",
-          position: "relative",
         }}
       >
-        <h3 className="text-lg font-bold p-2 border-b">Edit Script</h3>
+        {/* 제목바 (드래그 이동 가능) */}
+        <div
+          className="text-lg font-bold p-2 border-b bg-gray-200 cursor-move select-none"
+          onMouseDown={(e) => {
+            isDragging.current = true;
+            lastPos.current = { x: e.clientX, y: e.clientY };
+            document.body.style.userSelect = "none"; // 드래그 중 텍스트 선택 방지
+          }}
+        >
+          Edit Script
+        </div>
 
-        <div className="flex-1 p-2 flex flex-col">
-          <label className="block mt-1">Script:</label>
-          <CodeMirror
-            value={internalScript}
-            height="100%"
-            extensions={[javascript()]}
-            theme={oneDark}
-            onChange={(value) => setInternalScript(value)}
-            className="flex-1 w-full p-2 border font-mono resize-none"
-            placeholder={`
-const body = {
-      title: "sim",
-      body: "hyunbo",
-      age: 40
-  }
+        {/* 본문 */}
+        <div className="flex-1 p-2 flex flex-col overflow-hidden">
+          <label className="block mt-1 text-sm font-semibold">Script:</label>
+          <div className="flex-1 border rounded overflow-hidden">
+            <CodeMirror
+              value={internalScript}
+              height="100%"
+              extensions={[javascript()]}
+              theme={oneDark}
+              onChange={(value) => setInternalScript(value)}
+              className="w-full h-full"
+            />
+          </div>
 
-const response = await api.postJson("https://jsonplaceholder.typicode.com/posts",
-                                     JSON.stringify(body));
-api.alert(JSON.stringify(response));
-`}
-          />
-
-          <label className="block mt-2">Timeout (ms):</label>
+          <label className="block mt-2 text-sm font-semibold">
+            Timeout (ms):
+          </label>
           <input
             type="number"
-            className="w-32 p-1 border"
+            className="w-32 p-1 border rounded"
             value={internalTimeout}
             onChange={(e) => setInternalTimeout(Number(e.target.value))}
           />
         </div>
 
-        <div className="p-2 flex justify-end gap-2 border-t">
+        {/* 버튼들 */}
+        <div className="p-2 flex justify-end gap-2 border-t bg-gray-100">
           <button
-            className="px-3 py-1 border rounded semi-text-bg-color"
+            className="px-3 py-1 border rounded bg-blue-600 text-white hover:bg-blue-700"
             onClick={() => onConfirm(internalScript, internalTimeout)}
           >
             OK
           </button>
           <button
-            className="px-3 py-1 border rounded semi-text-bg-color"
+            className="px-3 py-1 border rounded bg-gray-300 hover:bg-gray-400"
             onClick={onCancel}
           >
             Cancel
           </button>
           <button
-            className="px-3 py-1 border rounded semi-text-bg-color"
+            className="px-3 py-1 border rounded bg-green-500 text-white hover:bg-green-600"
             onClick={onHelp}
           >
             Help
           </button>
         </div>
 
-        {/* Resizer */}
+        {/* 리사이즈 핸들 */}
         <div
-          ref={resizerRef}
           onMouseDown={(e) => {
             isResizing.current = true;
             lastPos.current = { x: e.clientX, y: e.clientY };
+            document.body.style.userSelect = "none";
           }}
           style={{
-            width: 16,
-            height: 16,
+            width: 18,
+            height: 18,
             position: "absolute",
             right: 0,
             bottom: 0,
             cursor: "nwse-resize",
-            backgroundColor: "transparent",
+            background:
+              "linear-gradient(135deg, transparent 40%, gray 40%, gray 60%, transparent 60%)",
           }}
         />
       </div>
