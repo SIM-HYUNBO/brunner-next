@@ -81,7 +81,6 @@ const nodeActionLogging = (node: Node<any>, stepInputs: WorkflowContext) => {
 };
 
 const preNodeCheck = (node: Node<any>, workflowData: any) => {
-  workflowData.currentNodeId = node.id;
   node.data.status = constants.workflowRunStatus.running;
 
   if (!evalCondition(node.data.if, workflowData)) {
@@ -98,9 +97,6 @@ const preNodeCheck = (node: Node<any>, workflowData: any) => {
 
 const postNodeCheck = (node: Node<any>, workflowData: any) => {
   node.data.status = constants.workflowRunStatus.idle;
-
-  if (node.data.actionName === constants.workflowActions.END)
-    workflowData.currentNodeId = null;
 };
 
 // -------------------- Built-in 액션 등록 --------------------
@@ -135,8 +131,8 @@ export function registerBuiltInActions(): void {
       }
       workflowData.data.run.system.endTime = new Date();
       workflowData.data.run.system.durationMs =
-        workflowData.data.run.system.endTime.getTime() -
-        workflowData.data.run.system.startTime.getTime();
+        new Date(workflowData.data.run.system.endTime).getTime() -
+        new Date(workflowData.data.run.system.startTime).getTime();
 
       postNodeCheck(node, workflowData);
       return;

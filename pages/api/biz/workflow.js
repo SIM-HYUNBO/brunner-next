@@ -6,6 +6,7 @@ import * as commonFunctions from "@/components/core/commonFunctions";
 import { DBConnectionManager } from "./workflow/dbConnectionManager";
 import * as workflowEngineServer from "./workflow/workflowEngineServer";
 import * as dynamicSql from "./dynamicSql";
+import next from "next";
 
 /**
  * Workflow 모듈의 서비스 실행 함수
@@ -126,14 +127,15 @@ const executeService = async (txnId, jRequest) => {
       case constants.commands.WORKFLOW_EXECUTE_WORKFLOW: {
         jResponse = { error_code: -1 }; // 초기값
 
-        const { systemCode, workflowId, transactionMode, currentNodeId } =
-          jRequest;
+        const { systemCode, workflowId, transactionMode } = jRequest;
 
         // workflowId로 DB에서 workflowData 조회
         const workflowData = await workflowEngineServer.getWorkflowById(
           systemCode,
           workflowId
         );
+
+        var currentNodeId = workflowData.currentNodeId;
 
         var txNode = null;
         try {
@@ -149,13 +151,6 @@ const executeService = async (txnId, jRequest) => {
             ].includes(transactionMode)
           ) {
             throw new Error(`Invalid transactionMode: ${transactionMode}`);
-          }
-
-          if (
-            transactionMode === constants.transactionMode.Business &&
-            !currentNodeId
-          ) {
-            throw new Error("currentNodeId is required in Business mode");
           }
 
           if (!workflowData.nodes || !workflowData.nodes.length) {
@@ -175,17 +170,41 @@ const executeService = async (txnId, jRequest) => {
           // -----------------------
           if (transactionMode === constants.transactionMode.Business) {
             // Business 모드: 단일 노드부터 실행
-            const node = workflowData.nodes.find((n) => n.id === currentNodeId);
+
+            const node = currentNodeId
+              ? workflowData.nodes.find((n) => n.id === currentNodeId)
+              : workflowData.nodes.find(
+                  (n) => n.data.actionName === constants.workflowActions.START
+                );
+
             if (!node) throw new Error(`Node not found: ${currentNodeId}`);
 
             const txInstance = node.data?.connectionId
               ? txNode.get(node.data.connectionId)
               : undefined;
 
-            await workflowEngineServer.runWorkflowStep(
+            const result = await workflowEngineServer.runWorkflowStep(
               node,
               workflowData,
               txInstance
+            );
+
+            var nextNodeId = null;
+            for (const edge of workflowData.edges || []) {
+              // 현재 노드에서 나가는 엣지만 검사
+              if (edge.source === node.id) {
+                if (!edge.data?.condition || Boolean(edge.data.condition)) {
+                  nextNodeId = edge.target;
+                  break; // 보통 하나만 실행하므로 탈출 (여러 조건 분기면 빼도 됨)
+                }
+              }
+            }
+            workflowData.currentNodeId = nextNodeId;
+            const saveResult = await workflowEngineServer.saveWorkflow(
+              systemCode,
+              jRequest.userId,
+              workflowId,
+              workflowData
             );
           } else {
             // System 모드: 전체 워크플로우 실행

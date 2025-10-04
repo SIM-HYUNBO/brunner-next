@@ -132,7 +132,6 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
   const [selectedNode, setSelectedNode] = useState<Node<ActionNodeData> | null>(
     null
   );
-  const [runningNodeIds, setRunningNodeIds] = useState<string[]>([]);
 
   const [isInputDataEditorOpen, setIsInputDataEditorOpen] = useState(false);
   const [isInputSchemaEditorOpen, setIsInputSchemaEditorOpen] = useState(false);
@@ -308,8 +307,6 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
         : JSON.stringify({ OUTPUT_TABLE: [] }, null, 2)
     );
 
-    // 실행 상태 초기화
-    setRunningNodeIds([]);
     stepCounterRef.current = 0;
   };
 
@@ -356,7 +353,6 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
         userId: userInfo.getLoginUserId(),
         workflowId: workflowId,
         transactionMode: constants.transactionMode.System,
-        currentNodeId: null,
         inputs: workflowInputDataObj,
       };
       const jResponse = await RequestServer(jRequest);
@@ -398,13 +394,17 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
               nodes={nodes.map((n) => ({
                 ...n,
                 style: {
-                  background: runningNodeIds.includes(n.id)
-                    ? "#FFD700"
-                    : n.data.actionName === constants.workflowActions.START ||
-                      n.data.actionName === constants.workflowActions.END
-                    ? "#ADFF2F"
-                    : "#fff",
-                  border: "1px solid #222",
+                  background:
+                    n.id === jWorkflow.current?.currentNodeId
+                      ? "#FFA500" // 현재 실행 중 노드 (주황색)
+                      : n.data.actionName === constants.workflowActions.START ||
+                        n.data.actionName === constants.workflowActions.END
+                      ? "#ADFF2F" // 시작/끝 노드
+                      : "#fff", // 일반 노드
+                  border:
+                    n.id === jWorkflow.current?.currentNodeId
+                      ? "3px solid #FF4500"
+                      : "1px solid #222",
                   color: "#000",
                 },
               }))}
@@ -443,9 +443,9 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
             />
             <button
               onClick={() => setDbModalOpen(true)}
-              className="ml-1 px-1 py-1 rounded semi-text-bg-color"
+              className="ml-1 mt-1 px-1 py-1 rounded semi-text-bg-color"
             >
-              DB 연결 관리
+              Database...
             </button>
             <div className="flex flex-row ml-1 mt-2">
               <button
