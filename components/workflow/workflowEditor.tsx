@@ -59,8 +59,8 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
           outputs: commonFunctions.getDefaultOutputs(
             constants.workflowActions.START
           ),
-          script: "",
-          timeoutMs: 5000,
+          scriptContents: "",
+          scriptTimeoutMs: 5000,
         },
         run: { inputs: [], outputs: [] },
       },
@@ -80,8 +80,8 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
           outputs: commonFunctions.getDefaultOutputs(
             constants.workflowActions.END
           ),
-          script: "",
-          timeoutMs: 5000,
+          scriptContents: "",
+          scriptTimeoutMs: 5000,
         },
         run: { inputs: [], outputs: [] },
       },
@@ -156,8 +156,10 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
     }
 
     if (selectedNode.data.actionName === constants.workflowActions.SCRIPT) {
-      setSelectedNodeScript(selectedNode.data.design.script ?? "");
-      setSelectedNodeTimeoutMs(selectedNode.data.design.timeoutMs ?? 5000);
+      setSelectedNodeScript(selectedNode.data.design.scriptContents ?? "");
+      setSelectedNodeTimeoutMs(
+        selectedNode.data.design.scriptTimeoutMs ?? 5000
+      );
     } else {
       setSelectedNodeScript(""); // 스크립트 노드가 아니면 초기화
       setSelectedNodeTimeoutMs(0);
@@ -249,8 +251,8 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
             outputs: commonFunctions.getDefaultOutputs(
               constants.workflowActions.SCRIPT
             ),
-            script: "",
-            timeoutMs: 0,
+            scriptContents: "",
+            scriptTimeoutMs: 0,
           },
           run: { inputs: [], outputs: [] },
         },
@@ -453,8 +455,8 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
               workflowDescription={workflowDescription}
               node={selectedNode}
               nodes={nodes}
-              script={selectedNodeScript} // 여기 전달
-              timeoutMs={selectedNodeTimeoutMs}
+              scriptContents={selectedNodeScript} // 여기 전달
+              scriptTimeoutMs={selectedNodeTimeoutMs}
               onWorkflowUpdate={({ workflowName, workflowDescription }) => {
                 if (workflowName !== undefined) setWorkflowName(workflowName);
                 if (workflowDescription !== undefined)
@@ -465,13 +467,18 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
                   const newNodes = nds.map((n) => {
                     if (n.id !== id) return n;
 
-                    // script, timeoutMs는 design으로 이동
-                    const { script, timeoutMs, ...otherUpdates } = updates;
+                    // scriptContents, scriptTimeoutMs는 design으로 이동
+                    const { scriptContents, scriptTimeoutMs, ...otherUpdates } =
+                      updates;
 
                     const newDesign = {
                       ...n.data.design,
-                      ...(script !== undefined ? { script } : {}),
-                      ...(timeoutMs !== undefined ? { timeoutMs } : {}),
+                      ...(scriptContents !== undefined
+                        ? { scriptContents: scriptContents }
+                        : {}),
+                      ...(scriptTimeoutMs !== undefined
+                        ? { scriptTimeoutMs: scriptTimeoutMs }
+                        : {}),
                     };
 
                     return {

@@ -178,10 +178,10 @@ export function registerBuiltInActions(): void {
   registerAction(
     constants.workflowActions.SCRIPT,
     async (node: any, workflowData: any, txContext) => {
-      const userScript = node.data.design.script || "";
+      const userScript = node.data.design.scriptContents || "";
 
       // const userScript: string =
-      //   node.data?.script ||
+      //   node.data.design.scriptConents ||
       //   `
       //   // POST 요청 예제
 
@@ -246,7 +246,13 @@ export function registerBuiltInActions(): void {
       const logs: string[] = [];
 
       const safeApi = {
-        log: (...args: any[]) => logs.push(args.join(" ")),
+        log: (message: any, level: "info" | "warn" | "error" = "info") => {
+          if (typeof message === "object") message = JSON.stringify(message);
+          logger.log(level, message);
+        },
+        info: (message: any) => safeApi.log(message, "info"),
+        warn: (message: any) => safeApi.log(message, "warn"),
+        error: (message: any) => safeApi.log(message, "error"),
         sleep: (ms: number) => new Promise((r) => setTimeout(r, ms)),
         getGlobalVar: (path: string) => getByPath(workflowData, path),
         setGlobalVar: (path: string, value: any) =>

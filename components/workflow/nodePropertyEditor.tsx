@@ -44,8 +44,10 @@ export const NodePropertyEditor: React.FC<NodePropertyEditorProps> = ({
   );
 
   // SCRIPT 노드 전용
-  const [script, setScript] = useState(node?.data.design.script || "");
-  const [timeoutMs, setTimeoutMs] = useState(
+  const [scriptContents, setScriptContents] = useState(
+    node?.data.design.scriptContents || ""
+  );
+  const [scriptTimeoutMs, setTimeoutMs] = useState(
     node?.data.design.timeoutMs ?? 5000
   );
 
@@ -86,8 +88,8 @@ export const NodePropertyEditor: React.FC<NodePropertyEditorProps> = ({
 
     // SCRIPT 노드 속성 동기화
     if (action === constants.workflowActions.SCRIPT) {
-      setScript(node.data.design.script || "");
-      setTimeoutMs(node.data.design.timeoutMs ?? 5000);
+      setScriptContents(node.data.design.scriptContents || "");
+      setTimeoutMs(node.data.design.scriptTimeoutMs ?? 5000);
     }
   }, [node]);
 
@@ -190,8 +192,8 @@ export const NodePropertyEditor: React.FC<NodePropertyEditorProps> = ({
             const updates: any = {
               actionName,
               design: {
-                script: script,
-                timeoutMs: timeoutMs,
+                scriptContents: scriptContents,
+                scriptTimeoutMs: scriptTimeoutMs,
                 inputs: newInputs,
                 outputs: newOutputs,
               },

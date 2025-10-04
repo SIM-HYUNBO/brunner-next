@@ -15,8 +15,8 @@ import { useModal } from "@/components/core/client/brunnerMessageBox";
 interface NodePropertyPanelProps {
   node: Node<any> | null;
   nodes: Node<any>[];
-  script: string;
-  timeoutMs: number | 5000;
+  scriptContents: string;
+  scriptTimeoutMs: number | 5000;
   workflowId: string | null;
   workflowName: string;
   workflowDescription: string;
@@ -31,8 +31,8 @@ interface NodePropertyPanelProps {
 export const NodePropertyPanel: React.FC<NodePropertyPanelProps> = ({
   node,
   nodes,
-  script,
-  timeoutMs,
+  scriptContents,
+  scriptTimeoutMs,
   workflowId,
   workflowName,
   workflowDescription,
@@ -53,8 +53,8 @@ export const NodePropertyPanel: React.FC<NodePropertyPanelProps> = ({
   const [isInputModalOpen, setIsInputModalOpen] = useState(false);
   const [isOutputModalOpen, setIsOutputModalOpen] = useState(false);
   const [isScriptModalOpen, setIsScriptModalOpen] = useState(false);
-  const [localScript, setLocalScript] = useState("");
-  const [localTimeoutMs, setLocalTimeoutMs] = useState(5000);
+  const [localScriptContents, setLocalScript] = useState("");
+  const [localScriptTimeoutMs, setLocalTimeoutMs] = useState(5000);
 
   const prevActionName = useRef<string>("");
   const { BrunnerMessageBox, openModal } = useModal();
@@ -65,12 +65,12 @@ export const NodePropertyPanel: React.FC<NodePropertyPanelProps> = ({
   }, [workflowName, workflowDescription]);
 
   useEffect(() => {
-    setLocalScript(script); // prop 변경 시 동기화
-  }, [script]);
+    setLocalScript(scriptContents); // prop 변경 시 동기화
+  }, [scriptContents]);
 
   useEffect(() => {
-    setLocalTimeoutMs(timeoutMs); // prop 변경 시 동기화
-  }, [timeoutMs]);
+    setLocalTimeoutMs(scriptTimeoutMs); // prop 변경 시 동기화
+  }, [scriptTimeoutMs]);
 
   // 🧠 노드 변경 시 입력/출력 초기화
   useEffect(() => {
@@ -200,7 +200,7 @@ api.postJson: async (url, body) => http post request.
             <label>Script Preview:</label>
             <textarea
               readOnly
-              value={localScript}
+              value={localScriptContents}
               rows={5}
               className="w-full border p-2 font-mono bg-gray-100"
             />
@@ -215,7 +215,7 @@ api.postJson: async (url, body) => http post request.
               <input
                 type="number"
                 className="border px-2 py-1 w-[100px]"
-                value={localTimeoutMs}
+                value={localScriptTimeoutMs}
                 readOnly
               />
             </div>
@@ -224,14 +224,14 @@ api.postJson: async (url, body) => http post request.
         {isScriptModalOpen && (
           <ScriptEditorModal
             open={isScriptModalOpen}
-            script={localScript}
-            timeoutMs={localTimeoutMs}
+            scriptContents={localScriptContents}
+            scriptTimeoutMs={localScriptTimeoutMs}
             onConfirm={(newScript, newTimeout) => {
               setLocalScript(newScript);
               setLocalTimeoutMs(newTimeout);
               onNodeUpdate?.(node.id, {
-                script: newScript,
-                timeoutMs: newTimeout,
+                scriptContents: newScript,
+                scriptTimeoutMs: newTimeout,
               });
               setIsScriptModalOpen(false);
             }}

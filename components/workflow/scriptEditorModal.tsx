@@ -3,23 +3,23 @@ import CodeMirror, { oneDark, oneDarkTheme } from "@uiw/react-codemirror";
 import { javascript } from "@codemirror/lang-javascript";
 interface ScriptEditorModalProps {
   open: boolean;
-  script: string;
-  timeoutMs: number;
-  onConfirm: (script: string, timeoutMs: number) => void;
+  scriptContents: string;
+  scriptTimeoutMs: number;
+  onConfirm: (scriptContents: string, scriptTimeoutMs: number) => void;
   onCancel: () => void;
   onHelp: () => void;
 }
 
 export const ScriptEditorModal: React.FC<ScriptEditorModalProps> = ({
   open,
-  script,
-  timeoutMs,
+  scriptContents,
+  scriptTimeoutMs,
   onConfirm,
   onCancel,
   onHelp,
 }) => {
-  const [internalScript, setInternalScript] = useState(script);
-  const [internalTimeout, setInternalTimeout] = useState(timeoutMs);
+  const [internalScript, setInternalScript] = useState(scriptContents);
+  const [internalTimeout, setInternalTimeout] = useState(scriptTimeoutMs);
 
   const [width, setWidth] = useState(800);
   const [height, setHeight] = useState(500);

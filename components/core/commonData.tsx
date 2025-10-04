@@ -20,8 +20,8 @@ export interface ActionNodeData {
   design: {
     inputs: NodeDataTable[];
     outputs: NodeDataTable[];
-    script: string;
-    timeoutMs: number;
+    scriptContents: string;
+    scriptTimeoutMs: number;
   };
   run: {
     inputs: NodeDataTable[];
