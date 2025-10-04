@@ -15,6 +15,7 @@ import { useModal } from "@/components/core/client/brunnerMessageBox";
 interface NodePropertyPanelProps {
   node: Node<any> | null;
   nodes: Node<any>[];
+  script: string;
   workflowId: string | null;
   workflowName: string;
   workflowDescription: string;
@@ -29,6 +30,7 @@ interface NodePropertyPanelProps {
 export const NodePropertyPanel: React.FC<NodePropertyPanelProps> = ({
   node,
   nodes,
+  script,
   workflowId,
   workflowName,
   workflowDescription,
@@ -49,7 +51,7 @@ export const NodePropertyPanel: React.FC<NodePropertyPanelProps> = ({
   const [isInputModalOpen, setIsInputModalOpen] = useState(false);
   const [isOutputModalOpen, setIsOutputModalOpen] = useState(false);
   const [isScriptModalOpen, setIsScriptModalOpen] = useState(false);
-  const [script, setScript] = useState("");
+  const [localScript, setLocalScript] = useState("");
   const [timeoutMs, setTimeoutMs] = useState(5000);
 
   const prevActionName = useRef<string>("");
@@ -59,6 +61,10 @@ export const NodePropertyPanel: React.FC<NodePropertyPanelProps> = ({
     setWfName(workflowName);
     setWfDesc(workflowDescription);
   }, [workflowName, workflowDescription]);
+
+  useEffect(() => {
+    setLocalScript(script); // prop 변경 시 동기화
+  }, [script]);
 
   // 🧠 노드 변경 시 입력/출력 초기화
   useEffect(() => {
@@ -215,7 +221,7 @@ api.postJson: async (url, body) => http post request.
             script={script}
             timeoutMs={timeoutMs}
             onConfirm={(newScript, newTimeout) => {
-              setScript(newScript);
+              setLocalScript(newScript);
               setTimeoutMs(newTimeout);
               onNodeUpdate?.(node.id, {
                 script: newScript,

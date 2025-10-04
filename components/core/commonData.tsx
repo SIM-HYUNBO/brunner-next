@@ -25,6 +25,7 @@ export interface ActionNodeData {
     inputs: NodeDataTable[];
     outputs: NodeDataTable[];
   };
+  script: string;
 }
 
 export interface ConditionEdgeData {

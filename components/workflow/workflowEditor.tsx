@@ -61,6 +61,7 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
           ),
         },
         run: { inputs: [], outputs: [] },
+        script: "",
       },
     },
     {
@@ -80,6 +81,7 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
           ),
         },
         run: { inputs: [], outputs: [] },
+        script: "",
       },
     },
   ],
@@ -135,11 +137,26 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
   const [isOutputSchemaEditorOpen, setIsOutputSchemaEditorOpen] =
     useState(false);
   const [dbModalOpen, setDbModalOpen] = useState(false);
+  const [selectedNodeScript, setSelectedNodeScript] = useState<string>("");
 
   useEffect(() => {
     setWorkflowId(uuidv4());
     initWorkflow();
   }, []);
+
+  // 선택 노드 변경 시
+  useEffect(() => {
+    if (!selectedNode) {
+      setSelectedNodeScript("");
+      return;
+    }
+
+    if (selectedNode.data.actionName === constants.workflowActions.SCRIPT) {
+      setSelectedNodeScript(selectedNode.data.script ?? "");
+    } else {
+      setSelectedNodeScript(""); // 스크립트 노드가 아니면 초기화
+    }
+  }, [selectedNode]);
 
   useEffect(() => {
     if (!jWorkflow.current) return;
@@ -228,6 +245,7 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
             ),
           },
           run: { inputs: [], outputs: [] },
+          script: "",
         },
       } as Node<ActionNodeData>,
     ]);
@@ -428,6 +446,7 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
               workflowDescription={workflowDescription}
               node={selectedNode}
               nodes={nodes}
+              script={selectedNodeScript} // 여기 전달
               onWorkflowUpdate={({ workflowName, workflowDescription }) => {
                 if (workflowName !== undefined) setWorkflowName(workflowName);
                 if (workflowDescription !== undefined)
@@ -439,6 +458,14 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
                     n.id === id ? { ...n, data: { ...n.data, ...updates } } : n
                   );
                   setSelectedNode(newNodes.find((n) => n.id === id) || null);
+
+                  // workflowData 업데이트
+                  const updatedWorkflow = {
+                    ...jWorkflow.current,
+                    nodes: newNodes,
+                  };
+                  setCurrentWorkflow(updatedWorkflow);
+
                   return newNodes;
                 });
               }}
