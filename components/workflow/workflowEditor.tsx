@@ -106,7 +106,7 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
       workflowId: uuidv4(),
       workflowName: "new workflow",
       workflowDescription: "new workflow",
-      currentNodeId: null,
+      currentNodeId: constants.workflowActions.START,
       data: {
         design: { inputs: [], outputs: [] },
         run: { inputs: [], outputs: [] },
@@ -371,7 +371,8 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
         userId: userInfo.getLoginUserId(),
         workflowId: workflowId,
         transactionMode: constants.transactionMode.Business,
-        currentNodeId: jWorkflow.current?.currentNodeId ?? null,
+        currentNodeId:
+          jWorkflow.current?.currentNodeId ?? constants.workflowActions.START,
         inputs: workflowInputDataObj,
       };
       const jResponse = await RequestServer(jRequest);

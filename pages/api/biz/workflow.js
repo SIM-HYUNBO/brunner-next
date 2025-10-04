@@ -135,7 +135,8 @@ const executeService = async (txnId, jRequest) => {
           workflowId
         );
 
-        var currentNodeId = workflowData.currentNodeId;
+        var currentNodeId =
+          workflowData.currentNodeId ?? constants.workflowActions.START;
 
         var txNode = null;
         try {
@@ -199,7 +200,8 @@ const executeService = async (txnId, jRequest) => {
                 }
               }
             }
-            workflowData.currentNodeId = nextNodeId;
+            workflowData.currentNodeId =
+              nextNodeId ?? constants.workflowActions.START;
             const saveResult = await workflowEngineServer.saveWorkflow(
               systemCode,
               jRequest.userId,
