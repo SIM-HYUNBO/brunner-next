@@ -178,7 +178,7 @@ export function registerBuiltInActions(): void {
   registerAction(
     constants.workflowActions.SCRIPT,
     async (node: any, workflowData: any, txContext) => {
-      const userScript = node.data.script || "";
+      const userScript = node.data.design.script || "";
 
       // const userScript: string =
       //   node.data?.script ||
@@ -220,7 +220,7 @@ export function registerBuiltInActions(): void {
       // }
       // `;
 
-      const timeoutMs: number = node.data?.timeoutMs || 5000;
+      const timeoutMs: number = node.data.design.timeoutMs || 5000;
 
       // 유틸 함수들 타입 명시
       function getByPath(obj: Record<string, any>, path: string): any {

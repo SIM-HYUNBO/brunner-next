@@ -65,11 +65,11 @@ export const NodePropertyPanel: React.FC<NodePropertyPanelProps> = ({
   }, [workflowName, workflowDescription]);
 
   useEffect(() => {
-    setLocalScript(localScript); // prop 변경 시 동기화
+    setLocalScript(script); // prop 변경 시 동기화
   }, [script]);
 
   useEffect(() => {
-    setLocalTimeoutMs(localTimeoutMs); // prop 변경 시 동기화
+    setLocalTimeoutMs(timeoutMs); // prop 변경 시 동기화
   }, [timeoutMs]);
 
   // 🧠 노드 변경 시 입력/출력 초기화

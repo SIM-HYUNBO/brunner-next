@@ -59,10 +59,10 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
           outputs: commonFunctions.getDefaultOutputs(
             constants.workflowActions.START
           ),
+          script: "",
+          timeoutMs: 5000,
         },
         run: { inputs: [], outputs: [] },
-        script: "",
-        timeoutMs: 5000,
       },
     },
     {
@@ -80,10 +80,10 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
           outputs: commonFunctions.getDefaultOutputs(
             constants.workflowActions.END
           ),
+          script: "",
+          timeoutMs: 5000,
         },
         run: { inputs: [], outputs: [] },
-        script: "",
-        timeoutMs: 5000,
       },
     },
   ],
@@ -156,11 +156,11 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
     }
 
     if (selectedNode.data.actionName === constants.workflowActions.SCRIPT) {
-      setSelectedNodeScript(selectedNode.data.script ?? "");
-      setSelectedNodeTimeoutMs(selectedNode.data.timeoutMs ?? 5000);
+      setSelectedNodeScript(selectedNode.data.design.script ?? "");
+      setSelectedNodeTimeoutMs(selectedNode.data.design.timeoutMs ?? 5000);
     } else {
       setSelectedNodeScript(""); // 스크립트 노드가 아니면 초기화
-      setSelectedNodeTimeoutMs(selectedNode.data.timeoutMs ?? 5000);
+      setSelectedNodeTimeoutMs(0);
     }
   }, [selectedNode]);
 
@@ -249,10 +249,10 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
             outputs: commonFunctions.getDefaultOutputs(
               constants.workflowActions.SCRIPT
             ),
+            script: "",
+            timeoutMs: 0,
           },
           run: { inputs: [], outputs: [] },
-          script: "",
-          timeoutMs: 0,
         },
       } as Node<ActionNodeData>,
     ]);
@@ -462,9 +462,29 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
               }}
               onNodeUpdate={(id, updates) => {
                 setNodes((nds) => {
-                  const newNodes = nds.map((n) =>
-                    n.id === id ? { ...n, data: { ...n.data, ...updates } } : n
-                  );
+                  const newNodes = nds.map((n) => {
+                    if (n.id !== id) return n;
+
+                    // script, timeoutMs는 design으로 이동
+                    const { script, timeoutMs, ...otherUpdates } = updates;
+
+                    const newDesign = {
+                      ...n.data.design,
+                      ...(script !== undefined ? { script } : {}),
+                      ...(timeoutMs !== undefined ? { timeoutMs } : {}),
+                    };
+
+                    return {
+                      ...n,
+                      data: {
+                        ...n.data,
+                        ...otherUpdates,
+                        design: newDesign,
+                      },
+                    };
+                  });
+
+                  // 선택 노드 업데이트
                   setSelectedNode(newNodes.find((n) => n.id === id) || null);
 
                   // workflowData 업데이트

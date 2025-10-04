@@ -20,13 +20,13 @@ export interface ActionNodeData {
   design: {
     inputs: NodeDataTable[];
     outputs: NodeDataTable[];
+    script: string;
+    timeoutMs: number;
   };
   run: {
     inputs: NodeDataTable[];
     outputs: NodeDataTable[];
   };
-  script: string;
-  timeoutMs: number;
 }
 
 export interface ConditionEdgeData {

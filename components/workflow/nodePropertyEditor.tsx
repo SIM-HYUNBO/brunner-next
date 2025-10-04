@@ -44,8 +44,10 @@ export const NodePropertyEditor: React.FC<NodePropertyEditorProps> = ({
   );
 
   // SCRIPT 노드 전용
-  const [script, setScript] = useState(node?.data.script || "");
-  const [timeoutMs, setTimeoutMs] = useState(node?.data.timeoutMs ?? 5000);
+  const [script, setScript] = useState(node?.data.design.script || "");
+  const [timeoutMs, setTimeoutMs] = useState(
+    node?.data.design.timeoutMs ?? 5000
+  );
 
   const [isInputModalOpen, setIsInputModalOpen] = useState(false);
   const [isOutputModalOpen, setIsOutputModalOpen] = useState(false);
@@ -84,8 +86,8 @@ export const NodePropertyEditor: React.FC<NodePropertyEditorProps> = ({
 
     // SCRIPT 노드 속성 동기화
     if (action === constants.workflowActions.SCRIPT) {
-      setScript(node.data.script || "");
-      setTimeoutMs(node.data.timeoutMs ?? 5000);
+      setScript(node.data.design.script || "");
+      setTimeoutMs(node.data.design.timeoutMs ?? 5000);
     }
   }, [node]);
 
@@ -187,12 +189,13 @@ export const NodePropertyEditor: React.FC<NodePropertyEditorProps> = ({
             // SCRIPT 속성 포함 업데이트
             const updates: any = {
               actionName,
-              design: { inputs: newInputs, outputs: newOutputs },
+              design: {
+                script: script,
+                timeoutMs: timeoutMs,
+                inputs: newInputs,
+                outputs: newOutputs,
+              },
             };
-            if (actionName === constants.workflowActions.SCRIPT) {
-              updates.script = script;
-              updates.timeoutMs = timeoutMs;
-            }
 
             onNodeUpdate?.(node.id, updates);
           }}
