@@ -227,7 +227,7 @@ api.postJson: async (url, body) => http post request.
               readOnly
               value={localScriptContents}
               rows={5}
-              className="w-full border p-2 font-mono bg-gray-100"
+              className="w-full border p-2 font-mono"
             />
             <div className="flex flex-row space-x-1">
               <button
