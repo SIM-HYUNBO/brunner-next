@@ -112,6 +112,31 @@ export const NodePropertyPanel: React.FC<NodePropertyPanelProps> = ({
     node?.data.design?.outputs,
   ]);
 
+  // 🧠 노드 변경 시 SQL 노드 초기화
+  useEffect(() => {
+    if (!node || node.data.actionName !== constants.workflowActions.SQL) return;
+
+    const design = node.data.design || {};
+
+    setActionName(node.data.actionName);
+    setLocalSqlStmt(design.sqlStmt || "");
+    setLocalDBConnectionId(design.dbConnectionId || "");
+    setLocalMaxRows(design.maxRows ?? 0);
+    setSqlModalData({
+      sqlStmt: design.sqlStmt || "",
+      dbConnectionId: design.dbConnectionId || "",
+      sqlParams: design.sqlParams || [],
+      maxRows: design.maxRows ?? 0,
+    });
+  }, [
+    node?.id,
+    node?.data.actionName,
+    node?.data.design?.sqlStmt,
+    node?.data.design?.dbConnectionId,
+    node?.data.design?.sqlParams,
+    node?.data.design?.maxRows,
+  ]);
+
   const showHelp = () => {
     const apiGuid: string = `
 api.log: (...args) => print console log.
