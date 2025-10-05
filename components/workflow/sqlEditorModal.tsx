@@ -238,20 +238,21 @@ export const SqlEditorModal: React.FC<SqlEditorModalProps> = ({
           {/* left: SQL editor */}
           <div className="flex-1 flex flex-col p-3 min-w-0">
             <label className="text-sm font-medium mb-2">SQL 문</label>
-            <div className="flex-1 border rounded overflow-hidden h-full">
+            <div className="flex-1 border rounded overflow-hidden">
               <CodeMirror
                 value={sqlStmt}
-                extensions={[sqlLang()]}
                 height="100%"
+                extensions={[sqlLang()]}
                 theme={oneDark}
                 onChange={(v) => setSqlStmt(v)}
+                className="w-full h-full"
               />
             </div>
           </div>
 
           {/* center: params table */}
           <div className="w-1/3 min-w-[260px] p-3 overflow-auto border-l">
-            <div className="flex items-center justify-between mb-2">
+            <div className="flex flex-col items-center justify-between mb-2">
               <h4 className="font-medium">Parameters</h4>
               <div className="flex gap-2">
                 <button
