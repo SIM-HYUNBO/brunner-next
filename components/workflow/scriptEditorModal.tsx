@@ -1,7 +1,8 @@
 import React, { useState, useRef, useEffect } from "react";
 import CodeMirror from "@uiw/react-codemirror";
 import { javascript } from "@codemirror/lang-javascript";
-import { oneDark } from "@codemirror/theme-one-dark";
+import { githubLight, githubDark } from "@uiw/codemirror-theme-github";
+import { getIsDarkMode } from "@/components/core/client/frames/darkModeToggleButton";
 
 interface ScriptEditorModalProps {
   open: boolean;
@@ -101,7 +102,7 @@ export const ScriptEditorModal: React.FC<ScriptEditorModalProps> = ({
               value={internalScript}
               height="100%"
               extensions={[javascript()]}
-              theme={oneDark}
+              theme={getIsDarkMode() ? githubDark : githubLight} // ✅ 이렇게만 사용
               onChange={(value) => setInternalScript(value)}
               className="w-full h-full"
             />

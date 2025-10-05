@@ -2,10 +2,11 @@
 import React, { useState, useRef, useEffect } from "react";
 import CodeMirror from "@uiw/react-codemirror";
 import { sql as sqlLang } from "@codemirror/lang-sql";
-import { oneDark } from "@codemirror/theme-one-dark";
+import { githubLight, githubDark } from "@uiw/codemirror-theme-github";
 import { Table, Input, Select, Button } from "antd";
 import type { ColumnsType } from "antd/es/table";
 import type { SqlParam, SqlNodeData } from "./types/sql";
+import { getIsDarkMode } from "@/components/core/client/frames/darkModeToggleButton";
 
 interface SqlEditorModalProps {
   open: boolean;
@@ -243,7 +244,7 @@ export const SqlEditorModal: React.FC<SqlEditorModalProps> = ({
                 value={sqlStmt}
                 height="100%"
                 extensions={[sqlLang()]}
-                theme={oneDark}
+                theme={getIsDarkMode() ? githubDark : githubLight} // ✅ 이렇게만 사용
                 onChange={(v) => setSqlStmt(v)}
                 className="w-full h-full"
               />
