@@ -2,7 +2,7 @@
 
 export interface SqlParam {
   name?: string;
-  type?: "string" | "number" | "boolean" | "object"; // optional
+  type?: "string" | "number" | "boolean" | "object" | undefined; // optional
   binding?: string;
 }
 

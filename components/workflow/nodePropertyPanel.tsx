@@ -182,13 +182,13 @@ api.postJson: async (url, body) => http post request.
     );
 
   const handleSqlModalClose = () => {
-    setIsScriptModalOpen(false);
+    setIsSqlModalOpen(false);
   };
 
   const handleSqlModalOk = (data: SqlNodeData) => {
     console.log("모달에서 입력한 SQL 데이터:", data);
     setSqlModalData(data);
-    setIsScriptModalOpen(false);
+    setIsSqlModalOpen(false);
   };
 
   // 🧩 실제 렌더링
@@ -316,15 +316,16 @@ api.postJson: async (url, body) => http post request.
             </div>
           </div>
         )}
+
         {isSqlModalOpen && (
           <SqlEditorModal
             open={isSqlModalOpen}
             initialDbConnectionId={node.data.dbConnectionId}
             initialSqlStmt={node.data.design.sqlStmt}
-            initialParams={node.data.design.sqlParams}
+            initialParams={node.data.design.sqlParams ?? []}
             initialMaxRows={node.data.design.maxRows}
-            onOk={handleSqlModalOk}
-            onCancel={handleSqlModalClose}
+            onSave={handleSqlModalOk}
+            onClose={handleSqlModalClose}
           />
         )}
       </div>
