@@ -124,7 +124,7 @@ export const NodePropertyEditor: React.FC<NodePropertyEditorProps> = ({
   if (!node) {
     return (
       <div style={{ padding: 10 }}>
-        <h3>Workflow Info</h3>
+        {/* <h3>Workflow Info</h3>
         <div>ID: {workflowId}</div>
         <div>
           이름:
@@ -147,7 +147,7 @@ export const NodePropertyEditor: React.FC<NodePropertyEditorProps> = ({
         </div>
         <div style={{ marginTop: 10, fontStyle: "italic" }}>
           Select a node to edit its properties.
-        </div>
+        </div> */}
       </div>
     );
   }

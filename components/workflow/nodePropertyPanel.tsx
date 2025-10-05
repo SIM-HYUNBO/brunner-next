@@ -43,9 +43,6 @@ export const NodePropertyPanel: React.FC<NodePropertyPanelProps> = ({
   onWorkflowUpdate,
   onNodeUpdate,
 }) => {
-  const [wfName, setWfName] = useState(workflowName);
-  const [wfDesc, setWfDesc] = useState(workflowDescription);
-
   const [actionName, setActionName] = useState(node?.data.actionName || "");
   const [inputs, setInputs] = useState<NodeDataTable[]>(
     node?.data.design?.inputs ?? []
@@ -71,10 +68,6 @@ export const NodePropertyPanel: React.FC<NodePropertyPanelProps> = ({
   const prevActionName = useRef<string>("");
   const { BrunnerMessageBox, openModal } = useModal();
   // 🧠 워크플로우 정보 변경 감지
-  useEffect(() => {
-    setWfName(workflowName);
-    setWfDesc(workflowDescription);
-  }, [workflowName, workflowDescription]);
 
   useEffect(() => {
     setLocalScript(scriptContents); // prop 변경 시 동기화
@@ -179,42 +172,12 @@ api.postJson: async (url, body) => http post request.
       : "string";
   };
 
-  // 🧩 노드 정보 없을 때 (워크플로우 정보 편집)
-  if (!node)
-    return (
-      <div style={{ padding: 10 }}>
-        <h3>Workflow Info</h3>
-        <div>ID: {workflowId}</div>
-        <div>
-          이름:
-          <input
-            className="w-full"
-            value={wfName}
-            onChange={(e) => setWfName(e.target.value)}
-            onBlur={() => onWorkflowUpdate?.({ workflowName: wfName })}
-          />
-        </div>
-        <div>
-          설명:
-          <textarea
-            className="w-full"
-            value={wfDesc}
-            rows={3}
-            onChange={(e) => setWfDesc(e.target.value)}
-            onBlur={() => onWorkflowUpdate?.({ workflowDescription: wfDesc })}
-          />
-        </div>
-        <div style={{ marginTop: 10, fontStyle: "italic" }}>
-          Select a node to edit its properties.
-        </div>
-      </div>
-    );
-
   const handleSqlModalClose = () => {
     setIsSqlModalOpen(false);
   };
 
   const handleScriptModalConfirm = (data: ScriptNodeDesignData) => {
+    if (!node) return;
     setLocalScript(data.scriptContents ?? "");
     setLocalTimeoutMs(data.scriptTimeoutMs ?? 0);
     onNodeUpdate?.(node.id, {
@@ -228,6 +191,7 @@ api.postJson: async (url, body) => http post request.
   };
 
   const handleSqlModalConfirm = (data: SqlNodeDesignData) => {
+    if (!node) return;
     console.log("SQL Editor 저장:", data);
 
     // ① 모달 내부 값 state 저장 (옵션)
@@ -387,9 +351,10 @@ api.postJson: async (url, body) => http post request.
             setInputs(newInputsArray);
             setIsInputModalOpen(false);
 
-            onNodeUpdate?.(node.id, {
-              design: { inputs: newInputsArray, outputs },
-            });
+            if (node)
+              onNodeUpdate?.(node.id, {
+                design: { inputs: newInputsArray, outputs },
+              });
           }}
           onCancel={() => setIsInputModalOpen(false)}
         />
@@ -419,9 +384,10 @@ api.postJson: async (url, body) => http post request.
             setOutputs(newOutputsArray);
             setIsOutputModalOpen(false);
 
-            onNodeUpdate?.(node.id, {
-              design: { inputs, outputs: newOutputsArray },
-            });
+            if (node)
+              onNodeUpdate?.(node.id, {
+                design: { inputs, outputs: newOutputsArray },
+              });
           }}
           onCancel={() => setIsOutputModalOpen(false)}
         />

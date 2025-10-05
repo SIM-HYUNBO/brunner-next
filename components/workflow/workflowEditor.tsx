@@ -443,13 +443,34 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
           />
 
           <div className="flex flex-col justify-top h-full ml-1">
-            <h3>Editor</h3>
+            <h2>Workflow Info</h2>
             <WorkflowSelector
               onSelect={(wfSelected: any) => {
                 setCurrentWorkflow(wfSelected.workflow_data);
               }}
               selectedWorkflow={jWorkflow.current}
             />
+            <div style={{ padding: 10 }}>
+              <div>ID: {workflowId}</div>
+              <div className="flex flex-row mt-2">
+                이름:
+                <input
+                  className="flex-1 w-auto ml-2"
+                  value={workflowName}
+                  onChange={(e) => setWorkflowName(e.target.value)}
+                />
+              </div>
+              <div className="flex flex-row mt-2">
+                설명:
+                <textarea
+                  className="flex-1 w-auto ml-2"
+                  value={workflowDescription}
+                  rows={1}
+                  onChange={(e) => setWorkflowDescription(e.target.value)}
+                />
+              </div>
+            </div>
+
             <button
               onClick={() => setDbConnectionsModalOpen(true)}
               className="ml-1 mt-1 px-1 py-1 rounded semi-text-bg-color"
