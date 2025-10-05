@@ -137,7 +137,7 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
   const [isInputSchemaEditorOpen, setIsInputSchemaEditorOpen] = useState(false);
   const [isOutputSchemaEditorOpen, setIsOutputSchemaEditorOpen] =
     useState(false);
-  const [dbModalOpen, setDbModalOpen] = useState(false);
+  const [dbConnectionsModalOpen, setDbConnectionsModalOpen] = useState(false);
   const [selectedNodeScript, setSelectedNodeScript] = useState<string>("");
   const [selectedNodeTimeoutMs, setSelectedNodeTimeoutMs] = useState(5000);
 
@@ -338,7 +338,10 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
         workflowId: workflowId,
       };
       const jResponse = await RequestServer(jRequest);
-      if (jResponse.error_code == 0) openModal("Successfully delete workflow.");
+      if (jResponse.error_code == 0) {
+        openModal("Successfully delete workflow.");
+        initWorkflow();
+      }
     } catch (err) {
       console.error(err);
       openModal("❌ 실행 실패: " + String(err));
@@ -431,8 +434,8 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
           </div>
 
           <DBConnectionManagerModal
-            open={dbModalOpen}
-            onOpenChange={setDbModalOpen}
+            open={dbConnectionsModalOpen}
+            onOpenChange={setDbConnectionsModalOpen}
           />
 
           <div className="flex flex-col justify-top h-full ml-1">
@@ -441,9 +444,10 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
               onSelect={(wfSelected: any) => {
                 setCurrentWorkflow(wfSelected.workflow_data);
               }}
+              selectedWorkflow={jWorkflow.current}
             />
             <button
-              onClick={() => setDbModalOpen(true)}
+              onClick={() => setDbConnectionsModalOpen(true)}
               className="ml-1 mt-1 px-1 py-1 rounded semi-text-bg-color"
             >
               Database...

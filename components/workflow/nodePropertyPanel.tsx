@@ -11,6 +11,8 @@ import type { JsonColumnType } from "@/components/workflow/jsonDatasetEditorModa
 import { NodePropertyEditor } from "@/components/workflow/nodePropertyEditor";
 import { ScriptEditorModal } from "@/components/workflow/scriptEditorModal";
 import { useModal } from "@/components/core/client/brunnerMessageBox";
+import { SqlEditorModal } from "./sqlEditorModal";
+import type { SqlNodeData } from "./types/sql";
 
 interface NodePropertyPanelProps {
   node: Node<any> | null;
@@ -55,6 +57,12 @@ export const NodePropertyPanel: React.FC<NodePropertyPanelProps> = ({
   const [isScriptModalOpen, setIsScriptModalOpen] = useState(false);
   const [localScriptContents, setLocalScript] = useState("");
   const [localScriptTimeoutMs, setLocalTimeoutMs] = useState(5000);
+
+  const [isSqlModalOpen, setIsSqlModalOpen] = useState(false);
+  const [sqlModalData, setSqlModalData] = useState<SqlNodeData | null>(null);
+  const [localSqlStmt, setLocalSqlStmt] = useState("");
+  const [localDBConnectionId, setLocalDBConnectionId] = useState("");
+  const [localSqlMaxRows, setLocalMaxRows] = useState(0);
 
   const prevActionName = useRef<string>("");
   const { BrunnerMessageBox, openModal } = useModal();
@@ -173,6 +181,16 @@ api.postJson: async (url, body) => http post request.
       </div>
     );
 
+  const handleSqlModalClose = () => {
+    setIsScriptModalOpen(false);
+  };
+
+  const handleSqlModalOk = (data: SqlNodeData) => {
+    console.log("모달에서 입력한 SQL 데이터:", data);
+    setSqlModalData(data);
+    setIsScriptModalOpen(false);
+  };
+
   // 🧩 실제 렌더링
   return (
     <div style={{ padding: 10 }}>
@@ -262,6 +280,51 @@ api.postJson: async (url, body) => http post request.
             }}
             onCancel={() => setIsScriptModalOpen(false)}
             onHelp={() => showHelp()}
+          />
+        )}
+        {node && node.data.actionName === constants.workflowActions.SQL && (
+          <div className="flex flex-col mt-5">
+            <h3>Sql Node Editor</h3>
+            <label className="mt-2">DB Connection:</label>
+            <input
+              type="text"
+              className="border px-2 py-1 w-[100px]"
+              value={localDBConnectionId}
+              readOnly
+            />
+            <label>Sql Preview:</label>
+            <textarea
+              readOnly
+              value={localSqlStmt}
+              rows={5}
+              className="w-full border p-2 font-mono"
+            />
+            <div className="flex flex-row space-x-1">
+              <button
+                className="mt-1 px-3 py-1 border rounded semi-text-bg-color"
+                onClick={() => setIsSqlModalOpen(true)}
+              >
+                Edit SQL
+              </button>
+              <label className="mt-2">Max Rows:</label>
+              <input
+                type="number"
+                className="border px-2 py-1 w-[100px]"
+                value={localSqlMaxRows}
+                readOnly
+              />
+            </div>
+          </div>
+        )}
+        {isSqlModalOpen && (
+          <SqlEditorModal
+            open={isSqlModalOpen}
+            initialDbConnectionId={node.data.dbConnectionId}
+            initialSqlStmt={node.data.design.sqlStmt}
+            initialParams={node.data.design.sqlParams}
+            initialMaxRows={node.data.design.maxRows}
+            onOk={handleSqlModalOk}
+            onCancel={handleSqlModalClose}
           />
         )}
       </div>
