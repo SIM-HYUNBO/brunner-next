@@ -12,7 +12,9 @@ import { NodePropertyEditor } from "@/components/workflow/nodePropertyEditor";
 import { ScriptEditorModal } from "@/components/workflow/scriptEditorModal";
 import { useModal } from "@/components/core/client/brunnerMessageBox";
 import { SqlEditorModal } from "./sqlEditorModal";
-import type { SqlNodeData } from "./types/sql";
+
+import type { ScriptNodeDesignData } from "./types/sql";
+import type { SqlNodeDesignData } from "./types/sql";
 
 interface NodePropertyPanelProps {
   node: Node<any> | null;
@@ -59,7 +61,9 @@ export const NodePropertyPanel: React.FC<NodePropertyPanelProps> = ({
   const [localScriptTimeoutMs, setLocalTimeoutMs] = useState(5000);
 
   const [isSqlModalOpen, setIsSqlModalOpen] = useState(false);
-  const [sqlModalData, setSqlModalData] = useState<SqlNodeData | null>(null);
+  const [sqlModalData, setSqlModalData] = useState<SqlNodeDesignData | null>(
+    null
+  );
   const [localSqlStmt, setLocalSqlStmt] = useState("");
   const [localDBConnectionId, setLocalDBConnectionId] = useState("");
   const [localSqlMaxRows, setLocalMaxRows] = useState(0);
@@ -210,7 +214,20 @@ api.postJson: async (url, body) => http post request.
     setIsSqlModalOpen(false);
   };
 
-  const handleSqlModalSave = (data: SqlNodeData) => {
+  const handleScriptModalConfirm = (data: ScriptNodeDesignData) => {
+    setLocalScript(data.scriptContents ?? "");
+    setLocalTimeoutMs(data.scriptTimeoutMs ?? 0);
+    onNodeUpdate?.(node.id, {
+      design: {
+        // 스크립트 노드 정보
+        scriptContents: data.scriptContents,
+        scriptTimeoutMs: data.scriptTimeoutMs,
+      },
+    });
+    setIsScriptModalOpen(false);
+  };
+
+  const handleSqlModalConfirm = (data: SqlNodeDesignData) => {
     console.log("SQL Editor 저장:", data);
 
     // ① 모달 내부 값 state 저장 (옵션)
@@ -286,18 +303,8 @@ api.postJson: async (url, body) => http post request.
             open={isScriptModalOpen}
             scriptContents={localScriptContents}
             scriptTimeoutMs={localScriptTimeoutMs}
-            onConfirm={(newScript, newTimeout) => {
-              setLocalScript(newScript);
-              setLocalTimeoutMs(newTimeout);
-              onNodeUpdate?.(node.id, {
-                design: {
-                  scriptContents: newScript,
-                  scriptTimeoutMs: newTimeout,
-                },
-              });
-              setIsScriptModalOpen(false);
-            }}
-            onCancel={() => setIsScriptModalOpen(false)}
+            onConfirm={handleScriptModalConfirm}
+            onClose={() => setIsScriptModalOpen(false)}
             onHelp={() => showHelp()}
           />
         )}
@@ -350,7 +357,7 @@ api.postJson: async (url, body) => http post request.
             initialSqlStmt={sqlModalData.sqlStmt}
             initialParams={sqlModalData.sqlParams}
             initialMaxRows={sqlModalData.maxRows}
-            onSave={handleSqlModalSave}
+            onConfirm={handleSqlModalConfirm}
             onClose={handleSqlModalClose}
           />
         )}

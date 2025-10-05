@@ -3,13 +3,14 @@ import CodeMirror from "@uiw/react-codemirror";
 import { javascript } from "@codemirror/lang-javascript";
 import { githubLight, githubDark } from "@uiw/codemirror-theme-github";
 import { getIsDarkMode } from "@/components/core/client/frames/darkModeToggleButton";
+import type { ScriptNodeDesignData } from "./types/sql";
 
 interface ScriptEditorModalProps {
   open: boolean;
   scriptContents: string;
   scriptTimeoutMs: number;
-  onConfirm: (scriptContents: string, scriptTimeoutMs: number) => void;
-  onCancel: () => void;
+  onConfirm: (data: ScriptNodeDesignData) => void;
+  onClose: () => void;
   onHelp: () => void;
 }
 
@@ -18,7 +19,7 @@ export const ScriptEditorModal: React.FC<ScriptEditorModalProps> = ({
   scriptContents,
   scriptTimeoutMs,
   onConfirm,
-  onCancel,
+  onClose,
   onHelp,
 }) => {
   const [internalScript, setInternalScript] = useState(scriptContents);
@@ -65,6 +66,15 @@ export const ScriptEditorModal: React.FC<ScriptEditorModalProps> = ({
       window.removeEventListener("mouseup", handleMouseUp);
     };
   }, []);
+
+  const handleSave = () => {
+    const data: ScriptNodeDesignData = {
+      scriptContents: internalScript,
+      scriptTimeoutMs: internalTimeout,
+    };
+
+    onConfirm(data);
+  };
 
   if (!open) return null;
 
@@ -123,13 +133,13 @@ export const ScriptEditorModal: React.FC<ScriptEditorModalProps> = ({
         <div className="p-2 flex justify-end gap-2 border-t bg-gray-100">
           <button
             className="px-3 py-1 border rounded bg-blue-600 text-white hover:bg-blue-700"
-            onClick={() => onConfirm(internalScript, internalTimeout)}
+            onClick={handleSave}
           >
-            OK
+            Save
           </button>
           <button
             className="px-3 py-1 border rounded bg-gray-300 hover:bg-gray-400"
-            onClick={onCancel}
+            onClick={onClose}
           >
             Cancel
           </button>

@@ -7,9 +7,14 @@ export interface SqlParam {
   value?: string | undefined;
 }
 
-export interface SqlNodeData {
+export interface SqlNodeDesignData {
   dbConnectionId?: string; // 연결된 DB ID
   sqlStmt?: string; // SQL문
   sqlParams?: SqlParam[]; // 파라미터 목록
   maxRows?: number | undefined; // 최대 조회 행 수, undefined나 0이면 무제한
+}
+
+export interface ScriptNodeDesignData {
+  scriptContents?: string;
+  scriptTimeoutMs?: number;
 }

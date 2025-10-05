@@ -5,7 +5,7 @@ import { sql as sqlLang } from "@codemirror/lang-sql";
 import { githubLight, githubDark } from "@uiw/codemirror-theme-github";
 import { Input, Button, Table } from "antd";
 import type { ColumnsType } from "antd/es/table";
-import type { SqlParam, SqlNodeData } from "./types/sql";
+import type { SqlParam, SqlNodeDesignData } from "./types/sql";
 import { getIsDarkMode } from "@/components/core/client/frames/darkModeToggleButton";
 
 interface SqlEditorModalProps {
@@ -14,7 +14,7 @@ interface SqlEditorModalProps {
   initialSqlStmt?: string | undefined;
   initialParams?: SqlParam[] | undefined;
   initialMaxRows?: number | undefined;
-  onSave: (result: SqlNodeData) => void;
+  onConfirm: (result: SqlNodeDesignData) => void;
   onClose: () => void;
 }
 
@@ -24,7 +24,7 @@ export const SqlEditorModal: React.FC<SqlEditorModalProps> = ({
   initialSqlStmt = "",
   initialParams = [],
   initialMaxRows,
-  onSave,
+  onConfirm,
   onClose,
 }) => {
   const [sqlStmt, setSqlStmt] = useState(initialSqlStmt);
@@ -139,7 +139,7 @@ export const SqlEditorModal: React.FC<SqlEditorModalProps> = ({
   ];
 
   const handleSave = () => {
-    const out: SqlNodeData = {
+    const out: SqlNodeDesignData = {
       dbConnectionId,
       sqlStmt,
       sqlParams: params.map((p) => {
@@ -152,7 +152,7 @@ export const SqlEditorModal: React.FC<SqlEditorModalProps> = ({
       }),
       maxRows: maxRows && maxRows > 0 ? maxRows : undefined,
     };
-    onSave(out);
+    onConfirm(out);
   };
 
   return (
@@ -305,7 +305,7 @@ export const SqlEditorModal: React.FC<SqlEditorModalProps> = ({
         <div className="p-3 border-t bg-gray-50 flex justify-end gap-2">
           <Button onClick={onClose}>닫기</Button>
           <Button type="primary" onClick={handleSave}>
-            저장
+            Save
           </Button>
         </div>
 
