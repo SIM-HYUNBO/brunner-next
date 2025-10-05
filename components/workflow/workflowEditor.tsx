@@ -513,39 +513,21 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
                   const newNodes = nds.map((n) => {
                     if (n.id !== id) return n;
 
-                    // scriptContents, scriptTimeoutMs는 design으로 이동
-                    const { scriptContents, scriptTimeoutMs, ...otherUpdates } =
-                      updates;
-
-                    const newDesign = {
-                      ...n.data.design,
-                      ...(scriptContents !== undefined
-                        ? { scriptContents: scriptContents }
-                        : {}),
-                      ...(scriptTimeoutMs !== undefined
-                        ? { scriptTimeoutMs: scriptTimeoutMs }
-                        : {}),
-                    };
+                    const designUpdates = updates.design ?? {};
+                    const otherUpdates = { ...updates, design: undefined }; // design 제거
 
                     return {
                       ...n,
                       data: {
                         ...n.data,
                         ...otherUpdates,
-                        design: newDesign,
+                        design: { ...n.data.design, ...designUpdates },
                       },
                     };
                   });
 
-                  // 선택 노드 업데이트
                   setSelectedNode(newNodes.find((n) => n.id === id) || null);
-
-                  // workflowData 업데이트
-                  const updatedWorkflow = {
-                    ...jWorkflow.current,
-                    nodes: newNodes,
-                  };
-                  setCurrentWorkflow(updatedWorkflow);
+                  setCurrentWorkflow({ ...jWorkflow.current, nodes: newNodes });
 
                   return newNodes;
                 });

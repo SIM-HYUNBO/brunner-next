@@ -185,9 +185,27 @@ api.postJson: async (url, body) => http post request.
     setIsSqlModalOpen(false);
   };
 
-  const handleSqlModalOk = (data: SqlNodeData) => {
-    console.log("모달에서 입력한 SQL 데이터:", data);
+  const handleSqlModalSave = (data: SqlNodeData) => {
+    console.log("SQL Editor 저장:", data);
+
+    // ① 모달 내부 값 state 저장 (옵션)
     setSqlModalData(data);
+    setLocalSqlStmt(data.sqlStmt || "");
+    setLocalDBConnectionId(data.dbConnectionId || "");
+    setLocalMaxRows(data.maxRows || 0);
+
+    // ② node.data.design 갱신
+    onNodeUpdate?.(node.id, {
+      design: {
+        ...node.data.design,
+        dbConnectionId: data.dbConnectionId,
+        sqlStmt: data.sqlStmt,
+        sqlParams: data.sqlParams,
+        maxRows: data.maxRows,
+      },
+    });
+
+    // ③ 모달 닫기
     setIsSqlModalOpen(false);
   };
 
@@ -293,11 +311,11 @@ api.postJson: async (url, body) => http post request.
         {isSqlModalOpen && (
           <SqlEditorModal
             open={isSqlModalOpen}
-            initialDbConnectionId={node.data.dbConnectionId}
+            initialDbConnectionId={node.data.design.dbConnectionId ?? ""}
             initialSqlStmt={node.data.design.sqlStmt}
             initialParams={node.data.design.sqlParams ?? []}
             initialMaxRows={node.data.design.maxRows}
-            onSave={handleSqlModalOk}
+            onSave={handleSqlModalSave}
             onClose={handleSqlModalClose}
           />
         )}
