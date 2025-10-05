@@ -3,7 +3,7 @@ import React, { useState, useRef, useEffect } from "react";
 import CodeMirror from "@uiw/react-codemirror";
 import { sql as sqlLang } from "@codemirror/lang-sql";
 import { githubLight, githubDark } from "@uiw/codemirror-theme-github";
-import { Table, Input, Select, Button } from "antd";
+import { Input, Button, Table } from "antd";
 import type { ColumnsType } from "antd/es/table";
 import type { SqlParam, SqlNodeData } from "./types/sql";
 import { getIsDarkMode } from "@/components/core/client/frames/darkModeToggleButton";
@@ -27,38 +27,33 @@ export const SqlEditorModal: React.FC<SqlEditorModalProps> = ({
   onSave,
   onClose,
 }) => {
-  // state
-  const [sqlStmt, setSqlStmt] = useState(initialSqlStmt ?? "");
-  const [params, setParams] = useState<SqlParam[]>(initialParams ?? []);
+  const [sqlStmt, setSqlStmt] = useState(initialSqlStmt);
+  const [params, setParams] = useState<SqlParam[]>(initialParams);
   const [maxRows, setMaxRows] = useState<number | undefined>(initialMaxRows);
-  const [dbConnectionId, setDbConnectionId] = useState(
-    initialDbConnectionId ?? ""
-  );
+  const [dbConnectionId, setDbConnectionId] = useState(initialDbConnectionId);
 
-  // 동기화: props -> state
-  useEffect(() => {
-    setDbConnectionId(initialDbConnectionId ?? "");
-    setSqlStmt(initialSqlStmt ?? "");
-    setParams(initialParams ?? []);
-    setMaxRows(initialMaxRows);
-  }, [initialDbConnectionId, initialSqlStmt, initialParams, initialMaxRows]);
+  // sliding panel
+  const [showParamsPanel, setShowParamsPanel] = useState(true);
+  const [panelWidth, setPanelWidth] = useState(300);
+  const panelResizing = useRef(false);
+  const lastX = useRef(0);
 
-  // modal position/size
+  // drag/resize modal
   const [width, setWidth] = useState(800);
   const [height, setHeight] = useState(520);
   const [position, setPosition] = useState({ x: 200, y: 100 });
-
-  // drag / resize refs
   const dragRef = useRef<HTMLDivElement | null>(null);
   const isDragging = useRef(false);
   const isResizing = useRef(false);
   const lastPos = useRef({ x: 0, y: 0 });
 
-  // binding panel
-  const [showBindingPanel, setShowBindingPanel] = useState(false);
-  const [bindingWidth, setBindingWidth] = useState(300);
-  const bindingResizing = useRef(false);
-  const lastBindingX = useRef(0);
+  // sync props
+  useEffect(() => {
+    setDbConnectionId(initialDbConnectionId);
+    setSqlStmt(initialSqlStmt);
+    setParams(initialParams);
+    setMaxRows(initialMaxRows);
+  }, [initialDbConnectionId, initialSqlStmt, initialParams, initialMaxRows]);
 
   // global mouse handlers
   useEffect(() => {
@@ -74,20 +69,18 @@ export const SqlEditorModal: React.FC<SqlEditorModalProps> = ({
         setWidth((w) => Math.max(600, w + dx));
         setHeight((h) => Math.max(360, h + dy));
         lastPos.current = { x: e.clientX, y: e.clientY };
-      } else if (bindingResizing.current) {
-        const dx = lastBindingX.current - e.clientX;
-        setBindingWidth((w) => Math.max(160, w + dx));
-        lastBindingX.current = e.clientX;
+      } else if (panelResizing.current) {
+        const dx = lastX.current - e.clientX;
+        setPanelWidth((w) => Math.max(200, w + dx));
+        lastX.current = e.clientX;
       }
     };
-
     const handleMouseUp = () => {
       isDragging.current = false;
       isResizing.current = false;
-      bindingResizing.current = false;
+      panelResizing.current = false;
       document.body.style.userSelect = "";
     };
-
     window.addEventListener("mousemove", handleMouseMove);
     window.addEventListener("mouseup", handleMouseUp);
     return () => {
@@ -100,48 +93,40 @@ export const SqlEditorModal: React.FC<SqlEditorModalProps> = ({
 
   const columns: ColumnsType<SqlParam> = [
     {
-      title: "파라미터",
+      title: "Name",
       dataIndex: "name",
       key: "name",
-      render: (val) => <span className="truncate">{val ?? "(unnamed)"}</span>,
+      render: (val) => <span>{val ?? "(unnamed)"}</span>,
     },
     {
-      title: "타입",
-      dataIndex: "type",
-      key: "type",
-      render: (val, rec, idx) => (
-        <Select
-          className="w-28"
-          value={val ?? "string"}
-          onChange={(v) =>
+      title: "Path or Value",
+      dataIndex: "binding",
+      key: "binding",
+      render: (_, rec, idx) => (
+        <input
+          className="w-full border rounded px-2 py-1"
+          value={rec.binding ?? ""}
+          placeholder="변수 경로 {{userId}} 또는 값 123"
+          onChange={(e) =>
             setParams((prev) =>
-              prev.map((p, i) => (i === idx ? { ...p, type: v } : p))
+              prev.map((p, i) =>
+                i === idx ? { ...p, binding: e.target.value } : p
+              )
             )
           }
-          options={[
-            { label: "string", value: "string" },
-            { label: "number", value: "number" },
-            { label: "boolean", value: "boolean" },
-            { label: "object", value: "object" },
-          ]}
         />
       ),
     },
     {
-      title: "바인딩",
-      key: "binding",
-      width: 80,
+      title: "Delete",
+      key: "delete",
       render: (_, __, idx) => (
-        <div className="flex justify-end">
-          <button
-            type="button"
-            className="text-sm px-2 py-1 bg-gray-100 border rounded hover:bg-gray-200"
-            onClick={() => setShowBindingPanel(true)}
-            title="Open bindings panel"
-          >
-            🔧
-          </button>
-        </div>
+        <button
+          className="px-2 py-1 text-sm rounded bg-red-500 text-white"
+          onClick={() => setParams((prev) => prev.filter((_, i) => i !== idx))}
+        >
+          Del.
+        </button>
       ),
     },
   ];
@@ -150,7 +135,14 @@ export const SqlEditorModal: React.FC<SqlEditorModalProps> = ({
     const out: SqlNodeData = {
       dbConnectionId,
       sqlStmt,
-      sqlParams: params,
+      sqlParams: params.map((p) => {
+        const isVar = /\{\{.*\}\}|\$\{.*\}/.test(p.binding ?? "");
+        return {
+          ...p,
+          value: isVar ? undefined : p.binding,
+          binding: isVar ? p.binding : undefined,
+        };
+      }),
       maxRows: maxRows && maxRows > 0 ? maxRows : undefined,
     };
     onSave(out);
@@ -170,7 +162,7 @@ export const SqlEditorModal: React.FC<SqlEditorModalProps> = ({
           minHeight: 360,
         }}
       >
-        {/* Title bar */}
+        {/* 타이틀 바 */}
         <div
           className="flex items-center justify-between p-2 bg-gray-100 border-b cursor-move select-none"
           onMouseDown={(e) => {
@@ -179,22 +171,21 @@ export const SqlEditorModal: React.FC<SqlEditorModalProps> = ({
             document.body.style.userSelect = "none";
           }}
         >
-          <div className="font-semibold">SQL 편집 및 파라미터</div>
-          <div className="flex items-center gap-2">
+          <div className="font-semibold">SQL 편집기 & 파라미터</div>
+          <div className="flex gap-2">
             <button
-              type="button"
-              className="px-2 py-1 text-sm rounded bg-gray-200 hover:bg-gray-300"
-              onClick={() => setShowBindingPanel((s) => !s)}
+              className="px-2 py-1 border rounded text-sm bg-gray-200 hover:bg-gray-300"
+              onClick={() => setShowParamsPanel((s) => !s)}
             >
-              {showBindingPanel ? "바인딩 닫기" : "바인딩 열기"}
+              {showParamsPanel ? "Close params." : "View params"}
             </button>
           </div>
         </div>
 
-        {/* Top inputs */}
+        {/* 상단 입력 */}
         <div className="flex gap-4 p-3 border-b">
           <div className="flex flex-col">
-            <label className="text-sm font-medium mb-1">DB 연결 ID</label>
+            <label>DB 연결 ID</label>
             <Input
               value={dbConnectionId}
               onChange={(e) => setDbConnectionId(e.target.value)}
@@ -203,9 +194,7 @@ export const SqlEditorModal: React.FC<SqlEditorModalProps> = ({
             />
           </div>
           <div className="flex flex-col">
-            <label className="text-sm font-medium mb-1">
-              Max Rows (0 = 무제한)
-            </label>
+            <label>Max Rows (0 = 무제한)</label>
             <Input
               type="number"
               value={maxRows ?? 0}
@@ -219,11 +208,11 @@ export const SqlEditorModal: React.FC<SqlEditorModalProps> = ({
           </div>
         </div>
 
-        {/* Body */}
+        {/* 본문 */}
         <div className="flex flex-1 overflow-hidden">
-          {/* SQL Editor */}
+          {/* SQL editor */}
           <div className="flex-1 flex flex-col p-3 min-w-0">
-            <label className="text-sm font-medium mb-2">SQL 문</label>
+            <label>SQL 문</label>
             <div className="flex-1 border rounded overflow-hidden">
               <CodeMirror
                 value={sqlStmt}
@@ -231,137 +220,71 @@ export const SqlEditorModal: React.FC<SqlEditorModalProps> = ({
                 extensions={[sqlLang()]}
                 theme={getIsDarkMode() ? githubDark : githubLight}
                 onChange={(v) => setSqlStmt(v)}
-                className="w-full h-full"
               />
             </div>
           </div>
 
-          {/* Params Table + 자동추출 */}
-          <div className="w-1/3 min-w-[260px] p-3 overflow-auto border-l">
-            <div className="flex justify-between mb-2">
-              <h4>Parameters</h4>
-              <div className="flex gap-1">
-                <button
-                  className="px-2 py-1 bg-green-500 text-white rounded hover:bg-green-600"
-                  onClick={() =>
-                    setParams((prev) => [
-                      ...prev,
-                      { name: "", type: "string", binding: "" },
-                    ])
-                  }
-                >
-                  + 파라미터
-                </button>
-                <button
-                  className="px-2 py-1 bg-gray-200 rounded hover:bg-gray-300"
-                  onClick={() => {
-                    const matches = (sqlStmt.match(/@\w+/g) || []).map((m) =>
-                      m.slice(1)
-                    );
-                    const uniq = Array.from(new Set(matches));
-                    setParams((prev) => {
-                      const map = new Map(prev.map((p) => [p.name, p]));
-                      return uniq.map(
-                        (name) =>
-                          map.get(name) ?? { name, type: "string", binding: "" }
-                      );
-                    });
-                  }}
-                >
-                  자동추출
-                </button>
-              </div>
-            </div>
-
-            <Table<SqlParam>
-              rowKey={(r) => r.name ?? Math.random().toString(36).slice(2)}
-              dataSource={params}
-              columns={columns}
-              pagination={false}
-              size="small"
-            />
-          </div>
-
-          {/* Sliding Binding Panel */}
+          {/* 파라미터 슬라이딩 패널 */}
           <div
-            className="relative h-full bg-gray-50 border-l transition-all duration-200 ease-in-out overflow-hidden"
+            className="relative bg-gray-50 border-l overflow-hidden transition-all duration-200 ease-in-out"
             style={{
-              width: showBindingPanel ? bindingWidth : 0,
-              minWidth: showBindingPanel ? 160 : 0,
+              width: showParamsPanel ? panelWidth : 0,
+              minWidth: showParamsPanel ? 200 : 0,
             }}
           >
-            {showBindingPanel && (
+            {showParamsPanel && (
               <>
-                <div className="p-3 h-full overflow-auto">
-                  <h4 className="font-medium mb-3">Bindings</h4>
-                  {params.map((p, i) => (
-                    <div key={i} className="flex gap-2 mb-2">
-                      <input
-                        className="flex-1 border rounded px-2 py-1"
-                        placeholder="name"
-                        value={p.name ?? ""}
-                        onChange={(e) =>
-                          setParams((prev) =>
-                            prev.map((pp, idx) =>
-                              idx === i ? { ...pp, name: e.target.value } : pp
-                            )
-                          )
-                        }
-                      />
-                      <select
-                        className="w-28 border rounded px-2 py-1"
-                        value={p.type ?? "string"}
-                        onChange={(e) =>
-                          setParams((prev) =>
-                            prev.map((pp, idx) =>
-                              idx === i
-                                ? {
-                                    ...pp,
-                                    type: e.target.value as SqlParam["type"],
-                                  }
-                                : pp
-                            )
-                          )
-                        }
-                      >
-                        <option value="string">string</option>
-                        <option value="number">number</option>
-                        <option value="boolean">boolean</option>
-                        <option value="object">object</option>
-                      </select>
-                      <input
-                        className="flex-1 border rounded px-2 py-1"
-                        placeholder="binding (예: input.userId)"
-                        value={p.binding ?? ""}
-                        onChange={(e) =>
-                          setParams((prev) =>
-                            prev.map((pp, idx) =>
-                              idx === i
-                                ? { ...pp, binding: e.target.value }
-                                : pp
-                            )
-                          )
-                        }
-                      />
+                <div className="p-3 h-full overflow-auto flex flex-col">
+                  <div className="flex flex-col justify-between items-center mb-2">
+                    <h4>Parameters</h4>
+                    <div className="flex gap-2">
                       <button
-                        className="px-2 py-1 text-sm rounded bg-red-500 text-white"
+                        className="px-2 py-1 text-sm bg-green-500 text-white rounded hover:bg-green-600"
                         onClick={() =>
-                          setParams((prev) =>
-                            prev.filter((_, idx) => idx !== i)
-                          )
+                          setParams((prev) => [
+                            ...prev,
+                            { name: "", binding: "" },
+                          ])
                         }
                       >
-                        삭제
+                        Add Param.
+                      </button>
+                      <button
+                        className="px-2 py-1 text-sm bg-gray-200 rounded hover:bg-gray-300"
+                        onClick={() => {
+                          const matches = (sqlStmt.match(/@\w+/g) || []).map(
+                            (m) => m.slice(1)
+                          );
+                          const uniq = Array.from(new Set(matches));
+                          setParams((prev) => {
+                            const map = new Map(prev.map((p) => [p.name, p]));
+                            return uniq.map(
+                              (name) => map.get(name) ?? { name, binding: "" }
+                            );
+                          });
+                        }}
+                      >
+                        Extract
                       </button>
                     </div>
-                  ))}
+                  </div>
+
+                  <Table
+                    rowKey={(r) =>
+                      r.name ?? Math.random().toString(36).slice(2)
+                    }
+                    dataSource={params}
+                    columns={columns}
+                    pagination={false}
+                    size="small"
+                  />
                 </div>
 
-                {/* resize handle */}
+                {/* 패널 resize handle */}
                 <div
                   onMouseDown={(e) => {
-                    bindingResizing.current = true;
-                    lastBindingX.current = e.clientX;
+                    panelResizing.current = true;
+                    lastX.current = e.clientX;
                     document.body.style.userSelect = "none";
                   }}
                   className="absolute left-0 top-0 h-full w-1 cursor-ew-resize bg-gray-300 hover:bg-gray-400"
@@ -371,7 +294,7 @@ export const SqlEditorModal: React.FC<SqlEditorModalProps> = ({
           </div>
         </div>
 
-        {/* Footer */}
+        {/* footer */}
         <div className="p-3 border-t bg-gray-50 flex justify-end gap-2">
           <Button onClick={onClose}>닫기</Button>
           <Button type="primary" onClick={handleSave}>
@@ -379,7 +302,7 @@ export const SqlEditorModal: React.FC<SqlEditorModalProps> = ({
           </Button>
         </div>
 
-        {/* Resize handle */}
+        {/* modal resize handle */}
         <div
           onMouseDown={(e) => {
             isResizing.current = true;

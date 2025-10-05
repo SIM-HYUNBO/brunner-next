@@ -3,7 +3,7 @@
 export interface SqlParam {
   name?: string;
   type?: "string" | "number" | "boolean" | "object" | undefined; // optional
-  binding?: string;
+  binding?: string | undefined;
 }
 
 export interface SqlNodeData {
