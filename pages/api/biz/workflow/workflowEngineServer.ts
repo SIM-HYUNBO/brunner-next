@@ -419,47 +419,59 @@ export function registerBuiltInActions(): void {
 
         switch (connection.type) {
           case "mysql": {
-            const [result] = await connection.dbConnection.query(
+            const { sql, params } = convertNamedParams(
               sqlStmt,
-              sqlParams || []
+              sqlParams,
+              "mysql"
             );
+            const [result] = await connection.dbConnection.query(sql, params);
             rows = result;
             break;
           }
 
           case "postgres": {
-            const result = await connection.dbConnection.query(
+            const { sql, params } = convertNamedParams(
               sqlStmt,
-              sqlParams || []
+              sqlParams,
+              "postgres"
             );
+            const result = await connection.dbConnection.query(sql, params);
             rows = result.rows;
             break;
           }
 
           case "mssql": {
+            const { sql, params } = convertNamedParams(
+              sqlStmt,
+              sqlParams,
+              "mssql"
+            );
             const request = connection.dbConnection.request();
-            if (sqlParams && Array.isArray(sqlParams)) {
-              sqlParams.forEach((p, i) => {
-                request.input(`param${i + 1}`, p);
+            if (Array.isArray(params)) {
+              params.forEach((p) => {
+                request.input(p.name, p.value);
               });
             }
-            const result = await request.query(sqlStmt);
+            const result = await request.query(sql);
             rows = result.recordset;
             break;
           }
 
           case "oracle": {
-            const result = await connection.dbConnection.execute(
+            const { sql, params } = convertNamedParams(
               sqlStmt,
-              sqlParams || [],
-              {
-                outFormat: (require("oracledb") as any).OUT_FORMAT_OBJECT,
-              }
+              sqlParams,
+              "oracle"
             );
+            const binds: Record<string, any> = {};
+            sqlParams.forEach((p: any) => (binds[p.name] = p.value));
+
+            const result = await connection.dbConnection.execute(sql, binds, {
+              outFormat: (require("oracledb") as any).OUT_FORMAT_OBJECT,
+            });
             rows = result.rows;
             break;
           }
-
           default:
             throw new Error(`지원하지 않는 DB 타입입니다: ${dbType}`);
         }
@@ -490,6 +502,56 @@ export function registerBuiltInActions(): void {
       }
     }
   );
+}
+
+function convertNamedParams(sqlStmt: string, sqlParams: any[], dbType: string) {
+  if (!sqlParams || sqlParams.length === 0) {
+    return { sql: sqlStmt, params: [] };
+  }
+
+  let sql = sqlStmt;
+  let params: any[] = [];
+
+  switch (dbType) {
+    case "postgres": {
+      // @name → $1, $2, ...
+      sqlParams.forEach((p, i) => {
+        const pattern = new RegExp(`@${p.name}\\b`, "g");
+        sql = sql.replace(pattern, `$${i + 1}`);
+        params.push(p.value);
+      });
+      break;
+    }
+
+    case "mysql":
+    case "mariadb": {
+      // @name → ?
+      sqlParams.forEach((p) => {
+        const pattern = new RegExp(`@${p.name}\\b`, "g");
+        sql = sql.replace(pattern, `?`);
+        params.push(p.value);
+      });
+      break;
+    }
+
+    case "mssql": {
+      // @name 그대로 사용 가능 (MSSQL은 기본적으로 지원)
+      params = sqlParams;
+      break;
+    }
+
+    case "oracle": {
+      // :name 형태로 치환
+      sqlParams.forEach((p) => {
+        const pattern = new RegExp(`@${p.name}\\b`, "g");
+        sql = sql.replace(pattern, `:${p.name}`);
+        params.push(p.value);
+      });
+      break;
+    }
+  }
+
+  return { sql, params };
 }
 
 type DBConnection =
