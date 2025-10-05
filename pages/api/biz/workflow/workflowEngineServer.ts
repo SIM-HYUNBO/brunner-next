@@ -271,7 +271,7 @@ export function registerBuiltInActions(): void {
           });
           return await res.json();
         },
-        sql: async (connectionId: string, query: string, params?: any[]) => {
+        sql: async (connectionId: string, sql: string, params?: any[]) => {
           let txContextEntry = getTxContextEntry(txContext, connectionId);
 
           if (!txContextEntry) {
@@ -298,14 +298,14 @@ export function registerBuiltInActions(): void {
           switch (dbType) {
             case "mysql":
               const [result] = await (tx as PoolConnection).query(
-                query,
+                sql,
                 params || []
               );
               return result;
 
             case "postgres":
               const resultPg = await (tx as PoolClient).query(
-                query,
+                sql,
                 params || []
               );
               return resultPg.rows;
@@ -314,12 +314,12 @@ export function registerBuiltInActions(): void {
               const request = (tx as MssqlConnectionPool).request();
               if (params)
                 params.forEach((p, i) => request.input(`param${i + 1}`, p));
-              const resultMs = await request.query(query);
+              const resultMs = await request.query(sql);
               return resultMs.recordset;
 
             case "oracle":
               const resultOra = await (tx as oracledb.Connection).execute(
-                query,
+                sql,
                 params || [],
                 {
                   outFormat: (require("oracledb") as any).OUT_FORMAT_OBJECT,

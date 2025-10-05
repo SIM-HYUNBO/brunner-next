@@ -54,6 +54,19 @@ export const NodePropertyEditor: React.FC<NodePropertyEditorProps> = ({
     node?.data.design.timeoutMs ?? 5000
   );
 
+  // useRef를 이용해 항상 최신 값을 추적
+  const scriptContentsRef = useRef(scriptContents);
+  const scriptTimeoutMsRef = useRef(scriptTimeoutMs);
+
+  // 상태가 바뀔 때마다 ref도 업데이트
+  useEffect(() => {
+    scriptContentsRef.current = scriptContents;
+  }, [scriptContents]);
+
+  useEffect(() => {
+    scriptTimeoutMsRef.current = scriptTimeoutMs;
+  }, [scriptTimeoutMs]);
+
   const [isInputModalOpen, setIsInputModalOpen] = useState(false);
   const [isOutputModalOpen, setIsOutputModalOpen] = useState(false);
 
@@ -179,6 +192,7 @@ export const NodePropertyEditor: React.FC<NodePropertyEditorProps> = ({
         <button
           className="py-1 semi-text-bg-color rounded border"
           onClick={() => {
+            // 액션 이름이 바뀌면 기본 입력/출력 가져오기
             const newInputs =
               prevActionName.current !== actionName
                 ? commmonFunctions.getDefaultInputs(actionName)
@@ -192,15 +206,17 @@ export const NodePropertyEditor: React.FC<NodePropertyEditorProps> = ({
             setInputs(newInputs);
             setOutputs(newOutputs);
 
-            // SCRIPT 속성 포함 업데이트
+            // 최신 값 참조
+            const newDesign = {
+              scriptContents: scriptContentsRef.current,
+              scriptTimeoutMs: scriptTimeoutMsRef.current,
+              inputs: [...newInputs], // 배열이면 새 객체로 복사
+              outputs: [...newOutputs],
+            };
+
             const updates: any = {
               actionName,
-              design: {
-                scriptContents: scriptContents,
-                scriptTimeoutMs: scriptTimeoutMs,
-                inputs: newInputs,
-                outputs: newOutputs,
-              },
+              design: newDesign,
             };
 
             onNodeUpdate?.(node.id, updates);

@@ -290,8 +290,10 @@ api.postJson: async (url, body) => http post request.
               setLocalScript(newScript);
               setLocalTimeoutMs(newTimeout);
               onNodeUpdate?.(node.id, {
-                scriptContents: newScript,
-                scriptTimeoutMs: newTimeout,
+                design: {
+                  scriptContents: newScript,
+                  scriptTimeoutMs: newTimeout,
+                },
               });
               setIsScriptModalOpen(false);
             }}
