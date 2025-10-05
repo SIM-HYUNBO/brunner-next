@@ -397,16 +397,16 @@ export function registerBuiltInActions(): void {
         return;
       }
 
-      const { connectionId, query, params } = node.data?.run?.inputs || {};
+      const { dbConnectionId, sqlStmt, sqlParams } = node.data?.design || {};
 
-      if (!connectionId) throw new Error("connectionId가 필요합니다.");
-      if (!query) throw new Error("SQL query가 필요합니다.");
+      if (!dbConnectionId) throw new Error("connectionId가 필요합니다.");
+      if (!sqlStmt) throw new Error("SQL query가 필요합니다.");
 
       const dbManager = DBConnectionManager.getInstance();
 
-      const dbConfig = await dbManager.get(connectionId);
+      const dbConfig = await dbManager.get(dbConnectionId);
       if (!dbConfig)
-        throw new Error(`DB 연결정보를 찾을 수 없습니다: ${connectionId}`);
+        throw new Error(`DB 연결정보를 찾을 수 없습니다: ${dbConnectionId}`);
 
       const dbType = dbConfig.type;
 
@@ -415,37 +415,47 @@ export function registerBuiltInActions(): void {
 
       try {
         // ✅ 연결 가져오기
-        connection = await dbManager.getConnection(connectionId);
+        connection = await dbManager.getConnection(dbConnectionId);
 
-        switch (dbType) {
+        switch (connection.type) {
           case "mysql": {
-            const [result] = await connection.query(query, params || []);
+            const [result] = await connection.dbConnection.query(
+              sqlStmt,
+              sqlParams || []
+            );
             rows = result;
             break;
           }
 
           case "postgres": {
-            const result = await connection.query(query, params || []);
+            const result = await connection.dbConnection.query(
+              sqlStmt,
+              sqlParams || []
+            );
             rows = result.rows;
             break;
           }
 
           case "mssql": {
-            const request = connection.request();
-            if (params && Array.isArray(params)) {
-              params.forEach((p, i) => {
+            const request = connection.dbConnection.request();
+            if (sqlParams && Array.isArray(sqlParams)) {
+              sqlParams.forEach((p, i) => {
                 request.input(`param${i + 1}`, p);
               });
             }
-            const result = await request.query(query);
+            const result = await request.query(sqlStmt);
             rows = result.recordset;
             break;
           }
 
           case "oracle": {
-            const result = await connection.execute(query, params || [], {
-              outFormat: (require("oracledb") as any).OUT_FORMAT_OBJECT,
-            });
+            const result = await connection.dbConnection.execute(
+              sqlStmt,
+              sqlParams || [],
+              {
+                outFormat: (require("oracledb") as any).OUT_FORMAT_OBJECT,
+              }
+            );
             rows = result.rows;
             break;
           }
@@ -458,17 +468,19 @@ export function registerBuiltInActions(): void {
         node.data.run.outputs = rows;
         // workflowData.data.run.outputs = rows;
 
-        console.log(`[SQL_NODE] ${dbType.toUpperCase()} 쿼리 실행 완료`);
+        console.log(
+          `[SQL_NODE] ${connection.type.toUpperCase()} 쿼리 실행 완료`
+        );
       } catch (err: any) {
         console.error(`[SQL_NODE ERROR][${dbType}]`, err);
         throw err;
       } finally {
         // ✅ 커넥션 반환
-        if (connection) {
+        if (connection.dbConnection) {
           try {
             if (dbType === "mysql" || dbType === "postgres")
-              connection.release();
-            else if (dbType === "oracle") await connection.close();
+              connection.dbConnection.release();
+            else if (dbType === "oracle") await connection.dbConnection.close();
             // mssql은 풀로 관리되므로 별도 close 없음
           } catch (closeErr) {
             console.warn("Connection close error:", closeErr);

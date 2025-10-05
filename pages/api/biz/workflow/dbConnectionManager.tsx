@@ -139,19 +139,61 @@ export class DBConnectionManager {
   }
 
   // ✅ 연결 획득
-  async getConnection(id: string): Promise<any> {
-    const poolObj = this.pools.get(id);
-    if (!poolObj) throw new Error(`No pool found for DB ID ${id}`);
+  async getConnection(idOrName: string): Promise<any> {
+    let poolObj;
+
+    const isUUID =
+      /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(
+        idOrName
+      );
+
+    if (isUUID) {
+      // UUID이면 id 우선
+      poolObj = this.pools.get(idOrName);
+      if (!poolObj) {
+        // 없으면 name으로 검색
+        for (const obj of this.pools.values()) {
+          if (obj.name === idOrName) {
+            poolObj = obj;
+            break;
+          }
+        }
+      }
+    } else {
+      // UUID 아니면 name 우선
+      for (const obj of this.pools.values()) {
+        if (obj.name === idOrName) {
+          poolObj = obj;
+          break;
+        }
+      }
+      if (!poolObj) {
+        // 없으면 id로 검색
+        poolObj = this.pools.get(idOrName);
+      }
+    }
+
+    if (!poolObj)
+      throw new Error(`No pool found for DB ID or Name "${idOrName}"`);
 
     switch (poolObj.type) {
       case "postgres":
-        return await poolObj.pool.connect();
+        return {
+          type: poolObj.type,
+          dbConnection: await poolObj.pool.connect(),
+        };
       case "mysql":
-        return await poolObj.pool.getConnection();
+        return {
+          type: poolObj.type,
+          dbConnection: await poolObj.pool.getConnection(),
+        };
       case "mssql":
-        return poolObj.pool;
+        return { type: poolObj.type, dbConnection: poolObj.pool };
       case "oracle":
-        return await poolObj.pool.getConnection();
+        return {
+          type: poolObj.type,
+          dbConnection: await poolObj.pool.getConnection(),
+        };
       default:
         throw new Error(`Unsupported DB type: ${poolObj.type}`);
     }
