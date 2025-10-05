@@ -359,8 +359,10 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
         inputs: workflowInputDataObj,
       };
       const jResponse = await RequestServer(jRequest);
-      if (jResponse.error_code == 0 && jResponse.jWorkflow)
+      if (jResponse.error_code == 0 && jResponse.jWorkflow) {
         setCurrentWorkflow({ ...jResponse.jWorkflow });
+        openModal(constants.messages.SUCCESS_FINISHED);
+      }
     } catch (err) {
       openModal("❌ 실행 실패: " + String(err));
     }
@@ -379,8 +381,10 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
         inputs: workflowInputDataObj,
       };
       const jResponse = await RequestServer(jRequest);
-      if (jResponse.error_code == 0 && jResponse.jWorkflow)
+      if (jResponse.error_code == 0 && jResponse.jWorkflow) {
         setCurrentWorkflow({ ...jResponse.jWorkflow });
+        openModal(constants.messages.SUCCESS_FINISHED);
+      }
     } catch (err) {
       console.error(err);
       openModal("❌ 실행 실패: " + String(err));
