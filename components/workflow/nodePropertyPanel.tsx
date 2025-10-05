@@ -211,32 +211,6 @@ api.postJson: async (url, body) => http post request.
             />
           </div>
         )}
-        {/* Apply */}
-        <button
-          className="px-1 py-1 mt-2 semi-text-bg-color rounded border"
-          onClick={() => {
-            const newInputs =
-              prevActionName.current !== actionName
-                ? commmonFunctions.getDefaultInputs(actionName)
-                : inputs;
-            const newOutputs =
-              prevActionName.current !== actionName
-                ? commmonFunctions.getDefaultOutputs(actionName)
-                : outputs;
-
-            prevActionName.current = actionName;
-            setInputs(newInputs);
-            setOutputs(newOutputs);
-
-            // ✅ 부모로 안전하게 업데이트 전달
-            onNodeUpdate?.(node.id, {
-              actionName,
-              design: { inputs: newInputs, outputs: newOutputs },
-            });
-          }}
-        >
-          Apply Node
-        </button>
         {node && node.data.actionName === constants.workflowActions.SCRIPT && (
           <div className="flex flex-col mt-5">
             <h3>Script Node Editor</h3>
@@ -316,7 +290,6 @@ api.postJson: async (url, body) => http post request.
             </div>
           </div>
         )}
-
         {isSqlModalOpen && (
           <SqlEditorModal
             open={isSqlModalOpen}
