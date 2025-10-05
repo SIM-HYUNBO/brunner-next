@@ -1,46 +1,57 @@
-// components/SqlEditorModal.tsx
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { Modal, Table, Input, Select } from "antd";
 import type { ColumnsType } from "antd/es/table";
 import CodeMirror from "@uiw/react-codemirror";
 import { sql as sqlLang } from "@codemirror/lang-sql";
-import type { SqlParam } from "./types/sql";
+import type { SqlParam, SqlNodeData } from "./types/sql";
+import Draggable from "react-draggable";
 
 interface SqlEditorModalProps {
-  open: boolean; // antd v5 uses `open`; v4 사용중이면 `visible`로 바꿔주세요.
-  initialSql?: string;
+  open: boolean;
+  initialDbConnectionId?: string;
+  initialSqlStmt?: string;
   initialParams?: SqlParam[];
-  onOk: (result: { sql: string; params: SqlParam[] }) => void;
+  initialMaxRows?: number;
+  onOk: (result: SqlNodeData) => void;
   onCancel: () => void;
 }
 
 export const SqlEditorModal: React.FC<SqlEditorModalProps> = ({
   open,
-  initialSql = "",
+  initialDbConnectionId = "",
+  initialSqlStmt = "",
   initialParams = [],
+  initialMaxRows,
   onOk,
   onCancel,
 }) => {
-  const [sqlText, setSqlText] = useState<string>(initialSql);
+  const [sqlStmt, setSqlStmt] = useState(initialSqlStmt);
   const [params, setParams] = useState<SqlParam[]>(initialParams);
+  const [maxRows, setMaxRows] = useState<number | undefined>(initialMaxRows);
+  const [dbConnectionId, setDbConnectionId] = useState<string>(
+    initialDbConnectionId
+  );
 
-  // SQL에서 @param 자동 추출 및 기존 params 보존
+  const dragRef = useRef<HTMLDivElement>(null!);
+  const [disabled, setDisabled] = useState(false);
+
+  // SQL에서 @param 자동 추출
   useEffect(() => {
-    const matches = sqlText.match(/@\w+/g) || [];
+    const matches = sqlStmt.match(/@\w+/g) || [];
     const names = Array.from(new Set(matches.map((m) => m.slice(1))));
     setParams((prev) => {
       const map = new Map(prev.map((p) => [p.name, p]));
-      return names.map(
-        (name) => map.get(name) ?? { name, type: "string", binding: "" }
-      );
+      return names.map((name) => map.get(name) ?? { name, type: "string" });
     });
-  }, [sqlText]);
+  }, [sqlStmt]);
 
-  // 초기값 변경 시 동기화
+  // 초기값 적용
   useEffect(() => {
-    setSqlText(initialSql);
+    setSqlStmt(initialSqlStmt);
     setParams(initialParams);
-  }, [initialSql, initialParams]);
+    setMaxRows(initialMaxRows);
+    setDbConnectionId(initialDbConnectionId);
+  }, [initialSqlStmt, initialParams, initialMaxRows, initialDbConnectionId]);
 
   const columns: ColumnsType<SqlParam> = [
     { title: "파라미터", dataIndex: "name", key: "name" },
@@ -52,16 +63,13 @@ export const SqlEditorModal: React.FC<SqlEditorModalProps> = ({
         <Select
           value={record.type ?? null}
           style={{ width: 120 }}
-          onChange={(val) => {
+          onChange={(val) =>
             setParams((prev) => {
               const copy = [...prev];
-              copy[idx] = {
-                ...copy[idx],
-                type: val ?? ("string" as SqlParam["type"]),
-              };
+              copy[idx] = { ...copy[idx], type: val ?? undefined };
               return copy;
-            });
-          }}
+            })
+          }
           options={[
             { label: "string", value: "string" },
             { label: "number", value: "number" },
@@ -77,8 +85,8 @@ export const SqlEditorModal: React.FC<SqlEditorModalProps> = ({
       key: "binding",
       render: (_, record, idx) => (
         <Input
-          value={record.binding}
-          placeholder="예: input.userId 또는 {{input.userId}}"
+          value={record.binding ?? ""}
+          placeholder="예: input.userId"
           onChange={(e) =>
             setParams((prev) => {
               const copy = [...prev];
@@ -92,31 +100,85 @@ export const SqlEditorModal: React.FC<SqlEditorModalProps> = ({
   ];
 
   return (
-    <Modal
-      open={open} // antd v4 사용중이면 visible={open} 로 변경
-      title="SQL 편집 및 파라미터 바인딩"
-      onCancel={onCancel}
-      onOk={() => onOk({ sql: sqlText, params })}
-      width={840}
-      destroyOnClose
-    >
-      <div style={{ marginBottom: 12 }}>
-        <CodeMirror
-          value={sqlText}
-          height="260px"
-          extensions={[sqlLang()]}
-          onChange={(value: string) => setSqlText(value)}
-          placeholder="예: SELECT * FROM users WHERE id = @userId;"
-        />
-      </div>
+    <Draggable disabled={disabled} handle=".ant-modal-header" nodeRef={dragRef}>
+      <div ref={dragRef}>
+        <Modal
+          open={open}
+          onCancel={onCancel}
+          title="SQL 편집 및 파라미터 바인딩"
+          width={840}
+          modalRender={(modal) => modal}
+          destroyOnClose
+          maskClosable={false}
+        >
+          {/* DB 연결 ID 입력 */}
+          <div style={{ marginBottom: 12 }}>
+            <label>
+              DB 연결 ID:{" "}
+              <Input
+                value={dbConnectionId}
+                onChange={(e) => setDbConnectionId(e.target.value)}
+                placeholder="예: myDbConnectionId"
+                style={{ width: 200 }}
+              />
+            </label>
+          </div>
 
-      <Table<SqlParam>
-        rowKey="name"
-        dataSource={params}
-        columns={columns}
-        pagination={false}
-        size="small"
-      />
-    </Modal>
+          {/* maxRows 입력 */}
+          <div style={{ marginBottom: 12 }}>
+            <label>
+              최대 조회 행 수 (0 또는 비우면 무제한):{" "}
+              <Input
+                type="number"
+                min={0}
+                value={maxRows ?? 0}
+                onChange={(e) =>
+                  setMaxRows(
+                    e.target.value ? parseInt(e.target.value) : undefined
+                  )
+                }
+                style={{ width: 120 }}
+              />
+            </label>
+          </div>
+
+          {/* CodeMirror SQL 편집 */}
+          <div style={{ marginBottom: 12 }}>
+            <CodeMirror
+              value={sqlStmt}
+              height="260px"
+              extensions={[sqlLang()]}
+              onChange={(value: string) => setSqlStmt(value)}
+              placeholder="SELECT * FROM users WHERE id = @userId;"
+            />
+          </div>
+
+          {/* 파라미터 테이블 */}
+          <Table<SqlParam>
+            rowKey="name"
+            dataSource={params}
+            columns={columns}
+            pagination={false}
+            size="small"
+          />
+
+          {/* 저장 버튼 */}
+          <div style={{ marginTop: 12, textAlign: "right" }}>
+            <button
+              onClick={() =>
+                onOk({
+                  dbConnectionId,
+                  sqlStmt,
+                  sqlParams: params,
+                  maxRows: maxRows && maxRows > 0 ? maxRows : undefined, // 0 또는 비우면 무제한
+                })
+              }
+            >
+              저장
+            </button>
+          </div>
+        </Modal>
+      </div>
+    </Draggable>
   );
 };
