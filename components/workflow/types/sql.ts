@@ -7,10 +7,8 @@ export interface SqlParam {
 }
 
 export interface SqlNodeData {
-  nodeType?: "sql" | string; // 노드 유형
-  sql?: string; // SQL문
-  params?: SqlParam[]; // 파라미터 목록
-  connectionId?: string; // 연결된 DB ID
-  resultVarName?: string; // 결과를 저장할 변수명
-  maxRows?: number; // 최대 조회 행 수
+  dbConnectionId?: string; // 연결된 DB ID
+  sqlStmt?: string; // SQL문
+  sqlParams?: SqlParam[]; // 파라미터 목록
+  maxRows?: number; // 최대 조회 행 수, undefined나 0이면 무제한
 }
