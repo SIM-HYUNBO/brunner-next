@@ -319,7 +319,15 @@ api.postJson: async (url, body) => http post request.
             <div className="flex flex-row space-x-1">
               <button
                 className="mt-1 px-3 py-1 border rounded semi-text-bg-color"
-                onClick={() => setIsSqlModalOpen(true)}
+                onClick={() => {
+                  setSqlModalData({
+                    sqlStmt: localSqlStmt,
+                    dbConnectionId: localDBConnectionId,
+                    sqlParams: node.data.design?.sqlParams ?? [], // 최신값 보장
+                    maxRows: localSqlMaxRows,
+                  });
+                  setIsSqlModalOpen(true);
+                }}
               >
                 Edit SQL
               </button>
@@ -333,13 +341,13 @@ api.postJson: async (url, body) => http post request.
             </div>
           </div>
         )}
-        {isSqlModalOpen && (
+        {isSqlModalOpen && sqlModalData && (
           <SqlEditorModal
             open={isSqlModalOpen}
-            initialDbConnectionId={node.data.design.dbConnectionId ?? ""}
-            initialSqlStmt={node.data.design.sqlStmt}
-            initialParams={node.data.design.sqlParams ?? []}
-            initialMaxRows={node.data.design.maxRows}
+            initialDbConnectionId={sqlModalData.dbConnectionId}
+            initialSqlStmt={sqlModalData.sqlStmt}
+            initialParams={sqlModalData.sqlParams}
+            initialMaxRows={sqlModalData.maxRows}
             onSave={handleSqlModalSave}
             onClose={handleSqlModalClose}
           />

@@ -10,10 +10,10 @@ import { getIsDarkMode } from "@/components/core/client/frames/darkModeToggleBut
 
 interface SqlEditorModalProps {
   open: boolean;
-  initialDbConnectionId?: string;
-  initialSqlStmt?: string;
-  initialParams?: SqlParam[];
-  initialMaxRows?: number;
+  initialDbConnectionId?: string | undefined;
+  initialSqlStmt?: string | undefined;
+  initialParams?: SqlParam[] | undefined;
+  initialMaxRows?: number | undefined;
   onSave: (result: SqlNodeData) => void;
   onClose: () => void;
 }
@@ -102,20 +102,27 @@ export const SqlEditorModal: React.FC<SqlEditorModalProps> = ({
       title: "Path or Value",
       dataIndex: "binding",
       key: "binding",
-      render: (_, rec, idx) => (
-        <input
-          className="w-full border rounded px-2 py-1"
-          value={rec.binding ?? ""}
-          placeholder="변수 경로 {{userId}} 또는 값 123"
-          onChange={(e) =>
-            setParams((prev) =>
-              prev.map((p, i) =>
-                i === idx ? { ...p, binding: e.target.value } : p
+      render: (_, rec, idx) => {
+        const displayValue = rec.binding ?? rec.value ?? "";
+        return (
+          <input
+            className="w-full border rounded px-2 py-1"
+            value={displayValue}
+            placeholder="변수 경로 {{userId}} 또는 값 123"
+            onChange={(e) =>
+              setParams((prev) =>
+                prev.map((p, i) =>
+                  i === idx
+                    ? rec.binding
+                      ? { ...p, binding: e.target.value } // 기존 binding이 있으면 binding 수정
+                      : { ...p, value: e.target.value } // 없으면 value 수정
+                    : p
+                )
               )
-            )
-          }
-        />
-      ),
+            }
+          />
+        );
+      },
     },
     {
       title: "Delete",

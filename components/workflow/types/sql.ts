@@ -4,6 +4,7 @@ export interface SqlParam {
   name?: string;
   type?: "string" | "number" | "boolean" | "object" | undefined; // optional
   binding?: string | undefined;
+  value?: string | undefined;
 }
 
 export interface SqlNodeData {
