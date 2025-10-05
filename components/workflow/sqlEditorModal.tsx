@@ -146,7 +146,7 @@ export const SqlEditorModal: React.FC<SqlEditorModalProps> = ({
         const isVar = /\{\{.*\}\}|\$\{.*\}/.test(p.binding ?? "");
         return {
           ...p,
-          value: isVar ? undefined : p.binding,
+          value: isVar ? undefined : p.value,
           binding: isVar ? p.binding : undefined,
         };
       }),

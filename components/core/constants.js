@@ -39,6 +39,7 @@ export const messages = {
   SERVER_SQL_NOT_LOADED: `Service SQL not loaded.`,
   SIGNOUT: `Do you want to signout now?`,
   SUCCESS_ADDED: `Successfully added.`,
+  SUCCESS_APPLIED: `Successfully applied.`,
   SUCCESS_CHANGED: `Successfully changed.`,
   SUCCESS_DELETED: `Successfully deleted.`,
   SUCCESS_FINISHED: `Successfully finished.`,

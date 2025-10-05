@@ -8,6 +8,7 @@ import type {
 import * as commmonFunctions from "@/components/core/commonFunctions";
 import { JsonDatasetEditorModal } from "@/components/workflow/jsonDatasetEditorModal";
 import type { JsonColumnType } from "@/components/workflow/jsonDatasetEditorModal";
+import { useModal } from "@/components/core/client/brunnerMessageBox";
 
 interface NodePropertyEditorProps {
   node: Node<any> | null;
@@ -32,6 +33,8 @@ export const NodePropertyEditor: React.FC<NodePropertyEditorProps> = ({
   onWorkflowUpdate,
   onNodeUpdate,
 }) => {
+  const { BrunnerMessageBox, openModal } = useModal();
+
   const [wfName, setWfName] = useState(workflowName);
   const [wfDesc, setWfDesc] = useState(workflowDescription);
 
@@ -138,6 +141,7 @@ export const NodePropertyEditor: React.FC<NodePropertyEditorProps> = ({
 
   return (
     <div>
+      <BrunnerMessageBox />
       <h3>Node Editor</h3>
       <div>ID: {node.id}</div>
       <div>Label: {node.data.label}</div>
@@ -200,6 +204,7 @@ export const NodePropertyEditor: React.FC<NodePropertyEditorProps> = ({
             };
 
             onNodeUpdate?.(node.id, updates);
+            openModal(constants.messages.SUCCESS_APPLIED);
           }}
         >
           Apply
