@@ -204,7 +204,7 @@ export class DBConnectionManager {
   // ✅ 연결 풀 생성
   private async createPool(config: DBConnectionConfig) {
     switch (config.type) {
-      case "postgres":
+      case constants.dbType.postgres:
         return new PgPool({
           host: config.host,
           port: config.port,
@@ -215,7 +215,7 @@ export class DBConnectionManager {
           max: 10,
         });
 
-      case "mysql":
+      case constants.dbType.mysql:
         return mysql.createPool({
           host: config.host,
           port: config.port,
@@ -225,7 +225,7 @@ export class DBConnectionManager {
           connectionLimit: 10,
         });
 
-      case "mssql":
+      case constants.dbType.mssql:
         return await mssql.connect({
           user: config.username,
           password: config.password,
@@ -236,7 +236,7 @@ export class DBConnectionManager {
           options: { encrypt: false, trustServerCertificate: true },
         });
 
-      case "oracle":
+      case constants.dbType.oracle:
         return await oracledb.createPool({
           user: config.username,
           password: config.password,

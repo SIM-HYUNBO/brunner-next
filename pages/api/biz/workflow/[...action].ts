@@ -75,11 +75,11 @@ export default async function handler(
     if (idx === -1)
       return res.status(404).json({ message: "DB 연결정보 없음" });
 
-    if (req.method === "PUT") {
+    if (req.method === constants.httpMethod.PUT) {
       connections[idx] = { ...connections[idx], ...req.body };
       return res.status(200).json(connections[idx]);
     }
-    if (req.method === "DELETE") {
+    if (req.method === constants.httpMethod.DELETE) {
       connections.splice(idx, 1);
       return res.status(204).end();
     }
@@ -88,8 +88,9 @@ export default async function handler(
 
   // id 없고 action 없으면 (GET / POST)
   if (!action) {
-    if (req.method === "GET") return res.status(200).json(connections);
-    if (req.method === "POST") {
+    if (req.method === constants.httpMethod.GET)
+      return res.status(200).json(connections);
+    if (req.method === constants.httpMethod.POST) {
       const data: DBConnectionInfo = { ...req.body, id: uuidv4() };
       connections.push(data);
       return res.status(201).json(data);
