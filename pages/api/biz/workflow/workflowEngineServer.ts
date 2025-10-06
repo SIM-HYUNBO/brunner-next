@@ -936,22 +936,27 @@ export async function getWorkflowById(systemCode: string, workflowId: string) {
   try {
     // 1️⃣ SQL 조회
     const sql = await dynamicSql.getSQL00("select_TB_COR_WORKFLOW_MST", 1);
-    const result: any = await database.executeSQL(sql, [
+    const dbResult: any = await database.executeSQL(sql, [
       systemCode,
       workflowId,
     ]);
 
     // 2️⃣ 조회 결과 확인
-    if (!result || result.rowCount === 0) {
+    var result = { error_code: -1, error_message: "", workflow_data: {} };
+    if (!dbResult || dbResult.rowCount === 0) {
       return {
         error_code: -1,
         error_message: "워크플로우를 찾을 수 없습니다.",
         workflowData: null,
       };
+    } else {
+      result.error_code = 0;
+      result.error_message = "";
+      result.workflow_data = dbResult.rows[0].workflow_data;
     }
 
     // 3️⃣ 워크플로우 데이터 반환
-    return result.rows[0].workflow_data;
+    return result;
   } catch (err: any) {
     return null;
   }

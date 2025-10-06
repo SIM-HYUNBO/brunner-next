@@ -34,6 +34,7 @@ import {
   AccordionTrigger,
   AccordionContent,
 } from "@/components/ui/accordion";
+import { WorkflowDataModal } from "./workflowDataModal";
 
 interface WorkflowEditorProps {
   initialNodes?: Node<ActionNodeData>[];
@@ -103,6 +104,7 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
   const [workflowName, setWorkflowName] = useState("새 워크플로우");
   const [workflowDescription, setWorkflowDescription] = useState("설명 없음");
   const [isRightPanelOpen, setIsRightPanelOpen] = useState(false);
+  const [isWorkflowDataModalOpen, setIsWorkflowDataModalOpen] = useState(false);
 
   const [workflowInputData, setWorkflowInputData] = useState<string>(
     JSON.stringify({ INPUT_TABLE: [{ key1: "test", key2: 123 }] }, null, 2)
@@ -500,14 +502,22 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
               className="absolute top-2 right-2 z-50 px-2 py-1 bg-blue-500 text-white rounded"
               onClick={() => setIsRightPanelOpen((prev) => !prev)}
             >
-              {isRightPanelOpen ? "⚙️" : "⚙️"}
+              ⚙️
             </button>
           </div>
 
           {/* ⚙️ 오른쪽 패널 (토글) */}
           {isRightPanelOpen && (
             <div className="flex flex-col justify-top h-full ml-1 w-[380px] overflow-y-auto border-l p-2 bg-white z-40">
-              <h2>Workflow Info</h2>
+              <h2 className="flex justify-between items-center">
+                Workflow Info
+                <button
+                  className="ml-2 px-2 py-1 text-sm bg-green-500 text-white rounded"
+                  onClick={() => setIsWorkflowDataModalOpen(true)}
+                >
+                  Data
+                </button>
+              </h2>
 
               <WorkflowSelector
                 onSelect={(wfSelected: any) => {
@@ -682,6 +692,15 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
             </div>
           </div>
         </Accordion>
+
+        {/* WorkflowDataModal */}
+        {isWorkflowDataModalOpen && workflowId && (
+          <WorkflowDataModal
+            workflowId={workflowId}
+            open={isWorkflowDataModalOpen}
+            onClose={() => setIsWorkflowDataModalOpen(false)}
+          />
+        )}
 
         <DBConnectionManagerModal
           open={dbConnectionsModalOpen}

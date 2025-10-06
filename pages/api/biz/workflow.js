@@ -33,6 +33,22 @@ const executeService = async (txnId, jRequest) => {
         }
         break;
       }
+      case constants.commands.WORKFLOW_SELECT_WORKFLOW: {
+        const result = await workflowEngineServer.getWorkflowById(
+          jRequest.systemCode,
+          jRequest.workflowId
+        );
+
+        if (result.error_code === 0) {
+          jResponse.error_code = 0;
+          jResponse.message = "";
+          jResponse.workflow_data = result.workflow_data;
+        } else {
+          jResponse.error_code = -1;
+          jResponse.error_message = result.error_message;
+        }
+        break;
+      }
       case constants.commands.WORKFLOW_SAVE_WORKFLOW: {
         const result = await workflowEngineServer.saveWorkflow(
           jRequest.systemCode,
@@ -130,10 +146,14 @@ const executeService = async (txnId, jRequest) => {
         const { systemCode, workflowId, transactionMode } = jRequest;
 
         // workflowId로 DB에서 workflowData 조회
-        const workflowData = await workflowEngineServer.getWorkflowById(
+        var result = await workflowEngineServer.getWorkflowById(
           systemCode,
           workflowId
         );
+        if (result.error_code != 0) {
+          throw new Error(result.error_message);
+        }
+        const workflowData = result.workflow_data;
 
         var currentNodeId =
           workflowData.currentNodeId ?? constants.workflowActions.START;
@@ -180,14 +200,12 @@ const executeService = async (txnId, jRequest) => {
 
             if (!node) throw new Error(`Node not found: ${currentNodeId}`);
 
-            const txInstance = node.data?.connectionId
-              ? txNode.get(node.data.connectionId)
-              : undefined;
+            const txInstances = Array.from(txNode.txContexts.values());
 
             const result = await workflowEngineServer.runWorkflowStep(
               node,
               workflowData,
-              txInstance
+              txInstances
             );
 
             var nextNodeId = null;
@@ -209,10 +227,11 @@ const executeService = async (txnId, jRequest) => {
               workflowData
             );
           } else {
+            const txInstances = Array.from(txNode.connections.values());
             // System 모드: 전체 워크플로우 실행
             await workflowEngineServer.executeWorkflow(
               workflowData,
-              txNode.txContexts
+              txInstances
             );
           }
 
