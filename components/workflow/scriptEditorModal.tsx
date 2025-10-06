@@ -3,7 +3,7 @@ import CodeMirror from "@uiw/react-codemirror";
 import { javascript } from "@codemirror/lang-javascript";
 import { githubLight, githubDark } from "@uiw/codemirror-theme-github";
 import { getIsDarkMode } from "@/components/core/client/frames/darkModeToggleButton";
-import type { ScriptNodeDesignData } from "./types/sql";
+import type { ScriptNodeDesignData } from "./types/nodeTypes";
 
 interface ScriptEditorModalProps {
   open: boolean;

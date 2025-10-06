@@ -5,7 +5,7 @@ import { sql as sqlLang } from "@codemirror/lang-sql";
 import { githubLight, githubDark } from "@uiw/codemirror-theme-github";
 import { Input, Button, Table } from "antd";
 import type { ColumnsType } from "antd/es/table";
-import type { SqlParam, SqlNodeDesignData } from "./types/sql";
+import type { SqlParam, SqlNodeDesignData } from "./types/nodeTypes";
 import { getIsDarkMode } from "@/components/core/client/frames/darkModeToggleButton";
 
 interface SqlEditorModalProps {

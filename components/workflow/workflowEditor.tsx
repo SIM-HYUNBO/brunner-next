@@ -28,6 +28,12 @@ import * as userInfo from "@/components/core/client/frames/userInfo";
 import { v4 as uuidv4 } from "uuid";
 import WorkflowSelector from "./workflowSelector";
 import * as commonFunctions from "@/components/core/commonFunctions";
+import {
+  Accordion,
+  AccordionItem,
+  AccordionTrigger,
+  AccordionContent,
+} from "@/components/ui/accordion";
 
 interface WorkflowEditorProps {
   initialNodes?: Node<ActionNodeData>[];
@@ -391,11 +397,62 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
     }
   };
 
+  const WorkflowOperationPanel = () => {
+    return (
+      <>
+        <div className="flex flex-row ml-1 mt-2">
+          <button
+            className="w-full border semi-text-bg-color"
+            onClick={addNode}
+          >
+            Add Node
+          </button>
+          <button
+            className="w-full border ml-1 semi-text-bg-color"
+            onClick={exportWorkflow}
+          >
+            Export JSON
+          </button>
+        </div>
+        <div className="flex flex-row ml-1 mt-1 space-x-1">
+          <button
+            className="w-full semi-text-bg-color border"
+            onClick={executeWorkflowFromTableEditor}
+          >
+            Run
+          </button>
+          <button
+            className="w-full semi-text-bg-color border"
+            onClick={executeWorkflowStepByStep}
+          >
+            Run By Node
+          </button>
+        </div>
+
+        <div className="flex flex-row ml-1 mt-1 space-x-1">
+          <button
+            className="w-full semi-text-bg-color border"
+            onClick={saveWorkflow}
+          >
+            Save
+          </button>
+          <button
+            className="w-full semi-text-bg-color border text-red-700"
+            onClick={deleteWorkflow}
+          >
+            Delete
+          </button>
+        </div>
+      </>
+    );
+  };
+
   return (
     <>
       <BrunnerMessageBox />
       <ReactFlowProvider>
         <div className="flex flex-row w-full h-full">
+          {/* 왼쪽 : 워크플로우 그래프 */}
           <div className="flex flex-1">
             <ReactFlow
               className="w-full semi-text-bg-color border border-gray-300 rounded-lg shadow-sm"
@@ -404,7 +461,7 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
                 style: {
                   background:
                     n.id === jWorkflow.current?.currentNodeId
-                      ? "#FFA500" // 현재 실행 중 노드 (주황색)
+                      ? "#FFA500" // 실행 중
                       : n.data.actionName === constants.workflowActions.START ||
                         n.data.actionName === constants.workflowActions.END
                       ? "#ADFF2F" // 시작/끝 노드
@@ -427,6 +484,7 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
               onEdgesChange={onEdgesChange}
               onConnect={onConnect}
               onNodeClick={onNodeClick}
+              onPaneClick={() => setSelectedNode(null)} // ✅ 빈 공간 클릭 시 선택 해제
               fitView
               snapToGrid
               snapGrid={[30, 30]}
@@ -437,205 +495,195 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
             </ReactFlow>
           </div>
 
-          <DBConnectionManagerModal
-            open={dbConnectionsModalOpen}
-            onOpenChange={setDbConnectionsModalOpen}
-          />
+          {/* 오른쪽 : Accordion으로 정리된 패널 */}
+          <div className="flex flex-col w-[380px] ml-1 h-full overflow-y-auto border-l border-gray-300 p-2 rounded-lg">
+            <Accordion type="multiple" defaultValue={["operation", "info"]}>
+              {/* ⚙️ Workflow Info */}
+              <AccordionItem value="info">
+                <AccordionTrigger>⚙️ Workflow Info</AccordionTrigger>
+                <AccordionContent>
+                  <WorkflowSelector
+                    onSelect={(wfSelected: any) => {
+                      setCurrentWorkflow(wfSelected.workflow_data);
+                    }}
+                    selectedWorkflow={jWorkflow.current}
+                  />
 
-          <div className="flex flex-col justify-top h-full ml-1">
-            <h2>Workflow Info</h2>
-            <WorkflowSelector
-              onSelect={(wfSelected: any) => {
-                setCurrentWorkflow(wfSelected.workflow_data);
-              }}
-              selectedWorkflow={jWorkflow.current}
-            />
-            <div style={{ padding: 10 }}>
-              <div>ID: {workflowId}</div>
-              <div className="flex flex-row mt-2">
-                이름:
-                <input
-                  className="flex-1 w-auto ml-2"
-                  value={workflowName}
-                  onChange={(e) => setWorkflowName(e.target.value)}
-                />
-              </div>
-              <div className="flex flex-row mt-2">
-                설명:
-                <textarea
-                  className="flex-1 w-auto ml-2"
-                  value={workflowDescription}
-                  rows={1}
-                  onChange={(e) => setWorkflowDescription(e.target.value)}
-                />
-              </div>
-            </div>
+                  <div className="p-2">
+                    <div>ID: {workflowId}</div>
+                    <div className="flex flex-row mt-2">
+                      이름:
+                      <input
+                        className="flex-1 w-auto ml-2"
+                        value={workflowName}
+                        onChange={(e) => setWorkflowName(e.target.value)}
+                      />
+                    </div>
+                    <div className="flex flex-row mt-2">
+                      설명:
+                      <textarea
+                        className="flex-1 w-auto ml-2"
+                        value={workflowDescription}
+                        rows={1}
+                        onChange={(e) => setWorkflowDescription(e.target.value)}
+                      />
+                    </div>
+                  </div>
 
-            <button
-              onClick={() => setDbConnectionsModalOpen(true)}
-              className="ml-1 mt-1 px-1 py-1 rounded semi-text-bg-color"
-            >
-              Database...
-            </button>
-            <div className="flex flex-row ml-1 mt-2">
-              <button
-                className="w-full border semi-text-bg-color"
-                onClick={addNode}
-              >
-                Add Node
-              </button>
-              <button
-                className="w-full border ml-1 semi-text-bg-color"
-                onClick={exportWorkflow}
-              >
-                Export JSON
-              </button>
-            </div>
-            <div className="flex flex-row ml-1 mt-1 space-x-1">
-              <button
-                className="w-full semi-text-bg-color border"
-                onClick={executeWorkflowFromTableEditor}
-              >
-                Run
-              </button>
-              <button
-                className="w-full semi-text-bg-color border"
-                onClick={executeWorkflowStepByStep}
-              >
-                Run By Node
-              </button>
-            </div>
+                  <button
+                    onClick={() => setDbConnectionsModalOpen(true)}
+                    className="ml-1 mt-1 px-2 py-1 rounded border semi-text-bg-color"
+                  >
+                    Database...
+                  </button>
+                </AccordionContent>
+              </AccordionItem>
+              {/* 🧭 Workflow Operation */}
+              <AccordionItem value="operation">
+                <AccordionTrigger>🧭 Workflow Operation</AccordionTrigger>
+                <AccordionContent>
+                  <WorkflowOperationPanel />
+                </AccordionContent>
+              </AccordionItem>
 
-            <div className="flex flex-row ml-1 mt-1 space-x-1">
-              <button
-                className="w-full semi-text-bg-color border"
-                onClick={saveWorkflow}
-              >
-                Save
-              </button>
-              <button
-                className="w-full semi-text-bg-color border text-red-700"
-                onClick={deleteWorkflow}
-              >
-                Delete
-              </button>
-            </div>
-            <NodePropertyPanel
-              workflowId={workflowId}
-              workflowName={workflowName}
-              workflowDescription={workflowDescription}
-              node={selectedNode}
-              nodes={nodes}
-              scriptContents={selectedNodeScript} // 여기 전달
-              scriptTimeoutMs={selectedNodeTimeoutMs}
-              onWorkflowUpdate={({ workflowName, workflowDescription }) => {
-                if (workflowName !== undefined) setWorkflowName(workflowName);
-                if (workflowDescription !== undefined)
-                  setWorkflowDescription(workflowDescription);
-              }}
-              onNodeUpdate={(id, updates) => {
-                setNodes((nds) => {
-                  const newNodes = nds.map((n) => {
-                    if (n.id !== id) return n;
+              {/* 🧩 Node Property */}
+              <AccordionItem value="node">
+                <AccordionTrigger>🧩 Node Property</AccordionTrigger>
+                <AccordionContent>
+                  <NodePropertyPanel
+                    workflowId={workflowId}
+                    workflowName={workflowName}
+                    workflowDescription={workflowDescription}
+                    node={selectedNode}
+                    nodes={nodes}
+                    scriptContents={selectedNodeScript}
+                    scriptTimeoutMs={selectedNodeTimeoutMs}
+                    onWorkflowUpdate={({
+                      workflowName,
+                      workflowDescription,
+                    }) => {
+                      if (workflowName !== undefined)
+                        setWorkflowName(workflowName);
+                      if (workflowDescription !== undefined)
+                        setWorkflowDescription(workflowDescription);
+                    }}
+                    onNodeUpdate={(id, updates) => {
+                      setNodes((nds) => {
+                        const newNodes = nds.map((n) => {
+                          if (n.id !== id) return n;
+                          const designUpdates = updates.design ?? {};
+                          const otherUpdates = {
+                            ...updates,
+                            design: undefined,
+                          };
+                          return {
+                            ...n,
+                            data: {
+                              ...n.data,
+                              ...otherUpdates,
+                              design: { ...n.data.design, ...designUpdates },
+                            },
+                          };
+                        });
 
-                    const designUpdates = updates.design ?? {};
-                    const otherUpdates = { ...updates, design: undefined }; // design 제거
+                        setSelectedNode(
+                          newNodes.find((n) => n.id === id) || null
+                        );
+                        setCurrentWorkflow({
+                          ...jWorkflow.current,
+                          nodes: newNodes,
+                        });
 
-                    return {
-                      ...n,
-                      data: {
-                        ...n.data,
-                        ...otherUpdates,
-                        design: { ...n.data.design, ...designUpdates },
-                      },
-                    };
-                  });
+                        return newNodes;
+                      });
+                    }}
+                  />
+                </AccordionContent>
+              </AccordionItem>
+            </Accordion>
 
-                  setSelectedNode(newNodes.find((n) => n.id === id) || null);
-                  setCurrentWorkflow({ ...jWorkflow.current, nodes: newNodes });
-
-                  return newNodes;
-                });
-              }}
+            {/* DB 연결 모달 */}
+            <DBConnectionManagerModal
+              open={dbConnectionsModalOpen}
+              onOpenChange={setDbConnectionsModalOpen}
             />
           </div>
         </div>
 
+        {/* 하단 : Input / Output Data */}
         <div className="flex flex-row mt-2">
-          {/* Input Table */}
+          {/* Inputs */}
           <div className="flex flex-col w-[calc(50%-10px)]">
-            <div className="flex flex-row space-x-2">
-              <div className="flex flex-row mb-2 space-x-2">
-                <h4>Workflow Inputs</h4>
-                <button
-                  className="border semi-text-bg-color px-3 py-1"
-                  onClick={() => setIsInputSchemaEditorOpen(true)}
-                >
-                  Edit Schema
-                </button>
-                <button
-                  className="border semi-text-bg-color px-3 py-1"
-                  onClick={() => setIsInputDataEditorOpen(true)}
-                >
-                  Edit Data
-                </button>
-              </div>
-
-              {isInputSchemaEditorOpen && (
-                <JsonDatasetEditorModal
-                  open={isInputSchemaEditorOpen}
-                  mode="schema"
-                  value={designedInputData}
-                  onConfirm={(newSchema) => {
-                    setDesignedInputData(newSchema as DesignedDataset);
-                    const newDataObj: Record<string, any> = {};
-                    for (const [tableName, rows] of Object.entries(newSchema)) {
-                      if (Array.isArray(rows) && rows.length > 0) {
-                        const firstRow = rows[0];
-                        const newRow: Record<string, any> = {};
-                        for (const key in firstRow) {
-                          const value = firstRow[key];
-                          switch (typeof value) {
-                            case "string":
-                              newRow[key] = "";
-                              break;
-                            case "number":
-                              newRow[key] = 0;
-                              break;
-                            case "boolean":
-                              newRow[key] = false;
-                              break;
-                            case "object":
-                            default:
-                              newRow[key] = {};
-                              break;
-                          }
-                        }
-                        newDataObj[tableName] = [newRow];
-                      } else {
-                        newDataObj[tableName] = [];
-                      }
-                    }
-                    setWorkflowInputData(JSON.stringify(newDataObj, null, 2));
-                    setIsInputSchemaEditorOpen(false);
-                  }}
-                  onCancel={() => setIsInputSchemaEditorOpen(false)}
-                />
-              )}
-
-              {isInputDataEditorOpen && (
-                <JsonDatasetEditorModal
-                  open={isInputDataEditorOpen}
-                  mode="data"
-                  value={workflowInputDataObj}
-                  onConfirm={(newData) => {
-                    setWorkflowInputData(JSON.stringify(newData, null, 2));
-                    setIsInputDataEditorOpen(false);
-                  }}
-                  onCancel={() => setIsInputDataEditorOpen(false)}
-                />
-              )}
+            <div className="flex flex-row mb-2 space-x-2">
+              <h4>Workflow Inputs</h4>
+              <button
+                className="border semi-text-bg-color px-3 py-1"
+                onClick={() => setIsInputSchemaEditorOpen(true)}
+              >
+                Edit Schema
+              </button>
+              <button
+                className="border semi-text-bg-color px-3 py-1"
+                onClick={() => setIsInputDataEditorOpen(true)}
+              >
+                Edit Data
+              </button>
             </div>
+
+            {/* Input Schema/Data 모달 */}
+            {isInputSchemaEditorOpen && (
+              <JsonDatasetEditorModal
+                open={isInputSchemaEditorOpen}
+                mode="schema"
+                value={designedInputData}
+                onConfirm={(newSchema) => {
+                  setDesignedInputData(newSchema as DesignedDataset);
+                  const newDataObj: Record<string, any> = {};
+                  for (const [tableName, rows] of Object.entries(newSchema)) {
+                    if (Array.isArray(rows) && rows.length > 0) {
+                      const firstRow = rows[0];
+                      const newRow: Record<string, any> = {};
+                      for (const key in firstRow) {
+                        const value = firstRow[key];
+                        switch (typeof value) {
+                          case "string":
+                            newRow[key] = "";
+                            break;
+                          case "number":
+                            newRow[key] = 0;
+                            break;
+                          case "boolean":
+                            newRow[key] = false;
+                            break;
+                          default:
+                            newRow[key] = {};
+                            break;
+                        }
+                      }
+                      newDataObj[tableName] = [newRow];
+                    } else {
+                      newDataObj[tableName] = [];
+                    }
+                  }
+                  setWorkflowInputData(JSON.stringify(newDataObj, null, 2));
+                  setIsInputSchemaEditorOpen(false);
+                }}
+                onCancel={() => setIsInputSchemaEditorOpen(false)}
+              />
+            )}
+
+            {isInputDataEditorOpen && (
+              <JsonDatasetEditorModal
+                open={isInputDataEditorOpen}
+                mode="data"
+                value={workflowInputDataObj}
+                onConfirm={(newData) => {
+                  setWorkflowInputData(JSON.stringify(newData, null, 2));
+                  setIsInputDataEditorOpen(false);
+                }}
+                onCancel={() => setIsInputDataEditorOpen(false)}
+              />
+            )}
 
             <textarea
               className="w-full h-[200px] mt-2 border p-2 font-mono text-sm"
@@ -658,19 +706,18 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
             />
           </div>
 
-          {/* Output Table */}
+          {/* Outputs */}
           <div className="flex flex-col ml-2 w-[calc(50%-10px)]">
-            <div className="flex mb-2">
-              <div className="flex flex-row space-x-2">
-                <h4>Workflow Outputs</h4>
-                <button
-                  className="border semi-text-bg-color px-3 py-1"
-                  onClick={() => setIsOutputSchemaEditorOpen(true)}
-                >
-                  Edit Schema
-                </button>
-              </div>
+            <div className="flex flex-row mb-2 space-x-2">
+              <h4>Workflow Outputs</h4>
+              <button
+                className="border semi-text-bg-color px-3 py-1"
+                onClick={() => setIsOutputSchemaEditorOpen(true)}
+              >
+                Edit Schema
+              </button>
             </div>
+
             {isOutputSchemaEditorOpen && (
               <JsonDatasetEditorModal
                 open={isOutputSchemaEditorOpen}
@@ -683,6 +730,7 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
                 onCancel={() => setIsOutputSchemaEditorOpen(false)}
               />
             )}
+
             <textarea
               className="w-full h-[200px] mt-2 border p-2 font-mono text-sm"
               value={designedOutputData}

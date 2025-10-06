@@ -13,8 +13,8 @@ import { ScriptEditorModal } from "@/components/workflow/scriptEditorModal";
 import { useModal } from "@/components/core/client/brunnerMessageBox";
 import { SqlEditorModal } from "./sqlEditorModal";
 
-import type { ScriptNodeDesignData } from "./types/sql";
-import type { SqlNodeDesignData } from "./types/sql";
+import type { ScriptNodeDesignData } from "./types/nodeTypes";
+import type { SqlNodeDesignData } from "./types/nodeTypes";
 
 interface NodePropertyPanelProps {
   node: Node<any> | null;

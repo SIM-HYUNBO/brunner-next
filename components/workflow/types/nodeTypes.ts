@@ -1,4 +1,4 @@
-// SQL 노드에서 사용할 타입 정의
+// 노드에서 사용할 타입 정의
 
 export interface SqlParam {
   name?: string;
