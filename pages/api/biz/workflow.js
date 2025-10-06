@@ -220,6 +220,8 @@ const executeService = async (txnId, jRequest) => {
             }
             workflowData.currentNodeId =
               nextNodeId ?? constants.workflowActions.START;
+
+            // Business 트랜잭션의 단위 노드 실행결과는 DB 저장함
             const saveResult = await workflowEngineServer.saveWorkflow(
               systemCode,
               jRequest.userId,
