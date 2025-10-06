@@ -190,24 +190,24 @@ api.postJson: async (url, body) => http post request.
     setIsScriptModalOpen(false);
   };
 
-  const handleSqlModalConfirm = (data: SqlNodeDesignData) => {
+  const handleSqlModalConfirm = (sqlNodeDesignData: SqlNodeDesignData) => {
     if (!node) return;
-    console.log("SQL Editor 저장:", data);
+    console.log("SQL Editor 저장:", sqlNodeDesignData);
 
     // ① 모달 내부 값 state 저장 (옵션)
-    setSqlModalData(data);
-    setLocalSqlStmt(data.sqlStmt || "");
-    setLocalDBConnectionId(data.dbConnectionId || "");
-    setLocalMaxRows(data.maxRows || 0);
+    setSqlModalData(sqlNodeDesignData);
+    setLocalSqlStmt(sqlNodeDesignData.sqlStmt || "");
+    setLocalDBConnectionId(sqlNodeDesignData.dbConnectionId || "");
+    setLocalMaxRows(sqlNodeDesignData.maxRows || 0);
 
     // ② node.data.design 갱신
     onNodeUpdate?.(node.id, {
       design: {
         ...node.data.design,
-        dbConnectionId: data.dbConnectionId,
-        sqlStmt: data.sqlStmt,
-        sqlParams: data.sqlParams,
-        maxRows: data.maxRows,
+        dbConnectionId: sqlNodeDesignData.dbConnectionId,
+        sqlStmt: sqlNodeDesignData.sqlStmt,
+        sqlParams: sqlNodeDesignData.sqlParams,
+        maxRows: sqlNodeDesignData.maxRows,
       },
     });
 
