@@ -164,7 +164,7 @@ export function registerBuiltInActions(): void {
 
   // safe Api
 
-  /* 
+  /*
     log(...) – 워커 내부 로그 저장
     alert(msg) – 메인 스레드 alert
     sleep(ms) – 비동기 지연
@@ -177,50 +177,59 @@ export function registerBuiltInActions(): void {
     jsonParse(str) / jsonStringify(obj) – JSON 처리
     formatDate(date, fmt) – 날짜 포맷(간단 예시)
   */
+  /*
+  const userScript: string =
+        node.data.design.scriptConents ||
+        `
+        // POST 요청 예제
+
+        const body = {
+          title: "sim",
+          body: "hyunbo",
+          age: 40
+        }
+
+        const response = await api.postJson(
+          "https://jsonplaceholder.typicode.com/posts",
+          body
+        );
+        api.setVar("data.run.output", response);
+        `;
+
+      const userScript = `
+      SQL 실행 예제
+      node.data.run.inputs에서 connectionId, query, params를 가져와서 사용
+
+      const databaseId = "brunner"; // DB 연결 ID
+      const query = `
+      SELECT *
+        FROM brunner.tb_cor_user_mst
+       WHERE user_id = $1`;
+      const params = ['fredric']; // 파라미터
+
+      try {
+        const result = await api.sql(databaseId, query, params);
+        api.log("SQL 결과:", result);
+        return result; // 노드 실행 결과 리턴한 값은 node.data.run.output에 자동 저장됨
+      } catch (err) {
+        api.log("SQL 실행 오류:", err.message);
+        api.setVar("data.run.output", err);
+        return err; // 노드 실행 결과 리턴한 값은 node.data.run.output에 자동 저장됨
+      }
+      `;
+  */
+  /*
+  var nodes = api.getGlobalVar("nodes");  // workflow 아래 경로부터 지정
+  var node = nodes.find((n) => n.data.label === "Node 1");
+  var userName = node.data.run.outputs[0].user_name;
+  api.setVar("data.run.outputs", [userName]); // node 아래 경로부터 지정
+  api.log(userName);
+  */
+  // SCRIPT
   registerAction(
     constants.workflowActions.SCRIPT,
     async (node: any, workflowData: any, txContext) => {
       const userScript = node.data.design.scriptContents || "";
-
-      // const userScript: string =
-      //   node.data.design.scriptConents ||
-      //   `
-      //   // POST 요청 예제
-
-      //   const body = {
-      //     title: "sim",
-      //     body: "hyunbo",
-      //     age: 40
-      //   }
-
-      //   const response = await api.postJson(
-      //     "https://jsonplaceholder.typicode.com/posts",
-      //     body
-      //   );
-      //   api.setVar("data.run.output", response);
-      //   `;
-
-      // const userScript = `
-      // SQL 실행 예제
-      // node.data.run.inputs에서 connectionId, query, params를 가져와서 사용
-
-      // const databaseId = "brunner"; // DB 연결 ID
-      // const query = `
-      // SELECT *
-      //   FROM brunner.tb_cor_user_mst
-      //  WHERE user_id = $1`;
-      // const params = ['fredric']; // 파라미터
-
-      // try {
-      //   const result = await api.sql(databaseId, query, params);
-      //   api.log("SQL 결과:", result);
-      //   return result; // 노드 실행 결과 리턴한 값은 node.data.run.output에 자동 저장됨
-      // } catch (err) {
-      //   api.log("SQL 실행 오류:", err.message);
-      //   api.setVar("data.run.output", err);
-      //   return err; // 노드 실행 결과 리턴한 값은 node.data.run.output에 자동 저장됨
-      // }
-      // `;
 
       const timeoutMs: number = node.data.design.timeoutMs || 5000;
 
@@ -368,17 +377,19 @@ export function registerBuiltInActions(): void {
         return undefined;
       }
 
-      const AsyncFunction = Object.getPrototypeOf(async function () {})
-        .constructor as any;
-      const fn = new AsyncFunction(
-        "actionData",
-        "workflowData",
-        "api",
-        userScript
-      );
+      var result = null;
 
       try {
-        const result = await Promise.race([
+        const AsyncFunction = Object.getPrototypeOf(async function () {})
+          .constructor as any;
+        const fn = new AsyncFunction(
+          "actionData",
+          "workflowData",
+          "api",
+          userScript
+        );
+
+        result = await Promise.race([
           fn(node.data || {}, workflowData.data || {}, safeApi),
           new Promise((_, reject) =>
             setTimeout(() => reject(new Error("timeout")), timeoutMs)
@@ -387,16 +398,20 @@ export function registerBuiltInActions(): void {
 
         logs.forEach((line: string) => console.log("[SCRIPT]", line));
 
-        node.data.run.outputs = result;
+        // 스크립트는 결과 저장 안함. 여기서 result = null;
+        // node.data.run.outputs = [result];
         postNodeCheck(node, workflowData);
+        return result;
       } catch (err: any) {
-        console.error("[SCRIPT ERROR]", err.message);
-        alert("스크립트 실행 오류: " + err.message);
-        throw err;
+        result = err;
+        console.error("[SCRIPT ERROR]", result.message);
+        node.data.run.outputs = [result];
+        return result;
       }
     }
   );
 
+  // SQL
   registerAction(
     constants.workflowActions.SQL,
     async (node, workflowData, txContext) => {
@@ -830,7 +845,7 @@ export async function runWorkflowStep(
   const action = getAction(node.data.actionName);
   if (!action) throw new Error(`Unknown action: ${node.data.actionName}`);
 
-  await action(node, workflowData, txContext ?? undefined);
+  return await action(node, workflowData, txContext ?? undefined);
 }
 
 export async function saveWorkflow(
