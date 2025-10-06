@@ -456,43 +456,54 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
       <ReactFlowProvider>
         <div className="flex flex-row w-full h-full relative">
           {/* 🧭 왼쪽: 워크플로우 다이어그램 */}
-          <div className="flex flex-1 relative rounded-lg border shadow-sm overflow-hidden">
-            <ReactFlow
-              nodes={nodes.map((n) => ({
-                ...n,
-                style: {
-                  background:
-                    n.id === jWorkflow.current?.currentNodeId
-                      ? "#FFA500"
-                      : n.data.actionName === constants.workflowActions.START ||
-                        n.data.actionName === constants.workflowActions.END
-                      ? "#ADFF2F"
-                      : "#fff",
-                  border:
-                    n.id === jWorkflow.current?.currentNodeId
-                      ? "3px solid #FF4500"
-                      : "1px solid #222",
-                  color: "#000",
-                },
-              }))}
-              edges={edges.map((e) => ({
-                ...e,
-                markerEnd: { type: "arrowclosed" },
-                style: { stroke: "#ccc", strokeWidth: 2 },
-              }))}
-              onNodesChange={onNodesChange}
-              onEdgesChange={onEdgesChange}
-              onConnect={onConnect}
-              onNodeClick={onNodeClick}
-              onPaneClick={() => setSelectedNode(null)}
-              fitView
-              snapToGrid
-              snapGrid={[30, 30]}
+          <div className="flex flex-1 relative">
+            <div className="flex-1 relative rounded-lg border shadow-sm overflow-hidden">
+              <ReactFlow
+                nodes={nodes.map((n) => ({
+                  ...n,
+                  style: {
+                    background:
+                      n.id === jWorkflow.current?.currentNodeId
+                        ? "#FFA500"
+                        : n.data.actionName ===
+                            constants.workflowActions.START ||
+                          n.data.actionName === constants.workflowActions.END
+                        ? "#ADFF2F"
+                        : "#fff",
+                    border:
+                      n.id === jWorkflow.current?.currentNodeId
+                        ? "3px solid #FF4500"
+                        : "1px solid #222",
+                    color: "#000",
+                  },
+                }))}
+                edges={edges.map((e) => ({
+                  ...e,
+                  markerEnd: { type: "arrowclosed" } as any,
+                  style: { stroke: "#ccc", strokeWidth: 2 },
+                }))}
+                onNodesChange={onNodesChange}
+                onEdgesChange={onEdgesChange}
+                onConnect={onConnect}
+                onNodeClick={onNodeClick}
+                onPaneClick={() => setSelectedNode(null)}
+                fitView
+                snapToGrid
+                snapGrid={[30, 30]}
+              >
+                <MiniMap />
+                <Controls />
+                <Background />
+              </ReactFlow>
+            </div>
+
+            {/* Flow 영역 안 버튼 (토글 방식) */}
+            <button
+              className="absolute top-2 right-2 z-50 px-2 py-1 bg-blue-500 text-white rounded"
+              onClick={() => setIsRightPanelOpen((prev) => !prev)}
             >
-              <MiniMap />
-              <Controls />
-              <Background />
-            </ReactFlow>
+              ⚙️
+            </button>
           </div>
 
           {/* ⚙️ 오른쪽 패널 (토글) */}
