@@ -155,7 +155,7 @@ export const NodePropertyEditor: React.FC<NodePropertyEditorProps> = ({
   return (
     <div>
       <BrunnerMessageBox />
-      <h3>Node Editor</h3>
+      {/* <h3>Node Editor</h3> */}
       <div>ID: {node.id}</div>
       <div>Label: {node.data.label}</div>
       <div>Status: {node.data.status}</div>
