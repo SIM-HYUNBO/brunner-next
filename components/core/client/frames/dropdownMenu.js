@@ -148,7 +148,7 @@ export default function DropdownMenu({ reloadSignal, triggermenureload }) {
                   <Link
                     href={item.href}
                     onClick={() => setMobileMenuOpen(false)} // 여기 추가
-                    className="block px-5 py-2 text-sm text-gray-800 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-600 hover:text-black dark:hover:text-white rounded-md whitespace-nowrap"
+                    className="block px-5 py-2 text-sm semi-text-bg-color hover:text-black dark:hover:text-white rounded-md whitespace-nowrap"
                     style={{ paddingLeft: `${16 * (depth + 1)}px` }}
                   >
                     {item.label}

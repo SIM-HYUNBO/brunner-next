@@ -49,7 +49,7 @@ export default function UserInfo({
       </div>
 
       {/* 가운데 고정: 사용자 이름 */}
-      <div className="absolute inset-y-0 left-1/2 flex items-center -translate-x-1/2">
+      <div className="absolute inset-y-0 left-1/2 flex items-center -translate-x-1/2 semi-text-bg-color">
         {getLoginUserId() && (
           <span className="text-base text-center">{userName}</span>
         )}
