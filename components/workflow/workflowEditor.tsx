@@ -456,9 +456,8 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
       <ReactFlowProvider>
         <div className="flex flex-row w-full h-full relative">
           {/* 🧭 왼쪽: 워크플로우 다이어그램 */}
-          <div className="flex flex-1 relative">
+          <div className="flex flex-1 relative rounded-lg border shadow-sm overflow-hidden">
             <ReactFlow
-              className="w-full semi-text-bg-color border border-gray-300 rounded-lg shadow-sm"
               nodes={nodes.map((n) => ({
                 ...n,
                 style: {
@@ -476,13 +475,11 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
                   color: "#000",
                 },
               }))}
-              edges={
-                edges.map((e) => ({
-                  ...e,
-                  markerEnd: { type: "arrowclosed" },
-                  style: { stroke: "#ccc", strokeWidth: 2 },
-                })) as Edge<any>[]
-              }
+              edges={edges.map((e) => ({
+                ...e,
+                markerEnd: { type: "arrowclosed" },
+                style: { stroke: "#ccc", strokeWidth: 2 },
+              }))}
               onNodesChange={onNodesChange}
               onEdgesChange={onEdgesChange}
               onConnect={onConnect}
@@ -496,14 +493,6 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
               <Controls />
               <Background />
             </ReactFlow>
-
-            {/* Flow 영역 안 버튼 (토글 방식) */}
-            <button
-              className="absolute top-2 right-2 z-50 px-2 py-1 bg-blue-500 text-white rounded"
-              onClick={() => setIsRightPanelOpen((prev) => !prev)}
-            >
-              ⚙️
-            </button>
           </div>
 
           {/* ⚙️ 오른쪽 패널 (토글) */}
