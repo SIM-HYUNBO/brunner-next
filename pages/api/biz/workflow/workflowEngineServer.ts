@@ -10,8 +10,8 @@ import type { DBConnectionConfig, DBType } from "./dbConnectionManager";
 
 import type { PoolClient } from "pg";
 import type { PoolConnection } from "mysql2/promise";
-import type * as mssql from "mssql";
-import type * as oracledb from "oracledb";
+import type * as mssqlType from "mssql";
+import type * as oracleType from "oracledb";
 
 type MssqlConnectionPool = {
   request: () => {
@@ -19,6 +19,12 @@ type MssqlConnectionPool = {
     query: (sql: string) => Promise<{ recordset: any[] }>;
   };
 };
+
+type DBConnection =
+  | PoolClient
+  | PoolConnection
+  | InstanceType<typeof mssqlType.ConnectionPool>
+  | oracleType.Connection;
 
 const logger = require("./../../../../components/core/server/winston/logger");
 
@@ -318,7 +324,7 @@ export function registerBuiltInActions(): void {
               return resultMs.recordset;
 
             case "oracle":
-              const resultOra = await (tx as oracledb.Connection).execute(
+              const resultOra = await (tx as oracleType.Connection).execute(
                 sql,
                 params || [],
                 {
@@ -553,12 +559,6 @@ function convertNamedParams(sqlStmt: string, sqlParams: any[], dbType: string) {
 
   return { sql, params };
 }
-
-type DBConnection =
-  | PoolClient
-  | PoolConnection
-  | InstanceType<typeof mssql.ConnectionPool>
-  | oracledb.Connection;
 
 // ---------------------------
 // 1️⃣ 트랜잭션 컨텍스트
