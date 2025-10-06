@@ -1,3 +1,4 @@
+import * as constants from "@/components/core/constants";
 import type { NextApiRequest, NextApiResponse } from "next";
 import { v4 as uuidv4 } from "uuid";
 import mssql from "mssql";
@@ -26,17 +27,17 @@ export default async function handler(
   const [action, id] = req.query.action as string[];
 
   // 테스트
-  if (action === "test" && req.method === "POST") {
+  if (action === "test" && req.method === constants.httpMethod.POST) {
     const conn: DBConnectionInfo = req.body;
     try {
-      if (conn.type === "postgres") {
+      if (conn.type === constants.dbType.postgres) {
         const client = new Client(conn);
         await client.connect();
         await client.end();
-      } else if (conn.type === "mysql") {
+      } else if (conn.type === constants.dbType.mysql) {
         const connection = await mysql2.createConnection(conn);
         await connection.end();
-      } else if (conn.type === "mssql") {
+      } else if (conn.type === constants.dbType.mssql) {
         const pool = await mssql.connect({
           user: conn.user,
           password: conn.password,
@@ -46,7 +47,7 @@ export default async function handler(
           options: { encrypt: false },
         });
         await pool.close();
-      } else if (conn.type === "oracle") {
+      } else if (conn.type === constants.dbType.oracle) {
         const connection = await oracledb.getConnection({
           user: conn.user,
           password: conn.password,
@@ -54,11 +55,14 @@ export default async function handler(
         });
         await connection.close();
       } else {
-        return res
-          .status(400)
-          .json({ success: false, message: "지원하지 않는 DB 타입" });
+        return res.status(400).json({
+          success: false,
+          message: constants.messages.NOT_SUPPORTED_DB_TYPE,
+        });
       }
-      return res.status(200).json({ success: true, message: "연결 성공" });
+      return res
+        .status(200)
+        .json({ success: true, message: constants.messages.SUCCESS_CONNECTED });
     } catch (err: any) {
       return res.status(500).json({ success: false, message: err.message });
     }

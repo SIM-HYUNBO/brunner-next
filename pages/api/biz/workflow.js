@@ -141,7 +141,7 @@ const executeService = async (txnId, jRequest) => {
       }
 
       case constants.commands.WORKFLOW_EXECUTE_WORKFLOW: {
-        jResponse = { error_code: -1 }; // 초기값
+        jResponse = { error_code: -1 };
 
         const { systemCode, workflowId, transactionMode } = jRequest;
 
@@ -252,7 +252,9 @@ const executeService = async (txnId, jRequest) => {
           try {
             if (txNode) await txNode?.rollback();
           } catch (rollbackErr) {
-            console.error("Rollback failed:", rollbackErr);
+            console.error(
+              `${constants.messages.DATABASE_FAILED}: ${rollbackErr}`
+            );
           }
 
           jResponse.error_code = -1;
@@ -275,7 +277,7 @@ const executeService = async (txnId, jRequest) => {
     logger.error(`message:${error.message}\n stack:${error.stack}\n`);
     jResponse = {
       error_code: -1,
-      error_message: error.message || "워크플로우 서비스 처리 중 오류 발생",
+      error_message: `${constants.messages.FAILED_TO_EXECUTE_WORKFLOW} ${error.message}`,
     };
   } finally {
     return jResponse;

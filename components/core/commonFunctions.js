@@ -178,7 +178,10 @@ export function getDefaultOutputs(actionName) {
     case constants.workflowActions.START:
     case constants.workflowActions.CALL:
     case constants.workflowActions.END:
-    default:
+    case constants.workflowActions.SCRIPT:
+    case constants.workflowActions.SQL:
       return [{ table: "OUTDATA", columns: [], rows: [] }];
+    default:
+      throw new Error(constants.messages.WORKFLOW_NOT_SUPPORTED_NODE_TYPE);
   }
 }

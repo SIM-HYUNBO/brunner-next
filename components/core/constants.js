@@ -30,6 +30,7 @@ export const messages = {
   MINIUM_PAGE_COUNT: `Minimum page count is 1.`,
   NO_DATA_FOUND: `No data found.`,
   NO_PERMISSION: `You do not have permission`,
+  NOT_SUPPORTED_DB_TYPE: `Not supported Database Type`,
   REQUIRED_FIELD: `The field value is required.`,
   SAVE_DOCUMENT_WITHOUT_TITLE: "Save document without title?",
   SERVER_NOT_CONNECTTED: `cannot connect to server`,
@@ -41,6 +42,7 @@ export const messages = {
   SUCCESS_ADDED: `Successfully added.`,
   SUCCESS_APPLIED: `Successfully applied.`,
   SUCCESS_CHANGED: `Successfully changed.`,
+  SUCCESS_CONNECTED: `Successfully connected.`,
   SUCCESS_DELETED: `Successfully deleted.`,
   SUCCESS_FINISHED: `Successfully finished.`,
   SUCCESS_REQUESTED: `Successfully requested.`,
@@ -118,6 +120,8 @@ export const edocComponentType = {
 export const httpMethod = {
   GET: "GET",
   POST: "POST",
+  PUT: "PUT",
+  DELETE: "DELETE",
 };
 
 export const workflowActions = {
@@ -141,4 +145,11 @@ export const workflowStatus = {
 export const transactionMode = {
   Business: "Business",
   System: "System",
+};
+
+export const dbType = {
+  oracle: "oracle",
+  mysql: "mysql",
+  postgres: "postgres",
+  mssql: "mssql",
 };

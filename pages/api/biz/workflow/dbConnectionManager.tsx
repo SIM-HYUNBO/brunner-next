@@ -177,25 +177,27 @@ export class DBConnectionManager {
       throw new Error(`No pool found for DB ID or Name "${idOrName}"`);
 
     switch (poolObj.type) {
-      case "postgres":
+      case constants.dbType.postgres:
         return {
           type: poolObj.type,
           dbConnection: await poolObj.pool.connect(),
         };
-      case "mysql":
+      case constants.dbType.mysql:
         return {
           type: poolObj.type,
           dbConnection: await poolObj.pool.getConnection(),
         };
-      case "mssql":
+      case constants.dbType.mssql:
         return { type: poolObj.type, dbConnection: poolObj.pool };
-      case "oracle":
+      case constants.dbType.oracle:
         return {
           type: poolObj.type,
           dbConnection: await poolObj.pool.getConnection(),
         };
       default:
-        throw new Error(`Unsupported DB type: ${poolObj.type}`);
+        throw new Error(
+          `${constants.messages.NOT_SUPPORTED_DB_TYPE}:${poolObj.type}`
+        );
     }
   }
 

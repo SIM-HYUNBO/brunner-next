@@ -271,7 +271,7 @@ export function registerBuiltInActions(): void {
         formatDate: (date: Date, fmt: string): string => date.toISOString(),
         postJson: async (url: string, body: any): Promise<any> => {
           const res = await fetch(url, {
-            method: "POST",
+            method: constants.httpMethod.POST,
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(body),
           });
@@ -297,33 +297,35 @@ export function registerBuiltInActions(): void {
 
           const tx = txContextEntry?.dbConnection;
           if (!tx)
-            throw new Error(`DB 연결을 찾을 수 없습니다: ${connectionId}`);
+            throw new Error(
+              `${constants.messages.NO_DATA_FOUND}:${connectionId}`
+            );
 
           const dbType = txContextEntry?.dbType;
 
           switch (dbType) {
-            case "mysql":
+            case constants.dbType.mysql:
               const [result] = await (tx as PoolConnection).query(
                 sql,
                 params || []
               );
               return result;
 
-            case "postgres":
+            case constants.dbType.postgres:
               const resultPg = await (tx as PoolClient).query(
                 sql,
                 params || []
               );
               return resultPg.rows;
 
-            case "mssql":
+            case constants.dbType.mssql:
               const request = (tx as MssqlConnectionPool).request();
               if (params)
                 params.forEach((p, i) => request.input(`param${i + 1}`, p));
               const resultMs = await request.query(sql);
               return resultMs.recordset;
 
-            case "oracle":
+            case constants.dbType.oracle:
               const resultOra = await (tx as oracleType.Connection).execute(
                 sql,
                 params || [],
@@ -334,7 +336,9 @@ export function registerBuiltInActions(): void {
               return resultOra.rows;
 
             default:
-              throw new Error(`지원하지 않는 DB 타입: ${dbType}`);
+              throw new Error(
+                `${constants.messages.NOT_SUPPORTED_DB_TYPE}:${dbType}`
+              );
           }
         },
       };
@@ -405,14 +409,22 @@ export function registerBuiltInActions(): void {
 
       const { dbConnectionId, sqlStmt, sqlParams } = node.data?.design || {};
 
-      if (!dbConnectionId) throw new Error("connectionId가 필요합니다.");
-      if (!sqlStmt) throw new Error("SQL query가 필요합니다.");
+      if (!dbConnectionId)
+        throw new Error(
+          `${constants.messages.REQUIRED_FIELD}:node.data.design.connetionId`
+        );
+      if (!sqlStmt)
+        throw new Error(
+          `${constants.messages.REQUIRED_FIELD}:node.data.design.sqlStmt`
+        );
 
       const dbManager = DBConnectionManager.getInstance();
 
       const dbConfig = await dbManager.get(dbConnectionId);
       if (!dbConfig)
-        throw new Error(`DB 연결정보를 찾을 수 없습니다: ${dbConnectionId}`);
+        throw new Error(
+          `${constants.messages.NO_DATA_FOUND}: ${dbConnectionId}`
+        );
 
       const dbType = dbConfig.type;
 
@@ -424,33 +436,33 @@ export function registerBuiltInActions(): void {
         connection = await dbManager.getConnection(dbConnectionId);
 
         switch (connection.type) {
-          case "mysql": {
+          case constants.dbType.mysql: {
             const { sql, params } = convertNamedParams(
               sqlStmt,
               sqlParams,
-              "mysql"
+              constants.dbType.mysql
             );
             const [result] = await connection.dbConnection.query(sql, params);
             rows = result;
             break;
           }
 
-          case "postgres": {
+          case constants.dbType.postgres: {
             const { sql, params } = convertNamedParams(
               sqlStmt,
               sqlParams,
-              "postgres"
+              constants.dbType.postgres
             );
             const result = await connection.dbConnection.query(sql, params);
             rows = result.rows;
             break;
           }
 
-          case "mssql": {
+          case constants.dbType.mssql: {
             const { sql, params } = convertNamedParams(
               sqlStmt,
               sqlParams,
-              "mssql"
+              constants.dbType.mssql
             );
             const request = connection.dbConnection.request();
             if (Array.isArray(params)) {
@@ -463,11 +475,11 @@ export function registerBuiltInActions(): void {
             break;
           }
 
-          case "oracle": {
+          case constants.dbType.oracle: {
             const { sql, params } = convertNamedParams(
               sqlStmt,
               sqlParams,
-              "oracle"
+              constants.dbType.oracle
             );
             const binds: Record<string, any> = {};
             sqlParams.forEach((p: any) => (binds[p.name] = p.value));
@@ -479,7 +491,9 @@ export function registerBuiltInActions(): void {
             break;
           }
           default:
-            throw new Error(`지원하지 않는 DB 타입입니다: ${dbType}`);
+            throw new Error(
+              `${constants.messages.NOT_SUPPORTED_DB_TYPE}: ${dbType}`
+            );
         }
 
         // ✅ 결과 저장
@@ -496,9 +510,13 @@ export function registerBuiltInActions(): void {
         // ✅ 커넥션 반환
         if (connection.dbConnection) {
           try {
-            if (dbType === "mysql" || dbType === "postgres")
+            if (
+              dbType === constants.dbType.mysql ||
+              dbType === constants.dbType.postgres
+            )
               connection.dbConnection.release();
-            else if (dbType === "oracle") await connection.dbConnection.close();
+            else if (dbType === constants.dbType.oracle)
+              await connection.dbConnection.close();
             // mssql은 풀로 관리되므로 별도 close 없음
           } catch (closeErr) {
             console.warn("Connection close error:", closeErr);
@@ -519,7 +537,7 @@ function convertNamedParams(sqlStmt: string, sqlParams: any[], dbType: string) {
   let params: any[] = [];
 
   switch (dbType) {
-    case "postgres": {
+    case constants.dbType.postgres: {
       // @name → $1, $2, ...
       sqlParams.forEach((p, i) => {
         const pattern = new RegExp(`@${p.name}\\b`, "g");
@@ -529,8 +547,7 @@ function convertNamedParams(sqlStmt: string, sqlParams: any[], dbType: string) {
       break;
     }
 
-    case "mysql":
-    case "mariadb": {
+    case constants.dbType.mysql: {
       // @name → ?
       sqlParams.forEach((p) => {
         const pattern = new RegExp(`@${p.name}\\b`, "g");
@@ -540,13 +557,13 @@ function convertNamedParams(sqlStmt: string, sqlParams: any[], dbType: string) {
       break;
     }
 
-    case "mssql": {
+    case constants.dbType.mssql: {
       // @name 그대로 사용 가능 (MSSQL은 기본적으로 지원)
       params = sqlParams;
       break;
     }
 
-    case "oracle": {
+    case constants.dbType.oracle: {
       // :name 형태로 치환
       sqlParams.forEach((p) => {
         const pattern = new RegExp(`@${p.name}\\b`, "g");
@@ -660,22 +677,22 @@ export class TransactionNode {
       const pool = dbManager.getPool(connectionId);
 
       switch (dbType) {
-        case "postgres":
+        case constants.dbType.postgres:
           connection = await pool.connect();
           await connection.query("BEGIN");
           break;
 
-        case "mysql":
+        case constants.dbType.mysql:
           connection = await pool.getConnection();
           await connection.beginTransaction();
           break;
 
-        case "mssql":
+        case constants.dbType.mssql:
           connection = pool; // MSSQL은 풀 그대로 사용
           await connection.request().query("BEGIN TRANSACTION");
           break;
 
-        case "oracle":
+        case constants.dbType.oracle:
           connection = await pool.getConnection();
           await connection.execute("BEGIN");
           break;
@@ -705,16 +722,16 @@ export class TransactionNode {
       if (!tx) continue;
 
       switch (ctx.dbType) {
-        case "postgres":
+        case constants.dbType.postgres:
           await tx.query("COMMIT");
           break;
-        case "mysql":
+        case constants.dbType.mysql:
           await tx.commit();
           break;
-        case "mssql":
+        case constants.dbType.mssql:
           await tx.request().query("COMMIT TRANSACTION");
           break;
-        case "oracle":
+        case constants.dbType.oracle:
           await tx.execute("COMMIT");
           break;
       }
@@ -729,16 +746,16 @@ export class TransactionNode {
       if (!tx) continue;
 
       switch (ctx.dbType) {
-        case "postgres":
+        case constants.dbType.postgres:
           await tx.query("ROLLBACK");
           break;
-        case "mysql":
+        case constants.dbType.mysql:
           await tx.rollback();
           break;
-        case "mssql":
+        case constants.dbType.mssql:
           await tx.request().query("ROLLBACK TRANSACTION");
           break;
-        case "oracle":
+        case constants.dbType.oracle:
           await tx.execute("ROLLBACK");
           break;
       }
@@ -946,7 +963,7 @@ export async function getWorkflowById(systemCode: string, workflowId: string) {
     if (!dbResult || dbResult.rowCount === 0) {
       return {
         error_code: -1,
-        error_message: "워크플로우를 찾을 수 없습니다.",
+        error_message: `${constants.messages.NO_DATA_FOUND}`,
         workflowData: null,
       };
     } else {
