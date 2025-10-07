@@ -185,6 +185,7 @@ const executeService = async (txnId, jRequest) => {
 
           // 트랜잭션 시작: workflowData에 연결정보 포함되어 있어야 함
           await txNode.start(workflowData);
+          const txInstances = Array.from(txNode.txContexts.values());
 
           // -----------------------
           // 3️⃣ 실행 분기
@@ -199,8 +200,6 @@ const executeService = async (txnId, jRequest) => {
                 );
 
             if (!node) throw new Error(`Node not found: ${currentNodeId}`);
-
-            const txInstances = Array.from(txNode.txContexts.values());
 
             const result = await workflowEngineServer.runWorkflowStep(
               node,
@@ -221,30 +220,47 @@ const executeService = async (txnId, jRequest) => {
             workflowData.currentNodeId =
               nextNodeId ?? constants.workflowActions.START;
 
-            // Business 트랜잭션의 단위 노드 실행결과는 DB 저장함
+            // Business 트랜잭션의 단위 노드 실행결과는 워크픞포우에 저장함
             const saveResult = await workflowEngineServer.saveWorkflow(
               systemCode,
               jRequest.userId,
               workflowId,
               workflowData
             );
+
+            if (result.error_code != 0) {
+              throw new Error(result.error_message);
+            }
+
+            // -----------------------
+            // 4️⃣ 트랜잭션 커밋
+            // -----------------------
+            await txNode.commit();
+
+            jResponse.error_code = result.error_code;
+            jResponse.jWorkflow = workflowData;
+            jResponse.message = result.error_message;
           } else {
-            const txInstances = Array.from(txNode.connections.values());
             // System 모드: 전체 워크플로우 실행
-            await workflowEngineServer.executeWorkflow(
+            result = await workflowEngineServer.executeWorkflow(
               workflowData,
               txInstances
             );
+
+            if (result.error_code != 0) {
+              throw new Error(result.error_message);
+            }
+
+            // -----------------------
+            // 4️⃣ 트랜잭션 커밋
+            // -----------------------
+            await txNode.commit();
+            const txInstances = Array.from(txNode.connections.values());
+
+            jResponse.error_code = result.error_code;
+            jResponse.jWorkflow = workflowData;
+            jResponse.message = result.error_message;
           }
-
-          // -----------------------
-          // 4️⃣ 트랜잭션 커밋
-          // -----------------------
-          await txNode.commit();
-
-          jResponse.error_code = result.error_code;
-          jResponse.jWorkflow = workflowData;
-          jResponse.message = result.error_message;
         } catch (err) {
           // -----------------------
           // 5️⃣ 에러 발생 시 롤백

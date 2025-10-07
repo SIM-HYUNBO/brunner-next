@@ -890,6 +890,8 @@ export async function executeWorkflow(
   workflow: any,
   txContext: Map<string, TransactionContext> = new Map()
 ) {
+  var result = { error_code: -1, error_message: "" };
+
   const nodesList = workflow.nodes;
   const edgesList = workflow.edges;
   const edgeMap: Record<string, any[]> = {};
@@ -906,19 +908,24 @@ export async function executeWorkflow(
     nodeId: string,
     txContext: Map<string, TransactionContext> = new Map()
   ) {
-    if (visitedNodes.has(nodeId)) return;
+    var result = { error_code: -1, error_message: "" };
+
+    if (visitedNodes.has(nodeId)) return result;
     visitedNodes.add(nodeId);
 
     const node = nodesList.find((n: any) => n.id === nodeId);
-    if (!node) return;
+    if (!node) return result;
 
-    await runWorkflowStep(node, workflow, txContext);
+    result = await runWorkflowStep(node, workflow, txContext);
+    if (result.error_code != 0) return result;
 
     for (const edge of edgeMap[nodeId] || []) {
       if (!edge.data?.condition || Boolean(edge.data.condition)) {
-        await traverse(edge.target, txContext);
+        result = await traverse(edge.target, txContext);
+        if (result.error_code != 0) return result;
       }
     }
+    return result;
   }
 
   const startNode = nodesList.find(
