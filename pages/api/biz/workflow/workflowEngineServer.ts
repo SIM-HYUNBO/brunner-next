@@ -401,11 +401,13 @@ export function registerBuiltInActions(): void {
       try {
         const AsyncFunction = Object.getPrototypeOf(async function () {})
           .constructor as any;
+
+        // sourceURL 추가
         const fn = new AsyncFunction(
           "actionData",
           "workflowData",
           "api",
-          userScript
+          userScript + "\n//# sourceURL=userScript.js"
         );
 
         result = await Promise.race([
@@ -417,8 +419,7 @@ export function registerBuiltInActions(): void {
 
         logs.forEach((line: string) => console.log("[SCRIPT]", line));
 
-        // 스크립트는 결과 저장 안함. 여기서 result = null;
-        // node.data.run.outputs = [result];
+        // 스크립트 결과는 별도 저장 안함
         postNodeCheck(node, workflowData);
         return result;
       } catch (err: any) {
@@ -427,7 +428,7 @@ export function registerBuiltInActions(): void {
         // stack에서 userScript 줄 정보 찾기
         const stackLines = err.stack?.split("\n") || [];
         const userScriptLine = stackLines.find((line: string) =>
-          line.includes("userScript")
+          line.includes("userScript.js")
         );
 
         const errorLocation = userScriptLine

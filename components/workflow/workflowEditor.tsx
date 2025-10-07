@@ -419,13 +419,13 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
       <>
         <div className="flex flex-row ml-1 mt-2">
           <button
-            className="w-full border semi-text-bg-color"
+            className="w-full border border-black semi-text-bg-color hover:bg-gray-400"
             onClick={addNode}
           >
             Add Node
           </button>
           <button
-            className="w-full border ml-1 semi-text-bg-color"
+            className="w-full border border-black ml-1 semi-text-bg-color hover:bg-gray-400"
             onClick={exportWorkflow}
           >
             Export JSON
@@ -433,13 +433,13 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
         </div>
         <div className="flex flex-row ml-1 mt-1 space-x-1">
           <button
-            className="w-full semi-text-bg-color border"
+            className="w-full border border-black semi-text-bg-color hover:bg-gray-400"
             onClick={executeWorkflowFromTableEditor}
           >
             Run
           </button>
           <button
-            className="w-full semi-text-bg-color border"
+            className="w-full border border-black semi-text-bg-color hover:bg-gray-400"
             onClick={executeWorkflowStepByStep}
           >
             Run By Node
@@ -448,13 +448,13 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
 
         <div className="flex flex-row ml-1 mt-1 space-x-1">
           <button
-            className="w-full semi-text-bg-color border"
+            className="w-full border border-black semi-text-bg-color hover:bg-gray-400"
             onClick={saveWorkflow}
           >
             Save
           </button>
           <button
-            className="w-full semi-text-bg-color border text-red-700"
+            className="w-full border border-black semi-text-bg-color hover:bg-gray-400"
             onClick={deleteWorkflow}
           >
             Delete
