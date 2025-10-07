@@ -42,14 +42,14 @@ export default function UserInfo({
   }, [reloadSignal]);
 
   return (
-    <div className="relative w-full h-12 mt-1 text-gray-600 dark:text-gray-400">
+    <div className="relative w-full h-12 mt-1">
       {/* 왼쪽 고정: 다크모드 토글 */}
       <div className="absolute inset-y-0 left-0 flex items-center pl-2">
         <DarkModeToggleButton />
       </div>
 
       {/* 가운데 고정: 사용자 이름 */}
-      <div className="absolute inset-y-0 left-1/2 flex items-center -translate-x-1/2 semi-text-bg-color">
+      <div className="absolute inset-y-0 left-1/2 flex items-center -translate-x-1/2">
         {getLoginUserId() && (
           <span className="text-base text-center">{userName}</span>
         )}

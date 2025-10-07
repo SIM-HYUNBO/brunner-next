@@ -567,7 +567,7 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
 
           {/* ⚙️ 오른쪽 패널 (토글) */}
           {isRightPanelOpen && (
-            <div className="flex flex-col justify-top h-full md:h-auto ml-0 md:ml-1 w-full md:w-[380px] overflow-y-auto border-t md:border-l p-2 bg-white z-40">
+            <div className="flex flex-col justify-top h-full md:h-auto ml-0 md:ml-1 w-full md:w-[380px] overflow-y-auto border-t md:border-l p-2  z-40 semi-text-bg-color">
               <h2 className="flex justify-between items-center">
                 Workflow Info
                 <button

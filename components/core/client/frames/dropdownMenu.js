@@ -1,8 +1,9 @@
+"use client";
+
 import { useEffect, useState, useRef } from "react";
 import Link from "next/link";
 import { getDropdownMenuItems } from "@/components/core/client/frames/dropdownMenuitem";
-import UserInfo from "@/components/core/client/frames/userInfo"; // 예시 import
-import { getIsDarkMode } from "@/components/core/client/frames/darkModeToggleButton";
+import UserInfo from "@/components/core/client/frames/userInfo";
 
 export default function DropdownMenu({ reloadSignal, triggermenureload }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -13,15 +14,12 @@ export default function DropdownMenu({ reloadSignal, triggermenureload }) {
   useEffect(() => {
     const loadMenu = async () => {
       const items = await getDropdownMenuItems();
-
-      // 모든 section 기본 닫힘(false)으로 초기화
       const sections = items
         .filter((item) => item.type === "section")
         .reduce((acc, cur) => {
           acc[cur.label] = false;
           return acc;
         }, {});
-
       setOpenSections(sections);
       setMenuItems(items);
     };
@@ -34,15 +32,12 @@ export default function DropdownMenu({ reloadSignal, triggermenureload }) {
         setMobileMenuOpen(false);
       }
     };
-
     if (mobileMenuOpen) {
       document.addEventListener("mousedown", handleClickOutside);
     } else {
       document.removeEventListener("mousedown", handleClickOutside);
     }
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [mobileMenuOpen]);
 
   const toggleSection = (label) => {
@@ -54,14 +49,14 @@ export default function DropdownMenu({ reloadSignal, triggermenureload }) {
 
   const getSectionLabel = (item) => item.parent || "";
 
-  // depth 계산 함수 (section 아래 메뉴도 포함)
   const getItemDepth = (item, items) => {
     let depth = 0;
     let current = item;
     while (current.parent) {
       depth++;
-      current = items.find((i) => i.label === current.parent);
-      if (!current) break;
+      const parentItem = items.find((i) => i.label === current.parent);
+      if (!parentItem) break;
+      current = parentItem;
     }
     return depth;
   };
@@ -74,8 +69,9 @@ export default function DropdownMenu({ reloadSignal, triggermenureload }) {
 
   return (
     <>
+      {/* 햄버거 버튼 */}
       <button
-        className="p-2 dark-bg-color semi-text-color"
+        className="p-2 rounded-md transition-colors"
         onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
         aria-label="메뉴 열기"
         aria-expanded={mobileMenuOpen}
@@ -89,8 +85,6 @@ export default function DropdownMenu({ reloadSignal, triggermenureload }) {
           strokeWidth="2"
           strokeLinecap="round"
           strokeLinejoin="round"
-          className="text-gray-700 
-                     semi-text-color"
         >
           <line x1="4" y1="6" x2="20" y2="6" />
           <line x1="4" y1="12" x2="20" y2="12" />
@@ -101,37 +95,21 @@ export default function DropdownMenu({ reloadSignal, triggermenureload }) {
       {mobileMenuOpen && (
         <div
           ref={menuRef}
-          className="absolute right-4 shadow-lg rounded-md z-50 semi-text-bg-color min-w-max"
+          className="absolute right-4 mt-2 shadow-lg rounded-md z-50 min-w-[220px]"
         >
-          <ul>
+          <ul className="divide-y">
             {menuItems.map((item, idx) => {
-              if (item.type === "divider") {
-                return (
-                  <hr
-                    key={idx}
-                    className="border-gray-300 
-                                      dark:border-gray-600"
-                  />
-                );
-              }
+              if (item.type === "divider") return <hr key={idx} className="" />;
 
               if (item.type === "section") {
                 return (
                   <li
                     key={idx}
-                    className="cursor-pointer 
-                               select-none flex 
-                               items-center 
-                               justify-between 
-                               px-5 py-2 
-                               hover:bg-gray-300 
-                               dark:hover:bg-gray-600"
+                    className="cursor-pointer select-none flex items-center justify-between px-4 py-2 rounded-md  transition-colors"
                     onClick={() => toggleSection(item.label)}
                   >
-                    <span className="text-gray-800 dark:text-gray-200 px-2">
-                      {item.label}
-                    </span>
-                    <span className="text-gray-600 dark:text-gray-400 px-2">
+                    <span>{item.label}</span>
+                    <span className="">
                       {openSections[item.label] ? "▼" : "▶"}
                     </span>
                   </li>
@@ -147,8 +125,8 @@ export default function DropdownMenu({ reloadSignal, triggermenureload }) {
                 <li key={item.href + idx}>
                   <Link
                     href={item.href}
-                    onClick={() => setMobileMenuOpen(false)} // 여기 추가
-                    className="block px-5 py-2 text-sm semi-text-bg-color hover:text-black dark:hover:text-white rounded-md whitespace-nowrap"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className={`semi-text-bg-color block px-4 py-2 text-sm rounded-md transition-colors`}
                     style={{ paddingLeft: `${16 * (depth + 1)}px` }}
                   >
                     {item.label}
@@ -157,11 +135,15 @@ export default function DropdownMenu({ reloadSignal, triggermenureload }) {
               );
             })}
           </ul>
-          <hr className="border-gray-300 dark:border-gray-600" />
-          <UserInfo
-            handleLogout={handleLogout}
-            triggermenureload={triggermenureload}
-          />
+
+          <hr className="" />
+
+          <div className="p-3 semi-text-bg-color">
+            <UserInfo
+              handleLogout={handleLogout}
+              triggermenureload={triggermenureload}
+            />
+          </div>
         </div>
       )}
     </>
