@@ -1046,6 +1046,59 @@ export async function deleteWorkflow(
   return result;
 }
 
+/**
+ * 워크플로우 초기화
+ * @param workflow 워크플로우 객체
+ * @param systemCode 시스템 코드 (DB 저장용)
+ * @param userId 사용자 ID (DB 저장용)
+ */
+export async function resetWorkflow(
+  workflow: any,
+  systemCode: string,
+  userId: string
+) {
+  // 1️⃣ currentNodeId 초기화
+  workflow.currentNodeId = workflow.nodes.find(
+    (n: any) => n.data.actionName === constants.workflowActions.START
+  ).id;
+
+  // 2️⃣ 워크플로우 run 초기화
+  if (workflow.data?.run) {
+    Object.keys(workflow.data.run).forEach((key) => {
+      if (key === "system") {
+        workflow.data.run.system = {}; // system 초기화
+      } else {
+        workflow.data.run[key] = []; // 나머지는 빈 배열
+      }
+    });
+  }
+
+  // 3️⃣ 각 노드 run 초기화
+  if (Array.isArray(workflow.nodes)) {
+    workflow.nodes.forEach((node: any) => {
+      if (node.data?.run) {
+        Object.keys(node.data.run).forEach((key) => {
+          node.data.run[key] = [];
+        });
+      }
+      node.data.status = constants.workflowRunStatus.idle; // 상태 초기화
+    });
+  }
+
+  // 4️⃣ DB 저장
+  const saveResult = await saveWorkflow(
+    systemCode,
+    userId,
+    workflow.id,
+    workflow
+  );
+  if (saveResult.error_code !== 0) {
+    throw new Error(`워크플로우 초기화 저장 실패: ${saveResult.error_message}`);
+  }
+
+  return workflow;
+}
+
 export async function getWorkflowList(systemCode: string, userId: string) {
   try {
     // 워크플로우 목록 조회 쿼리 (DB 구조에 맞게 수정 가능)

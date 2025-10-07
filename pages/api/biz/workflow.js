@@ -154,8 +154,7 @@ const executeService = async (txnId, jRequest) => {
         }
         const workflowData = result.workflow_data;
 
-        var currentNodeId =
-          workflowData.currentNodeId ?? constants.workflowActions.START;
+        var currentNodeId = workflowData.currentNodeId;
 
         var txNode = null;
         try {
@@ -216,8 +215,12 @@ const executeService = async (txnId, jRequest) => {
                 }
               }
             }
-            workflowData.currentNodeId =
-              nextNodeId ?? constants.workflowActions.START;
+
+            if (nextNodeId) workflowData.currentNodeId = nextNodeId;
+            else
+              workflowData.currentNodeId = workflowData.nodes.find(
+                (n) => n.data.actionName === constants.workflowActions.START
+              ).id;
 
             // Business 트랜잭션의 단위 노드 실행결과는 워크픞포우에 저장함
             const saveResult = await workflowEngineServer.saveWorkflow(
@@ -278,7 +281,64 @@ const executeService = async (txnId, jRequest) => {
 
         break;
       }
+      case constants.commands.WORKFLOW_RESET_WORKFLOW: {
+        jResponse = { error_code: -1 };
 
+        const { systemCode, workflowId, userId } = jRequest;
+
+        try {
+          // 1️⃣ workflowId로 DB에서 workflowData 조회
+          const result = await workflowEngineServer.getWorkflowById(
+            systemCode,
+            workflowId
+          );
+
+          if (result.error_code !== 0) {
+            throw new Error(result.error_message);
+          }
+
+          const workflowData = result.workflow_data;
+
+          if (!workflowData) {
+            throw new Error(constants.messages.NO_DATA_FOUND);
+          }
+
+          // 2️⃣ 워크플로우 초기화
+          workflowData.currentNodeId = workflowData.nodes.find(
+            (n) => n.data.actionName === constants.workflowActions.START
+          ).id;
+
+          if (workflowData.nodes) {
+            workflowData.nodes.forEach((node) => {
+              node.data.status = constants.workflowRunStatus.idle;
+              node.data.run = node.data.run || {};
+              node.data.run.inputs = {};
+              node.data.run.outputs = [];
+            });
+          }
+
+          // 3️⃣ DB에 업데이트
+          const saveResult = await workflowEngineServer.saveWorkflow(
+            systemCode,
+            userId,
+            workflowId,
+            workflowData
+          );
+
+          if (saveResult.error_code !== 0) {
+            throw new Error(saveResult.error_message);
+          }
+
+          jResponse.error_code = saveResult.error_code;
+          jResponse.error_message = constants.messages.SUCCESS_FINISHED;
+          jResponse.workflow_data = workflowData;
+        } catch (err) {
+          jResponse.error_code = -1;
+          jResponse.error_message = String(err.message || err);
+        }
+
+        break;
+      }
       // ❌ 정의되지 않은 commandName
       default: {
         jResponse = {

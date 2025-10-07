@@ -52,7 +52,7 @@ type InputDataset = Record<string, Record<string, any>[]>;
 export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
   initialNodes = [
     {
-      id: constants.workflowActions.START,
+      id: uuidv4(),
       type: "default",
       position: { x: 100, y: 100 },
       data: {
@@ -73,7 +73,7 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
       },
     },
     {
-      id: constants.workflowActions.END,
+      id: uuidv4(),
       type: "default",
       position: { x: 100, y: 500 },
       data: {
@@ -115,7 +115,7 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
       workflowId: uuidv4(),
       workflowName: "new workflow",
       workflowDescription: "new workflow",
-      currentNodeId: constants.workflowActions.START,
+      currentNodeId: "",
       data: {
         design: { inputs: [], outputs: [] },
         run: { inputs: [], outputs: [] },
@@ -331,6 +331,7 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
     );
 
     stepCounterRef.current = 0;
+    // jWorkflow.current = newVal;
   };
 
   const saveWorkflow = async () => {
@@ -349,6 +350,35 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
     } catch (err) {
       console.error(err);
       openModal("❌ 실행 실패: " + String(err));
+    }
+  };
+
+  const resetWorkflow = async () => {
+    try {
+      if (!workflowId) return;
+
+      const jRequest = {
+        commandName: constants.commands.WORKFLOW_RESET_WORKFLOW,
+        systemCode: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE,
+        userId: userInfo.getLoginUserId(),
+        workflowId: workflowId,
+      };
+
+      const jResponse = await RequestServer(jRequest);
+
+      if (jResponse.error_code === 0 && jResponse.workflow_data) {
+        const workflowData = jResponse.workflow_data;
+
+        // 서버에서 내려온 데이터 그대로 적용
+        setCurrentWorkflow(workflowData);
+
+        openModal(constants.messages.SUCCESS_FINISHED);
+      } else {
+        openModal(jResponse.error_message);
+      }
+    } catch (err) {
+      console.error(err);
+      openModal(String(err));
     }
   };
 
@@ -401,8 +431,7 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
         userId: userInfo.getLoginUserId(),
         workflowId: workflowId,
         transactionMode: constants.transactionMode.Business,
-        currentNodeId:
-          jWorkflow.current?.currentNodeId ?? constants.workflowActions.START,
+        currentNodeId: jWorkflow.current?.currentNodeId ?? "",
         inputs: workflowInputDataObj,
       };
       const jResponse = await RequestServer(jRequest);
@@ -436,6 +465,12 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
           </button>
         </div>
         <div className="flex flex-row ml-1 mt-1 space-x-1">
+          <button
+            className="w-full border border-black semi-text-bg-color hover:bg-gray-400"
+            onClick={resetWorkflow}
+          >
+            Reset
+          </button>
           <button
             className="w-full border border-black semi-text-bg-color hover:bg-gray-400"
             onClick={executeWorkflowFromTableEditor}

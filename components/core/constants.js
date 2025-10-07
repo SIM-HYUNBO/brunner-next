@@ -99,6 +99,7 @@ export const commands = {
   WORKFLOW_DELETE_DB_CONNECTION_ONE: `workflow.deleteDBConnectionOne`,
   WORKFLOW_TEST_DB_CONNECTION: `workflow.testDBConnectionOne`,
   WORKFLOW_EXECUTE_WORKFLOW: "workflow.executeWorkflow",
+  WORKFLOW_RESET_WORKFLOW: "workflow.resetWorkflow",
   WORKFLOW_SAVE_WORKFLOW: "workflow.saveflow",
   WORKFLOW_SELECT_WORKFLOW: "workflow.selectWorkflow",
   WORKFLOW_DELETE_WORKFLOW: "workflow.deleteWorkflow",
