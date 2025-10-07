@@ -115,14 +115,14 @@ export function registerBuiltInActions(): void {
       try {
         if (!node) {
           result.error_code = -1;
-          result.error_message = "node is invalid.";
+          result.error_message = constants.messages.NO_DATA_FOUND;
           return result;
         }
         if (!preNodeCheck(node, workflowData)) {
           postNodeCheck(node, workflowData);
 
           result.error_code = -1;
-          result.error_message = "node is invalid.";
+          result.error_message = `[${node.data.name}] node check result is invalid.`;
         }
 
         // Node main action
@@ -134,7 +134,7 @@ export function registerBuiltInActions(): void {
         result.error_message = constants.messages.SUCCESS_FINISHED;
       } catch (error) {
         result.error_code = -1;
-        result.error_message = JSON.stringify(error);
+        result.error_message = `[${node.data.name}] ${JSON.stringify(error)}`;
         return result;
       }
       return result;
@@ -149,7 +149,7 @@ export function registerBuiltInActions(): void {
       try {
         if (!node) {
           result.error_code = -1;
-          result.error_message = "node is invalid.";
+          result.error_message = constants.messages.NO_DATA_FOUND;
           return result;
         }
 
@@ -157,7 +157,7 @@ export function registerBuiltInActions(): void {
           postNodeCheck(node, workflowData);
 
           result.error_code = -1;
-          result.error_message = "node is invalid.";
+          result.error_message = `[${node.data.name}] node check result is invalid.`;
           return result;
         }
         workflowData.data.run.system.endTime = new Date();
@@ -172,7 +172,7 @@ export function registerBuiltInActions(): void {
         return result;
       } catch (error) {
         result.error_code = -1;
-        result.error_message = JSON.stringify(error);
+        result.error_message = `[${node.data.name}] ${JSON.stringify(error)}`;
         return result;
       }
     }
@@ -186,14 +186,14 @@ export function registerBuiltInActions(): void {
 
       if (!node) {
         result.error_code = -1;
-        result.error_message = "node is invalid.";
+        result.error_message = constants.messages.NO_DATA_FOUND;
         return result;
       }
 
       if (!preNodeCheck(node, workflowData)) {
         postNodeCheck(node, workflowData);
         result.error_code = -1;
-        result.error_message = "Node is invalid.";
+        result.error_message = `[${node.data.name}] node check result is invalid.`;
         return result;
       }
 
@@ -502,7 +502,7 @@ export function registerBuiltInActions(): void {
 
       if (!node) {
         result.error_code = -1;
-        result.error_message = "node is invalid.";
+        result.error_message = constants.messages.NO_DATA_FOUND;
         return result;
       }
 
@@ -510,7 +510,7 @@ export function registerBuiltInActions(): void {
         postNodeCheck(node, workflowData);
 
         result.error_code = -1;
-        result.error_message = "node is invalid.";
+        result.error_message = `[${node.data.name}] node check result is invalid.`;
       }
 
       const { dbConnectionId, sqlStmt, sqlParams } = node.data?.design || {};

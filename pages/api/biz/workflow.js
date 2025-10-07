@@ -254,7 +254,7 @@ const executeService = async (txnId, jRequest) => {
             // 4️⃣ 트랜잭션 커밋
             // -----------------------
             await txNode.commit();
-            const txInstances = Array.from(txNode.connections.values());
+            // const txInstances = Array.from(txNode.connections.values());
 
             jResponse.error_code = result.error_code;
             jResponse.jWorkflow = workflowData;

@@ -385,6 +385,8 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
       if (jResponse.error_code == 0 && jResponse.jWorkflow) {
         setCurrentWorkflow({ ...jResponse.jWorkflow });
         openModal(constants.messages.SUCCESS_FINISHED);
+      } else {
+        openModal(jResponse.error_message);
       }
     } catch (err) {
       openModal("❌ 실행 실패: " + String(err));
@@ -407,6 +409,8 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
       if (jResponse.error_code == 0 && jResponse.jWorkflow) {
         setCurrentWorkflow({ ...jResponse.jWorkflow });
         openModal(constants.messages.SUCCESS_FINISHED);
+      } else {
+        openModal(jResponse.error_message);
       }
     } catch (err) {
       console.error(err);
