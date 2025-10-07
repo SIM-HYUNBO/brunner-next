@@ -122,7 +122,7 @@ export function registerBuiltInActions(): void {
           postNodeCheck(node, workflowData);
 
           result.error_code = -1;
-          result.error_message = `[${node.data.name}] node check result is invalid.`;
+          result.error_message = `[${node.data.label}] node check result is invalid.`;
         }
 
         // Node main action
@@ -134,7 +134,7 @@ export function registerBuiltInActions(): void {
         result.error_message = constants.messages.SUCCESS_FINISHED;
       } catch (error) {
         result.error_code = -1;
-        result.error_message = `[${node.data.name}] ${JSON.stringify(error)}`;
+        result.error_message = `[${node.data.label}] ${JSON.stringify(error)}`;
         return result;
       }
       return result;
@@ -157,7 +157,7 @@ export function registerBuiltInActions(): void {
           postNodeCheck(node, workflowData);
 
           result.error_code = -1;
-          result.error_message = `[${node.data.name}] node check result is invalid.`;
+          result.error_message = `[${node.data.label}] node check result is invalid.`;
           return result;
         }
         workflowData.data.run.system.endTime = new Date();
@@ -172,7 +172,7 @@ export function registerBuiltInActions(): void {
         return result;
       } catch (error) {
         result.error_code = -1;
-        result.error_message = `[${node.data.name}] ${JSON.stringify(error)}`;
+        result.error_message = `[${node.data.label}] ${JSON.stringify(error)}`;
         return result;
       }
     }
@@ -193,7 +193,7 @@ export function registerBuiltInActions(): void {
       if (!preNodeCheck(node, workflowData)) {
         postNodeCheck(node, workflowData);
         result.error_code = -1;
-        result.error_message = `[${node.data.name}] node check result is invalid.`;
+        result.error_message = `[${node.data.label}] node check result is invalid.`;
         return result;
       }
 
@@ -472,7 +472,10 @@ export function registerBuiltInActions(): void {
         result.error_message = constants.messages.SUCCESS_FINISHED;
         return result;
       } catch (err: any) {
-        result = { error_code: -1, error_message: err };
+        result = {
+          error_code: -1,
+          error_message: `[${node.data.label}] ${err}`,
+        };
 
         // stack에서 userScript 줄 정보 찾기
         const stackLines = err.stack?.split("\n") || [];
@@ -483,12 +486,12 @@ export function registerBuiltInActions(): void {
         const errorLocation = userScriptLine
           ? `(at ${userScriptLine.trim()})`
           : "";
-        console.error(`[SCRIPT ERROR] ${err.message} ${errorLocation}`);
 
         // outputs에도 기록
         node.data.run.outputs = [
           err.message + (errorLocation ? ` ${errorLocation}` : ""),
         ];
+
         return result;
       }
     }
@@ -510,7 +513,7 @@ export function registerBuiltInActions(): void {
         postNodeCheck(node, workflowData);
 
         result.error_code = -1;
-        result.error_message = `[${node.data.name}] node check result is invalid.`;
+        result.error_message = `[${node.data.label}] node check result is invalid.`;
       }
 
       const { dbConnectionId, sqlStmt, sqlParams } = node.data?.design || {};
