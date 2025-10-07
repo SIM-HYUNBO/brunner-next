@@ -150,6 +150,20 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
   const [selectedNodeScript, setSelectedNodeScript] = useState<string>("");
   const [selectedNodeTimeoutMs, setSelectedNodeTimeoutMs] = useState(5000);
 
+  // <<< MOBILE-FIX: state for responsive behavior
+  const [isMobile, setIsMobile] = useState<boolean>(
+    typeof window !== "undefined" ? window.innerWidth < 768 : false
+  );
+  const [isPortrait, setIsPortrait] = useState<boolean>(
+    typeof window !== "undefined"
+      ? window.innerHeight > window.innerWidth
+      : true
+  );
+  const [flowHeightPx, setFlowHeightPx] = useState<number | null>(null);
+  const flowBottomReservedPx = 260; // 모바일에서 하단(Inputs/Outputs 등) 예상 높이
+  const rfInstanceRef = useRef<any | null>(null); // ReactFlow instance ref
+  // <<< /MOBILE-FIX
+
   useEffect(() => {
     setWorkflowId(uuidv4());
     initWorkflow();
@@ -450,14 +464,55 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
     );
   };
 
+  // <<< MOBILE-FIX: resize handling to compute flow height and call fitView
+  useEffect(() => {
+    const handleResize = () => {
+      const iw = window.innerWidth;
+      const ih = window.innerHeight;
+      const mobile = iw < 768;
+      const portrait = ih > iw;
+      setIsMobile(mobile);
+      setIsPortrait(portrait);
+
+      if (mobile && portrait) {
+        // reserve bottom panel area so flow isn't hidden
+        setFlowHeightPx(Math.max(200, ih - flowBottomReservedPx));
+      } else {
+        setFlowHeightPx(null); // default 100% (flex)
+      }
+
+      // request ReactFlow to recalc viewport
+      setTimeout(() => {
+        try {
+          rfInstanceRef.current?.fitView?.({ padding: 0.2, duration: 200 });
+        } catch (e) {
+          // ignore
+        }
+      }, 120);
+    };
+
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+  // <<< /MOBILE-FIX
+
   return (
     <>
       <BrunnerMessageBox />
       <ReactFlowProvider>
-        <div className="flex flex-row w-full h-full relative">
+        {/* <<< MOBILE-FIX: Use h-screen so we can compute child heights on mobile; and switch to column on small screens */}
+        <div className="flex flex-col md:flex-row w-full h-screen relative">
           {/* 🧭 왼쪽: 워크플로우 다이어그램 */}
-          <div className="flex flex-1 relative">
-            <div className="flex-1 relative rounded-lg border shadow-sm overflow-hidden">
+          <div className="flex-1 relative">
+            {/* wrapper with explicit min height and dynamic height for mobile portrait */}
+            <div
+              className="relative rounded-lg border shadow-sm overflow-hidden w-full"
+              style={{
+                height: flowHeightPx ? `${flowHeightPx}px` : "100%",
+                minHeight: 320,
+              }}
+            >
               <ReactFlow
                 nodes={nodes.map((n) => ({
                   ...n,
@@ -490,6 +545,10 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
                 fitView
                 snapToGrid
                 snapGrid={[30, 30]}
+                onInit={(instance) => {
+                  // store instance so we can call fitView on resize
+                  rfInstanceRef.current = instance;
+                }}
               >
                 <MiniMap />
                 <Controls />
@@ -508,7 +567,7 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
 
           {/* ⚙️ 오른쪽 패널 (토글) */}
           {isRightPanelOpen && (
-            <div className="flex flex-col justify-top h-full ml-1 w-[380px] overflow-y-auto border-l p-2 bg-white z-40">
+            <div className="flex flex-col justify-top h-full md:h-auto ml-0 md:ml-1 w-full md:w-[380px] overflow-y-auto border-t md:border-l p-2 bg-white z-40">
               <h2 className="flex justify-between items-center">
                 Workflow Info
                 <button
