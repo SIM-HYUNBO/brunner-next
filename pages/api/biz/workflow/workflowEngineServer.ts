@@ -549,7 +549,8 @@ export function registerBuiltInActions(): void {
             const { sql, params } = convertNamedParams(
               sqlStmt,
               sqlParams,
-              constants.dbType.mysql
+              constants.dbType.mysql,
+              workflowData
             );
             const [result] = await connection.dbConnection.query(sql, params);
             rows = result;
@@ -560,7 +561,8 @@ export function registerBuiltInActions(): void {
             const { sql, params } = convertNamedParams(
               sqlStmt,
               sqlParams,
-              constants.dbType.postgres
+              constants.dbType.postgres,
+              workflowData
             );
             const result = await connection.dbConnection.query(sql, params);
             rows = result.rows;
@@ -571,7 +573,8 @@ export function registerBuiltInActions(): void {
             const { sql, params } = convertNamedParams(
               sqlStmt,
               sqlParams,
-              constants.dbType.mssql
+              constants.dbType.mssql,
+              workflowData
             );
             const request = connection.dbConnection.request();
             if (Array.isArray(params)) {
@@ -588,7 +591,8 @@ export function registerBuiltInActions(): void {
             const { sql, params } = convertNamedParams(
               sqlStmt,
               sqlParams,
-              constants.dbType.oracle
+              constants.dbType.oracle,
+              workflowData
             );
             const binds: Record<string, any> = {};
             sqlParams.forEach((p: any) => (binds[p.name] = p.value));
@@ -641,7 +645,29 @@ export function registerBuiltInActions(): void {
   );
 }
 
-function convertNamedParams(sqlStmt: string, sqlParams: any[], dbType: string) {
+function isPathValue(input: string) {
+  return /^\$\{(.+)\}$/.test(input) || /^\{\{(.+)\}\}$/.test(input);
+}
+
+function extractPath(input: string) {
+  const match = input.match(/^\$\{(.+)\}$|^\{\{(.+)\}\}$/);
+  if (!match) return null;
+  return match[1] || match[2]; // ${path} 또는 {{path}} 내부 내용
+}
+function getParamValue(input: string, context: any) {
+  if (isPathValue(input)) {
+    const path = extractPath(input);
+    return getByPath(context, path ?? "");
+  }
+  return input; // 일반 값
+}
+
+function convertNamedParams(
+  sqlStmt: string,
+  sqlParams: { name: string; value: any }[],
+  dbType: string,
+  context: any
+) {
   if (!sqlParams || sqlParams.length === 0) {
     return { sql: sqlStmt, params: [] };
   }
@@ -649,39 +675,50 @@ function convertNamedParams(sqlStmt: string, sqlParams: any[], dbType: string) {
   let sql = sqlStmt;
   let params: any[] = [];
 
+  // 값인지 경로인지 판단해서 실제 값으로 변환
+  function resolveParamValue(value: any) {
+    if (typeof value === "string") {
+      const match = value.match(/^\$\{(.+)\}$|^\{\{(.+)\}\}$/);
+      if (match) {
+        const path = match[1] || match[2];
+        return getByPath(context, path ?? ""); // context에서 경로값 가져오기
+      }
+    }
+    return value; // 일반 값이면 그대로
+  }
+
   switch (dbType) {
     case constants.dbType.postgres: {
-      // @name → $1, $2, ...
       sqlParams.forEach((p, i) => {
         const pattern = new RegExp(`@${p.name}\\b`, "g");
         sql = sql.replace(pattern, `$${i + 1}`);
-        params.push(p.value);
+        params.push(resolveParamValue(p.value));
       });
       break;
     }
 
     case constants.dbType.mysql: {
-      // @name → ?
       sqlParams.forEach((p) => {
         const pattern = new RegExp(`@${p.name}\\b`, "g");
         sql = sql.replace(pattern, `?`);
-        params.push(p.value);
+        params.push(resolveParamValue(p.value));
       });
       break;
     }
 
     case constants.dbType.mssql: {
-      // @name 그대로 사용 가능 (MSSQL은 기본적으로 지원)
-      params = sqlParams;
+      params = sqlParams.map((p) => ({
+        ...p,
+        value: resolveParamValue(p.value),
+      }));
       break;
     }
 
     case constants.dbType.oracle: {
-      // :name 형태로 치환
       sqlParams.forEach((p) => {
         const pattern = new RegExp(`@${p.name}\\b`, "g");
         sql = sql.replace(pattern, `:${p.name}`);
-        params.push(p.value);
+        params.push(resolveParamValue(p.value));
       });
       break;
     }
