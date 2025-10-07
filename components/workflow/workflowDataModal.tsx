@@ -1,9 +1,11 @@
-// components/workflow/WorkflowDataModal.tsx
+"use client";
+
 import React, { useEffect, useRef, useState } from "react";
-import ReactJson from "react18-json-view";
 import { Rnd } from "react-rnd";
 import * as constants from "@/components/core/constants";
 import RequestServer from "@/components/core/client/requestServer";
+import { JsonViewer } from "@textea/json-viewer";
+import copy from "copy-to-clipboard";
 
 interface WorkflowDataModalProps {
   workflowId: string;
@@ -23,7 +25,6 @@ export const WorkflowDataModal: React.FC<WorkflowDataModalProps> = ({
   const [error, setError] = useState<string | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
-  // 서버에서 워크플로우 데이터 가져오기
   const fetchWorkflowData = async (id: string) => {
     setLoading(true);
     setError(null);
@@ -49,15 +50,13 @@ export const WorkflowDataModal: React.FC<WorkflowDataModalProps> = ({
   };
 
   useEffect(() => {
-    if (open && workflowId) {
-      fetchWorkflowData(workflowId);
-    } else {
+    if (open && workflowId) fetchWorkflowData(workflowId);
+    else {
       setWorkflowData(null);
       setError(null);
     }
   }, [open, workflowId]);
 
-  // 자동 스크롤 + 하이라이트
   useEffect(() => {
     if (!containerRef.current || !workflowData || !currentNodeId) return;
 
@@ -70,7 +69,6 @@ export const WorkflowDataModal: React.FC<WorkflowDataModalProps> = ({
       );
 
       if (targetSpan) {
-        // 상위 li에서 data 노드 찾기
         const dataDiv = targetSpan
           .closest("li")
           ?.querySelector('[data-name="data"]') as HTMLElement | null;
@@ -82,10 +80,7 @@ export const WorkflowDataModal: React.FC<WorkflowDataModalProps> = ({
             dataDiv.style.backgroundColor = "transparent";
           }, 1000);
         }
-      } else {
-        // 아직 렌더링 안 됐으면 50ms 후 재시도
-        setTimeout(scrollToNode, 50);
-      }
+      } else setTimeout(scrollToNode, 50);
     };
 
     scrollToNode();
@@ -99,58 +94,43 @@ export const WorkflowDataModal: React.FC<WorkflowDataModalProps> = ({
       minWidth={600}
       minHeight={400}
       bounds="window"
-      style={{
-        background: "white",
-        borderRadius: 8,
-        boxShadow: "0 0 10px rgba(0,0,0,0.3)",
-      }}
+      className="rounded-lg shadow-lg bg-white"
     >
       {/* 헤더 */}
-      <div
-        style={{
-          cursor: "move",
-          padding: "8px",
-          backgroundColor: "#f3f3f3",
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          borderTopLeftRadius: 8,
-          borderTopRightRadius: 8,
-        }}
-      >
-        <h2 style={{ fontWeight: "bold" }}>
+      <div className="flex justify-between items-center cursor-move p-2.5 bg-gray-200 rounded-t-lg">
+        <h2 className="font-bold">
           Workflow JSON - {workflowId}
           {currentNodeId ? ` / Node: ${currentNodeId}` : ""}
         </h2>
-        <button
-          onClick={onClose}
-          style={{
-            backgroundColor: "#ef4444",
-            color: "white",
-            padding: "4px 12px",
-            borderRadius: 4,
-          }}
-        >
-          Close
-        </button>
+        <div className="flex gap-2">
+          <button
+            onClick={() =>
+              workflowData && copy(JSON.stringify(workflowData, null, 2))
+            }
+            className="bg-blue-500 text-white px-3 py-1 rounded"
+          >
+            Copy JSON
+          </button>
+          <button
+            onClick={onClose}
+            className="bg-red-500 text-white px-3 py-1 rounded"
+          >
+            Close
+          </button>
+        </div>
       </div>
 
-      {/* 내용 */}
+      {/* JSON 뷰어 */}
       <div
         ref={containerRef}
-        style={{
-          height: "calc(100% - 48px)",
-          overflowY: "auto",
-          padding: 8,
-        }}
+        className="overflow-y-auto p-2.5 h-[calc(100%-48px)]"
       >
         {loading && <div>Loading...</div>}
-        {error && <div style={{ color: "red" }}>{error}</div>}
+        {error && <div className="text-red-500">{error}</div>}
         {workflowData && (
-          <ReactJson
-            src={workflowData}
-            enableClipboard
-            collapsed={false} // 전체 펼치기
+          <JsonViewer
+            value={workflowData}
+            defaultInspectDepth={2} // 모든 키 동일하게 2레벨까지만 펼침
           />
         )}
       </div>

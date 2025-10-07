@@ -220,28 +220,29 @@ export function registerBuiltInActions(): void {
   */
 
   /* nodes에서 특정 노드 이름 ("Node 1")으로 찾기
-    const targetNode = (api.getGlobalVar("nodes") || []).find(n => n.data.label === "Node 1");
+  var targetNode = (api.getGlobalVar("nodes") || []).find(n => n.data.label === "Node 1");
 
-    if (targetNode) {
-      // outputs 배열 가져오기
-      const sourceOutputs = targetNode.data.run.outputs || [];
+  if (targetNode) {
+    // outputs 배열 가져오기
+    var sourceOutputs = targetNode.data.run.outputs || [];
 
-      // user_name만 추출
-      const userNames: string[] = sourceOutputs.map(o => o?.user_name).filter(Boolean); // null/undefined 제거
+    // user_name만 추출
+    var userNames = sourceOutputs.map(o => o?.user_name).filter(Boolean); // null/undefined 제거
 
-      if (userNames.length > 0) {
-        // 현재 노드 outputs에 복사
-        userNames.forEach((name, idx) => {
-          api.setVar(`data.run.outputs.${idx}`, name);
-        });
+    if (userNames.length > 0) {
+      // 현재 노드 outputs에 복사
+      userNames.forEach((name, idx) => {
+        api.setVar(`data.run.outputs.${idx}`, name);
+      });
 
-        api.log(`User names set to outputs: ${userNames.join(", ")}`);
-      } else {
-        api.log("No user_name found in Node 1 outputs", "warn");
-      }
+      // ✅ 이 부분이 핵심: 반드시 백틱(`)으로 감싸야 함
+      api.log(`User names set to outputs: ${userNames.join(", ")}`);
     } else {
-      api.log("Node with label 'Node 1' not found", "warn");
+      api.log("No user_name found in Node 1 outputs", "warn");
     }
+  } else {
+    api.log("Node with label 'Node 1' not found", "warn");
+  }
   */
   // SCRIPT
   registerAction(
@@ -422,8 +423,22 @@ export function registerBuiltInActions(): void {
         return result;
       } catch (err: any) {
         result = err;
-        console.error("[SCRIPT ERROR]", result.message);
-        node.data.run.outputs = [result];
+
+        // stack에서 userScript 줄 정보 찾기
+        const stackLines = err.stack?.split("\n") || [];
+        const userScriptLine = stackLines.find((line: string) =>
+          line.includes("userScript")
+        );
+
+        const errorLocation = userScriptLine
+          ? `(at ${userScriptLine.trim()})`
+          : "";
+        console.error(`[SCRIPT ERROR] ${err.message} ${errorLocation}`);
+
+        // outputs에도 기록
+        node.data.run.outputs = [
+          err.message + (errorLocation ? ` ${errorLocation}` : ""),
+        ];
         return result;
       }
     }
