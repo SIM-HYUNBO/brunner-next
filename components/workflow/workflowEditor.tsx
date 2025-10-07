@@ -461,7 +461,13 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
             className="w-full border border-black ml-1 semi-text-bg-color hover:bg-gray-400"
             onClick={exportWorkflow}
           >
-            Export JSON
+            Export
+          </button>
+          <button
+            className="w-full border border-black ml-1 semi-text-bg-color hover:bg-gray-400"
+            onClick={() => setIsWorkflowDataModalOpen(true)}
+          >
+            View Data
           </button>
         </div>
         <div className="flex flex-row ml-1 mt-1 space-x-1">
@@ -609,14 +615,7 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
             <div className="flex flex-col justify-top h-full md:h-auto ml-0 md:ml-1 w-full md:w-[380px] overflow-y-auto border-t md:border-l p-2  z-40 semi-text-bg-color">
               <h2 className="flex justify-between items-center">
                 Workflow Info
-                <button
-                  className="ml-2 px-2 py-1 text-sm bg-green-500 text-white rounded"
-                  onClick={() => setIsWorkflowDataModalOpen(true)}
-                >
-                  Data
-                </button>
               </h2>
-
               <WorkflowSelector
                 onSelect={(wfSelected: any) => {
                   setCurrentWorkflow(wfSelected.workflow_data);

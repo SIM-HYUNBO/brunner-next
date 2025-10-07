@@ -106,7 +106,7 @@ export const SqlEditorModal: React.FC<SqlEditorModalProps> = ({
         const displayValue = rec.binding ?? rec.value ?? "";
         return (
           <input
-            className="w-full border rounded px-2 py-1"
+            className="w-full general-text-bg-color border rounded px-2 py-1"
             value={displayValue}
             placeholder="변수 경로 {{userId}} 또는 값 123"
             onChange={(e) =>
@@ -156,10 +156,10 @@ export const SqlEditorModal: React.FC<SqlEditorModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center">
+    <div className="fixed inset-0 z-50 flex items-center justify-center">
       <div
         ref={dragRef}
-        className="absolute bg-white border border-gray-300 rounded shadow-lg flex flex-col"
+        className="absolute semi-text-bg-color rounded shadow-lg flex flex-col"
         style={{
           left: position.x,
           top: position.y,
@@ -171,7 +171,7 @@ export const SqlEditorModal: React.FC<SqlEditorModalProps> = ({
       >
         {/* 타이틀 바 */}
         <div
-          className="flex items-center justify-between p-2 bg-gray-100 border-b cursor-move select-none"
+          className="flex items-center justify-between p-2 cursor-move select-none"
           onMouseDown={(e) => {
             isDragging.current = true;
             lastPos.current = { x: e.clientX, y: e.clientY };
@@ -181,7 +181,7 @@ export const SqlEditorModal: React.FC<SqlEditorModalProps> = ({
           <div className="font-semibold">SQL 편집기 & 파라미터</div>
           <div className="flex gap-2">
             <button
-              className="px-2 py-1 border rounded text-sm bg-gray-200 hover:bg-gray-300"
+              className="px-2 py-1 border rounded text-sm"
               onClick={() => setShowParamsPanel((s) => !s)}
             >
               {showParamsPanel ? "Close params." : "View params"}
@@ -233,7 +233,7 @@ export const SqlEditorModal: React.FC<SqlEditorModalProps> = ({
 
           {/* 파라미터 슬라이딩 패널 */}
           <div
-            className="relative bg-gray-50 border-l overflow-hidden transition-all duration-200 ease-in-out"
+            className="relative border-l overflow-hidden transition-all duration-200 ease-in-out"
             style={{
               width: showParamsPanel ? panelWidth : 0,
               minWidth: showParamsPanel ? 200 : 0,
@@ -246,7 +246,7 @@ export const SqlEditorModal: React.FC<SqlEditorModalProps> = ({
                     <h4>Parameters</h4>
                     <div className="flex gap-2">
                       <button
-                        className="px-2 py-1 text-sm bg-green-500 text-white rounded hover:bg-green-600"
+                        className="px-2 py-1 text-sm"
                         onClick={() =>
                           setParams((prev) => [
                             ...prev,
@@ -257,7 +257,7 @@ export const SqlEditorModal: React.FC<SqlEditorModalProps> = ({
                         Add Param.
                       </button>
                       <button
-                        className="px-2 py-1 text-sm bg-gray-200 rounded hover:bg-gray-300"
+                        className="px-2 py-1 text-sm"
                         onClick={() => {
                           const matches = (sqlStmt.match(/@\w+/g) || []).map(
                             (m) => m.slice(1)
@@ -294,7 +294,7 @@ export const SqlEditorModal: React.FC<SqlEditorModalProps> = ({
                     lastX.current = e.clientX;
                     document.body.style.userSelect = "none";
                   }}
-                  className="absolute left-0 top-0 h-full w-1 cursor-ew-resize bg-gray-300 hover:bg-gray-400"
+                  className="absolute left-0 top-0 h-full w-1 cursor-ew-resize"
                 />
               </>
             )}
@@ -302,7 +302,7 @@ export const SqlEditorModal: React.FC<SqlEditorModalProps> = ({
         </div>
 
         {/* footer */}
-        <div className="p-3 border-t bg-gray-50 flex justify-end gap-2">
+        <div className="p-3 border-t flex justify-end gap-2">
           <Button onClick={onClose}>닫기</Button>
           <Button type="primary" onClick={handleSave}>
             Save

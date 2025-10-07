@@ -14,14 +14,14 @@ neutral, stone
 @layer utilities {
   :root {
     /* Light Mode 색상 변수 */
-    --theme-light-text: theme("colors.stone.900");
-    --theme-light-bg: theme("colors.stone.100");
+    --theme-light-text: theme("colors.gray.900");
+    --theme-light-bg: theme("colors.gray.100");
 
-    --theme-medium-text: theme("colors.stone.600");
-    --theme-medium-bg: theme("colors.stone.400");
+    --theme-medium-text: theme("colors.gray.600");
+    --theme-medium-bg: theme("colors.gray.400");
 
-    --theme-semi-text: theme("colors.stone.800");
-    --theme-semi-bg: theme("colors.stone.200");
+    --theme-semi-text: theme("colors.gray.700");
+    --theme-semi-bg: theme("colors.gray.300");
 
     --general-text-color: var(--theme-light-text);
     --general-bg-color: var(--theme-light-bg);
@@ -29,14 +29,14 @@ neutral, stone
 
   .dark {
     /* Dark Mode 색상 변수 덮어쓰기 */
-    --theme-dark-text: theme("colors.stone.100");
-    --theme-dark-bg: theme("colors.stone.900");
+    --theme-dark-text: theme("colors.gray.100");
+    --theme-dark-bg: theme("colors.gray.900");
 
-    --theme-medium-text: theme("colors.stone.400");
-    --theme-medium-bg: theme("colors.stone.600");
+    --theme-medium-text: theme("colors.gray.400");
+    --theme-medium-bg: theme("colors.gray.600");
 
-    --theme-semi-text: theme("colors.stone.400");
-    --theme-semi-bg: theme("colors.stone.800");
+    --theme-semi-text: theme("colors.gray.300");
+    --theme-semi-bg: theme("colors.gray.700");
 
     --general-text-color: var(--theme-dark-text);
     --general-bg-color: var(--theme-dark-bg);
