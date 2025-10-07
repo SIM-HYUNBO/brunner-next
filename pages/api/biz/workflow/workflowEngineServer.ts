@@ -218,12 +218,30 @@ export function registerBuiltInActions(): void {
       }
       `;
   */
-  /*
-  var nodes = api.getGlobalVar("nodes");  // workflow 아래 경로부터 지정
-  var node = nodes.find((n) => n.data.label === "Node 1");
-  var userName = node.data.run.outputs[0].user_name;
-  api.setVar("data.run.outputs", [userName]); // node 아래 경로부터 지정
-  api.log(userName);
+
+  /* nodes에서 특정 노드 이름 ("Node 1")으로 찾기
+    const targetNode = (api.getGlobalVar("nodes") || []).find(n => n.data.label === "Node 1");
+
+    if (targetNode) {
+      // outputs 배열 가져오기
+      const sourceOutputs = targetNode.data.run.outputs || [];
+
+      // user_name만 추출
+      const userNames: string[] = sourceOutputs.map(o => o?.user_name).filter(Boolean); // null/undefined 제거
+
+      if (userNames.length > 0) {
+        // 현재 노드 outputs에 복사
+        userNames.forEach((name, idx) => {
+          api.setVar(`data.run.outputs.${idx}`, name);
+        });
+
+        api.log(`User names set to outputs: ${userNames.join(", ")}`);
+      } else {
+        api.log("No user_name found in Node 1 outputs", "warn");
+      }
+    } else {
+      api.log("Node with label 'Node 1' not found", "warn");
+    }
   */
   // SCRIPT
   registerAction(
