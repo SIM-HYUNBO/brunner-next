@@ -40,7 +40,7 @@ export type ActionHandler = (
   node: Node<any>,
   workflow: any,
   txContext: Map<string, TransactionContext>
-) => Promise<void>;
+) => Promise<{ error_code: number; error_message: any }>;
 
 export const actionMap = new Map<string, ActionHandler>();
 
@@ -111,18 +111,33 @@ export function registerBuiltInActions(): void {
   registerAction(
     constants.workflowActions.START,
     async (node, workflowData, txContext) => {
-      if (!node) return;
-      if (!preNodeCheck(node, workflowData)) {
+      var result = { error_code: -1, error_message: "" };
+      try {
+        if (!node) {
+          result.error_code = -1;
+          result.error_message = "node is invalid.";
+          return result;
+        }
+        if (!preNodeCheck(node, workflowData)) {
+          postNodeCheck(node, workflowData);
+
+          result.error_code = -1;
+          result.error_message = "node is invalid.";
+        }
+
+        // Node main action
+        workflowData.data.run.system = {};
+        workflowData.data.run.system.startTime = new Date();
+
         postNodeCheck(node, workflowData);
-        return;
+        result.error_code = 0;
+        result.error_message = constants.messages.SUCCESS_FINISHED;
+      } catch (error) {
+        result.error_code = -1;
+        result.error_message = JSON.stringify(error);
+        return result;
       }
-
-      // Node main action
-      workflowData.data.run.system = {};
-      workflowData.data.run.system.startTime = new Date();
-
-      postNodeCheck(node, workflowData);
-      return;
+      return result;
     }
   );
 
@@ -130,18 +145,36 @@ export function registerBuiltInActions(): void {
   registerAction(
     constants.workflowActions.END,
     async (node, workflowData, txContext) => {
-      if (!node) return;
-      if (!preNodeCheck(node, workflowData)) {
-        postNodeCheck(node, workflowData);
-        return;
-      }
-      workflowData.data.run.system.endTime = new Date();
-      workflowData.data.run.system.durationMs =
-        new Date(workflowData.data.run.system.endTime).getTime() -
-        new Date(workflowData.data.run.system.startTime).getTime();
+      var result = { error_code: -1, error_message: "" };
+      try {
+        if (!node) {
+          result.error_code = -1;
+          result.error_message = "node is invalid.";
+          return result;
+        }
 
-      postNodeCheck(node, workflowData);
-      return;
+        if (!preNodeCheck(node, workflowData)) {
+          postNodeCheck(node, workflowData);
+
+          result.error_code = -1;
+          result.error_message = "node is invalid.";
+          return result;
+        }
+        workflowData.data.run.system.endTime = new Date();
+        workflowData.data.run.system.durationMs =
+          new Date(workflowData.data.run.system.endTime).getTime() -
+          new Date(workflowData.data.run.system.startTime).getTime();
+
+        postNodeCheck(node, workflowData);
+
+        result.error_code = 0;
+        result.error_message = constants.messages.SUCCESS_FINISHED;
+        return result;
+      } catch (error) {
+        result.error_code = -1;
+        result.error_message = JSON.stringify(error);
+        return result;
+      }
     }
   );
 
@@ -149,14 +182,25 @@ export function registerBuiltInActions(): void {
   registerAction(
     constants.workflowActions.CALL,
     async (node, workflowData, txContext) => {
-      if (!node) return;
+      var result = { error_code: -1, error_message: "" };
+
+      if (!node) {
+        result.error_code = -1;
+        result.error_message = "node is invalid.";
+        return result;
+      }
+
       if (!preNodeCheck(node, workflowData)) {
         postNodeCheck(node, workflowData);
-        return;
+        result.error_code = -1;
+        result.error_message = "Node is invalid.";
+        return result;
       }
 
       postNodeCheck(node, workflowData);
-      return;
+      result.error_code = 0;
+      result.error_message = constants.messages.SUCCESS_FINISHED;
+      return result;
     }
   );
 
@@ -248,6 +292,8 @@ export function registerBuiltInActions(): void {
   registerAction(
     constants.workflowActions.SCRIPT,
     async (node: any, workflowData: any, txContext) => {
+      var result = { error_code: -1, error_message: "" };
+
       const userScript = node.data.design.scriptContents || "";
 
       const timeoutMs: number = node.data.design.timeoutMs || 5000;
@@ -396,7 +442,7 @@ export function registerBuiltInActions(): void {
         return undefined;
       }
 
-      var result = null;
+      var res = null;
 
       try {
         const AsyncFunction = Object.getPrototypeOf(async function () {})
@@ -410,7 +456,7 @@ export function registerBuiltInActions(): void {
           userScript + "\n//# sourceURL=userScript.js"
         );
 
-        result = await Promise.race([
+        res = await Promise.race([
           fn(node.data || {}, workflowData.data || {}, safeApi),
           new Promise((_, reject) =>
             setTimeout(() => reject(new Error("timeout")), timeoutMs)
@@ -421,9 +467,12 @@ export function registerBuiltInActions(): void {
 
         // 스크립트 결과는 별도 저장 안함
         postNodeCheck(node, workflowData);
+
+        result.error_code = 0;
+        result.error_message = constants.messages.SUCCESS_FINISHED;
         return result;
       } catch (err: any) {
-        result = err;
+        result = { error_code: -1, error_message: err };
 
         // stack에서 userScript 줄 정보 찾기
         const stackLines = err.stack?.split("\n") || [];
@@ -449,11 +498,19 @@ export function registerBuiltInActions(): void {
   registerAction(
     constants.workflowActions.SQL,
     async (node, workflowData, txContext) => {
-      if (!node) return;
+      var result = { error_code: -1, error_message: "" };
+
+      if (!node) {
+        result.error_code = -1;
+        result.error_message = "node is invalid.";
+        return result;
+      }
 
       if (!preNodeCheck(node, workflowData)) {
         postNodeCheck(node, workflowData);
-        return;
+
+        result.error_code = -1;
+        result.error_message = "node is invalid.";
       }
 
       const { dbConnectionId, sqlStmt, sqlParams } = node.data?.design || {};
@@ -552,6 +609,10 @@ export function registerBuiltInActions(): void {
         console.log(
           `[SQL_NODE] ${connection.type.toUpperCase()} 쿼리 실행 완료`
         );
+
+        result.error_code = 0;
+        result.error_message = constants.messages.SUCCESS_FINISHED;
+        return result;
       } catch (err: any) {
         console.error(`[SQL_NODE ERROR][${dbType}]`, err);
         throw err;
@@ -921,7 +982,7 @@ export async function saveWorkflow(
 
   if (upsert_TB_COR_WORKFLOW_MST_01.rowCount == 1) {
     result.error_code = 0;
-    result.error_message = "";
+    result.error_message = constants.messages.SUCCESS_FINISHED;
   } else {
     result.error_code = -1;
     result.error_message = upsert_TB_COR_WORKFLOW_MST_01.message;
@@ -962,7 +1023,7 @@ export async function deleteWorkflow(
 
     if (delete_TB_COR_WORKFLOW_MST_01.rowCount == 1) {
       result.error_code = 0;
-      result.error_message = "";
+      result.error_message = constants.messages.SUCCESS_FINISHED;
     } else {
       result.error_code = -1;
       result.error_message = delete_TB_COR_WORKFLOW_MST_01.message;
@@ -1017,7 +1078,7 @@ export async function getWorkflowById(systemCode: string, workflowId: string) {
       };
     } else {
       result.error_code = 0;
-      result.error_message = "";
+      result.error_message = constants.messages.SUCCESS_FINISHED;
       result.workflow_data = dbResult.rows[0].workflow_data;
     }
 

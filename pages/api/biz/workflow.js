@@ -242,9 +242,9 @@ const executeService = async (txnId, jRequest) => {
           // -----------------------
           await txNode.commit();
 
-          jResponse.error_code = 0;
+          jResponse.error_code = result.error_code;
           jResponse.jWorkflow = workflowData;
-          jResponse.message = "Workflow executed successfully";
+          jResponse.message = result.error_message;
         } catch (err) {
           // -----------------------
           // 5️⃣ 에러 발생 시 롤백
