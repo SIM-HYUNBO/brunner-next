@@ -933,7 +933,7 @@ export async function executeWorkflow(
   );
   if (!startNode) throw new Error("Start node not found");
 
-  await traverse(startNode.id, txContext);
+  return await traverse(startNode.id, txContext);
 }
 
 // ---------------------------

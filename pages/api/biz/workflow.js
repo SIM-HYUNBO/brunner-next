@@ -6,7 +6,6 @@ import * as commonFunctions from "@/components/core/commonFunctions";
 import { DBConnectionManager } from "./workflow/dbConnectionManager";
 import * as workflowEngineServer from "./workflow/workflowEngineServer";
 import * as dynamicSql from "./dynamicSql";
-import next from "next";
 
 /**
  * Workflow 모듈의 서비스 실행 함수
