@@ -1,6 +1,6 @@
 // components/workflow/WorkflowDataModal.tsx
 import React, { useEffect, useRef, useState } from "react";
-import ReactJson from "react-json-view";
+import ReactJson from "react18-json-view";
 import { Rnd } from "react-rnd";
 import * as constants from "@/components/core/constants";
 import RequestServer from "@/components/core/client/requestServer";
@@ -149,10 +149,7 @@ export const WorkflowDataModal: React.FC<WorkflowDataModalProps> = ({
         {workflowData && (
           <ReactJson
             src={workflowData}
-            name={false}
             enableClipboard
-            displayDataTypes={false}
-            displayObjectSize
             collapsed={false} // 전체 펼치기
           />
         )}
