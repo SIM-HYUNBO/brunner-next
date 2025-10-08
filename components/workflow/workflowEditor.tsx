@@ -595,9 +595,9 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
   return (
     <>
       <ReactFlowProvider>
-        <BrunnerMessageBox />
         {/* <<< MOBILE-FIX: Use h-screen so we can compute child heights on mobile; and switch to column on small screens */}
         <div className="flex flex-col md:flex-row w-full h-screen relative">
+          <BrunnerMessageBox />
           {/* 🧭 왼쪽: 워크플로우 다이어그램 */}
           <div className="flex-1 relative">
             {/* wrapper with explicit min height and dynamic height for mobile portrait */}
