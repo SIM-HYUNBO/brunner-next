@@ -62,7 +62,7 @@ export default function EDocDesignerContainer({
       },
     ],
   });
-  const [modalOpen, setModalOpen] = useState(false);
+
   const [currentPageIdx, setCurrentPageIdx] = useState(0);
   const [selectedComponentId, setSelectedComponentId] = useState(null);
   const [documentList, setDocumentList] = useState([]);

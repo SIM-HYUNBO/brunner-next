@@ -13,11 +13,11 @@ export default function WorkflowSelector({
   selectedWorkflow,
 }: WorkflowSelectorProps) {
   useEffect(() => {
-    setLocalSelectedWorkflow(selectedWorkflow?.current);
+    setLocalSelectedWorkflow(selectedWorkflow);
   }, [selectedWorkflow]);
 
   // 모달 열림 여부
-  const [modalOpen, setModalOpen] = useState(false);
+  const [workflowSelectModalOpen, setWorkflowSelectModalOpen] = useState(false);
 
   // 선택된 워크플로우 정보
   const [localSelectedWorkflow, setLocalSelectedWorkflow] = useState<any>(null);
@@ -29,14 +29,14 @@ export default function WorkflowSelector({
     // 조회한 데이터로 갱신
     setLocalSelectedWorkflow(workflow); // 내부 상태 갱신
     if (onSelect) onSelect(workflow); // prop으로 전달된 함수 호출
-    setModalOpen(false); // 모달 닫기
+    setWorkflowSelectModalOpen(false); // 모달 닫기
   };
 
   return (
     <div className="px-2">
       {/* 모달 열기 버튼 */}
       <button
-        onClick={() => setModalOpen(true)}
+        onClick={() => setWorkflowSelectModalOpen(true)}
         className="p-2 rounded-md semi-text-bg-color"
       >
         Select ...
@@ -45,20 +45,18 @@ export default function WorkflowSelector({
       {/* 선택된 워크플로우 표시 */}
       {localSelectedWorkflow && (
         <div className="mt-3 text-gray-700">
-          선택된 워크플로우:{" "}
-          <b>
-            {localSelectedWorkflow.name} ({localSelectedWorkflow.id})
-          </b>
-          <div className="text-sm text-gray-500">
-            {localSelectedWorkflow.description}
-          </div>
+          <b>{localSelectedWorkflow.workflowId}</b>
+          <br />
+          <b>{localSelectedWorkflow?.workflowName}</b>
+          <br />
+          <b>{localSelectedWorkflow?.workflowDescription}</b>
         </div>
       )}
 
       {/* 워크플로우 선택 모달 */}
       <WorkflowSelectModal
-        open={modalOpen}
-        onClose={() => setModalOpen(false)}
+        open={workflowSelectModalOpen}
+        onClose={() => setWorkflowSelectModalOpen(false)}
         onSelect={handleSelectWorkflow}
       />
     </div>

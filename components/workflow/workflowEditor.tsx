@@ -673,7 +673,7 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
                 selectedWorkflow={jWorkflow.current}
               />
 
-              <div className="p-2 border rounded mt-2">
+              {/* <div className="p-2 border rounded mt-2">
                 <div>ID: {workflowId}</div>
                 <div className="flex flex-row mt-2">
                   이름:
@@ -692,7 +692,7 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
                     onChange={(e) => setWorkflowDescription(e.target.value)}
                   />
                 </div>
-              </div>
+              </div> */}
 
               <button
                 onClick={() => setDbConnectionsModalOpen(true)}
