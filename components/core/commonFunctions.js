@@ -168,6 +168,8 @@ export function getDefaultInputs(actionName) {
       return [{ table: "INDATA", columns: [], rows: [] }];
     case constants.workflowActions.SQL:
       return [{ table: "INDATA", columns: [], rows: [] }];
+    case constants.workflowActions.BRANCH:
+      return [];
     default:
       throw new Error(constants.messages.WORKFLOW_NOT_SUPPORTED_NODE_TYPE);
   }
@@ -176,10 +178,11 @@ export function getDefaultInputs(actionName) {
 export function getDefaultOutputs(actionName) {
   switch (actionName) {
     case constants.workflowActions.START:
-    case constants.workflowActions.CALL:
     case constants.workflowActions.END:
     case constants.workflowActions.SCRIPT:
     case constants.workflowActions.SQL:
+    case constants.workflowActions.BRANCH:
+    case constants.workflowActions.CALL:
       return [{ table: "OUTDATA", columns: [], rows: [] }];
     default:
       throw new Error(constants.messages.WORKFLOW_NOT_SUPPORTED_NODE_TYPE);

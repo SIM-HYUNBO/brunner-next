@@ -51,14 +51,13 @@ export const NodePropertyEditor: React.FC<NodePropertyEditorProps> = ({
     node?.data.design.scriptContents || ""
   );
   const [scriptTimeoutMs, setTimeoutMs] = useState(
-    node?.data.design.timeoutMs ?? 5000
+    node?.data.design.scriptTimeoutMs ?? 5000
   );
 
   // useRef를 이용해 항상 최신 값을 추적
   const scriptContentsRef = useRef(scriptContents);
   const scriptTimeoutMsRef = useRef(scriptTimeoutMs);
 
-  // 상태가 바뀔 때마다 ref도 업데이트
   useEffect(() => {
     scriptContentsRef.current = scriptContents;
   }, [scriptContents]);
@@ -102,7 +101,6 @@ export const NodePropertyEditor: React.FC<NodePropertyEditorProps> = ({
       setOutputs(node.data.design.outputs);
     }
 
-    // SCRIPT 노드 속성 동기화
     if (action === constants.workflowActions.SCRIPT) {
       setScriptContents(node.data.design.scriptContents || "");
       setTimeoutMs(node.data.design.scriptTimeoutMs ?? 5000);
@@ -124,38 +122,80 @@ export const NodePropertyEditor: React.FC<NodePropertyEditorProps> = ({
   if (!node) {
     return (
       <div style={{ padding: 10 }}>
-        {/* <h3>Workflow Info</h3>
-        <div>ID: {workflowId}</div>
-        <div>
-          이름:
-          <input
-            className="w-full"
-            value={wfName}
-            onChange={(e) => setWfName(e.target.value)}
-            onBlur={() => onWorkflowUpdate?.({ workflowName: wfName })}
-          />
-        </div>
-        <div>
-          설명:
-          <textarea
-            className="w-full"
-            value={wfDesc}
-            rows={3}
-            onChange={(e) => setWfDesc(e.target.value)}
-            onBlur={() => onWorkflowUpdate?.({ workflowDescription: wfDesc })}
-          />
-        </div>
         <div style={{ marginTop: 10, fontStyle: "italic" }}>
           Select a node to edit its properties.
-        </div> */}
+        </div>
       </div>
     );
   }
 
+  // 액션 변경 시 UI + 자동 Apply
+  const handleActionChange = (newAction: string) => {
+    setActionName(newAction);
+
+    const defaultInputs = commmonFunctions.getDefaultInputs(newAction) ?? [];
+    const defaultOutputs = commmonFunctions.getDefaultOutputs(newAction) ?? [];
+    setInputs(defaultInputs);
+    setOutputs(defaultOutputs);
+
+    // 공통 design 초기화
+    let design: any = {
+      inputs: [...defaultInputs],
+      outputs: [...defaultOutputs],
+    };
+
+    // 이전 액션 필드 제거
+    if (prevActionName.current === constants.workflowActions.SCRIPT) {
+      delete design.scriptContents;
+      delete design.scriptTimeoutMs;
+      setScriptContents(undefined);
+      setTimeoutMs(undefined);
+    }
+    if (prevActionName.current === constants.workflowActions.BRANCH) {
+      delete design.initial;
+      delete design.step;
+      delete design.limit;
+      delete design.condition;
+    }
+
+    // 새 액션 필드 추가
+    if (newAction === constants.workflowActions.SCRIPT) {
+      setScriptContents("");
+      setTimeoutMs(5000);
+      design.scriptContents = "";
+      design.scriptTimeoutMs = 5000;
+    }
+
+    if (newAction === constants.workflowActions.BRANCH) {
+      // mode 기본값
+      design.mode = design.mode || constants.workflowActions;
+
+      if (design.mode === constants.workflowBranchNodeMode.Loop) {
+        design.initial = 0; // 인덱스 초기값
+        design.step = 1; // 증분값
+        design.limit = { binding: "" }; // 리미트 (변수 바인딩 가능)
+        delete design.condition; // condition 모드 관련 필드 제거
+      } else if (design.mode === constants.workflowBranchNodeMode.Branch) {
+        design.condition = ""; // 조건식
+        delete design.initial;
+        delete design.step;
+        delete design.limit; // loop 모드 관련 필드 제거
+      }
+    }
+
+    // 노드 업데이트 호출
+    onNodeUpdate?.(node.id, {
+      actionName: newAction,
+      design,
+    });
+
+    prevActionName.current = newAction;
+    openModal(constants.messages.SUCCESS_APPLIED);
+  };
+
   return (
     <div>
       <BrunnerMessageBox />
-      {/* <h3>Node Editor</h3> */}
       <div>ID: {node.id}</div>
       <div>Label: {node.data.label}</div>
       <div>Status: {node.data.status}</div>
@@ -165,7 +205,7 @@ export const NodePropertyEditor: React.FC<NodePropertyEditorProps> = ({
         <select
           className="w-full border px-2 py-1 mt-1"
           value={actionName}
-          onChange={(e) => setActionName(e.target.value)}
+          onChange={(e) => handleActionChange(e.target.value)}
         >
           {Object.values(constants.workflowActions).map((a) => (
             <option key={a} value={a}>
@@ -192,34 +232,14 @@ export const NodePropertyEditor: React.FC<NodePropertyEditorProps> = ({
         <button
           className="py-1 semi-text-bg-color rounded border"
           onClick={() => {
-            // 액션 이름이 바뀌면 기본 입력/출력 가져오기
-            const newInputs =
-              prevActionName.current !== actionName
-                ? commmonFunctions.getDefaultInputs(actionName)
-                : inputs;
-            const newOutputs =
-              prevActionName.current !== actionName
-                ? commmonFunctions.getDefaultOutputs(actionName)
-                : outputs;
-
-            prevActionName.current = actionName;
-            setInputs(newInputs);
-            setOutputs(newOutputs);
-
-            // 최신 값 참조
+            // Apply 수동 클릭 시도
             const newDesign = {
               scriptContents: scriptContentsRef.current,
               scriptTimeoutMs: scriptTimeoutMsRef.current,
-              inputs: [...newInputs], // 배열이면 새 객체로 복사
-              outputs: [...newOutputs],
+              inputs: [...inputs],
+              outputs: [...outputs],
             };
-
-            const updates: any = {
-              actionName,
-              design: newDesign,
-            };
-
-            onNodeUpdate?.(node.id, updates);
+            onNodeUpdate?.(node.id, { actionName, design: newDesign });
             openModal(constants.messages.SUCCESS_APPLIED);
           }}
         >

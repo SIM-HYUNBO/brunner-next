@@ -130,6 +130,7 @@ export const workflowActions = {
   END: "End",
   SCRIPT: "Java Script",
   SQL: "SQL",
+  BRANCH: "Branch",
   CALL: "CallWorkflow",
 };
 
@@ -153,4 +154,9 @@ export const dbType = {
   mysql: "mysql",
   postgres: "postgres",
   mssql: "mssql",
+};
+
+export const workflowBranchNodeMode = {
+  Loop: "Loop",
+  Branch: "Branch",
 };

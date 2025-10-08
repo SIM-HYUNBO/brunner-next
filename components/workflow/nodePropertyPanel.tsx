@@ -215,6 +215,167 @@ api.postJson: async (url, body) => http post request.
     setIsSqlModalOpen(false);
   };
 
+  const BranchNodeProperties = ({ node }: { node: Node<any> }) => {
+    if (!node) return null;
+    const { data } = node;
+
+    const handleChange = (key: string, value: any) => {
+      onNodeUpdate?.(node.id, { [key]: value });
+    };
+
+    const isLoopMode = data.mode === constants.workflowBranchNodeMode.Loop;
+    const isConditionMode =
+      data.mode === constants.workflowBranchNodeMode.Branch;
+
+    return (
+      <div className="mt-5">
+        <h3>Branch Node Properties</h3>
+
+        <label className="mt-2">Mode</label>
+        <select
+          className="ml-1 mt-2"
+          value={data.mode || "none"}
+          onChange={(e) => handleChange("mode", e.target.value)}
+        >
+          <option value="none">선택하세요</option>
+          <option value={constants.workflowBranchNodeMode.Branch}>
+            분기 (Branch)
+          </option>
+          <option value={constants.workflowBranchNodeMode.Loop}>
+            반복 (Loop)
+          </option>
+        </select>
+
+        {isConditionMode && (
+          <div className="flex flex-col">
+            <label className="mt-2">조건식</label>
+            <input
+              type="text"
+              value={data.condition || ""}
+              onChange={(e) => handleChange("condition", e.target.value)}
+              placeholder="예: workflow.value > 5"
+            />
+          </div>
+        )}
+
+        {isLoopMode && (
+          <div className="flex flex-col">
+            <div className="flex flex-row mt-2 space-x-1">
+              <label className="">Start</label>
+              <input
+                className="flex text-center w-full ml-2"
+                type="number"
+                value={data.startIndex ?? 0}
+                onChange={(e) =>
+                  handleChange("startIndex", Number(e.target.value))
+                }
+              />
+              <label>Step</label>
+              <input
+                className="flex text-center w-full ml-2"
+                type="number"
+                value={data.step ?? 1}
+                onChange={(e) => handleChange("step", Number(e.target.value))}
+              />
+            </div>
+            <div className="flex flex-row mt-2">
+              <label>Limit</label>
+              <input
+                className="w-full text-center ml-1"
+                type="text"
+                value={data.limit ?? ""}
+                onChange={(e) => handleChange("limit", e.target.value)}
+                placeholder="숫자 또는 ${변수경로}"
+              />
+            </div>
+            <small style={{ color: "#666" }}>
+              ※ 예: <code>${"{workflow.items.length}"}</code>
+            </small>
+
+            <div style={{ marginTop: 8 }}>
+              현재 인덱스: <b>{data.currentIndex ?? data.startIndex ?? 0}</b>
+            </div>
+          </div>
+        )}
+      </div>
+    );
+  };
+
+  const ScriptNodeProperties = ({ node }: { node: Node<any> }) => {
+    return (
+      <div className="flex flex-col mt-5">
+        <h3>Script Node Editor</h3>
+        <label>Script Preview:</label>
+        <textarea
+          readOnly
+          value={localScriptContents}
+          rows={5}
+          className="w-full border p-2 font-mono"
+        />
+        <div className="flex flex-row space-x-1">
+          <button
+            className="mt-1 px-3 py-1 border rounded semi-text-bg-color"
+            onClick={() => setIsScriptModalOpen(true)}
+          >
+            Edit Script
+          </button>
+          <label className="mt-2">Timeout (ms):</label>
+          <input
+            type="number"
+            className="border px-2 py-1 w-[100px]"
+            value={localScriptTimeoutMs}
+            readOnly
+          />
+        </div>
+      </div>
+    );
+  };
+
+  const SqlNodeProperties = ({ node }: { node: Node<any> }) => {
+    return (
+      <div className="flex flex-col mt-5">
+        <h3>Sql Node Editor</h3>
+        <label className="mt-2">Database:</label>
+        <input
+          type="text"
+          className="border px-2 py-1 w-full"
+          value={localDBConnectionId}
+          readOnly
+        />
+        <label>Sql Preview:</label>
+        <textarea
+          readOnly
+          value={localSqlStmt}
+          rows={5}
+          className="w-full border p-2 font-mono"
+        />
+        <div className="flex flex-row space-x-1">
+          <button
+            className="mt-1 px-3 py-1 border rounded semi-text-bg-color"
+            onClick={() => {
+              setSqlModalData({
+                sqlStmt: localSqlStmt,
+                dbConnectionId: localDBConnectionId,
+                sqlParams: node.data.design?.sqlParams ?? [], // 최신값 보장
+                maxRows: localSqlMaxRows,
+              });
+              setIsSqlModalOpen(true);
+            }}
+          >
+            Edit SQL
+          </button>
+          <label className="mt-2">Max Rows:</label>
+          <input
+            type="number"
+            className="border px-2 py-1 w-[100px]"
+            value={localSqlMaxRows}
+            readOnly
+          />
+        </div>
+      </div>
+    );
+  };
+
   // 🧩 실제 렌더링
   return (
     <div style={{ padding: 10 }}>
@@ -236,31 +397,7 @@ api.postJson: async (url, body) => http post request.
           </div>
         )}
         {node && node.data.actionName === constants.workflowActions.SCRIPT && (
-          <div className="flex flex-col mt-5">
-            <h3>Script Node Editor</h3>
-            <label>Script Preview:</label>
-            <textarea
-              readOnly
-              value={localScriptContents}
-              rows={5}
-              className="w-full border p-2 font-mono"
-            />
-            <div className="flex flex-row space-x-1">
-              <button
-                className="mt-1 px-3 py-1 border rounded semi-text-bg-color"
-                onClick={() => setIsScriptModalOpen(true)}
-              >
-                Edit Script
-              </button>
-              <label className="mt-2">Timeout (ms):</label>
-              <input
-                type="number"
-                className="border px-2 py-1 w-[100px]"
-                value={localScriptTimeoutMs}
-                readOnly
-              />
-            </div>
-          </div>
+          <ScriptNodeProperties node={node} />
         )}
         {isScriptModalOpen && (
           <ScriptEditorModal
@@ -273,46 +410,7 @@ api.postJson: async (url, body) => http post request.
           />
         )}
         {node && node.data.actionName === constants.workflowActions.SQL && (
-          <div className="flex flex-col mt-5">
-            <h3>Sql Node Editor</h3>
-            <label className="mt-2">DB Connection:</label>
-            <input
-              type="text"
-              className="border px-2 py-1 w-[100px]"
-              value={localDBConnectionId}
-              readOnly
-            />
-            <label>Sql Preview:</label>
-            <textarea
-              readOnly
-              value={localSqlStmt}
-              rows={5}
-              className="w-full border p-2 font-mono"
-            />
-            <div className="flex flex-row space-x-1">
-              <button
-                className="mt-1 px-3 py-1 border rounded semi-text-bg-color"
-                onClick={() => {
-                  setSqlModalData({
-                    sqlStmt: localSqlStmt,
-                    dbConnectionId: localDBConnectionId,
-                    sqlParams: node.data.design?.sqlParams ?? [], // 최신값 보장
-                    maxRows: localSqlMaxRows,
-                  });
-                  setIsSqlModalOpen(true);
-                }}
-              >
-                Edit SQL
-              </button>
-              <label className="mt-2">Max Rows:</label>
-              <input
-                type="number"
-                className="border px-2 py-1 w-[100px]"
-                value={localSqlMaxRows}
-                readOnly
-              />
-            </div>
-          </div>
+          <SqlNodeProperties node={node} />
         )}
         {isSqlModalOpen && sqlModalData && (
           <SqlEditorModal
@@ -324,6 +422,9 @@ api.postJson: async (url, body) => http post request.
             onConfirm={handleSqlModalConfirm}
             onClose={handleSqlModalClose}
           />
+        )}
+        {node && node.data.actionName === constants.workflowActions.BRANCH && (
+          <BranchNodeProperties node={node} />
         )}
       </div>
 

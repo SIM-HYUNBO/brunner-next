@@ -111,6 +111,53 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
   );
 
   const initWorkflow = () => {
+    const initialNodes = [
+      {
+        id: uuidv4(),
+        type: "default",
+        position: { x: 100, y: 100 },
+        data: {
+          label: constants.workflowActions.START,
+          actionName: constants.workflowActions.START,
+          status: constants.workflowRunStatus.idle,
+          design: {
+            inputs: commonFunctions.getDefaultInputs(
+              constants.workflowActions.START
+            ),
+            outputs: commonFunctions.getDefaultOutputs(
+              constants.workflowActions.START
+            ),
+            scriptContents: "",
+            scriptTimeoutMs: 5000,
+          },
+          run: { inputs: [], outputs: [] },
+        },
+      },
+      {
+        id: uuidv4(),
+        type: "default",
+        position: { x: 100, y: 500 },
+        data: {
+          label: constants.workflowActions.END,
+          actionName: constants.workflowActions.END,
+          status: constants.workflowRunStatus.idle,
+          design: {
+            inputs: commonFunctions.getDefaultInputs(
+              constants.workflowActions.END
+            ),
+            outputs: commonFunctions.getDefaultOutputs(
+              constants.workflowActions.END
+            ),
+            scriptContents: "",
+            scriptTimeoutMs: 5000,
+          },
+          run: { inputs: [], outputs: [] },
+        },
+      },
+    ];
+
+    const initialEdges: Edge<ConditionEdgeData>[] = [];
+
     setCurrentWorkflow({
       workflowId: uuidv4(),
       workflowName: "new workflow",
@@ -120,8 +167,8 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
         design: { inputs: [], outputs: [] },
         run: { inputs: [], outputs: [] },
       },
-      nodes,
-      edges,
+      nodes: initialNodes,
+      edges: initialEdges,
     });
   };
 
@@ -384,6 +431,9 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
 
   const deleteWorkflow = async () => {
     try {
+      const confirm = await openModal(constants.messages.DELETE_ITEM);
+      if (!confirm) return;
+
       const jRequest = {
         commandName: constants.commands.WORKFLOW_DELETE_WORKFLOW,
         systemCode: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE,
@@ -544,8 +594,8 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
 
   return (
     <>
-      <BrunnerMessageBox />
       <ReactFlowProvider>
+        <BrunnerMessageBox />
         {/* <<< MOBILE-FIX: Use h-screen so we can compute child heights on mobile; and switch to column on small screens */}
         <div className="flex flex-col md:flex-row w-full h-screen relative">
           {/* 🧭 왼쪽: 워크플로우 다이어그램 */}
