@@ -135,58 +135,27 @@ export const NodePropertyEditor: React.FC<NodePropertyEditorProps> = ({
 
     const defaultInputs = commmonFunctions.getDefaultInputs(newAction) ?? [];
     const defaultOutputs = commmonFunctions.getDefaultOutputs(newAction) ?? [];
-    setInputs(defaultInputs);
-    setOutputs(defaultOutputs);
 
-    // 공통 design 초기화
+    // design 초기화
     let design: any = {
       inputs: [...defaultInputs],
       outputs: [...defaultOutputs],
     };
 
-    // 이전 액션 필드 제거
-    if (prevActionName.current === constants.workflowActions.SCRIPT) {
-      delete design.scriptContents;
-      delete design.scriptTimeoutMs;
-      setScriptContents(undefined);
-      setTimeoutMs(undefined);
-    }
-    if (prevActionName.current === constants.workflowActions.BRANCH) {
-      delete design.initial;
-      delete design.step;
-      delete design.limit;
-      delete design.condition;
-    }
-
-    // 새 액션 필드 추가
     if (newAction === constants.workflowActions.SCRIPT) {
-      setScriptContents("");
-      setTimeoutMs(5000);
       design.scriptContents = "";
       design.scriptTimeoutMs = 5000;
+    } else if (newAction === constants.workflowActions.BRANCH) {
+      design.mode = constants.workflowBranchNodeMode.Branch;
+      design.condition = ""; // 조건식 초기화
+      delete design.scriptContents;
+      delete design.scriptTimeoutMs;
     }
 
-    if (newAction === constants.workflowActions.BRANCH) {
-      // mode 기본값
-      design.mode = design.mode;
-
-      if (design.mode === constants.workflowBranchNodeMode.Loop) {
-        design.initial = 0; // 인덱스 초기값
-        design.step = 1; // 증분값
-        design.limit = { binding: "" }; // 리미트 (변수 바인딩 가능)
-        delete design.condition; // condition 모드 관련 필드 제거
-      } else if (design.mode === constants.workflowBranchNodeMode.Branch) {
-        design.condition = ""; // 조건식
-        delete design.initial;
-        delete design.step;
-        delete design.limit; // loop 모드 관련 필드 제거
-      }
-    }
-
-    // 노드 업데이트 호출
+    // 노드 업데이트
     onNodeUpdate?.(node.id, {
       actionName: newAction,
-      design,
+      design: design,
     });
 
     prevActionName.current = newAction;

@@ -221,10 +221,15 @@ api.postJson: async (url, body) => http post request.
 
     // ✅ design 안에 안전하게 저장
     const handleChange = (key: string, value: any) => {
+      // Branch 전용 design으로 완전히 덮어쓰기
       onNodeUpdate?.(node.id, {
         design: {
-          ...data.design, // 기존 design 필드 유지
-          [key]: value,
+          mode: node.data.design.mode, // 기존 Branch mode 유지
+          startIndex: node.data.design.startIndex,
+          step: node.data.design.step,
+          limit: node.data.design.limit,
+          condition: node.data.design.condition,
+          [key]: value, // 수정한 속성
         },
       });
     };

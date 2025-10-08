@@ -14,7 +14,7 @@ export default function BranchNode({ data }: NodeProps<BranchNodeData>) {
   const { mode, condition } = data;
   const width = 100; // 폭
   const height = width / 2; // 높이는 폭의 절반
-  const portSize = 10; // 포트 크기
+  const portSize = 6; // 포트 크기
 
   const isLoopMode = mode === constants.workflowBranchNodeMode.Loop;
   const isBranchMode = mode === constants.workflowBranchNodeMode.Branch;
@@ -55,7 +55,7 @@ export default function BranchNode({ data }: NodeProps<BranchNodeData>) {
           boxSizing: "border-box",
         }}
       >
-        {/* <div style={{ fontWeight: "bold", marginBottom: 4 }}>Branch</div> */}
+        {<div style={{ fontSize: 8, marginBottom: 4 }}>[Branch]</div>}
         {isLoopMode && <div style={{ fontSize: 8 }}>Loop</div>}
         {isBranchMode && <div style={{ fontSize: 8 }}>Branch</div>}
         {isBranchMode && (

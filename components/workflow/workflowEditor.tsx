@@ -58,6 +58,54 @@ export type DesignColumn = {
 export type DesignedDataset = Record<string, DesignColumn[]>;
 type InputDataset = Record<string, Record<string, any>[]>;
 
+const WorkflowDefaultNode: React.FC<NodeProps<ActionNodeData>> = ({ data }) => {
+  const isStart = data.actionName === constants.workflowActions.START;
+  const isEnd = data.actionName === constants.workflowActions.END;
+  const hasPorts = [
+    constants.workflowActions.SCRIPT,
+    constants.workflowActions.SQL,
+    constants.workflowActions.CALL,
+  ].includes(data.actionName);
+
+  return (
+    <div
+      style={{
+        padding: 6,
+        border: "1px dashed #222",
+        textAlign: "center",
+        fontSize: 8,
+      }}
+    >
+      [{data.actionName}] {data.label}
+      {/* Start: 하단 source */}
+      {isStart && <Handle type="source" position={Position.Bottom} />}
+      {/* End: 상단 target */}
+      {isEnd && <Handle type="target" position={Position.Top} />}
+      {/* 일반 노드: 상단 target / 하단 source */}
+      {hasPorts && !isStart && !isEnd && (
+        <>
+          <Handle
+            type="target"
+            position={Position.Top}
+            style={{ background: "green" }}
+          />
+          <Handle
+            type="source"
+            position={Position.Bottom}
+            style={{ background: "blue" }}
+          />
+        </>
+      )}
+    </div>
+  );
+};
+
+// 노드 유형별 렌더링 컴포넌트 등록
+const nodeTypes = {
+  default: WorkflowDefaultNode,
+  branch: BranchNode,
+};
+
 export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
   initialNodes = [
     {
@@ -115,6 +163,13 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
   const [isRightPanelOpen, setIsRightPanelOpen] = useState(false);
   const [isWorkflowDataModalOpen, setIsWorkflowDataModalOpen] = useState(false);
 
+  const gridSize = 30; // 스냅 그리드 크기
+
+  const snapToGrid = (position: { x: number; y: number }) => ({
+    x: Math.round(position.x / gridSize) * gridSize,
+    y: Math.round(position.y / gridSize) * gridSize,
+  });
+
   const [workflowInputData, setWorkflowInputData] = useState<string>(
     JSON.stringify({ INPUT_TABLE: [{ key1: "test", key2: 123 }] }, null, 2)
   );
@@ -124,7 +179,7 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
       {
         id: uuidv4(),
         type: "default",
-        position: { x: 100, y: 100 },
+        position: snapToGrid({ x: 100, y: 100 }),
         data: {
           label: constants.workflowActions.START,
           actionName: constants.workflowActions.START,
@@ -145,7 +200,7 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
       {
         id: uuidv4(),
         type: "default",
-        position: { x: 100, y: 500 },
+        position: snapToGrid({ x: 100, y: 500 }),
         data: {
           label: constants.workflowActions.END,
           actionName: constants.workflowActions.END,
@@ -312,12 +367,16 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
 
   const addNode = () => {
     const id = generateStepId();
+    const randomPos = {
+      x: Math.random() * 400 + 50,
+      y: Math.random() * 400 + 50,
+    };
     setNodes((nds) => [
       ...nds,
       {
         id,
         type: "default",
-        position: { x: Math.random() * 400 + 50, y: Math.random() * 400 + 50 },
+        position: snapToGrid(randomPos),
         data: {
           label: `Node ${id}`,
           actionName: constants.workflowActions.SCRIPT,
@@ -387,7 +446,13 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
     );
 
     stepCounterRef.current = 0;
-    // jWorkflow.current = newVal;
+    const snappedNodes = (newVal.nodes ?? []).map(
+      (n: Node<ActionNodeData>) => ({
+        ...n,
+        position: snapToGrid(n.position),
+      })
+    );
+    setNodes(snappedNodes);
   };
 
   const saveWorkflow = async () => {
@@ -601,66 +666,6 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
   }, []);
   // <<< /MOBILE-FIX
 
-  // 노드 유형별 렌더링 컴포넌트 등록
-  const nodeTypes = useMemo(
-    () => ({
-      default: ({ data }: NodeProps<ActionNodeData>) => {
-        const isStart = data.actionName === constants.workflowActions.START;
-        const isEnd = data.actionName === constants.workflowActions.END;
-
-        return (
-          <div
-            style={{
-              padding: 6,
-              border: "1px dashed #555",
-              borderRadius: 6,
-              minWidth: 100,
-              textAlign: "center",
-              fontSize: 8,
-              background: isStart ? "#ADFF2F" : isEnd ? "#FFB6C1" : "#fff",
-              color: "#000",
-              position: "relative", // Handle 위치 조정용
-            }}
-          >
-            {data.label || "Node"}
-
-            {/* START 포트 */}
-            {isStart && (
-              <Handle
-                type="source"
-                position={Position.Right}
-                style={{
-                  width: 10,
-                  height: 10,
-                  background: "blue",
-                  border: "1px solid #222",
-                }}
-              />
-            )}
-
-            {/* END 포트 */}
-            {isEnd && (
-              <Handle
-                type="target"
-                position={Position.Left}
-                style={{
-                  width: 10,
-                  height: 10,
-                  background: "green",
-                  border: "1px solid #222",
-                }}
-              />
-            )}
-          </div>
-        );
-      },
-
-      // BRANCH용 노드 렌더링
-      branch: BranchNode,
-    }),
-    []
-  );
-
   return (
     <>
       <ReactFlowProvider>
@@ -788,20 +793,23 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
                         setNodes((nds) => {
                           const newNodes = nds.map((n) => {
                             if (n.id !== id) return n;
+
                             const designUpdates = updates.design ?? {};
                             const otherUpdates = {
                               ...updates,
                               design: undefined,
                             };
+
                             return {
                               ...n,
                               data: {
                                 ...n.data,
                                 ...otherUpdates,
-                                design: { ...n.data.design, ...designUpdates },
+                                design: designUpdates, // 기존 design과 merge 하지 않음
                               },
                             };
                           });
+
                           setSelectedNode(
                             newNodes.find((n) => n.id === id) || null
                           );
@@ -809,6 +817,7 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
                             ...jWorkflow.current,
                             nodes: newNodes,
                           });
+
                           return newNodes;
                         });
                       }}
