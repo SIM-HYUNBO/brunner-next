@@ -15,7 +15,7 @@ export default function EDocDesignerTopMenu({
   onAddPage,
   onDeleteCurrentPage,
   onExportPdf,
-  setModalOpen,
+  setAIInputModalOpen,
 }) {
   return (
     <>
@@ -105,7 +105,7 @@ export default function EDocDesignerTopMenu({
           Exp. PDF
         </button>
         <button
-          onClick={() => setModalOpen(true)}
+          onClick={() => setAIInputModalOpen(true)}
           className="bg-indigo-500 
                    text-white 
                    rounded 

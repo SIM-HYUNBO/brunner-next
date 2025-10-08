@@ -74,6 +74,7 @@ export default function EDocDesignerContainer({
   const [rightPanelWidth, setRightPanelWidth] = useState(300);
   const [resizeStartX, setResizeStartX] = useState(0);
   const [resizeStartWidth, setResizeStartWidth] = useState(0);
+  const [aiInputModalOpen, setAIInputModalOpen] = useState(false);
 
   useEffect(() => {
     async function fetchTemplates() {
@@ -578,8 +579,8 @@ export default function EDocDesignerContainer({
   return (
     <>
       <AIInputModal
-        isOpen={modalOpen}
-        onClose={() => setModalOpen(false)}
+        isOpen={aiInputModalOpen}
+        onClose={() => setAIInputModalOpen(false)}
         commandName={constants.commands.EDOC_AI_GENERATE_DOCUMENT}
         onAIResponse={handleAIResponse}
       />
@@ -668,7 +669,7 @@ export default function EDocDesignerContainer({
         currentPageIdx={currentPageIdx}
         totalPageCount={documentData?.pages?.length}
         setCurrentPageIdx={setCurrentPageIdx}
-        setModalOpen={setModalOpen}
+        setAIInputModalOpen={setAIInputModalOpen}
       />
       <div className="flex flex-row justify-center mt-3">
         <ModeToggleButton />
