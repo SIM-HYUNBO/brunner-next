@@ -219,13 +219,20 @@ api.postJson: async (url, body) => http post request.
     if (!node) return null;
     const { data } = node;
 
+    // ✅ design 안에 안전하게 저장
     const handleChange = (key: string, value: any) => {
-      onNodeUpdate?.(node.id, { [key]: value });
+      onNodeUpdate?.(node.id, {
+        design: {
+          ...data.design, // 기존 design 필드 유지
+          [key]: value,
+        },
+      });
     };
 
-    const isLoopMode = data.mode === constants.workflowBranchNodeMode.Loop;
+    const isLoopMode =
+      data.design?.mode === constants.workflowBranchNodeMode.Loop;
     const isConditionMode =
-      data.mode === constants.workflowBranchNodeMode.Branch;
+      data.design?.mode === constants.workflowBranchNodeMode.Branch;
 
     return (
       <div className="mt-5">
@@ -234,7 +241,7 @@ api.postJson: async (url, body) => http post request.
         <label className="mt-2">Mode</label>
         <select
           className="ml-1 mt-2"
-          value={data.mode || "none"}
+          value={data.design?.mode || "none"}
           onChange={(e) => handleChange("mode", e.target.value)}
         >
           <option value="none">선택하세요</option>
@@ -251,7 +258,7 @@ api.postJson: async (url, body) => http post request.
             <label className="mt-2">조건식</label>
             <input
               type="text"
-              value={data.condition || ""}
+              value={data.design?.condition || ""}
               onChange={(e) => handleChange("condition", e.target.value)}
               placeholder="예: workflow.value > 5"
             />
@@ -265,7 +272,7 @@ api.postJson: async (url, body) => http post request.
               <input
                 className="flex text-center w-full ml-2"
                 type="number"
-                value={data.startIndex ?? 0}
+                value={data.design?.startIndex ?? 0}
                 onChange={(e) =>
                   handleChange("startIndex", Number(e.target.value))
                 }
@@ -274,7 +281,7 @@ api.postJson: async (url, body) => http post request.
               <input
                 className="flex text-center w-full ml-2"
                 type="number"
-                value={data.step ?? 1}
+                value={data.design?.step ?? 1}
                 onChange={(e) => handleChange("step", Number(e.target.value))}
               />
             </div>
@@ -283,7 +290,7 @@ api.postJson: async (url, body) => http post request.
               <input
                 className="w-full text-center ml-1"
                 type="text"
-                value={data.limit ?? ""}
+                value={data.design?.limit ?? ""}
                 onChange={(e) => handleChange("limit", e.target.value)}
                 placeholder="숫자 또는 ${변수경로}"
               />
@@ -293,7 +300,8 @@ api.postJson: async (url, body) => http post request.
             </small>
 
             <div style={{ marginTop: 8 }}>
-              현재 인덱스: <b>{data.currentIndex ?? data.startIndex ?? 0}</b>
+              현재 인덱스:{" "}
+              <b>{data.design?.currentIndex ?? data.design?.startIndex ?? 0}</b>
             </div>
           </div>
         )}
