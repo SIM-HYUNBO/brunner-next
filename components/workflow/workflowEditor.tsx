@@ -10,7 +10,15 @@ import {
   applyNodeChanges,
   applyEdgeChanges,
 } from "reactflow";
-import type { Connection, Edge, Node, NodeChange, EdgeChange } from "reactflow";
+import type {
+  Connection,
+  Edge,
+  Node,
+  NodeChange,
+  EdgeChange,
+  NodeProps,
+} from "reactflow";
+import { Handle, Position } from "reactflow";
 import "reactflow/dist/base.css";
 import "reactflow/dist/style.css";
 import { nanoid } from "nanoid";
@@ -35,6 +43,7 @@ import {
   AccordionContent,
 } from "@/components/ui/accordion";
 import { WorkflowDataModal } from "./workflowDataModal";
+import BranchNode from "./customNode/branchNode";
 
 interface WorkflowEditorProps {
   initialNodes?: Node<ActionNodeData>[];
@@ -592,6 +601,66 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
   }, []);
   // <<< /MOBILE-FIX
 
+  // 노드 유형별 렌더링 컴포넌트 등록
+  const nodeTypes = useMemo(
+    () => ({
+      default: ({ data }: NodeProps<ActionNodeData>) => {
+        const isStart = data.actionName === constants.workflowActions.START;
+        const isEnd = data.actionName === constants.workflowActions.END;
+
+        return (
+          <div
+            style={{
+              padding: 6,
+              border: "1px dashed #555",
+              borderRadius: 6,
+              minWidth: 100,
+              textAlign: "center",
+              fontSize: 8,
+              background: isStart ? "#ADFF2F" : isEnd ? "#FFB6C1" : "#fff",
+              color: "#000",
+              position: "relative", // Handle 위치 조정용
+            }}
+          >
+            {data.label || "Node"}
+
+            {/* START 포트 */}
+            {isStart && (
+              <Handle
+                type="source"
+                position={Position.Right}
+                style={{
+                  width: 10,
+                  height: 10,
+                  background: "blue",
+                  border: "1px solid #222",
+                }}
+              />
+            )}
+
+            {/* END 포트 */}
+            {isEnd && (
+              <Handle
+                type="target"
+                position={Position.Left}
+                style={{
+                  width: 10,
+                  height: 10,
+                  background: "green",
+                  border: "1px solid #222",
+                }}
+              />
+            )}
+          </div>
+        );
+      },
+
+      // BRANCH용 노드 렌더링
+      branch: BranchNode,
+    }),
+    []
+  );
+
   return (
     <>
       <ReactFlowProvider>
@@ -611,6 +680,10 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
               <ReactFlow
                 nodes={nodes.map((n) => ({
                   ...n,
+                  type:
+                    n.data.actionName === constants.workflowActions.BRANCH
+                      ? "branch"
+                      : "default", // BRANCH면 branchNode로 렌더링
                   style: {
                     background:
                       n.id === jWorkflow.current?.currentNodeId
@@ -622,7 +695,7 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
                         : "#fff",
                     border:
                       n.id === jWorkflow.current?.currentNodeId
-                        ? "3px solid #FF4500"
+                        ? "1px solid #FF4500"
                         : "1px solid #222",
                     color: "#000",
                   },
@@ -641,9 +714,9 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
                 snapToGrid
                 snapGrid={[30, 30]}
                 onInit={(instance) => {
-                  // store instance so we can call fitView on resize
                   rfInstanceRef.current = instance;
                 }}
+                nodeTypes={nodeTypes} // ✅ 추가
               >
                 <MiniMap />
                 <Controls />
@@ -672,27 +745,6 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
                 }}
                 selectedWorkflow={jWorkflow.current}
               />
-
-              {/* <div className="p-2 border rounded mt-2">
-                <div>ID: {workflowId}</div>
-                <div className="flex flex-row mt-2">
-                  이름:
-                  <input
-                    className="flex-1 w-auto ml-2"
-                    value={workflowName}
-                    onChange={(e) => setWorkflowName(e.target.value)}
-                  />
-                </div>
-                <div className="flex flex-row mt-2">
-                  설명:
-                  <textarea
-                    className="flex-1 w-auto ml-2"
-                    value={workflowDescription}
-                    rows={1}
-                    onChange={(e) => setWorkflowDescription(e.target.value)}
-                  />
-                </div>
-              </div> */}
 
               <button
                 onClick={() => setDbConnectionsModalOpen(true)}

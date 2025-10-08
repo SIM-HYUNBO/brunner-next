@@ -168,7 +168,7 @@ export const NodePropertyEditor: React.FC<NodePropertyEditorProps> = ({
 
     if (newAction === constants.workflowActions.BRANCH) {
       // mode 기본값
-      design.mode = design.mode || constants.workflowActions;
+      design.mode = design.mode;
 
       if (design.mode === constants.workflowBranchNodeMode.Loop) {
         design.initial = 0; // 인덱스 초기값
