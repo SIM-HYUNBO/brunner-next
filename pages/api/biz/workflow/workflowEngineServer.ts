@@ -692,11 +692,12 @@ export function registerBuiltInActions(): void {
           const currentIndex = design.currentIndex ?? startIndex;
 
           if (currentIndex < limitValue) {
-            node.data.run.selectedPort = "loop";
+            node.data.run.selectedPort = "true";
             // 다음 반복 인덱스 저장
             node.data.design.currentIndex = currentIndex + step;
           } else {
-            node.data.run.selectedPort = "end"; // 루프 종료 후 다음 노드
+            node.data.run.selectedPort = "false"; // 루프 종료 후 다음 노드
+            node.data.design.currentIndex = undefined;
           }
 
           console.log(

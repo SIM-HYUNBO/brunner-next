@@ -233,18 +233,34 @@ api.postJson: async (url, body) => http post request.
     }, [data.design]);
 
     // ✅ design 안에 안전하게 저장
-    const handleChange = (key: string, value: any) => {
-      // Branch 전용 design으로 완전히 덮어쓰기
-      onNodeUpdate?.(node.id, {
-        design: {
-          mode: node.data.design.mode, // 기존 Branch mode 유지
-          startIndex: node.data.design.startIndex,
-          step: node.data.design.step,
-          limit: node.data.design.limit,
-          condition: node.data.design.condition,
-          [key]: value, // 수정한 속성
-        },
-      });
+    const handleChange = (
+      key: keyof typeof node.data.design,
+      value: any,
+      isModeChange = false
+    ) => {
+      let newDesign;
+
+      isModeChange = key === "mode";
+
+      if (isModeChange) {
+        // 모드 변경 시: 화면상의 값 기반으로 완전히 새 design 생성
+        newDesign = {
+          mode: value, // 변경된 모드
+          startIndex: node.data.design.startIndex ?? 0,
+          step: node.data.design.step ?? 1,
+          limit: node.data.design.limit ?? "",
+          condition: node.data.design.condition ?? "",
+        };
+      } else {
+        // 단순 값 변경 시: 기존 design에 변경 값만 덮어쓰기
+        newDesign = {
+          ...node.data.design,
+          [key]: value,
+        };
+      }
+
+      // 업데이트
+      onNodeUpdate?.(node.id, { design: newDesign });
     };
 
     const isLoopMode =
@@ -319,7 +335,7 @@ api.postJson: async (url, body) => http post request.
             </small>
 
             <div style={{ marginTop: 8 }}>
-              현재 인덱스:{" "}
+              Current Index (Start ≤ Current &lt; Limit):{" "}
               <b>{data.design?.currentIndex ?? data.design?.startIndex ?? 0}</b>
             </div>
           </div>

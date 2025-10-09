@@ -397,6 +397,27 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
     ]);
   };
 
+  const deleteSelectedNode = () => {
+    if (!selectedNode) {
+      alert("Select a node to delete.");
+      return;
+    }
+
+    // 노드 ID
+    const nodeId = selectedNode.id;
+
+    // 1️⃣ 노드 삭제
+    setNodes((nds) => nds.filter((n) => n.id !== nodeId));
+
+    // 2️⃣ 연결된 엣지 삭제 (source 또는 target이 해당 노드인 경우)
+    setEdges((eds) =>
+      eds.filter((e) => e.source !== nodeId && e.target !== nodeId)
+    );
+
+    // 3️⃣ 선택 상태 초기화
+    setSelectedNode(null);
+  };
+
   const getWorkflowJson = (): string => {
     return JSON.stringify(jWorkflow.current, null, 2);
   };
@@ -591,10 +612,10 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
             Add Node
           </button>
           <button
-            className="w-full border border-black ml-1 semi-text-bg-color hover:bg-gray-400"
-            onClick={exportWorkflow}
+            className="w-full border border-black semi-text-bg-color hover:bg-gray-400"
+            onClick={deleteSelectedNode}
           >
-            Export
+            Delete Node
           </button>
           <button
             className="w-full border border-black ml-1 semi-text-bg-color hover:bg-gray-400"
@@ -604,12 +625,6 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
           </button>
         </div>
         <div className="flex flex-row ml-1 mt-1 space-x-1">
-          <button
-            className="w-full border border-black semi-text-bg-color hover:bg-gray-400"
-            onClick={resetWorkflow}
-          >
-            Reset
-          </button>
           <button
             className="w-full border border-black semi-text-bg-color hover:bg-gray-400"
             onClick={executeWorkflowFromTableEditor}
@@ -622,6 +637,12 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
           >
             Run By Node
           </button>
+          <button
+            className="w-full border border-black semi-text-bg-color hover:bg-gray-400"
+            onClick={resetWorkflow}
+          >
+            Reset
+          </button>
         </div>
 
         <div className="flex flex-row ml-1 mt-1 space-x-1">
@@ -630,6 +651,12 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
             onClick={saveWorkflow}
           >
             Save
+          </button>
+          <button
+            className="w-full border border-black ml-1 semi-text-bg-color hover:bg-gray-400"
+            onClick={exportWorkflow}
+          >
+            Export
           </button>
           <button
             className="w-full border border-black semi-text-bg-color hover:bg-gray-400"
@@ -823,29 +850,48 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
                           const newNodes = nds.map((n) => {
                             if (n.id !== id) return n;
 
-                            const designUpdates = updates.design ?? {};
-                            const otherUpdates = {
-                              ...updates,
-                              design: undefined,
-                            };
+                            // design을 Partial 타입으로 안전하게 처리
+                            let newDesign: Partial<typeof n.data.design> =
+                              n.data?.design || {};
 
-                            return {
+                            // ① actionName 변경 시 design 초기화
+                            if (
+                              updates.actionName &&
+                              updates.actionName !== n.data?.actionName
+                            ) {
+                              newDesign = {}; // 타입에러 없음
+                            }
+
+                            // ② design 업데이트 병합
+                            if (updates.design) {
+                              newDesign = { ...newDesign, ...updates.design };
+                            }
+
+                            // design 외 나머지 필드 처리
+                            const otherUpdates = { ...updates };
+                            delete otherUpdates.design;
+
+                            const updatedNode = {
                               ...n,
                               data: {
                                 ...n.data,
                                 ...otherUpdates,
-                                design: designUpdates, // 기존 design과 merge 하지 않음
+                                design: newDesign,
                               },
                             };
+
+                            return updatedNode;
                           });
 
-                          setSelectedNode(
-                            newNodes.find((n) => n.id === id) || null
-                          );
-                          setCurrentWorkflow({
+                          const updatedWorkflow = {
                             ...jWorkflow.current,
                             nodes: newNodes,
-                          });
+                          };
+
+                          setSelectedNode(
+                            newNodes.find((nn) => nn.id === id) || null
+                          );
+                          setCurrentWorkflow(updatedWorkflow);
 
                           return newNodes;
                         });
