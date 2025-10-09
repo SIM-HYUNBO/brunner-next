@@ -677,15 +677,18 @@ export function registerBuiltInActions(): void {
 
         // Loop 모드
         else if (mode === constants.workflowBranchNodeMode.Loop) {
-          const startIndex = design.startIndex ?? 0;
-          const step = design.step ?? 1;
-          let limitValue = 0;
+          const startIndex = design.startIndex;
+          const stepValue = design.stepValue;
+          let limitValue = design.limitValue;
 
           // limit는 JS 평가식 가능
           try {
-            limitValue = eval(design.limit || "0");
+            limitValue = eval(design.limitValue || "0");
           } catch (err) {
-            console.warn(`[Loop Node] limit 평가 오류: ${design.limit}`, err);
+            console.warn(
+              `[Loop Node] limit 평가 오류: ${design.limitValue}`,
+              err
+            );
             limitValue = 0;
           }
 
@@ -694,7 +697,7 @@ export function registerBuiltInActions(): void {
           if (currentIndex < limitValue) {
             node.data.run.selectedPort = "true";
             // 다음 반복 인덱스 저장
-            node.data.design.currentIndex = currentIndex + step;
+            node.data.design.currentIndex = currentIndex + stepValue;
           } else {
             node.data.run.selectedPort = "false"; // 루프 종료 후 다음 노드
             node.data.design.currentIndex = undefined;

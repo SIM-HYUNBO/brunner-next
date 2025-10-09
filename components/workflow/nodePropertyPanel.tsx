@@ -222,14 +222,14 @@ api.postJson: async (url, body) => http post request.
       data.design?.condition || ""
     );
     const [localStart, setLocalStart] = useState(data.design?.startIndex ?? 0);
-    const [localStep, setLocalStep] = useState(data.design?.step ?? 1);
-    const [localLimit, setLocalLimit] = useState(data.design?.limit ?? "");
+    const [localStep, setLocalStep] = useState(data.design?.stepValue ?? 1);
+    const [localLimit, setLocalLimit] = useState(data.design?.limitValue ?? "");
 
     useEffect(() => {
       setLocalCondition(data.design?.condition ?? "");
       setLocalStart(data.design?.startIndex ?? 0);
-      setLocalStep(data.design?.step ?? 1);
-      setLocalLimit(data.design?.limit ?? "");
+      setLocalStep(data.design?.stepValue ?? 1);
+      setLocalLimit(data.design?.limitValue ?? "");
     }, [data.design]);
 
     // ✅ design 안에 안전하게 저장
@@ -246,10 +246,11 @@ api.postJson: async (url, body) => http post request.
         // 모드 변경 시: 화면상의 값 기반으로 완전히 새 design 생성
         newDesign = {
           mode: value, // 변경된 모드
-          startIndex: node.data.design.startIndex ?? 0,
-          step: node.data.design.step ?? 1,
-          limit: node.data.design.limit ?? "",
-          condition: node.data.design.condition ?? "",
+          startIndex: node.data.design.startIndex,
+          stepValue: node.data.design.stepValue,
+          limitValue: node.data.design.limitValue,
+          condition: node.data.design.condition,
+          currentIndex: node.data.design.currentIndex,
         };
       } else {
         // 단순 값 변경 시: 기존 design에 변경 값만 덮어쓰기
@@ -316,7 +317,7 @@ api.postJson: async (url, body) => http post request.
                 type="number"
                 value={localStep}
                 onChange={(e) => setLocalStep(Number(e.target.value))}
-                onBlur={() => handleChange("step", localStep)}
+                onBlur={() => handleChange("stepValue", localStep)}
               />
             </div>
 
@@ -326,7 +327,7 @@ api.postJson: async (url, body) => http post request.
                 className="w-full text-center ml-1"
                 value={localLimit}
                 onChange={(e) => setLocalLimit(e.target.value)}
-                onBlur={() => handleChange("limit", localLimit)}
+                onBlur={() => handleChange("limitValue", localLimit)}
                 placeholder="숫자 또는 ${변수경로}"
               />
             </div>
