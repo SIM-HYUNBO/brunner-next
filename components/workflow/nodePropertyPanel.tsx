@@ -221,6 +221,16 @@ api.postJson: async (url, body) => http post request.
     const [localCondition, setLocalCondition] = useState(
       data.design?.condition || ""
     );
+    const [localStart, setLocalStart] = useState(data.design?.startIndex ?? 0);
+    const [localStep, setLocalStep] = useState(data.design?.step ?? 1);
+    const [localLimit, setLocalLimit] = useState(data.design?.limit ?? "");
+
+    useEffect(() => {
+      setLocalCondition(data.design?.condition ?? "");
+      setLocalStart(data.design?.startIndex ?? 0);
+      setLocalStep(data.design?.step ?? 1);
+      setLocalLimit(data.design?.limit ?? "");
+    }, [data.design]);
 
     // ✅ design 안에 안전하게 저장
     const handleChange = (key: string, value: any) => {
@@ -276,29 +286,31 @@ api.postJson: async (url, body) => http post request.
         {isLoopMode && (
           <div className="flex flex-col">
             <div className="flex flex-row mt-2 space-x-1">
-              <label className="">Start</label>
+              <label>Start</label>
               <input
                 className="flex text-center w-full ml-2"
                 type="number"
-                value={data.design?.startIndex ?? 0}
-                onChange={(e) =>
-                  handleChange("startIndex", Number(e.target.value))
-                }
+                value={localStart}
+                onChange={(e) => setLocalStart(Number(e.target.value))}
+                onBlur={() => handleChange("startIndex", localStart)}
               />
               <label>Step</label>
               <input
                 className="flex text-center w-full ml-2"
                 type="number"
-                value={data.design?.step ?? 1}
-                onChange={(e) => handleChange("step", Number(e.target.value))}
+                value={localStep}
+                onChange={(e) => setLocalStep(Number(e.target.value))}
+                onBlur={() => handleChange("step", localStep)}
               />
             </div>
+
             <div className="flex flex-row mt-2">
               <label>Limit</label>
               <textarea
                 className="w-full text-center ml-1"
-                value={data.design?.limit ?? ""}
-                onChange={(e) => handleChange("limit", e.target.value)}
+                value={localLimit}
+                onChange={(e) => setLocalLimit(e.target.value)}
+                onBlur={() => handleChange("limit", localLimit)}
                 placeholder="숫자 또는 ${변수경로}"
               />
             </div>
