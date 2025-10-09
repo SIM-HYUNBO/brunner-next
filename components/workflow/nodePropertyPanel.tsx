@@ -265,9 +265,9 @@ api.postJson: async (url, body) => http post request.
           <div className="flex flex-col">
             <label className="mt-2">Condition Expression</label>
             <textarea
-              value={data.design?.condition || ""}
-              onChange={(e) => handleChange("condition", e.target.value)}
-              onBlur={() => handleChange("condition", localCondition)}
+              value={localCondition} // ✅ 로컬 상태 사용
+              onChange={(e) => setLocalCondition(e.target.value)} // ✅ 타이핑 시 로컬 상태만 변경
+              onBlur={() => handleChange("condition", localCondition)} // ✅ 포커스 떠날 때 부모에 저장
               placeholder="예: workflow.value > 5"
             />
           </div>
