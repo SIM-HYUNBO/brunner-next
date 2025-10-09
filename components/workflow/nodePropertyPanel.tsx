@@ -218,6 +218,9 @@ api.postJson: async (url, body) => http post request.
   const BranchNodeProperties = ({ node }: { node: Node<any> }) => {
     if (!node) return null;
     const { data } = node;
+    const [localCondition, setLocalCondition] = useState(
+      data.design?.condition || ""
+    );
 
     // ✅ design 안에 안전하게 저장
     const handleChange = (key: string, value: any) => {
@@ -260,11 +263,11 @@ api.postJson: async (url, body) => http post request.
 
         {isConditionMode && (
           <div className="flex flex-col">
-            <label className="mt-2">조건식</label>
-            <input
-              type="text"
+            <label className="mt-2">Condition Expression</label>
+            <textarea
               value={data.design?.condition || ""}
               onChange={(e) => handleChange("condition", e.target.value)}
+              onBlur={() => handleChange("condition", localCondition)}
               placeholder="예: workflow.value > 5"
             />
           </div>
@@ -292,9 +295,8 @@ api.postJson: async (url, body) => http post request.
             </div>
             <div className="flex flex-row mt-2">
               <label>Limit</label>
-              <input
+              <textarea
                 className="w-full text-center ml-1"
-                type="text"
                 value={data.design?.limit ?? ""}
                 onChange={(e) => handleChange("limit", e.target.value)}
                 placeholder="숫자 또는 ${변수경로}"

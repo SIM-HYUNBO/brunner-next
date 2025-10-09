@@ -181,7 +181,7 @@ const executeService = async (txnId, jRequest) => {
           // -----------------------
           txNode = new workflowEngineServer.TransactionNode();
 
-          // 트랜잭션 시작: workflowData에 연결정보 포함되어 있어야 함
+          // 트랜잭션 시작
           await txNode.start(workflowData);
           const txInstances = Array.from(txNode.txContexts.values());
 
@@ -190,7 +190,6 @@ const executeService = async (txnId, jRequest) => {
           // -----------------------
           if (transactionMode === constants.transactionMode.Business) {
             // Business 모드: 단일 노드부터 실행
-
             const node = currentNodeId
               ? workflowData.nodes.find((n) => n.id === currentNodeId)
               : workflowData.nodes.find(
@@ -205,24 +204,36 @@ const executeService = async (txnId, jRequest) => {
               txInstances
             );
 
-            var nextNodeId = null;
+            // -----------------------
+            // 4️⃣ 다음 노드 선택: Branch/Loop selectedPort 기준
+            // -----------------------
+            const selectedPort = node.data.run.selectedPort; // 'true', 'false', 'loop', 'end' 등
+            let nextNodeId = null;
+
             for (const edge of workflowData.edges || []) {
-              // 현재 노드에서 나가는 엣지만 검사
               if (edge.source === node.id) {
-                if (!edge.data?.condition || Boolean(edge.data.condition)) {
+                // edge.sourceHandle 또는 edge.data.port에 selectedPort 매핑
+                if (
+                  !selectedPort ||
+                  edge.sourceHandle === selectedPort ||
+                  edge.data?.port === selectedPort
+                ) {
                   nextNodeId = edge.target;
-                  break; // 보통 하나만 실행하므로 탈출 (여러 조건 분기면 빼도 됨)
+                  break; // 하나만 실행
                 }
               }
             }
 
+            // 다음 노드가 없으면 START 노드로 초기화
             if (nextNodeId) workflowData.currentNodeId = nextNodeId;
             else
               workflowData.currentNodeId = workflowData.nodes.find(
                 (n) => n.data.actionName === constants.workflowActions.START
               ).id;
 
-            // Business 트랜잭션의 단위 노드 실행결과는 워크픞포우에 저장함
+            // -----------------------
+            // 5️⃣ 워크플로우 저장
+            // -----------------------
             const saveResult = await workflowEngineServer.saveWorkflow(
               systemCode,
               jRequest.userId,
@@ -235,7 +246,7 @@ const executeService = async (txnId, jRequest) => {
             }
 
             // -----------------------
-            // 4️⃣ 트랜잭션 커밋
+            // 6️⃣ 트랜잭션 커밋
             // -----------------------
             await txNode.commit();
 
@@ -254,10 +265,9 @@ const executeService = async (txnId, jRequest) => {
             }
 
             // -----------------------
-            // 4️⃣ 트랜잭션 커밋
+            // 트랜잭션 커밋
             // -----------------------
             await txNode.commit();
-            // const txInstances = Array.from(txNode.connections.values());
 
             jResponse.error_code = result.error_code;
             jResponse.jWorkflow = workflowData;

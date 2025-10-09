@@ -262,7 +262,6 @@ export function registerBuiltInActions(): void {
       }
       `;
   */
-
   /* nodes에서 특정 노드 이름 ("Node 1")으로 찾기
   var targetNode = (api.getGlobalVar("nodes") || []).find(n => n.data.label === "Node 1");
 
@@ -496,7 +495,6 @@ export function registerBuiltInActions(): void {
       }
     }
   );
-
   // SQL
   registerAction(
     constants.workflowActions.SQL,
@@ -643,6 +641,82 @@ export function registerBuiltInActions(): void {
       }
     }
   );
+
+  // Branch 노드 등록
+  registerAction(
+    constants.workflowActions.BRANCH,
+    async (node: any, workflowData: any, txContext: any) => {
+      const result = { error_code: -1, error_message: "" };
+      try {
+        if (!node) throw new Error(constants.messages.NO_DATA_FOUND);
+
+        const design = node.data.design || {};
+        const mode = design.mode;
+
+        // Branch 모드
+        if (mode === constants.workflowBranchNodeMode.Branch) {
+          // condition 평가
+          const conditionStr = design.condition || "false";
+          let conditionResult = false;
+          try {
+            // workflow, node 데이터 스코프에서 평가
+            conditionResult = !!eval(conditionStr);
+          } catch (err) {
+            console.warn(
+              `[Branch Node] condition 평가 오류: ${conditionStr}`,
+              err
+            );
+          }
+
+          // true/false 포트 결정
+          node.data.run.selectedPort = conditionResult ? "true" : "false";
+          console.log(
+            `[Branch Node] condition: ${conditionStr}, result: ${conditionResult}`
+          );
+        }
+
+        // Loop 모드
+        else if (mode === constants.workflowBranchNodeMode.Loop) {
+          const startIndex = design.startIndex ?? 0;
+          const step = design.step ?? 1;
+          let limitValue = 0;
+
+          // limit는 JS 평가식 가능
+          try {
+            limitValue = eval(design.limit || "0");
+          } catch (err) {
+            console.warn(`[Loop Node] limit 평가 오류: ${design.limit}`, err);
+            limitValue = 0;
+          }
+
+          const currentIndex = design.currentIndex ?? startIndex;
+
+          if (currentIndex < limitValue) {
+            node.data.run.selectedPort = "loop";
+            // 다음 반복 인덱스 저장
+            node.data.design.currentIndex = currentIndex + step;
+          } else {
+            node.data.run.selectedPort = "end"; // 루프 종료 후 다음 노드
+          }
+
+          console.log(
+            `[Loop Node] currentIndex: ${currentIndex}, limit: ${limitValue}, nextIndex: ${node.data.design.currentIndex}`
+          );
+        } else {
+          throw new Error(`Unknown Branch mode: ${mode}`);
+        }
+
+        result.error_code = 0;
+        result.error_message = constants.messages.SUCCESS_FINISHED;
+        return result;
+      } catch (err: any) {
+        console.error(`[Branch Node ERROR]`, err);
+        result.error_code = -1;
+        result.error_message = `[${node?.data?.label}] ${err.message}`;
+        return result;
+      }
+    }
+  );
 }
 
 function isPathValue(input: string) {
@@ -661,7 +735,6 @@ function getParamValue(input: string, context: any) {
   }
   return input; // 일반 값
 }
-
 function convertNamedParams(
   sqlStmt: string,
   sqlParams: { name: string; value: any }[],
@@ -936,6 +1009,7 @@ export async function executeWorkflow(
   const edgesList = workflow.edges;
   const edgeMap: Record<string, any[]> = {};
 
+  // source 노드 기준 edge 맵 생성
   edgesList.forEach((e: any) => {
     if (!e.source) return;
     if (!edgeMap[e.source]) edgeMap[e.source] = [];
@@ -956,15 +1030,27 @@ export async function executeWorkflow(
     const node = nodesList.find((n: any) => n.id === nodeId);
     if (!node) return result;
 
+    // 노드 실행
     result = await runWorkflowStep(node, workflow, txContext);
     if (result.error_code != 0) return result;
 
+    // 다음 노드 선택
+    const selectedPort = node.data.run?.selectedPort; // Branch/Loop 선택 포트
     for (const edge of edgeMap[nodeId] || []) {
+      // Branch/Loop 노드일 때 selectedPort와 edge.sourceHandle 또는 edge.id 매칭
+      if (selectedPort) {
+        if (edge.sourceHandle !== selectedPort && edge.id !== selectedPort) {
+          continue; // 선택된 포트와 다른 edge는 무시
+        }
+      }
+
+      // 일반 condition 체크 (선택적)
       if (!edge.data?.condition || Boolean(edge.data.condition)) {
         result = await traverse(edge.target, txContext);
         if (result.error_code != 0) return result;
       }
     }
+
     return result;
   }
 

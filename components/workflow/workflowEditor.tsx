@@ -457,6 +457,12 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
 
   const saveWorkflow = async () => {
     try {
+      if (!jWorkflow.current) return;
+
+      // 현재 상태값을 jWorkflow.current에 반영
+      jWorkflow.current.workflowName = workflowName;
+      jWorkflow.current.workflowDescription = workflowDescription;
+
       const jRequest = {
         commandName: constants.commands.WORKFLOW_SAVE_WORKFLOW,
         systemCode: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE,
@@ -464,9 +470,12 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
         workflowId: workflowId,
         workflowData: JSON.parse(getWorkflowJson()),
       };
+
       const jResponse = await RequestServer(jRequest);
       if (jResponse.error_code == 0) {
         openModal("Successfully updated workflow.");
+      } else {
+        openModal("❌ 저장 실패: " + jResponse.error_message);
       }
     } catch (err) {
       console.error(err);
@@ -750,6 +759,26 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
                 }}
                 selectedWorkflow={jWorkflow.current}
               />
+              <div className="p-2 border rounded mt-2">
+                <div>ID: {workflowId}</div>
+                <div className="flex flex-row mt-2">
+                  이름:
+                  <input
+                    className="flex-1 w-auto ml-2"
+                    value={workflowName}
+                    onChange={(e) => setWorkflowName(e.target.value)}
+                  />
+                </div>
+                <div className="flex flex-row mt-2">
+                  설명:
+                  <textarea
+                    className="flex-1 w-auto ml-2"
+                    value={workflowDescription}
+                    rows={1}
+                    onChange={(e) => setWorkflowDescription(e.target.value)}
+                  />
+                </div>
+              </div>
 
               <button
                 onClick={() => setDbConnectionsModalOpen(true)}
