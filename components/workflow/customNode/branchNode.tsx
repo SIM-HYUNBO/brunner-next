@@ -6,12 +6,12 @@ import type { NodeProps } from "reactflow";
 import * as constants from "@/components/core/constants";
 
 interface BranchNodeData {
-  mode?: string;
-  condition?: string;
+  design: any;
+  run: any;
 }
 
 export default function BranchNode({ data }: NodeProps<BranchNodeData>) {
-  const { mode, condition } = data;
+  const { mode, condition } = data.design;
   const width = 100; // 폭
   const height = width / 2; // 높이는 폭의 절반
   const portSize = 6; // 포트 크기
@@ -55,7 +55,11 @@ export default function BranchNode({ data }: NodeProps<BranchNodeData>) {
           boxSizing: "border-box",
         }}
       >
-        {<div style={{ fontSize: 8, marginBottom: 4 }}>[Branch]</div>}
+        {
+          <div style={{ fontSize: 8 }}>
+            [{constants.workflowActions.BRANCH}]
+          </div>
+        }
         {isLoopMode && <div style={{ fontSize: 8 }}>Loop</div>}
         {isBranchMode && <div style={{ fontSize: 8 }}>Branch</div>}
         {isBranchMode && (
