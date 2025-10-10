@@ -426,7 +426,11 @@ api.postJson: async (url, body) => http post request.
 
             <div style={{ marginTop: 8 }}>
               Current Index (Start ≤ Current &lt; Limit):{" "}
-              <b>{data.design?.currentIndex ?? data.design?.startIndex ?? 0}</b>
+              <b>
+                {data.design?.loopCurrentIndex ??
+                  data.design?.loopStartIndex ??
+                  0}
+              </b>
             </div>
           </div>
         )}
