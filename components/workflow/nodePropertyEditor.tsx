@@ -148,8 +148,11 @@ export const NodePropertyEditor: React.FC<NodePropertyEditorProps> = ({
     } else if (newAction === constants.workflowActions.BRANCH) {
       design.mode = constants.workflowBranchNodeMode.Branch;
       design.condition = ""; // 조건식 초기화
-      delete design.scriptContents;
-      delete design.scriptTimeoutMs;
+    } else if (newAction === constants.workflowActions.SQL) {
+      design.sqlStmt = "";
+      design.dbConnectionId = "";
+      design.sqlParams = [];
+      design.maxRows = 0;
     }
 
     // 노드 업데이트

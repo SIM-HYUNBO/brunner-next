@@ -44,58 +44,129 @@ export const NodePropertyPanel: React.FC<NodePropertyPanelProps> = ({
   onNodeUpdate,
 }) => {
   const [actionName, setActionName] = useState(node?.data.actionName || "");
+
+  // Inputs / Outputs
   const [inputs, setInputs] = useState<NodeDataTable[]>(
     node?.data.design?.inputs ?? []
   );
   const [outputs, setOutputs] = useState<NodeDataTable[]>(
     node?.data.design?.outputs ?? []
   );
-
   const [isInputModalOpen, setIsInputModalOpen] = useState(false);
   const [isOutputModalOpen, setIsOutputModalOpen] = useState(false);
-  const [isScriptModalOpen, setIsScriptModalOpen] = useState(false);
+
+  // SCRIPT 노드
   const [localScriptContents, setLocalScript] = useState("");
   const [localScriptTimeoutMs, setLocalTimeoutMs] = useState(5000);
+  const [isScriptModalOpen, setIsScriptModalOpen] = useState(false);
 
+  // SQL 노드
+  const [localSqlStmt, setLocalSqlStmt] = useState("");
+  const [localDBConnectionId, setLocalDBConnectionId] = useState("");
+  const [localSqlMaxRows, setLocalMaxRows] = useState(0);
   const [isSqlModalOpen, setIsSqlModalOpen] = useState(false);
   const [sqlModalData, setSqlModalData] = useState<SqlNodeDesignData | null>(
     null
   );
-  const [localSqlStmt, setLocalSqlStmt] = useState("");
-  const [localDBConnectionId, setLocalDBConnectionId] = useState("");
-  const [localSqlMaxRows, setLocalMaxRows] = useState(0);
 
   const prevActionName = useRef<string>("");
   const { BrunnerMessageBox, openModal } = useModal();
   // 🧠 워크플로우 정보 변경 감지
 
+  // 🧩 [1] SCRIPT props 동기화
   useEffect(() => {
-    setLocalScript(scriptContents); // prop 변경 시 동기화
-  }, [scriptContents]);
+    if (!node) return;
+    if (node.data.actionName === constants.workflowActions.SCRIPT) {
+      setLocalScript(scriptContents);
+      setLocalTimeoutMs(scriptTimeoutMs);
+    }
+  }, [node?.id, node?.data.actionName, scriptContents, scriptTimeoutMs]);
 
+  // 🧩 [2] SQL props 동기화
   useEffect(() => {
-    setLocalTimeoutMs(scriptTimeoutMs); // prop 변경 시 동기화
-  }, [scriptTimeoutMs]);
+    if (!node) return;
+    if (node.data.actionName === constants.workflowActions.SQL) {
+      const design = node.data.design ?? {};
 
-  // 🧠 노드 변경 시 입력/출력 초기화
+      setActionName(node.data.actionName);
+      setLocalSqlStmt(design.sqlStmt ?? "");
+      setLocalDBConnectionId(design.dbConnectionId ?? "");
+      setLocalMaxRows(design.maxRows ?? 0);
+      setSqlModalData({
+        sqlStmt: design.sqlStmt ?? "",
+        dbConnectionId: design.dbConnectionId ?? "",
+        sqlParams: design.sqlParams ?? [],
+        maxRows: design.maxRows ?? 0,
+      });
+    }
+  }, [
+    node?.id,
+    node?.data.actionName,
+    node?.data.design?.sqlStmt,
+    node?.data.design?.dbConnectionId,
+    node?.data.design?.sqlParams,
+    node?.data.design?.maxRows,
+  ]);
+
+  // 🧩 [3] BRANCH props 동기화 (mode, condition, loop 관련)
   useEffect(() => {
-    if (!node || node.data.actionName !== constants.workflowActions.SCRIPT)
-      return;
+    if (!node) return;
+    if (node.data.actionName === constants.workflowActions.BRANCH) {
+      const design = node.data.design ?? {};
 
+      // branch/loop 모드에 맞게 로컬 상태 반영
+      setActionName(node.data.actionName);
+      // condition
+      if (design.mode === constants.workflowBranchNodeMode.Branch) {
+        // condition 모드
+        if (design.condition === undefined) {
+          onNodeUpdate?.(node.id, {
+            design: {
+              ...design,
+              mode: constants.workflowBranchNodeMode.Branch,
+              condition: "",
+            },
+          });
+        }
+      } else if (design.mode === constants.workflowBranchNodeMode.Loop) {
+        // loop 모드
+        if (
+          design.loopStartIndex === undefined ||
+          design.loopStepValue === undefined ||
+          design.loopLimitValue === undefined
+        ) {
+          onNodeUpdate?.(node.id, {
+            design: {
+              ...design,
+              mode: constants.workflowBranchNodeMode.Loop,
+              loopStartIndex: design.loopStartIndex ?? 0,
+              loopStepValue: design.loopStepValue ?? 1,
+              loopLimitValue: design.loopLimitValue ?? "",
+              loopCurrentIndex: design.loopCurrentIndex ?? 0,
+            },
+          });
+        }
+      } else {
+        // 모드가 없으면 Branch 기본값으로
+        onNodeUpdate?.(node.id, {
+          design: {
+            ...design,
+            mode: constants.workflowBranchNodeMode.Branch,
+            condition: design.condition ?? "",
+          },
+        });
+      }
+    }
+  }, [node?.id, node?.data.actionName, node?.data.design?.mode]);
+
+  // 🧩 [4] Inputs / Outputs 기본값 설정
+  useEffect(() => {
+    if (!node) return;
     const action = node.data.actionName;
-    setActionName(action);
-
     const defaultInputs = commmonFunctions.getDefaultInputs?.(action) ?? [];
     const defaultOutputs = commmonFunctions.getDefaultOutputs?.(action) ?? [];
 
-    if (prevActionName.current !== action) {
-      setInputs(defaultInputs);
-      setOutputs(defaultOutputs);
-      prevActionName.current = action;
-    } else if (
-      !node.data.design?.inputs ||
-      node.data.design.inputs.length === 0
-    ) {
+    if (!node.data.design?.inputs || node.data.design.inputs.length === 0) {
       setInputs(defaultInputs);
       setOutputs(defaultOutputs);
     } else {
@@ -109,30 +180,36 @@ export const NodePropertyPanel: React.FC<NodePropertyPanelProps> = ({
     node?.data.design?.outputs,
   ]);
 
-  // 🧠 노드 변경 시 SQL 노드 초기화
-  useEffect(() => {
-    if (!node || node.data.actionName !== constants.workflowActions.SQL) return;
+  // 🧩 [5] Action 변경 감지 (디자인 초기화)
+  // useEffect(() => {
+  //   if (!node) return;
+  //   const newAction = node.data.actionName;
+  //   if (prevActionName.current === newAction) return;
 
-    const design = node.data.design || {};
+  //   const design = { ...node.data.design };
 
-    setActionName(node.data.actionName);
-    setLocalSqlStmt(design.sqlStmt || "");
-    setLocalDBConnectionId(design.dbConnectionId || "");
-    setLocalMaxRows(design.maxRows ?? 0);
-    setSqlModalData({
-      sqlStmt: design.sqlStmt || "",
-      dbConnectionId: design.dbConnectionId || "",
-      sqlParams: design.sqlParams || [],
-      maxRows: design.maxRows ?? 0,
-    });
-  }, [
-    node?.id,
-    node?.data.actionName,
-    node?.data.design?.sqlStmt,
-    node?.data.design?.dbConnectionId,
-    node?.data.design?.sqlParams,
-    node?.data.design?.maxRows,
-  ]);
+  //   if (newAction === constants.workflowActions.SCRIPT) {
+  //     Object.assign(design, {
+  //       scriptContents: "",
+  //       scriptTimeoutMs: 5000,
+  //     });
+  //   } else if (newAction === constants.workflowActions.SQL) {
+  //     Object.assign(design, {
+  //       sqlStmt: "",
+  //       dbConnectionId: "",
+  //       sqlParams: [],
+  //       maxRows: 0,
+  //     });
+  //   } else if (newAction === constants.workflowActions.BRANCH) {
+  //     Object.assign(design, {
+  //       mode: constants.workflowBranchNodeMode.Branch,
+  //       condition: "",
+  //     });
+  //   }
+
+  //   prevActionName.current = newAction;
+  //   onNodeUpdate?.(node.id, { design });
+  // }, [node?.id, node?.data.actionName]);
 
   const showHelp = () => {
     const apiGuid: string = `
@@ -221,19 +298,25 @@ api.postJson: async (url, body) => http post request.
     const [localCondition, setLocalCondition] = useState(
       data.design?.condition || ""
     );
-    const [localStart, setLocalStart] = useState(data.design?.startIndex ?? 0);
-    const [localStep, setLocalStep] = useState(data.design?.stepValue ?? 1);
-    const [localLimit, setLocalLimit] = useState(data.design?.limitValue ?? "");
+    const [localLoopStartIndex, setLocalLoopStartIndex] = useState(
+      data.design?.loopStartIndex ?? 0
+    );
+    const [localLoopStepValue, setLocalLoopStepValue] = useState(
+      data.design?.loopStepValue ?? 1
+    );
+    const [localLoopLimitValue, setLocalLoopLimitValue] = useState(
+      data.design?.loopLimitValue ?? ""
+    );
 
     useEffect(() => {
       setLocalCondition(data.design?.condition ?? "");
-      setLocalStart(data.design?.startIndex ?? 0);
-      setLocalStep(data.design?.stepValue ?? 1);
-      setLocalLimit(data.design?.limitValue ?? "");
+      setLocalLoopStartIndex(data.design?.loopStartIndex ?? 0);
+      setLocalLoopStepValue(data.design?.loopStepValue ?? 1);
+      setLocalLoopLimitValue(data.design?.loopLimitValue ?? "");
     }, [data.design]);
 
     // ✅ design 안에 안전하게 저장
-    const handleChange = (
+    const handleBranchNodeChange = (
       key: keyof typeof node.data.design,
       value: any,
       isModeChange = false
@@ -246,11 +329,11 @@ api.postJson: async (url, body) => http post request.
         // 모드 변경 시: 화면상의 값 기반으로 완전히 새 design 생성
         newDesign = {
           mode: value, // 변경된 모드
-          startIndex: node.data.design.startIndex,
-          stepValue: node.data.design.stepValue,
-          limitValue: node.data.design.limitValue,
+          loopStartIndex: node.data.design.loopStartIndex,
+          loopStepValue: node.data.design.loopStepValue,
+          loopLimitValue: node.data.design.loopLimitValue,
           condition: node.data.design.condition,
-          currentIndex: node.data.design.currentIndex,
+          loopCurrentIndex: node.data.design.loopCurrentIndex,
         };
       } else {
         // 단순 값 변경 시: 기존 design에 변경 값만 덮어쓰기
@@ -277,7 +360,7 @@ api.postJson: async (url, body) => http post request.
         <select
           className="ml-1 mt-2"
           value={data.design?.mode || "none"}
-          onChange={(e) => handleChange("mode", e.target.value)}
+          onChange={(e) => handleBranchNodeChange("mode", e.target.value)}
         >
           <option value="none">선택하세요</option>
           <option value={constants.workflowBranchNodeMode.Branch}>
@@ -294,7 +377,7 @@ api.postJson: async (url, body) => http post request.
             <textarea
               value={localCondition} // ✅ 로컬 상태 사용
               onChange={(e) => setLocalCondition(e.target.value)} // ✅ 타이핑 시 로컬 상태만 변경
-              onBlur={() => handleChange("condition", localCondition)} // ✅ 포커스 떠날 때 부모에 저장
+              onBlur={() => handleBranchNodeChange("condition", localCondition)} // ✅ 포커스 떠날 때 부모에 저장
               placeholder="예: workflow.value > 5"
             />
           </div>
@@ -307,17 +390,21 @@ api.postJson: async (url, body) => http post request.
               <input
                 className="flex text-center w-full ml-2"
                 type="number"
-                value={localStart}
-                onChange={(e) => setLocalStart(Number(e.target.value))}
-                onBlur={() => handleChange("startIndex", localStart)}
+                value={localLoopStartIndex}
+                onChange={(e) => setLocalLoopStartIndex(Number(e.target.value))}
+                onBlur={() =>
+                  handleBranchNodeChange("loopStartIndex", localLoopStartIndex)
+                }
               />
               <label>Step</label>
               <input
                 className="flex text-center w-full ml-2"
                 type="number"
-                value={localStep}
-                onChange={(e) => setLocalStep(Number(e.target.value))}
-                onBlur={() => handleChange("stepValue", localStep)}
+                value={localLoopStepValue}
+                onChange={(e) => setLocalLoopStepValue(Number(e.target.value))}
+                onBlur={() =>
+                  handleBranchNodeChange("loopStepValue", localLoopStepValue)
+                }
               />
             </div>
 
@@ -325,9 +412,11 @@ api.postJson: async (url, body) => http post request.
               <label>Limit</label>
               <textarea
                 className="w-full text-center ml-1"
-                value={localLimit}
-                onChange={(e) => setLocalLimit(e.target.value)}
-                onBlur={() => handleChange("limitValue", localLimit)}
+                value={localLoopLimitValue}
+                onChange={(e) => setLocalLoopLimitValue(e.target.value)}
+                onBlur={() =>
+                  handleBranchNodeChange("loopLimitValue", localLoopLimitValue)
+                }
                 placeholder="숫자 또는 ${변수경로}"
               />
             </div>

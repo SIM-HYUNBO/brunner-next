@@ -642,7 +642,7 @@ export function registerBuiltInActions(): void {
     }
   );
 
-  // Branch 노드 등록
+  // BRANCH 노드
   registerAction(
     constants.workflowActions.BRANCH,
     async (node: any, workflowData: any, txContext: any) => {
@@ -677,34 +677,35 @@ export function registerBuiltInActions(): void {
 
         // Loop 모드
         else if (mode === constants.workflowBranchNodeMode.Loop) {
-          const startIndex = design.startIndex;
-          const stepValue = design.stepValue;
-          let limitValue = design.limitValue;
+          const loopStartIndex = design.loopStartIndex;
+          const loopStepValue = design.loopStepValue;
+          let loopLimitValue = design.loopLimitValue;
 
           // limit는 JS 평가식 가능
           try {
-            limitValue = eval(design.limitValue || "0");
+            loopLimitValue = eval(design.loopLimitValue || "0");
           } catch (err) {
             console.warn(
-              `[Loop Node] limit 평가 오류: ${design.limitValue}`,
+              `[Loop Node] limit 평가 오류: ${design.loopLimitValue}`,
               err
             );
-            limitValue = 0;
+            loopLimitValue = 0;
           }
 
-          const currentIndex = design.currentIndex ?? startIndex;
+          const loopCurrentIndex = design.loopCurrentIndex ?? loopStartIndex;
 
-          if (currentIndex < limitValue) {
+          if (loopCurrentIndex < loopLimitValue) {
             node.data.run.selectedPort = "true";
             // 다음 반복 인덱스 저장
-            node.data.design.currentIndex = currentIndex + stepValue;
+            node.data.design.loopCurrentIndex =
+              loopCurrentIndex + loopStepValue;
           } else {
             node.data.run.selectedPort = "false"; // 루프 종료 후 다음 노드
-            node.data.design.currentIndex = undefined;
+            node.data.design.loopCurrentIndex = undefined;
           }
 
           console.log(
-            `[Loop Node] currentIndex: ${currentIndex}, limit: ${limitValue}, nextIndex: ${node.data.design.currentIndex}`
+            `[Loop Node] currentIndex: ${loopCurrentIndex}, limit: ${loopLimitValue}, nextIndex: ${node.data.design.currentIndex}`
           );
         } else {
           throw new Error(`Unknown Branch mode: ${mode}`);
