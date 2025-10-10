@@ -45,7 +45,7 @@ export const NodePropertyPanel: React.FC<NodePropertyPanelProps> = ({
 }) => {
   const [actionName, setActionName] = useState(node?.data.actionName || "");
 
-  // Inputs / Outputs
+  // Inputs /Outputs
   const [inputs, setInputs] = useState<NodeDataTable[]>(
     node?.data.design?.inputs ?? []
   );
@@ -71,102 +71,44 @@ export const NodePropertyPanel: React.FC<NodePropertyPanelProps> = ({
 
   const prevActionName = useRef<string>("");
   const { BrunnerMessageBox, openModal } = useModal();
+
+  const [loopCurrentIndex, setCurrentIndex] = useState(
+    node?.data.design?.loopCurrentIndex ?? 0
+  );
+
   // 🧠 워크플로우 정보 변경 감지
 
-  // 🧩 [1] SCRIPT props 동기화
   useEffect(() => {
-    if (!node) return;
-    if (node.data.actionName === constants.workflowActions.SCRIPT) {
-      setLocalScript(scriptContents);
-      setLocalTimeoutMs(scriptTimeoutMs);
-    }
-  }, [node?.id, node?.data.actionName, scriptContents, scriptTimeoutMs]);
+    setLocalScript(scriptContents); // prop 변경 시 동기화
+  }, [scriptContents]);
 
-  // 🧩 [2] SQL props 동기화
   useEffect(() => {
-    if (!node) return;
-    if (node.data.actionName === constants.workflowActions.SQL) {
-      const design = node.data.design ?? {};
+    setLocalTimeoutMs(scriptTimeoutMs); // prop 변경 시 동기화
+  }, [scriptTimeoutMs]);
 
-      setActionName(node.data.actionName);
-      setLocalSqlStmt(design.sqlStmt ?? "");
-      setLocalDBConnectionId(design.dbConnectionId ?? "");
-      setLocalMaxRows(design.maxRows ?? 0);
-      setSqlModalData({
-        sqlStmt: design.sqlStmt ?? "",
-        dbConnectionId: design.dbConnectionId ?? "",
-        sqlParams: design.sqlParams ?? [],
-        maxRows: design.maxRows ?? 0,
-      });
-    }
-  }, [
-    node?.id,
-    node?.data.actionName,
-    node?.data.design?.sqlStmt,
-    node?.data.design?.dbConnectionId,
-    node?.data.design?.sqlParams,
-    node?.data.design?.maxRows,
-  ]);
-
-  // 🧩 [3] BRANCH props 동기화 (mode, condition, loop 관련)
   useEffect(() => {
-    if (!node) return;
-    if (node.data.actionName === constants.workflowActions.BRANCH) {
-      const design = node.data.design ?? {};
+    setCurrentIndex(node?.data.design?.loopCurrentIndex ?? 0);
+  }, [node?.data.design?.loopCurrentIndex]);
 
-      // branch/loop 모드에 맞게 로컬 상태 반영
-      setActionName(node.data.actionName);
-      // condition
-      if (design.mode === constants.workflowBranchNodeMode.Branch) {
-        // condition 모드
-        if (design.condition === undefined) {
-          onNodeUpdate?.(node.id, {
-            design: {
-              ...design,
-              mode: constants.workflowBranchNodeMode.Branch,
-              condition: "",
-            },
-          });
-        }
-      } else if (design.mode === constants.workflowBranchNodeMode.Loop) {
-        // loop 모드
-        if (
-          design.loopStartIndex === undefined ||
-          design.loopStepValue === undefined ||
-          design.loopLimitValue === undefined
-        ) {
-          onNodeUpdate?.(node.id, {
-            design: {
-              ...design,
-              mode: constants.workflowBranchNodeMode.Loop,
-              loopStartIndex: design.loopStartIndex ?? 0,
-              loopStepValue: design.loopStepValue ?? 1,
-              loopLimitValue: design.loopLimitValue ?? "",
-              loopCurrentIndex: design.loopCurrentIndex ?? 0,
-            },
-          });
-        }
-      } else {
-        // 모드가 없으면 Branch 기본값으로
-        onNodeUpdate?.(node.id, {
-          design: {
-            ...design,
-            mode: constants.workflowBranchNodeMode.Branch,
-            condition: design.condition ?? "",
-          },
-        });
-      }
-    }
-  }, [node?.id, node?.data.actionName, node?.data.design?.mode]);
-
-  // 🧩 [4] Inputs / Outputs 기본값 설정
+  // 🧠 노드 변경 시 입력/출력 초기화
   useEffect(() => {
-    if (!node) return;
+    if (!node || node.data.actionName !== constants.workflowActions.SCRIPT)
+      return;
+
     const action = node.data.actionName;
+    setActionName(action);
+
     const defaultInputs = commmonFunctions.getDefaultInputs?.(action) ?? [];
     const defaultOutputs = commmonFunctions.getDefaultOutputs?.(action) ?? [];
 
-    if (!node.data.design?.inputs || node.data.design.inputs.length === 0) {
+    if (prevActionName.current !== action) {
+      setInputs(defaultInputs);
+      setOutputs(defaultOutputs);
+      prevActionName.current = action;
+    } else if (
+      !node.data.design?.inputs ||
+      node.data.design.inputs.length === 0
+    ) {
       setInputs(defaultInputs);
       setOutputs(defaultOutputs);
     } else {
@@ -180,36 +122,80 @@ export const NodePropertyPanel: React.FC<NodePropertyPanelProps> = ({
     node?.data.design?.outputs,
   ]);
 
-  // 🧩 [5] Action 변경 감지 (디자인 초기화)
-  // useEffect(() => {
-  //   if (!node) return;
-  //   const newAction = node.data.actionName;
-  //   if (prevActionName.current === newAction) return;
+  // 🧠 노드 변경 시 SQL 노드 초기화
+  useEffect(() => {
+    if (node?.data?.actionName == constants.workflowActions.SQL) {
+      const design = node.data.design || {};
 
-  //   const design = { ...node.data.design };
+      setActionName(node.data.actionName);
 
-  //   if (newAction === constants.workflowActions.SCRIPT) {
-  //     Object.assign(design, {
-  //       scriptContents: "",
-  //       scriptTimeoutMs: 5000,
-  //     });
-  //   } else if (newAction === constants.workflowActions.SQL) {
-  //     Object.assign(design, {
-  //       sqlStmt: "",
-  //       dbConnectionId: "",
-  //       sqlParams: [],
-  //       maxRows: 0,
-  //     });
-  //   } else if (newAction === constants.workflowActions.BRANCH) {
-  //     Object.assign(design, {
-  //       mode: constants.workflowBranchNodeMode.Branch,
-  //       condition: "",
-  //     });
-  //   }
+      setLocalSqlStmt(design.sqlStmt || "");
+      setLocalDBConnectionId(design.dbConnectionId || "");
+      setLocalMaxRows(design.maxRows ?? 0);
+      setSqlModalData({
+        sqlStmt: design.sqlStmt || "",
+        dbConnectionId: design.dbConnectionId || "",
+        sqlParams: design.sqlParams || [],
+        maxRows: design.maxRows ?? 0,
+      });
+    }
+  }, [
+    node?.id,
+    node?.data.actionName,
+    node?.data.design?.sqlStmt,
+    node?.data.design?.dbConnectionId,
+    node?.data.design?.sqlParams,
+    node?.data.design?.maxRows,
+  ]);
 
-  //   prevActionName.current = newAction;
-  //   onNodeUpdate?.(node.id, { design });
-  // }, [node?.id, node?.data.actionName]);
+  // ✅ 외부 nodes 배열이 바뀌면, 현재 node.id 에 해당하는 최신 데이터를 반영
+  useEffect(() => {
+    if (!node) return;
+    const latestNode = nodes.find((n) => n.id === node.id);
+    if (!latestNode) return;
+
+    // inputs / outputs 동기화
+    setInputs(latestNode.data.design?.inputs ?? []);
+    setOutputs(latestNode.data.design?.outputs ?? []);
+
+    // loopCurrentIndex 갱신
+    setCurrentIndex(
+      latestNode.data.run?.currentIndex ??
+        latestNode.data.design?.loopCurrentIndex ??
+        0
+    );
+
+    // Branch 노드일 경우 추가 동기화
+    if (latestNode.data.actionName === constants.workflowActions.BRANCH) {
+      const design = latestNode.data.design || {};
+      // 분기(Branch)모드 condition / 반복(Loop)모드 변수값 동기화
+      if (design.mode === constants.workflowBranchNodeMode.Branch) {
+        // condition만 있음
+        // localCondition, localLoop* 은 BranchNodeProperties 내부 state 이므로,
+        // 해당 컴포넌트 내에서도 유사 useEffect 가 있어야 함
+      }
+    }
+
+    // Script 노드
+    if (latestNode.data.actionName === constants.workflowActions.SCRIPT) {
+      setLocalScript(latestNode.data.design?.scriptContents ?? "");
+      setLocalTimeoutMs(latestNode.data.design?.scriptTimeoutMs ?? 5000);
+    }
+
+    // SQL 노드
+    if (latestNode.data.actionName === constants.workflowActions.SQL) {
+      const d = latestNode.data.design || {};
+      setLocalSqlStmt(d.sqlStmt ?? "");
+      setLocalDBConnectionId(d.dbConnectionId ?? "");
+      setLocalMaxRows(d.maxRows ?? 0);
+      setSqlModalData({
+        sqlStmt: d.sqlStmt ?? "",
+        dbConnectionId: d.dbConnectionId ?? "",
+        sqlParams: d.sqlParams ?? [],
+        maxRows: d.maxRows ?? 0,
+      });
+    }
+  }, [nodes]);
 
   const showHelp = () => {
     const apiGuid: string = `
@@ -426,11 +412,7 @@ api.postJson: async (url, body) => http post request.
 
             <div style={{ marginTop: 8 }}>
               Current Index (Start ≤ Current &lt; Limit):{" "}
-              <b>
-                {data.design?.loopCurrentIndex ??
-                  data.design?.loopStartIndex ??
-                  0}
-              </b>
+              <b>{loopCurrentIndex}</b>
             </div>
           </div>
         )}

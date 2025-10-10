@@ -67,8 +67,14 @@ export function setByPath(obj: any, path: string, value: any) {
   target[String(keys[keys.length - 1])] = value;
 }
 
-/* value (객체)의 모든 템플릿 {{}} 데이터(변수값)를 실제 값으로 치환 */
-export function interpolate(value: any, ctx: any): any {
+function interpolate(value: any, ctx: any): any {
+  if (typeof value === "string") {
+    return value.replace(/\$\{(.+?)\}|\{\{(.+?)\}\}/g, (_, g1, g2) => {
+      const path = g1 || g2;
+      const result = getPathValue(ctx, path);
+      return result !== undefined ? result : "";
+    });
+  }
   return value;
 }
 
@@ -102,7 +108,22 @@ const preNodeCheck = (node: Node<any>, workflowData: any) => {
 };
 
 const postNodeCheck = (node: Node<any>, workflowData: any) => {
+  // 상태 초기화
   node.data.status = constants.workflowRunStatus.idle;
+
+  // workflowData.nodes에서 node.id에 해당하는 노드 찾기
+  const index = workflowData.nodes.findIndex((n: any) => n.id === node.id);
+
+  if (index >= 0) {
+    // 기존 노드 업데이트 (node.data만 반영)
+    workflowData.nodes[index] = {
+      ...workflowData.nodes[index],
+      data: { ...node.data },
+    };
+  } else {
+    // 없으면 새로 추가
+    workflowData.nodes.push({ ...node });
+  }
 };
 
 // -------------------- Built-in 액션 등록 --------------------
@@ -646,7 +667,21 @@ export function registerBuiltInActions(): void {
   registerAction(
     constants.workflowActions.BRANCH,
     async (node: any, workflowData: any, txContext: any) => {
-      const result = { error_code: -1, error_message: "" };
+      var result = { error_code: -1, error_message: "" };
+
+      if (!node) {
+        result.error_code = -1;
+        result.error_message = constants.messages.NO_DATA_FOUND;
+        return result;
+      }
+
+      if (!preNodeCheck(node, workflowData)) {
+        postNodeCheck(node, workflowData);
+
+        result.error_code = -1;
+        result.error_message = `[${node.data.label}] node check result is invalid.`;
+      }
+
       try {
         if (!node) throw new Error(constants.messages.NO_DATA_FOUND);
 
@@ -679,16 +714,17 @@ export function registerBuiltInActions(): void {
         else if (mode === constants.workflowBranchNodeMode.Loop) {
           const loopStartIndex = design.loopStartIndex;
           const loopStepValue = design.loopStepValue;
+
           let loopLimitValue = design.loopLimitValue;
 
-          // limit는 JS 평가식 가능
+          // 워크플로우 데이터 기반으로 경로값 치환
+          loopLimitValue = interpolate(loopLimitValue, workflowData);
+
+          // eval 처리 (필요시)
           try {
-            loopLimitValue = eval(design.loopLimitValue || "0");
+            loopLimitValue = eval(loopLimitValue || "0");
           } catch (err) {
-            console.warn(
-              `[Loop Node] limit 평가 오류: ${design.loopLimitValue}`,
-              err
-            );
+            console.warn(`[Loop Node] limit 평가 오류: ${loopLimitValue}`, err);
             loopLimitValue = 0;
           }
 
@@ -710,6 +746,8 @@ export function registerBuiltInActions(): void {
         } else {
           throw new Error(`Unknown Branch mode: ${mode}`);
         }
+
+        postNodeCheck(node, workflowData);
 
         result.error_code = 0;
         result.error_message = constants.messages.SUCCESS_FINISHED;
@@ -733,6 +771,39 @@ function extractPath(input: string) {
   if (!match) return null;
   return match[1] || match[2]; // ${path} 또는 {{path}} 내부 내용
 }
+
+function getPathValue(obj: any, path: string): any {
+  const pathParts = path.split(".");
+
+  let target = obj;
+
+  for (let part of pathParts) {
+    // 1️⃣ 배열 + id/name 기반 접근
+    const arrayIdMatch = part.match(/^(\w+)\["(.+)"\]$/);
+    if (arrayIdMatch) {
+      const arrayName = arrayIdMatch[1];
+      const key = arrayIdMatch[2];
+      const arr = target[arrayName!];
+      if (!Array.isArray(arr)) return undefined;
+
+      // id, name, label 중 하나로 검색
+      target = arr.find(
+        (x: any) => x.id === key || x.name === key || x.data?.label === key
+      );
+      continue;
+    }
+
+    // 2️⃣ 기존 객체 키 접근
+    if (target != null) {
+      target = target[part];
+    } else {
+      return undefined;
+    }
+  }
+
+  return target;
+}
+
 function getParamValue(input: string, context: any) {
   if (isPathValue(input)) {
     const path = extractPath(input);
