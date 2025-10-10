@@ -397,8 +397,9 @@ api.postJson: async (url, body) => http post request.
             <div className="flex flex-row mt-2">
               <label>Limit</label>
               <textarea
-                className="w-full text-center ml-1"
+                className="w-full h-full text-center ml-1"
                 value={localLoopLimitValue}
+                rows={3}
                 onChange={(e) => setLocalLoopLimitValue(e.target.value)}
                 onBlur={() =>
                   handleBranchNodeChange("loopLimitValue", localLoopLimitValue)
