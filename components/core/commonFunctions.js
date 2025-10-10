@@ -188,3 +188,26 @@ export function getDefaultOutputs(actionName) {
       throw new Error(constants.messages.WORKFLOW_NOT_SUPPORTED_NODE_TYPE);
   }
 }
+
+export function getByPath(obj, path) {
+  return path.split(".").reduce((o, k) => {
+    if (o == null) return undefined;
+    const index = Number(k);
+    return !isNaN(index) ? o[index] : o[k];
+  }, obj);
+}
+
+export function setByPath(obj, path, value) {
+  const keys = path.split(".");
+  let target = obj;
+  for (let i = 0; i < keys.length - 1; i++) {
+    const key = keys[i];
+    const idx = Number(key);
+    const finalKey = !isNaN(idx) ? idx : key;
+    if (!target[finalKey]) target[finalKey] = {};
+    target = target[finalKey];
+  }
+  const lastKey = keys[keys.length - 1];
+  const idx = Number(lastKey);
+  target[!isNaN(idx) ? idx : lastKey] = value;
+}

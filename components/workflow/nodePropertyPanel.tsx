@@ -403,7 +403,7 @@ api.postJson: async (url, body) => http post request.
                 onBlur={() =>
                   handleBranchNodeChange("loopLimitValue", localLoopLimitValue)
                 }
-                placeholder="숫자 또는 ${변수경로}"
+                placeholder="숫자 또는 JS 표현식 입력"
               />
             </div>
             <small style={{ color: "#666" }}>

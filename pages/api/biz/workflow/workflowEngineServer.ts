@@ -5,6 +5,7 @@ import * as database from "../database/database";
 import * as dynamicSql from "../dynamicSql";
 import type { Connection, Edge, Node, NodeChange, EdgeChange } from "reactflow";
 import * as commonData from "@/components/core/commonData";
+import * as commonFunctions from "@/components/core/commonFunctions";
 import { DBConnectionManager } from "@/pages/api/biz/workflow/dbConnectionManager";
 import type { DBConnectionConfig, DBType } from "./dbConnectionManager";
 
@@ -53,25 +54,11 @@ export function getAction(name: string): ActionHandler | undefined {
   return actionMap.get(name);
 }
 
-// 객체 경로로 값 가져오기
-export function getByPath(obj: any, path: string) {
-  return path.split(".").reduce((o, k) => (o ? o[k] : undefined), obj);
-}
-export function setByPath(obj: any, path: string, value: any) {
-  const keys = path.split(".");
-  let target = obj;
-  for (let i: number = 0; i < keys.length - 1; i++) {
-    if (!target[String(keys[i])]) target[String(keys[i])] = {};
-    target = target[String(keys[i])];
-  }
-  target[String(keys[keys.length - 1])] = value;
-}
-
 function interpolate(value: any, ctx: any): any {
   if (typeof value === "string") {
     return value.replace(/\$\{(.+?)\}|\{\{(.+?)\}\}/g, (_, g1, g2) => {
       const path = g1 || g2;
-      const result = getPathValue(ctx, path);
+      const result = commonFunctions.getByPath(ctx, path);
       return result !== undefined ? result : "";
     });
   }
@@ -715,16 +702,18 @@ export function registerBuiltInActions(): void {
           const loopStartIndex = design.loopStartIndex;
           const loopStepValue = design.loopStepValue;
 
-          let loopLimitValue = design.loopLimitValue;
-
-          // 워크플로우 데이터 기반으로 경로값 치환
-          loopLimitValue = interpolate(loopLimitValue, workflowData);
-
-          // eval 처리 (필요시)
+          // JS 표현식으로 limit 계산
+          let loopLimitValue = 0;
           try {
-            loopLimitValue = eval(loopLimitValue || "0");
-          } catch (err) {
-            console.warn(`[Loop Node] limit 평가 오류: ${loopLimitValue}`, err);
+            const nodes = workflowData.nodes;
+
+            loopLimitValue = Function(
+              "nodes",
+              "workflowData",
+              `return ${design.loopLimitValue || "0"}`
+            )(nodes, workflowData);
+          } catch (e) {
+            console.error("[Loop Node] limit 평가 오류:", e);
             loopLimitValue = 0;
           }
 
@@ -741,7 +730,7 @@ export function registerBuiltInActions(): void {
           }
 
           console.log(
-            `[Loop Node] currentIndex: ${loopCurrentIndex}, limit: ${loopLimitValue}, nextIndex: ${node.data.design.currentIndex}`
+            `[Loop Node] currentIndex: ${loopCurrentIndex}, limit: ${loopLimitValue}, nextIndex: ${node.data.design.loopCurrentIndex}`
           );
         } else {
           throw new Error(`Unknown Branch mode: ${mode}`);
@@ -772,42 +761,10 @@ function extractPath(input: string) {
   return match[1] || match[2]; // ${path} 또는 {{path}} 내부 내용
 }
 
-function getPathValue(obj: any, path: string): any {
-  const pathParts = path.split(".");
-
-  let target = obj;
-
-  for (let part of pathParts) {
-    // 1️⃣ 배열 + id/name 기반 접근
-    const arrayIdMatch = part.match(/^(\w+)\["(.+)"\]$/);
-    if (arrayIdMatch) {
-      const arrayName = arrayIdMatch[1];
-      const key = arrayIdMatch[2];
-      const arr = target[arrayName!];
-      if (!Array.isArray(arr)) return undefined;
-
-      // id, name, label 중 하나로 검색
-      target = arr.find(
-        (x: any) => x.id === key || x.name === key || x.data?.label === key
-      );
-      continue;
-    }
-
-    // 2️⃣ 기존 객체 키 접근
-    if (target != null) {
-      target = target[part];
-    } else {
-      return undefined;
-    }
-  }
-
-  return target;
-}
-
 function getParamValue(input: string, context: any) {
   if (isPathValue(input)) {
     const path = extractPath(input);
-    return getByPath(context, path ?? "");
+    return commonFunctions.getByPath(context, path ?? "");
   }
   return input; // 일반 값
 }
@@ -830,7 +787,7 @@ function convertNamedParams(
       const match = value.match(/^\$\{(.+)\}$|^\{\{(.+)\}\}$/);
       if (match) {
         const path = match[1] || match[2];
-        return getByPath(context, path ?? ""); // context에서 경로값 가져오기
+        return commonFunctions.getByPath(context, path ?? ""); // context에서 경로값 가져오기
       }
     }
     return value; // 일반 값이면 그대로
