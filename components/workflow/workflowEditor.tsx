@@ -23,7 +23,6 @@ import "reactflow/dist/base.css";
 import "reactflow/dist/style.css";
 import { nanoid } from "nanoid";
 import * as constants from "@/components/core/constants";
-import { useModal } from "@/components/core/client/brunnerMessageBox";
 import { NodePropertyPanel } from "@/components/workflow/nodePropertyPanel";
 import { JsonDatasetEditorModal } from "@/components/workflow/jsonDatasetEditorModal";
 import type {
@@ -48,6 +47,7 @@ import BranchNode from "./customNode/branchNode";
 interface WorkflowEditorProps {
   initialNodes?: Node<ActionNodeData>[];
   initialEdges?: Edge<ConditionEdgeData>[];
+  openModal?: (msg: string) => void; // 필요하면 타입 정의
 }
 
 export type DesignColumn = {
@@ -152,10 +152,10 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
     },
   ],
   initialEdges = [],
+  openModal,
 }) => {
   const jWorkflow = useRef<any | null>(null);
   const stepCounterRef = useRef(0);
-  const { BrunnerMessageBox, openModal } = useModal();
 
   const [workflowId, setWorkflowId] = useState<string | null>(null);
   const [workflowName, setWorkflowName] = useState("새 워크플로우");
@@ -325,6 +325,65 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
     if (!jWorkflow.current) return;
     jWorkflow.current.edges = edges;
   }, [edges]);
+
+  useEffect(() => {
+    if (!jWorkflow.current) return;
+
+    const newDataObj: Record<string, any> = {};
+    for (const [tableName, rows] of Object.entries(designedInputData)) {
+      if (Array.isArray(rows) && rows.length > 0) {
+        const firstRow: any = rows[0];
+        const newRow: Record<string, any> = {};
+        for (const key in firstRow) {
+          const value = firstRow[key];
+          switch (value.type) {
+            case "string":
+              newRow[key] = "";
+              break;
+            case "number":
+              newRow[key] = 0;
+              break;
+            case "boolean":
+              newRow[key] = false;
+              break;
+            default:
+              newRow[key] = {};
+              break;
+          }
+        }
+        newDataObj[tableName] = [newRow];
+      } else {
+        newDataObj[tableName] = [];
+      }
+    }
+
+    setWorkflowInputData(JSON.stringify(newDataObj, null, 2));
+    jWorkflow.current.data.design.inputs = designedInputData; // 스키마 반영
+    jWorkflow.current.data.run.inputs = newDataObj; // 실제 데이터 반영
+  }, [designedInputData]);
+
+  useEffect(() => {
+    if (!jWorkflow.current) return;
+
+    try {
+      jWorkflow.current.data.run.inputs = JSON.parse(workflowInputData);
+    } catch (err) {
+      console.warn("workflowInputData JSON parse failed:", err);
+    }
+  }, [workflowInputData]);
+
+  // designedOutputData 변경 시
+  useEffect(() => {
+    if (!jWorkflow.current) return;
+
+    try {
+      const parsed = JSON.parse(designedOutputData);
+      jWorkflow.current.data.design.outputs = parsed; // 스키마 반영
+      jWorkflow.current.data.run.outputs = parsed; // 실제 데이터 반영
+    } catch (err) {
+      console.warn("designedOutputData parse failed:", err);
+    }
+  }, [designedOutputData]);
 
   const workflowInputDataObj = useMemo(() => {
     try {
@@ -511,13 +570,13 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
 
       const jResponse = await RequestServer(jRequest);
       if (jResponse.error_code == 0) {
-        openModal("Successfully updated workflow.");
+        openModal?.("Successfully updated workflow.");
       } else {
-        openModal("❌ 저장 실패: " + jResponse.error_message);
+        openModal?.("❌ 저장 실패: " + jResponse.error_message);
       }
     } catch (err) {
       console.error(err);
-      openModal("❌ 실행 실패: " + String(err));
+      openModal?.("❌ 실행 실패: " + String(err));
     }
   };
 
@@ -540,19 +599,19 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
         // 서버에서 내려온 데이터 그대로 적용
         setCurrentWorkflow(workflowData);
 
-        openModal(constants.messages.SUCCESS_FINISHED);
+        openModal?.(constants.messages.SUCCESS_FINISHED);
       } else {
-        openModal(jResponse.error_message);
+        openModal?.(jResponse.error_message);
       }
     } catch (err) {
       console.error(err);
-      openModal(String(err));
+      openModal?.(String(err));
     }
   };
 
   const deleteWorkflow = async () => {
     try {
-      const confirm = await openModal(constants.messages.DELETE_ITEM);
+      const confirm = await openModal?.(constants.messages.DELETE_ITEM);
       if (!confirm) return;
 
       const jRequest = {
@@ -563,12 +622,12 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
       };
       const jResponse = await RequestServer(jRequest);
       if (jResponse.error_code == 0) {
-        openModal("Successfully delete workflow.");
+        openModal?.("Successfully delete workflow.");
         initWorkflow();
       }
     } catch (err) {
       console.error(err);
-      openModal("❌ 실행 실패: " + String(err));
+      openModal?.("❌ 실행 실패: " + String(err));
     }
   };
 
@@ -585,12 +644,12 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
       const jResponse = await RequestServer(jRequest);
       if (jResponse.error_code == 0 && jResponse.jWorkflow) {
         setCurrentWorkflow({ ...jResponse.jWorkflow });
-        openModal(constants.messages.SUCCESS_FINISHED);
+        openModal?.(constants.messages.SUCCESS_FINISHED);
       } else {
-        openModal(jResponse.error_message);
+        openModal?.(jResponse.error_message);
       }
     } catch (err) {
-      openModal("❌ 실행 실패: " + String(err));
+      openModal?.("❌ 실행 실패: " + String(err));
     }
   };
 
@@ -608,13 +667,13 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
       const jResponse = await RequestServer(jRequest);
       if (jResponse.error_code == 0 && jResponse.jWorkflow) {
         setCurrentWorkflow({ ...jResponse.jWorkflow });
-        openModal(constants.messages.SUCCESS_FINISHED);
+        openModal?.(constants.messages.SUCCESS_FINISHED);
       } else {
-        openModal(jResponse.error_message);
+        openModal?.(jResponse.error_message);
       }
     } catch (err) {
       console.error(err);
-      openModal("❌ 실행 실패: " + String(err));
+      openModal?.("❌ 실행 실패: " + String(err));
     }
   };
 
@@ -723,8 +782,7 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
     <>
       <ReactFlowProvider>
         {/* <<< MOBILE-FIX: Use h-screen so we can compute child heights on mobile; and switch to column on small screens */}
-        <div className="flex flex-col md:flex-row w-full h-screen relative">
-          <BrunnerMessageBox />
+        <div className="flex flex-col md:flex-row w-full h-3/5 relative">
           {/* 🧭 왼쪽: 워크플로우 다이어그램 */}
           <div className="flex-1 relative">
             {/* wrapper with explicit min height and dynamic height for mobile portrait */}
@@ -808,6 +866,8 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
                   <AccordionContent>
                     <WorkflowSelector
                       onSelect={(wfSelected: any) => {
+                        initWorkflow();
+
                         setCurrentWorkflow(wfSelected.workflow_data);
                       }}
                       selectedWorkflow={jWorkflow.current}
@@ -912,6 +972,7 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
                           return newNodes;
                         });
                       }}
+                      openModal={openModal!}
                     />
                   </AccordionContent>
                 </AccordionItem>
@@ -935,6 +996,67 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
                     >
                       Edit Schema
                     </button>
+
+                    {/* Input Schema/Data 모달 */}
+                    {isInputSchemaEditorOpen && (
+                      <JsonDatasetEditorModal
+                        open={isInputSchemaEditorOpen}
+                        mode="schema"
+                        value={designedInputData}
+                        onConfirm={(newSchema) => {
+                          setDesignedInputData(newSchema as DesignedDataset);
+                          const newDataObj: Record<string, any> = {};
+                          for (const [tableName, rows] of Object.entries(
+                            newSchema
+                          )) {
+                            if (Array.isArray(rows) && rows.length > 0) {
+                              const firstRow = rows[0];
+                              const newRow: Record<string, any> = {};
+                              for (const key in firstRow) {
+                                const value = firstRow[key];
+                                switch (typeof value) {
+                                  case "string":
+                                    newRow[key] = "";
+                                    break;
+                                  case "number":
+                                    newRow[key] = 0;
+                                    break;
+                                  case "boolean":
+                                    newRow[key] = false;
+                                    break;
+                                  default:
+                                    newRow[key] = {};
+                                    break;
+                                }
+                              }
+                              newDataObj[tableName] = [newRow];
+                            } else {
+                              newDataObj[tableName] = [];
+                            }
+                          }
+                          setWorkflowInputData(
+                            JSON.stringify(newDataObj, null, 2)
+                          );
+                          setIsInputSchemaEditorOpen(false);
+                        }}
+                        onCancel={() => setIsInputSchemaEditorOpen(false)}
+                      />
+                    )}
+
+                    {isInputDataEditorOpen && (
+                      <JsonDatasetEditorModal
+                        open={isInputDataEditorOpen}
+                        mode="data"
+                        value={workflowInputDataObj}
+                        onConfirm={(newData) => {
+                          setWorkflowInputData(
+                            JSON.stringify(newData, null, 2)
+                          );
+                          setIsInputDataEditorOpen(false);
+                        }}
+                        onCancel={() => setIsInputDataEditorOpen(false)}
+                      />
+                    )}
                     <button
                       className="border semi-text-bg-color px-3 py-1"
                       onClick={() => setIsInputDataEditorOpen(true)}
@@ -980,6 +1102,20 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
                     >
                       Edit Schema
                     </button>
+                    {isOutputSchemaEditorOpen && (
+                      <JsonDatasetEditorModal
+                        open={isOutputSchemaEditorOpen}
+                        mode="schema"
+                        value={workflowOutputDataObj}
+                        onConfirm={(newSchema) => {
+                          setDesignedOutputData(
+                            JSON.stringify(newSchema, null, 2)
+                          );
+                          setIsOutputSchemaEditorOpen(false);
+                        }}
+                        onCancel={() => setIsOutputSchemaEditorOpen(false)}
+                      />
+                    )}
                   </div>
                   <textarea
                     className="w-full h-[200px] mt-2 border p-2 font-mono text-sm"

@@ -72,16 +72,16 @@ export const useModal = () => {
           ></div>
           <div
             className="semi-text-bg-color 
-                          rounded-lg 
-                          p-8 
-                          max-w-md 
-                          w-full 
-                          z-50"
+             rounded-lg 
+             p-8 
+             w-auto 
+             max-w-[90vw] 
+             z-50"
           >
             <p
               className="text-lg 
                           dark:text-gray-200 
-                          text-center 
+                          text-left 
                           mb-4 
                           whitespace-pre-line"
             >

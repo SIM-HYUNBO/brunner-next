@@ -10,7 +10,6 @@ import { JsonDatasetEditorModal } from "@/components/workflow/jsonDatasetEditorM
 import type { JsonColumnType } from "@/components/workflow/jsonDatasetEditorModal";
 import { NodePropertyEditor } from "@/components/workflow/nodePropertyEditor";
 import { ScriptEditorModal } from "@/components/workflow/scriptEditorModal";
-import { useModal } from "@/components/core/client/brunnerMessageBox";
 import { SqlEditorModal } from "./sqlEditorModal";
 
 import type { ScriptNodeDesignData } from "./types/nodeTypes";
@@ -30,6 +29,7 @@ interface NodePropertyPanelProps {
     workflowDescription?: string;
   }) => void;
   onNodeUpdate?: (id: string, updates: any) => void;
+  openModal: (message: string) => void;
 }
 
 export const NodePropertyPanel: React.FC<NodePropertyPanelProps> = ({
@@ -42,6 +42,7 @@ export const NodePropertyPanel: React.FC<NodePropertyPanelProps> = ({
   workflowDescription,
   onWorkflowUpdate,
   onNodeUpdate,
+  openModal,
 }) => {
   const [actionName, setActionName] = useState(node?.data.actionName || "");
 
@@ -70,7 +71,6 @@ export const NodePropertyPanel: React.FC<NodePropertyPanelProps> = ({
   );
 
   const prevActionName = useRef<string>("");
-  const { BrunnerMessageBox, openModal } = useModal();
 
   const [loopCurrentIndex, setCurrentIndex] = useState(
     node?.data.design?.loopCurrentIndex ?? 0
@@ -199,19 +199,24 @@ export const NodePropertyPanel: React.FC<NodePropertyPanelProps> = ({
 
   const showHelp = () => {
     const apiGuid: string = `
-api.log: (...args) => print console log.
-api.sleep: (ms) => sleep during miliseconds.
-api.alert: (msg) => display alert message.
-api.getVar: (path) => get workflow runtime variable value.
-api.setVar: (path, value) => set wworkflow runtime variable value.
-api.now: () => get current time.
-api.timestamp: () => get current time.
-api.random: (min, max) => get random number between min to max,
-api.clone:(obj) => clone json object,
-api.jsonParse: (str) => parse json object.
-api.jsonStringify: (obj) => serialize json object.
-api.formatDate: (date, fmt) => format date time.
-api.postJson: async (url, body) => http post request.
+        clone: (obj: any): any => JSON.parse(JSON.stringify(obj)),
+        error: (message: any) => safeApi.log(message, "error"),
+        formatDate: (date: Date, fmt: string): string => date.toISOString(),
+        jsonParse: (str: string): any => JSON.parse(str),
+        jsonStringify: (obj: any): string => JSON.stringify(obj),
+        getGlobalVar: (path: string) => getByPath(workflowData, path),
+        getVar: (path: string) => getByPath(node, path),
+        info: (message: any) => safeApi.log(message, "info"),
+        log: (message: any, level: "info" | "warn" | "error" = "info"),
+        now: (): Date => new Date(),
+        postJson: async (url: string, body: any): Promise<any>,
+        random: (min: number = 0, max: number = 1): number,
+        sleep: (ms: number) => new Promise((r) => setTimeout(r, ms)),
+        setGlobalVar: (path: string, value: any),
+        setVar: (path: string, value: any) => setByPath(node, path, value),
+        sql: async (connectionId: string, sql: string, params?: any[]),
+        timestamp: (): number => Date.now(),
+        warn: (message: any) => safeApi.log(message, "warn"),
     `;
     openModal(apiGuid);
   };
@@ -499,7 +504,6 @@ api.postJson: async (url, body) => http post request.
   // 🧩 실제 렌더링
   return (
     <div style={{ padding: 10 }}>
-      <BrunnerMessageBox />
       <div className="">
         {/* Node Property Editor */}
         {node && (

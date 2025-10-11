@@ -115,7 +115,7 @@ const postNodeCheck = (node: Node<any>, workflowData: any) => {
 
 // -------------------- Built-in 액션 등록 --------------------
 export function registerBuiltInActions(): void {
-  // START
+  // START 노드
   registerAction(
     constants.workflowActions.START,
     async (node, workflowData, txContext) => {
@@ -149,7 +149,7 @@ export function registerBuiltInActions(): void {
     }
   );
 
-  // END
+  // END 노드
   registerAction(
     constants.workflowActions.END,
     async (node, workflowData, txContext) => {
@@ -186,7 +186,7 @@ export function registerBuiltInActions(): void {
     }
   );
 
-  // CALL
+  // CALL 노드
   registerAction(
     constants.workflowActions.CALL,
     async (node, workflowData, txContext) => {
@@ -234,18 +234,23 @@ export function registerBuiltInActions(): void {
         node.data.design.scriptConents ||
         `
         // POST 요청 예제
+        const nameKor= api.getGlobalVar("data.run.inputs").INPUT_TABLE[0]?.name;
+        const nameEng= api.getGlobalVar("data.run.inputs").INPUT_TABLE[0]?.type;
+        const age= api.getGlobalVar("data.run.inputs").INPUT_TABLE[0]?.age;
 
         const body = {
-          title: "sim",
-          body: "hyunbo",
-          age: 40
+          kor: nameKor,
+          eng: nameEng,
+          age: age
         }
 
         const response = await api.postJson(
           "https://jsonplaceholder.typicode.com/posts",
           body
         );
-        api.setVar("data.run.output", response);
+        api.setVar("data.run.outputs", []);
+        api.setVar("data.run.outputs.0", response);
+
         `;
 
       const userScript = `
@@ -329,27 +334,19 @@ export function registerBuiltInActions(): void {
       const logs: string[] = [];
 
       const safeApi = {
+        clone: (obj: any): any => JSON.parse(JSON.stringify(obj)),
+        error: (message: any) => safeApi.log(message, "error"),
+        formatDate: (date: Date, fmt: string): string => date.toISOString(),
+        jsonParse: (str: string): any => JSON.parse(str),
+        jsonStringify: (obj: any): string => JSON.stringify(obj),
+        getGlobalVar: (path: string) => getByPath(workflowData, path),
+        getVar: (path: string) => getByPath(node, path),
+        info: (message: any) => safeApi.log(message, "info"),
         log: (message: any, level: "info" | "warn" | "error" = "info") => {
           if (typeof message === "object") message = JSON.stringify(message);
           logger.log(level, message);
         },
-        info: (message: any) => safeApi.log(message, "info"),
-        warn: (message: any) => safeApi.log(message, "warn"),
-        error: (message: any) => safeApi.log(message, "error"),
-        sleep: (ms: number) => new Promise((r) => setTimeout(r, ms)),
-        getGlobalVar: (path: string) => getByPath(workflowData, path),
-        setGlobalVar: (path: string, value: any) =>
-          setByPath(workflowData, path, value),
-        getVar: (path: string) => getByPath(node, path),
-        setVar: (path: string, value: any) => setByPath(node, path, value),
         now: (): Date => new Date(),
-        timestamp: (): number => Date.now(),
-        random: (min: number = 0, max: number = 1): number =>
-          Math.random() * (max - min) + min,
-        clone: (obj: any): any => JSON.parse(JSON.stringify(obj)),
-        jsonParse: (str: string): any => JSON.parse(str),
-        jsonStringify: (obj: any): string => JSON.stringify(obj),
-        formatDate: (date: Date, fmt: string): string => date.toISOString(),
         postJson: async (url: string, body: any): Promise<any> => {
           const res = await fetch(url, {
             method: constants.httpMethod.POST,
@@ -358,6 +355,12 @@ export function registerBuiltInActions(): void {
           });
           return await res.json();
         },
+        random: (min: number = 0, max: number = 1): number =>
+          Math.random() * (max - min) + min,
+        sleep: (ms: number) => new Promise((r) => setTimeout(r, ms)),
+        setGlobalVar: (path: string, value: any) =>
+          setByPath(workflowData, path, value),
+        setVar: (path: string, value: any) => setByPath(node, path, value),
         sql: async (connectionId: string, sql: string, params?: any[]) => {
           let txContextEntry = getTxContextEntry(txContext, connectionId);
 
@@ -422,6 +425,8 @@ export function registerBuiltInActions(): void {
               );
           }
         },
+        timestamp: (): number => Date.now(),
+        warn: (message: any) => safeApi.log(message, "warn"),
       };
 
       function getTxContextEntry(
@@ -503,7 +508,8 @@ export function registerBuiltInActions(): void {
       }
     }
   );
-  // SQL
+
+  // SQL 노드
   registerAction(
     constants.workflowActions.SQL,
     async (node, workflowData, txContext) => {

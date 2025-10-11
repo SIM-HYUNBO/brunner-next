@@ -314,18 +314,21 @@ const executeService = async (txnId, jRequest) => {
           }
 
           // 2️⃣ 워크플로우 초기화
-          workflowData.currentNodeId = workflowData.nodes.find(
-            (n) => n.data.actionName === constants.workflowActions.START
-          ).id;
-
-          if (workflowData.nodes) {
-            workflowData.nodes.forEach((node) => {
-              node.data.status = constants.workflowRunStatus.idle;
-              node.data.run = node.data.run || {};
-              node.data.run.inputs = {};
-              node.data.run.outputs = [];
-            });
-          }
+          workflowData.nodes = workflowData.nodes.map((node) => ({
+            ...node,
+            data: {
+              ...node.data,
+              status: constants.workflowRunStatus.idle,
+              run: {
+                inputs: {},
+                outputs: [],
+              },
+            },
+          }));
+          workflowData.currentNodeId =
+            workflowData.nodes.find(
+              (n) => n.data.actionName === constants.workflowActions.START
+            )?.id ?? null;
 
           // 3️⃣ DB에 업데이트
           const saveResult = await workflowEngineServer.saveWorkflow(
