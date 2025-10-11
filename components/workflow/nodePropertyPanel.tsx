@@ -65,6 +65,8 @@ export const NodePropertyPanel: React.FC<NodePropertyPanelProps> = ({
   const [localSqlStmt, setLocalSqlStmt] = useState("");
   const [localDBConnectionId, setLocalDBConnectionId] = useState("");
   const [localSqlMaxRows, setLocalMaxRows] = useState(0);
+  const [localSqlOutputTableName, setLocalSqlOutputTableName] = useState("");
+
   const [isSqlModalOpen, setIsSqlModalOpen] = useState(false);
   const [sqlModalData, setSqlModalData] = useState<SqlNodeDesignData | null>(
     null
@@ -132,11 +134,13 @@ export const NodePropertyPanel: React.FC<NodePropertyPanelProps> = ({
       setLocalSqlStmt(design.sqlStmt || "");
       setLocalDBConnectionId(design.dbConnectionId || "");
       setLocalMaxRows(design.maxRows ?? 0);
+      setLocalSqlOutputTableName(design.outputTableName ?? "");
       setSqlModalData({
         sqlStmt: design.sqlStmt || "",
         dbConnectionId: design.dbConnectionId || "",
         sqlParams: design.sqlParams || [],
         maxRows: design.maxRows ?? 0,
+        outputTableName: design.outputTableName ?? "",
       });
     }
   }, [
@@ -146,6 +150,7 @@ export const NodePropertyPanel: React.FC<NodePropertyPanelProps> = ({
     node?.data.design?.dbConnectionId,
     node?.data.design?.sqlParams,
     node?.data.design?.maxRows,
+    node?.data.design?.outputTableName,
   ]);
 
   // ✅ 외부 nodes 배열이 바뀌면, 현재 node.id 에 해당하는 최신 데이터를 반영
@@ -188,11 +193,13 @@ export const NodePropertyPanel: React.FC<NodePropertyPanelProps> = ({
       setLocalSqlStmt(d.sqlStmt ?? "");
       setLocalDBConnectionId(d.dbConnectionId ?? "");
       setLocalMaxRows(d.maxRows ?? 0);
+      setLocalSqlOutputTableName(d.outputTableName);
       setSqlModalData({
         sqlStmt: d.sqlStmt ?? "",
         dbConnectionId: d.dbConnectionId ?? "",
         sqlParams: d.sqlParams ?? [],
         maxRows: d.maxRows ?? 0,
+        outputTableName: d.outputTableName ?? "",
       });
     }
   }, [nodes]);
@@ -267,6 +274,7 @@ export const NodePropertyPanel: React.FC<NodePropertyPanelProps> = ({
     setLocalSqlStmt(sqlNodeDesignData.sqlStmt || "");
     setLocalDBConnectionId(sqlNodeDesignData.dbConnectionId || "");
     setLocalMaxRows(sqlNodeDesignData.maxRows || 0);
+    setLocalSqlOutputTableName(sqlNodeDesignData.outputTableName || "");
 
     // ② node.data.design 갱신
     onNodeUpdate?.(node.id, {
@@ -276,6 +284,7 @@ export const NodePropertyPanel: React.FC<NodePropertyPanelProps> = ({
         sqlStmt: sqlNodeDesignData.sqlStmt,
         sqlParams: sqlNodeDesignData.sqlParams,
         maxRows: sqlNodeDesignData.maxRows,
+        outputTableName: sqlNodeDesignData.outputTableName,
       },
     });
 
@@ -483,19 +492,32 @@ export const NodePropertyPanel: React.FC<NodePropertyPanelProps> = ({
                 dbConnectionId: localDBConnectionId,
                 sqlParams: node.data.design?.sqlParams ?? [], // 최신값 보장
                 maxRows: localSqlMaxRows,
+                outputTableName: localSqlOutputTableName,
               });
               setIsSqlModalOpen(true);
             }}
           >
-            Edit SQL
+            Edit Sql
           </button>
-          <label className="mt-2">Max Rows:</label>
-          <input
-            type="number"
-            className="border px-2 py-1 w-[100px]"
-            value={localSqlMaxRows}
-            readOnly
-          />
+          <div className="flex flex-col">
+            <div className="flex flex-row mt-1">
+              <label className="mt-2">Max Rows</label>
+              <input
+                type="number"
+                className="border px-2 py-1 w-[100px]"
+                value={localSqlMaxRows}
+                readOnly
+              />
+            </div>
+            <div className="flex flex-row mt-2"></div>
+            <label>Output Table</label>
+            <input
+              type="text"
+              className="border px-1 py-1"
+              value={localSqlOutputTableName}
+              readOnly
+            />
+          </div>
         </div>
       </div>
     );
@@ -543,6 +565,7 @@ export const NodePropertyPanel: React.FC<NodePropertyPanelProps> = ({
             initialSqlStmt={sqlModalData.sqlStmt}
             initialParams={sqlModalData.sqlParams}
             initialMaxRows={sqlModalData.maxRows}
+            initialOutputTableName={sqlModalData.outputTableName}
             onConfirm={handleSqlModalConfirm}
             onClose={handleSqlModalClose}
           />

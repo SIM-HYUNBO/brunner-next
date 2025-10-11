@@ -153,6 +153,7 @@ export const NodePropertyEditor: React.FC<NodePropertyEditorProps> = ({
       design.dbConnectionId = "";
       design.sqlParams = [];
       design.maxRows = 0;
+      design.outputTableName = "";
     }
 
     // 노드 업데이트

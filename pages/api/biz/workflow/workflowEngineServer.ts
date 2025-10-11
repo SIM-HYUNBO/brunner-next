@@ -500,9 +500,8 @@ export function registerBuiltInActions(): void {
           : "";
 
         // outputs에도 기록
-        node.data.run.outputs = [
-          err.message + (errorLocation ? ` ${errorLocation}` : ""),
-        ];
+        node.data.run.outputs = {};
+        node.data.run.outputs.err = err;
 
         return result;
       }
@@ -528,7 +527,8 @@ export function registerBuiltInActions(): void {
         result.error_message = `[${node.data.label}] node check result is invalid.`;
       }
 
-      const { dbConnectionId, sqlStmt, sqlParams } = node.data?.design || {};
+      const { dbConnectionId, sqlStmt, sqlParams, outputTableName } =
+        node.data?.design || {};
 
       if (!dbConnectionId)
         throw new Error(
@@ -622,8 +622,8 @@ export function registerBuiltInActions(): void {
         }
 
         // ✅ 결과 저장
-        node.data.run.outputs = rows;
-        // workflowData.data.run.outputs = rows;
+        node.data.run.outputs = {};
+        node.data.run.outputs[outputTableName] = rows;
 
         console.log(
           `[SQL_NODE] ${connection.type.toUpperCase()} 쿼리 실행 완료`

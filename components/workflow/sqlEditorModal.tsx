@@ -14,6 +14,7 @@ interface SqlEditorModalProps {
   initialSqlStmt?: string | undefined;
   initialParams?: SqlParam[] | undefined;
   initialMaxRows?: number | undefined;
+  initialOutputTableName?: string | undefined;
   onConfirm: (result: SqlNodeDesignData) => void;
   onClose: () => void;
 }
@@ -24,6 +25,7 @@ export const SqlEditorModal: React.FC<SqlEditorModalProps> = ({
   initialSqlStmt = "",
   initialParams = [],
   initialMaxRows,
+  initialOutputTableName = "",
   onConfirm,
   onClose,
 }) => {
@@ -31,6 +33,9 @@ export const SqlEditorModal: React.FC<SqlEditorModalProps> = ({
   const [params, setParams] = useState<SqlParam[]>(initialParams);
   const [maxRows, setMaxRows] = useState<number | undefined>(initialMaxRows);
   const [dbConnectionId, setDbConnectionId] = useState(initialDbConnectionId);
+  const [outputTableName, setOutputTableName] = useState<string | undefined>(
+    initialOutputTableName
+  );
 
   // sliding panel
   const [showParamsPanel, setShowParamsPanel] = useState(true);
@@ -53,7 +58,14 @@ export const SqlEditorModal: React.FC<SqlEditorModalProps> = ({
     setSqlStmt(initialSqlStmt);
     setParams(initialParams);
     setMaxRows(initialMaxRows);
-  }, [initialDbConnectionId, initialSqlStmt, initialParams, initialMaxRows]);
+    setOutputTableName(initialOutputTableName);
+  }, [
+    initialDbConnectionId,
+    initialSqlStmt,
+    initialParams,
+    initialMaxRows,
+    initialOutputTableName,
+  ]);
 
   // global mouse handlers
   useEffect(() => {
@@ -151,6 +163,7 @@ export const SqlEditorModal: React.FC<SqlEditorModalProps> = ({
         };
       }),
       maxRows: maxRows && maxRows > 0 ? maxRows : undefined,
+      outputTableName,
     };
     onConfirm(out);
   };
@@ -210,6 +223,15 @@ export const SqlEditorModal: React.FC<SqlEditorModalProps> = ({
                   e.target.value ? parseInt(e.target.value, 10) : undefined
                 )
               }
+              className="w-36"
+            />
+          </div>
+          <div className="flex flex-col">
+            <label>Output Table Name)</label>
+            <Input
+              type="text"
+              value={outputTableName ?? ""}
+              onChange={(e) => setOutputTableName(e.target.value)}
               className="w-36"
             />
           </div>
