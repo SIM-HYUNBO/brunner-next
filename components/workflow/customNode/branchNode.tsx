@@ -33,7 +33,7 @@ export default function BranchNode({ data }: NodeProps<BranchNodeData>) {
           },${height} 0,${height / 2}`}
           fill="#fff"
           stroke="#555"
-          strokeWidth={1} // 테두리 1px
+          strokeWidth={1}
           strokeDasharray="4,4"
         />
       </svg>
@@ -55,11 +55,7 @@ export default function BranchNode({ data }: NodeProps<BranchNodeData>) {
           boxSizing: "border-box",
         }}
       >
-        {
-          <div style={{ fontSize: 8 }}>
-            [{constants.workflowActions.BRANCH}]
-          </div>
-        }
+        <div style={{ fontSize: 8 }}>[{constants.workflowActions.BRANCH}]</div>
         {isLoopMode && <div style={{ fontSize: 8 }}>Loop</div>}
         {isBranchMode && <div style={{ fontSize: 8 }}>Branch</div>}
         {isBranchMode && (
@@ -77,9 +73,9 @@ export default function BranchNode({ data }: NodeProps<BranchNodeData>) {
           </div>
         )}
 
-        {/* 포트 배치 */}
-        {/* Target: 상단 중앙, 녹색 */}
+        {/* 🟢 입력 포트 2개 (상단 + 좌측) */}
         <Handle
+          id="input_main"
           type="target"
           position={Position.Top}
           style={{
@@ -94,10 +90,28 @@ export default function BranchNode({ data }: NodeProps<BranchNodeData>) {
           }}
         />
 
-        {/* Source True: 하단 중앙, 파란색 */}
+        {isLoopMode && (
+          <Handle
+            id="input_loop"
+            type="target"
+            position={Position.Left}
+            style={{
+              left: -portSize / 2,
+              top: "50%",
+              width: portSize,
+              height: portSize,
+              borderRadius: "50%",
+              background: "green",
+              border: "2px solid #222",
+              transform: "translateY(-50%)",
+            }}
+          />
+        )}
+
+        {/* 🔵 True 출력 (하단 중앙) */}
         <Handle
-          type="source"
           id="true"
+          type="source"
           position={Position.Bottom}
           style={{
             bottom: -portSize / 2,
@@ -111,10 +125,10 @@ export default function BranchNode({ data }: NodeProps<BranchNodeData>) {
           }}
         />
 
-        {/* Source False: 우측 중앙, 빨간색 */}
+        {/* 🔴 False 출력 (우측 중앙) */}
         <Handle
-          type="source"
           id="false"
+          type="source"
           position={Position.Right}
           style={{
             right: -portSize / 2,

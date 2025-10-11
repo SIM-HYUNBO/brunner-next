@@ -295,7 +295,7 @@ export function registerBuiltInActions(): void {
     api.log("Node with label 'Node 1' not found", "warn");
   }
   */
-  // SCRIPT
+  // SCRIPT 노드 액션
   registerAction(
     constants.workflowActions.SCRIPT,
     async (node: any, workflowData: any, txContext) => {
@@ -651,6 +651,9 @@ export function registerBuiltInActions(): void {
   );
 
   // BRANCH 노드
+  // loop 모드에서 loopLimitValue 입력 예시 노드 이름으로 노드를 찾아서 건수 확인
+  // nodes.find(n => n.data.label === 'Node 1').data.run.outputs.length
+
   registerAction(
     constants.workflowActions.BRANCH,
     async (node: any, workflowData: any, txContext: any) => {

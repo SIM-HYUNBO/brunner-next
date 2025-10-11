@@ -162,7 +162,9 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
   const [workflowDescription, setWorkflowDescription] = useState("설명 없음");
   const [isRightPanelOpen, setIsRightPanelOpen] = useState(false);
   const [isWorkflowDataModalOpen, setIsWorkflowDataModalOpen] = useState(false);
-
+  const [openAccordionItems, setOpenAccordionItems] = useState<string[]>([
+    "Workflow Info",
+  ]);
   const gridSize = 30; // 스냅 그리드 크기
 
   const snapToGrid = (position: { x: number; y: number }) => ({
@@ -252,6 +254,14 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
   const [selectedNode, setSelectedNode] = useState<Node<ActionNodeData> | null>(
     null
   );
+  const [rfKey, setRfKey] = useState(0);
+
+  // 전체 초기화할 때 (노드, 엣지 모두 제거 시점)
+  const resetFlow = () => {
+    setNodes([]);
+    setEdges([]);
+    setRfKey((k) => k + 1); // ReactFlow 완전 재렌더
+  };
 
   const [isInputDataEditorOpen, setIsInputDataEditorOpen] = useState(false);
   const [isInputSchemaEditorOpen, setIsInputSchemaEditorOpen] = useState(false);
@@ -274,6 +284,13 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
   const flowBottomReservedPx = 260; // 모바일에서 하단(Inputs/Outputs 등) 예상 높이
   const rfInstanceRef = useRef<any | null>(null); // ReactFlow instance ref
   // <<< /MOBILE-FIX
+
+  useEffect(() => {
+    if (selectedNode) {
+      // Node Property("info")만 열기
+      setOpenAccordionItems(["info"]);
+    }
+  }, [selectedNode]);
 
   useEffect(() => {
     setWorkflowId(uuidv4());
@@ -612,7 +629,7 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
             Add Node
           </button>
           <button
-            className="w-full border border-black semi-text-bg-color hover:bg-gray-400"
+            className="w-full border border-black ml-1 semi-text-bg-color hover:bg-gray-400"
             onClick={deleteSelectedNode}
           >
             Delete Node
@@ -719,6 +736,7 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
               }}
             >
               <ReactFlow
+                key={rfKey}
                 nodes={nodes.map((n) => ({
                   ...n,
                   type:
@@ -777,45 +795,55 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
           {/* ⚙️ 오른쪽 패널 (토글) */}
           {isRightPanelOpen && (
             <div className="flex flex-col justify-top h-full md:h-auto ml-0 md:ml-1 w-full md:w-[380px] overflow-y-auto border-t md:border-l p-2  z-40 semi-text-bg-color">
-              <h2 className="flex justify-between items-center">
-                Workflow Info
-              </h2>
-              <WorkflowSelector
-                onSelect={(wfSelected: any) => {
-                  setCurrentWorkflow(wfSelected.workflow_data);
-                }}
-                selectedWorkflow={jWorkflow.current}
-              />
-              <div className="p-2 border rounded mt-2">
-                <div>ID: {workflowId}</div>
-                <div className="flex flex-row mt-2">
-                  이름:
-                  <input
-                    className="flex-1 w-auto ml-2"
-                    value={workflowName}
-                    onChange={(e) => setWorkflowName(e.target.value)}
-                  />
-                </div>
-                <div className="flex flex-row mt-2">
-                  설명:
-                  <textarea
-                    className="flex-1 w-auto ml-2"
-                    value={workflowDescription}
-                    rows={1}
-                    onChange={(e) => setWorkflowDescription(e.target.value)}
-                  />
-                </div>
-              </div>
-
-              <button
-                onClick={() => setDbConnectionsModalOpen(true)}
-                className="ml-1 mt-2 px-2 py-1 rounded semi-text-bg-color border"
+              <Accordion
+                value={openAccordionItems} // <-- controlled value
+                type="multiple"
+                defaultValue={["workflowInfo"]}
+                className="mt-3"
+                onValueChange={(vals: string[]) => setOpenAccordionItems(vals)}
               >
-                Database...
-              </button>
+                {/* Workflow Info */}
+                <AccordionItem value="workflowInfo">
+                  <AccordionTrigger>📝 Workflow Info</AccordionTrigger>
+                  <AccordionContent>
+                    <WorkflowSelector
+                      onSelect={(wfSelected: any) => {
+                        setCurrentWorkflow(wfSelected.workflow_data);
+                      }}
+                      selectedWorkflow={jWorkflow.current}
+                    />
+                    <div className="p-2 border rounded mt-2">
+                      <div>ID: {workflowId}</div>
+                      <div className="flex flex-row mt-2">
+                        이름:
+                        <input
+                          className="flex-1 w-auto ml-2"
+                          value={workflowName}
+                          onChange={(e) => setWorkflowName(e.target.value)}
+                        />
+                      </div>
+                      <div className="flex flex-row mt-2">
+                        설명:
+                        <textarea
+                          className="flex-1 w-auto ml-2"
+                          value={workflowDescription}
+                          rows={1}
+                          onChange={(e) =>
+                            setWorkflowDescription(e.target.value)
+                          }
+                        />
+                      </div>
+                    </div>
 
-              {/* 🪗 Accordion - 접을 수 있는 패널들 */}
-              <Accordion type="multiple" defaultValue={[]} className="mt-3">
+                    <button
+                      onClick={() => setDbConnectionsModalOpen(true)}
+                      className="ml-1 mt-2 px-2 py-1 rounded semi-text-bg-color border"
+                    >
+                      Database...
+                    </button>
+                  </AccordionContent>
+                </AccordionItem>
+
                 {/* Workflow Operation */}
                 <AccordionItem value="operation">
                   <AccordionTrigger>⚙️ Workflow Operation</AccordionTrigger>
@@ -836,42 +864,33 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
                       nodes={nodes}
                       scriptContents={selectedNodeScript}
                       scriptTimeoutMs={selectedNodeTimeoutMs}
-                      onWorkflowUpdate={({
-                        workflowName,
-                        workflowDescription,
-                      }) => {
-                        if (workflowName !== undefined)
-                          setWorkflowName(workflowName);
-                        if (workflowDescription !== undefined)
-                          setWorkflowDescription(workflowDescription);
+                      onWorkflowUpdate={(updates) => {
+                        if (updates.workflowName !== undefined)
+                          setWorkflowName(updates.workflowName);
+                        if (updates.workflowDescription !== undefined)
+                          setWorkflowDescription(updates.workflowDescription);
                       }}
                       onNodeUpdate={(id, updates) => {
                         setNodes((nds) => {
                           const newNodes = nds.map((n) => {
                             if (n.id !== id) return n;
 
-                            // design을 Partial 타입으로 안전하게 처리
                             let newDesign: Partial<typeof n.data.design> =
                               n.data?.design || {};
-
-                            // ① actionName 변경 시 design 초기화
                             if (
                               updates.actionName &&
                               updates.actionName !== n.data?.actionName
                             ) {
-                              newDesign = {}; // 타입에러 없음
+                              newDesign = {};
                             }
-
-                            // ② design 업데이트 병합
                             if (updates.design) {
                               newDesign = { ...newDesign, ...updates.design };
                             }
 
-                            // design 외 나머지 필드 처리
                             const otherUpdates = { ...updates };
                             delete otherUpdates.design;
 
-                            const updatedNode = {
+                            return {
                               ...n,
                               data: {
                                 ...n.data,
@@ -879,15 +898,12 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
                                 design: newDesign,
                               },
                             };
-
-                            return updatedNode;
                           });
 
                           const updatedWorkflow = {
                             ...jWorkflow.current,
                             nodes: newNodes,
                           };
-
                           setSelectedNode(
                             newNodes.find((nn) => nn.id === id) || null
                           );

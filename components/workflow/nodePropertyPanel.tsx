@@ -176,7 +176,7 @@ export const NodePropertyPanel: React.FC<NodePropertyPanelProps> = ({
       }
     }
 
-    // Script 노드
+    // SCRIPT 노드
     if (latestNode.data.actionName === constants.workflowActions.SCRIPT) {
       setLocalScript(latestNode.data.design?.scriptContents ?? "");
       setLocalTimeoutMs(latestNode.data.design?.scriptTimeoutMs ?? 5000);
