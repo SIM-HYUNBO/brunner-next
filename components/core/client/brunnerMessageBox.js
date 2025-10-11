@@ -74,8 +74,9 @@ export const useModal = () => {
             className="semi-text-bg-color 
              rounded-lg 
              p-8 
+             h-auto
              w-auto 
-             max-w-[90vw] 
+             max-w-screen 
              z-50"
           >
             <p
