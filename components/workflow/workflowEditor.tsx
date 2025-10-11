@@ -175,14 +175,39 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
     ],
   });
 
+  // Input Dataset 문자열
   const [workflowInputData, setWorkflowInputData] = useState<string>(
     JSON.stringify({ INPUT_TABLE: [{ key1: "test", key2: 123 }] }, null, 2)
   );
+
+  // Input Dataset 객체
+  const workflowInputDataObj = useMemo(() => {
+    try {
+      const parsed = JSON.parse(workflowInputData);
+      return Object.keys(parsed).length ? parsed : { table1: [] };
+    } catch {
+      return { table1: [] };
+    }
+  }, [workflowInputData]);
 
   // Output Dataset 스키마
   const [designedOutputData, setDesignedOutputData] = useState<string>(
     JSON.stringify({ OUTPUT_TABLE: [{ key1: "test", key2: 123 }] }, null, 2)
   );
+  // Output Dataset 문자열
+  const [workflowOutputData, setWorkflowOutputData] = useState<string>(
+    JSON.stringify({ OUTPUT_TABLE: [{ key1: "test", key2: 123 }] }, null, 2)
+  );
+
+  // Output Dataset 객체
+  const workflowOutputDataObj = useMemo(() => {
+    try {
+      const parsed = JSON.parse(workflowOutputData);
+      return Object.keys(parsed).length ? parsed : { table1: [] };
+    } catch {
+      return { table1: [] };
+    }
+  }, [workflowOutputData]);
 
   const [isRightPanelOpen, setIsRightPanelOpen] = useState(false);
   const [isWorkflowDataModalOpen, setIsWorkflowDataModalOpen] = useState(false);
@@ -260,6 +285,7 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
 
   const [isInputDataEditorOpen, setIsInputDataEditorOpen] = useState(false);
   const [isInputSchemaEditorOpen, setIsInputSchemaEditorOpen] = useState(false);
+  const [isOutputDataEditorOpen, setIsOutputDataEditorOpen] = useState(false);
   const [isOutputSchemaEditorOpen, setIsOutputSchemaEditorOpen] =
     useState(false);
   const [isDBConnectionsModalOpen, setIsDBConnectionsModalOpen] =
@@ -370,24 +396,6 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
       jWorkflow.current.data.run.outputs = parsed; // 실제 데이터 반영
     } catch (err) {
       console.warn("designedOutputData parse failed:", err);
-    }
-  }, [designedOutputData]);
-
-  const workflowInputDataObj = useMemo(() => {
-    try {
-      const parsed = JSON.parse(workflowInputData);
-      return Object.keys(parsed).length ? parsed : { table1: [] };
-    } catch {
-      return { table1: [] };
-    }
-  }, [workflowInputData]);
-
-  const workflowOutputDataObj = useMemo(() => {
-    try {
-      const parsed = JSON.parse(designedOutputData);
-      return Object.keys(parsed).length ? parsed : { table1: [] };
-    } catch {
-      return { table1: [] };
     }
   }, [designedOutputData]);
 
@@ -632,6 +640,9 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
       const jResponse = await RequestServer(jRequest);
       if (jResponse.error_code == 0 && jResponse.jWorkflow) {
         setCurrentWorkflow({ ...jResponse.jWorkflow });
+        setWorkflowOutputData(
+          JSON.stringify(jWorkflow.current.data.run.outputs, null, 2)
+        );
         openModal?.(constants.messages.SUCCESS_FINISHED);
       } else {
         openModal?.(jResponse.error_message);
@@ -655,6 +666,9 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
       const jResponse = await RequestServer(jRequest);
       if (jResponse.error_code == 0 && jResponse.jWorkflow) {
         setCurrentWorkflow({ ...jResponse.jWorkflow });
+        setWorkflowOutputData(
+          JSON.stringify(jWorkflow.current.data.run.outputs, null, 2)
+        );
         openModal?.(constants.messages.SUCCESS_FINISHED);
       } else {
         openModal?.(jResponse.error_message);
@@ -973,10 +987,30 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
                             onCancel={() => setIsOutputSchemaEditorOpen(false)}
                           />
                         )}
+                        {isOutputDataEditorOpen && (
+                          <JsonDatasetEditorModal
+                            open={isOutputDataEditorOpen}
+                            mode="data"
+                            value={workflowOutputDataObj}
+                            onConfirm={(newData) => {
+                              setWorkflowOutputData(
+                                JSON.stringify(newData, null, 2)
+                              );
+                              setIsOutputDataEditorOpen(false);
+                            }}
+                            onCancel={() => setIsOutputDataEditorOpen(false)}
+                          />
+                        )}
+                        <button
+                          className="border semi-text-bg-color px-3 py-1"
+                          onClick={() => setIsOutputDataEditorOpen(true)}
+                        >
+                          Edit Data
+                        </button>
                       </div>
                       <textarea
                         className="w-full h-[200px] mt-2 border p-2 font-mono text-sm"
-                        value={designedOutputData}
+                        value={workflowOutputData}
                         readOnly
                       />
                     </AccordionContent>
