@@ -160,6 +160,30 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
   const [workflowId, setWorkflowId] = useState<string | null>(null);
   const [workflowName, setWorkflowName] = useState("새 워크플로우");
   const [workflowDescription, setWorkflowDescription] = useState("설명 없음");
+  const [nodes, setNodes] = useState<Node<ActionNodeData>[]>(initialNodes);
+  const [edges, setEdges] = useState<Edge<ConditionEdgeData>[]>(initialEdges);
+
+  const [selectedNode, setSelectedNode] = useState<Node<ActionNodeData> | null>(
+    null
+  );
+
+  // Input Dataset 스키마
+  const [designedInputData, setDesignedInputData] = useState<DesignedDataset>({
+    INPUT_TABLE: [
+      { name: "key1", type: "string" },
+      { name: "key2", type: "number" },
+    ],
+  });
+
+  const [workflowInputData, setWorkflowInputData] = useState<string>(
+    JSON.stringify({ INPUT_TABLE: [{ key1: "test", key2: 123 }] }, null, 2)
+  );
+
+  // Output Dataset 스키마
+  const [designedOutputData, setDesignedOutputData] = useState<string>(
+    JSON.stringify({ OUTPUT_TABLE: [{ key1: "test", key2: 123 }] }, null, 2)
+  );
+
   const [isRightPanelOpen, setIsRightPanelOpen] = useState(false);
   const [isWorkflowDataModalOpen, setIsWorkflowDataModalOpen] = useState(false);
   const [openAccordionItems, setOpenAccordionItems] = useState<string[]>([
@@ -171,10 +195,6 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
     x: Math.round(position.x / gridSize) * gridSize,
     y: Math.round(position.y / gridSize) * gridSize,
   });
-
-  const [workflowInputData, setWorkflowInputData] = useState<string>(
-    JSON.stringify({ INPUT_TABLE: [{ key1: "test", key2: 123 }] }, null, 2)
-  );
 
   const initWorkflow = () => {
     const initialNodes = [
@@ -238,52 +258,20 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
     });
   };
 
-  const [designedInputData, setDesignedInputData] = useState<DesignedDataset>({
-    INPUT_TABLE: [
-      { name: "key1", type: "string" },
-      { name: "key2", type: "number" },
-    ],
-  });
-
-  const [designedOutputData, setDesignedOutputData] = useState<string>(
-    JSON.stringify({ OUTPUT_TABLE: [{ key1: "test", key2: 123 }] }, null, 2)
-  );
-
-  const [nodes, setNodes] = useState<Node<ActionNodeData>[]>(initialNodes);
-  const [edges, setEdges] = useState<Edge<ConditionEdgeData>[]>(initialEdges);
-  const [selectedNode, setSelectedNode] = useState<Node<ActionNodeData> | null>(
-    null
-  );
-  const [rfKey, setRfKey] = useState(0);
-
-  // 전체 초기화할 때 (노드, 엣지 모두 제거 시점)
-  const resetFlow = () => {
-    setNodes([]);
-    setEdges([]);
-    setRfKey((k) => k + 1); // ReactFlow 완전 재렌더
-  };
-
   const [isInputDataEditorOpen, setIsInputDataEditorOpen] = useState(false);
   const [isInputSchemaEditorOpen, setIsInputSchemaEditorOpen] = useState(false);
   const [isOutputSchemaEditorOpen, setIsOutputSchemaEditorOpen] =
     useState(false);
-  const [dbConnectionsModalOpen, setDbConnectionsModalOpen] = useState(false);
+  const [isDBConnectionsModalOpen, setIsDBConnectionsModalOpen] =
+    useState(false);
   const [selectedNodeScript, setSelectedNodeScript] = useState<string>("");
   const [selectedNodeTimeoutMs, setSelectedNodeTimeoutMs] = useState(5000);
 
-  // <<< MOBILE-FIX: state for responsive behavior
-  const [isMobile, setIsMobile] = useState<boolean>(
-    typeof window !== "undefined" ? window.innerWidth < 768 : false
-  );
-  const [isPortrait, setIsPortrait] = useState<boolean>(
-    typeof window !== "undefined"
-      ? window.innerHeight > window.innerWidth
-      : true
-  );
+  // 모바일
   const [flowHeightPx, setFlowHeightPx] = useState<number | null>(null);
   const flowBottomReservedPx = 260; // 모바일에서 하단(Inputs/Outputs 등) 예상 높이
   const rfInstanceRef = useRef<any | null>(null); // ReactFlow instance ref
-  // <<< /MOBILE-FIX
+  //
 
   useEffect(() => {
     if (selectedNode) {
@@ -752,8 +740,6 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
       const ih = window.innerHeight;
       const mobile = iw < 768;
       const portrait = ih > iw;
-      setIsMobile(mobile);
-      setIsPortrait(portrait);
 
       if (mobile && portrait) {
         // reserve bottom panel area so flow isn't hidden
@@ -795,7 +781,6 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
                 }}
               >
                 <ReactFlow
-                  key={rfKey}
                   nodes={nodes.map((n) => ({
                     ...n,
                     type:
@@ -1047,7 +1032,7 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
                     </div>
 
                     <button
-                      onClick={() => setDbConnectionsModalOpen(true)}
+                      onClick={() => setIsDBConnectionsModalOpen(true)}
                       className="ml-1 mt-2 px-2 py-1 rounded semi-text-bg-color border"
                     >
                       Database...
@@ -1142,8 +1127,8 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
         )}
 
         <DBConnectionManagerModal
-          open={dbConnectionsModalOpen}
-          onOpenChange={setDbConnectionsModalOpen}
+          open={isDBConnectionsModalOpen}
+          onOpenChange={setIsDBConnectionsModalOpen}
         />
       </ReactFlowProvider>
     </>
