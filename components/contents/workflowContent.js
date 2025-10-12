@@ -1,7 +1,6 @@
-`use strict`;
+"use client";
 
-import { useState, useRef, useEffect } from "react";
-import { WorkflowEditor } from "../workflow/workflowEditor";
+import { TabbedWorkflowEditor } from "../workflow/tabbedWorkflowEditor";
 import { useModal } from "@/components/core/client/brunnerMessageBox";
 
 export default function WorkflowContent() {
@@ -11,7 +10,7 @@ export default function WorkflowContent() {
     <>
       <BrunnerMessageBox />
       <div className="flex flex-col h-full">
-        <WorkflowEditor openModal={openModal} />
+        <TabbedWorkflowEditor openModal={openModal} />
       </div>
     </>
   );

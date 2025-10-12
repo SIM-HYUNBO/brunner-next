@@ -45,6 +45,7 @@ import { WorkflowDataModal } from "./workflowDataModal";
 import BranchNode from "./customNode/branchNode";
 
 interface WorkflowEditorProps {
+  workflowId?: string;
   initialNodes?: Node<ActionNodeData>[];
   initialEdges?: Edge<ConditionEdgeData>[];
   openModal?: (msg: string) => void; // 필요하면 타입 정의
@@ -153,11 +154,22 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
   ],
   initialEdges = [],
   openModal,
+  workflowId: initialWorkflowId, // props에서 받은 workflowId
 }) => {
   const jWorkflow = useRef<any | null>(null);
   const stepCounterRef = useRef(0);
 
-  const [workflowId, setWorkflowId] = useState<string | null>(null);
+  const [workflowId, setWorkflowId] = useState<string | null>(
+    initialWorkflowId || null
+  );
+  // workflowId가 변경되면 필요한 로직 실행 가능
+  useEffect(() => {
+    if (initialWorkflowId) {
+      setWorkflowId(initialWorkflowId);
+      // workflowId에 맞는 워크플로우 로드 로직
+    }
+  }, [initialWorkflowId]);
+
   const [workflowName, setWorkflowName] = useState("새 워크플로우");
   const [workflowDescription, setWorkflowDescription] = useState("설명 없음");
   const [nodes, setNodes] = useState<Node<ActionNodeData>[]>(initialNodes);
