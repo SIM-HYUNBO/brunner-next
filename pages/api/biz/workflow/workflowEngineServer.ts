@@ -460,7 +460,6 @@ export function registerBuiltInActions(): void {
         const AsyncFunction = Object.getPrototypeOf(async function () {})
           .constructor as any;
 
-        // sourceURL 추가
         const fn = new AsyncFunction(
           "actionData",
           "workflowData",
@@ -468,9 +467,9 @@ export function registerBuiltInActions(): void {
           userScript + "\n//# sourceURL=userScript.js"
         );
 
-        res = await Promise.race([
+        const res = await Promise.race([
           fn(node.data || {}, workflowData.data || {}, safeApi),
-          new Promise((_, reject) =>
+          new Promise<never>((_, reject) =>
             setTimeout(() => reject(new Error("timeout")), timeoutMs)
           ),
         ]);
@@ -484,26 +483,33 @@ export function registerBuiltInActions(): void {
         result.error_message = constants.messages.SUCCESS_FINISHED;
         return result;
       } catch (err: any) {
-        result = {
-          error_code: -1,
-          error_message: `[${node.data.label}] ${err}`,
-        };
+        let errorMessage = "";
+        let errorStack: string | undefined;
+
+        if (err instanceof Error) {
+          errorMessage = err.message;
+          errorStack = err.stack;
+        } else {
+          errorMessage = String(err);
+        }
 
         // stack에서 userScript 줄 정보 찾기
-        const stackLines = err.stack?.split("\n") || [];
-        const userScriptLine = stackLines.find((line: string) =>
+        const stackLines = errorStack?.split("\n") || [];
+        const userScriptLine = stackLines.find((line) =>
           line.includes("userScript.js")
         );
-
         const errorLocation = userScriptLine
           ? `(at ${userScriptLine.trim()})`
           : "";
 
         // outputs에도 기록
-        node.data.run.outputs = {};
-        node.data.run.outputs.err = err;
+        node.data.run = node.data.run || {};
+        node.data.run.outputs = { err, location: errorLocation };
 
-        return result;
+        return {
+          error_code: -1,
+          error_message: `[${node.data.label}] ${errorMessage} ${errorLocation}`,
+        };
       }
     }
   );
