@@ -532,10 +532,6 @@ export const NodePropertyPanel: React.FC<NodePropertyPanelProps> = ({
           <div>
             <NodePropertyEditor
               node={node}
-              nodes={nodes}
-              workflowId={workflowId}
-              workflowName={workflowName}
-              workflowDescription={workflowDescription}
               onNodeUpdate={(id, updates) => {
                 onNodeUpdate?.(id, updates);
               }}
