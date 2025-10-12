@@ -48,6 +48,7 @@ interface WorkflowEditorProps {
   workflowId?: string;
   initialNodes?: Node<ActionNodeData>[];
   initialEdges?: Edge<ConditionEdgeData>[];
+  onWorkflowIDNameChange?: (newId: string, newName: string) => void;
   openModal?: (msg: string) => void; // 필요하면 타입 정의
 }
 
@@ -154,6 +155,7 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
   ],
   initialEdges = [],
   openModal,
+  onWorkflowIDNameChange,
   workflowId: initialWorkflowId, // props에서 받은 workflowId
 }) => {
   const jWorkflow = useRef<any | null>(null);
@@ -483,7 +485,7 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
 
   const deleteSelectedNode = () => {
     if (!selectedNode) {
-      alert("Select a node to delete.");
+      openModal!("Select a node to delete.");
       return;
     }
 
@@ -560,6 +562,7 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
       })
     );
     setNodes(snappedNodes);
+    onWorkflowIDNameChange?.(newVal.workflowId, newVal.workflowName);
   };
 
   const saveWorkflow = async () => {
@@ -581,6 +584,8 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
       const jResponse = await RequestServer(jRequest);
       if (jResponse.error_code == 0) {
         openModal?.("Successfully updated workflow.");
+        if (onWorkflowIDNameChange)
+          onWorkflowIDNameChange(workflowId!, workflowName);
       } else {
         openModal?.("❌ 저장 실패: " + jResponse.error_message);
       }
@@ -633,8 +638,10 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
       };
       const jResponse = await RequestServer(jRequest);
       if (jResponse.error_code == 0) {
-        openModal?.("Successfully delete workflow.");
+        openModal?.(jResponse.error_message);
         initWorkflow();
+      } else {
+        openModal?.(jResponse.error_message);
       }
     } catch (err) {
       console.error(err);

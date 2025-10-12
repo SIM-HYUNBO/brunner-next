@@ -76,11 +76,10 @@ const executeService = async (txnId, jRequest) => {
 
         if (result.error_code == 0) {
           jResponse.error_code = result.error_code;
-          jResponse.message = "워크플로우 삭제 성공";
+          jResponse.error_message = result.error_message;
         } else {
-          jResponse.error_code = -1;
-          jResponse.error_message =
-            result.error_message || " 워크플로우 삭제 실패";
+          jResponse.error_code = result.error_code;
+          jResponse.error_message = result.error_message;
         }
         break;
       }
