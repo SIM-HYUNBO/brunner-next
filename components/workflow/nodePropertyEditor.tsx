@@ -152,7 +152,7 @@ export const NodePropertyEditor: React.FC<NodePropertyEditorProps> = ({
       design.sqlStmt = "";
       design.dbConnectionId = "";
       design.sqlParams = [];
-      design.maxRows = 0;
+      // design.maxRows = 0;
       design.outputTableName = "";
     }
 

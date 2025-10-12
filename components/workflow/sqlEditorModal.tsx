@@ -13,7 +13,7 @@ interface SqlEditorModalProps {
   initialDbConnectionId?: string | undefined;
   initialSqlStmt?: string | undefined;
   initialParams?: SqlParam[] | undefined;
-  initialMaxRows?: number | undefined;
+  // initialMaxRows?: number | undefined;
   initialOutputTableName?: string | undefined;
   onConfirm: (result: SqlNodeDesignData) => void;
   onClose: () => void;
@@ -24,14 +24,14 @@ export const SqlEditorModal: React.FC<SqlEditorModalProps> = ({
   initialDbConnectionId = "",
   initialSqlStmt = "",
   initialParams = [],
-  initialMaxRows,
+  // initialMaxRows,
   initialOutputTableName = "",
   onConfirm,
   onClose,
 }) => {
   const [sqlStmt, setSqlStmt] = useState(initialSqlStmt);
   const [params, setParams] = useState<SqlParam[]>(initialParams);
-  const [maxRows, setMaxRows] = useState<number | undefined>(initialMaxRows);
+  // const [maxRows, setMaxRows] = useState<number | undefined>(initialMaxRows);
   const [dbConnectionId, setDbConnectionId] = useState(initialDbConnectionId);
   const [outputTableName, setOutputTableName] = useState<string | undefined>(
     initialOutputTableName
@@ -57,13 +57,13 @@ export const SqlEditorModal: React.FC<SqlEditorModalProps> = ({
     setDbConnectionId(initialDbConnectionId);
     setSqlStmt(initialSqlStmt);
     setParams(initialParams);
-    setMaxRows(initialMaxRows);
+    // setMaxRows(initialMaxRows);
     setOutputTableName(initialOutputTableName);
   }, [
     initialDbConnectionId,
     initialSqlStmt,
     initialParams,
-    initialMaxRows,
+    // initialMaxRows,
     initialOutputTableName,
   ]);
 
@@ -162,7 +162,7 @@ export const SqlEditorModal: React.FC<SqlEditorModalProps> = ({
           binding: isVar ? p.binding : undefined,
         };
       }),
-      maxRows: maxRows && maxRows > 0 ? maxRows : undefined,
+      // maxRows: maxRows && maxRows > 0 ? maxRows : undefined,
       outputTableName,
     };
     onConfirm(out);
@@ -213,7 +213,7 @@ export const SqlEditorModal: React.FC<SqlEditorModalProps> = ({
               className="w-64"
             />
           </div>
-          <div className="flex flex-col">
+          {/* <div className="flex flex-col">
             <label>Max Rows (0 = 무제한)</label>
             <Input
               type="number"
@@ -225,7 +225,7 @@ export const SqlEditorModal: React.FC<SqlEditorModalProps> = ({
               }
               className="w-36"
             />
-          </div>
+          </div> */}
           <div className="flex flex-col">
             <label>Output Table Name)</label>
             <Input

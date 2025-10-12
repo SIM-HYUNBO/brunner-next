@@ -64,7 +64,7 @@ export const NodePropertyPanel: React.FC<NodePropertyPanelProps> = ({
   // SQL 노드
   const [localSqlStmt, setLocalSqlStmt] = useState("");
   const [localDBConnectionId, setLocalDBConnectionId] = useState("");
-  const [localSqlMaxRows, setLocalMaxRows] = useState(0);
+  // const [localSqlMaxRows, setLocalMaxRows] = useState(0);
   const [localSqlOutputTableName, setLocalSqlOutputTableName] = useState("");
 
   const [isSqlModalOpen, setIsSqlModalOpen] = useState(false);
@@ -133,13 +133,13 @@ export const NodePropertyPanel: React.FC<NodePropertyPanelProps> = ({
 
       setLocalSqlStmt(design.sqlStmt || "");
       setLocalDBConnectionId(design.dbConnectionId || "");
-      setLocalMaxRows(design.maxRows ?? 0);
+      // setLocalMaxRows(design.maxRows ?? 0);
       setLocalSqlOutputTableName(design.outputTableName ?? "");
       setSqlModalData({
         sqlStmt: design.sqlStmt || "",
         dbConnectionId: design.dbConnectionId || "",
         sqlParams: design.sqlParams || [],
-        maxRows: design.maxRows ?? 0,
+        // maxRows: design.maxRows ?? 0,
         outputTableName: design.outputTableName ?? "",
       });
     }
@@ -149,7 +149,7 @@ export const NodePropertyPanel: React.FC<NodePropertyPanelProps> = ({
     node?.data.design?.sqlStmt,
     node?.data.design?.dbConnectionId,
     node?.data.design?.sqlParams,
-    node?.data.design?.maxRows,
+    // node?.data.design?.maxRows,
     node?.data.design?.outputTableName,
   ]);
 
@@ -192,13 +192,13 @@ export const NodePropertyPanel: React.FC<NodePropertyPanelProps> = ({
       const d = latestNode.data.design || {};
       setLocalSqlStmt(d.sqlStmt ?? "");
       setLocalDBConnectionId(d.dbConnectionId ?? "");
-      setLocalMaxRows(d.maxRows ?? 0);
+      // setLocalMaxRows(d.maxRows ?? 0);
       setLocalSqlOutputTableName(d.outputTableName);
       setSqlModalData({
         sqlStmt: d.sqlStmt ?? "",
         dbConnectionId: d.dbConnectionId ?? "",
         sqlParams: d.sqlParams ?? [],
-        maxRows: d.maxRows ?? 0,
+        // maxRows: d.maxRows ?? 0,
         outputTableName: d.outputTableName ?? "",
       });
     }
@@ -273,7 +273,7 @@ export const NodePropertyPanel: React.FC<NodePropertyPanelProps> = ({
     setSqlModalData(sqlNodeDesignData);
     setLocalSqlStmt(sqlNodeDesignData.sqlStmt || "");
     setLocalDBConnectionId(sqlNodeDesignData.dbConnectionId || "");
-    setLocalMaxRows(sqlNodeDesignData.maxRows || 0);
+    // setLocalMaxRows(sqlNodeDesignData.maxRows || 0);
     setLocalSqlOutputTableName(sqlNodeDesignData.outputTableName || "");
 
     // ② node.data.design 갱신
@@ -283,7 +283,7 @@ export const NodePropertyPanel: React.FC<NodePropertyPanelProps> = ({
         dbConnectionId: sqlNodeDesignData.dbConnectionId,
         sqlStmt: sqlNodeDesignData.sqlStmt,
         sqlParams: sqlNodeDesignData.sqlParams,
-        maxRows: sqlNodeDesignData.maxRows,
+        // maxRows: sqlNodeDesignData.maxRows,
         outputTableName: sqlNodeDesignData.outputTableName,
       },
     });
@@ -491,7 +491,7 @@ export const NodePropertyPanel: React.FC<NodePropertyPanelProps> = ({
                 sqlStmt: localSqlStmt,
                 dbConnectionId: localDBConnectionId,
                 sqlParams: node.data.design?.sqlParams ?? [], // 최신값 보장
-                maxRows: localSqlMaxRows,
+                // maxRows: localSqlMaxRows,
                 outputTableName: localSqlOutputTableName,
               });
               setIsSqlModalOpen(true);
@@ -500,7 +500,7 @@ export const NodePropertyPanel: React.FC<NodePropertyPanelProps> = ({
             Edit Sql
           </button>
           <div className="flex flex-col">
-            <div className="flex flex-row mt-1">
+            {/* <div className="flex flex-row mt-1">
               <label className="mt-2">Max Rows</label>
               <input
                 type="number"
@@ -508,7 +508,7 @@ export const NodePropertyPanel: React.FC<NodePropertyPanelProps> = ({
                 value={localSqlMaxRows}
                 readOnly
               />
-            </div>
+            </div> */}
             <div className="flex flex-row mt-2"></div>
             <label>Output Table</label>
             <input
@@ -564,7 +564,7 @@ export const NodePropertyPanel: React.FC<NodePropertyPanelProps> = ({
             initialDbConnectionId={sqlModalData.dbConnectionId}
             initialSqlStmt={sqlModalData.sqlStmt}
             initialParams={sqlModalData.sqlParams}
-            initialMaxRows={sqlModalData.maxRows}
+            // initialMaxRows={sqlModalData.maxRows}
             initialOutputTableName={sqlModalData.outputTableName}
             onConfirm={handleSqlModalConfirm}
             onClose={handleSqlModalClose}
