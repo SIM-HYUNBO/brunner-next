@@ -1,6 +1,6 @@
 "use client";
 
-import { TabbedWorkflowEditor } from "../workflow/tabbedWorkflowEditor";
+import { TabbedWorkflowEditor } from "@/components/workflow/tabbedWorkflowEditor";
 import { useModal } from "@/components/core/client/brunnerMessageBox";
 
 export default function WorkflowContent() {
