@@ -727,6 +727,7 @@ export function registerBuiltInActions(): void {
           }
 
           const loopCurrentIndex = design.loopCurrentIndex ?? loopStartIndex;
+          node.data.design.loopCurrentIndex = loopCurrentIndex;
 
           if (loopCurrentIndex < loopLimitValue) {
             node.data.run.selectedPort = "true";
@@ -1064,10 +1065,7 @@ export async function executeWorkflow(
     nodeId: string,
     txContext: Map<string, TransactionContext> = new Map()
   ) {
-    var result = { error_code: -1, error_message: "" };
-
-    if (visitedNodes.has(nodeId)) return result;
-    visitedNodes.add(nodeId);
+    let result = { error_code: -1, error_message: "" };
 
     const node = nodesList.find((n: any) => n.id === nodeId);
     if (!node) return result;
@@ -1077,16 +1075,14 @@ export async function executeWorkflow(
     if (result.error_code != 0) return result;
 
     // 다음 노드 선택
-    const selectedPort = node.data.run?.selectedPort; // Branch/Loop 선택 포트
+    const selectedPort = node.data.run?.selectedPort;
+
     for (const edge of edgeMap[nodeId] || []) {
-      // Branch/Loop 노드일 때 selectedPort와 edge.sourceHandle 또는 edge.id 매칭
       if (selectedPort) {
-        if (edge.sourceHandle !== selectedPort && edge.id !== selectedPort) {
-          continue; // 선택된 포트와 다른 edge는 무시
-        }
+        if (edge.sourceHandle !== selectedPort && edge.id !== selectedPort)
+          continue;
       }
 
-      // 일반 condition 체크 (선택적)
       if (!edge.data?.condition || Boolean(edge.data.condition)) {
         result = await traverse(edge.target, txContext);
         if (result.error_code != 0) return result;
@@ -1124,7 +1120,7 @@ export async function saveWorkflow(
   workflowId: string,
   workflowData: any
 ) {
-  var result = { error_code: -1, error_message: "" };
+  var result = { error_code: -1, error_message: "", workflow_data: {} };
 
   var sql = await dynamicSql.getSQL00(`select_TB_COR_WORKFLOW_MST`, 1);
   var select_TB_COR_WORKFLOW_MST: any = await database.executeSQL(sql, [
@@ -1230,11 +1226,7 @@ export async function resetWorkflow(
   // 2️⃣ 워크플로우 run 초기화
   if (workflow.data?.run) {
     Object.keys(workflow.data.run).forEach((key) => {
-      if (key === "system") {
-        workflow.data.run.system = {}; // system 초기화
-      } else {
-        workflow.data.run[key] = []; // 나머지는 빈 배열
-      }
+      workflow.data.run[key] = {};
     });
   }
 
@@ -1243,7 +1235,7 @@ export async function resetWorkflow(
     workflow.nodes.forEach((node: any) => {
       if (node.data?.run) {
         Object.keys(node.data.run).forEach((key) => {
-          node.data.run[key] = [];
+          node.data.run[key] = {};
         });
       }
       node.data.status = constants.workflowRunStatus.idle; // 상태 초기화
@@ -1254,14 +1246,14 @@ export async function resetWorkflow(
   const saveResult = await saveWorkflow(
     systemCode,
     userId,
-    workflow.id,
+    workflow.workflowId,
     workflow
   );
   if (saveResult.error_code !== 0) {
     throw new Error(`워크플로우 초기화 저장 실패: ${saveResult.error_message}`);
   }
-
-  return workflow;
+  saveResult.workflow_data = workflow;
+  return saveResult;
 }
 
 export async function getWorkflowList(systemCode: string, userId: string) {

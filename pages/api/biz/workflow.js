@@ -6,6 +6,7 @@ import * as commonFunctions from "@/components/core/commonFunctions";
 import { DBConnectionManager } from "./workflow/dbConnectionManager";
 import * as workflowEngineServer from "./workflow/workflowEngineServer";
 import * as dynamicSql from "./dynamicSql";
+import { WorkflowDataModal } from "@/components/workflow/workflowDataModal";
 
 /**
  * Workflow 모듈의 서비스 실행 함수
@@ -307,35 +308,11 @@ const executeService = async (txnId, jRequest) => {
             throw new Error(result.error_message);
           }
 
-          const workflowData = result.workflow_data;
-
-          if (!workflowData) {
-            throw new Error(constants.messages.NO_DATA_FOUND);
-          }
-
-          // 2️⃣ 워크플로우 초기화
-          workflowData.nodes = workflowData.nodes.map((node) => ({
-            ...node,
-            data: {
-              ...node.data,
-              status: constants.workflowRunStatus.idle,
-              run: {
-                inputs: {},
-                outputs: [],
-              },
-            },
-          }));
-          workflowData.currentNodeId =
-            workflowData.nodes.find(
-              (n) => n.data.actionName === constants.workflowActions.START
-            )?.id ?? null;
-
-          // 3️⃣ DB에 업데이트
-          const saveResult = await workflowEngineServer.saveWorkflow(
+          // Reset
+          const saveResult = await workflowEngineServer.resetWorkflow(
+            result.workflow_data,
             systemCode,
-            userId,
-            workflowId,
-            workflowData
+            userId
           );
 
           if (saveResult.error_code !== 0) {
@@ -344,7 +321,7 @@ const executeService = async (txnId, jRequest) => {
 
           jResponse.error_code = saveResult.error_code;
           jResponse.error_message = constants.messages.SUCCESS_FINISHED;
-          jResponse.workflow_data = workflowData;
+          jResponse.workflow_data = saveResult.workflow_data;
         } catch (err) {
           jResponse.error_code = -1;
           jResponse.error_message = String(err.message || err);

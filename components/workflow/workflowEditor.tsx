@@ -594,6 +594,7 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
 
         // 서버에서 내려온 데이터 그대로 적용
         setCurrentWorkflow(workflowData);
+        setWorkflowOutputData(JSON.stringify(workflowData.data.run.outputs));
 
         openModal?.(constants.messages.SUCCESS_FINISHED);
       } else {
