@@ -1,7 +1,7 @@
 // tabbedWorkflowEditor.tsx
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { WorkflowEditor } from "../workflow/workflowEditor";
 import { useModal } from "@/components/core/client/brunnerMessageBox";
 
@@ -30,9 +30,11 @@ export function TabbedWorkflowEditor() {
   // 워크플로우 이름 변경 콜백
   const handleWorkflowChange = (workflowId: string, name: string) => {
     setTabs((prev) =>
-      prev.map((tab) => {
-        return { ...tab, workflowId: workflowId, workflowName: name }; // workflowId가 일치하면 무조건 덮어쓰기
-      })
+      prev.map((tab) => ({
+        ...tab,
+        workflowId, // 무조건 덮어쓰기
+        workflowName: name,
+      }))
     );
   };
 
@@ -43,6 +45,22 @@ export function TabbedWorkflowEditor() {
     setActiveTabId(newTabId);
   };
 
+  // 탭 닫기
+  const handleCloseTab = (tabId: string) => {
+    setTabs((prevTabs) => {
+      const newTabs = prevTabs.filter((tab) => tab.id !== tabId);
+
+      // 닫은 탭이 현재 액티브 탭이면, 새 액티브 탭 지정
+      if (tabId === activeTabId && newTabs.length > 0) {
+        setActiveTabId(newTabs[newTabs.length - 1]!.id); // 마지막 탭으로 전환
+      } else if (newTabs.length === 0) {
+        setActiveTabId(""); // 탭이 하나도 없으면 빈 문자열
+      }
+
+      return newTabs;
+    });
+  };
+
   return (
     <>
       <BrunnerMessageBox />
@@ -51,18 +69,27 @@ export function TabbedWorkflowEditor() {
         {/* 탭 바 */}
         <div className="flex border-b border-gray-300">
           {tabs.map((tab) => (
-            <button
+            <div
               key={tab.id}
-              className={`px-4 py-2 ${
-                tab.id === activeTabId
-                  ? "border-b-2 border-blue-500 font-bold"
-                  : ""
-              }`}
-              onClick={() => setActiveTabId(tab.id)}
+              className="flex items-center border-r border-gray-200"
             >
-              {/* {tab.workflowId} | */}
-              {tab.workflowName || "new workflow"}
-            </button>
+              <button
+                className={`px-4 py-2 ${
+                  tab.id === activeTabId
+                    ? "border-b-2 border-blue-500 font-bold"
+                    : ""
+                }`}
+                onClick={() => setActiveTabId(tab.id)}
+              >
+                {tab.workflowName}
+              </button>
+              <button
+                className="px-2 text-red-500 font-bold"
+                onClick={() => handleCloseTab(tab.id)}
+              >
+                ×
+              </button>
+            </div>
           ))}
 
           <button
