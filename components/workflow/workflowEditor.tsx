@@ -538,6 +538,8 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
         : JSON.stringify({ OUTPUT_TABLE: [] }, null, 2)
     );
 
+    setWorkflowOutputData(JSON.stringify(newVal.data.run.outputs, null, 2));
+
     stepCounterRef.current = 0;
     const snappedNodes = (newVal.nodes ?? []).map(
       (n: Node<ActionNodeData>) => ({
