@@ -159,7 +159,7 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
   workflowId: initialWorkflowId, // props에서 받은 workflowId
 }) => {
   const jWorkflow = useRef<any | null>(null);
-  const stepCounterRef = useRef(0);
+  // const stepCounterRef = useRef(0);
 
   const [workflowId, setWorkflowId] = useState<string | null>(
     initialWorkflowId || null
@@ -441,11 +441,6 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
     }
   }, [designedOutputData]);
 
-  const generateStepId = useCallback(() => {
-    stepCounterRef.current += 1;
-    return stepCounterRef.current.toString();
-  }, []);
-
   const onNodesChange = useCallback(
     (changes: NodeChange[]) =>
       setNodes((nds) => applyNodeChanges(changes, nds)),
@@ -459,7 +454,7 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
   );
 
   const onConnect = useCallback((connection: Connection) => {
-    const id = generateStepId();
+    const id = uuidv4();
     setEdges((eds) =>
       addEdge(
         {
@@ -480,7 +475,7 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
   );
 
   const addNode = () => {
-    const id = generateStepId();
+    const id = uuidv4();
     const randomPos = {
       x: Math.random() * 400 + 50,
       y: Math.random() * 400 + 50,
@@ -582,7 +577,6 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
 
     setWorkflowOutputData(JSON.stringify(newVal.data.run.outputs, null, 2));
 
-    stepCounterRef.current = 0;
     const snappedNodes = (newVal.nodes ?? []).map(
       (n: Node<ActionNodeData>) => ({
         ...n,

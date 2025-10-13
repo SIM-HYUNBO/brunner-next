@@ -44,7 +44,7 @@ export default function WorkflowSelector({
 
       {/* 선택된 워크플로우 표시 */}
       {localSelectedWorkflow && (
-        <div className="mt-3 text-gray-700">
+        <div className="mt-3 semi-text-bg-color">
           <b>{localSelectedWorkflow.workflowId}</b>
           <br />
           <b>{localSelectedWorkflow?.workflowName}</b>
