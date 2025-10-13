@@ -6,6 +6,7 @@ import * as constants from "@/components/core/constants";
 import RequestServer from "@/components/core/client/requestServer";
 import { JsonViewer } from "@textea/json-viewer";
 import copy from "copy-to-clipboard";
+import { getIsDarkMode } from "@/components/core/client/frames/darkModeToggleButton";
 
 interface WorkflowDataModalProps {
   workflowId: string;
@@ -94,10 +95,10 @@ export const WorkflowDataModal: React.FC<WorkflowDataModalProps> = ({
       minWidth={600}
       minHeight={400}
       bounds="window"
-      className="rounded-lg shadow-lg bg-white"
+      className="rounded-lg shadow-lg bg-white semi-text-bg-color z-[999]"
     >
       {/* 헤더 */}
-      <div className="flex justify-between items-center cursor-move p-2.5 bg-gray-200 rounded-t-lg">
+      <div className="flex justify-between items-center cursor-move p-2.5 rounded-t-lg">
         <h2 className="font-bold">
           Workflow JSON - {workflowId}
           {currentNodeId ? ` / Node: ${currentNodeId}` : ""}
@@ -107,13 +108,13 @@ export const WorkflowDataModal: React.FC<WorkflowDataModalProps> = ({
             onClick={() =>
               workflowData && copy(JSON.stringify(workflowData, null, 2))
             }
-            className="bg-blue-500 text-white px-3 py-1 rounded"
+            className="medium-text-bg-color px-3 py-1 rounded border"
           >
             Copy JSON
           </button>
           <button
             onClick={onClose}
-            className="bg-red-500 text-white px-3 py-1 rounded"
+            className="semi-text-bg-color px-3 py-1 rounded border"
           >
             Close
           </button>
@@ -123,12 +124,14 @@ export const WorkflowDataModal: React.FC<WorkflowDataModalProps> = ({
       {/* JSON 뷰어 */}
       <div
         ref={containerRef}
-        className="overflow-y-auto p-2.5 h-[calc(100%-48px)]"
+        className="overflow-y-auto p-2.5 h-[calc(100%-48px)] semi-text-bg-color"
       >
         {loading && <div>Loading...</div>}
         {error && <div className="text-red-500">{error}</div>}
         {workflowData && (
           <JsonViewer
+            className="general-text-bg-color"
+            theme={getIsDarkMode() ? "dark" : "light"}
             value={workflowData}
             defaultInspectDepth={2} // 모든 키 동일하게 2레벨까지만 펼침
           />
