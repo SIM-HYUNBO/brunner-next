@@ -321,7 +321,7 @@ export const JsonDatasetEditorModal: React.FC<JsonDatasetEditorModalProps> = ({
             <>
               <button
                 onClick={addTable}
-                className="px-2 py-1 border bg-green-200 rounded h-8"
+                className="px-2 py-1 border semi-text-bg-color rounded h-8"
               >
                 + Table
               </button>
@@ -343,7 +343,7 @@ export const JsonDatasetEditorModal: React.FC<JsonDatasetEditorModalProps> = ({
             <>
               {isSchemaMode ? (
                 <table className="table-auto border-collapse border w-full text-sm">
-                  <thead>
+                  <thead className="medium-text-bg-color">
                     <tr>
                       {columns.map((col) => (
                         <th
@@ -379,7 +379,7 @@ export const JsonDatasetEditorModal: React.FC<JsonDatasetEditorModalProps> = ({
                 </table>
               ) : (
                 <table className="table-auto border-collapse border w-full text-sm">
-                  <thead>
+                  <thead className="medium-text-bg-color">
                     <tr>
                       {columns.map((col) => (
                         <th key={col.name} className="border px-2 py-1">
@@ -439,7 +439,7 @@ export const JsonDatasetEditorModal: React.FC<JsonDatasetEditorModalProps> = ({
           </button>
           <button
             onClick={() => onConfirm({ ...internalData })}
-            className="px-4 py-2 border medium-text-bg-color"
+            className="px-4 py-2 border general-text-bg-color"
           >
             Apply
           </button>

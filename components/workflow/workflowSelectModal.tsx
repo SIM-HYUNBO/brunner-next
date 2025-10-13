@@ -128,15 +128,18 @@ const WorkflowSelectModal: React.FC<WorkflowSelectModalProps> = ({
 
         {/* 푸터 */}
         <div className="flex justify-end gap-2 border-t px-5 py-3">
-          <button onClick={onClose} className="px-4 py-2 text-sm rounded-md">
+          <button
+            onClick={onClose}
+            className="semi-text-bg-color px-4 py-2 text-sm rounded-md"
+          >
             Cancel
           </button>
           <button
             onClick={handleSelect}
             disabled={!selected}
-            className={`px-4 py-2 text-sm rounded-md`}
+            className={`px-4 py-2 text-sm rounded-md general-text-bg-color`}
           >
-            Open
+            Select
           </button>
         </div>
       </div>
