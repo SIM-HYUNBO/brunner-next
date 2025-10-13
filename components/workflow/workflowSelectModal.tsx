@@ -103,7 +103,7 @@ const WorkflowSelectModal: React.FC<WorkflowSelectModalProps> = ({
                     onClick={() => setSelected(wf)}
                     className={`cursor-pointer ${
                       selected?.id === wf.id
-                        ? "theme-medium-text-bg-color"
+                        ? "medium-text-bg-color"
                         : "semi-text-bg-color"
                     }`}
                   >

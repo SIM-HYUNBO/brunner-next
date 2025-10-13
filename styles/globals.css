@@ -92,6 +92,11 @@ neutral, stone
     background-color: var(--theme-semi-bg);
   }
 
+  .medium-text-bg-color {
+    color: var(--theme-medium-text);
+    background-color: var(--theme-medium-bg);
+  }
+
   .general-text-color {
     color: var(--general-text-color);
   }
