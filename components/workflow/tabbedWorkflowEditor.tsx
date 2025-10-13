@@ -98,7 +98,7 @@ export function TabbedWorkflowEditor() {
               handleAddTab(`wf-${tabs.length + 1}`, "new workflow")
             }
           >
-            + 새 탭
+            + Tab
           </button>
         </div>
 

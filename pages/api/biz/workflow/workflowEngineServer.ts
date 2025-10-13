@@ -73,10 +73,8 @@ export function evalCondition(cond: any, workflowData: any) {
 }
 
 const nodeActionLogging = (node: Node<any>, stepInputs: WorkflowContext) => {
-  console.log(
-    `Execute Node [${node.id}] Inputs:`,
-    JSON.stringify(node.data, null, 2)
-  );
+  logger.info(`Execute Node [${node.id}:${node.data.label}]`);
+  // console.log(`Inputs:`, JSON.stringify(node.data, null, 2));
 };
 
 const preNodeCheck = (node: Node<any>, workflowData: any) => {
@@ -1118,8 +1116,6 @@ export async function executeWorkflow(
     if (!edgeMap[e.source]) edgeMap[e.source] = [];
     edgeMap[e.source]?.push(e);
   });
-
-  const visitedNodes = new Set<string>();
 
   async function traverse(
     nodeId: string,
