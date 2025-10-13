@@ -224,7 +224,8 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
   }, [workflowOutputData]);
 
   const [isRightPanelOpen, setIsRightPanelOpen] = useState(false);
-  const [isWorkflowDataModalOpen, setIsWorkflowDataModalOpen] = useState(false);
+  const [isViewWorkflowDataModalOpen, setIsViewWorkflowDataModalOpen] =
+    useState(false);
   const [openAccordionItems, setOpenAccordionItems] = useState<string[]>([
     "Workflow Info",
   ]);
@@ -304,7 +305,10 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
     useState(false);
   const [isDBConnectionsModalOpen, setIsDBConnectionsModalOpen] =
     useState(false);
-  const [selectedNodeScript, setSelectedNodeScript] = useState<string>("");
+
+  // SCRIPT 노드 속성
+  const [selectedNodeScriptContents, setSelectedNodeScriptContents] =
+    useState<string>("");
   const [selectedNodeTimeoutMs, setSelectedNodeTimeoutMs] = useState(5000);
 
   // 모바일
@@ -327,22 +331,46 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
 
   // 선택 노드 변경 시
   useEffect(() => {
+    syncSelectedNode(selectedNode);
+  }, [selectedNode]);
+
+  // 선택 노드에 대한 동기화 작업
+  const syncSelectedNode = (selectedNode: any) => {
     if (!selectedNode) {
-      setSelectedNodeScript("");
+      setSelectedNodeScriptContents("");
       setSelectedNodeTimeoutMs(5000);
       return;
     }
 
-    if (selectedNode.data.actionName === constants.workflowActions.SCRIPT) {
-      setSelectedNodeScript(selectedNode.data.design.scriptContents ?? "");
-      setSelectedNodeTimeoutMs(
-        selectedNode.data.design.scriptTimeoutMs ?? 5000
-      );
-    } else {
-      setSelectedNodeScript(""); // 스크립트 노드가 아니면 초기화
-      setSelectedNodeTimeoutMs(0);
+    switch (selectedNode.data.actionName) {
+      case constants.workflowActions.START:
+        setSelectedNodeScriptContents(""); // 스크립트 노드가 아니면 초기화
+        setSelectedNodeTimeoutMs(0);
+        break;
+      case constants.workflowActions.END:
+        setSelectedNodeScriptContents(""); // 스크립트 노드가 아니면 초기화
+        setSelectedNodeTimeoutMs(0);
+        break;
+      case constants.workflowActions.SCRIPT:
+        setSelectedNodeScriptContents(
+          selectedNode.data.design.scriptContents ?? ""
+        );
+        setSelectedNodeTimeoutMs(
+          selectedNode.data.design.scriptTimeoutMs ?? 5000
+        );
+        break;
+      case constants.workflowActions.BRANCH:
+        setSelectedNodeScriptContents(""); // 스크립트 노드가 아니면 초기화
+        setSelectedNodeTimeoutMs(0);
+        break;
+      case constants.workflowActions.CALL:
+        setSelectedNodeScriptContents(""); // 스크립트 노드가 아니면 초기화
+        setSelectedNodeTimeoutMs(0);
+        break;
+      default:
+        break;
     }
-  }, [selectedNode]);
+  };
 
   useEffect(() => {
     if (!jWorkflow.current) return;
@@ -719,7 +747,7 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
           </button>
           <button
             className="w-full border border-black ml-1 semi-text-bg-color hover:bg-gray-400"
-            onClick={() => setIsWorkflowDataModalOpen(true)}
+            onClick={() => setIsViewWorkflowDataModalOpen(true)}
           >
             View Data
           </button>
@@ -1114,7 +1142,7 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
                       workflowDescription={workflowDescription}
                       node={selectedNode}
                       nodes={nodes}
-                      scriptContents={selectedNodeScript}
+                      scriptContents={selectedNodeScriptContents}
                       scriptTimeoutMs={selectedNodeTimeoutMs}
                       onWorkflowUpdate={(updates) => {
                         if (updates.workflowName !== undefined)
@@ -1174,11 +1202,11 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
         </div>
 
         {/* WorkflowDataModal */}
-        {isWorkflowDataModalOpen && workflowId && (
+        {isViewWorkflowDataModalOpen && workflowId && (
           <WorkflowDataModal
             workflowId={workflowId}
-            open={isWorkflowDataModalOpen}
-            onClose={() => setIsWorkflowDataModalOpen(false)}
+            open={isViewWorkflowDataModalOpen}
+            onClose={() => setIsViewWorkflowDataModalOpen(false)}
           />
         )}
 

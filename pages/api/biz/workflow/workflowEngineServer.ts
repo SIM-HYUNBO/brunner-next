@@ -189,26 +189,79 @@ export function registerBuiltInActions(): void {
   // CALL 노드
   registerAction(
     constants.workflowActions.CALL,
-    async (node, workflowData, txContext) => {
+    async (
+      node: any,
+      workflowData: any,
+      txContext: Map<string, TransactionContext>
+    ) => {
       var result = { error_code: -1, error_message: "" };
+      try {
+        if (!node) {
+          result.error_code = -1;
+          result.error_message = constants.messages.NO_DATA_FOUND;
+          return result;
+        }
 
-      if (!node) {
-        result.error_code = -1;
-        result.error_message = constants.messages.NO_DATA_FOUND;
-        return result;
-      }
+        if (!preNodeCheck(node, workflowData)) {
+          postNodeCheck(node, workflowData);
+          result.error_code = -1;
+          result.error_message = `[${node.data.label}] node check result is invalid.`;
+          return result;
+        } // 실행할 다른 워크플로우 정보
 
-      if (!preNodeCheck(node, workflowData)) {
+        const { targetWorkflowId, targetWorkflowName } = node.data.design;
+        if (!targetWorkflowId) {
+          throw new Error("CALL node targetWorkflowId is not defined.");
+        }
+
+        // 하위 워크플로우 가져오기
+        const subWorkflowResult = await getWorkflowById(
+          process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE!, // 동일 시스템 코드 사용
+          targetWorkflowId
+        );
+
+        if (subWorkflowResult?.error_code !== 0) {
+          throw new Error(`Target workflow not found: ${targetWorkflowId}`);
+        }
+
+        // 타입 가드
+        if (
+          "workflow_data" in subWorkflowResult &&
+          subWorkflowResult.workflow_data
+        ) {
+          const subWorkflow: any = subWorkflowResult.workflow_data;
+          result = await resetWorkflow(
+            subWorkflow,
+            process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE!,
+            workflowData.userId
+          );
+          if (result.error_code != 0) {
+            return result;
+          }
+          subWorkflow.data = subWorkflow.data || {};
+          subWorkflow.data.run = subWorkflow.data.run || {};
+          subWorkflow.data.run.inputs = node.data.run.inputs;
+
+          // 호출시 전달할 input data
+          result = await executeWorkflow(subWorkflow, txContext, true);
+          node.data.run.outputs = subWorkflow.data.run.outputs || {};
+          if (result.error_code != 0) {
+            throw new Error(result.error_message);
+          }
+        } else {
+          throw new Error(
+            `Target workflow not found or invalid: ${targetWorkflowId}`
+          );
+        }
+
         postNodeCheck(node, workflowData);
+        return result;
+      } catch (err: any) {
+        console.error(`[CALL Node ERROR]`, err);
         result.error_code = -1;
-        result.error_message = `[${node.data.label}] node check result is invalid.`;
+        result.error_message = `[${node?.data?.label}] ${err.message}`;
         return result;
       }
-
-      postNodeCheck(node, workflowData);
-      result.error_code = 0;
-      result.error_message = constants.messages.SUCCESS_FINISHED;
-      return result;
     }
   );
 
@@ -1050,9 +1103,10 @@ export function initializeWorkflowEngine() {
 // ---------------------------
 export async function executeWorkflow(
   workflow: any,
-  txContext: Map<string, TransactionContext> = new Map()
+  txContext: Map<string, TransactionContext> = new Map(),
+  isSubWorkflow = false // 하위 워크플로우 여부
 ) {
-  var result = { error_code: -1, error_message: "" };
+  let result = { error_code: -1, error_message: "" };
 
   const nodesList = workflow.nodes;
   const edgesList = workflow.edges;
@@ -1069,7 +1123,8 @@ export async function executeWorkflow(
 
   async function traverse(
     nodeId: string,
-    txContext: Map<string, TransactionContext> = new Map()
+    txContext: Map<string, TransactionContext> = new Map(),
+    isSubWorkflow = false
   ) {
     let result = { error_code: -1, error_message: "" };
 
@@ -1090,11 +1145,11 @@ export async function executeWorkflow(
       }
 
       if (!edge.data?.condition || Boolean(edge.data.condition)) {
-        result = await traverse(edge.target, txContext);
+        // 하위 워크플로우는 isSub=true
+        result = await traverse(edge.target, txContext, isSubWorkflow);
         if (result.error_code != 0) return result;
       }
     }
-
     return result;
   }
 
@@ -1103,9 +1158,8 @@ export async function executeWorkflow(
   );
   if (!startNode) throw new Error("Start node not found");
 
-  return await traverse(startNode.id, txContext);
+  return await traverse(startNode.id, txContext, isSubWorkflow);
 }
-
 // ---------------------------
 // 5️⃣ 노드 단위 실행
 // ---------------------------
@@ -1256,7 +1310,7 @@ export async function resetWorkflow(
     workflow
   );
   if (saveResult.error_code !== 0) {
-    throw new Error(`워크플로우 초기화 저장 실패: ${saveResult.error_message}`);
+    throw new Error(`${saveResult.error_message}`);
   }
   saveResult.workflow_data = workflow;
   return saveResult;

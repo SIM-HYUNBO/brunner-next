@@ -11,6 +11,7 @@ import type { JsonColumnType } from "@/components/workflow/jsonDatasetEditorModa
 import { NodePropertyEditor } from "@/components/workflow/nodePropertyEditor";
 import { ScriptEditorModal } from "@/components/workflow/scriptEditorModal";
 import { SqlEditorModal } from "./sqlEditorModal";
+import WorkflowSelectModal from "@/components/workflow/workflowSelectModal";
 
 import type { ScriptNodeDesignData } from "./types/nodeTypes";
 import type { SqlNodeDesignData } from "./types/nodeTypes";
@@ -64,13 +65,14 @@ export const NodePropertyPanel: React.FC<NodePropertyPanelProps> = ({
   // SQL 노드
   const [localSqlStmt, setLocalSqlStmt] = useState("");
   const [localDBConnectionId, setLocalDBConnectionId] = useState("");
-  // const [localSqlMaxRows, setLocalMaxRows] = useState(0);
   const [localSqlOutputTableName, setLocalSqlOutputTableName] = useState("");
-
   const [isSqlModalOpen, setIsSqlModalOpen] = useState(false);
   const [sqlModalData, setSqlModalData] = useState<SqlNodeDesignData | null>(
     null
   );
+
+  // CALL 노드
+  const [workflowSelectModalOpen, setWorkflowSelectModalOpen] = useState(false);
 
   const prevActionName = useRef<string>("");
 
@@ -94,25 +96,23 @@ export const NodePropertyPanel: React.FC<NodePropertyPanelProps> = ({
 
   // 🧠 노드 변경 시 입력/출력 초기화
   useEffect(() => {
-    if (!node || node.data.actionName !== constants.workflowActions.SCRIPT)
-      return;
+    if (!node) return;
 
-    const action = node.data.actionName;
-    setActionName(action);
+    setActionName(node.data.actionName);
 
-    const defaultInputs = commmonFunctions.getDefaultInputs?.(action) ?? [];
-    const defaultOutputs = commmonFunctions.getDefaultOutputs?.(action) ?? [];
+    const defaultInputs =
+      commmonFunctions.getDefaultInputs?.(node.data.actionName) ?? [];
+    const defaultOutputs =
+      commmonFunctions.getDefaultOutputs?.(node.data.actionName) ?? [];
 
-    if (prevActionName.current !== action) {
-      setInputs(defaultInputs);
-      setOutputs(defaultOutputs);
-      prevActionName.current = action;
-    } else if (
+    if (
+      prevActionName.current !== node.data.actionName ||
       !node.data.design?.inputs ||
       node.data.design.inputs.length === 0
     ) {
       setInputs(defaultInputs);
       setOutputs(defaultOutputs);
+      prevActionName.current = node.data.actionName;
     } else {
       setInputs(node.data.design.inputs);
       setOutputs(node.data.design.outputs);
@@ -170,17 +170,6 @@ export const NodePropertyPanel: React.FC<NodePropertyPanelProps> = ({
         0
     );
 
-    // Branch 노드일 경우 추가 동기화
-    if (latestNode.data.actionName === constants.workflowActions.BRANCH) {
-      const design = latestNode.data.design || {};
-      // 분기(Branch)모드 condition / 반복(Loop)모드 변수값 동기화
-      if (design.mode === constants.workflowBranchNodeMode.Branch) {
-        // condition만 있음
-        // localCondition, localLoop* 은 BranchNodeProperties 내부 state 이므로,
-        // 해당 컴포넌트 내에서도 유사 useEffect 가 있어야 함
-      }
-    }
-
     // SCRIPT 노드
     if (latestNode.data.actionName === constants.workflowActions.SCRIPT) {
       setLocalScript(latestNode.data.design?.scriptContents ?? "");
@@ -189,17 +178,17 @@ export const NodePropertyPanel: React.FC<NodePropertyPanelProps> = ({
 
     // SQL 노드
     if (latestNode.data.actionName === constants.workflowActions.SQL) {
-      const d = latestNode.data.design || {};
-      setLocalSqlStmt(d.sqlStmt ?? "");
-      setLocalDBConnectionId(d.dbConnectionId ?? "");
+      const design = latestNode.data.design || {};
+      setLocalSqlStmt(design.sqlStmt ?? "");
+      setLocalDBConnectionId(design.dbConnectionId ?? "");
       // setLocalMaxRows(d.maxRows ?? 0);
-      setLocalSqlOutputTableName(d.outputTableName);
+      setLocalSqlOutputTableName(design.outputTableName);
       setSqlModalData({
-        sqlStmt: d.sqlStmt ?? "",
-        dbConnectionId: d.dbConnectionId ?? "",
-        sqlParams: d.sqlParams ?? [],
+        sqlStmt: design.sqlStmt ?? "",
+        dbConnectionId: design.dbConnectionId ?? "",
+        sqlParams: design.sqlParams ?? [],
         // maxRows: d.maxRows ?? 0,
-        outputTableName: d.outputTableName ?? "",
+        outputTableName: design.outputTableName ?? "",
       });
     }
   }, [nodes]);
@@ -523,6 +512,49 @@ export const NodePropertyPanel: React.FC<NodePropertyPanelProps> = ({
     );
   };
 
+  const CallNodeProperties = ({ node, onNodeUpdate }: any) => {
+    const [selectedWorkflowId, setSelectedWorkflowId] = useState<string>(
+      node.data.design?.targetWorkflowId || ""
+    );
+
+    const handleSelectWorkflow = (workflow: any) => {
+      if (workflow.id === workflowId) {
+        openModal(constants.messages.WORKFLOW_INVALID_SELF_CALL);
+      }
+
+      setSelectedWorkflowId(workflow.id);
+      onNodeUpdate?.(node.id, {
+        design: {
+          ...node.data.design,
+          targetWorkflowId: workflow.id,
+          targetWorkflowName: workflow.workflow_data.workflowName,
+        },
+      });
+    };
+
+    return (
+      <>
+        <button
+          onClick={() => setWorkflowSelectModalOpen(true)}
+          className="p-2 rounded-md semi-text-bg-color"
+        >
+          Select ...
+        </button>
+        <div className="flex flex-col gap-3 mt-2">
+          <label className="text-sm font-semibold">
+            Target Workflow: {selectedWorkflowId}
+          </label>
+          {/* 워크플로우 선택 모달 */}
+          <WorkflowSelectModal
+            open={workflowSelectModalOpen}
+            onClose={() => setWorkflowSelectModalOpen(false)}
+            onSelect={handleSelectWorkflow}
+          />
+        </div>
+      </>
+    );
+  };
+
   // 🧩 실제 렌더링
   return (
     <div style={{ padding: 10 }}>
@@ -568,6 +600,9 @@ export const NodePropertyPanel: React.FC<NodePropertyPanelProps> = ({
         )}
         {node && node.data.actionName === constants.workflowActions.BRANCH && (
           <BranchNodeProperties node={node} />
+        )}
+        {node && node.data.actionName === constants.workflowActions.CALL && (
+          <CallNodeProperties node={node} onNodeUpdate={onNodeUpdate} />
         )}
       </div>
 

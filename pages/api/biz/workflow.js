@@ -257,7 +257,8 @@ const executeService = async (txnId, jRequest) => {
             // System 모드: 전체 워크플로우 실행
             result = await workflowEngineServer.executeWorkflow(
               workflowData,
-              txInstances
+              txInstances,
+              false
             );
 
             if (result.error_code != 0) {

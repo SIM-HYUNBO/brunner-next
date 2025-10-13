@@ -110,6 +110,9 @@ export const NodePropertyEditor: React.FC<NodePropertyEditorProps> = ({
       design.sqlParams = [];
       // design.maxRows = 0;
       design.outputTableName = "";
+    } else if (newAction === constants.workflowActions.CALL) {
+      design.targetWorkflowId = "";
+      design.targetWorkflowName = "";
     }
 
     // 노드 업데이트

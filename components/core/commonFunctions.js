@@ -170,6 +170,8 @@ export function getDefaultInputs(actionName) {
       return [{ table: "INDATA", columns: [], rows: [] }];
     case constants.workflowActions.BRANCH:
       return [];
+    case constants.workflowActions.CALL:
+      return [{ table: "INDATA", columns: [], rows: [] }];
     default:
       throw new Error(constants.messages.WORKFLOW_NOT_SUPPORTED_NODE_TYPE);
   }
