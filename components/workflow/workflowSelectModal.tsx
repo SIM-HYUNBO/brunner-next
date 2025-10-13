@@ -73,7 +73,7 @@ const WorkflowSelectModal: React.FC<WorkflowSelectModalProps> = ({
       onClick={onClose}
     >
       <div
-        className="rounded-lg shadow-lg w-[700px] max-h-[80vh] flex flex-col"
+        className="semi-text-bg-color rounded-lg shadow-lg w-[700px] max-h-[80vh] flex flex-col"
         onClick={(e) => e.stopPropagation()} // 모달 내부 클릭시 닫히지 않게
       >
         {/* 헤더 */}
@@ -91,7 +91,7 @@ const WorkflowSelectModal: React.FC<WorkflowSelectModalProps> = ({
           ) : (
             <table className="min-w-full border-collapse text-sm">
               <thead className="bg-gray-100 sticky top-0">
-                <tr>
+                <tr className="medium-text-bg-color">
                   <th className="px-4 py-2 text-left border-b">ID</th>
                   <th className="px-4 py-2 text-left border-b">데이터</th>
                 </tr>
@@ -103,8 +103,8 @@ const WorkflowSelectModal: React.FC<WorkflowSelectModalProps> = ({
                     onClick={() => setSelected(wf)}
                     className={`cursor-pointer ${
                       selected?.id === wf.id
-                        ? "semi-text-bg-color"
-                        : "general-text-bg-color"
+                        ? "theme-medium-text-bg-color"
+                        : "semi-text-bg-color"
                     }`}
                   >
                     <td className="px-4 py-2 border-b">{wf.id}</td>
