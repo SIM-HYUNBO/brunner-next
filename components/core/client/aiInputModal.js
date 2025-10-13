@@ -232,7 +232,7 @@ export default function AIInputModal({
                              text-white 
                              hover:bg-gray-600"
           >
-            닫기
+            Close
           </button>
           <button
             onClick={handleRequest}

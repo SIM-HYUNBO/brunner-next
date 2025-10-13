@@ -37,7 +37,7 @@ const CellEditor: React.FC<{
           setCellValue(e.target.value);
           onUpdate(e.target.value === "true");
         }}
-        className="w-full border-none outline-none bg-white"
+        className="w-full border-none outline-none semi-text-bg-color"
       >
         <option value="true">true</option>
         <option value="false">false</option>
@@ -52,7 +52,7 @@ const CellEditor: React.FC<{
       onChange={(e) => setCellValue(e.target.value)}
       onBlur={commitChange}
       onKeyDown={(e) => e.key === "Enter" && commitChange()}
-      className="w-full border-none outline-none bg-white"
+      className="w-full border-none outline-none semi-text-bg-color"
     />
   );
 };
@@ -277,12 +277,12 @@ export const JsonDatasetEditorModal: React.FC<JsonDatasetEditorModalProps> = ({
 
   return (
     <div
-      className="fixed inset-0 bg-black bg-opacity-50 z-50"
+      className="fixed inset-0 z-50 general-text-bg-color"
       onClick={onCancel}
     >
       <div
         ref={modalRef}
-        className="bg-white p-4 absolute shadow-lg border border-gray-400 flex flex-col"
+        className="semi-text-bg-color p-4 absolute shadow-lg flex flex-col"
         style={{
           left: pos.x,
           top: pos.y,
@@ -293,7 +293,7 @@ export const JsonDatasetEditorModal: React.FC<JsonDatasetEditorModalProps> = ({
       >
         {/* 헤더 (드래그 가능 영역) */}
         <div
-          className="flex justify-between mb-2 cursor-move select-none bg-gray-100 px-2 py-1"
+          className="flex justify-between mb-2 cursor-move select-none px-2 py-1"
           onMouseDown={startDrag}
         >
           <h3 className="font-semibold">
@@ -309,7 +309,9 @@ export const JsonDatasetEditorModal: React.FC<JsonDatasetEditorModalProps> = ({
               onClick={() => setSelectedTable(key)}
               onDoubleClick={() => renameTable(key)}
               className={`mr-2 mb-2 px-2 py-1 border rounded ${
-                key === selectedTable ? "bg-blue-200" : "bg-white"
+                key === selectedTable
+                  ? "medium-text-bg-color"
+                  : "semi-text-bg-color"
               }`}
             >
               {key}
@@ -326,7 +328,7 @@ export const JsonDatasetEditorModal: React.FC<JsonDatasetEditorModalProps> = ({
               {selectedTable && (
                 <button
                   onClick={() => removeTable(selectedTable)}
-                  className="px-2 py-1 border bg-red-200 rounded ml-1 h-8"
+                  className="px-2 py-1 border semi-text-bg-color rounded ml-1 h-8"
                 >
                   Delete
                 </button>
@@ -346,7 +348,7 @@ export const JsonDatasetEditorModal: React.FC<JsonDatasetEditorModalProps> = ({
                       {columns.map((col) => (
                         <th
                           key={col.name}
-                          className="border px-2 py-1 bg-gray-300"
+                          className="border px-2 py-1 semi-text-bg-color"
                         >
                           {col.name} ({col.type})
                           <button
@@ -358,17 +360,14 @@ export const JsonDatasetEditorModal: React.FC<JsonDatasetEditorModalProps> = ({
                         </th>
                       ))}
                       <th className="border px-2 py-1">
-                        <button
-                          onClick={addColumn}
-                          className="bg-green-200 px-1"
-                        >
+                        <button onClick={addColumn} className="px-1">
                           + Column
                         </button>
                       </th>
                     </tr>
                   </thead>
                   <tbody>
-                    <tr>
+                    <tr className="semi-text-bg-color">
                       {columns.map((col) => (
                         <td key={col.name} className="border px-2 py-1">
                           {String(getDefaultValue(col.type as JsonColumnType))}
@@ -383,10 +382,7 @@ export const JsonDatasetEditorModal: React.FC<JsonDatasetEditorModalProps> = ({
                   <thead>
                     <tr>
                       {columns.map((col) => (
-                        <th
-                          key={col.name}
-                          className="border px-2 py-1 bg-gray-300"
-                        >
+                        <th key={col.name} className="border px-2 py-1">
                           {col.name} ({col.type})
                         </th>
                       ))}
@@ -397,7 +393,10 @@ export const JsonDatasetEditorModal: React.FC<JsonDatasetEditorModalProps> = ({
                     {manager.getTable(selectedTable)?.map((row, i) => (
                       <tr key={i}>
                         {columns.map((col) => (
-                          <td key={col.name} className="border px-2 py-1">
+                          <td
+                            key={col.name}
+                            className="semi-text-bg-color border px-2 py-1"
+                          >
                             <CellEditor
                               initialValue={row[col.name]}
                               colType={col.type as JsonColumnType}
@@ -408,7 +407,7 @@ export const JsonDatasetEditorModal: React.FC<JsonDatasetEditorModalProps> = ({
                         <td className="border px-2 py-1">
                           <button
                             onClick={() => removeRow(i)}
-                            className="bg-red-200 px-1"
+                            className="px-1 text-red-400"
                           >
                             Del
                           </button>
@@ -421,7 +420,7 @@ export const JsonDatasetEditorModal: React.FC<JsonDatasetEditorModalProps> = ({
               {isDataMode && (
                 <button
                   onClick={addRow}
-                  className="bg-green-200 px-2 py-1 mt-1 rounded"
+                  className="px-2 py-1 mt-1 rounded medium-text-bg-color border"
                 >
                   + Row
                 </button>
@@ -432,12 +431,15 @@ export const JsonDatasetEditorModal: React.FC<JsonDatasetEditorModalProps> = ({
 
         {/* 하단 버튼 */}
         <div className="flex justify-end mt-4 space-x-2">
-          <button onClick={onCancel} className="px-4 py-2 border bg-gray-300">
+          <button
+            onClick={onCancel}
+            className="px-4 py-2 border medium-text-bg-color"
+          >
             Close
           </button>
           <button
             onClick={() => onConfirm({ ...internalData })}
-            className="px-4 py-2 border bg-blue-300"
+            className="px-4 py-2 border medium-text-bg-color"
           >
             Apply
           </button>
@@ -446,7 +448,7 @@ export const JsonDatasetEditorModal: React.FC<JsonDatasetEditorModalProps> = ({
         {/* 크기조절 핸들 */}
         <div
           onMouseDown={startResize}
-          className="absolute w-4 h-4 bg-gray-400 bottom-0 right-0 cursor-se-resize"
+          className="absolute w-4 h-4 bottom-0 right-0 cursor-se-resize"
         />
       </div>
     </div>

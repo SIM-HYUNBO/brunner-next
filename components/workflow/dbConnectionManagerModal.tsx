@@ -191,7 +191,7 @@ export const DBConnectionManagerModal: React.FC<
                 onClick={() => onOpenChange(false)}
                 className="px-2 py-1 rounded bg-gray-200 hover:bg-gray-300"
               >
-                닫기
+                Close
               </button>
             </div>
 

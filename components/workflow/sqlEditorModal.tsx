@@ -169,7 +169,7 @@ export const SqlEditorModal: React.FC<SqlEditorModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center">
+    <div className="fixed inset-0 flex items-center justify-center z-[9999]">
       <div
         ref={dragRef}
         className="absolute semi-text-bg-color rounded shadow-lg flex flex-col"
@@ -191,13 +191,13 @@ export const SqlEditorModal: React.FC<SqlEditorModalProps> = ({
             document.body.style.userSelect = "none";
           }}
         >
-          <div className="font-semibold">SQL 편집기 & 파라미터</div>
+          <div className="font-semibold">SQL Editor</div>
           <div className="flex gap-2">
             <button
               className="px-2 py-1 border rounded text-sm"
               onClick={() => setShowParamsPanel((s) => !s)}
             >
-              {showParamsPanel ? "Close params." : "View params"}
+              {showParamsPanel ? "Hide params." : "View params"}
             </button>
           </div>
         </div>
@@ -205,7 +205,7 @@ export const SqlEditorModal: React.FC<SqlEditorModalProps> = ({
         {/* 상단 입력 */}
         <div className="flex gap-4 p-3 border-b">
           <div className="flex flex-col">
-            <label>DB 연결 ID</label>
+            <label>DB Connection ID</label>
             <Input
               value={dbConnectionId}
               onChange={(e) => setDbConnectionId(e.target.value)}
@@ -241,7 +241,7 @@ export const SqlEditorModal: React.FC<SqlEditorModalProps> = ({
         <div className="flex flex-1 overflow-hidden">
           {/* SQL editor */}
           <div className="flex-1 flex flex-col p-3 min-w-0">
-            <label>SQL 문</label>
+            <label>SQL Statement</label>
             <div className="flex-1 border rounded overflow-hidden">
               <CodeMirror
                 value={sqlStmt}
@@ -325,7 +325,7 @@ export const SqlEditorModal: React.FC<SqlEditorModalProps> = ({
 
         {/* footer */}
         <div className="p-3 border-t flex justify-end gap-2">
-          <Button onClick={onClose}>닫기</Button>
+          <Button onClick={onClose}>Close</Button>
           <Button type="primary" onClick={handleSave}>
             Save
           </Button>

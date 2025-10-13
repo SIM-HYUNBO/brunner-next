@@ -645,7 +645,7 @@ export default function EDocDesignerContainer({
                         dark:hover:medium-bg-color"
               onClick={() => setShowDocumentListModal(false)}
             >
-              닫기
+              Close
             </button>
           </div>
         </div>

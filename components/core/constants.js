@@ -132,7 +132,7 @@ export const workflowActions = {
   SCRIPT: "Java Script",
   SQL: "SQL",
   BRANCH: "Branch",
-  CALL: "CallWorkflow",
+  CALL: "Call Workflow",
 };
 
 export const workflowRunStatus = {

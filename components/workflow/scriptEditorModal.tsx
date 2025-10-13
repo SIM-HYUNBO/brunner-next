@@ -79,9 +79,9 @@ export const ScriptEditorModal: React.FC<ScriptEditorModalProps> = ({
   if (!open) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+    <div className="general-text-bg-color fixed inset-0 flex justify-center items-center">
       <div
-        className="bg-white rounded shadow-lg flex flex-col border border-gray-400"
+        className="semi-text-bg-color rounded shadow-lg flex flex-col border border-gray-400"
         style={{
           width,
           height,
@@ -94,7 +94,7 @@ export const ScriptEditorModal: React.FC<ScriptEditorModalProps> = ({
       >
         {/* 제목바 (드래그 이동 가능) */}
         <div
-          className="text-lg font-bold p-2 border-b bg-gray-200 cursor-move select-none"
+          className="semi-text-bg-color font-bold p-2 border-b bg-gray-200 cursor-move select-none"
           onMouseDown={(e) => {
             isDragging.current = true;
             lastPos.current = { x: e.clientX, y: e.clientY };
@@ -105,7 +105,7 @@ export const ScriptEditorModal: React.FC<ScriptEditorModalProps> = ({
         </div>
 
         {/* 본문 */}
-        <div className="flex-1 p-2 flex flex-col overflow-hidden">
+        <div className="semi-text-bg-color flex-1 p-2 flex flex-col overflow-hidden">
           <label className="block mt-1 text-sm font-semibold">Script:</label>
           <div className="flex-1 border rounded overflow-hidden">
             <CodeMirror
@@ -130,7 +130,7 @@ export const ScriptEditorModal: React.FC<ScriptEditorModalProps> = ({
         </div>
 
         {/* 버튼들 */}
-        <div className="p-2 flex justify-end gap-2 border-t bg-gray-100">
+        <div className="semi-text-bg-color p-2 flex justify-end gap-2 border-t">
           <button
             className="px-3 py-1 border rounded bg-blue-600 text-white hover:bg-blue-700"
             onClick={handleSave}
@@ -138,10 +138,10 @@ export const ScriptEditorModal: React.FC<ScriptEditorModalProps> = ({
             Save
           </button>
           <button
-            className="px-3 py-1 border rounded bg-gray-300 hover:bg-gray-400"
+            className="px-3 py-1 border rounded bg-red-400 hover:bg-gray-400"
             onClick={onClose}
           >
-            Cancel
+            Close
           </button>
           <button
             className="px-3 py-1 border rounded bg-green-500 text-white hover:bg-green-600"
