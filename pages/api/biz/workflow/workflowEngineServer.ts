@@ -407,8 +407,9 @@ export function registerBuiltInActions(): void {
         now: (): Date => new Date(),
         postJson: async (url: string, body: any): Promise<any> => {
           const agent = new https.Agent({ rejectUnauthorized: false });
+
           const res = await axios.post(url, body, {
-            httpAgent: agent,
+            httpsAgent: agent,
             headers: { "Content-Type": "application/json" },
           });
           return await res.data;
