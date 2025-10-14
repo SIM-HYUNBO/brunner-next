@@ -13,6 +13,8 @@ import type { PoolClient } from "pg";
 import type { PoolConnection } from "mysql2/promise";
 import type * as mssqlType from "mssql";
 import type * as oracleType from "oracledb";
+import https from "https";
+import axios from "axios";
 
 type MssqlConnectionPool = {
   request: () => {
@@ -364,7 +366,7 @@ export function registerBuiltInActions(): void {
 
       const userScript = node.data.design.scriptContents || "";
 
-      const timeoutMs: number = node.data.design.timeoutMs || 5000;
+      const timeoutMs: number = node.data.design.timeoutMs || 50000;
 
       // 유틸 함수들 타입 명시
       function getByPath(obj: Record<string, any>, path: string): any {
@@ -404,12 +406,12 @@ export function registerBuiltInActions(): void {
         },
         now: (): Date => new Date(),
         postJson: async (url: string, body: any): Promise<any> => {
-          const res = await fetch(url, {
-            method: constants.httpMethod.POST,
+          const agent = new https.Agent({ rejectUnauthorized: false });
+          const res = await axios.post(url, body, {
+            httpAgent: agent,
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(body),
           });
-          return await res.json();
+          return await res.data;
         },
         random: (min: number = 0, max: number = 1): number =>
           Math.random() * (max - min) + min,
