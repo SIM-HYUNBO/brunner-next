@@ -183,20 +183,32 @@ export const DBConnectionManagerModal: React.FC<
             className="semi-text-bg-color rounded-lg shadow-lg flex flex-col overflow-hidden"
           >
             {/* 헤더 */}
-            <div className="flex justify-between items-center p-3 border-b cursor-move modal-drag-handle bg-gray-100">
-              <h2 className="text-lg font-bold flex items-center gap-2">
-                🗄 DB 연결정보 관리
+            <div
+              className="semi-text-bg-color 
+                            flex 
+                            flex-row
+                            justify-between 
+                            items-center 
+                            border-b 
+                            cursor-move 
+                            modal-drag-handle"
+            >
+              <h2 className="text-lg font-bold flex items-center gap-2 my">
+                🗄 DB Connection Info
               </h2>
-              <button
-                onClick={() => onOpenChange(false)}
-                className="px-2 py-1 rounded medium-text-bg-color hover:bg-gray-300"
-              >
-                Close
-              </button>
+              {/* 푸터 */}
+              <div className="fixed bottom-0 left-0 right-0 flex justify-end border semi-text-bg-color m-1">
+                <button
+                  onClick={() => onOpenChange(false)}
+                  className="px-2 py-1 rounded medium-text-bg-color"
+                >
+                  Close
+                </button>
+              </div>
             </div>
 
             {/* 본문 */}
-            <div className="p-4 overflow-y-auto flex-1">
+            <div className="p-4 overflow-y-auto flex-1 h-full">
               <button
                 onClick={() =>
                   setEditing({
@@ -211,17 +223,26 @@ export const DBConnectionManagerModal: React.FC<
                     database_name: "",
                   })
                 }
-                className="mb-4 w-full py-2 rounded semi-text-bg-color "
+                className="medium-text-bg-color border mb-4 w-full py-2 rounded"
               >
-                ➕ 새 연결 추가
+                ➕
               </button>
+              {/* 푸터 */}
+              <div className="fixed bottom-0 left-0 right-0 flex justify-end border semi-text-bg-color m-1">
+                <button
+                  onClick={() => onOpenChange(false)}
+                  className="px-2 py-1 rounded medium-text-bg-color"
+                >
+                  Close
+                </button>
+              </div>
 
               {/* 연결 리스트 */}
               <div className="space-y-2 max-h-60 overflow-y-auto mb-4">
                 {connections.map((conn) => (
                   <div
                     key={conn.id}
-                    className="flex flex-row justify-between items-center border p-2 rounded hover:bg-gray-100 transition gap-2"
+                    className="flex flex-row justify-between items-center border p-2 rounded hover:medium-text-bg-color transition gap-2"
                   >
                     <div className="flex flex-col min-w-0">
                       <div className="font-medium truncate">{conn.name}</div>
@@ -237,19 +258,19 @@ export const DBConnectionManagerModal: React.FC<
                         disabled={testing}
                         className="px-2 py-1 rounded border hover:bg-gray-50 whitespace-nowrap"
                       >
-                        🔄 테스트
+                        🔄 Test
                       </button>
                       <button
                         onClick={() => setEditing(conn)}
                         className="px-2 py-1 rounded border hover:bg-gray-50 whitespace-nowrap"
                       >
-                        ✏️ 수정
+                        ✏️ Change
                       </button>
                       <button
                         onClick={() => handleDelete(conn.id)}
                         className="px-2 py-1 rounded border hover:bg-red-100 text-red-600 whitespace-nowrap"
                       >
-                        🗑 삭제
+                        🗑 Delete
                       </button>
                     </div>
                   </div>
@@ -261,7 +282,7 @@ export const DBConnectionManagerModal: React.FC<
                 <div className="border-t pt-4 space-y-3">
                   {/* DB 종류 선택 */}
                   <div className="flex items-center gap-2 mb-2">
-                    <label className="font-medium text-sm w-24">DB 종류</label>
+                    <label className="font-medium text-sm w-24">DB Type</label>
                     <select
                       value={editing.type}
                       onChange={(e) =>
@@ -315,15 +336,15 @@ export const DBConnectionManagerModal: React.FC<
                   <div className="flex justify-end gap-2 mt-2">
                     <button
                       onClick={() => setEditing(null)}
-                      className="medium-text-bg-color px-3 py-1 rounded border hover:bg-gray-100"
+                      className="medium-text-bg-color px-3 py-1 rounded border"
                     >
-                      취소
+                      Cancel
                     </button>
                     <button
                       onClick={handleSave}
-                      className="px-3 py-1 rounded bg-green-600 text-white hover:bg-green-700"
+                      className="px-3 py-1 rounded medium-text-bg-color"
                     >
-                      저장
+                      Save
                     </button>
                   </div>
                 </div>
