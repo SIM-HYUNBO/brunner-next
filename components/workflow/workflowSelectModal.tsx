@@ -117,7 +117,7 @@ const WorkflowSelectModal: React.FC<WorkflowSelectModalProps> = ({
                 {workflows.length === 0 && !loading && (
                   <tr>
                     <td colSpan={3} className="text-center">
-                      등록된 워크플로우가 없습니다.
+                      Loading ...
                     </td>
                   </tr>
                 )}
