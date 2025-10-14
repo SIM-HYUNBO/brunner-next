@@ -132,8 +132,10 @@ export function registerBuiltInActions(): void {
         }
 
         // Node main action
-        workflowData.data.run.system = {};
-        workflowData.data.run.system.startTime = new Date();
+        workflowData.data.run = {};
+        workflowData.data.run.outputs = {};
+        workflowData.data.run.outputs._SYSTEM = [];
+        workflowData.data.run.outputs._SYSTEM[0] = { startTime: new Date() };
 
         postNodeCheck(node, workflowData);
         result.error_code = 0;
@@ -166,10 +168,13 @@ export function registerBuiltInActions(): void {
           result.error_message = `[${node.data.label}] node check result is invalid.`;
           return result;
         }
-        workflowData.data.run.system.endTime = new Date();
-        workflowData.data.run.system.durationMs =
-          new Date(workflowData.data.run.system.endTime).getTime() -
-          new Date(workflowData.data.run.system.startTime).getTime();
+
+        workflowData.data.run.outputs._SYSTEM[0].endTime = new Date();
+        workflowData.data.run.outputs._SYSTEM[0].durationMs =
+          new Date(workflowData.data.run.outputs._SYSTEM[0].endTime).getTime() -
+          new Date(
+            workflowData.data.run.outputs._SYSTEM[0].startTime
+          ).getTime();
 
         postNodeCheck(node, workflowData);
 
