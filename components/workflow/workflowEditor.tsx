@@ -1161,28 +1161,23 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
                               newDesign = { ...newDesign, ...updates.design };
                             }
 
-                            const otherUpdates = { ...updates };
-                            delete otherUpdates.design;
+                            // ✅ 수정된 부분
+                            const mergedData = {
+                              ...n.data,
+                              ...(updates.data ?? {}), // updates.data 내용만 병합
+                            };
 
-                            var newLabel = undefined;
-                            if (updates.data) {
-                              newLabel = updates.data.label ?? "";
-                            } else {
-                              newLabel = n.data.label;
-                            }
-
-                            if (
-                              updates.label &&
-                              updates.label !== n.data?.label
-                            ) {
-                              newLabel = updates.label;
-                            }
+                            var newLabel =
+                              updates.data?.label ??
+                              updates.label ??
+                              mergedData.label;
 
                             return {
                               ...n,
+                              actionName:
+                                updates.actionName ?? n.data?.actionName,
                               data: {
-                                ...n.data,
-                                ...otherUpdates,
+                                ...mergedData,
                                 label: newLabel,
                                 design: newDesign,
                               },
