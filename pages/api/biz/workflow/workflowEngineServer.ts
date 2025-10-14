@@ -546,7 +546,7 @@ export function registerBuiltInActions(): void {
         let errorStack: string | undefined;
 
         if (err instanceof Error) {
-          errorMessage = JSON.stringify(err, null, 2);
+          errorMessage = err.message;
           errorStack = err.stack;
         } else {
           errorMessage = String(err);
