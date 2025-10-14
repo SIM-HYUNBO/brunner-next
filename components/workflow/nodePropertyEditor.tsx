@@ -8,19 +8,18 @@ import type {
 import * as commmonFunctions from "@/components/core/commonFunctions";
 import { JsonDatasetEditorModal } from "@/components/workflow/jsonDatasetEditorModal";
 import type { JsonColumnType } from "@/components/workflow/jsonDatasetEditorModal";
-import { useModal } from "@/components/core/client/brunnerMessageBox";
 
 interface NodePropertyEditorProps {
   node: Node<any> | null;
   onNodeUpdate?: (id: string, updates: any) => void;
+  openModal?: (message: string) => void;
 }
 
 export const NodePropertyEditor: React.FC<NodePropertyEditorProps> = ({
   node,
   onNodeUpdate,
+  openModal,
 }) => {
-  const { BrunnerMessageBox, openModal } = useModal();
-
   const [actionName, setActionName] = useState(node?.data.actionName || "");
   const [NodeInputs, setNodeInputs] = useState({});
   const [NodeOutputs, setNodeOutputs] = useState({});
@@ -122,15 +121,14 @@ export const NodePropertyEditor: React.FC<NodePropertyEditorProps> = ({
     });
 
     prevActionName.current = newAction;
-    openModal(constants.messages.SUCCESS_APPLIED);
+    openModal?.(constants.messages.SUCCESS_APPLIED);
   };
 
   return (
-    <div>
-      <BrunnerMessageBox />
-      <div>ID: {node.id}</div>
-      <div>Label: {node.data.label}</div>
-      <div>Status: {node.data.status}</div>
+    <div className="w-full">
+      <div className="flex flex-row">{`ID : ${node.id}`}</div>
+      <div className="flex flex-row">{`Label : ${node.data.label}`}</div>
+      <div className="flex flex-row">{`Status : ${node.data.status}`}</div>
 
       <div className="mt-2">
         <label>Action Name:</label>
@@ -182,7 +180,7 @@ export const NodePropertyEditor: React.FC<NodePropertyEditorProps> = ({
               },
             });
 
-            openModal(constants.messages.SUCCESS_APPLIED);
+            openModal?.(constants.messages.SUCCESS_APPLIED);
           }}
         >
           Apply

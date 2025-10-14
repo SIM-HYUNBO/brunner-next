@@ -346,23 +346,24 @@ export const NodePropertyPanel: React.FC<NodePropertyPanelProps> = ({
       data.design?.mode === constants.workflowBranchNodeMode.Branch;
 
     return (
-      <div className="mt-5">
+      <div className="mt-5 flex flex-col">
         <h3>Branch Node Properties</h3>
-
-        <label className="mt-2">Mode</label>
-        <select
-          className="ml-1 mt-2"
-          value={data.design?.mode || "none"}
-          onChange={(e) => handleBranchNodeChange("mode", e.target.value)}
-        >
-          <option value="none">선택하세요</option>
-          <option value={constants.workflowBranchNodeMode.Branch}>
-            분기 (Branch)
-          </option>
-          <option value={constants.workflowBranchNodeMode.Loop}>
-            반복 (Loop)
-          </option>
-        </select>
+        <div className="flex flex-row space-x-1">
+          <label className="mt-2">Mode</label>
+          <select
+            className="ml-1 mt-2 flex-1 text-center"
+            value={data.design?.mode || "none"}
+            onChange={(e) => handleBranchNodeChange("mode", e.target.value)}
+          >
+            <option value="none">선택하세요</option>
+            <option value={constants.workflowBranchNodeMode.Branch}>
+              분기 (Branch)
+            </option>
+            <option value={constants.workflowBranchNodeMode.Loop}>
+              반복 (Loop)
+            </option>
+          </select>
+        </div>
 
         {isConditionMode && (
           <div className="flex flex-col">
@@ -378,7 +379,7 @@ export const NodePropertyPanel: React.FC<NodePropertyPanelProps> = ({
 
         {isLoopMode && (
           <div className="flex flex-col">
-            <div className="flex flex-row mt-2 space-x-1">
+            <div className="flex flex-row mt-2 space-x-3">
               <label>Start</label>
               <input
                 className="flex text-center w-full ml-2"
@@ -401,10 +402,10 @@ export const NodePropertyPanel: React.FC<NodePropertyPanelProps> = ({
               />
             </div>
 
-            <div className="flex flex-row mt-2">
+            <div className="flex flex-col mt-2">
               <label>Limit</label>
               <textarea
-                className="w-full h-full text-left ml-1"
+                className="w-full h-full text-left"
                 value={localLoopLimitValue}
                 rows={3}
                 onChange={(e) => setLocalLoopLimitValue(e.target.value)}
@@ -414,14 +415,16 @@ export const NodePropertyPanel: React.FC<NodePropertyPanelProps> = ({
                 placeholder="숫자 또는 JS 표현식 입력"
               />
             </div>
-            <small style={{ color: "#666" }}>
+            <small className="w-full text-right semi-text-bg-color">
               ※ 예: <code>${"{workflow.items.length}"}</code>
             </small>
 
             <div style={{ marginTop: 8 }}>
-              Current Index (Start ≤ Current &lt; Limit):{" "}
-              <b>{loopCurrentIndex}</b>
+              Current Index : <b>{loopCurrentIndex}</b>
             </div>
+            <small className="w-full text-center semi-text-bg-color">
+              ※ (Start ≤ Current &lt; Limit)
+            </small>
           </div>
         )}
       </div>
@@ -432,27 +435,29 @@ export const NodePropertyPanel: React.FC<NodePropertyPanelProps> = ({
     return (
       <div className="flex flex-col mt-5">
         <h3>Script Node Editor</h3>
-        <label>Script Preview:</label>
+        <label className="mt-2">Script Preview:</label>
         <textarea
           readOnly
           value={localScriptContents}
           rows={5}
-          className="w-full border p-2 font-mono"
+          className="w-full border p-2 mt-1"
         />
-        <div className="flex flex-row space-x-1">
+        <div className="flex flex-col mt-2">
           <button
-            className="mt-1 px-3 py-1 border rounded semi-text-bg-color"
+            className="border rounded semi-text-bg-color px-2"
             onClick={() => setIsScriptModalOpen(true)}
           >
             Edit Script
           </button>
-          <label className="mt-2">Timeout (ms):</label>
-          <input
-            type="number"
-            className="border px-2 py-1 w-[100px]"
-            value={localScriptTimeoutMs}
-            readOnly
-          />
+          <div className="flex space-x-2 mt-2">
+            <label className="border">Timeout (ms):</label>
+            <input
+              type="number"
+              className="border w-[50px] text-center"
+              value={localScriptTimeoutMs}
+              readOnly
+            />
+          </div>
         </div>
       </div>
     );
@@ -561,35 +566,7 @@ export const NodePropertyPanel: React.FC<NodePropertyPanelProps> = ({
 
   // 🧩 실제 렌더링
   return (
-    <div style={{ padding: 10 }}>
-      {/* 🏷️ Node Label Editor */}
-      {/* 🏷️ Node Label Editor */}
-      {node && (
-        <div className="mb-4">
-          <label className="block text-sm font-semibold mb-1">Label</label>
-          <input
-            type="text"
-            className="border rounded px-2 py-1 w-full"
-            value={localLabel}
-            onChange={(e) => {
-              const v = e.target.value;
-              setLocalLabel(v); // UI 즉시 반영
-
-              // 부모에 안전하게 현재 data 전체를 포함해서 보냄
-              onNodeUpdate?.(node.id, {
-                data: {
-                  ...(node.data ?? {}),
-                  label: v,
-                },
-              });
-              // 디버깅용 콘솔 (문제 계속되면 지우세요)
-              console.log("[NodePropertyPanel] set label:", node.id, v);
-            }}
-            placeholder="노드 이름을 입력하세요"
-          />
-        </div>
-      )}
-
+    <div className="w-auto">
       <div className="">
         {/* Node Property Editor */}
         {node && (
@@ -599,7 +576,32 @@ export const NodePropertyPanel: React.FC<NodePropertyPanelProps> = ({
               onNodeUpdate={(id, updates) => {
                 onNodeUpdate?.(id, updates);
               }}
+              openModal={openModal}
             />
+            {/* 🏷️ Node Label Editor */}
+            {node && (
+              <div className="my-4">
+                <label className="block text-sm mb-1">Label</label>
+                <input
+                  type="text"
+                  className="border rounded px-2 py-1 w-full"
+                  value={localLabel}
+                  onChange={(e) => {
+                    const v = e.target.value;
+                    setLocalLabel(v); // UI 즉시 반영
+
+                    // 부모에 안전하게 현재 data 전체를 포함해서 보냄
+                    onNodeUpdate?.(node.id, {
+                      data: {
+                        ...(node.data ?? {}),
+                        label: v,
+                      },
+                    });
+                  }}
+                  placeholder="노드 이름을 입력하세요"
+                />
+              </div>
+            )}
           </div>
         )}
         {node && node.data.actionName === constants.workflowActions.SCRIPT && (
