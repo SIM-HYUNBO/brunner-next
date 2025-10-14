@@ -406,8 +406,8 @@ export function registerBuiltInActions(): void {
         },
         now: (): Date => new Date(),
         postJson: async (url: string, body: any): Promise<any> => {
+          // https 인증서 오류 무시
           const agent = new https.Agent({ rejectUnauthorized: false });
-
           const res = await axios.post(url, body, {
             httpsAgent: agent,
             headers: { "Content-Type": "application/json" },
