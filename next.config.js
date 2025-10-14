@@ -14,21 +14,35 @@ const nextConfig = {
       },
       {
         protocol: "https",
-        hostname: "s3.us-west-2.amazononaws.com",
+        hostname: "s3.us-west-2.amazonaws.com", // ← 오타 수정 (amazononaws ❌)
       },
     ],
   },
-  webpack: function (config, options) {
-    // console.log(options.webpack.version); // Should be webpack v5 now
+  webpack: (config, options) => {
     config.experiments = {
       topLevelAwait: true,
       layers: true,
     };
+
     if (!options.isServer) {
       config.resolve.fallback = { fs: false, dns: false };
     }
+
+    // ✅ Watchpack 에러 방지
+    config.watchOptions = {
+      ignored: [
+        "**/node_modules",
+        "**/.git",
+        "C:/DumpStack.log.tmp",
+        "C:/pagefile.sys",
+        "C:/hiberfil.sys",
+        "C:/System Volume Information",
+      ],
+    };
+
     return config;
   },
 };
 
-module.export = nextConfig;
+// ⚠️ 오타 주의: `module.exports` (s 빠졌어요)
+module.exports = nextConfig;

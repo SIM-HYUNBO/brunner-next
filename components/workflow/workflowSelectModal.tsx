@@ -78,7 +78,7 @@ const WorkflowSelectModal: React.FC<WorkflowSelectModalProps> = ({
       >
         {/* 헤더 */}
         <div className="flex items-center justify-between border-b px-5 py-3">
-          <h2 className="text-lg font-semibold">워크플로우 선택</h2>
+          <h2 className="text-lg font-semibold">Select workflow</h2>
           <button onClick={onClose} className="">
             ✕
           </button>
@@ -87,13 +87,13 @@ const WorkflowSelectModal: React.FC<WorkflowSelectModalProps> = ({
         {/* 본문 */}
         <div className="flex-1 overflow-y-auto">
           {loading ? (
-            <div className="p-5 text-center">불러오는 중...</div>
+            <div className="p-5 text-center">Loading ...</div>
           ) : (
             <table className="min-w-full border-collapse text-sm">
               <thead className="bg-gray-100 sticky top-0">
                 <tr className="medium-text-bg-color">
                   <th className="px-4 py-2 text-left border-b">ID</th>
-                  <th className="px-4 py-2 text-left border-b">데이터</th>
+                  <th className="px-4 py-2 text-left border-b">Name</th>
                 </tr>
               </thead>
               <tbody>

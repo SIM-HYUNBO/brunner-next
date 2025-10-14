@@ -416,7 +416,7 @@ export const NodePropertyPanel: React.FC<NodePropertyPanelProps> = ({
               />
             </div>
             <small className="w-full text-right semi-text-bg-color">
-              ※ 예: <code>${"{workflow.items.length}"}</code>
+              ※ Ex) <code>${"{workflow.items.length}"}</code>
             </small>
 
             <div style={{ marginTop: 8 }}>
@@ -443,12 +443,6 @@ export const NodePropertyPanel: React.FC<NodePropertyPanelProps> = ({
           className="w-full border p-2 mt-1"
         />
         <div className="flex flex-col mt-2">
-          <button
-            className="border rounded semi-text-bg-color px-2"
-            onClick={() => setIsScriptModalOpen(true)}
-          >
-            Edit Script
-          </button>
           <div className="flex space-x-2 mt-2">
             <label className="border">Timeout (ms):</label>
             <input
@@ -458,6 +452,12 @@ export const NodePropertyPanel: React.FC<NodePropertyPanelProps> = ({
               readOnly
             />
           </div>
+          <button
+            className="border rounded semi-text-bg-color mt-2 px-2"
+            onClick={() => setIsScriptModalOpen(true)}
+          >
+            Edit Script
+          </button>
         </div>
       </div>
     );
@@ -545,7 +545,7 @@ export const NodePropertyPanel: React.FC<NodePropertyPanelProps> = ({
       <>
         <button
           onClick={() => setWorkflowSelectModalOpen(true)}
-          className="p-2 rounded-md semi-text-bg-color"
+          className="p-2 rounded-md medium-text-bg-color"
         >
           Select ...
         </button>

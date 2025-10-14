@@ -130,10 +130,10 @@ export const NodePropertyEditor: React.FC<NodePropertyEditorProps> = ({
       <div className="flex flex-row">{`Label : ${node.data.label}`}</div>
       <div className="flex flex-row">{`Status : ${node.data.status}`}</div>
 
-      <div className="mt-2">
+      <div className="flex flex-row mt-2 items-center">
         <label>Action Name:</label>
         <select
-          className="w-full border px-2 py-1 mt-1"
+          className="flex flex-1 border px-2 py-1 ml-2 mt-1"
           value={actionName}
           onChange={(e) => handleActionChange(e.target.value)}
         >
@@ -148,19 +148,19 @@ export const NodePropertyEditor: React.FC<NodePropertyEditorProps> = ({
       {/* Inputs/Outputs 버튼 */}
       <div className="flex flex-row mt-2 space-x-1">
         <button
-          className="px-1 py-1 semi-text-bg-color rounded border"
+          className="px-2 py-1 semi-text-bg-color rounded border medium-text-bg-color"
           onClick={() => setIsNodeInputModalOpen(true)}
         >
           Node Inputs
         </button>
         <button
-          className="px-1 py-1 semi-text-bg-color rounded border"
+          className="px-2 py-1 semi-text-bg-color rounded border medium-text-bg-color"
           onClick={() => setIsNodeOutputModalOpen(true)}
         >
           Node Outputs
         </button>
         <button
-          className="py-1 semi-text-bg-color rounded border"
+          className="px-2 py-1 semi-text-bg-color rounded border medium-text-bg-color"
           onClick={() => {
             const prevDesign = node.data?.design ?? {};
 

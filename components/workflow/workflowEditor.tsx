@@ -728,19 +728,19 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
       <>
         <div className="flex flex-row ml-1 mt-2">
           <button
-            className="w-full border border-black semi-text-bg-color hover:bg-gray-400"
+            className="w-full border border-black medium-text-bg-color hover:bg-gray-400"
             onClick={addNode}
           >
             Add Node
           </button>
           <button
-            className="w-full border border-black ml-1 semi-text-bg-color hover:bg-gray-400"
+            className="w-full border border-black ml-1 medium-text-bg-color hover:bg-gray-400"
             onClick={deleteSelectedNode}
           >
             Delete Node
           </button>
           <button
-            className="w-full border border-black ml-1 semi-text-bg-color hover:bg-gray-400"
+            className="w-full border border-black ml-1 medium-text-bg-color hover:bg-gray-400"
             onClick={() => setIsViewWorkflowDataModalOpen(true)}
           >
             View Data
@@ -748,19 +748,19 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
         </div>
         <div className="flex flex-row ml-1 mt-1 space-x-1">
           <button
-            className="w-full border border-black semi-text-bg-color hover:bg-gray-400"
+            className="w-full border border-black medium-text-bg-color hover:bg-gray-400"
             onClick={executeWorkflowFromTableEditor}
           >
             Run
           </button>
           <button
-            className="w-full border border-black semi-text-bg-color hover:bg-gray-400"
+            className="w-full border border-black medium-text-bg-color hover:bg-gray-400"
             onClick={executeWorkflowStepByStep}
           >
             Run By Node
           </button>
           <button
-            className="w-full border border-black semi-text-bg-color hover:bg-gray-400"
+            className="w-full border border-black medium-text-bg-color hover:bg-gray-400"
             onClick={resetWorkflow}
           >
             Reset
@@ -769,19 +769,19 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
 
         <div className="flex flex-row ml-1 mt-1 space-x-1">
           <button
-            className="w-full border border-black semi-text-bg-color hover:bg-gray-400"
+            className="w-full border border-black medium-text-bg-color hover:bg-gray-400"
             onClick={saveWorkflow}
           >
             Save
           </button>
           <button
-            className="w-full border border-black ml-1 semi-text-bg-color hover:bg-gray-400"
+            className="w-full border border-black ml-1 medium-text-bg-color hover:bg-gray-400"
             onClick={exportWorkflow}
           >
             Export
           </button>
           <button
-            className="w-full border border-black semi-text-bg-color hover:bg-gray-400"
+            className="w-full border border-black medium-text-bg-color hover:bg-gray-400"
             onClick={deleteWorkflow}
           >
             Delete
@@ -826,9 +826,9 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
     <>
       <ReactFlowProvider>
         {/* <<< MOBILE-FIX: Use h-screen so we can compute child heights on mobile; and switch to column on small screens */}
-        <div className="flex flex-row md:flex-row w-full h-full relative">
+        <div className="flex flex-row w-full h-full relative">
           {/* 🧭 왼쪽: 워크플로우 다이어그램 */}
-          <div className="flex flex-col w-full h-full">
+          <div className="flex flex-col flex-grow h-full min-w-0">
             <div className="flex-1 relative">
               {/* wrapper with explicit min height and dynamic height for mobile portrait */}
               <div
@@ -1066,7 +1066,16 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
 
           {/* ⚙️ 오른쪽 패널 (토글) */}
           {isRightPanelOpen && (
-            <div className="flex flex-col justify-top h-full md:h-auto ml-0 md:ml-1 w-full md:w-[380px] overflow-y-auto border-t md:border-l p-2  z-40 semi-text-bg-color">
+            <div
+              className="flex flex-col justify-top h-full md:h-auto ml-0 md:ml-1 border-t md:border-l p-2 z-40 semi-text-bg-color"
+              style={{
+                width: "auto", // 콘텐츠에 따라 자동 폭
+                minWidth: "300px", // 너무 좁아지지 않게 최소 폭
+                maxWidth: "800px", // 화면 넘치지 않게 최대 폭 (선택)
+                overflowY: "auto", // 세로 스크롤 유지
+                overflowX: "hidden", // 가로 스크롤은 숨김
+              }}
+            >
               <Accordion
                 value={openAccordionItems} // <-- controlled value
                 type="multiple"
@@ -1089,7 +1098,7 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
                     <div className="p-2 border rounded mt-2">
                       <div>ID: {workflowId}</div>
                       <div className="flex flex-row mt-2">
-                        이름:
+                        Name:
                         <input
                           className="flex-1 w-auto ml-2"
                           value={workflowName}
@@ -1097,7 +1106,7 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
                         />
                       </div>
                       <div className="flex flex-row mt-2">
-                        설명:
+                        Description:
                         <textarea
                           className="flex-1 w-auto ml-2"
                           value={workflowDescription}
@@ -1111,7 +1120,7 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
 
                     <button
                       onClick={() => setIsDBConnectionsModalOpen(true)}
-                      className="ml-1 mt-2 px-2 py-1 rounded semi-text-bg-color border"
+                      className="ml-1 mt-2 px-2 py-1 rounded medium-text-bg-color border"
                     >
                       Database...
                     </button>

@@ -164,7 +164,7 @@ export const DBConnectionManagerModal: React.FC<
       {loading && <Loading />}
 
       {open && (
-        <div className="fixed inset-0 bg-black/50 flex justify-center items-start z-50">
+        <div className="fixed inset-0 flex justify-center items-start z-50">
           <Rnd
             size={{ width: modalSize.width, height: modalSize.height }}
             position={{ x: modalPosition.x, y: modalPosition.y }}
@@ -180,7 +180,7 @@ export const DBConnectionManagerModal: React.FC<
             minHeight={400}
             bounds="window"
             dragHandleClassName="modal-drag-handle"
-            className="bg-white rounded-lg shadow-lg flex flex-col overflow-hidden"
+            className="semi-text-bg-color rounded-lg shadow-lg flex flex-col overflow-hidden"
           >
             {/* 헤더 */}
             <div className="flex justify-between items-center p-3 border-b cursor-move modal-drag-handle bg-gray-100">
@@ -189,7 +189,7 @@ export const DBConnectionManagerModal: React.FC<
               </h2>
               <button
                 onClick={() => onOpenChange(false)}
-                className="px-2 py-1 rounded bg-gray-200 hover:bg-gray-300"
+                className="px-2 py-1 rounded medium-text-bg-color hover:bg-gray-300"
               >
                 Close
               </button>
@@ -211,7 +211,7 @@ export const DBConnectionManagerModal: React.FC<
                     database_name: "",
                   })
                 }
-                className="mb-4 w-full py-2 rounded bg-blue-600 text-white hover:bg-blue-700"
+                className="mb-4 w-full py-2 rounded semi-text-bg-color "
               >
                 ➕ 새 연결 추가
               </button>
@@ -315,7 +315,7 @@ export const DBConnectionManagerModal: React.FC<
                   <div className="flex justify-end gap-2 mt-2">
                     <button
                       onClick={() => setEditing(null)}
-                      className="px-3 py-1 rounded border hover:bg-gray-100"
+                      className="medium-text-bg-color px-3 py-1 rounded border hover:bg-gray-100"
                     >
                       취소
                     </button>

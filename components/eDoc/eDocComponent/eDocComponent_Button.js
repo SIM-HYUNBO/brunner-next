@@ -73,7 +73,6 @@ const RenderComponent = (props) => {
   );
 };
 
-// ✅ 기본 런타임 데이터 초기화 — commandName 추가
 export const initDefaultRuntimeData = (defaultRuntimeData) => {
   defaultRuntimeData.buttonText = "버튼";
   defaultRuntimeData.actionName = "";
@@ -88,11 +87,10 @@ export const getBindingValue = (component) => {
   if (!component.runtime_data?.bindingKey) {
     return null;
   }
-  // 버튼 컴포넌트는 text 을 가져옵니다.
+
   return component.runtime_data?.buttonText || null;
 };
 
-// ✅ 런타임 데이터 업데이트 유틸
 export const getNewRuntimeData = (component, { key, value }) => {
   return {
     ...(component.runtime_data || {}),

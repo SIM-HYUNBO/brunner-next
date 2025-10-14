@@ -1366,7 +1366,6 @@ export async function getWorkflowById(systemCode: string, workflowId: string) {
       result.workflow_data = dbResult.rows[0].workflow_data;
     }
 
-    // 3️⃣ 워크플로우 데이터 반환
     return result;
   } catch (err: any) {
     return null;
