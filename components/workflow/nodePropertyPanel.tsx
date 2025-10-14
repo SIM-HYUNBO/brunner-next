@@ -57,6 +57,8 @@ export const NodePropertyPanel: React.FC<NodePropertyPanelProps> = ({
   const [isInputModalOpen, setIsInputModalOpen] = useState(false);
   const [isOutputModalOpen, setIsOutputModalOpen] = useState(false);
 
+  const [localLabel, setLocalLabel] = useState(node?.data.label ?? "");
+
   // SCRIPT 노드
   const [localScriptContents, setLocalScript] = useState("");
   const [localScriptTimeoutMs, setLocalTimeoutMs] = useState(5000);
@@ -98,6 +100,7 @@ export const NodePropertyPanel: React.FC<NodePropertyPanelProps> = ({
   useEffect(() => {
     if (!node) return;
 
+    setLocalLabel(node.data.label);
     setActionName(node.data.actionName);
 
     const defaultInputs =
@@ -119,6 +122,7 @@ export const NodePropertyPanel: React.FC<NodePropertyPanelProps> = ({
     }
   }, [
     node?.id,
+    node?.data.label,
     node?.data.actionName,
     node?.data.design?.inputs,
     node?.data.design?.outputs,
@@ -558,6 +562,34 @@ export const NodePropertyPanel: React.FC<NodePropertyPanelProps> = ({
   // 🧩 실제 렌더링
   return (
     <div style={{ padding: 10 }}>
+      {/* 🏷️ Node Label Editor */}
+      {/* 🏷️ Node Label Editor */}
+      {node && (
+        <div className="mb-4">
+          <label className="block text-sm font-semibold mb-1">Label</label>
+          <input
+            type="text"
+            className="border rounded px-2 py-1 w-full"
+            value={localLabel}
+            onChange={(e) => {
+              const v = e.target.value;
+              setLocalLabel(v); // UI 즉시 반영
+
+              // 부모에 안전하게 현재 data 전체를 포함해서 보냄
+              onNodeUpdate?.(node.id, {
+                data: {
+                  ...(node.data ?? {}),
+                  label: v,
+                },
+              });
+              // 디버깅용 콘솔 (문제 계속되면 지우세요)
+              console.log("[NodePropertyPanel] set label:", node.id, v);
+            }}
+            placeholder="노드 이름을 입력하세요"
+          />
+        </div>
+      )}
+
       <div className="">
         {/* Node Property Editor */}
         {node && (

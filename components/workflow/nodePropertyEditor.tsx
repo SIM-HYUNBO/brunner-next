@@ -164,14 +164,24 @@ export const NodePropertyEditor: React.FC<NodePropertyEditorProps> = ({
         <button
           className="py-1 semi-text-bg-color rounded border"
           onClick={() => {
-            // Apply 수동 클릭 시도
+            const prevDesign = node.data?.design ?? {};
+
             const newDesign = {
+              ...prevDesign, // 기존 디자인 보존
               scriptContents: scriptContentsRef.current,
               scriptTimeoutMs: scriptTimeoutMsRef.current,
               inputs: NodeInputs,
               outputs: NodeOutputs,
             };
-            onNodeUpdate?.(node.id, { actionName, design: newDesign });
+
+            onNodeUpdate?.(node.id, {
+              actionName,
+              data: {
+                ...(node.data ?? {}),
+                design: newDesign,
+              },
+            });
+
             openModal(constants.messages.SUCCESS_APPLIED);
           }}
         >

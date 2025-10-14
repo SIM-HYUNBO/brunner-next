@@ -1164,11 +1164,26 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
                             const otherUpdates = { ...updates };
                             delete otherUpdates.design;
 
+                            var newLabel = undefined;
+                            if (updates.data) {
+                              newLabel = updates.data.label ?? "";
+                            } else {
+                              newLabel = n.data.label;
+                            }
+
+                            if (
+                              updates.label &&
+                              updates.label !== n.data?.label
+                            ) {
+                              newLabel = updates.label;
+                            }
+
                             return {
                               ...n,
                               data: {
                                 ...n.data,
                                 ...otherUpdates,
+                                label: newLabel,
                                 design: newDesign,
                               },
                             };
