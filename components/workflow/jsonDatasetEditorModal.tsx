@@ -290,13 +290,6 @@ export const JsonDatasetEditorModal: React.FC<JsonDatasetEditorModalProps> = ({
   const List = ReactWindow.FixedSizeList;
 
   function TableVirtualized({ rows, columns, height }: any) {
-    useEffect(() => {
-      const widths: { [key: string]: number } = {};
-      columns.forEach((col: any) => {
-        widths[col.name] = columnWidths[col.name]!;
-      });
-    }, [columns]);
-
     const resizeColStart = useRef<{
       colName: string;
       startX: number;
@@ -311,37 +304,44 @@ export const JsonDatasetEditorModal: React.FC<JsonDatasetEditorModalProps> = ({
         startX: e.clientX,
         startWidth: columnWidths[colName] || 120,
       };
-      window.addEventListener("mousemove", onColResize);
-      window.addEventListener("mouseup", stopColResize);
-    };
 
-    const onColResize = (e: MouseEvent) => {
-      if (!resizeColStart.current) return;
-      const dx = e.clientX - resizeColStart.current.startX;
-      setColumnWidths((prev) => ({
-        ...prev,
-        [resizeColStart.current!.colName]: Math.max(
-          50,
-          resizeColStart.current!.startWidth + dx
-        ),
-      }));
-    };
+      const onMouseMove = (e: MouseEvent) => {
+        if (!resizeColStart.current) return;
+        const dx = e.clientX - resizeColStart.current.startX;
+        setColumnWidths((prev) => ({
+          ...prev,
+          [resizeColStart.current!.colName]: Math.max(
+            50,
+            resizeColStart.current!.startWidth + dx
+          ),
+        }));
+      };
 
-    const stopColResize = () => {
-      resizeColStart.current = null;
-      window.removeEventListener("mousemove", onColResize);
-      window.removeEventListener("mouseup", stopColResize);
+      const onMouseUp = () => {
+        resizeColStart.current = null;
+        window.removeEventListener("mousemove", onMouseMove);
+        window.removeEventListener("mouseup", onMouseUp);
+      };
+
+      window.addEventListener("mousemove", onMouseMove);
+      window.addEventListener("mouseup", onMouseUp);
     };
 
     return (
       <>
         {/* Header */}
         <div className="flex medium-text-bg-color border-b select-none">
+          <div
+            className=" flex items-center justify-center text-center"
+            style={{ width: 50 }}
+          >
+            #
+          </div>
           {columns.map((col: any) => (
             <div
               key={col.name}
               className="border px-2 py-1 flex items-center"
-              style={{ width: columnWidths[col.name], minWidth: 50 }}
+              style={{ width: columnWidths[col.name] || 150, minWidth: 50 }}
             >
               <span className="flex-1">{col.name}</span>
               <div
@@ -364,11 +364,20 @@ export const JsonDatasetEditorModal: React.FC<JsonDatasetEditorModalProps> = ({
             const row = rows[index];
             return (
               <div style={style} className="flex border-b w-full">
+                <div
+                  className="border px-2 py-1 flex items-center justify-center font-mono medium-text-bg-color"
+                  style={{ width: 50 }}
+                >
+                  {index + 1}
+                </div>
                 {columns.map((col: any) => (
                   <div
                     key={col.name}
                     className="border px-2 py-1 flex items-center"
-                    style={{ width: columnWidths[col.name], minWidth: 50 }}
+                    style={{
+                      width: columnWidths[col.name] || 150,
+                      minWidth: 50,
+                    }}
                   >
                     <CellEditor
                       initialValue={row[col.name]}
@@ -466,6 +475,7 @@ export const JsonDatasetEditorModal: React.FC<JsonDatasetEditorModalProps> = ({
                           <th
                             key={col.name}
                             className="border px-2 py-1 semi-text-bg-color"
+                            style={{ width: columnWidths[col.name] || 150 }}
                           >
                             {col.name} ({col.type})
                             <button
@@ -486,7 +496,11 @@ export const JsonDatasetEditorModal: React.FC<JsonDatasetEditorModalProps> = ({
                     <tbody>
                       <tr className="semi-text-bg-color">
                         {columns.map((col) => (
-                          <td key={col.name} className="border px-2 py-1">
+                          <td
+                            key={col.name}
+                            className="border px-2 py-1"
+                            style={{ width: columnWidths[col.name] || 150 }}
+                          >
                             {String(
                               getDefaultValue(col.type as JsonColumnType)
                             )}
@@ -501,7 +515,16 @@ export const JsonDatasetEditorModal: React.FC<JsonDatasetEditorModalProps> = ({
                 <TableVirtualized
                   rows={manager.getTable(selectedTable) || []}
                   columns={columns}
-                  height={size.height - 40 - 50 - 60 - 16} // 헤더, 버튼 등
+                  height={
+                    size.height -
+                    40 - // 헤더
+                    50 - // 테이블 버튼 영역
+                    60 - // 하단 버튼
+                    16 // padding 여유
+                  }
+                  columnWidths={columnWidths}
+                  setColumnWidths={setColumnWidths}
+                  updateCell={updateCell}
                 />
               )}
               {isDataMode && (
