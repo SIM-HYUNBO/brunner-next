@@ -2,6 +2,7 @@ import * as React from "react";
 import { useState, useEffect, useRef } from "react";
 import { JsonDatasetManager } from "@/components/workflow/jsonDatasetManager";
 import type { JsonObject } from "@/components/workflow/jsonDatasetManager";
+import * as ReactWindow from "react-window";
 
 export type JsonColumnType = "string" | "number" | "boolean";
 type JsonDatasetEditorMode = "schema" | "data";
@@ -70,6 +71,9 @@ export const JsonDatasetEditorModal: React.FC<JsonDatasetEditorModalProps> = ({
   >({});
   const [selectedTable, setSelectedTable] = useState<string | null>(null);
   const [manager, setManager] = useState(() => new JsonDatasetManager({}));
+  const [columnWidths, setColumnWidths] = useState<{ [key: string]: number }>(
+    {}
+  );
 
   const isSchemaMode = mode === "schema";
   const isDataMode = mode === "data";
@@ -159,11 +163,17 @@ export const JsonDatasetEditorModal: React.FC<JsonDatasetEditorModalProps> = ({
     Object.entries(value).forEach(([tableName, arr]: any) => {
       if (Array.isArray(arr)) initData[tableName] = arr as JsonObject[];
     });
-
     const newManager = new JsonDatasetManager(initData);
     setManager(newManager);
     setInternalData(initData);
     setSelectedTable(Object.keys(initData)[0] || null);
+    // 기본 컬럼 폭 초기화
+    const firstTableCols = Object.keys(
+      initData[Object.keys(initData)[0] || ""]?.[0] || {}
+    );
+    const widths: { [key: string]: number } = {};
+    firstTableCols.forEach((col) => (widths[col] = 120));
+    setColumnWidths(widths);
 
     setPos({
       x: window.innerWidth / 2 - size.width / 2,
@@ -231,6 +241,7 @@ export const JsonDatasetEditorModal: React.FC<JsonDatasetEditorModalProps> = ({
       manager.updateRow(selectedTable, i, row);
     });
     setInternalData({ ...manager.getData() });
+    setColumnWidths((prev) => ({ ...prev, [name]: 120 }));
   };
 
   const removeColumn = (colKey: string) => {
@@ -242,6 +253,11 @@ export const JsonDatasetEditorModal: React.FC<JsonDatasetEditorModalProps> = ({
     });
     manager.removeColumn(selectedTable, colKey);
     setInternalData({ ...manager.getData() });
+    setColumnWidths((prev) => {
+      const copy = { ...prev };
+      delete copy[colKey];
+      return copy;
+    });
   };
 
   /* ---------------- 행 관리 ---------------- */
@@ -270,6 +286,106 @@ export const JsonDatasetEditorModal: React.FC<JsonDatasetEditorModalProps> = ({
     setInternalData({ ...manager.getData() });
   };
 
+  /* ---------------- TableVirtualized ---------------- */
+  const List = ReactWindow.FixedSizeList;
+
+  function TableVirtualized({ rows, columns, height }: any) {
+    useEffect(() => {
+      const widths: { [key: string]: number } = {};
+      columns.forEach((col: any) => {
+        widths[col.name] = columnWidths[col.name]!;
+      });
+    }, [columns]);
+
+    const resizeColStart = useRef<{
+      colName: string;
+      startX: number;
+      startWidth: number;
+    } | null>(null);
+
+    const startResizeCol = (e: React.MouseEvent, colName: string) => {
+      e.preventDefault();
+      e.stopPropagation();
+      resizeColStart.current = {
+        colName,
+        startX: e.clientX,
+        startWidth: columnWidths[colName] || 120,
+      };
+      window.addEventListener("mousemove", onColResize);
+      window.addEventListener("mouseup", stopColResize);
+    };
+
+    const onColResize = (e: MouseEvent) => {
+      if (!resizeColStart.current) return;
+      const dx = e.clientX - resizeColStart.current.startX;
+      setColumnWidths((prev) => ({
+        ...prev,
+        [resizeColStart.current!.colName]: Math.max(
+          50,
+          resizeColStart.current!.startWidth + dx
+        ),
+      }));
+    };
+
+    const stopColResize = () => {
+      resizeColStart.current = null;
+      window.removeEventListener("mousemove", onColResize);
+      window.removeEventListener("mouseup", stopColResize);
+    };
+
+    return (
+      <>
+        {/* Header */}
+        <div className="flex medium-text-bg-color border-b select-none">
+          {columns.map((col: any) => (
+            <div
+              key={col.name}
+              className="border px-2 py-1 flex items-center"
+              style={{ width: columnWidths[col.name], minWidth: 50 }}
+            >
+              <span className="flex-1">{col.name}</span>
+              <div
+                className="w-1 h-full cursor-col-resize medium-text-bg-color"
+                onMouseDown={(e) => startResizeCol(e, col.name)}
+              />
+            </div>
+          ))}
+          <div className="border px-2 py-1">Action</div>
+        </div>
+
+        {/* Body */}
+        <List
+          height={height}
+          itemCount={rows.length}
+          itemSize={35}
+          width={size.width - 16}
+        >
+          {({ index, style }) => {
+            const row = rows[index];
+            return (
+              <div style={style} className="flex border-b w-full">
+                {columns.map((col: any) => (
+                  <div
+                    key={col.name}
+                    className="border px-2 py-1 flex items-center"
+                    style={{ width: columnWidths[col.name], minWidth: 50 }}
+                  >
+                    <CellEditor
+                      initialValue={row[col.name]}
+                      colType={col.type as JsonColumnType}
+                      onUpdate={(val) => updateCell(index, col.name, val)}
+                    />
+                  </div>
+                ))}
+                <div className="border px-2 py-1">Action</div>
+              </div>
+            );
+          }}
+        </List>
+      </>
+    );
+  }
+
   /* ---------------- 렌더링 ---------------- */
   if (!open) return null;
 
@@ -291,9 +407,9 @@ export const JsonDatasetEditorModal: React.FC<JsonDatasetEditorModalProps> = ({
         }}
         onClick={(e) => e.stopPropagation()}
       >
-        {/* 헤더 (드래그 가능 영역) */}
+        {/* 헤더 (드래그 영역) */}
         <div
-          className="flex justify-between mb-2 cursor-move select-none px-2 py-1"
+          className="flex justify-between mb-2 cursor-move select-none px-2 py-1 flex-none"
           onMouseDown={startDrag}
         >
           <h3 className="font-semibold">
@@ -301,8 +417,8 @@ export const JsonDatasetEditorModal: React.FC<JsonDatasetEditorModalProps> = ({
           </h3>
         </div>
 
-        {/* 테이블 선택 */}
-        <div className="flex mb-2 flex-wrap">
+        {/* 테이블 선택 버튼 */}
+        <div className="flex mb-2 flex-wrap flex-none">
           {tableKeys.map((key) => (
             <button
               key={key}
@@ -337,85 +453,56 @@ export const JsonDatasetEditorModal: React.FC<JsonDatasetEditorModalProps> = ({
           )}
         </div>
 
-        {/* 내용 */}
-        <div className="flex-1 overflow-auto border p-1">
+        {/* 내용 영역 */}
+        <div className="flex-1 flex flex-col overflow-hidden border p-1">
           {selectedTable && (
             <>
               {isSchemaMode ? (
-                <table className="table-auto border-collapse border w-full text-sm">
-                  <thead className="medium-text-bg-color">
-                    <tr>
-                      {columns.map((col) => (
-                        <th
-                          key={col.name}
-                          className="border px-2 py-1 semi-text-bg-color"
-                        >
-                          {col.name} ({col.type})
-                          <button
-                            onClick={() => removeColumn(col.name)}
-                            className="text-red-500 ml-1"
+                <div className="flex-1 overflow-auto">
+                  <table className="table-auto border-collapse border w-full text-sm">
+                    <thead className="medium-text-bg-color">
+                      <tr>
+                        {columns.map((col) => (
+                          <th
+                            key={col.name}
+                            className="border px-2 py-1 semi-text-bg-color"
                           >
-                            ×
+                            {col.name} ({col.type})
+                            <button
+                              onClick={() => removeColumn(col.name)}
+                              className="text-red-500 ml-1"
+                            >
+                              ×
+                            </button>
+                          </th>
+                        ))}
+                        <th className="border px-2 py-1">
+                          <button onClick={addColumn} className="px-1">
+                            + Column
                           </button>
                         </th>
-                      ))}
-                      <th className="border px-2 py-1">
-                        <button onClick={addColumn} className="px-1">
-                          + Column
-                        </button>
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr className="semi-text-bg-color">
-                      {columns.map((col) => (
-                        <td key={col.name} className="border px-2 py-1">
-                          {String(getDefaultValue(col.type as JsonColumnType))}
-                        </td>
-                      ))}
-                      <td className="border px-2 py-1"></td>
-                    </tr>
-                  </tbody>
-                </table>
-              ) : (
-                <table className="table-auto border-collapse border w-full text-sm">
-                  <thead className="medium-text-bg-color">
-                    <tr>
-                      {columns.map((col) => (
-                        <th key={col.name} className="border px-2 py-1">
-                          {col.name} ({col.type})
-                        </th>
-                      ))}
-                      <th className="border px-2 py-1">Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {manager.getTable(selectedTable)?.map((row, i) => (
-                      <tr key={i}>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr className="semi-text-bg-color">
                         {columns.map((col) => (
-                          <td
-                            key={col.name}
-                            className="semi-text-bg-color border px-2 py-1"
-                          >
-                            <CellEditor
-                              initialValue={row[col.name]}
-                              colType={col.type as JsonColumnType}
-                              onUpdate={(val) => updateCell(i, col.name, val)}
-                            />
+                          <td key={col.name} className="border px-2 py-1">
+                            {String(
+                              getDefaultValue(col.type as JsonColumnType)
+                            )}
                           </td>
                         ))}
-                        <td className="border px-2 py-1">
-                          <button
-                            onClick={() => removeRow(i)}
-                            className="px-1 text-red-400"
-                          >
-                            Del
-                          </button>
-                        </td>
+                        <td className="border px-2 py-1"></td>
                       </tr>
-                    ))}
-                  </tbody>
-                </table>
+                    </tbody>
+                  </table>
+                </div>
+              ) : (
+                <TableVirtualized
+                  rows={manager.getTable(selectedTable) || []}
+                  columns={columns}
+                  height={size.height - 40 - 50 - 60 - 16} // 헤더, 버튼 등
+                />
               )}
               {isDataMode && (
                 <button
@@ -430,7 +517,7 @@ export const JsonDatasetEditorModal: React.FC<JsonDatasetEditorModalProps> = ({
         </div>
 
         {/* 하단 버튼 */}
-        <div className="flex justify-end mt-4 space-x-2">
+        <div className="flex justify-end mt-4 space-x-2 flex-none">
           <button
             onClick={onCancel}
             className="px-4 py-2 border medium-text-bg-color"
@@ -445,7 +532,7 @@ export const JsonDatasetEditorModal: React.FC<JsonDatasetEditorModalProps> = ({
           </button>
         </div>
 
-        {/* 크기조절 핸들 */}
+        {/* 모달 크기조절 핸들 */}
         <div
           onMouseDown={startResize}
           className="absolute w-4 h-4 bottom-0 right-0 cursor-se-resize"

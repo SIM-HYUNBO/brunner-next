@@ -53,9 +53,7 @@ export default async (req, res) => {
 
     res.json(jResponse);
     logger.warn(
-      `END TXN ${commandName} in ${durationMs} ms. Response: ${JSON.stringify(
-        jResponse
-      )}`
+      `END TXN ${commandName} in ${durationMs} ms. Response: ${jResponse}`
     );
 
     // saveTxnHistoryAsync(remoteIp, txnId, jRequest, jResponse);

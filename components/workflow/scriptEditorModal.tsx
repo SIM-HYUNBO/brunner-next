@@ -132,19 +132,19 @@ export const ScriptEditorModal: React.FC<ScriptEditorModalProps> = ({
         {/* 버튼들 */}
         <div className="semi-text-bg-color p-2 flex justify-end gap-2 border-t">
           <button
-            className="px-3 py-1 border rounded bg-blue-600 text-white hover:bg-blue-700"
+            className="px-3 py-1 border rounded general-text-bg-color"
             onClick={handleSave}
           >
             Save
           </button>
           <button
-            className="px-3 py-1 border rounded bg-red-400 hover:bg-gray-400"
+            className="px-3 py-1 border rounded medium-text-bg-color"
             onClick={onClose}
           >
             Close
           </button>
           <button
-            className="px-3 py-1 border rounded bg-green-500 text-white hover:bg-green-600"
+            className="px-3 py-1 border rounded medium-text-bg-color"
             onClick={onHelp}
           >
             Help

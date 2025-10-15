@@ -453,7 +453,7 @@ export const NodePropertyPanel: React.FC<NodePropertyPanelProps> = ({
             />
           </div>
           <button
-            className="border rounded semi-text-bg-color mt-2 px-2"
+            className="border rounded medium-text-bg-color mt-2 px-2 w-[100px]"
             onClick={() => setIsScriptModalOpen(true)}
           >
             Edit Script
