@@ -311,7 +311,7 @@ export const JsonDatasetEditorModal: React.FC<JsonDatasetEditorModalProps> = ({
         setColumnWidths((prev) => ({
           ...prev,
           [resizeColStart.current!.colName]: Math.max(
-            50,
+            minColWidth,
             resizeColStart.current!.startWidth + dx
           ),
         }));
@@ -333,15 +333,18 @@ export const JsonDatasetEditorModal: React.FC<JsonDatasetEditorModalProps> = ({
         <div className="flex medium-text-bg-color border-b select-none">
           <div
             className=" flex items-center justify-center text-center"
-            style={{ width: 50 }}
+            style={{ width: minColWidth }}
           >
-            #
+            # (of {rows.length})
           </div>
           {columns.map((col: any) => (
             <div
               key={col.name}
-              className="border px-2 py-1 flex items-center"
-              style={{ width: columnWidths[col.name] || 150, minWidth: 50 }}
+              className="border px-5 flex text-center justify-center items-center"
+              style={{
+                width: columnWidths[col.name] || 150,
+                minWidth: minColWidth,
+              }}
             >
               <span className="flex-1">{col.name}</span>
               <div
@@ -366,7 +369,7 @@ export const JsonDatasetEditorModal: React.FC<JsonDatasetEditorModalProps> = ({
               <div style={style} className="flex border-b w-full">
                 <div
                   className="border px-2 py-1 flex items-center justify-center font-mono medium-text-bg-color"
-                  style={{ width: 50 }}
+                  style={{ width: minColWidth }}
                 >
                   {index + 1}
                 </div>
@@ -376,7 +379,7 @@ export const JsonDatasetEditorModal: React.FC<JsonDatasetEditorModalProps> = ({
                     className="border px-2 py-1 flex items-center"
                     style={{
                       width: columnWidths[col.name] || 150,
-                      minWidth: 50,
+                      minWidth: minColWidth,
                     }}
                   >
                     <CellEditor
@@ -386,7 +389,14 @@ export const JsonDatasetEditorModal: React.FC<JsonDatasetEditorModalProps> = ({
                     />
                   </div>
                 ))}
-                <div className="border px-2 py-1">Action</div>
+                <div>
+                  <button
+                    className="border px-2 py-1 text-red-500"
+                    onClick={() => removeRow(index)}
+                  >
+                    Delete
+                  </button>
+                </div>
               </div>
             );
           }}
@@ -399,6 +409,7 @@ export const JsonDatasetEditorModal: React.FC<JsonDatasetEditorModalProps> = ({
   if (!open) return null;
 
   const columns = selectedTable ? manager.getColumns(selectedTable) ?? [] : [];
+  const minColWidth = 100;
 
   return (
     <div
