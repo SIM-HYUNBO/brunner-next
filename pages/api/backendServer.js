@@ -13,6 +13,15 @@ import * as edocDocument from "./biz/eDoc/eDocDocument";
 import * as edocCustom from "./biz/eDoc/eDocCustom";
 import * as workflow from "./biz/workflow";
 
+export const config = {
+  api: {
+    responsLimit: "100mb",
+    bodyParser: {
+      sizeLimit: "100mb",
+    },
+  },
+};
+
 /**
  * 최종 서버 핸들러
  */
@@ -52,9 +61,7 @@ export default async (req, res) => {
     jResponse._exception = exception;
 
     res.json(jResponse);
-    logger.warn(
-      `END TXN ${commandName} in ${durationMs} ms. Response: ${jResponse}`
-    );
+    logger.warn(`END TXN ${commandName} in ${durationMs} ms`);
 
     // saveTxnHistoryAsync(remoteIp, txnId, jRequest, jResponse);
   }

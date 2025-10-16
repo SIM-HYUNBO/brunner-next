@@ -177,30 +177,24 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
   // Input Dataset 스키마
   const [designedInputData, setDesignedInputData] =
     useState<commonData.DesignedDataset>({
-      INPUT_TABLE: [
-        { name: "key1", type: "string" },
-        { name: "key2", type: "number" },
-      ],
+      INPUT_TABLE: [],
     });
 
   // Input Dataset
   const [workflowInputData, setWorkflowInputData] =
     useState<commonData.BrunnerDataset>({
-      INPUT_TABLE: [{ key1: "test", key2: 123 }],
+      INPUT_TABLE: [],
     });
 
   // Output Dataset 스키마
   const [designedOutputData, setDesignedOutputData] =
     useState<commonData.DesignedDataset>({
-      OUTPUT_TABLE: [
-        { name: "key1", type: "string" },
-        { name: "key2", type: "number" },
-      ],
+      OUTPUT_TABLE: [],
     });
 
   // Output Dataset
   const [workflowOutputData, setWorkflowOutputData] = useState<any>({
-    OUTPUT_TABLE: [{ key1: "test", key2: 123 }],
+    OUTPUT_TABLE: [],
   });
 
   const [isRightPanelOpen, setIsRightPanelOpen] = useState(false);
@@ -539,9 +533,7 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
 
     // 입력 데이터 적용
     setWorkflowInputData(
-      newVal.data?.run?.inputs
-        ? newVal.data.run.inputs
-        : { INPUT_TABLE: [{ key1: "test", key2: 123 }] }
+      newVal.data?.run?.inputs ? newVal.data.run.inputs : { INPUT_TABLE: [] }
     );
 
     // 출력 데이터 적용
@@ -549,7 +541,7 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
       newVal.data?.run?.outputs ? newVal.data.run.outputs : { OUTPUT_TABLE: [] }
     );
 
-    setWorkflowOutputData(JSON.stringify(newVal.data.run.outputs, null, 2));
+    setWorkflowOutputData(newVal.data.run.outputs);
 
     const snappedNodes = (newVal.nodes ?? []).map(
       (n: Node<commonData.ActionNodeData>) => ({
@@ -1000,9 +992,7 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
                             mode="data"
                             value={workflowOutputData}
                             onConfirm={(newData) => {
-                              setWorkflowOutputData(
-                                JSON.stringify(newData, null, 2)
-                              );
+                              setWorkflowOutputData(newData);
                               setIsOutputDataEditorOpen(false);
                             }}
                             onCancel={() => setIsOutputDataEditorOpen(false)}
@@ -1017,7 +1007,7 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
                       </div>
                       <textarea
                         className="w-full h-[200px] mt-2 border p-2 font-mono text-sm"
-                        value={workflowOutputData}
+                        value={JSON.stringify(workflowOutputData, null, 2)}
                         readOnly
                       />
                     </AccordionContent>
@@ -1117,8 +1107,8 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
                           setWorkflowDescription(updates.workflowDescription);
                       }}
                       onNodeUpdate={(id, updates) => {
-                        setNodes((nds) => {
-                          const newNodes = nds.map((n) => {
+                        setNodes((nds: any) => {
+                          const newNodes = nds.map((n: any) => {
                             if (n.id !== id) return n;
 
                             let newDesign: Partial<typeof n.data.design> =
@@ -1134,22 +1124,28 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
                             }
 
                             // ✅ 수정된 부분
-                            const mergedData = {
-                              ...n.data,
-                              ...(updates.data ?? {}), // updates.data 내용만 병합
+                            const mergedNode = {
+                              ...n,
+                              actionName: updates.actionName ?? n.actionName,
+                              data: {
+                                ...n.data,
+                                ...(updates.data ?? {}), // updates.data 내용만 병합
+                              },
                             };
 
                             var newLabel =
                               updates.data?.label ??
                               updates.label ??
-                              mergedData.label;
+                              mergedNode.label;
 
                             return {
                               ...n,
-                              actionName:
-                                updates.actionName ?? n.data?.actionName,
+                              actionName: updates.actionName ?? n.actionName,
                               data: {
-                                ...mergedData,
+                                ...mergedNode.data,
+                                actionName:
+                                  updates.actionName ??
+                                  mergedNode.data?.actionName,
                                 label: newLabel,
                                 design: newDesign,
                               },
@@ -1161,7 +1157,7 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
                             nodes: newNodes,
                           };
                           setSelectedNode(
-                            newNodes.find((nn) => nn.id === id) || null
+                            newNodes.find((nn: any) => nn.id === id) || null
                           );
                           setCurrentWorkflow(updatedWorkflow);
 

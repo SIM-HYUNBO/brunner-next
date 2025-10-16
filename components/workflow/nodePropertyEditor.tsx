@@ -20,10 +20,6 @@ export const NodePropertyEditor: React.FC<NodePropertyEditorProps> = ({
   onNodeUpdate,
   openModal,
 }) => {
-  const [actionName, setActionName] = useState(node?.data.actionName || "");
-  const [NodeInputs, setNodeInputs] = useState({});
-  const [NodeOutputs, setNodeOutputs] = useState({});
-
   // SCRIPT 노드 전용
   const [scriptContents, setScriptContents] = useState(
     node?.data.design.scriptContents || ""
@@ -49,19 +45,6 @@ export const NodePropertyEditor: React.FC<NodePropertyEditorProps> = ({
 
   const prevActionName = useRef<string>("");
 
-  // 노드 변경 시 초기화
-  useEffect(() => {
-    if (!node) return;
-    const action = node.data.actionName;
-    setActionName(action);
-
-    const defaultInputs = commmonFunctions.getDefaultInputs?.(action) ?? [];
-    const defaultOutputs = commmonFunctions.getDefaultOutputs?.(action) ?? [];
-
-    setNodeInputs(node.data.run.inputs);
-    setNodeOutputs(node.data.run.outputs);
-  }, [node]);
-
   // 컬럼 타입 추론
   const inferColumns = (data: any) => {
     const firstRow = Array.isArray(data) && data.length > 0 ? data[0] : {};
@@ -86,8 +69,6 @@ export const NodePropertyEditor: React.FC<NodePropertyEditorProps> = ({
 
   // 액션 변경 시 UI + 자동 Apply
   const handleActionChange = (newAction: string) => {
-    setActionName(newAction);
-
     const defaultInputs = commmonFunctions.getDefaultInputs(newAction) ?? [];
     const defaultOutputs = commmonFunctions.getDefaultOutputs(newAction) ?? [];
 
@@ -134,7 +115,7 @@ export const NodePropertyEditor: React.FC<NodePropertyEditorProps> = ({
         <label>Action Name:</label>
         <select
           className="flex flex-1 border px-2 py-1 ml-2 mt-1"
-          value={actionName}
+          value={node.data.actionName}
           onChange={(e) => handleActionChange(e.target.value)}
         >
           {Object.values(constants.workflowActions).map((a) => (
@@ -168,12 +149,12 @@ export const NodePropertyEditor: React.FC<NodePropertyEditorProps> = ({
               ...prevDesign, // 기존 디자인 보존
               scriptContents: scriptContentsRef.current,
               scriptTimeoutMs: scriptTimeoutMsRef.current,
-              inputs: NodeInputs,
-              outputs: NodeOutputs,
+              inputs: node.data.design.inputs,
+              outputs: node.data.design.outputs,
             };
 
             onNodeUpdate?.(node.id, {
-              actionName,
+              actionName: node.data.actionName,
               data: {
                 ...(node.data ?? {}),
                 design: newDesign,
@@ -192,7 +173,7 @@ export const NodePropertyEditor: React.FC<NodePropertyEditorProps> = ({
         <JsonDatasetEditorModal
           open={isNodeInputModalOpen}
           mode="data"
-          value={NodeInputs}
+          value={node.data.run.inputs}
           onConfirm={(newSchema) => {
             const newInputsArray: NodeDataTable[] = Object.entries(
               newSchema
@@ -201,10 +182,12 @@ export const NodePropertyEditor: React.FC<NodePropertyEditorProps> = ({
               columns: inferColumns(data),
               rows: Array.isArray(data) ? data : [],
             }));
-            setNodeInputs(newInputsArray);
             setIsNodeInputModalOpen(false);
             onNodeUpdate?.(node.id, {
-              design: { inputs: newInputsArray, outputs: NodeOutputs },
+              design: {
+                inputs: newInputsArray,
+                outputs: node.data.run.outputs,
+              },
             });
           }}
           onCancel={() => setIsNodeInputModalOpen(false)}
@@ -216,7 +199,7 @@ export const NodePropertyEditor: React.FC<NodePropertyEditorProps> = ({
         <JsonDatasetEditorModal
           open={isNodeOutputModalOpen}
           mode="data"
-          value={NodeOutputs}
+          value={node.data.run.outputs}
           onConfirm={(newSchema) => {
             const newOutputsArray: NodeDataTable[] = Object.entries(
               newSchema
@@ -225,10 +208,12 @@ export const NodePropertyEditor: React.FC<NodePropertyEditorProps> = ({
               columns: inferColumns(data),
               rows: Array.isArray(data) ? data : [],
             }));
-            setNodeOutputs(newOutputsArray);
             setIsNodeOutputModalOpen(false);
             onNodeUpdate?.(node.id, {
-              design: { inputs: NodeInputs, outputs: newOutputsArray },
+              design: {
+                inputs: node.data.run.inputs,
+                outputs: newOutputsArray,
+              },
             });
           }}
           onCancel={() => setIsNodeOutputModalOpen(false)}

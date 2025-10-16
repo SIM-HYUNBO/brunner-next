@@ -98,7 +98,7 @@ export const WorkflowDataModal: React.FC<WorkflowDataModalProps> = ({
       className="rounded-lg shadow-lg bg-white semi-text-bg-color z-[999]"
     >
       {/* 헤더 */}
-      <div className="flex justify-between items-center cursor-move p-2.5 rounded-t-lg">
+      <div className="flex medium-text-bg-color justify-between items-center cursor-move p-2.5 rounded-t-lg">
         <h2 className="font-bold">
           Workflow JSON - {workflowId}
           {currentNodeId ? ` / Node: ${currentNodeId}` : ""}
