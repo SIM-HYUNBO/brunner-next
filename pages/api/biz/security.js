@@ -145,12 +145,21 @@ const signup = async (txnId, jRequest) => {
 
     if (insert_TB_COR_USER_MST_01.rowCount == 1) {
       // New User login report mail send
-      mailSender.sendEmail({
-        from: "brunner-admin@brunner-next.com", // 발신자 이메일 주소
-        to: "hbsim0605@gmail.com", // 관리자 이메일 주소
-        subject: "[brunner-next] New user signed up",
-        text: `New user signed up. ID: ${jRequest.userId}, Name:${jRequest.userName}`, // 이메일 본문
-      });
+      mailSender.sendMail(
+        {
+          service: "gmail", // 또는 'smtp', 'yahoo', 'outlook' 등 사용하고자 하는 이메일 서비스
+          auth: {
+            user: "hbsim0605@gmail.com", // 발송할 이메일 주소
+            pass: "qjrc wqdk otau kvpg", // 이메일 계정 비밀번호 또는 앱 비밀번호
+          },
+        },
+        {
+          from: "brunner-admin@brunner-next.com", // 발신자 이메일 주소
+          to: "hbsim0605@gmail.com", // 관리자 이메일 주소
+          subject: "[brunner-next] New user signed up",
+          text: `New user signed up. ID: ${jRequest.userId}, Name:${jRequest.userName}`, // 이메일 본문
+        }
+      );
 
       jResponse.error_code = 0;
       jResponse.error_message = constants.messages.EMPTY_STRING;
@@ -206,12 +215,21 @@ const signin = async (txnId, jRequest) => {
         jResponse.adminFlag = select_TB_COR_USER_MST_02.rows[0].admin_flag;
 
         // New User login report mail send
-        mailSender.sendEmail({
-          from: "brunner-admin@brunner-next.com", // 발신자 이메일 주소
-          to: "hbsim0605@gmail.com", // 관리자 이메일 주소
-          subject: "[brunner-next] New user signed in",
-          text: `New user signed in. ID: ${jResponse.userId}, Name:${jResponse.userName}`, // 이메일 본문
-        });
+        mailSender.sendMail(
+          {
+            service: "gmail", // 또는 'smtp', 'yahoo', 'outlook' 등 사용하고자 하는 이메일 서비스
+            auth: {
+              user: "hbsim0605@gmail.com", // 발송할 이메일 주소
+              pass: "qjrc wqdk otau kvpg", // 이메일 계정 비밀번호 또는 앱 비밀번호
+            },
+          },
+          {
+            from: "brunner-admin@brunner-next.com", // 발신자 이메일 주소
+            to: "hbsim0605@gmail.com", // 관리자 이메일 주소
+            subject: "[brunner-next] New user signed in",
+            text: `New user signed in. ID: ${jResponse.userId}, Name:${jResponse.userName}`, // 이메일 본문
+          }
+        );
       } else {
         jResponse.error_code = -1;
         jResponse.error_message = `Incorrect password`;
@@ -455,12 +473,21 @@ const sendEMailAuthCode = async (txnId, jRequest) => {
         var authCode = generateRandomString(6);
         // EMail로 전송하고
 
-        mailSender.sendEmail({
-          from: "brunner-admin@brunner-next.com", // 발신자 이메일 주소
-          to: select_TB_COR_USER_MST_03.rows[0].email_id, // 수신자 이메일 주소
-          subject: "[brunner-next]Your Authentication Code",
-          text: `Your user authentication code is: ${authCode}`, // 이메일 본문
-        });
+        mailSender.sendMail(
+          {
+            service: "gmail", // 또는 'smtp', 'yahoo', 'outlook' 등 사용하고자 하는 이메일 서비스
+            auth: {
+              user: "hbsim0605@gmail.com", // 발송할 이메일 주소
+              pass: "qjrc wqdk otau kvpg", // 이메일 계정 비밀번호 또는 앱 비밀번호
+            },
+          },
+          {
+            from: "brunner-admin@brunner-next.com", // 발신자 이메일 주소
+            to: select_TB_COR_USER_MST_03.rows[0].email_id, // 수신자 이메일 주소
+            subject: "[brunner-next]Your Authentication Code",
+            text: `Your user authentication code is: ${authCode}`, // 이메일 본문
+          }
+        );
 
         // 해당 인증코드를 DB에 저장
         var sql = await dynamicSql.getSQL00(`update_TB_COR_USER_MST`, 2);

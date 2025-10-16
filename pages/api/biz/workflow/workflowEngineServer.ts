@@ -15,6 +15,7 @@ import type * as mssqlType from "mssql";
 import type * as oracleType from "oracledb";
 import https from "https";
 import axios from "axios";
+import * as mailSender from "@/components/core/server/mailSender";
 
 type MssqlConnectionPool = {
   request: () => {
@@ -272,21 +273,6 @@ export function registerBuiltInActions(): void {
 
   // SCRIPT
 
-  // safe Api
-
-  /*
-    log(...) – 워커 내부 로그 저장
-    alert(msg) – 메인 스레드 alert
-    sleep(ms) – 비동기 지연
-    getGlobalVar(path) / setGlobalVar(path, value) – 워크플로우 전역 변수(workflowData) 아래 패스로 경로 접근
-    getVar(path) / setVar(path, value) – 해당 노드 변수(node) 아래 패스로 경로 접근
-    now() – 현재 Date 객체
-    timestamp() – 현재 timestamp (ms)
-    random(min, max) – 난수 생성
-    clone(obj) – 안전한 깊은 복사
-    jsonParse(str) / jsonStringify(obj) – JSON 처리
-    formatDate(date, fmt) – 날짜 포맷(간단 예시)
-  */
   /*
   const userScript: string =
         node.data.design.scriptConents ||
@@ -395,8 +381,6 @@ export function registerBuiltInActions(): void {
         clone: (obj: any): any => JSON.parse(JSON.stringify(obj)),
         error: (message: any) => safeApi.log(message, "error"),
         formatDate: (date: Date, fmt: string): string => date.toISOString(),
-        jsonParse: (str: string): any => JSON.parse(str),
-        jsonStringify: (obj: any): string => JSON.stringify(obj),
         getGlobalVar: (path: string) => getByPath(workflowData, path),
         getVar: (path: string) => getByPath(node, path),
         info: (message: any) => safeApi.log(message, "info"),
@@ -404,7 +388,6 @@ export function registerBuiltInActions(): void {
           if (typeof message === "object") message = JSON.stringify(message);
           logger.log(level, message);
         },
-        now: (): Date => new Date(),
         postJson: async (url: string, body: any): Promise<any> => {
           // https 인증서 오류 무시
           const agent = new https.Agent({ rejectUnauthorized: false });
@@ -416,6 +399,9 @@ export function registerBuiltInActions(): void {
         },
         random: (min: number = 0, max: number = 1): number =>
           Math.random() * (max - min) + min,
+        sendMail: (transporterOption: any, mailOption: any): void => {
+          mailSender.sendMail(transporterOption, mailOption);
+        },
         sleep: (ms: number) => new Promise((r) => setTimeout(r, ms)),
         setGlobalVar: (path: string, value: any) =>
           setByPath(workflowData, path, value),
@@ -484,7 +470,6 @@ export function registerBuiltInActions(): void {
               );
           }
         },
-        timestamp: (): number => Date.now(),
         warn: (message: any) => safeApi.log(message, "warn"),
       };
 
