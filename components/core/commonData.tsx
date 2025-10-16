@@ -32,3 +32,14 @@ export interface ActionNodeData {
 export interface ConditionEdgeData {
   condition?: string;
 }
+
+export type JsonObject = { [key: string]: any };
+
+export type DesignColumn = {
+  name: string;
+  type: "string" | "number" | "boolean" | "object";
+};
+
+export type DesignedDataset = Record<string, DesignColumn[]>;
+
+export type BrunnerDataset = Record<string, Record<string, any>[]>;

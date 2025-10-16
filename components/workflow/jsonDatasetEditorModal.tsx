@@ -1,7 +1,7 @@
 import * as React from "react";
 import { useState, useEffect, useRef } from "react";
 import { JsonDatasetManager } from "@/components/workflow/jsonDatasetManager";
-import type { JsonObject } from "@/components/workflow/jsonDatasetManager";
+import * as commonData from "@/components/core/commonData";
 import * as ReactWindow from "react-window";
 
 export type JsonColumnType = "string" | "number" | "boolean";
@@ -11,7 +11,7 @@ interface JsonDatasetEditorModalProps {
   open: boolean;
   mode: JsonDatasetEditorMode;
   value?: Record<string, any[]>; // 테이블 이름 -> 데이터 배열
-  onConfirm: (data: Record<string, JsonObject[]>) => void;
+  onConfirm: (data: commonData.DesignedDataset) => void;
   onCancel?: () => void;
 }
 
@@ -66,9 +66,9 @@ export const JsonDatasetEditorModal: React.FC<JsonDatasetEditorModalProps> = ({
   onConfirm,
   onCancel,
 }) => {
-  const [internalData, setInternalData] = useState<
-    Record<string, JsonObject[]>
-  >({});
+  const [internalData, setInternalData] = useState<commonData.DesignedDataset>(
+    {}
+  );
   const [selectedTable, setSelectedTable] = useState<string | null>(null);
   const [manager, setManager] = useState(() => new JsonDatasetManager({}));
   const [columnWidths, setColumnWidths] = useState<{ [key: string]: number }>(
@@ -159,9 +159,9 @@ export const JsonDatasetEditorModal: React.FC<JsonDatasetEditorModalProps> = ({
 
   /* ---------------- 초기화 ---------------- */
   useEffect(() => {
-    const initData: Record<string, JsonObject[]> = {};
+    const initData: commonData.DesignedDataset = {};
     Object.entries(value).forEach(([tableName, arr]: any) => {
-      if (Array.isArray(arr)) initData[tableName] = arr as JsonObject[];
+      if (Array.isArray(arr)) initData[tableName] = arr;
     });
     const newManager = new JsonDatasetManager(initData);
     setManager(newManager);
@@ -203,7 +203,7 @@ export const JsonDatasetEditorModal: React.FC<JsonDatasetEditorModalProps> = ({
     manager.addTable(name, []);
     setManager(new JsonDatasetManager(manager.getData()));
     setSelectedTable(name);
-    setInternalData({ ...manager.getData() });
+    setInternalData({ ...manager.getData() } as commonData.DesignedDataset);
   };
 
   const removeTable = (key: string) => {
@@ -211,7 +211,7 @@ export const JsonDatasetEditorModal: React.FC<JsonDatasetEditorModalProps> = ({
     manager.removeTable(key);
     const newKeys = Object.keys(manager.getData());
     setSelectedTable(newKeys[0] || null);
-    setInternalData({ ...manager.getData() });
+    setInternalData({ ...manager.getData() } as commonData.DesignedDataset);
   };
 
   const renameTable = (oldKey: string) => {
@@ -223,7 +223,7 @@ export const JsonDatasetEditorModal: React.FC<JsonDatasetEditorModalProps> = ({
     manager.addTable(newKey, data);
     setManager(new JsonDatasetManager(manager.getData()));
     setSelectedTable(newKey);
-    setInternalData({ ...manager.getData() });
+    setInternalData({ ...manager.getData() } as commonData.DesignedDataset);
   };
 
   /* ---------------- 컬럼 관리 ---------------- */
@@ -240,7 +240,7 @@ export const JsonDatasetEditorModal: React.FC<JsonDatasetEditorModalProps> = ({
       row[name] = getDefaultValue(type);
       manager.updateRow(selectedTable, i, row);
     });
-    setInternalData({ ...manager.getData() });
+    setInternalData({ ...manager.getData() } as commonData.DesignedDataset);
     setColumnWidths((prev) => ({ ...prev, [name]: 120 }));
   };
 
@@ -252,7 +252,7 @@ export const JsonDatasetEditorModal: React.FC<JsonDatasetEditorModalProps> = ({
       manager.updateRow(selectedTable, i, row);
     });
     manager.removeColumn(selectedTable, colKey);
-    setInternalData({ ...manager.getData() });
+    setInternalData({ ...manager.getData() } as commonData.DesignedDataset);
     setColumnWidths((prev) => {
       const copy = { ...prev };
       delete copy[colKey];
@@ -264,18 +264,18 @@ export const JsonDatasetEditorModal: React.FC<JsonDatasetEditorModalProps> = ({
   const addRow = () => {
     if (!selectedTable || !isDataMode) return;
     const cols = manager.getColumns(selectedTable) ?? [];
-    const newRow: JsonObject = {};
+    const newRow: commonData.JsonObject = {};
     cols.forEach(
       (c) => (newRow[c.name] = getDefaultValue(c.type as JsonColumnType))
     );
     manager.addRow(selectedTable, newRow);
-    setInternalData({ ...manager.getData() });
+    setInternalData({ ...manager.getData() } as commonData.DesignedDataset);
   };
 
   const removeRow = (i: number) => {
     if (!selectedTable || !isDataMode) return;
     manager.removeRow(selectedTable, i);
-    setInternalData({ ...manager.getData() });
+    setInternalData({ ...manager.getData() } as commonData.DesignedDataset);
   };
 
   const updateCell = (rowIndex: number, colKey: string, value: any) => {
@@ -283,7 +283,7 @@ export const JsonDatasetEditorModal: React.FC<JsonDatasetEditorModalProps> = ({
     const table = manager.getTable(selectedTable) ?? [];
     const newRow = { ...table[rowIndex], [colKey]: value };
     manager.updateRow(selectedTable, rowIndex, newRow);
-    setInternalData({ ...manager.getData() });
+    setInternalData({ ...manager.getData() } as commonData.DesignedDataset);
   };
 
   /* ---------------- TableVirtualized ---------------- */
@@ -335,7 +335,7 @@ export const JsonDatasetEditorModal: React.FC<JsonDatasetEditorModalProps> = ({
             className=" flex items-center justify-center text-center"
             style={{ width: minColWidth }}
           >
-            # (of {rows.length})
+            # ({rows.length})
           </div>
           {columns.map((col: any) => (
             <div
