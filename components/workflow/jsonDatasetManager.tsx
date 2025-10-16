@@ -1,4 +1,4 @@
-import type { JsonObject } from "@/components/core/commonData";
+export type JsonObject = { [key: string]: any };
 
 export interface ColumnSchema {
   name: string;

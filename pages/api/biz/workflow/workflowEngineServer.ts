@@ -135,7 +135,6 @@ export function registerBuiltInActions(): void {
         }
 
         // Node main action
-        workflowData.data.run = {};
         workflowData.data.run.outputs = {};
         workflowData.data.run.outputs._SYSTEM = [];
         workflowData.data.run.outputs._SYSTEM[0] = { startTime: new Date() };
@@ -399,8 +398,11 @@ export function registerBuiltInActions(): void {
         },
         random: (min: number = 0, max: number = 1): number =>
           Math.random() * (max - min) + min,
-        sendMail: (transporterOption: any, mailOption: any): void => {
-          mailSender.sendMail(transporterOption, mailOption);
+        sendMail: async (
+          transporterOption: any,
+          mailOption: any
+        ): Promise<any> => {
+          return await mailSender.sendMail(transporterOption, mailOption);
         },
         sleep: (ms: number) => new Promise((r) => setTimeout(r, ms)),
         setGlobalVar: (path: string, value: any) =>

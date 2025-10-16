@@ -21,18 +21,20 @@ import type {
 import { Handle, Position } from "reactflow";
 import "reactflow/dist/base.css";
 import "reactflow/dist/style.css";
+import { nanoid } from "nanoid";
 import * as constants from "@/components/core/constants";
-import * as commonData from "@/components/core/commonData";
-import * as commonFunctions from "@/components/core/commonFunctions";
-
 import { NodePropertyPanel } from "@/components/workflow/nodePropertyPanel";
 import { JsonDatasetEditorModal } from "@/components/workflow/jsonDatasetEditorModal";
-
+import type {
+  ActionNodeData,
+  ConditionEdgeData,
+} from "@/components/core/commonData";
 import { DBConnectionManagerModal } from "@/components/workflow/dbConnectionManagerModal";
 import RequestServer from "@/components/core/client/requestServer";
 import * as userInfo from "@/components/core/client/frames/userInfo";
 import { v4 as uuidv4 } from "uuid";
 import WorkflowSelector from "./workflowSelector";
+import * as commonFunctions from "@/components/core/commonFunctions";
 import {
   Accordion,
   AccordionItem,
@@ -44,15 +46,21 @@ import BranchNode from "./customNode/branchNode";
 
 interface WorkflowEditorProps {
   workflowId?: string;
-  initialNodes?: Node<commonData.ActionNodeData>[];
-  initialEdges?: Edge<commonData.ConditionEdgeData>[];
+  initialNodes?: Node<ActionNodeData>[];
+  initialEdges?: Edge<ConditionEdgeData>[];
   onWorkflowIDNameChange?: (newId: string, newName: string) => void;
   openModal?: (msg: string) => void; // 필요하면 타입 정의
 }
 
-const WorkflowDefaultNode: React.FC<NodeProps<commonData.ActionNodeData>> = ({
-  data,
-}) => {
+export type DesignColumn = {
+  name: string;
+  type: "string" | "number" | "boolean" | "object";
+};
+
+export type DesignedDataset = Record<string, DesignColumn[]>;
+type InputDataset = Record<string, Record<string, any>[]>;
+
+const WorkflowDefaultNode: React.FC<NodeProps<ActionNodeData>> = ({ data }) => {
   const isStart = data.actionName === constants.workflowActions.START;
   const isEnd = data.actionName === constants.workflowActions.END;
   const hasPorts = [
@@ -166,36 +174,54 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
 
   const [workflowName, setWorkflowName] = useState("새 워크플로우");
   const [workflowDescription, setWorkflowDescription] = useState("설명 없음");
-  const [nodes, setNodes] =
-    useState<Node<commonData.ActionNodeData>[]>(initialNodes);
-  const [edges, setEdges] =
-    useState<Edge<commonData.ConditionEdgeData>[]>(initialEdges);
+  const [nodes, setNodes] = useState<Node<ActionNodeData>[]>(initialNodes);
+  const [edges, setEdges] = useState<Edge<ConditionEdgeData>[]>(initialEdges);
 
-  const [selectedNode, setSelectedNode] =
-    useState<Node<commonData.ActionNodeData> | null>(null);
+  const [selectedNode, setSelectedNode] = useState<Node<ActionNodeData> | null>(
+    null
+  );
 
   // Input Dataset 스키마
-  const [designedInputData, setDesignedInputData] =
-    useState<commonData.DesignedDataset>({
-      INPUT_TABLE: [],
-    });
+  const [designedInputData, setDesignedInputData] = useState<DesignedDataset>({
+    INPUT_TABLE: [
+      { name: "key1", type: "string" },
+      { name: "key2", type: "number" },
+    ],
+  });
 
-  // Input Dataset
-  const [workflowInputData, setWorkflowInputData] =
-    useState<commonData.BrunnerDataset>({
-      INPUT_TABLE: [],
-    });
+  // Input Dataset 문자열
+  const [workflowInputData, setWorkflowInputData] = useState<string>(
+    JSON.stringify({ INPUT_TABLE: [{ key1: "test", key2: 123 }] }, null, 2)
+  );
+
+  // Input Dataset 객체
+  const workflowInputDataObj = useMemo(() => {
+    try {
+      const parsed = JSON.parse(workflowInputData);
+      return Object.keys(parsed).length ? parsed : { table1: [] };
+    } catch {
+      return { table1: [] };
+    }
+  }, [workflowInputData]);
 
   // Output Dataset 스키마
-  const [designedOutputData, setDesignedOutputData] =
-    useState<commonData.DesignedDataset>({
-      OUTPUT_TABLE: [],
-    });
+  const [designedOutputData, setDesignedOutputData] = useState<string>(
+    JSON.stringify({ OUTPUT_TABLE: [{ key1: "test", key2: 123 }] }, null, 2)
+  );
+  // Output Dataset 문자열
+  const [workflowOutputData, setWorkflowOutputData] = useState<string>(
+    JSON.stringify({ OUTPUT_TABLE: [{ key1: "test", key2: 123 }] }, null, 2)
+  );
 
-  // Output Dataset
-  const [workflowOutputData, setWorkflowOutputData] = useState<any>({
-    OUTPUT_TABLE: [],
-  });
+  // Output Dataset 객체
+  const workflowOutputDataObj = useMemo(() => {
+    try {
+      const parsed = JSON.parse(workflowOutputData);
+      return Object.keys(parsed).length ? parsed : { table1: [] };
+    } catch {
+      return { table1: [] };
+    }
+  }, [workflowOutputData]);
 
   const [isRightPanelOpen, setIsRightPanelOpen] = useState(false);
   const [isViewWorkflowDataModalOpen, setIsViewWorkflowDataModalOpen] =
@@ -256,7 +282,7 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
       },
     ];
 
-    const initialEdges: Edge<commonData.ConditionEdgeData>[] = [];
+    const initialEdges: Edge<ConditionEdgeData>[] = [];
 
     setCurrentWorkflow({
       workflowId: uuidv4(),
@@ -366,7 +392,8 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
         const newRow: Record<string, any> = {};
         for (const key in firstRow) {
           const value = firstRow[key];
-          switch (value.type) {
+          const type = (value as any)?.type ?? typeof value;
+          switch (type) {
             case "string":
               newRow[key] = "";
               break;
@@ -387,7 +414,7 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
       }
     }
 
-    setWorkflowInputData(newDataObj);
+    setWorkflowInputData(JSON.stringify(newDataObj, null, 2));
     jWorkflow.current.data.design.inputs = designedInputData; // 스키마 반영
     jWorkflow.current.data.run.inputs = newDataObj; // 실제 데이터 반영
   }, [designedInputData]);
@@ -396,7 +423,7 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
     if (!jWorkflow.current) return;
 
     try {
-      jWorkflow.current.data.run.inputs = workflowInputData;
+      jWorkflow.current.data.run.inputs = JSON.parse(workflowInputData);
     } catch (err) {
       console.warn("workflowInputData JSON parse failed:", err);
     }
@@ -407,8 +434,9 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
     if (!jWorkflow.current) return;
 
     try {
-      jWorkflow.current.data.design.outputs = designedOutputData; // 스키마 반영
-      jWorkflow.current.data.run.outputs = designedOutputData; // 실제 데이터 반영
+      const parsed = JSON.parse(designedOutputData);
+      jWorkflow.current.data.design.outputs = parsed; // 스키마 반영
+      jWorkflow.current.data.run.outputs = parsed; // 실제 데이터 반영
     } catch (err) {
       console.warn("designedOutputData parse failed:", err);
     }
@@ -436,23 +464,22 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
           data: { condition: "" },
           markerEnd: { type: "arrowclosed" },
           style: { stroke: "#ccc", strokeWidth: 2 },
-        } as Edge<commonData.ConditionEdgeData>,
+        } as Edge<ConditionEdgeData>,
         eds
       )
     );
   }, []);
 
   const onNodeClick = useCallback(
-    (_event: any, node: Node<commonData.ActionNodeData>) =>
-      setSelectedNode(node),
+    (_event: any, node: Node<ActionNodeData>) => setSelectedNode(node),
     []
   );
 
   const addNode = () => {
     const id = uuidv4();
     const randomPos = {
-      x: 100, // Math.random() * 400 + 50,
-      y: 100, //Math.random() * 400 + 50,
+      x: Math.random() * 400 + 50,
+      y: Math.random() * 400 + 50,
     };
     setNodes((nds) => [
       ...nds,
@@ -476,7 +503,7 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
           },
           run: { inputs: [], outputs: [] },
         },
-      } as Node<commonData.ActionNodeData>,
+      } as Node<ActionNodeData>,
     ]);
   };
 
@@ -533,18 +560,26 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
 
     // 입력 데이터 적용
     setWorkflowInputData(
-      newVal.data?.run?.inputs ? newVal.data.run.inputs : { INPUT_TABLE: [] }
+      newVal.data?.run?.inputs
+        ? JSON.stringify(newVal.data.run.inputs, null, 2)
+        : JSON.stringify(
+            { INPUT_TABLE: [{ key1: "test", key2: 123 }] },
+            null,
+            2
+          )
     );
 
     // 출력 데이터 적용
     setDesignedOutputData(
-      newVal.data?.run?.outputs ? newVal.data.run.outputs : { OUTPUT_TABLE: [] }
+      newVal.data?.run?.outputs
+        ? JSON.stringify(newVal.data.run.outputs, null, 2)
+        : JSON.stringify({ OUTPUT_TABLE: [] }, null, 2)
     );
 
-    setWorkflowOutputData(newVal.data.run.outputs);
+    setWorkflowOutputData(JSON.stringify(newVal.data.run.outputs, null, 2));
 
     const snappedNodes = (newVal.nodes ?? []).map(
-      (n: Node<commonData.ActionNodeData>) => ({
+      (n: Node<ActionNodeData>) => ({
         ...n,
         position: snapToGrid(n.position),
       })
@@ -644,7 +679,7 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
         userId: userInfo.getLoginUserId(),
         workflowId: workflowId,
         transactionMode: constants.transactionMode.System,
-        inputs: workflowInputData,
+        inputs: workflowInputDataObj,
       };
       const jResponse = await RequestServer(jRequest);
       if (jResponse.error_code == 0 && jResponse.jWorkflow) {
@@ -667,7 +702,7 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
         workflowId: workflowId,
         transactionMode: constants.transactionMode.Business,
         currentNodeId: jWorkflow.current?.currentNodeId ?? "",
-        inputs: workflowInputData,
+        inputs: workflowInputDataObj,
       };
       const jResponse = await RequestServer(jRequest);
       if (jResponse.error_code == 0 && jResponse.jWorkflow) {
@@ -876,7 +911,7 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
                             value={designedInputData}
                             onConfirm={(newSchema) => {
                               setDesignedInputData(
-                                newSchema as commonData.DesignedDataset
+                                newSchema as DesignedDataset
                               );
                               const newDataObj: Record<string, any> = {};
                               for (const [tableName, rows] of Object.entries(
@@ -886,21 +921,21 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
                                   const firstRow = rows[0];
                                   const newRow: Record<string, any> = {};
                                   for (const key in firstRow) {
-                                    const typedKey =
-                                      key as keyof commonData.DesignColumn;
-                                    const value = firstRow[typedKey];
-                                    switch (typeof value) {
+                                    const value = firstRow[key];
+                                    const type =
+                                      (value as any)?.type ?? typeof value;
+                                    switch (type) {
                                       case "string":
-                                        newRow[typedKey] = "";
+                                        newRow[key] = "";
                                         break;
                                       case "number":
-                                        newRow[typedKey] = 0;
+                                        newRow[key] = 0;
                                         break;
                                       case "boolean":
-                                        newRow[typedKey] = false;
+                                        newRow[key] = false;
                                         break;
                                       default:
-                                        newRow[typedKey] = {};
+                                        newRow[key] = {};
                                         break;
                                     }
                                   }
@@ -909,7 +944,9 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
                                   newDataObj[tableName] = [];
                                 }
                               }
-                              setWorkflowInputData(newDataObj);
+                              setWorkflowInputData(
+                                JSON.stringify(newDataObj, null, 2)
+                              );
                               setIsInputSchemaEditorOpen(false);
                             }}
                             onCancel={() => setIsInputSchemaEditorOpen(false)}
@@ -920,9 +957,11 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
                           <JsonDatasetEditorModal
                             open={isInputDataEditorOpen}
                             mode="data"
-                            value={workflowInputData}
+                            value={workflowInputDataObj}
                             onConfirm={(newData) => {
-                              setWorkflowInputData(newData);
+                              setWorkflowInputData(
+                                JSON.stringify(newData, null, 2)
+                              );
                               setIsInputDataEditorOpen(false);
                             }}
                             onCancel={() => setIsInputDataEditorOpen(false)}
@@ -939,10 +978,12 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
                       <textarea
                         className="w-full h-[200px] mt-2 border p-2 font-mono text-sm"
                         value={(() => {
-                          const dataObj = workflowInputData;
+                          const dataObj = JSON.parse(
+                            workflowInputData
+                          ) as InputDataset;
                           Object.keys(dataObj).forEach((tableKey) => {
                             const rows = dataObj[tableKey];
-                            rows?.forEach((row: any) => {
+                            rows?.forEach((row) => {
                               Object.keys(row).forEach((key) => {
                                 const value = row[key];
                                 if (!isNaN(Number(value)))
@@ -976,11 +1017,11 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
                           <JsonDatasetEditorModal
                             open={isOutputSchemaEditorOpen}
                             mode="schema"
-                            value={workflowOutputData}
-                            onConfirm={(
-                              newSchema: commonData.DesignedDataset
-                            ) => {
-                              setDesignedOutputData(newSchema);
+                            value={workflowOutputDataObj}
+                            onConfirm={(newSchema) => {
+                              setDesignedOutputData(
+                                JSON.stringify(newSchema, null, 2)
+                              );
                               setIsOutputSchemaEditorOpen(false);
                             }}
                             onCancel={() => setIsOutputSchemaEditorOpen(false)}
@@ -990,9 +1031,11 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
                           <JsonDatasetEditorModal
                             open={isOutputDataEditorOpen}
                             mode="data"
-                            value={workflowOutputData}
+                            value={workflowOutputDataObj}
                             onConfirm={(newData) => {
-                              setWorkflowOutputData(newData);
+                              setWorkflowOutputData(
+                                JSON.stringify(newData, null, 2)
+                              );
                               setIsOutputDataEditorOpen(false);
                             }}
                             onCancel={() => setIsOutputDataEditorOpen(false)}
@@ -1007,7 +1050,7 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
                       </div>
                       <textarea
                         className="w-full h-[200px] mt-2 border p-2 font-mono text-sm"
-                        value={JSON.stringify(workflowOutputData, null, 2)}
+                        value={workflowOutputData}
                         readOnly
                       />
                     </AccordionContent>
@@ -1107,8 +1150,8 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
                           setWorkflowDescription(updates.workflowDescription);
                       }}
                       onNodeUpdate={(id, updates) => {
-                        setNodes((nds: any) => {
-                          const newNodes = nds.map((n: any) => {
+                        setNodes((nds) => {
+                          const newNodes = nds.map((n) => {
                             if (n.id !== id) return n;
 
                             let newDesign: Partial<typeof n.data.design> =
@@ -1124,28 +1167,22 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
                             }
 
                             // ✅ 수정된 부분
-                            const mergedNode = {
-                              ...n,
-                              actionName: updates.actionName ?? n.actionName,
-                              data: {
-                                ...n.data,
-                                ...(updates.data ?? {}), // updates.data 내용만 병합
-                              },
+                            const mergedData = {
+                              ...n.data,
+                              ...(updates.data ?? {}), // updates.data 내용만 병합
                             };
 
                             var newLabel =
                               updates.data?.label ??
                               updates.label ??
-                              mergedNode.label;
+                              mergedData.label;
 
                             return {
                               ...n,
-                              actionName: updates.actionName ?? n.actionName,
+                              actionName:
+                                updates.actionName ?? n.data?.actionName,
                               data: {
-                                ...mergedNode.data,
-                                actionName:
-                                  updates.actionName ??
-                                  mergedNode.data?.actionName,
+                                ...mergedData,
                                 label: newLabel,
                                 design: newDesign,
                               },
@@ -1157,7 +1194,7 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
                             nodes: newNodes,
                           };
                           setSelectedNode(
-                            newNodes.find((nn: any) => nn.id === id) || null
+                            newNodes.find((nn) => nn.id === id) || null
                           );
                           setCurrentWorkflow(updatedWorkflow);
 

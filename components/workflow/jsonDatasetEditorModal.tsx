@@ -1,7 +1,7 @@
 import * as React from "react";
 import { useState, useEffect, useRef } from "react";
 import { JsonDatasetManager } from "@/components/workflow/jsonDatasetManager";
-import * as commonData from "@/components/core/commonData";
+import type { JsonObject } from "@/components/workflow/jsonDatasetManager";
 import * as ReactWindow from "react-window";
 
 export type JsonColumnType = "string" | "number" | "boolean";
@@ -11,7 +11,7 @@ interface JsonDatasetEditorModalProps {
   open: boolean;
   mode: JsonDatasetEditorMode;
   value?: Record<string, any[]>; // 테이블 이름 -> 데이터 배열
-  onConfirm: (data: commonData.DesignedDataset) => void;
+  onConfirm: (data: Record<string, JsonObject[]>) => void;
   onCancel?: () => void;
 }
 
@@ -66,74 +66,9 @@ export const JsonDatasetEditorModal: React.FC<JsonDatasetEditorModalProps> = ({
   onConfirm,
   onCancel,
 }) => {
-  useEffect(() => {
-    const initData: commonData.DesignedDataset = {};
-    Object.entries(value).forEach(([tableName, arr]: any) => {
-      if (Array.isArray(arr)) initData[tableName] = arr;
-    });
-
-    const newManager = new JsonDatasetManager(initData);
-
-    // ---- 안전하게 첫 행에서 컬럼 추론 (존재 체크 포함) ----
-    Object.entries(initData).forEach(([tableName, rows]: any) => {
-      if (!Array.isArray(rows) || rows.length === 0) return;
-
-      const firstRow = rows[0] ?? {};
-      // firstRow가 객체인지 확인 (문자열/프리미티브이면 건너뜀)
-      if (typeof firstRow !== "object" || firstRow === null) return;
-
-      const inferredCols = Object.keys(firstRow).map((key) => {
-        const val = (firstRow as any)[key];
-        const type: JsonColumnType =
-          typeof val === "number"
-            ? "number"
-            : typeof val === "boolean"
-            ? "boolean"
-            : "string";
-        return { name: key, type };
-      });
-
-      // ---- manager에 setColumns가 있으면 쓰고, 없으면 addColumn으로 대체 ----
-      if (typeof (newManager as any).setColumns === "function") {
-        (newManager as any).setColumns(tableName, inferredCols);
-      } else {
-        // fallback: 기존 컬럼 확인 후 없는 컬럼은 addColumn 호출
-        const existing =
-          typeof (newManager as any).getColumns === "function"
-            ? (newManager as any).getColumns(tableName) || []
-            : [];
-        inferredCols.forEach((col) => {
-          if (!existing.some((c: any) => c.name === col.name)) {
-            (newManager as any).addColumn?.(tableName, col);
-          }
-        });
-      }
-    });
-
-    setManager(newManager);
-    setInternalData(initData);
-    setSelectedTable(Object.keys(initData)[0] || null);
-
-    // 컬럼 폭 초기화 — 안전 체크 추가
-    const firstTableName = Object.keys(initData)[0];
-    const firstTableRows = firstTableName ? initData[firstTableName] ?? [] : [];
-    const firstTableCols =
-      firstTableRows[0] && typeof firstTableRows[0] === "object"
-        ? Object.keys(firstTableRows[0])
-        : [];
-    const widths: { [key: string]: number } = {};
-    firstTableCols.forEach((col) => (widths[col] = 120));
-    setColumnWidths(widths);
-
-    setPos({
-      x: window.innerWidth / 2 - size.width / 2,
-      y: window.innerHeight / 2 - size.height / 2,
-    });
-  }, [value]);
-
-  const [internalData, setInternalData] = useState<commonData.DesignedDataset>(
-    {}
-  );
+  const [internalData, setInternalData] = useState<
+    Record<string, JsonObject[]>
+  >({});
   const [selectedTable, setSelectedTable] = useState<string | null>(null);
   const [manager, setManager] = useState(() => new JsonDatasetManager({}));
   const [columnWidths, setColumnWidths] = useState<{ [key: string]: number }>(
@@ -224,9 +159,9 @@ export const JsonDatasetEditorModal: React.FC<JsonDatasetEditorModalProps> = ({
 
   /* ---------------- 초기화 ---------------- */
   useEffect(() => {
-    const initData: commonData.DesignedDataset = {};
+    const initData: Record<string, JsonObject[]> = {};
     Object.entries(value).forEach(([tableName, arr]: any) => {
-      if (Array.isArray(arr)) initData[tableName] = arr;
+      if (Array.isArray(arr)) initData[tableName] = arr as JsonObject[];
     });
     const newManager = new JsonDatasetManager(initData);
     setManager(newManager);
@@ -268,7 +203,7 @@ export const JsonDatasetEditorModal: React.FC<JsonDatasetEditorModalProps> = ({
     manager.addTable(name, []);
     setManager(new JsonDatasetManager(manager.getData()));
     setSelectedTable(name);
-    setInternalData({ ...manager.getData() } as commonData.DesignedDataset);
+    setInternalData({ ...manager.getData() });
   };
 
   const removeTable = (key: string) => {
@@ -276,7 +211,7 @@ export const JsonDatasetEditorModal: React.FC<JsonDatasetEditorModalProps> = ({
     manager.removeTable(key);
     const newKeys = Object.keys(manager.getData());
     setSelectedTable(newKeys[0] || null);
-    setInternalData({ ...manager.getData() } as commonData.DesignedDataset);
+    setInternalData({ ...manager.getData() });
   };
 
   const renameTable = (oldKey: string) => {
@@ -288,7 +223,7 @@ export const JsonDatasetEditorModal: React.FC<JsonDatasetEditorModalProps> = ({
     manager.addTable(newKey, data);
     setManager(new JsonDatasetManager(manager.getData()));
     setSelectedTable(newKey);
-    setInternalData({ ...manager.getData() } as commonData.DesignedDataset);
+    setInternalData({ ...manager.getData() });
   };
 
   /* ---------------- 컬럼 관리 ---------------- */
@@ -305,7 +240,7 @@ export const JsonDatasetEditorModal: React.FC<JsonDatasetEditorModalProps> = ({
       row[name] = getDefaultValue(type);
       manager.updateRow(selectedTable, i, row);
     });
-    setInternalData({ ...manager.getData() } as commonData.DesignedDataset);
+    setInternalData({ ...manager.getData() });
     setColumnWidths((prev) => ({ ...prev, [name]: 120 }));
   };
 
@@ -317,7 +252,7 @@ export const JsonDatasetEditorModal: React.FC<JsonDatasetEditorModalProps> = ({
       manager.updateRow(selectedTable, i, row);
     });
     manager.removeColumn(selectedTable, colKey);
-    setInternalData({ ...manager.getData() } as commonData.DesignedDataset);
+    setInternalData({ ...manager.getData() });
     setColumnWidths((prev) => {
       const copy = { ...prev };
       delete copy[colKey];
@@ -329,18 +264,18 @@ export const JsonDatasetEditorModal: React.FC<JsonDatasetEditorModalProps> = ({
   const addRow = () => {
     if (!selectedTable || !isDataMode) return;
     const cols = manager.getColumns(selectedTable) ?? [];
-    const newRow: commonData.JsonObject = {};
+    const newRow: JsonObject = {};
     cols.forEach(
       (c) => (newRow[c.name] = getDefaultValue(c.type as JsonColumnType))
     );
     manager.addRow(selectedTable, newRow);
-    setInternalData({ ...manager.getData() } as commonData.DesignedDataset);
+    setInternalData({ ...manager.getData() });
   };
 
   const removeRow = (i: number) => {
     if (!selectedTable || !isDataMode) return;
     manager.removeRow(selectedTable, i);
-    setInternalData({ ...manager.getData() } as commonData.DesignedDataset);
+    setInternalData({ ...manager.getData() });
   };
 
   const updateCell = (rowIndex: number, colKey: string, value: any) => {
@@ -348,7 +283,7 @@ export const JsonDatasetEditorModal: React.FC<JsonDatasetEditorModalProps> = ({
     const table = manager.getTable(selectedTable) ?? [];
     const newRow = { ...table[rowIndex], [colKey]: value };
     manager.updateRow(selectedTable, rowIndex, newRow);
-    setInternalData({ ...manager.getData() } as commonData.DesignedDataset);
+    setInternalData({ ...manager.getData() });
   };
 
   /* ---------------- TableVirtualized ---------------- */
@@ -400,7 +335,7 @@ export const JsonDatasetEditorModal: React.FC<JsonDatasetEditorModalProps> = ({
             className=" flex items-center justify-center text-center"
             style={{ width: minColWidth }}
           >
-            # ({rows.length})
+            # (of {rows.length})
           </div>
           {columns.map((col: any) => (
             <div
@@ -478,7 +413,7 @@ export const JsonDatasetEditorModal: React.FC<JsonDatasetEditorModalProps> = ({
 
   return (
     <div
-      className="fixed inset-0 z-50 bg-black/30 backdrop-blur-sm"
+      className="fixed inset-0 z-50 general-text-bg-color"
       onClick={onCancel}
     >
       <div
@@ -544,75 +479,60 @@ export const JsonDatasetEditorModal: React.FC<JsonDatasetEditorModalProps> = ({
             <>
               {isSchemaMode ? (
                 <div className="flex-1 overflow-auto">
-                  {selectedTable && (
-                    <table className="table-auto border-collapse border w-full text-sm">
-                      <thead className="medium-text-bg-color">
-                        <tr>
-                          {Object.keys(
-                            (manager.getTable(selectedTable) ?? [])[0] ?? {}
-                          ).map((colKey) => {
-                            const sampleRow =
-                              (manager.getTable(selectedTable) ?? [])[0] ?? {};
-                            const val = sampleRow[colKey];
-                            const type =
-                              typeof val === "number"
-                                ? "number"
-                                : typeof val === "boolean"
-                                ? "boolean"
-                                : "string";
-                            return (
-                              <th
-                                key={colKey}
-                                className="border px-2 py-1 semi-text-bg-color"
-                                style={{ width: columnWidths[colKey] || 150 }}
-                              >
-                                {colKey} ({type})
-                                {isSchemaMode && (
-                                  <button
-                                    onClick={() => removeColumn(colKey)}
-                                    className="text-red-500 ml-1"
-                                  >
-                                    ×
-                                  </button>
-                                )}
-                              </th>
-                            );
-                          })}
-                          <th className="border px-2 py-1">
-                            <button onClick={addColumn} className="px-1">
-                              + Column
+                  <table className="table-auto border-collapse border w-full text-sm">
+                    <thead className="medium-text-bg-color">
+                      <tr>
+                        {columns.map((col) => (
+                          <th
+                            key={col.name}
+                            className="border px-2 py-1 semi-text-bg-color"
+                            style={{ width: columnWidths[col.name] || 150 }}
+                          >
+                            {col.name} ({col.type})
+                            <button
+                              onClick={() => removeColumn(col.name)}
+                              className="text-red-500 ml-1"
+                            >
+                              ×
                             </button>
                           </th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <tr className="semi-text-bg-color">
-                          {Object.keys(
-                            (manager.getTable(selectedTable) ?? [])[0] ?? {}
-                          ).map((colKey) => (
-                            <td
-                              key={colKey}
-                              className="border px-2 py-1"
-                              style={{ width: columnWidths[colKey] || 150 }}
-                            >
-                              {String(
-                                (manager.getTable(selectedTable) ?? [])[0]?.[
-                                  colKey
-                                ] ?? ""
-                              )}
-                            </td>
-                          ))}
-                          <td className="border px-2 py-1"></td>
-                        </tr>
-                      </tbody>
-                    </table>
-                  )}
+                        ))}
+                        <th className="border px-2 py-1">
+                          <button onClick={addColumn} className="px-1">
+                            + Column
+                          </button>
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr className="semi-text-bg-color">
+                        {columns.map((col) => (
+                          <td
+                            key={col.name}
+                            className="border px-2 py-1"
+                            style={{ width: columnWidths[col.name] || 150 }}
+                          >
+                            {String(
+                              getDefaultValue(col.type as JsonColumnType)
+                            )}
+                          </td>
+                        ))}
+                        <td className="border px-2 py-1"></td>
+                      </tr>
+                    </tbody>
+                  </table>
                 </div>
               ) : (
                 <TableVirtualized
                   rows={manager.getTable(selectedTable) || []}
                   columns={columns}
-                  height={size.height - 180}
+                  height={
+                    size.height -
+                    40 - // 헤더
+                    50 - // 테이블 버튼 영역
+                    60 - // 하단 버튼
+                    16 // padding 여유
+                  }
                   columnWidths={columnWidths}
                   setColumnWidths={setColumnWidths}
                   updateCell={updateCell}
@@ -632,12 +552,15 @@ export const JsonDatasetEditorModal: React.FC<JsonDatasetEditorModalProps> = ({
 
         {/* 하단 버튼 */}
         <div className="flex justify-end mt-4 space-x-2 flex-none">
-          <button onClick={onCancel} className="px-4 py-2 border">
+          <button
+            onClick={onCancel}
+            className="px-4 py-2 border medium-text-bg-color"
+          >
             Close
           </button>
           <button
             onClick={() => onConfirm({ ...internalData })}
-            className="px-4 py-2 border medium-text-bg-color"
+            className="px-4 py-2 border general-text-bg-color"
           >
             Apply
           </button>
