@@ -164,7 +164,7 @@ export const DBConnectionManagerModal: React.FC<
       {loading && <Loading />}
 
       {open && (
-        <div className="fixed inset-0 flex justify-center items-start z-50">
+        <div className="fixed inset-0 flex justify-center items-start z-50 bg-black/30 backdrop-blur-sm">
           <Rnd
             size={{ width: modalSize.width, height: modalSize.height }}
             position={{ x: modalPosition.x, y: modalPosition.y }}

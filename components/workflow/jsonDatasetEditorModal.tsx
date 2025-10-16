@@ -478,7 +478,7 @@ export const JsonDatasetEditorModal: React.FC<JsonDatasetEditorModalProps> = ({
 
   return (
     <div
-      className="fixed inset-0 z-50 general-text-bg-color"
+      className="fixed inset-0 z-50 bg-black/30 backdrop-blur-sm"
       onClick={onCancel}
     >
       <div

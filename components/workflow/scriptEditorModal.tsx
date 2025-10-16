@@ -79,7 +79,7 @@ export const ScriptEditorModal: React.FC<ScriptEditorModalProps> = ({
   if (!open) return null;
 
   return (
-    <div className="general-text-bg-color fixed inset-0 flex justify-center items-center">
+    <div className="bg-black/30 backdrop-blur-sm fixed inset-0 flex justify-center items-center">
       <div
         className="semi-text-bg-color rounded shadow-lg flex flex-col border border-gray-400"
         style={{

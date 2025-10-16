@@ -169,7 +169,7 @@ export const SqlEditorModal: React.FC<SqlEditorModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center z-[9999]">
+    <div className="bg-black/30 backdrop-blur-sm fixed inset-0 flex items-center justify-center z-[9999]">
       <div
         ref={dragRef}
         className="absolute semi-text-bg-color rounded shadow-lg flex flex-col"
@@ -213,19 +213,6 @@ export const SqlEditorModal: React.FC<SqlEditorModalProps> = ({
               className="w-64"
             />
           </div>
-          {/* <div className="flex flex-col">
-            <label>Max Rows (0 = 무제한)</label>
-            <Input
-              type="number"
-              value={maxRows ?? 0}
-              onChange={(e) =>
-                setMaxRows(
-                  e.target.value ? parseInt(e.target.value, 10) : undefined
-                )
-              }
-              className="w-36"
-            />
-          </div> */}
           <div className="flex flex-col">
             <label>Output Table Name)</label>
             <Input

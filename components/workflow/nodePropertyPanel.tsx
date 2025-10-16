@@ -415,7 +415,7 @@ export const NodePropertyPanel: React.FC<NodePropertyPanelProps> = ({
                 placeholder="숫자 또는 JS 표현식 입력"
               />
             </div>
-            <small className="w-full text-right semi-text-bg-color">
+            <small className="w-full text-center semi-text-bg-color">
               ※ Ex) <code>${"{workflow.items.length}"}</code>
             </small>
 
