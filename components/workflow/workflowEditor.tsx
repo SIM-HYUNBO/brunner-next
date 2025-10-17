@@ -532,11 +532,20 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
         : { INPUT_TABLE: [{ key1: "test", key2: 123 }] }
     );
 
-    // 출력 데이터 적용
-    setDesignedOutputData(
-      newVal.data?.run?.outputs ? newVal.data.run.outputs : { OUTPUT_TABLE: [] }
+    setDesignedInputData(
+      newVal.data?.design?.inputs
+        ? newVal.data.design.inputs
+        : { OUTPUT_TABLE: [] }
     );
 
+    // 출력 데이터 적용
+    setDesignedOutputData(
+      newVal.data?.design?.outputs
+        ? newVal.data.design.outputs
+        : { OUTPUT_TABLE: [] }
+    );
+
+    setWorkflowInputData(newVal.data.run.inputs);
     setWorkflowOutputData(newVal.data.run.outputs);
 
     const snappedNodes = (newVal.nodes ?? []).map(
