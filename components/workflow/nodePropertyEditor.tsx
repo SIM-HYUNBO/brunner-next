@@ -114,7 +114,7 @@ export const NodePropertyEditor: React.FC<NodePropertyEditorProps> = ({
       <div className="flex flex-row mt-2 items-center">
         <label>Action Name:</label>
         <select
-          className="flex flex-1 border px-2 py-1 ml-2 mt-1"
+          className="flex flex-1 border px-2 py-1 ml-2 mt-1 text-center"
           value={node.data.actionName}
           onChange={(e) => handleActionChange(e.target.value)}
         >
