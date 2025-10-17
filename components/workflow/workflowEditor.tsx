@@ -183,45 +183,44 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
 
   // Input Dataset 스키마
   const [designedInputData, setDesignedInputData] = useState<DesignedDataset>({
-    INPUT_TABLE: [
-      { name: "key1", type: "string" },
-      { name: "key2", type: "number" },
-    ],
+    INPUT_TABLE: [],
   });
 
   // Input Dataset 문자열
-  const [workflowInputData, setWorkflowInputData] = useState<string>(
-    JSON.stringify({ INPUT_TABLE: [{ key1: "test", key2: 123 }] }, null, 2)
-  );
+  const [workflowInputData, setWorkflowInputData] = useState<
+    Record<string, any[]>
+  >({ INPUT_TABLE: [{ key1: "test", key2: 123 }] });
 
-  // Input Dataset 객체
-  const workflowInputDataObj = useMemo(() => {
-    try {
-      const parsed = JSON.parse(workflowInputData);
-      return Object.keys(parsed).length ? parsed : { table1: [] };
-    } catch {
-      return { table1: [] };
-    }
-  }, [workflowInputData]);
+  // // Input Dataset 객체
+  // const workflowInputDataObj = useMemo(() => {
+  //   try {
+  //     const parsed = JSON.parse(workflowInputData);
+  //     return Object.keys(parsed).length ? parsed : { table1: [] };
+  //   } catch {
+  //     return { table1: [] };
+  //   }
+  // }, [workflowInputData]);
 
   // Output Dataset 스키마
   const [designedOutputData, setDesignedOutputData] = useState<string>(
     JSON.stringify({ OUTPUT_TABLE: [{ key1: "test", key2: 123 }] }, null, 2)
   );
   // Output Dataset 문자열
-  const [workflowOutputData, setWorkflowOutputData] = useState<string>(
-    JSON.stringify({ OUTPUT_TABLE: [{ key1: "test", key2: 123 }] }, null, 2)
-  );
+  const [workflowOutputData, setWorkflowOutputData] = useState<
+    Record<string, any[]>
+  >({
+    OUTPUT_TABLE: [],
+  });
 
-  // Output Dataset 객체
-  const workflowOutputDataObj = useMemo(() => {
-    try {
-      const parsed = JSON.parse(workflowOutputData);
-      return Object.keys(parsed).length ? parsed : { table1: [] };
-    } catch {
-      return { table1: [] };
-    }
-  }, [workflowOutputData]);
+  // // Output Dataset 객체
+  // const workflowOutputDataObj = useMemo(() => {
+  //   try {
+  //     const parsed = JSON.parse(workflowOutputData);
+  //     return Object.keys(parsed).length ? parsed : { table1: [] };
+  //   } catch {
+  //     return { table1: [] };
+  //   }
+  // }, [workflowOutputData]);
 
   const [isRightPanelOpen, setIsRightPanelOpen] = useState(false);
   const [isViewWorkflowDataModalOpen, setIsViewWorkflowDataModalOpen] =
@@ -414,7 +413,7 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
       }
     }
 
-    setWorkflowInputData(JSON.stringify(newDataObj, null, 2));
+    setWorkflowInputData(newDataObj);
     jWorkflow.current.data.design.inputs = designedInputData; // 스키마 반영
     jWorkflow.current.data.run.inputs = newDataObj; // 실제 데이터 반영
   }, [designedInputData]);
@@ -423,7 +422,7 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
     if (!jWorkflow.current) return;
 
     try {
-      jWorkflow.current.data.run.inputs = JSON.parse(workflowInputData);
+      jWorkflow.current.data.run.inputs = workflowInputData;
     } catch (err) {
       console.warn("workflowInputData JSON parse failed:", err);
     }
@@ -561,12 +560,8 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
     // 입력 데이터 적용
     setWorkflowInputData(
       newVal.data?.run?.inputs
-        ? JSON.stringify(newVal.data.run.inputs, null, 2)
-        : JSON.stringify(
-            { INPUT_TABLE: [{ key1: "test", key2: 123 }] },
-            null,
-            2
-          )
+        ? newVal.data.run.inputs
+        : { INPUT_TABLE: [{ key1: "test", key2: 123 }] }
     );
 
     // 출력 데이터 적용
@@ -576,7 +571,7 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
         : JSON.stringify({ OUTPUT_TABLE: [] }, null, 2)
     );
 
-    setWorkflowOutputData(JSON.stringify(newVal.data.run.outputs, null, 2));
+    setWorkflowOutputData(newVal.data.run.outputs);
 
     const snappedNodes = (newVal.nodes ?? []).map(
       (n: Node<ActionNodeData>) => ({
@@ -679,7 +674,7 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
         userId: userInfo.getLoginUserId(),
         workflowId: workflowId,
         transactionMode: constants.transactionMode.System,
-        inputs: workflowInputDataObj,
+        inputs: workflowInputData,
       };
       const jResponse = await RequestServer(jRequest);
       if (jResponse.error_code == 0 && jResponse.jWorkflow) {
@@ -702,7 +697,7 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
         workflowId: workflowId,
         transactionMode: constants.transactionMode.Business,
         currentNodeId: jWorkflow.current?.currentNodeId ?? "",
-        inputs: workflowInputDataObj,
+        inputs: workflowInputData,
       };
       const jResponse = await RequestServer(jRequest);
       if (jResponse.error_code == 0 && jResponse.jWorkflow) {
@@ -944,9 +939,7 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
                                   newDataObj[tableName] = [];
                                 }
                               }
-                              setWorkflowInputData(
-                                JSON.stringify(newDataObj, null, 2)
-                              );
+                              setWorkflowInputData(newDataObj);
                               setIsInputSchemaEditorOpen(false);
                             }}
                             onCancel={() => setIsInputSchemaEditorOpen(false)}
@@ -957,11 +950,9 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
                           <JsonDatasetEditorModal
                             open={isInputDataEditorOpen}
                             mode="data"
-                            value={workflowInputDataObj}
+                            value={workflowInputData}
                             onConfirm={(newData) => {
-                              setWorkflowInputData(
-                                JSON.stringify(newData, null, 2)
-                              );
+                              setWorkflowInputData(newData);
                               setIsInputDataEditorOpen(false);
                             }}
                             onCancel={() => setIsInputDataEditorOpen(false)}
@@ -978,9 +969,7 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
                       <textarea
                         className="w-full h-[200px] mt-2 border p-2 font-mono text-sm"
                         value={(() => {
-                          const dataObj = JSON.parse(
-                            workflowInputData
-                          ) as InputDataset;
+                          const dataObj = workflowInputData;
                           Object.keys(dataObj).forEach((tableKey) => {
                             const rows = dataObj[tableKey];
                             rows?.forEach((row) => {
@@ -1017,7 +1006,7 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
                           <JsonDatasetEditorModal
                             open={isOutputSchemaEditorOpen}
                             mode="schema"
-                            value={workflowOutputDataObj}
+                            value={workflowOutputData}
                             onConfirm={(newSchema) => {
                               setDesignedOutputData(
                                 JSON.stringify(newSchema, null, 2)
@@ -1031,11 +1020,9 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
                           <JsonDatasetEditorModal
                             open={isOutputDataEditorOpen}
                             mode="data"
-                            value={workflowOutputDataObj}
+                            value={workflowOutputData}
                             onConfirm={(newData) => {
-                              setWorkflowOutputData(
-                                JSON.stringify(newData, null, 2)
-                              );
+                              setWorkflowOutputData(newData);
                               setIsOutputDataEditorOpen(false);
                             }}
                             onCancel={() => setIsOutputDataEditorOpen(false)}
@@ -1050,7 +1037,7 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
                       </div>
                       <textarea
                         className="w-full h-[200px] mt-2 border p-2 font-mono text-sm"
-                        value={workflowOutputData}
+                        value={JSON.stringify(workflowOutputData, null, 2)}
                         readOnly
                       />
                     </AccordionContent>
