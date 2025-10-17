@@ -67,7 +67,8 @@ export const useModal = () => {
           <div
             className="fixed 
                inset-0 
-               bg-black/30 backdrop-blur-sm"
+               bg-black/30 
+               backdrop-blur-sm"
           ></div>
           <div
             className="semi-text-bg-color 

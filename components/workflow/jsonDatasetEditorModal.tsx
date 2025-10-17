@@ -38,7 +38,7 @@ const CellEditor: React.FC<{
           setCellValue(e.target.value);
           onUpdate(e.target.value === "true");
         }}
-        className="w-full border-none outline-none semi-text-bg-color"
+        className="w-full border-none outline-none general-text-bg-color"
       >
         <option value="true">true</option>
         <option value="false">false</option>
@@ -53,7 +53,7 @@ const CellEditor: React.FC<{
       onChange={(e) => setCellValue(e.target.value)}
       onBlur={commitChange}
       onKeyDown={(e) => e.key === "Enter" && commitChange()}
-      className="w-full border-none outline-none semi-text-bg-color"
+      className="w-full border-none outline-none general-text-bg-color"
     />
   );
 };
@@ -296,6 +296,9 @@ export const JsonDatasetEditorModal: React.FC<JsonDatasetEditorModalProps> = ({
       startWidth: number;
     } | null>(null);
 
+    const [selectedRows, setSelectedRows] = useState<number[]>([]);
+
+    /* ---------- 컬럼 리사이즈 ---------- */
     const startResizeCol = (e: React.MouseEvent, colName: string) => {
       e.preventDefault();
       e.stopPropagation();
@@ -327,10 +330,99 @@ export const JsonDatasetEditorModal: React.FC<JsonDatasetEditorModalProps> = ({
       window.addEventListener("mouseup", onMouseUp);
     };
 
+    /* ---------- 행 선택 ---------- */
+    const handleRowClick = (e: React.MouseEvent, index: number) => {
+      if (e.ctrlKey || e.metaKey) {
+        // Ctrl/⌘ 클릭 → 토글 선택
+        setSelectedRows((prev) =>
+          prev.includes(index)
+            ? prev.filter((i) => i !== index)
+            : [...prev, index]
+        );
+      } else if (e.shiftKey && selectedRows.length > 0) {
+        // Shift 클릭 → 연속 선택
+        const last = selectedRows[selectedRows.length - 1];
+        const [start, end] = last! < index ? [last, index] : [index, last];
+        const range = Array.from(
+          { length: end! - start! + 1 },
+          (_, i) => start! + i
+        );
+        setSelectedRows(range);
+      } else {
+        // 단일 선택
+        setSelectedRows([index]);
+      }
+    };
+
+    /* ---------- 복사 (Ctrl+C) ---------- */
+    const handleCopy = async () => {
+      if (selectedRows.length === 0) return;
+      const sorted = [...selectedRows].sort((a, b) => a - b);
+      const text = sorted
+        .map((i) => columns.map((c: any) => rows[i]?.[c.name] ?? "").join("\t"))
+        .join("\n");
+      await navigator.clipboard.writeText(text);
+    };
+
+    /* ---------- 붙여넣기 (Ctrl+V) ---------- */
+    const handlePaste = async () => {
+      const text = await navigator.clipboard.readText();
+      if (!text) return;
+      const lines = text
+        .trim()
+        .split(/\r?\n/)
+        .map((line) => line.split("\t"));
+
+      if (lines.length === 0) return;
+
+      let startIndex = selectedRows[0] ?? rows.length; // 선택 없으면 append
+
+      const newData = [...rows];
+      for (let i = 0; i < lines.length; i++) {
+        const line = lines[i];
+        const targetIndex = startIndex + i;
+        const newRow: any = {};
+
+        columns.forEach((c: any, j: any) => {
+          newRow[c.name] = line![j] ?? "";
+        });
+
+        if (targetIndex < newData.length) {
+          // 기존 행 덮어쓰기
+          newData[targetIndex] = newRow;
+        } else {
+          // 새 행 추가
+          newData.push(newRow);
+        }
+      }
+
+      // 반영
+      newData.forEach((r, i) => manager.updateRow(selectedTable!, i, r));
+      setInternalData({ ...manager.getData() });
+    };
+
+    /* ---------- 단축키 등록 ---------- */
+    useEffect(() => {
+      const onKeyDown = (e: KeyboardEvent) => {
+        if (e.ctrlKey || e.metaKey) {
+          if (e.key.toLowerCase() === "c") {
+            e.preventDefault();
+            handleCopy();
+          } else if (e.key.toLowerCase() === "v") {
+            e.preventDefault();
+            handlePaste();
+          }
+        }
+      };
+      window.addEventListener("keydown", onKeyDown);
+      return () => window.removeEventListener("keydown", onKeyDown);
+    }, [selectedRows, rows, columns]);
+
+    /* ---------- 렌더 ---------- */
     return (
       <>
         {/* Header */}
-        <div className="flex medium-text-bg-color border-b select-none">
+        <div className="flex semi-text-bg-color border-b select-none">
           <div
             className=" flex items-center justify-center text-center"
             style={{ width: minColWidth }}
@@ -348,7 +440,7 @@ export const JsonDatasetEditorModal: React.FC<JsonDatasetEditorModalProps> = ({
             >
               <span className="flex-1">{col.name}</span>
               <div
-                className="w-1 h-full cursor-col-resize medium-text-bg-color"
+                className="w-1 h-full cursor-col-resize semi-text-bg-color"
                 onMouseDown={(e) => startResizeCol(e, col.name)}
               />
             </div>
@@ -365,10 +457,18 @@ export const JsonDatasetEditorModal: React.FC<JsonDatasetEditorModalProps> = ({
         >
           {({ index, style }) => {
             const row = rows[index];
+            const isSelected = selectedRows.includes(index);
             return (
-              <div style={style} className="flex border-b w-full">
+              <div
+                style={{
+                  ...style,
+                  backgroundColor: isSelected ? "#cce5ff" : "transparent",
+                }}
+                className="flex border-b w-full cursor-pointer"
+                onClick={(e) => handleRowClick(e, index)}
+              >
                 <div
-                  className="border px-2 py-1 flex items-center justify-center font-mono medium-text-bg-color"
+                  className="border px-2 py-1 flex items-center justify-center font-mono semi-text-bg-color"
                   style={{ width: minColWidth }}
                 >
                   {index + 1}
@@ -413,12 +513,12 @@ export const JsonDatasetEditorModal: React.FC<JsonDatasetEditorModalProps> = ({
 
   return (
     <div
-      className="fixed inset-0 z-50 general-text-bg-color"
+      className="fixed inset-0 z-50 bg-black/30 backdrop-blur-sm"
       onClick={onCancel}
     >
       <div
         ref={modalRef}
-        className="semi-text-bg-color p-4 absolute shadow-lg flex flex-col"
+        className="general-text-bg-color p-4 absolute shadow-lg flex flex-col "
         style={{
           left: pos.x,
           top: pos.y,
@@ -446,8 +546,8 @@ export const JsonDatasetEditorModal: React.FC<JsonDatasetEditorModalProps> = ({
               onDoubleClick={() => renameTable(key)}
               className={`mr-2 mb-2 px-2 py-1 border rounded ${
                 key === selectedTable
-                  ? "medium-text-bg-color"
-                  : "semi-text-bg-color"
+                  ? "semi-text-bg-color"
+                  : "general-text-bg-color"
               }`}
             >
               {key}
@@ -457,7 +557,7 @@ export const JsonDatasetEditorModal: React.FC<JsonDatasetEditorModalProps> = ({
             <>
               <button
                 onClick={addTable}
-                className="px-2 py-1 border semi-text-bg-color rounded h-8"
+                className="px-2 py-1 border general-text-bg-color rounded h-8"
               >
                 + Table
               </button>
@@ -480,12 +580,12 @@ export const JsonDatasetEditorModal: React.FC<JsonDatasetEditorModalProps> = ({
               {isSchemaMode ? (
                 <div className="flex-1 overflow-auto">
                   <table className="table-auto border-collapse border w-full text-sm">
-                    <thead className="medium-text-bg-color">
+                    <thead className="semi-text-bg-color">
                       <tr>
                         {columns.map((col) => (
                           <th
                             key={col.name}
-                            className="border px-2 py-1 semi-text-bg-color"
+                            className="border px-2 py-1 general-text-bg-color"
                             style={{ width: columnWidths[col.name] || 150 }}
                           >
                             {col.name} ({col.type})
@@ -505,7 +605,7 @@ export const JsonDatasetEditorModal: React.FC<JsonDatasetEditorModalProps> = ({
                       </tr>
                     </thead>
                     <tbody>
-                      <tr className="semi-text-bg-color">
+                      <tr className="general-text-bg-color">
                         {columns.map((col) => (
                           <td
                             key={col.name}
@@ -541,7 +641,7 @@ export const JsonDatasetEditorModal: React.FC<JsonDatasetEditorModalProps> = ({
               {isDataMode && (
                 <button
                   onClick={addRow}
-                  className="px-2 py-1 mt-1 rounded medium-text-bg-color border"
+                  className="px-2 py-1 mt-1 rounded semi-text-bg-color border"
                 >
                   + Row
                 </button>
@@ -554,13 +654,13 @@ export const JsonDatasetEditorModal: React.FC<JsonDatasetEditorModalProps> = ({
         <div className="flex justify-end mt-4 space-x-2 flex-none">
           <button
             onClick={onCancel}
-            className="px-4 py-2 border medium-text-bg-color"
+            className="px-4 py-2 border semi-text-bg-color"
           >
             Close
           </button>
           <button
             onClick={() => onConfirm({ ...internalData })}
-            className="px-4 py-2 border general-text-bg-color"
+            className="px-4 py-2 border semi-text-bg-color"
           >
             Apply
           </button>
