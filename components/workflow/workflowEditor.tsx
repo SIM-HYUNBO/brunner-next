@@ -183,44 +183,27 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
 
   // Input Dataset 스키마
   const [designedInputData, setDesignedInputData] = useState<DesignedDataset>({
-    INPUT_TABLE: [],
+    INPUT_TABLE: [
+      { name: "column1", type: "string" },
+      { name: "column2", type: "number" },
+    ],
   });
 
   // Input Dataset 문자열
   const [workflowInputData, setWorkflowInputData] = useState<
     Record<string, any[]>
-  >({ INPUT_TABLE: [{ key1: "test", key2: 123 }] });
-
-  // // Input Dataset 객체
-  // const workflowInputDataObj = useMemo(() => {
-  //   try {
-  //     const parsed = JSON.parse(workflowInputData);
-  //     return Object.keys(parsed).length ? parsed : { table1: [] };
-  //   } catch {
-  //     return { table1: [] };
-  //   }
-  // }, [workflowInputData]);
+  >({ INPUT_TABLE: [{ column1: "test", column2: 123 }] });
 
   // Output Dataset 스키마
-  const [designedOutputData, setDesignedOutputData] = useState<string>(
-    JSON.stringify({ OUTPUT_TABLE: [{ key1: "test", key2: 123 }] }, null, 2)
-  );
+  const [designedOutputData, setDesignedOutputData] = useState<
+    Record<string, any[]>
+  >({ OUTPUT_TABLE: [{ key1: "test", key2: 123 }] });
   // Output Dataset 문자열
   const [workflowOutputData, setWorkflowOutputData] = useState<
     Record<string, any[]>
   >({
     OUTPUT_TABLE: [],
   });
-
-  // // Output Dataset 객체
-  // const workflowOutputDataObj = useMemo(() => {
-  //   try {
-  //     const parsed = JSON.parse(workflowOutputData);
-  //     return Object.keys(parsed).length ? parsed : { table1: [] };
-  //   } catch {
-  //     return { table1: [] };
-  //   }
-  // }, [workflowOutputData]);
 
   const [isRightPanelOpen, setIsRightPanelOpen] = useState(false);
   const [isViewWorkflowDataModalOpen, setIsViewWorkflowDataModalOpen] =
@@ -433,9 +416,8 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
     if (!jWorkflow.current) return;
 
     try {
-      const parsed = JSON.parse(designedOutputData);
-      jWorkflow.current.data.design.outputs = parsed; // 스키마 반영
-      jWorkflow.current.data.run.outputs = parsed; // 실제 데이터 반영
+      jWorkflow.current.data.design.outputs = designedOutputData; // 스키마 반영
+      jWorkflow.current.data.run.outputs = designedOutputData; // 실제 데이터 반영
     } catch (err) {
       console.warn("designedOutputData parse failed:", err);
     }
@@ -566,9 +548,7 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
 
     // 출력 데이터 적용
     setDesignedOutputData(
-      newVal.data?.run?.outputs
-        ? JSON.stringify(newVal.data.run.outputs, null, 2)
-        : JSON.stringify({ OUTPUT_TABLE: [] }, null, 2)
+      newVal.data?.run?.outputs ? newVal.data.run.outputs : { OUTPUT_TABLE: [] }
     );
 
     setWorkflowOutputData(newVal.data.run.outputs);
@@ -897,7 +877,6 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
                         >
                           Edit Schema
                         </button>
-
                         {/* Input Schema/Data 모달 */}
                         {isInputSchemaEditorOpen && (
                           <JsonDatasetEditorModal
@@ -965,25 +944,9 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
                           Edit Data
                         </button>
                       </div>
-
                       <textarea
                         className="w-full h-[200px] mt-2 border p-2 font-mono text-sm"
-                        value={(() => {
-                          const dataObj = workflowInputData;
-                          Object.keys(dataObj).forEach((tableKey) => {
-                            const rows = dataObj[tableKey];
-                            rows?.forEach((row) => {
-                              Object.keys(row).forEach((key) => {
-                                const value = row[key];
-                                if (!isNaN(Number(value)))
-                                  row[key] = Number(value);
-                                else if (value === "true") row[key] = true;
-                                else if (value === "false") row[key] = false;
-                              });
-                            });
-                          });
-                          return JSON.stringify(dataObj, null, 2);
-                        })()}
+                        value={JSON.stringify(workflowInputData, null, 2)}
                         readOnly
                       />
                     </AccordionContent>
@@ -1006,11 +969,43 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
                           <JsonDatasetEditorModal
                             open={isOutputSchemaEditorOpen}
                             mode="schema"
-                            value={workflowOutputData}
+                            value={designedOutputData}
                             onConfirm={(newSchema) => {
                               setDesignedOutputData(
-                                JSON.stringify(newSchema, null, 2)
+                                newSchema as DesignedDataset
                               );
+                              const newDataObj: Record<string, any> = {};
+                              for (const [tableName, rows] of Object.entries(
+                                newSchema
+                              )) {
+                                if (Array.isArray(rows) && rows.length > 0) {
+                                  const firstRow = rows[0];
+                                  const newRow: Record<string, any> = {};
+                                  for (const key in firstRow) {
+                                    const value = firstRow[key];
+                                    const type =
+                                      (value as any)?.type ?? typeof value;
+                                    switch (type) {
+                                      case "string":
+                                        newRow[key] = "";
+                                        break;
+                                      case "number":
+                                        newRow[key] = 0;
+                                        break;
+                                      case "boolean":
+                                        newRow[key] = false;
+                                        break;
+                                      default:
+                                        newRow[key] = {};
+                                        break;
+                                    }
+                                  }
+                                  newDataObj[tableName] = [newRow];
+                                } else {
+                                  newDataObj[tableName] = [];
+                                }
+                              }
+                              setWorkflowOutputData(newDataObj);
                               setIsOutputSchemaEditorOpen(false);
                             }}
                             onCancel={() => setIsOutputSchemaEditorOpen(false)}
