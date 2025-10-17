@@ -213,3 +213,17 @@ export function setByPath(obj, path, value) {
   const idx = Number(lastKey);
   target[!isNaN(idx) ? idx : lastKey] = value;
 }
+
+export function getJsonDefaultTypedValue(value) {
+  const type = value?.type ?? typeof value;
+  switch (type) {
+    case "string":
+      return "";
+    case "number":
+      return 0;
+    case "boolean":
+      return false;
+    default:
+      return Array.isArray(value) ? [] : {};
+  }
+}

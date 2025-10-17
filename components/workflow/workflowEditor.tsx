@@ -374,21 +374,7 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
         const newRow: Record<string, any> = {};
         for (const key in firstRow) {
           const value = firstRow[key];
-          const type = (value as any)?.type ?? typeof value;
-          switch (type) {
-            case "string":
-              newRow[key] = "";
-              break;
-            case "number":
-              newRow[key] = 0;
-              break;
-            case "boolean":
-              newRow[key] = false;
-              break;
-            default:
-              newRow[key] = {};
-              break;
-          }
+          newRow[key] = commonFunctions.getJsonDefaultTypedValue(value);
         }
         newDataObj[tableName] = [newRow];
       } else {
@@ -896,22 +882,10 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
                                   const newRow: Record<string, any> = {};
                                   for (const key in firstRow) {
                                     const value = firstRow[key];
-                                    const type =
-                                      (value as any)?.type ?? typeof value;
-                                    switch (type) {
-                                      case "string":
-                                        newRow[key] = "";
-                                        break;
-                                      case "number":
-                                        newRow[key] = 0;
-                                        break;
-                                      case "boolean":
-                                        newRow[key] = false;
-                                        break;
-                                      default:
-                                        newRow[key] = {};
-                                        break;
-                                    }
+                                    newRow[key] =
+                                      commonFunctions.getJsonDefaultTypedValue(
+                                        value
+                                      );
                                   }
                                   newDataObj[tableName] = [newRow];
                                 } else {
@@ -983,22 +957,10 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
                                   const newRow: Record<string, any> = {};
                                   for (const key in firstRow) {
                                     const value = firstRow[key];
-                                    const type =
-                                      (value as any)?.type ?? typeof value;
-                                    switch (type) {
-                                      case "string":
-                                        newRow[key] = "";
-                                        break;
-                                      case "number":
-                                        newRow[key] = 0;
-                                        break;
-                                      case "boolean":
-                                        newRow[key] = false;
-                                        break;
-                                      default:
-                                        newRow[key] = {};
-                                        break;
-                                    }
+                                    newRow[key] =
+                                      commonFunctions.getJsonDefaultTypedValue(
+                                        value
+                                      );
                                   }
                                   newDataObj[tableName] = [newRow];
                                 } else {
