@@ -349,8 +349,7 @@ export const JsonDatasetEditorModal: React.FC<JsonDatasetEditorModalProps> = ({
         );
         setSelectedRows(range);
       } else {
-        // 단일 선택
-        setSelectedRows([index]);
+        // 단일 선택 아무 것도 안함. 단순 편집
       }
     };
 
