@@ -4,6 +4,7 @@ import RequestServer from "@/components/core/client/requestServer";
 import * as constants from "@/components/core/constants";
 import { useModal } from "@/components/core/client/brunnerMessageBox";
 import Loading from "@/components/core/client/loading";
+import { Input, Button, Table } from "antd";
 
 export default function SignupContent() {
   const [loading, setLoading] = useState(false);
@@ -199,12 +200,12 @@ export default function SignupContent() {
             />
           </div>
         </div>
-        <button
+        <Button
           onClick={() => requestSignup()}
           className={`text-white bg-indigo-500 max-w-max border-0 py-2 px-4 focus:outline-none hover:bg-indigo-600 rounded text-lg`}
         >
           Sign up
-        </button>
+        </Button>
 
         <p className={`text-xs text-gray-500 mt-3`}>Nice to meet you.</p>
       </div>

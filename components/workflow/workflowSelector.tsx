@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import WorkflowSelectModal from "@/components/workflow/workflowSelectModal";
+import { Input, Button, Table } from "antd";
 
 interface WorkflowSelectorProps {
   onSelect?: (workflow: any) => void; // prop 정의
@@ -35,12 +36,12 @@ export default function WorkflowSelector({
   return (
     <div className="px-2">
       {/* 모달 열기 버튼 */}
-      <button
+      <Button
         onClick={() => setWorkflowSelectModalOpen(true)}
         className="p-2 rounded-md medium-text-bg-color"
       >
         Select ...
-      </button>
+      </Button>
 
       {/* 선택된 워크플로우 표시 */}
       {localSelectedWorkflow && (

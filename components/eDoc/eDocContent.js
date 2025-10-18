@@ -5,6 +5,7 @@ import * as commonFunctions from "@/components/core/commonFunctions";
 import * as userInfo from "@/components/core/client/frames/userInfo";
 import EDocEditorCanvas from "@/components/eDoc/eDocEditorCanvas";
 import BrunnerBoard from "@/components/core/client/brunnerBoard";
+import { Input, Button, Table } from "antd";
 
 export default function EDocContent({ argDocumentId, argDocumentData }) {
   const [documentData, setDocumentData] = useState(null);

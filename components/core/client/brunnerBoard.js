@@ -313,12 +313,12 @@ function BrunnerBoard({ boardType }) {
                       rounded-md 
                       medium-text-color`}
         />
-        <button
+        <Button
           onClick={handleAddPost}
           className={`mt-2 px-4 py-2 bg-green-500 text-white rounded-md ml-2 justify-end`}
         >
           Post
-        </button>
+        </Button>
       </div>
       <div className={`post-list`}>
         {posts.map((post) => (
@@ -423,7 +423,7 @@ function BoardContent({
                         text-slate-600 
                         dark:text-slate-400`}
           />
-          <button
+          <Button
             onClick={handleEditPost}
             className={`mt-2 
                         px-4 
@@ -433,8 +433,8 @@ function BoardContent({
                         rounded-md`}
           >
             Save
-          </button>
-          <button
+          </Button>
+          <Button
             onClick={() => setIsEditingPost(false)}
             className={`mt-2 
                         ml-2 
@@ -445,7 +445,7 @@ function BoardContent({
                         rounded-md`}
           >
             Cancel
-          </button>
+          </Button>
         </div>
       ) : (
         <div className={`w-full text-left`}>
@@ -460,7 +460,7 @@ function BoardContent({
       <div className={`flex mt-2`}>
         {!isEditingPost && (
           <>
-            <button
+            <Button
               onClick={() => {
                 const userId = userInfo.getLoginUserId();
                 if (!userId) {
@@ -489,8 +489,8 @@ function BoardContent({
                   d="M16.862 4.487l2.651 2.651a2 2 0 010 2.828l-9.9 9.9a4 4 0 01-1.414.94l-3.53 1.178a.5.5 0 01-.633-.633l1.178-3.53a4 4 0 01.94-1.414l9.9-9.9a2 2 0 012.828 0z"
                 />
               </svg>
-            </button>
-            <button
+            </Button>
+            <Button
               onClick={() => {
                 const userId = userInfo.getLoginUserId();
                 if (!userId) {
@@ -505,7 +505,7 @@ function BoardContent({
                           rounded-md`}
             >
               -
-            </button>
+            </Button>
           </>
         )}
       </div>
@@ -524,7 +524,7 @@ function BoardContent({
                               border-gray-300 
                               rounded-md`}
                 />
-                <button
+                <Button
                   onClick={() => handleEditComment(comment.comment_id)}
                   className={`mt-2 
                               p-1 
@@ -533,8 +533,8 @@ function BoardContent({
                               rounded-md`}
                 >
                   Save
-                </button>
-                <button
+                </Button>
+                <Button
                   onClick={() => setEditingCommentId(null)}
                   className={`mt-2 
                               ml-1 
@@ -544,7 +544,7 @@ function BoardContent({
                               rounded-md`}
                 >
                   Cancel
-                </button>
+                </Button>
               </div>
             ) : (
               <div className={`w-full text-left`}>
@@ -561,7 +561,7 @@ function BoardContent({
             <div className={`flex mt-1`}>
               {editingCommentId !== comment.comment_id && (
                 <>
-                  <button
+                  <Button
                     onClick={() => {
                       const userId = userInfo.getLoginUserId();
                       if (!userId) {
@@ -591,8 +591,8 @@ function BoardContent({
                         d="M16.862 4.487l2.651 2.651a2 2 0 010 2.828l-9.9 9.9a4 4 0 01-1.414.94l-3.53 1.178a.5.5 0 01-.633-.633l1.178-3.53a4 4 0 01.94-1.414l9.9-9.9a2 2 0 012.828 0z"
                       />
                     </svg>
-                  </button>
-                  <button
+                  </Button>
+                  <Button
                     onClick={() => {
                       const userId = userInfo.getLoginUserId();
                       if (!userId) {
@@ -607,7 +607,7 @@ function BoardContent({
                                 rounded-md`}
                   >
                     -
-                  </button>
+                  </Button>
                 </>
               )}
             </div>
@@ -627,7 +627,7 @@ function BoardContent({
                       rounded-md 
                       medium-text-color`}
         />
-        <button
+        <Button
           onClick={handleAddComment}
           className={`ml-1 
                       p-1 
@@ -636,7 +636,7 @@ function BoardContent({
                       rounded-md`}
         >
           +
-        </button>
+        </Button>
       </div>
     </div>
   );

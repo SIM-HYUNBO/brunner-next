@@ -1,6 +1,7 @@
 "use strict";
 
 import React from "react";
+import { Input, Button, Table } from "antd";
 
 // ✅ 사용할 한글 + 영문 폰트 리스트
 export const availableFonts = [

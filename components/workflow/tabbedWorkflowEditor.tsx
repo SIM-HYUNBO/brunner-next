@@ -4,7 +4,7 @@
 import { useState } from "react";
 import { WorkflowEditor } from "../workflow/workflowEditor";
 import { useModal } from "@/components/core/client/brunnerMessageBox";
-
+import { Input, Button, Table } from "antd";
 interface Tab {
   id: string; // 탭 고유 ID
   workflowId: string; // 워크플로우 고유 ID
@@ -73,7 +73,7 @@ export function TabbedWorkflowEditor() {
               key={tab.id}
               className="flex items-center border-r border-gray-200"
             >
-              <button
+              <Button
                 className={`px-4 py-2 ${
                   tab.id === activeTabId
                     ? "border-b-2 border-blue-500 font-bold"
@@ -82,24 +82,24 @@ export function TabbedWorkflowEditor() {
                 onClick={() => setActiveTabId(tab.id)}
               >
                 {tab.workflowName}
-              </button>
-              <button
+              </Button>
+              <Button
                 className="px-2 text-red-500 font-bold"
                 onClick={() => handleCloseTab(tab.id)}
               >
                 ×
-              </button>
+              </Button>
             </div>
           ))}
 
-          <button
+          <Button
             className="ml-auto px-4 py-2 text-green-600"
             onClick={() =>
               handleAddTab(`wf-${tabs.length + 1}`, "new workflow")
             }
           >
             + Tab
-          </button>
+          </Button>
         </div>
 
         {/* 액티브 탭 내용 */}

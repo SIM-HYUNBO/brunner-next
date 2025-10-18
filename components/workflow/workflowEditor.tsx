@@ -1,5 +1,6 @@
 import * as React from "react";
 import { useState, useEffect, useCallback, useRef, useMemo } from "react";
+import { Input, Button, Table } from "antd";
 import {
   ReactFlow,
   ReactFlowProvider,
@@ -666,65 +667,65 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
     return (
       <>
         <div className="flex flex-row ml-1 mt-2">
-          <button
+          <Button
             className="w-full border border-black medium-text-bg-color hover:bg-gray-400"
             onClick={addNode}
           >
             Add Node
-          </button>
-          <button
+          </Button>
+          <Button
             className="w-full border border-black ml-1 medium-text-bg-color hover:bg-gray-400"
             onClick={deleteSelectedNode}
           >
             Delete Node
-          </button>
-          <button
+          </Button>
+          <Button
             className="w-full border border-black ml-1 medium-text-bg-color hover:bg-gray-400"
             onClick={() => setIsViewWorkflowDataModalOpen(true)}
           >
             View Data
-          </button>
+          </Button>
         </div>
         <div className="flex flex-row ml-1 mt-1 space-x-1">
-          <button
+          <Button
             className="w-full border border-black medium-text-bg-color hover:bg-gray-400"
             onClick={executeWorkflowFromTableEditor}
           >
             Run
-          </button>
-          <button
+          </Button>
+          <Button
             className="w-full border border-black medium-text-bg-color hover:bg-gray-400"
             onClick={executeWorkflowStepByStep}
           >
             Run By Node
-          </button>
-          <button
+          </Button>
+          <Button
             className="w-full border border-black medium-text-bg-color hover:bg-gray-400"
             onClick={resetWorkflow}
           >
             Reset
-          </button>
+          </Button>
         </div>
 
         <div className="flex flex-row ml-1 mt-1 space-x-1">
-          <button
+          <Button
             className="w-full border border-black medium-text-bg-color hover:bg-gray-400"
             onClick={saveWorkflow}
           >
             Save
-          </button>
-          <button
+          </Button>
+          <Button
             className="w-full border border-black ml-1 medium-text-bg-color hover:bg-gray-400"
             onClick={exportWorkflow}
           >
             Export
-          </button>
-          <button
+          </Button>
+          <Button
             className="w-full border border-black medium-text-bg-color hover:bg-gray-400"
             onClick={deleteWorkflow}
           >
             Delete
-          </button>
+          </Button>
         </div>
       </>
     );
@@ -825,12 +826,12 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
               </div>
 
               {/* Flow 영역 안 버튼 (토글 방식) */}
-              <button
+              <Button
                 className="absolute top-2 right-2 z-50 px-2 py-1 semi-text-bg-color rounded"
                 onClick={() => setIsRightPanelOpen((prev) => !prev)}
               >
                 ⚙️
-              </button>
+              </Button>
             </div>
             {/* 🧾 하단: Inputs / Outputs (좌우 배치 + 접힘 가능) */}
             <Accordion type="multiple" defaultValue={[]} className="mt-3">
@@ -841,12 +842,12 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
                     <AccordionTrigger>📥 Workflow Inputs</AccordionTrigger>
                     <AccordionContent>
                       <div className="flex flex-row space-x-2 mb-2">
-                        <button
+                        <Button
                           className="border semi-text-bg-color px-3 py-1"
                           onClick={() => setIsInputSchemaEditorOpen(true)}
                         >
                           Edit Schema
-                        </button>
+                        </Button>
                         {/* Input Schema/Data 모달 */}
                         {isInputSchemaEditorOpen && (
                           <JsonDatasetEditorModal
@@ -895,12 +896,12 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
                             onCancel={() => setIsInputDataEditorOpen(false)}
                           />
                         )}
-                        <button
+                        <Button
                           className="border semi-text-bg-color px-3 py-1"
                           onClick={() => setIsInputDataEditorOpen(true)}
                         >
                           Edit Data
-                        </button>
+                        </Button>
                       </div>
                       <textarea
                         className="w-full h-[200px] mt-2 border p-2 font-mono text-sm"
@@ -917,12 +918,12 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
                     <AccordionTrigger>📤 Workflow Outputs</AccordionTrigger>
                     <AccordionContent>
                       <div className="flex flex-row mb-2 space-x-2">
-                        <button
+                        <Button
                           className="border semi-text-bg-color px-3 py-1"
                           onClick={() => setIsOutputSchemaEditorOpen(true)}
                         >
                           Edit Schema
-                        </button>
+                        </Button>
                         {isOutputSchemaEditorOpen && (
                           <JsonDatasetEditorModal
                             open={isOutputSchemaEditorOpen}
@@ -969,12 +970,12 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
                             onCancel={() => setIsOutputDataEditorOpen(false)}
                           />
                         )}
-                        <button
+                        <Button
                           className="border semi-text-bg-color px-3 py-1"
                           onClick={() => setIsOutputDataEditorOpen(true)}
                         >
                           Edit Data
-                        </button>
+                        </Button>
                       </div>
                       <textarea
                         className="w-full h-[200px] mt-2 border p-2 font-mono text-sm"
@@ -1042,12 +1043,12 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
                       </div>
                     </div>
 
-                    <button
+                    <Button
                       onClick={() => setIsDBConnectionsModalOpen(true)}
                       className="ml-1 mt-2 px-2 py-1 rounded medium-text-bg-color border"
                     >
                       Database...
-                    </button>
+                    </Button>
                   </AccordionContent>
                 </AccordionItem>
 

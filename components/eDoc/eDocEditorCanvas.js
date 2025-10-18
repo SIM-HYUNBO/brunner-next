@@ -160,29 +160,29 @@ export default function EDocEditorCanvas({
                                     gap-1 
                                     absolute z-10"
                     >
-                      <button
+                      <Button
                         onClick={() => onMoveUp(compIdx)}
                         disabled={compIdx === 0}
                         className="hover:bg-gray-100 text-sm px-1 py-0.5 transition-opacity duration-200"
                         style={{ width: "16px", height: "20px", opacity: 1 }}
                       >
                         ↑
-                      </button>
-                      <button
+                      </Button>
+                      <Button
                         onClick={() => onMoveDown(compIdx)}
                         disabled={compIdx === comps.length - 1}
                         className="hover:bg-gray-100 text-sm px-1 py-0.5 transition-opacity duration-200"
                         style={{ width: "16px", height: "20px", opacity: 1 }}
                       >
                         ↓
-                      </button>
-                      <button
+                      </Button>
+                      <Button
                         onClick={() => onDeleteComponent(compIdx)}
                         className="hover:bg-gray-100 text-red-600 text-sm px-1 py-0.5 transition-opacity duration-200"
                         style={{ width: "16px", height: "20px", opacity: 1 }}
                       >
                         🗑
-                      </button>
+                      </Button>
                     </div>
                   )}
 

@@ -5,6 +5,7 @@ import { useModal } from "@/components/core/client/brunnerMessageBox";
 import * as constants from "@/components/core/constants";
 import RequestServer from "@/components/core/client/requestServer";
 import Loading from "@/components/core/client/loading";
+import { Input, Button, Table } from "antd";
 
 export default function SigninContent() {
   const [loading, setLoading] = useState(false);
@@ -135,28 +136,28 @@ export default function SigninContent() {
             onKeyPress={handleKeyPress} // Enter 키 눌림 처리
           />
         </div>
-        <button
+        <Button
           className={`text-white bg-indigo-500 border-0 py-2 px-4 focus:outline-none hover:bg-indigo-600 rounded text-lg`}
           onClick={requestSignIn}
         >
           Sign in
-        </button>
+        </Button>
         <p className={`text-xs text-gray-500 mt-10`}>
           Forgot your password? Reset now.
         </p>
-        <button
+        <Button
           className={`text-white bg-indigo-500 border-0 py-2 px-4 focus:outline-none hover:bg-indigo-600 rounded text-lg mt-5`}
           onClick={() => router.push("/mainPages/resetPassword")}
         >
           Reset password
-        </button>
+        </Button>
         <p className={`text-xs text-gray-500 mt-10`}>You can delete account.</p>
-        <button
+        <Button
           className={`text-white bg-indigo-500 border-0 py-2 px-4 focus:outline-none hover:bg-indigo-600 rounded text-lg mt-5`}
           onClick={() => router.push("/mainPages/resetPassword")}
         >
           Leave & Delete Account
-        </button>
+        </Button>
       </div>
     </>
   );

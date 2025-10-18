@@ -5,7 +5,7 @@ import RequestServer from "@/components/core/client/requestServer";
 import * as constants from "@/components/core/constants";
 import { useModal } from "@/components/core/client/brunnerMessageBox";
 import * as userInfo from "@/components/core/client/frames/userInfo";
-
+import { Input, Button, Table } from "antd";
 interface Workflow {
   id: string;
   workflow_data: any;
@@ -79,9 +79,9 @@ const WorkflowSelectModal: React.FC<WorkflowSelectModalProps> = ({
         {/* 헤더 */}
         <div className="medium-text-bg-color flex items-center justify-between border-b px-2 py-1">
           <h4 className="text-lg">Select workflow</h4>
-          <button onClick={onClose} className="">
+          <Button onClick={onClose} className="">
             ✕
-          </button>
+          </Button>
         </div>
 
         {/* 본문 */}
@@ -128,19 +128,19 @@ const WorkflowSelectModal: React.FC<WorkflowSelectModalProps> = ({
 
         {/* 푸터 */}
         <div className="flex justify-end gap-2 border-t px-5 py-3">
-          <button
+          <Button
             onClick={onClose}
             className="semi-text-bg-color px-4 py-2 text-sm rounded-md"
           >
             Cancel
-          </button>
-          <button
+          </Button>
+          <Button
             onClick={handleSelect}
             disabled={!selected}
             className={`px-4 py-2 text-sm rounded-md general-text-bg-color`}
           >
             Select
-          </button>
+          </Button>
         </div>
       </div>
     </div>

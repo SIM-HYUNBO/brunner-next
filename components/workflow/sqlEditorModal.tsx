@@ -146,12 +146,12 @@ export const SqlEditorModal: React.FC<SqlEditorModalProps> = ({
       title: "Delete",
       key: "delete",
       render: (_, __, idx) => (
-        <button
+        <Button
           className="px-2 py-1 text-sm rounded bg-red-500 text-white"
           onClick={() => setParams((prev) => prev.filter((_, i) => i !== idx))}
         >
           Del.
-        </button>
+        </Button>
       ),
     },
   ];
@@ -199,12 +199,12 @@ export const SqlEditorModal: React.FC<SqlEditorModalProps> = ({
         >
           <h3 className="font-semibold">SQL Editor</h3>
           <div className="flex gap-2">
-            <button
+            <Button
               className="px-2 py-1 border rounded text-sm"
               onClick={() => setShowParamsPanel((s) => !s)}
             >
               {showParamsPanel ? "Hide params." : "View params"}
-            </button>
+            </Button>
           </div>
         </div>
 
@@ -260,7 +260,7 @@ export const SqlEditorModal: React.FC<SqlEditorModalProps> = ({
                   <div className="flex flex-col justify-between items-center mb-2">
                     <h4>Parameters</h4>
                     <div className="flex gap-2">
-                      <button
+                      <Button
                         className="px-2 py-1 text-sm"
                         onClick={() =>
                           setParams((prev) => [
@@ -270,8 +270,8 @@ export const SqlEditorModal: React.FC<SqlEditorModalProps> = ({
                         }
                       >
                         Add Param.
-                      </button>
-                      <button
+                      </Button>
+                      <Button
                         className="px-2 py-1 text-sm"
                         onClick={() => {
                           const matches = (sqlStmt.match(/@\w+/g) || []).map(
@@ -287,7 +287,7 @@ export const SqlEditorModal: React.FC<SqlEditorModalProps> = ({
                         }}
                       >
                         Extract
-                      </button>
+                      </Button>
                     </div>
                   </div>
 

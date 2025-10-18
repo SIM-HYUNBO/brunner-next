@@ -1,6 +1,7 @@
 `use strict`;
 
 import * as constants from "@/components/core/constants";
+import { Input, Button, Table } from "antd";
 
 import TextComponent from "@/components/eDoc/eDocComponent/eDocComponent_Text";
 import InputComponent from "@/components/eDoc/eDocComponent/eDocComponent_Input";

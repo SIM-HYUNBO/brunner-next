@@ -15,6 +15,7 @@ import WorkflowSelectModal from "@/components/workflow/workflowSelectModal";
 
 import type { ScriptNodeDesignData } from "./types/nodeTypes";
 import type { SqlNodeDesignData } from "./types/nodeTypes";
+import { Input, Button, Table } from "antd";
 
 interface NodePropertyPanelProps {
   node: Node<any> | null;
@@ -452,12 +453,12 @@ export const NodePropertyPanel: React.FC<NodePropertyPanelProps> = ({
               readOnly
             />
           </div>
-          <button
+          <Button
             className="border rounded medium-text-bg-color mt-2 px-2 w-[100px]"
             onClick={() => setIsScriptModalOpen(true)}
           >
             Edit Script
-          </button>
+          </Button>
         </div>
       </div>
     );
@@ -482,7 +483,7 @@ export const NodePropertyPanel: React.FC<NodePropertyPanelProps> = ({
           className="w-full border p-2 font-mono"
         />
         <div className="flex flex-row space-x-1">
-          <button
+          <Button
             className="mt-1 px-3 py-1 border rounded semi-text-bg-color"
             onClick={() => {
               setSqlModalData({
@@ -496,7 +497,7 @@ export const NodePropertyPanel: React.FC<NodePropertyPanelProps> = ({
             }}
           >
             Edit Sql
-          </button>
+          </Button>
           <div className="flex flex-col">
             {/* <div className="flex flex-row mt-1">
               <label className="mt-2">Max Rows</label>
@@ -543,12 +544,12 @@ export const NodePropertyPanel: React.FC<NodePropertyPanelProps> = ({
 
     return (
       <>
-        <button
+        <Button
           onClick={() => setWorkflowSelectModalOpen(true)}
           className="p-2 rounded-md medium-text-bg-color"
         >
           Select ...
-        </button>
+        </Button>
         <div className="flex flex-col gap-3 mt-2">
           <label className="text-sm font-semibold">
             Target Workflow: {selectedWorkflowId}

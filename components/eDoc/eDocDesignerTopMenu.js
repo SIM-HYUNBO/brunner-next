@@ -1,6 +1,7 @@
 `use strict`;
 
 import React, { useEffect, useState } from "react";
+import { Input, Button, Table } from "antd";
 
 /**
  * EDocTopMenu.js
@@ -27,7 +28,7 @@ export default function EDocDesignerTopMenu({
                     items-center 
                     justify-center"
       >
-        <button
+        <Button
           onClick={onNewDocument}
           className="bg-blue-400 
                    text-white
@@ -37,8 +38,8 @@ export default function EDocDesignerTopMenu({
                    hover:bg-blue-600"
         >
           New Doc.
-        </button>
-        <button
+        </Button>
+        <Button
           onClick={onOpenDocument}
           className="bg-sky-400 
                    text-white
@@ -48,8 +49,8 @@ export default function EDocDesignerTopMenu({
                    hover:bg-sky-600"
         >
           Open Doc.
-        </button>
-        <button
+        </Button>
+        <Button
           onClick={onSaveDocument}
           className="bg-yellow-400 
                    text-white 
@@ -59,8 +60,8 @@ export default function EDocDesignerTopMenu({
                    hover:bg-yellow-600"
         >
           Save Doc.
-        </button>
-        <button
+        </Button>
+        <Button
           onClick={onDeleteDocument}
           className="bg-red-400 
                    text-white 
@@ -70,8 +71,8 @@ export default function EDocDesignerTopMenu({
                    hover:bg-red-600"
         >
           Del. Doc.
-        </button>
-        <button
+        </Button>
+        <Button
           onClick={onAddPage}
           className="bg-green-400 
                    text-white 
@@ -81,8 +82,8 @@ export default function EDocDesignerTopMenu({
                    hover:bg-green-600"
         >
           Add Page
-        </button>
-        <button
+        </Button>
+        <Button
           onClick={onDeleteCurrentPage}
           className="bg-pink-400 
                    text-white 
@@ -92,8 +93,8 @@ export default function EDocDesignerTopMenu({
                    hover:bg-pink-600"
         >
           Del. Page
-        </button>
-        <button
+        </Button>
+        <Button
           onClick={onExportPdf}
           className="bg-purple-400 
                    text-white 
@@ -103,8 +104,8 @@ export default function EDocDesignerTopMenu({
                    hover:bg-purple-600"
         >
           Exp. PDF
-        </button>
-        <button
+        </Button>
+        <Button
           onClick={() => setAIInputModalOpen(true)}
           className="bg-indigo-500 
                    text-white 
@@ -113,7 +114,7 @@ export default function EDocDesignerTopMenu({
                    hover:bg-indigo-700"
         >
           AI Gen.
-        </button>
+        </Button>
       </div>
     </>
   );

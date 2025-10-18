@@ -4,6 +4,7 @@ import { useRouter } from "next/router";
 import * as constants from "@/components/core/constants";
 import { useModal } from "@/components/core/client/brunnerMessageBox";
 import Loading from "@/components/core/client/loading";
+import { Input, Button, Table } from "antd";
 
 export default function ResetPasswordContent() {
   const router = useRouter();
@@ -198,12 +199,12 @@ export default function ResetPasswordContent() {
                             ease-in-out`}
           />
           <div className={`relative w-full`}>
-            <button
+            <Button
               onClick={() => sendEMailAuthCode()}
               className={`text-white bg-indigo-500 border-0 py-2 px-4 focus:outline-none hover:bg-indigo-600 rounded text-lg mt-2`}
             >
               Send Code
-            </button>
+            </Button>
           </div>
         </div>
         <div className={`mt-2 w-full`}>
@@ -230,12 +231,12 @@ export default function ResetPasswordContent() {
                             ease-in-out`}
             onChange={(e) => changeAuthCode(e)}
           />
-          <button
+          <Button
             onClick={() => requestDeleteAccount()}
             className={`text-white bg-pink-500 border-0 py-2 px-4 focus:outline-none hover:bg-indigo-600 rounded text-lg mt-2`}
           >
             Delete account
-          </button>
+          </Button>
         </div>
         <div className={`relative mt-6 w-full`}>
           <label htmlFor="new-password" className={`text-sm text-gray-400`}>
@@ -289,12 +290,12 @@ export default function ResetPasswordContent() {
             onChange={(e) => changeConfirmPasswordValue(e)}
           ></input>
         </div>
-        <button
+        <Button
           onClick={() => requestResetPassword()}
           className={`text-white bg-indigo-500 border-0 py-2 px-4 focus:outline-none hover:bg-indigo-600 rounded text-lg mt-2`}
         >
           Reset password
-        </button>
+        </Button>
       </div>
     </>
   );

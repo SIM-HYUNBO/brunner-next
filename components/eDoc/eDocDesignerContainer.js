@@ -18,6 +18,7 @@ import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
 import AIInputModal from "@/components/core/client/aiInputModal";
 import Loading from "@/components/core/client/loading";
+import { Input, Button, Table } from "antd";
 
 import * as InputComponent from "@/components/eDoc/eDocComponent/eDocComponent_Input";
 import * as TextComponent from "@/components/eDoc/eDocComponent/eDocComponent_Text";
@@ -501,7 +502,7 @@ export default function EDocDesignerContainer({
 
   const ModeToggleButton = () => {
     return (
-      <button
+      <Button
         onClick={toggleMode}
         className="flex 
                       flex-row 
@@ -544,7 +545,7 @@ export default function EDocDesignerContainer({
             />
           </svg>
         )}
-      </button>
+      </Button>
     );
   };
 
@@ -635,7 +636,7 @@ export default function EDocDesignerContainer({
                 </li>
               ))}
             </ul>
-            <button
+            <Button
               className="mt-4 
                         px-4 
                         py-2 
@@ -646,7 +647,7 @@ export default function EDocDesignerContainer({
               onClick={() => setShowDocumentListModal(false)}
             >
               Close
-            </button>
+            </Button>
           </div>
         </div>
       )}
@@ -693,7 +694,7 @@ export default function EDocDesignerContainer({
             )}
           </aside>
           {/* 좌측 패널 토글 버튼 (항상 보임, 패널 우측에 겹치도록) */}
-          <button
+          <Button
             onClick={() => setIsLeftPanelOpen((prev) => !prev)}
             className="flex 
                         flex-col 
@@ -704,7 +705,7 @@ export default function EDocDesignerContainer({
                         bg-transparent z-10"
           >
             {isLeftPanelOpen ? "◀" : "▶"}
-          </button>
+          </Button>
         </div>
         {/* 중앙 편집 캔버스 */}
         <div className="flex-1 overflow-auto">
@@ -745,13 +746,13 @@ export default function EDocDesignerContainer({
                 >
                   <div className="flex flex-row justify-around">
                     <div className="flex flex-row justify-center items-center gap-2 mt-2">
-                      <button
+                      <Button
                         onClick={handleMovePageUp}
                         className="mb-1 px-2 py-1 rounded bg-gray-200 hover:bg-gray-300"
                         disabled={currentPageIdx === 0}
                       >
                         ▲
-                      </button>
+                      </Button>
                       <div
                         className="general-text-bg-color 
                               border
@@ -766,7 +767,7 @@ export default function EDocDesignerContainer({
                       >
                         p{idx + 1}
                       </div>
-                      <button
+                      <Button
                         onClick={handleMovePageDown}
                         className="mb-1 px-2 py-1 rounded bg-gray-200 hover:bg-gray-300"
                         disabled={
@@ -774,7 +775,7 @@ export default function EDocDesignerContainer({
                         }
                       >
                         ▼
-                      </button>
+                      </Button>
                     </div>
                   </div>
                   <EDocEditorCanvas
@@ -821,13 +822,13 @@ export default function EDocDesignerContainer({
           style={{ width: isRightPanelOpen ? `${rightPanelWidth}px` : "0px" }}
         >
           {/* 우측 패널 토글 버튼 */}
-          <button
+          <Button
             onClick={() => setIsRightPanelOpen((prev) => !prev)}
             className="absolute top-1/2 left-0 -translate-y-1/2 p-2
                      text-gray-800 dark:text-gray-200 bg-transparent z-10"
           >
             {isRightPanelOpen ? "▶" : "◀"}
-          </button>
+          </Button>
 
           {isRightPanelOpen && (
             <>

@@ -208,7 +208,7 @@ const ServiceSQL = () => {
 
   const ClearInputButton = () => {
     return (
-      <button
+      <Button
         onClick={handleNew}
         className={`bg-green-500 
                         text-white 
@@ -222,13 +222,13 @@ const ServiceSQL = () => {
                         ml-1`}
       >
         Clear
-      </button>
+      </Button>
     );
   };
 
   const CreateUpdateButton = () => {
     return (
-      <button
+      <Button
         onClick={handleCreateOrUpdate}
         className={`bg-blue-500 
                           text-white 
@@ -242,7 +242,7 @@ const ServiceSQL = () => {
                           focus:ring-opacity-50`}
       >
         {currentServiceSQL ? "Update" : "Create"}
-      </button>
+      </Button>
     );
   };
 
@@ -380,7 +380,7 @@ const ServiceSQL = () => {
           >
             Query List
           </h2>
-          <button
+          <Button
             onClick={fetchSQLList}
             className={`bg-blue-500 
                         text-white 
@@ -395,7 +395,7 @@ const ServiceSQL = () => {
                         mt-2`}
           >
             Refresh
-          </button>
+          </Button>
           <div className="w-full overflow-x-auto">
             <table className={`w-full bg-white border border-gray-300 mt-2`}>
               <thead>
@@ -498,7 +498,7 @@ const ServiceSQL = () => {
                                   px-4 
                                   py-2`}
                     >
-                      <button
+                      <Button
                         onClick={() => handleEdit(query)}
                         className={`bg-yellow-500 
                                   text-white 
@@ -512,8 +512,8 @@ const ServiceSQL = () => {
                                   focus:ring-opacity-50`}
                       >
                         Edit
-                      </button>
-                      <button
+                      </Button>
+                      <Button
                         onClick={() => handleDelete(query)}
                         className={`bg-red-500 
                                   text-white 
@@ -527,14 +527,14 @@ const ServiceSQL = () => {
                                   focus:ring-opacity-50`}
                       >
                         Del.
-                      </button>
+                      </Button>
                     </td>
                   </tr>
                 ))}
               </tbody>
             </table>
           </div>
-          <button
+          <Button
             onClick={fetchSQLList}
             className={`bg-blue-500 
                         text-white 
@@ -549,7 +549,7 @@ const ServiceSQL = () => {
                         mt-2`}
           >
             Refresh
-          </button>
+          </Button>
         </div>
       )}
     </>

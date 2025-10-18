@@ -1,5 +1,7 @@
 "use strict";
 
+import { Input, Button, Table } from "antd";
+
 export default function EDocPagePropertyEditor({
   runtimeData = {},
   onChangeRuntimeData,

@@ -22,7 +22,7 @@ export default function DarkModeToggleButton() {
   }, []);
 
   return (
-    <button
+    <Button
       type="button"
       className={`
         inline-flex items-center justify-center
@@ -70,6 +70,6 @@ export default function DarkModeToggleButton() {
        a9.753 9.753 0 009.002-5.998z"
         />
       </svg>
-    </button>
+    </Button>
   );
 }

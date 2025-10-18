@@ -71,7 +71,7 @@ export default function HomeContent() {
         <div className={`flex flex-col mt-20`}>
           {isMounted && !userInfo.isLogin() && (
             <div className="flex space-x-1">
-              <button
+              <Button
                 className={`inline-flex 
                             text-white 
                             bg-indigo-500 
@@ -85,13 +85,13 @@ export default function HomeContent() {
                 onClick={() => router.push("/mainPages/signin")}
               >
                 Sign in
-              </button>
-              <button
+              </Button>
+              <Button
                 className={`inline-flex text-white bg-indigo-500 border-0 py-2 px-6 focus:outline-none hover:bg-indigo-600 rounded text-lg`}
                 onClick={() => router.push("/mainPages/signup")}
               >
                 Sign up
-              </button>
+              </Button>
             </div>
           )}
         </div>

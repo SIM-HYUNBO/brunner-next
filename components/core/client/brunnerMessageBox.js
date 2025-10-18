@@ -91,7 +91,7 @@ export const useModal = () => {
                 : modalContent.message}
             </p>
             <div className="flex justify-center">
-              <button
+              <Button
                 className="bg-blue-500 
                            hover:bg-blue-700 
                            text-white 
@@ -103,8 +103,8 @@ export const useModal = () => {
                 onClick={handleConfirm}
               >
                 OK
-              </button>
-              <button
+              </Button>
+              <Button
                 className="bg-gray-300 
                            hover:bg-gray-400 
                            text-gray-800 
@@ -115,7 +115,7 @@ export const useModal = () => {
                 onClick={handleClose}
               >
                 Cancel
-              </button>
+              </Button>
             </div>
           </div>
         </div>

@@ -99,23 +99,23 @@ export function renderProperty(
               onChange={(e) => updateItemLabel(idx, e.target.value)}
               className="border border-gray-300 rounded p-1 flex-grow"
             />
-            <button
+            <Button
               onClick={() => removeItem(idx)}
               className="bg-red-500 text-white px-2 rounded"
               title="항목 삭제"
               type="button"
             >
               ×
-            </button>
+            </Button>
           </div>
         ))}
-        <button
+        <Button
           onClick={addItem}
           className="mt-2 bg-blue-500 text-white rounded px-4 py-1"
           type="button"
         >
           항목 추가
-        </button>
+        </Button>
 
         {renderWidthProperty()}
         {renderForceNewLineProperty()}

@@ -223,7 +223,7 @@ export default function AIInputModal({
         />
 
         <div className="mt-6 flex justify-end gap-2">
-          <button
+          <Button
             onClick={onClose}
             className="px-4 
                              py-2 
@@ -233,8 +233,8 @@ export default function AIInputModal({
                              hover:bg-gray-600"
           >
             Close
-          </button>
-          <button
+          </Button>
+          <Button
             onClick={handleRequest}
             className="px-4 
                              py-2 
@@ -244,7 +244,7 @@ export default function AIInputModal({
                              hover:bg-indigo-600"
           >
             생성하기
-          </button>
+          </Button>
         </div>
 
         {/* 리사이즈 핸들 */}

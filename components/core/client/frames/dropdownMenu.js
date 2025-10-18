@@ -4,6 +4,7 @@ import { useEffect, useState, useRef } from "react";
 import Link from "next/link";
 import { getDropdownMenuItems } from "@/components/core/client/frames/dropdownMenuitem";
 import UserInfo from "@/components/core/client/frames/userInfo";
+import { Input, Button, Table } from "antd";
 
 export default function DropdownMenu({ reloadSignal, triggermenureload }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -70,7 +71,7 @@ export default function DropdownMenu({ reloadSignal, triggermenureload }) {
   return (
     <>
       {/* 햄버거 버튼 */}
-      <button
+      <Button
         className="p-2 rounded-md transition-colors"
         onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
         aria-label="메뉴 열기"
@@ -90,7 +91,7 @@ export default function DropdownMenu({ reloadSignal, triggermenureload }) {
           <line x1="4" y1="12" x2="20" y2="12" />
           <line x1="4" y1="18" x2="20" y2="18" />
         </svg>
-      </button>
+      </Button>
 
       {mobileMenuOpen && (
         <div

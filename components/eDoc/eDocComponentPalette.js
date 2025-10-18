@@ -17,7 +17,7 @@ export default function EDocComponentPalette({ templates, onAddComponent }) {
         컴포넌트
       </h2>
       {templates.map((template) => (
-        <button
+        <Button
           key={template.id}
           className="w-full text-center rounded border border-gray-300 general-text-bg-color"
           onClick={() => {
@@ -25,7 +25,7 @@ export default function EDocComponentPalette({ templates, onAddComponent }) {
           }}
         >
           {template.type}
-        </button>
+        </Button>
       ))}
     </div>
   );

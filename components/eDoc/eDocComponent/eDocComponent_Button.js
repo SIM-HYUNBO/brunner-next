@@ -54,7 +54,7 @@ const RenderComponent = (props) => {
   return (
     <>
       <BrunnerMessageBox />
-      <button
+      <Button
         className={`${selectedClass} ${alignmentClass}`}
         style={style}
         onClick={(e) => {
@@ -68,7 +68,7 @@ const RenderComponent = (props) => {
         }}
       >
         {buttonText || "버튼"}
-      </button>
+      </Button>
     </>
   );
 };

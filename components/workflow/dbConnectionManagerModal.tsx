@@ -5,6 +5,7 @@ import Loading from "@/components/core/client/loading";
 import { useModal } from "@/components/core/client/brunnerMessageBox";
 import * as userInfo from "@/components/core/client/frames/userInfo";
 import { Rnd } from "react-rnd";
+import { Input, Button, Table } from "antd";
 
 export interface DBConnectionInfo {
   system_code: string;
@@ -206,18 +207,18 @@ export const DBConnectionManagerModal: React.FC<
               </h3>
               {/* 푸터 */}
               <div className="fixed bottom-0 left-0 right-0 flex justify-end border semi-text-bg-color m-1">
-                <button
+                <Button
                   onClick={() => onOpenChange(false)}
                   className="px-2 py-1 rounded medium-text-bg-color"
                 >
                   Close
-                </button>
+                </Button>
               </div>
             </div>
 
             {/* 본문 */}
             <div className="p-4 overflow-y-auto flex-1 h-full">
-              <button
+              <Button
                 onClick={() =>
                   setEditing({
                     system_code: `${process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE}`,
@@ -234,15 +235,15 @@ export const DBConnectionManagerModal: React.FC<
                 className="medium-text-bg-color border mb-4 w-full py-2 rounded"
               >
                 ➕
-              </button>
+              </Button>
               {/* 푸터 */}
               <div className="fixed bottom-0 left-0 right-0 flex justify-end border semi-text-bg-color m-1">
-                <button
+                <Button
                   onClick={() => onOpenChange(false)}
                   className="px-2 py-1 rounded medium-text-bg-color"
                 >
                   Close
-                </button>
+                </Button>
               </div>
 
               {/* 연결 리스트 */}
@@ -261,25 +262,25 @@ export const DBConnectionManagerModal: React.FC<
                     </div>
 
                     <div className="flex flex-row flex-wrap gap-2 shrink-0">
-                      <button
+                      <Button
                         onClick={() => handleTest(conn)}
                         disabled={testing}
                         className="px-2 py-1 rounded border hover:bg-gray-50 whitespace-nowrap"
                       >
                         🔄 Test
-                      </button>
-                      <button
+                      </Button>
+                      <Button
                         onClick={() => setEditing(conn)}
                         className="px-2 py-1 rounded border hover:bg-gray-50 whitespace-nowrap"
                       >
                         ✏️ Change
-                      </button>
-                      <button
+                      </Button>
+                      <Button
                         onClick={() => handleDelete(conn.id)}
                         className="px-2 py-1 rounded border hover:bg-red-100 text-red-600 whitespace-nowrap"
                       >
                         🗑 Delete
-                      </button>
+                      </Button>
                     </div>
                   </div>
                 ))}
@@ -342,18 +343,18 @@ export const DBConnectionManagerModal: React.FC<
                   ))}
 
                   <div className="flex justify-end gap-2 mt-2">
-                    <button
+                    <Button
                       onClick={() => setEditing(null)}
                       className="medium-text-bg-color px-3 py-1 rounded border"
                     >
                       Cancel
-                    </button>
-                    <button
+                    </Button>
+                    <Button
                       onClick={handleSave}
                       className="px-3 py-1 rounded medium-text-bg-color"
                     >
                       Save
-                    </button>
+                    </Button>
                   </div>
                 </div>
               )}

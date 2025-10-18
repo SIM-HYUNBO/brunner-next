@@ -4,6 +4,7 @@ import { javascript } from "@codemirror/lang-javascript";
 import { githubLight, githubDark } from "@uiw/codemirror-theme-github";
 import { getIsDarkMode } from "@/components/core/client/frames/darkModeToggleButton";
 import type { ScriptNodeDesignData } from "./types/nodeTypes";
+import { Input, Button, Table } from "antd";
 
 interface ScriptEditorModalProps {
   open: boolean;
@@ -136,24 +137,24 @@ export const ScriptEditorModal: React.FC<ScriptEditorModalProps> = ({
 
         {/* 버튼들 */}
         <div className="semi-text-bg-color p-2 flex justify-end gap-2 border-t">
-          <button
+          <Button
             className="px-3 py-1 border rounded general-text-bg-color"
             onClick={handleSave}
           >
             Save
-          </button>
-          <button
+          </Button>
+          <Button
             className="px-3 py-1 border rounded medium-text-bg-color"
             onClick={onClose}
           >
             Close
-          </button>
-          <button
+          </Button>
+          <Button
             className="px-3 py-1 border rounded medium-text-bg-color"
             onClick={onHelp}
           >
             Help
-          </button>
+          </Button>
         </div>
 
         {/* 리사이즈 핸들 */}

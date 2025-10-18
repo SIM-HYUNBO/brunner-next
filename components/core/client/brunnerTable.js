@@ -68,15 +68,15 @@ const BrunnerTable = forwardRef(
             "text-center bg-purple-500 text-purple-100 w-[100px] !important",
           Cell: ({ row }) => (
             <div className={`flex justify-center`}>
-              <button
+              <Button
                 onClick={() => updateTableData(row)}
                 className={`p-2 rounded`}
                 title="Save"
               >
                 {" "}
                 <img src="/save-icon.png" alt="Save" className={`w-6 h-6`} />
-              </button>
-              <button
+              </Button>
+              <Button
                 onClick={() => deleteTableData(row)}
                 className={`p-2 rounded`}
                 title="Delete"
@@ -86,7 +86,7 @@ const BrunnerTable = forwardRef(
                   alt="Delete"
                   className={`w-6 h-6`}
                 />
-              </button>
+              </Button>
             </div>
           ),
         },
@@ -133,12 +133,12 @@ const BrunnerTable = forwardRef(
                        bg-gray-100 dark-bg-color
                        mt-2`}
         >
-          <button
+          <Button
             onClick={fetchTableData}
             className={`text-white bg-indigo-500 border-0 py-2 px-6 focus:outline-none hover:bg-indigo-600 rounded text-lg mb-3`}
           >
             Refresh
-          </button>
+          </Button>
         </div>
       );
     };
@@ -345,7 +345,7 @@ const BrunnerTable = forwardRef(
                 </div>
               )
           )}
-          <button
+          <Button
             onClick={() => {
               addNewTableData(inputValues);
             }}
@@ -353,7 +353,7 @@ const BrunnerTable = forwardRef(
             style={{ alignSelf: "flex-end" }}
           >
             Add
-          </button>
+          </Button>
         </div>
       );
     };

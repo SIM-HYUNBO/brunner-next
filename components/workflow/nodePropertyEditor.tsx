@@ -7,6 +7,7 @@ import type {
 } from "@/components/core/commonData";
 import * as commmonFunctions from "@/components/core/commonFunctions";
 import { JsonDatasetEditorModal } from "@/components/workflow/jsonDatasetEditorModal";
+import { Input, Button, Table } from "antd";
 import type { JsonColumnType } from "@/components/workflow/jsonDatasetEditorModal";
 
 interface NodePropertyEditorProps {
@@ -128,19 +129,19 @@ export const NodePropertyEditor: React.FC<NodePropertyEditorProps> = ({
 
       {/* Inputs/Outputs 버튼 */}
       <div className="flex flex-row mt-2 space-x-1">
-        <button
+        <Button
           className="px-2 py-1 semi-text-bg-color rounded border medium-text-bg-color"
           onClick={() => setIsNodeInputModalOpen(true)}
         >
           Node Inputs
-        </button>
-        <button
+        </Button>
+        <Button
           className="px-2 py-1 semi-text-bg-color rounded border medium-text-bg-color"
           onClick={() => setIsNodeOutputModalOpen(true)}
         >
           Node Outputs
-        </button>
-        <button
+        </Button>
+        <Button
           className="px-2 py-1 semi-text-bg-color rounded border medium-text-bg-color"
           onClick={() => {
             const prevDesign = node.data?.design ?? {};
@@ -165,7 +166,7 @@ export const NodePropertyEditor: React.FC<NodePropertyEditorProps> = ({
           }}
         >
           Apply
-        </button>
+        </Button>
       </div>
 
       {/* Input Modal */}

@@ -3,6 +3,7 @@ import { useState, useEffect, useRef } from "react";
 import { JsonDatasetManager } from "@/components/workflow/jsonDatasetManager";
 import type { JsonObject } from "@/components/workflow/jsonDatasetManager";
 import * as ReactWindow from "react-window";
+import { Input, Button, Table } from "antd";
 
 export type JsonColumnType = "string" | "number" | "boolean";
 type JsonDatasetEditorMode = "schema" | "data";
@@ -590,12 +591,12 @@ export const JsonDatasetEditorModal: React.FC<JsonDatasetEditorModalProps> = ({
                   );
                 })}
                 <div>
-                  <button
+                  <Button
                     className="border px-2 py-1 text-red-500"
                     onClick={() => removeRow(index)}
                   >
                     Delete
-                  </button>
+                  </Button>
                 </div>
               </div>
             );
@@ -637,7 +638,7 @@ export const JsonDatasetEditorModal: React.FC<JsonDatasetEditorModalProps> = ({
         {/* 테이블 선택 버튼 */}
         <div className="flex mb-2 flex-wrap flex-none">
           {tableKeys.map((key) => (
-            <button
+            <Button
               key={key}
               onClick={() => setSelectedTable(key)}
               onDoubleClick={() => renameTable(key)}
@@ -648,23 +649,23 @@ export const JsonDatasetEditorModal: React.FC<JsonDatasetEditorModalProps> = ({
               }`}
             >
               {key}
-            </button>
+            </Button>
           ))}
           {isSchemaMode && (
             <>
-              <button
+              <Button
                 onClick={addTable}
                 className="px-2 py-1 border general-text-bg-color rounded h-8"
               >
                 + Table
-              </button>
+              </Button>
               {selectedTable && (
-                <button
+                <Button
                   onClick={() => removeTable(selectedTable)}
                   className="px-2 py-1 border semi-text-bg-color rounded ml-1 h-8"
                 >
                   Delete
-                </button>
+                </Button>
               )}
             </>
           )}
@@ -686,18 +687,18 @@ export const JsonDatasetEditorModal: React.FC<JsonDatasetEditorModalProps> = ({
                             style={{ width: columnWidths[col.name] || 150 }}
                           >
                             {col.name} ({col.type})
-                            <button
+                            <Button
                               onClick={() => removeColumn(col.name)}
                               className="text-red-500 ml-1"
                             >
                               ×
-                            </button>
+                            </Button>
                           </th>
                         ))}
                         <th className="border px-2 py-1">
-                          <button onClick={addColumn} className="px-1">
+                          <Button onClick={addColumn} className="px-1">
                             + Column
-                          </button>
+                          </Button>
                         </th>
                       </tr>
                     </thead>
@@ -737,31 +738,31 @@ export const JsonDatasetEditorModal: React.FC<JsonDatasetEditorModalProps> = ({
                 />
               )}
               {isDataMode && (
-                <button
+                <Button
                   onClick={addRow}
                   className="px-2 py-1 mt-1 rounded semi-text-bg-color border"
                 >
                   + Row
-                </button>
+                </Button>
               )}
             </>
           )}
         </div>
 
         {/* 하단 버튼 */}
-        <div className="flex justify-end mt-4 space-x-2 flex-none">
-          <button
+        <div className="flex justify-end mt-4 mr-2 space-x-2 flex-none mb-2">
+          <Button
             onClick={() => onConfirm({ ...internalData })}
             className="medium-text-bg-color px-4 py-2 border semi-text-bg-color"
           >
             Apply
-          </button>
-          <button
+          </Button>
+          <Button
             onClick={onCancel}
-            className="px-4 py-2 border semi-text-bg-color"
+            className="px-4 py-2 border semi-text-bg-color mr-2"
           >
             Close
-          </button>
+          </Button>
         </div>
 
         {/* 모달 크기조절 핸들 */}

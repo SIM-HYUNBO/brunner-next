@@ -7,6 +7,7 @@ import RequestServer from "@/components/core/client/requestServer";
 import { JsonViewer } from "@textea/json-viewer";
 import copy from "copy-to-clipboard";
 import { getIsDarkMode } from "@/components/core/client/frames/darkModeToggleButton";
+import { Input, Button, Table } from "antd";
 
 interface WorkflowDataModalProps {
   workflowId: string;
@@ -104,20 +105,20 @@ export const WorkflowDataModal: React.FC<WorkflowDataModalProps> = ({
           {currentNodeId ? ` / Node: ${currentNodeId}` : ""}
         </h2>
         <div className="flex gap-2">
-          <button
+          <Button
             onClick={() =>
               workflowData && copy(JSON.stringify(workflowData, null, 2))
             }
             className="medium-text-bg-color px-3 py-1 rounded border"
           >
             Copy JSON
-          </button>
-          <button
+          </Button>
+          <Button
             onClick={onClose}
             className="semi-text-bg-color px-3 py-1 rounded border"
           >
             Close
-          </button>
+          </Button>
         </div>
       </div>
 

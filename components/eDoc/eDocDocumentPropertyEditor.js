@@ -1,6 +1,7 @@
 "use strict";
 
 import React, { useState } from "react";
+import { Input, Button, Table } from "antd";
 
 export default function EDocDocumentPropertyEditor({
   runtimeData,

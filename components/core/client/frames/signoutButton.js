@@ -39,7 +39,7 @@ export default function SignoutButton({ handleLogout, triggermenureload }) {
       <BrunnerMessageBox />
 
       {userInfo.getLoginUserId() && (
-        <button
+        <Button
           className={`flex 
               items-center 
               justify-center 
@@ -76,7 +76,7 @@ export default function SignoutButton({ handleLogout, triggermenureload }) {
               d="M4.5 12h15m0 0l-6.75-6.75M19.5 12l-6.75 6.75"
             />
           </svg>
-        </button>
+        </Button>
       )}
     </>
   );
