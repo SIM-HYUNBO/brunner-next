@@ -448,7 +448,7 @@ export const JsonDatasetEditorModal: React.FC<JsonDatasetEditorModalProps> = ({
       if (selectedRows.length > 0) {
         // ✅ 여러 행 붙여넣기
         let startIndex = selectedRows[0];
-        if (!startIndex) return;
+        if (startIndex === undefined || startIndex === null) return;
         for (let i = 0; i < lines.length; i++) {
           const line = lines[i];
           const targetIndex = startIndex + i;
