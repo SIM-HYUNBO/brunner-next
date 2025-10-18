@@ -501,6 +501,8 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
 
   const exportWorkflow = () => {
     const workflowJson = getWorkflowJson();
+    if (!window) return;
+
     const win = window.open("", "_blank");
     if (win) {
       win.document.write(
@@ -513,8 +515,8 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
   const setCurrentWorkflow = (newVal: any) => {
     if (!newVal) return;
 
-    // jWorkflow에 교체
-    jWorkflow.current = newVal;
+    setWorkflowInputData(newVal.data.run.inputs);
+    setWorkflowOutputData(newVal.data.run.outputs);
 
     // 상태값도 새 워크플로우에 맞춰 업데이트
     setWorkflowId(newVal.workflowId ?? uuidv4());
@@ -525,28 +527,16 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
     setNodes(newVal.nodes ?? []);
     setEdges(newVal.edges ?? []);
 
-    // 입력 데이터 적용
-    setWorkflowInputData(
-      newVal.data?.run?.inputs
-        ? newVal.data.run.inputs
-        : { INPUT_TABLE: [{ key1: "test", key2: 123 }] }
-    );
+    // jWorkflow에 교체
+    jWorkflow.current = newVal;
 
-    setDesignedInputData(
-      newVal.data?.design?.inputs
-        ? newVal.data.design.inputs
-        : { OUTPUT_TABLE: [] }
-    );
+    // 입력 데이터 적용
+    setWorkflowInputData(jWorkflow.current.data?.run?.inputs);
+
+    setDesignedInputData(jWorkflow.current.data?.design?.inputs);
 
     // 출력 데이터 적용
-    setDesignedOutputData(
-      newVal.data?.design?.outputs
-        ? newVal.data.design.outputs
-        : { OUTPUT_TABLE: [] }
-    );
-
-    setWorkflowInputData(newVal.data.run.inputs);
-    setWorkflowOutputData(newVal.data.run.outputs);
+    setDesignedOutputData(newVal.data?.design?.outputs);
 
     const snappedNodes = (newVal.nodes ?? []).map(
       (n: Node<ActionNodeData>) => ({
@@ -555,7 +545,10 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
       })
     );
     setNodes(snappedNodes);
-    onWorkflowIDNameChange?.(newVal.workflowId, newVal.workflowName);
+    onWorkflowIDNameChange?.(
+      jWorkflow.current.workflowId,
+      jWorkflow.current.workflowName
+    );
   };
 
   const saveWorkflow = async () => {

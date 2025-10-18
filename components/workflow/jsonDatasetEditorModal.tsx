@@ -164,7 +164,7 @@ export const JsonDatasetEditorModal: React.FC<JsonDatasetEditorModalProps> = ({
   const stopResize = () => setResizing(false);
 
   useEffect(() => {
-    if (resizing) {
+    if (window && resizing) {
       window.addEventListener("mousemove", onResize);
       window.addEventListener("mouseup", stopResize);
     } else {
@@ -195,10 +195,11 @@ export const JsonDatasetEditorModal: React.FC<JsonDatasetEditorModalProps> = ({
     firstTableCols.forEach((col) => (widths[col] = 120));
     setColumnWidths(widths);
 
-    setPos({
-      x: window.innerWidth / 2 - size.width / 2,
-      y: window.innerHeight / 2 - size.height / 2,
-    });
+    if (window)
+      setPos({
+        x: window.innerWidth / 2 - size.width / 2,
+        y: window.innerHeight / 2 - size.height / 2,
+      });
   }, [value]);
 
   /* ---------------- 유틸 ---------------- */

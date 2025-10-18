@@ -47,8 +47,8 @@ export const SqlEditorModal: React.FC<SqlEditorModalProps> = ({
   const [width, setWidth] = useState(800);
   const [height, setHeight] = useState(520);
   const [position, setPosition] = useState({
-    x: (window.innerWidth - width) / 2,
-    y: (window.innerHeight - height) / 2,
+    x: (window?.innerWidth - width) / 2,
+    y: (window?.innerHeight - height) / 2,
   });
   const dragRef = useRef<HTMLDivElement | null>(null);
   const isDragging = useRef(false);
@@ -96,6 +96,9 @@ export const SqlEditorModal: React.FC<SqlEditorModalProps> = ({
       panelResizing.current = false;
       document.body.style.userSelect = "";
     };
+
+    if (!window) return;
+
     window.addEventListener("mousemove", handleMouseMove);
     window.addEventListener("mouseup", handleMouseUp);
     return () => {

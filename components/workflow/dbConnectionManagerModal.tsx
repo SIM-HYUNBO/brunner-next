@@ -42,12 +42,17 @@ export const DBConnectionManagerModal: React.FC<
 
   const [modalSize, setModalSize] = useState({ width: 900, height: 600 });
   const [modalPosition, setModalPosition] = useState({
-    x: (window.innerWidth - modalSize.width) / 2,
-    y: (window.innerHeight - modalSize.height) / 2,
+    x: 0 / 2,
+    y: 0 / 2,
   });
 
   useEffect(() => {
     if (open) loadConnections();
+
+    setModalPosition({
+      x: (window?.innerWidth - modalSize.width) / 2,
+      y: (window?.innerHeight - modalSize.height) / 2,
+    });
   }, [open]);
 
   useEffect(() => {

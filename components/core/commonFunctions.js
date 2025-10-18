@@ -80,6 +80,8 @@ export function useDeviceType() {
   });
 
   useEffect(() => {
+    if (!window) return;
+
     function updateDeviceType() {
       const width = window.innerWidth;
       setDeviceType({
