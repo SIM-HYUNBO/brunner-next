@@ -27,7 +27,10 @@ export const ScriptEditorModal: React.FC<ScriptEditorModalProps> = ({
 
   const [width, setWidth] = useState(800);
   const [height, setHeight] = useState(500);
-  const [position, setPosition] = useState({ x: 200, y: 100 });
+  const [position, setPosition] = useState({
+    x: (window.innerWidth - width) / 2,
+    y: (window.innerHeight - height) / 2,
+  });
 
   const isResizing = useRef(false);
   const isDragging = useRef(false);
@@ -79,7 +82,7 @@ export const ScriptEditorModal: React.FC<ScriptEditorModalProps> = ({
   if (!open) return null;
 
   return (
-    <div className="bg-black/30 backdrop-blur-sm fixed inset-0 flex justify-center items-center">
+    <div className="fixed inset-0 flex justify-center items-center">
       <div
         className="semi-text-bg-color rounded shadow-lg flex flex-col border border-gray-400"
         style={{

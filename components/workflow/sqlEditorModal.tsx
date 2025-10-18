@@ -46,7 +46,10 @@ export const SqlEditorModal: React.FC<SqlEditorModalProps> = ({
   // drag/resize modal
   const [width, setWidth] = useState(800);
   const [height, setHeight] = useState(520);
-  const [position, setPosition] = useState({ x: 200, y: 100 });
+  const [position, setPosition] = useState({
+    x: (window.innerWidth - width) / 2,
+    y: (window.innerHeight - height) / 2,
+  });
   const dragRef = useRef<HTMLDivElement | null>(null);
   const isDragging = useRef(false);
   const isResizing = useRef(false);
@@ -169,7 +172,7 @@ export const SqlEditorModal: React.FC<SqlEditorModalProps> = ({
   };
 
   return (
-    <div className="bg-black/30 backdrop-blur-sm fixed inset-0 flex items-center justify-center z-[9999]">
+    <div className="fixed inset-0 flex items-center justify-center z-[9999]">
       <div
         ref={dragRef}
         className="absolute semi-text-bg-color rounded shadow-lg flex flex-col"
@@ -184,14 +187,14 @@ export const SqlEditorModal: React.FC<SqlEditorModalProps> = ({
       >
         {/* 타이틀 바 */}
         <div
-          className="flex items-center justify-between p-2 cursor-move select-none"
+          className="flex medium-text-bg-color items-center justify-between p-2 cursor-move select-none"
           onMouseDown={(e) => {
             isDragging.current = true;
             lastPos.current = { x: e.clientX, y: e.clientY };
             document.body.style.userSelect = "none";
           }}
         >
-          <div className="font-semibold">SQL Editor</div>
+          <h3 className="font-semibold">SQL Editor</h3>
           <div className="flex gap-2">
             <button
               className="px-2 py-1 border rounded text-sm"

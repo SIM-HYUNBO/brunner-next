@@ -511,13 +511,10 @@ export const JsonDatasetEditorModal: React.FC<JsonDatasetEditorModalProps> = ({
   const minColWidth = 100;
 
   return (
-    <div
-      className="fixed inset-0 z-50 bg-black/30 backdrop-blur-sm"
-      onClick={onCancel}
-    >
+    <div className="fixed inset-0 z-50" onClick={onCancel}>
       <div
         ref={modalRef}
-        className="general-text-bg-color p-4 absolute shadow-lg flex flex-col "
+        className="semi-text-bg-color absolute shadow-lg flex flex-col "
         style={{
           left: pos.x,
           top: pos.y,
@@ -528,7 +525,7 @@ export const JsonDatasetEditorModal: React.FC<JsonDatasetEditorModalProps> = ({
       >
         {/* 헤더 (드래그 영역) */}
         <div
-          className="flex justify-between mb-2 cursor-move select-none px-2 py-1 flex-none"
+          className="flex medium-text-bg-color justify-between mb-2 cursor-move select-none px-2 py-1 flex-none"
           onMouseDown={startDrag}
         >
           <h3 className="font-semibold">

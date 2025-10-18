@@ -77,15 +77,15 @@ const WorkflowSelectModal: React.FC<WorkflowSelectModalProps> = ({
         onClick={(e) => e.stopPropagation()} // 모달 내부 클릭시 닫히지 않게
       >
         {/* 헤더 */}
-        <div className="flex items-center justify-between border-b px-5 py-3">
-          <h2 className="text-lg font-semibold">Select workflow</h2>
+        <div className="medium-text-bg-color flex items-center justify-between border-b px-2 py-1">
+          <h3 className="text-lg font-semibold">Select workflow</h3>
           <button onClick={onClose} className="">
             ✕
           </button>
         </div>
 
         {/* 본문 */}
-        <div className="flex-1 overflow-y-auto">
+        <div className="flex-1 mt-5 overflow-y-auto">
           {loading ? (
             <div className="p-5 text-center">Loading ...</div>
           ) : (

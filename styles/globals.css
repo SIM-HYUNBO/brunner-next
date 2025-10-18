@@ -139,7 +139,7 @@ neutral, stone
   h4,
   h5,
   h6 {
-    @apply text-green-600 
+    @apply text-green-800 
            dark:text-green-300;
   }
 

@@ -187,7 +187,7 @@ export const DBConnectionManagerModal: React.FC<
           >
             {/* 헤더 */}
             <div
-              className="semi-text-bg-color 
+              className="medium-text-bg-color 
                             flex 
                             flex-row
                             justify-between 
@@ -196,9 +196,9 @@ export const DBConnectionManagerModal: React.FC<
                             cursor-move 
                             modal-drag-handle"
             >
-              <h2 className="text-lg font-bold flex items-center gap-2 my">
+              <h3 className="text-lg font-bold flex items-center gap-2 my">
                 🗄 DB Connection Info
-              </h2>
+              </h3>
               {/* 푸터 */}
               <div className="fixed bottom-0 left-0 right-0 flex justify-end border semi-text-bg-color m-1">
                 <button
