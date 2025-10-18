@@ -6,6 +6,7 @@ import * as userInfo from "@/components/core/client/frames/userInfo";
 import { useModal } from "@/components/core/client/brunnerMessageBox";
 import * as constants from "@/components/core/constants";
 import Loading from "@/components/core/client/loading";
+import { Input, Button, Table } from "antd";
 
 function BrunnerBoard({ boardType }) {
   const [loading, setLoading] = useState(false);

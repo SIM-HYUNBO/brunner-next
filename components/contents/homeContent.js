@@ -8,6 +8,7 @@ import GoverningMessage from "@/components/core/client/governingMessage";
 import LottiePlayer from "@/components/core/client/lottiePlayer";
 import EDocContent from "@/components/eDoc/eDocContent";
 import Loading from "@/components/core/client/loading";
+import { Input, Button, Table } from "antd";
 
 export default function HomeContent() {
   const router = useRouter();

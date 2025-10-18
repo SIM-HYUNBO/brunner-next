@@ -8,6 +8,7 @@ import React, {
   forwardRef,
 } from "react";
 import { useTable, useSortBy } from "react-table";
+import { Input, Button, Table } from "antd";
 
 const BrunnerTable = forwardRef(
   (

@@ -4,6 +4,7 @@ import { useDeviceType } from "@/components/core/commonFunctions";
 import ServiceSQL from "@/components/core/client/serviceSQL";
 import * as userInfo from "@/components/core/client/frames/userInfo";
 import LottiePlayer from "@/components/core/client/lottiePlayer";
+import { Input, Button, Table } from "antd";
 
 export default function ServiceSqlContent() {
   const { isMobile, isTablet } = useDeviceType();

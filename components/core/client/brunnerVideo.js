@@ -2,6 +2,7 @@
 
 import dynamic from "next/dynamic";
 import { useState, useEffect, useRef } from "react";
+import { Input, Button, Table } from "antd";
 
 const ReactPlayer = dynamic(() => import("react-player"), { ssr: false });
 

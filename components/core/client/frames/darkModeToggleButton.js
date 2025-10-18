@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import { useTheme } from "next-themes";
+import { Input, Button, Table } from "antd";
 
 export function getIsDarkMode() {
   const { resolvedTheme } = useTheme();

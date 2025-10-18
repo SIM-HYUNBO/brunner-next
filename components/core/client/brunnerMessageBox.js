@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import Loading from "@/components/core/client/loading";
+import { Input, Button, Table } from "antd";
 
 export const useModal = () => {
   const [modalContent, setModalContent] = useState({
