@@ -78,7 +78,7 @@ const WorkflowSelectModal: React.FC<WorkflowSelectModalProps> = ({
       >
         {/* 헤더 */}
         <div className="medium-text-bg-color flex items-center justify-between border-b px-2 py-1">
-          <h3 className="text-lg font-semibold">Select workflow</h3>
+          <h3 className="text-lg">Select workflow</h3>
           <button onClick={onClose} className="">
             ✕
           </button>

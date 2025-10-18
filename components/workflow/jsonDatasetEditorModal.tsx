@@ -649,16 +649,16 @@ export const JsonDatasetEditorModal: React.FC<JsonDatasetEditorModalProps> = ({
         {/* 하단 버튼 */}
         <div className="flex justify-end mt-4 space-x-2 flex-none">
           <button
+            onClick={() => onConfirm({ ...internalData })}
+            className="medium-text-bg-color px-4 py-2 border semi-text-bg-color"
+          >
+            Apply
+          </button>
+          <button
             onClick={onCancel}
             className="px-4 py-2 border semi-text-bg-color"
           >
             Close
-          </button>
-          <button
-            onClick={() => onConfirm({ ...internalData })}
-            className="px-4 py-2 border semi-text-bg-color"
-          >
-            Apply
           </button>
         </div>
 

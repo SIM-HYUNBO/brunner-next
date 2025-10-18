@@ -196,7 +196,7 @@ export const DBConnectionManagerModal: React.FC<
                             cursor-move 
                             modal-drag-handle"
             >
-              <h3 className="text-lg font-bold flex items-center gap-2 my">
+              <h3 className="text-lg font flex items-center gap-2 my">
                 🗄 DB Connection Info
               </h3>
               {/* 푸터 */}
