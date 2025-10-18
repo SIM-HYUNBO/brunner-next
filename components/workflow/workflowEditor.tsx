@@ -367,24 +367,7 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
   useEffect(() => {
     if (!jWorkflow.current) return;
 
-    const newDataObj: Record<string, any> = {};
-    for (const [tableName, rows] of Object.entries(designedInputData)) {
-      if (Array.isArray(rows) && rows.length > 0) {
-        const firstRow: any = rows[0];
-        const newRow: Record<string, any> = {};
-        for (const key in firstRow) {
-          const value = firstRow[key];
-          newRow[key] = commonFunctions.getJsonDefaultTypedValue(value);
-        }
-        newDataObj[tableName] = [newRow];
-      } else {
-        newDataObj[tableName] = [];
-      }
-    }
-
-    setWorkflowInputData(newDataObj);
     jWorkflow.current.data.design.inputs = designedInputData; // 스키마 반영
-    jWorkflow.current.data.run.inputs = newDataObj; // 실제 데이터 반영
   }, [designedInputData]);
 
   useEffect(() => {
@@ -531,9 +514,8 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
     jWorkflow.current = newVal;
 
     // 입력 데이터 적용
-    setWorkflowInputData(jWorkflow.current.data?.run?.inputs);
-
     setDesignedInputData(jWorkflow.current.data?.design?.inputs);
+    setWorkflowInputData(jWorkflow.current.data?.run?.inputs);
 
     // 출력 데이터 적용
     setDesignedOutputData(newVal.data?.design?.outputs);
