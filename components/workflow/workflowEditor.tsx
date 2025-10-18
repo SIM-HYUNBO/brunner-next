@@ -668,19 +668,19 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
       <>
         <div className="flex flex-row ml-1 mt-2">
           <Button
-            className="w-full border border-black medium-text-bg-color hover:bg-gray-400"
+            className="w-full border border-black general-text-bg-color hover:bg-gray-400"
             onClick={addNode}
           >
             Add Node
           </Button>
           <Button
-            className="w-full border border-black ml-1 medium-text-bg-color hover:bg-gray-400"
+            className="w-full border border-black ml-1 general-text-bg-color hover:bg-gray-400"
             onClick={deleteSelectedNode}
           >
             Delete Node
           </Button>
           <Button
-            className="w-full border border-black ml-1 medium-text-bg-color hover:bg-gray-400"
+            className="w-full border border-black ml-1 general-text-bg-color hover:bg-gray-400"
             onClick={() => setIsViewWorkflowDataModalOpen(true)}
           >
             View Data
@@ -688,19 +688,19 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
         </div>
         <div className="flex flex-row ml-1 mt-1 space-x-1">
           <Button
-            className="w-full border border-black medium-text-bg-color hover:bg-gray-400"
+            className="w-full border border-black general-text-bg-color hover:bg-gray-400"
             onClick={executeWorkflowFromTableEditor}
           >
             Run
           </Button>
           <Button
-            className="w-full border border-black medium-text-bg-color hover:bg-gray-400"
+            className="w-full border border-black general-text-bg-color hover:bg-gray-400"
             onClick={executeWorkflowStepByStep}
           >
             Run By Node
           </Button>
           <Button
-            className="w-full border border-black medium-text-bg-color hover:bg-gray-400"
+            className="w-full border border-black general-text-bg-color hover:bg-gray-400"
             onClick={resetWorkflow}
           >
             Reset
@@ -709,19 +709,19 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
 
         <div className="flex flex-row ml-1 mt-1 space-x-1">
           <Button
-            className="w-full border border-black medium-text-bg-color hover:bg-gray-400"
+            className="w-full border border-black general-text-bg-color hover:bg-gray-400"
             onClick={saveWorkflow}
           >
             Save
           </Button>
           <Button
-            className="w-full border border-black ml-1 medium-text-bg-color hover:bg-gray-400"
+            className="w-full border border-black ml-1 general-text-bg-color hover:bg-gray-400"
             onClick={exportWorkflow}
           >
             Export
           </Button>
           <Button
-            className="w-full border border-black medium-text-bg-color hover:bg-gray-400"
+            className="w-full border border-black general-text-bg-color hover:bg-gray-400"
             onClick={deleteWorkflow}
           >
             Delete
@@ -765,12 +765,9 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
   return (
     <>
       <ReactFlowProvider>
-        {/* <<< MOBILE-FIX: Use h-screen so we can compute child heights on mobile; and switch to column on small screens */}
         <div className="flex flex-row w-full h-full relative">
-          {/* 🧭 왼쪽: 워크플로우 다이어그램 */}
           <div className="flex flex-col flex-grow h-full min-w-0">
             <div className="flex-1 relative">
-              {/* wrapper with explicit min height and dynamic height for mobile portrait */}
               <div
                 className="relative rounded-lg border shadow-sm overflow-hidden w-full"
                 style={{
@@ -1045,7 +1042,7 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
 
                     <Button
                       onClick={() => setIsDBConnectionsModalOpen(true)}
-                      className="ml-1 mt-2 px-2 py-1 rounded medium-text-bg-color border"
+                      className="ml-1 mt-2 px-2 py-1 rounded  general-text-bg-color border border-black"
                     >
                       Database...
                     </Button>

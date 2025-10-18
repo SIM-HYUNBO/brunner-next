@@ -38,7 +38,7 @@ export default function WorkflowSelector({
       {/* 모달 열기 버튼 */}
       <Button
         onClick={() => setWorkflowSelectModalOpen(true)}
-        className="p-2 rounded-md medium-text-bg-color"
+        className="p-2 rounded-md general-text-bg-color border-black"
       >
         Select ...
       </Button>

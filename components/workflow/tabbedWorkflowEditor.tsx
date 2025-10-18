@@ -76,8 +76,8 @@ export function TabbedWorkflowEditor() {
               <Button
                 className={`px-4 py-2 ${
                   tab.id === activeTabId
-                    ? "border-b-2 border-blue-500 font-bold"
-                    : ""
+                    ? "border-b-2 general-text-bg-color border border-black"
+                    : "semi-text-bg-color border border-black"
                 }`}
                 onClick={() => setActiveTabId(tab.id)}
               >
@@ -93,7 +93,7 @@ export function TabbedWorkflowEditor() {
           ))}
 
           <Button
-            className="ml-auto px-4 py-2 text-green-600"
+            className="ml-auto px-4 py-2 general-text-bg-color border border-black"
             onClick={() =>
               handleAddTab(`wf-${tabs.length + 1}`, "new workflow")
             }

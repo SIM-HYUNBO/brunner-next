@@ -133,14 +133,24 @@ neutral, stone
            general-text-bg-color;
   }
 
+  /* 기본 라이트 모드 헤딩 스타일 */
   h1,
   h2,
   h3,
   h4,
   h5,
   h6 {
-    @apply text-green-600 
-           dark:text-green-600;
+    @apply text-green-900;
+  }
+
+  /* 다크 모드일 때 */
+  .dark h1,
+  .dark h2,
+  .dark h3,
+  .dark h4,
+  .dark h5,
+  .dark h6 {
+    @apply text-green-400;
   }
 
   pre {

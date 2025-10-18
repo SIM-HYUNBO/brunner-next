@@ -72,7 +72,7 @@ export default function DropdownMenu({ reloadSignal, triggermenureload }) {
     <>
       {/* 햄버거 버튼 */}
       <Button
-        className="p-2 rounded-md transition-colors"
+        className="p-2 rounded-md transition-colors general-text-bg-color"
         onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
         aria-label="메뉴 열기"
         aria-expanded={mobileMenuOpen}
