@@ -20,9 +20,26 @@ const CellEditor: React.FC<{
   initialValue: any;
   colType: JsonColumnType;
   onUpdate: (newValue: any) => void;
-}> = ({ initialValue, colType, onUpdate }) => {
+  autoFocus?: boolean;
+}> = ({ initialValue, colType, onUpdate, autoFocus }) => {
   const [cellValue, setCellValue] = useState(String(initialValue));
+  const inputRef = useRef<HTMLInputElement | HTMLSelectElement>(null);
 
+  useEffect(() => {
+    if (autoFocus && inputRef.current) {
+      inputRef.current.focus();
+
+      // input type="text" 또는 textarea에서만 selection 설정
+      if (
+        inputRef.current instanceof HTMLInputElement &&
+        inputRef.current.type !== "number"
+      ) {
+        const len = inputRef.current.value.length;
+        inputRef.current.selectionStart = len;
+        inputRef.current.selectionEnd = len;
+      }
+    }
+  }, [autoFocus]);
   const commitChange = () => {
     let parsed: any = cellValue;
     if (colType === "number") parsed = Number(cellValue) || 0;
@@ -33,6 +50,7 @@ const CellEditor: React.FC<{
   if (colType === "boolean") {
     return (
       <select
+        ref={inputRef as any}
         value={String(cellValue)}
         onChange={(e) => {
           setCellValue(e.target.value);
@@ -48,12 +66,14 @@ const CellEditor: React.FC<{
 
   return (
     <input
+      ref={inputRef as any}
       type={colType === "number" ? "number" : "text"}
       value={cellValue}
       onChange={(e) => setCellValue(e.target.value)}
       onBlur={commitChange}
       onKeyDown={(e) => e.key === "Enter" && commitChange()}
       className="w-full border-none outline-none general-text-bg-color"
+      autoFocus={autoFocus}
     />
   );
 };
@@ -289,7 +309,13 @@ export const JsonDatasetEditorModal: React.FC<JsonDatasetEditorModalProps> = ({
   /* ---------------- TableVirtualized ---------------- */
   const List = ReactWindow.FixedSizeList;
 
-  function TableVirtualized({ rows, columns, height }: any) {
+  function TableVirtualized({
+    rows,
+    columns,
+    height,
+    updateCell,
+    removeRow,
+  }: any) {
     const resizeColStart = useRef<{
       colName: string;
       startX: number;
@@ -297,6 +323,10 @@ export const JsonDatasetEditorModal: React.FC<JsonDatasetEditorModalProps> = ({
     } | null>(null);
 
     const [selectedRows, setSelectedRows] = useState<number[]>([]);
+    const [selectedCell, setSelectedCell] = useState<{
+      rowIndex: number;
+      colName: string;
+    } | null>(null);
 
     /* ---------- 컬럼 리사이즈 ---------- */
     const startResizeCol = (e: React.MouseEvent, colName: string) => {
@@ -333,14 +363,12 @@ export const JsonDatasetEditorModal: React.FC<JsonDatasetEditorModalProps> = ({
     /* ---------- 행 선택 ---------- */
     const handleRowClick = (e: React.MouseEvent, index: number) => {
       if (e.ctrlKey || e.metaKey) {
-        // Ctrl/⌘ 클릭 → 토글 선택
         setSelectedRows((prev) =>
           prev.includes(index)
             ? prev.filter((i) => i !== index)
             : [...prev, index]
         );
       } else if (e.shiftKey && selectedRows.length > 0) {
-        // Shift 클릭 → 연속 선택
         const last = selectedRows[selectedRows.length - 1];
         const [start, end] = last! < index ? [last, index] : [index, last];
         const range = Array.from(
@@ -349,18 +377,59 @@ export const JsonDatasetEditorModal: React.FC<JsonDatasetEditorModalProps> = ({
         );
         setSelectedRows(range);
       } else {
-        // 단일 선택 아무 것도 안함. 단순 편집
+        // 단일 클릭은 편집용 — 행 선택 안함
+        setSelectedRows([]);
       }
+    };
+
+    /* ---------- 셀 클릭 ---------- */
+    const handleCellClick = (
+      rowIndex: number,
+      colName: string,
+      e: React.MouseEvent
+    ) => {
+      e.stopPropagation();
+      setSelectedCell({ rowIndex, colName });
     };
 
     /* ---------- 복사 (Ctrl+C) ---------- */
     const handleCopy = async () => {
-      if (selectedRows.length === 0) return;
-      const sorted = [...selectedRows].sort((a, b) => a - b);
-      const text = sorted
-        .map((i) => columns.map((c: any) => rows[i]?.[c.name] ?? "").join("\t"))
-        .join("\n");
-      await navigator.clipboard.writeText(text);
+      const activeEl = document.activeElement;
+
+      // 타입 가드: input 또는 textarea일 때만 selection 확인
+      if (
+        activeEl &&
+        (activeEl instanceof HTMLInputElement ||
+          activeEl instanceof HTMLTextAreaElement)
+      ) {
+        const start = activeEl.selectionStart ?? 0;
+        const end = activeEl.selectionEnd ?? 0;
+        if (start !== end) {
+          // 선택 영역만 복사
+          const selectedText = activeEl.value.substring(start, end);
+          await navigator.clipboard.writeText(selectedText);
+          return;
+        }
+      }
+
+      // 선택된 행이 있는 경우 → 기존 행 복사
+      if (selectedRows.length > 0) {
+        const sorted = [...selectedRows].sort((a, b) => a - b);
+        const text = sorted
+          .map((i) =>
+            columns.map((c: any) => rows[i]?.[c.name] ?? "").join("\t")
+          )
+          .join("\n");
+        await navigator.clipboard.writeText(text);
+        return;
+      }
+
+      // 셀만 선택된 경우 → 전체 값 복사
+      if (selectedCell) {
+        const { rowIndex, colName } = selectedCell;
+        const cellValue = rows[rowIndex]?.[colName] ?? "";
+        await navigator.clipboard.writeText(String(cellValue));
+      }
     };
 
     /* ---------- 붙여넣기 (Ctrl+V) ---------- */
@@ -374,25 +443,37 @@ export const JsonDatasetEditorModal: React.FC<JsonDatasetEditorModalProps> = ({
 
       if (lines.length === 0) return;
 
-      let startIndex = selectedRows[0] ?? rows.length; // 선택 없으면 append
-
       const newData = [...rows];
-      for (let i = 0; i < lines.length; i++) {
-        const line = lines[i];
-        const targetIndex = startIndex + i;
-        const newRow: any = {};
 
-        columns.forEach((c: any, j: any) => {
-          newRow[c.name] = line![j] ?? "";
-        });
+      if (selectedRows.length > 0) {
+        // ✅ 여러 행 붙여넣기
+        let startIndex = selectedRows[0];
+        if (!startIndex) return;
+        for (let i = 0; i < lines.length; i++) {
+          const line = lines[i];
+          const targetIndex = startIndex + i;
+          const newRow: any = {};
 
-        if (targetIndex < newData.length) {
-          // 기존 행 덮어쓰기
-          newData[targetIndex] = newRow;
-        } else {
-          // 새 행 추가
-          newData.push(newRow);
+          columns.forEach((c: any, j: any) => {
+            newRow[c.name] = line![j] ?? "";
+          });
+
+          if (targetIndex < newData.length) newData[targetIndex] = newRow;
+          else newData.push(newRow);
         }
+      } else if (selectedCell) {
+        // ✅ 단일 셀 붙여넣기
+        const { rowIndex, colName } = selectedCell;
+        const pastedValue = lines[0]![0]; // 첫 셀 값만
+        updateCell(rowIndex, colName, pastedValue);
+        return;
+      } else {
+        // ✅ 아무 선택 없으면 맨 끝에 추가
+        const newRow: any = {};
+        columns.forEach((c: any, j: any) => {
+          newRow[c.name] = lines[0]![j] ?? "";
+        });
+        newData.push(newRow);
       }
 
       // 반영
@@ -415,7 +496,7 @@ export const JsonDatasetEditorModal: React.FC<JsonDatasetEditorModalProps> = ({
       };
       window.addEventListener("keydown", onKeyDown);
       return () => window.removeEventListener("keydown", onKeyDown);
-    }, [selectedRows, rows, columns]);
+    }, [selectedRows, selectedCell, rows, columns]);
 
     /* ---------- 렌더 ---------- */
     return (
@@ -467,27 +548,46 @@ export const JsonDatasetEditorModal: React.FC<JsonDatasetEditorModalProps> = ({
                 onClick={(e) => handleRowClick(e, index)}
               >
                 <div
-                  className="border px-2 py-1 flex items-center justify-center font-mono semi-text-bg-color"
+                  className="border px-2 py-1 flex items-center justify-center font-mono semi-text-bg-color user-select-text"
                   style={{ width: minColWidth }}
                 >
                   {index + 1}
                 </div>
-                {columns.map((col: any) => (
-                  <div
-                    key={col.name}
-                    className="border px-2 py-1 flex items-center"
-                    style={{
-                      width: columnWidths[col.name] || 150,
-                      minWidth: minColWidth,
-                    }}
-                  >
-                    <CellEditor
-                      initialValue={row[col.name]}
-                      colType={col.type as JsonColumnType}
-                      onUpdate={(val) => updateCell(index, col.name, val)}
-                    />
-                  </div>
-                ))}
+                {columns.map((col: any) => {
+                  const isCellSelected =
+                    selectedCell?.rowIndex === index &&
+                    selectedCell?.colName === col.name;
+                  return (
+                    <div
+                      key={col.name}
+                      className="border px-2 py-1 flex items-center"
+                      style={{
+                        width: columnWidths[col.name] || 150,
+                        minWidth: minColWidth,
+                      }}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        // 이미 선택된 셀이면 상태 변경 안 함 → 재렌더 방지
+                        if (
+                          selectedCell?.rowIndex === index &&
+                          selectedCell?.colName === col.name
+                        )
+                          return;
+                        setSelectedCell({ rowIndex: index, colName: col.name });
+                      }}
+                    >
+                      <CellEditor
+                        initialValue={row[col.name]}
+                        colType={col.type as JsonColumnType}
+                        onUpdate={(val) => updateCell(index, col.name, val)}
+                        autoFocus={
+                          selectedCell?.rowIndex === index &&
+                          selectedCell?.colName === col.name
+                        }
+                      />
+                    </div>
+                  );
+                })}
                 <div>
                   <button
                     className="border px-2 py-1 text-red-500"
@@ -632,6 +732,7 @@ export const JsonDatasetEditorModal: React.FC<JsonDatasetEditorModalProps> = ({
                   columnWidths={columnWidths}
                   setColumnWidths={setColumnWidths}
                   updateCell={updateCell}
+                  removeRow={removeRow}
                 />
               )}
               {isDataMode && (
