@@ -40,8 +40,11 @@ export const DBConnectionManagerModal: React.FC<
     oracle: 1521,
   };
 
-  const [modalSize, setModalSize] = useState({ width: 700, height: 600 });
-  const [modalPosition, setModalPosition] = useState({ x: 0, y: 100 });
+  const [modalSize, setModalSize] = useState({ width: 900, height: 600 });
+  const [modalPosition, setModalPosition] = useState({
+    x: (window.innerWidth - modalSize.width) / 2,
+    y: (window.innerHeight - modalSize.height) / 2,
+  });
 
   useEffect(() => {
     if (open) loadConnections();
