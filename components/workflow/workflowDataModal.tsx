@@ -7,7 +7,7 @@ import RequestServer from "@/components/core/client/requestServer";
 import { JsonViewer } from "@textea/json-viewer";
 import copy from "copy-to-clipboard";
 import { getIsDarkMode } from "@/components/core/client/frames/darkModeToggleButton";
-import { Input, Button, Table } from "antd";
+import { Button, message } from "antd";
 
 interface WorkflowDataModalProps {
   workflowId: string;
@@ -15,6 +15,24 @@ interface WorkflowDataModalProps {
   open: boolean;
   onClose: () => void;
 }
+
+// 배열 인덱스 → %%i%% 변환 & 노드 배열 인덱스는 이름으로 치환
+const pathToDotWithNames = (path: (string | number)[], workflowData: any) => {
+  return path
+    .map((p, idx) => {
+      if (typeof p === "number") {
+        const parentKey = path[idx - 1];
+        if (parentKey === "nodes") {
+          const node = workflowData?.nodes?.[p];
+          return node?.data?.label || `%%i%%`; // <-- label 사용
+        }
+        return `%%i%%`;
+      } else {
+        return p;
+      }
+    })
+    .join(".");
+};
 
 export const WorkflowDataModal: React.FC<WorkflowDataModalProps> = ({
   workflowId,
@@ -25,6 +43,7 @@ export const WorkflowDataModal: React.FC<WorkflowDataModalProps> = ({
   const [workflowData, setWorkflowData] = useState<any>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [selectedPath, setSelectedPath] = useState<string>("");
   const containerRef = useRef<HTMLDivElement>(null);
 
   const fetchWorkflowData = async (id: string) => {
@@ -56,6 +75,7 @@ export const WorkflowDataModal: React.FC<WorkflowDataModalProps> = ({
     else {
       setWorkflowData(null);
       setError(null);
+      setSelectedPath("");
     }
   }, [open, workflowId]);
 
@@ -88,6 +108,13 @@ export const WorkflowDataModal: React.FC<WorkflowDataModalProps> = ({
     scrollToNode();
   }, [workflowData, currentNodeId]);
 
+  const handleCopyPath = () => {
+    if (selectedPath) {
+      copy(selectedPath);
+      message.success("노드 경로 복사됨");
+    }
+  };
+
   if (!open) return null;
 
   return (
@@ -96,7 +123,7 @@ export const WorkflowDataModal: React.FC<WorkflowDataModalProps> = ({
       minWidth={600}
       minHeight={400}
       bounds="window"
-      className="rounded-lg shadow-lg bg-white semi-text-bg-color z-[999]"
+      className="rounded-lg shadow-lg  semi-text-bg-color flex flex-col z-[999]"
     >
       {/* 헤더 */}
       <div className="flex medium-text-bg-color justify-between items-center cursor-move p-2.5 rounded-t-lg">
@@ -109,13 +136,13 @@ export const WorkflowDataModal: React.FC<WorkflowDataModalProps> = ({
             onClick={() =>
               workflowData && copy(JSON.stringify(workflowData, null, 2))
             }
-            className="medium-text-bg-color px-3 py-1 rounded border"
+            className="semi-text-bg-color px-3 py-1 rounded border"
           >
             Copy JSON
           </Button>
           <Button
             onClick={onClose}
-            className="semi-text-bg-color px-3 py-1 rounded border"
+            className="general-text-bg-color px-3 py-1 rounded border"
           >
             Close
           </Button>
@@ -125,16 +152,36 @@ export const WorkflowDataModal: React.FC<WorkflowDataModalProps> = ({
       {/* JSON 뷰어 */}
       <div
         ref={containerRef}
-        className="overflow-y-auto p-2.5 h-[calc(100%-48px)] semi-text-bg-color"
+        className="overflow-y-auto flex-1 p-2.5 semi-text-bg-color"
       >
         {loading && <div>Loading...</div>}
         {error && <div className="text-red-500">{error}</div>}
+        {/* 선택 노드 경로 표시 */}
+        {selectedPath && (
+          <div className="flex items-center justify-between gap-3 border-t px-3 py-2">
+            <div className="general-text-bg-color border border-black text-sm font-mono truncate flex-1">
+              {selectedPath}
+            </div>
+            <Button
+              className="semi-text-bg-color border border-black"
+              size="small"
+              onClick={handleCopyPath}
+            >
+              Copy Path
+            </Button>
+          </div>
+        )}
+
         {workflowData && (
           <JsonViewer
             className="general-text-bg-color"
             theme={getIsDarkMode() ? "dark" : "light"}
             value={workflowData}
-            defaultInspectDepth={2} // 모든 키 동일하게 2레벨까지만 펼침
+            defaultInspectDepth={2}
+            onSelect={(path, value) => {
+              const dotPath = pathToDotWithNames(path, workflowData);
+              setSelectedPath(dotPath);
+            }}
           />
         )}
       </div>
