@@ -318,15 +318,15 @@ export const SqlEditorModal: React.FC<SqlEditorModalProps> = ({
 
         {/* footer */}
         <div className="p-3 border-t flex justify-end gap-2">
-          <Button className="medium-text-bg-color" onClick={onClose}>
-            Close
-          </Button>
           <Button
             className="general-text-bg-color"
             // type="primary"
             onClick={handleSave}
           >
             Save
+          </Button>
+          <Button className="medium-text-bg-color" onClick={onClose}>
+            Close
           </Button>
         </div>
 

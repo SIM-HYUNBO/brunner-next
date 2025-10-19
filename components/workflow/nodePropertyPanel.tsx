@@ -454,7 +454,7 @@ export const NodePropertyPanel: React.FC<NodePropertyPanelProps> = ({
             />
           </div>
           <Button
-            className="border rounded medium-text-bg-color mt-2 px-2 w-[100px]"
+            className="general-text-bg-color border border-black rounded mt-2 px-2 w-[100px]"
             onClick={() => setIsScriptModalOpen(true)}
           >
             Edit Script
@@ -484,7 +484,7 @@ export const NodePropertyPanel: React.FC<NodePropertyPanelProps> = ({
         />
         <div className="flex flex-row space-x-1">
           <Button
-            className="mt-1 px-3 py-1 border rounded semi-text-bg-color"
+            className="mt-1 px-3 py-1 general-text-bg-color border border-black rounded"
             onClick={() => {
               setSqlModalData({
                 sqlStmt: localSqlStmt,

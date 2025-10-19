@@ -840,7 +840,7 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
                     <AccordionContent>
                       <div className="flex flex-row space-x-2 mb-2">
                         <Button
-                          className="border semi-text-bg-color px-3 py-1"
+                          className="general-text-bg-color border border-black rounded"
                           onClick={() => setIsInputSchemaEditorOpen(true)}
                         >
                           Edit Schema
@@ -894,7 +894,7 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
                           />
                         )}
                         <Button
-                          className="border semi-text-bg-color px-3 py-1"
+                          className="general-text-bg-color border border-black rounded"
                           onClick={() => setIsInputDataEditorOpen(true)}
                         >
                           Edit Data
@@ -916,7 +916,7 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
                     <AccordionContent>
                       <div className="flex flex-row mb-2 space-x-2">
                         <Button
-                          className="border semi-text-bg-color px-3 py-1"
+                          className="general-text-bg-color border border-black rounded"
                           onClick={() => setIsOutputSchemaEditorOpen(true)}
                         >
                           Edit Schema
@@ -968,7 +968,7 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
                           />
                         )}
                         <Button
-                          className="border semi-text-bg-color px-3 py-1"
+                          className="general-text-bg-color border border-black rounded"
                           onClick={() => setIsOutputDataEditorOpen(true)}
                         >
                           Edit Data

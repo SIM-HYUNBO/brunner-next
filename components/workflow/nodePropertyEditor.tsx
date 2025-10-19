@@ -130,19 +130,19 @@ export const NodePropertyEditor: React.FC<NodePropertyEditorProps> = ({
       {/* Inputs/Outputs 버튼 */}
       <div className="flex flex-row mt-2 space-x-1">
         <Button
-          className="px-2 py-1 general-text-bg-color rounded border medium-text-bg-color"
+          className="px-2 py-1 general-text-bg-color border border-black rounded"
           onClick={() => setIsNodeInputModalOpen(true)}
         >
           Node Inputs
         </Button>
         <Button
-          className="px-2 py-1 general-text-bg-color rounded border medium-text-bg-color"
+          className="px-2 py-1 general-text-bg-color border border-black rounded"
           onClick={() => setIsNodeOutputModalOpen(true)}
         >
           Node Outputs
         </Button>
         <Button
-          className="px-2 py-1 general-text-bg-color rounded border medium-text-bg-color"
+          className="px-2 py-1 general-text-bg-color border border-black rounded"
           onClick={() => {
             const prevDesign = node.data?.design ?? {};
 
