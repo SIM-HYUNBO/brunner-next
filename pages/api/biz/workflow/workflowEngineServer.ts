@@ -353,35 +353,13 @@ export function registerBuiltInActions(): void {
 
       const timeoutMs: number = node.data.design.timeoutMs || 50000;
 
-      // 유틸 함수들 타입 명시
-      function getByPath(obj: Record<string, any>, path: string): any {
-        return path
-          .split(".")
-          .reduce((o, k) => (o != null ? o[k] : undefined), obj);
-      }
-
-      function setByPath(
-        obj: Record<string, any>,
-        path: string,
-        value: any
-      ): void {
-        const keys: string[] = path.split(".");
-        let target: Record<string, any> = obj;
-        for (let i = 0; i < keys.length - 1; i++) {
-          if (!target[String(keys[i])]) target[String(keys[i])] = {};
-          target = target[String(keys[i])] as Record<string, any>;
-        }
-        target[String(keys[keys.length - 1])] = value;
-      }
-
       const logs: string[] = [];
 
       const safeApi = {
         clone: (obj: any): any => JSON.parse(JSON.stringify(obj)),
         error: (message: any) => safeApi.log(message, "error"),
         formatDate: (date: Date, fmt: string): string => date.toISOString(),
-        getGlobalVar: (path: string) => getByPath(workflowData, path),
-        getVar: (path: string) => getByPath(node, path),
+        getVar: (path: string) => commonFunctions.getByPath(workflowData, path),
         info: (message: any) => safeApi.log(message, "info"),
         log: (message: any, level: "info" | "warn" | "error" = "info") => {
           if (typeof message === "object") message = JSON.stringify(message);
@@ -405,9 +383,8 @@ export function registerBuiltInActions(): void {
           return await mailSender.sendMail(transporterOption, mailOption);
         },
         sleep: (ms: number) => new Promise((r) => setTimeout(r, ms)),
-        setGlobalVar: (path: string, value: any) =>
-          setByPath(workflowData, path, value),
-        setVar: (path: string, value: any) => setByPath(node, path, value),
+        setVar: (path: string, value: any) =>
+          commonFunctions.setByPath(workflowData, path, value),
         sql: async (connectionId: string, sql: string, params?: any[]) => {
           let txContextEntry = getTxContextEntry(txContext, connectionId);
 
@@ -823,13 +800,6 @@ function extractPath(input: string) {
   return match[1] || match[2]; // ${path} 또는 {{path}} 내부 내용
 }
 
-function getParamValue(input: string, context: any) {
-  if (isPathValue(input)) {
-    const path = extractPath(input);
-    return commonFunctions.getByPath(context, path ?? "");
-  }
-  return input; // 일반 값
-}
 function convertNamedParams(
   sqlStmt: string,
   sqlParams: { name: string; value: any }[],

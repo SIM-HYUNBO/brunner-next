@@ -193,29 +193,6 @@ export function getDefaultOutputs(actionName) {
   }
 }
 
-export function getByPath(obj, path) {
-  return path.split(".").reduce((o, k) => {
-    if (o == null) return undefined;
-    const index = Number(k);
-    return !isNaN(index) ? o[index] : o[k];
-  }, obj);
-}
-
-export function setByPath(obj, path, value) {
-  const keys = path.split(".");
-  let target = obj;
-  for (let i = 0; i < keys.length - 1; i++) {
-    const key = keys[i];
-    const idx = Number(key);
-    const finalKey = !isNaN(idx) ? idx : key;
-    if (!target[finalKey]) target[finalKey] = {};
-    target = target[finalKey];
-  }
-  const lastKey = keys[keys.length - 1];
-  const idx = Number(lastKey);
-  target[!isNaN(idx) ? idx : lastKey] = value;
-}
-
 export function getJsonDefaultTypedValue(value) {
   const type = value?.type ?? typeof value;
   switch (type) {
@@ -228,4 +205,89 @@ export function getJsonDefaultTypedValue(value) {
     default:
       return Array.isArray(value) ? [] : {};
   }
+}
+
+// Json 노드 값 탐색
+
+// 노드 라벨로 접근
+// console.log(getByPath(workflow, "nodes.MyNode.data.design.outputs.0.table");
+
+// 노드 ID(uuid 값)로 접근
+// getByPath(workflow, "nodes.abc123.data.design.outputs.0.table");
+
+export function getByPath(obj, path) {
+  if (!obj || !path) return undefined;
+  const keys = path.split(".").filter(Boolean);
+
+  let target = obj;
+
+  for (let i = 0; i < keys.length; i++) {
+    const key = keys[i];
+    if (target == null) return undefined;
+
+    const index = Number(key);
+    const realKey = !isNaN(index) ? index : key;
+
+    // 🔹 nodes.<라벨 or id> 접근 처리
+    if (keys[0] === "nodes" && i === 1) {
+      if (Array.isArray(target.nodes)) {
+        target =
+          target.nodes.find(
+            (n) => n.id === realKey || n.data?.label === realKey
+          ) || undefined;
+        continue;
+      }
+    }
+
+    target = target[realKey];
+  }
+
+  return target;
+}
+
+// Json 노드 값 변경
+// setByPath(workflow, "nodes.MyNode.data.design.outputs.0.table", "NEW_TABLE");
+// getByPath(workflow, "nodes.abc123.data.design.outputs.0.table")
+
+// 일반 데이터 접근
+// getByPath(workflow, "data.run.inputs.INPUT_TABLE.0.service"));
+
+export function setByPath(obj, path, value) {
+  if (!obj || !path) return;
+  const keys = path.split(".").filter(Boolean);
+
+  let target = obj;
+
+  for (let i = 0; i < keys.length - 1; i++) {
+    const key = keys[i];
+    const index = Number(key);
+    const realKey = !isNaN(index) ? index : key;
+
+    // 🔹 nodes.<라벨 or id> 처리
+    if (keys[0] === "nodes" && i === 1) {
+      if (Array.isArray(target.nodes)) {
+        let node = target.nodes.find(
+          (n) => n.id === realKey || n.data?.label === realKey
+        );
+        if (!node) {
+          node = { id: realKey, data: {} };
+          target.nodes.push(node);
+        }
+        target = node;
+        continue;
+      }
+    }
+
+    if (target[realKey] == null) {
+      const nextKey = keys[i + 1];
+      const nextIndex = Number(nextKey);
+      target[realKey] = !isNaN(nextIndex) ? [] : {};
+    }
+
+    target = target[realKey];
+  }
+
+  const lastKey = keys[keys.length - 1];
+  const lastIndex = Number(lastKey);
+  target[!isNaN(lastIndex) ? lastIndex : lastKey] = value;
 }
