@@ -43,7 +43,8 @@ export type WorkflowContext = Record<string, any> & {
 export type ActionHandler = (
   node: Node<any>,
   workflow: any,
-  txContext: Map<string, TransactionContext>
+  txContext: Map<string, TransactionContext>,
+  safeApi: any
 ) => Promise<{ error_code: number; error_message: any }>;
 
 export const actionMap = new Map<string, ActionHandler>();
@@ -114,12 +115,129 @@ const postNodeCheck = (node: Node<any>, workflowData: any) => {
   }
 };
 
+export function createSafeApi(workflowData: any, txContext: any) {
+  const safeApi = {
+    clone: (obj: any): any => JSON.parse(JSON.stringify(obj)),
+    error: (message: any) => safeApi.log(message, "error"),
+    formatDate: (date: Date, fmt: string): string => date.toISOString(),
+    getVar: (path: string) => commonFunctions.getByPath(workflowData, path),
+    info: (message: any) => safeApi.log(message, "info"),
+    log: (message: any, level: "info" | "warn" | "error" = "info") => {
+      if (typeof message === "object") message = JSON.stringify(message);
+      logger.log(level, message);
+    },
+    postJson: async (url: string, body: any): Promise<any> => {
+      // https 인증서 오류 무시
+      const agent = new https.Agent({ rejectUnauthorized: false });
+      const res = await axios.post(url, body, {
+        httpsAgent: agent,
+        headers: { "Content-Type": "application/json" },
+      });
+      return await res.data;
+    },
+    random: (min: number = 0, max: number = 1): number =>
+      Math.random() * (max - min) + min,
+    sendMail: async (transporterOption: any, mailOption: any): Promise<any> => {
+      return await mailSender.sendMail(transporterOption, mailOption);
+    },
+    sleep: (ms: number) => new Promise((r) => setTimeout(r, ms)),
+    setVar: (path: string, value: any) =>
+      commonFunctions.setByPath(workflowData, path, value),
+    sql: async (connectionId: string, sql: string, params?: any[]) => {
+      let txContextEntry = getTxContextEntry(txContext, connectionId);
+
+      if (!txContextEntry) {
+        // UUID 형식 체크
+        const isUUID =
+          /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(
+            connectionId
+          );
+
+        if (!isUUID) {
+          // 이름으로 조회
+          txContextEntry = Array.from(txContext.values()).find(
+            (ctx: any) => ctx.connectionName === connectionId
+          ) as TransactionContext;
+        }
+      }
+
+      const tx = txContextEntry?.dbConnection;
+      if (!tx)
+        throw new Error(`${constants.messages.NO_DATA_FOUND}:${connectionId}`);
+
+      const dbType = txContextEntry?.dbType;
+
+      switch (dbType) {
+        case constants.dbType.mysql:
+          const [result] = await (tx as PoolConnection).query(
+            sql,
+            params || []
+          );
+          return result;
+
+        case constants.dbType.postgres:
+          const resultPg = await (tx as PoolClient).query(sql, params || []);
+          return resultPg.rows;
+
+        case constants.dbType.mssql:
+          const request = (tx as MssqlConnectionPool).request();
+          if (params)
+            params.forEach((p, i) => request.input(`param${i + 1}`, p));
+          const resultMs = await request.query(sql);
+          return resultMs.recordset;
+
+        case constants.dbType.oracle:
+          const resultOra = await (tx as oracleType.Connection).execute(
+            sql,
+            params || [],
+            {
+              outFormat: (require("oracledb") as any).OUT_FORMAT_OBJECT,
+            }
+          );
+          return resultOra.rows;
+
+        default:
+          throw new Error(
+            `${constants.messages.NOT_SUPPORTED_DB_TYPE}:${dbType}`
+          );
+      }
+    },
+    warn: (message: any) => safeApi.log(message, "warn"),
+  };
+  return safeApi;
+}
+
+function getTxContextEntry(
+  txContext: Map<string, TransactionContext>,
+  connectionIdOrName: string
+): TransactionContext | undefined {
+  // UUID 형식 체크
+  const uuidRegex =
+    /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+  const isId = uuidRegex.test(connectionIdOrName);
+
+  // 1️⃣ id 기준 조회
+  if (isId && txContext.has(connectionIdOrName)) {
+    return txContext.get(connectionIdOrName);
+  }
+
+  // 2️⃣ id로 못 찾으면 이름 기준 조회
+  for (const ctx of txContext.values()) {
+    if (ctx.connectionName === connectionIdOrName) {
+      return ctx;
+    }
+  }
+
+  // 3️⃣ 못 찾으면 undefined
+  return undefined;
+}
+
 // -------------------- Built-in 액션 등록 --------------------
 export function registerBuiltInActions(): void {
   // START 노드
   registerAction(
     constants.workflowActions.START,
-    async (node, workflowData, txContext) => {
+    async (node, workflowData, txContext, safeApi: any) => {
       var result = { error_code: -1, error_message: "" };
       try {
         if (!node) {
@@ -154,7 +272,7 @@ export function registerBuiltInActions(): void {
   // END 노드
   registerAction(
     constants.workflowActions.END,
-    async (node, workflowData, txContext) => {
+    async (node, workflowData, txContext, safeApi: any) => {
       var result = { error_code: -1, error_message: "" };
       try {
         if (!node) {
@@ -197,7 +315,8 @@ export function registerBuiltInActions(): void {
     async (
       node: any,
       workflowData: any,
-      txContext: Map<string, TransactionContext>
+      txContext: Map<string, TransactionContext>,
+      safeApi: any
     ) => {
       var result = { error_code: -1, error_message: "" };
       try {
@@ -346,7 +465,7 @@ export function registerBuiltInActions(): void {
   // SCRIPT 노드 액션
   registerAction(
     constants.workflowActions.SCRIPT,
-    async (node: any, workflowData: any, txContext) => {
+    async (node: any, workflowData: any, txContext: any, safeApi: any) => {
       var result = { error_code: -1, error_message: "" };
 
       const userScript = node.data.design.scriptContents || "";
@@ -354,128 +473,6 @@ export function registerBuiltInActions(): void {
       const timeoutMs: number = node.data.design.timeoutMs || 50000;
 
       const logs: string[] = [];
-
-      const safeApi = {
-        clone: (obj: any): any => JSON.parse(JSON.stringify(obj)),
-        error: (message: any) => safeApi.log(message, "error"),
-        formatDate: (date: Date, fmt: string): string => date.toISOString(),
-        getVar: (path: string) => commonFunctions.getByPath(workflowData, path),
-        info: (message: any) => safeApi.log(message, "info"),
-        log: (message: any, level: "info" | "warn" | "error" = "info") => {
-          if (typeof message === "object") message = JSON.stringify(message);
-          logger.log(level, message);
-        },
-        postJson: async (url: string, body: any): Promise<any> => {
-          // https 인증서 오류 무시
-          const agent = new https.Agent({ rejectUnauthorized: false });
-          const res = await axios.post(url, body, {
-            httpsAgent: agent,
-            headers: { "Content-Type": "application/json" },
-          });
-          return await res.data;
-        },
-        random: (min: number = 0, max: number = 1): number =>
-          Math.random() * (max - min) + min,
-        sendMail: async (
-          transporterOption: any,
-          mailOption: any
-        ): Promise<any> => {
-          return await mailSender.sendMail(transporterOption, mailOption);
-        },
-        sleep: (ms: number) => new Promise((r) => setTimeout(r, ms)),
-        setVar: (path: string, value: any) =>
-          commonFunctions.setByPath(workflowData, path, value),
-        sql: async (connectionId: string, sql: string, params?: any[]) => {
-          let txContextEntry = getTxContextEntry(txContext, connectionId);
-
-          if (!txContextEntry) {
-            // UUID 형식 체크
-            const isUUID =
-              /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(
-                connectionId
-              );
-
-            if (!isUUID) {
-              // 이름으로 조회
-              txContextEntry = Array.from(txContext.values()).find(
-                (ctx) => ctx.connectionName === connectionId
-              );
-            }
-          }
-
-          const tx = txContextEntry?.dbConnection;
-          if (!tx)
-            throw new Error(
-              `${constants.messages.NO_DATA_FOUND}:${connectionId}`
-            );
-
-          const dbType = txContextEntry?.dbType;
-
-          switch (dbType) {
-            case constants.dbType.mysql:
-              const [result] = await (tx as PoolConnection).query(
-                sql,
-                params || []
-              );
-              return result;
-
-            case constants.dbType.postgres:
-              const resultPg = await (tx as PoolClient).query(
-                sql,
-                params || []
-              );
-              return resultPg.rows;
-
-            case constants.dbType.mssql:
-              const request = (tx as MssqlConnectionPool).request();
-              if (params)
-                params.forEach((p, i) => request.input(`param${i + 1}`, p));
-              const resultMs = await request.query(sql);
-              return resultMs.recordset;
-
-            case constants.dbType.oracle:
-              const resultOra = await (tx as oracleType.Connection).execute(
-                sql,
-                params || [],
-                {
-                  outFormat: (require("oracledb") as any).OUT_FORMAT_OBJECT,
-                }
-              );
-              return resultOra.rows;
-
-            default:
-              throw new Error(
-                `${constants.messages.NOT_SUPPORTED_DB_TYPE}:${dbType}`
-              );
-          }
-        },
-        warn: (message: any) => safeApi.log(message, "warn"),
-      };
-
-      function getTxContextEntry(
-        txContext: Map<string, TransactionContext>,
-        connectionIdOrName: string
-      ): TransactionContext | undefined {
-        // UUID 형식 체크
-        const uuidRegex =
-          /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
-        const isId = uuidRegex.test(connectionIdOrName);
-
-        // 1️⃣ id 기준 조회
-        if (isId && txContext.has(connectionIdOrName)) {
-          return txContext.get(connectionIdOrName);
-        }
-
-        // 2️⃣ id로 못 찾으면 이름 기준 조회
-        for (const ctx of txContext.values()) {
-          if (ctx.connectionName === connectionIdOrName) {
-            return ctx;
-          }
-        }
-
-        // 3️⃣ 못 찾으면 undefined
-        return undefined;
-      }
 
       var res = null;
 
@@ -540,7 +537,7 @@ export function registerBuiltInActions(): void {
   // SQL 노드
   registerAction(
     constants.workflowActions.SQL,
-    async (node, workflowData, txContext) => {
+    async (node, workflowData, txContext, safeApi: any) => {
       var result = { error_code: -1, error_message: "" };
 
       if (!node) {
@@ -691,7 +688,7 @@ export function registerBuiltInActions(): void {
 
   registerAction(
     constants.workflowActions.BRANCH,
-    async (node: any, workflowData: any, txContext: any) => {
+    async (node: any, workflowData: any, txContext: any, safeApi: any) => {
       var result = { error_code: -1, error_message: "" };
 
       if (!node) {
@@ -720,7 +717,12 @@ export function registerBuiltInActions(): void {
           let conditionResult = false;
           try {
             // workflow, node 데이터 스코프에서 평가
-            conditionResult = !!eval(conditionStr);
+            const fnCondition = new Function(
+              "workflowData",
+              "api",
+              `return ${conditionStr}`
+            );
+            conditionResult = !!fnCondition(workflowData, safeApi);
           } catch (err) {
             console.warn(
               `[Branch Node] condition 평가 오류: ${conditionStr}`,
@@ -745,11 +747,12 @@ export function registerBuiltInActions(): void {
           try {
             const nodes = workflowData.nodes;
 
-            loopLimitValue = Function(
-              "nodes",
+            const fnLoopLimit = new Function(
               "workflowData",
+              "api",
               `return ${design.loopLimitValue || "0"}`
-            )(nodes, workflowData);
+            );
+            loopLimitValue = fnLoopLimit(workflowData, safeApi);
           } catch (e) {
             console.error("[Loop Node] limit 평가 오류:", e);
             loopLimitValue = 0;
@@ -802,7 +805,7 @@ function extractPath(input: string) {
 
 function convertNamedParams(
   sqlStmt: string,
-  sqlParams: { name: string; value: any }[],
+  sqlParams: { name: string; binding: string; value: any }[],
   dbType: string,
   context: any
 ) {
@@ -830,7 +833,7 @@ function convertNamedParams(
       sqlParams.forEach((p, i) => {
         const pattern = new RegExp(`@${p.name}\\b`, "g");
         sql = sql.replace(pattern, `$${i + 1}`);
-        params.push(resolveParamValue(p.value));
+        params.push(resolveParamValue(p.binding));
       });
       break;
     }
@@ -1132,7 +1135,8 @@ export async function runWorkflowStep(
   const action = getAction(node.data.actionName);
   if (!action) throw new Error(`Unknown action: ${node.data.actionName}`);
 
-  return await action(node, workflowData, txContext ?? undefined);
+  const safeApi = createSafeApi(workflowData, txContext);
+  return await action(node, workflowData, txContext ?? undefined, safeApi);
 }
 
 export async function saveWorkflow(

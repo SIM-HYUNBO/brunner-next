@@ -131,9 +131,7 @@ export const SqlEditorModal: React.FC<SqlEditorModalProps> = ({
               setParams((prev) =>
                 prev.map((p, i) =>
                   i === idx
-                    ? rec.binding
-                      ? { ...p, binding: e.target.value } // 기존 binding이 있으면 binding 수정
-                      : { ...p, value: e.target.value } // 없으면 value 수정
+                    ? { ...p, binding: e.target.value } // 기존 binding이 있으면 binding 수정
                     : p
                 )
               )
