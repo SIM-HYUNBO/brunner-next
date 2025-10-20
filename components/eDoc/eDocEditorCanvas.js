@@ -3,6 +3,7 @@
 import React, { useEffect } from "react";
 import * as constants from "@/components/core/constants";
 import DocComponentRenderer from "@/components/eDoc/eDocComponentRenderer";
+import { Input, Button, Table } from "antd";
 
 export default function EDocEditorCanvas({
   documentData,

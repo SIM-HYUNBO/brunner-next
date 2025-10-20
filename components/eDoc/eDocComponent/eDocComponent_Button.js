@@ -7,6 +7,7 @@ import RequestServer from "@/components/core/client/requestServer";
 import * as userInfo from "@/components/core/client/frames/userInfo";
 import * as commonFunctions from "@/components/core/commonFunctions";
 import { message } from "hawk/lib/client";
+import { Input, Button, Table } from "antd";
 
 // ✅ 실제 버튼 렌더링
 const RenderComponent = (props) => {
