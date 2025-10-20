@@ -849,6 +849,7 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
                         {isInputSchemaEditorOpen && (
                           <JsonDatasetEditorModal
                             open={isInputSchemaEditorOpen}
+                            title="Input Schema"
                             mode="schema"
                             value={designedInputData}
                             onConfirm={(newSchema) => {
@@ -884,6 +885,7 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
                         {isInputDataEditorOpen && (
                           <JsonDatasetEditorModal
                             open={isInputDataEditorOpen}
+                            title="Input Data"
                             mode="data"
                             value={workflowInputData}
                             onConfirm={(newData) => {
@@ -924,6 +926,7 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
                         {isOutputSchemaEditorOpen && (
                           <JsonDatasetEditorModal
                             open={isOutputSchemaEditorOpen}
+                            title="Output Schema"
                             mode="schema"
                             value={designedOutputData}
                             onConfirm={(newSchema) => {
@@ -958,6 +961,7 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
                         {isOutputDataEditorOpen && (
                           <JsonDatasetEditorModal
                             open={isOutputDataEditorOpen}
+                            title="Output Data"
                             mode="data"
                             value={workflowOutputData}
                             onConfirm={(newData) => {

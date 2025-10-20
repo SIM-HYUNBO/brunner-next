@@ -645,6 +645,7 @@ export const NodePropertyPanel: React.FC<NodePropertyPanelProps> = ({
       {isInputModalOpen && (
         <JsonDatasetEditorModal
           open={isInputModalOpen}
+          title="Input Data"
           mode="schema"
           value={inputs.reduce((acc, table) => {
             acc[table.table] = table.columns.map((col) => ({
@@ -678,6 +679,7 @@ export const NodePropertyPanel: React.FC<NodePropertyPanelProps> = ({
       {isOutputModalOpen && (
         <JsonDatasetEditorModal
           open={isOutputModalOpen}
+          title="Output Data"
           mode="schema"
           value={outputs.reduce((acc, table) => {
             acc[table.table] = table.columns.map((col) => ({

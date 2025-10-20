@@ -173,6 +173,7 @@ export const NodePropertyEditor: React.FC<NodePropertyEditorProps> = ({
       {isNodeInputModalOpen && (
         <JsonDatasetEditorModal
           open={isNodeInputModalOpen}
+          title="Input Data"
           mode="data"
           value={node.data.run.inputs}
           onConfirm={(newSchema) => {
@@ -199,6 +200,7 @@ export const NodePropertyEditor: React.FC<NodePropertyEditorProps> = ({
       {isNodeOutputModalOpen && (
         <JsonDatasetEditorModal
           open={isNodeOutputModalOpen}
+          title="Output Data"
           mode="data"
           value={node.data.run.outputs}
           onConfirm={(newSchema) => {

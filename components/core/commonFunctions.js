@@ -215,29 +215,30 @@ export function getJsonDefaultTypedValue(value) {
 // 노드 ID(uuid 값)로 접근
 // getByPath(workflow, "nodes.abc123.data.design.outputs.0.table");
 
+// ==========================
+// nodes 전용 label 탐색 get/set
+// ==========================
+
 export function getByPath(obj, path) {
   const keys = path.split(".");
   let current = obj;
 
-  for (let key of keys) {
+  for (let i = 0; i < keys.length; i++) {
+    const key = keys[i];
     if (current == null) return undefined;
 
-    // nodes.<id> 또는 nodes.<label> 처리
-    if (key.startsWith("Node ")) {
-      // Node label로 탐색
-      if (Array.isArray(current)) {
-        current = current.find((n) => n.data?.label === key);
+    // nodes 다음 레벨이면 배열일 때 UUID 또는 label 탐색
+    if (i === 1 && Array.isArray(current)) {
+      // nodes 다음
+      if (/^[0-9a-fA-F-]{36}$/.test(key)) {
+        current = current.find((n) => n.id === key);
         continue;
       }
-    }
-
-    // nodes.<uuid> 탐색
-    if (Array.isArray(current) && /^[0-9a-fA-F-]{36}$/.test(key)) {
-      current = current.find((n) => n.id === key);
+      current = current.find((n) => n.data?.label === key);
       continue;
     }
 
-    // 숫자 인덱스 접근
+    // 배열 내 숫자 인덱스
     const index = Number(key);
     if (Array.isArray(current) && !isNaN(index)) {
       current = current[index];
@@ -256,33 +257,34 @@ export function setByPath(obj, path, value) {
   let current = obj;
 
   for (let i = 0; i < keys.length - 1; i++) {
-    let key = keys[i];
+    const key = keys[i];
 
-    // Node label로 접근
-    if (key.startsWith("Node ")) {
-      if (Array.isArray(current)) {
-        let found = current.find((n) => n.data?.label === key);
+    // nodes 다음 레벨이면 배열에서 UUID/label 탐색
+    if (i === 1 && Array.isArray(current)) {
+      let found;
+
+      // UUID 탐색
+      if (/^[0-9a-fA-F-]{36}$/.test(key)) {
+        found = current.find((n) => n.id === key);
         if (!found) {
-          found = { id: key, data: { label: key } };
+          found = { id: key };
           current.push(found);
         }
         current = found;
         continue;
       }
-    }
 
-    // Node id로 접근
-    if (Array.isArray(current) && /^[0-9a-fA-F-]{36}$/.test(key)) {
-      let found = current.find((n) => n.id === key);
+      // label 탐색
+      found = current.find((n) => n.data?.label === key);
       if (!found) {
-        found = { id: key };
+        found = { id: key, data: { label: key } };
         current.push(found);
       }
       current = found;
       continue;
     }
 
-    // 숫자 인덱스
+    // 배열 숫자 인덱스
     const index = Number(key);
     if (Array.isArray(current) && !isNaN(index)) {
       if (!current[index]) current[index] = {};
