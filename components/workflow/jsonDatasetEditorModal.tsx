@@ -9,6 +9,7 @@ export type JsonColumnType = "string" | "number" | "boolean";
 type JsonDatasetEditorMode = "schema" | "data";
 
 interface JsonDatasetEditorModalProps {
+  title: string;
   open: boolean;
   mode: JsonDatasetEditorMode;
   value?: Record<string, any[]>; // 테이블 이름 -> 데이터 배열
@@ -82,6 +83,7 @@ const CellEditor: React.FC<{
 /* -------------------- JsonDatasetEditorModal -------------------- */
 export const JsonDatasetEditorModal: React.FC<JsonDatasetEditorModalProps> = ({
   open,
+  title,
   mode,
   value = {},
   onConfirm,
@@ -630,9 +632,7 @@ export const JsonDatasetEditorModal: React.FC<JsonDatasetEditorModalProps> = ({
           className="flex medium-text-bg-color justify-between mb-2 cursor-move select-none px-2 py-1 flex-none"
           onMouseDown={startDrag}
         >
-          <h3 className="font-semibold">
-            JSON Dataset Editor ({mode === "schema" ? "Schema" : "Data"} Mode)
-          </h3>
+          <h3 className="font-semibold">{title}</h3>
         </div>
 
         {/* 테이블 선택 버튼 */}
