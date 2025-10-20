@@ -292,8 +292,8 @@ export const NodePropertyPanel: React.FC<NodePropertyPanelProps> = ({
     const [localCondition, setLocalCondition] = useState(
       data.design?.condition || ""
     );
-    const [localLoopStartIndex, setLocalLoopStartIndex] = useState(
-      data.design?.loopStartIndex ?? 0
+    const [localloopStartValue, setLocalloopStartValue] = useState(
+      data.design?.loopStartValue ?? 0
     );
     const [localLoopStepValue, setLocalLoopStepValue] = useState(
       data.design?.loopStepValue ?? 1
@@ -304,7 +304,7 @@ export const NodePropertyPanel: React.FC<NodePropertyPanelProps> = ({
 
     useEffect(() => {
       setLocalCondition(data.design?.condition ?? "");
-      setLocalLoopStartIndex(data.design?.loopStartIndex ?? 0);
+      setLocalloopStartValue(data.design?.loopStartValue ?? 0);
       setLocalLoopStepValue(data.design?.loopStepValue ?? 1);
       setLocalLoopLimitValue(data.design?.loopLimitValue ?? "");
     }, [data.design]);
@@ -323,7 +323,7 @@ export const NodePropertyPanel: React.FC<NodePropertyPanelProps> = ({
         // 모드 변경 시: 화면상의 값 기반으로 완전히 새 design 생성
         newDesign = {
           mode: value, // 변경된 모드
-          loopStartIndex: node.data.design.loopStartIndex,
+          loopStartValue: node.data.design.loopStartValue,
           loopStepValue: node.data.design.loopStepValue,
           loopLimitValue: node.data.design.loopLimitValue,
           condition: node.data.design.condition,
@@ -385,10 +385,10 @@ export const NodePropertyPanel: React.FC<NodePropertyPanelProps> = ({
               <input
                 className="flex text-center w-full ml-2"
                 type="number"
-                value={localLoopStartIndex}
-                onChange={(e) => setLocalLoopStartIndex(Number(e.target.value))}
+                value={localloopStartValue}
+                onChange={(e) => setLocalloopStartValue(Number(e.target.value))}
                 onBlur={() =>
-                  handleBranchNodeChange("loopStartIndex", localLoopStartIndex)
+                  handleBranchNodeChange("loopStartValue", localloopStartValue)
                 }
               />
               <label>Step</label>

@@ -739,7 +739,7 @@ export function registerBuiltInActions(): void {
 
         // Loop 모드
         else if (mode === constants.workflowBranchNodeMode.Loop) {
-          const loopStartIndex = design.loopStartIndex;
+          const loopStartValue = design.loopStartValue;
           const loopStepValue = design.loopStepValue;
 
           // JS 표현식으로 limit 계산
@@ -758,7 +758,7 @@ export function registerBuiltInActions(): void {
             loopLimitValue = 0;
           }
 
-          const loopCurrentIndex = design.loopCurrentIndex ?? loopStartIndex;
+          const loopCurrentIndex = design.loopCurrentIndex ?? loopStartValue;
           node.data.design.loopCurrentIndex = loopCurrentIndex;
 
           if (loopCurrentIndex < loopLimitValue) {

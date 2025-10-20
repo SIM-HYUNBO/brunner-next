@@ -216,78 +216,85 @@ export function getJsonDefaultTypedValue(value) {
 // getByPath(workflow, "nodes.abc123.data.design.outputs.0.table");
 
 export function getByPath(obj, path) {
-  if (!obj || !path) return undefined;
-  const keys = path.split(".").filter(Boolean);
+  const keys = path.split(".");
+  let current = obj;
 
-  let target = obj;
+  for (let key of keys) {
+    if (current == null) return undefined;
 
-  for (let i = 0; i < keys.length; i++) {
-    const key = keys[i];
-    if (target == null) return undefined;
-
-    const index = Number(key);
-    const realKey = !isNaN(index) ? index : key;
-
-    // 🔹 nodes.<라벨 or id> 접근 처리
-    if (keys[0] === "nodes" && i === 1) {
-      if (Array.isArray(target.nodes)) {
-        target =
-          target.nodes.find(
-            (n) => n.id === realKey || n.data?.label === realKey
-          ) || undefined;
+    // nodes.<id> 또는 nodes.<label> 처리
+    if (key.startsWith("Node ")) {
+      // Node label로 탐색
+      if (Array.isArray(current)) {
+        current = current.find((n) => n.data?.label === key);
         continue;
       }
     }
 
-    target = target[realKey];
+    // nodes.<uuid> 탐색
+    if (Array.isArray(current) && /^[0-9a-fA-F-]{36}$/.test(key)) {
+      current = current.find((n) => n.id === key);
+      continue;
+    }
+
+    // 숫자 인덱스 접근
+    const index = Number(key);
+    if (Array.isArray(current) && !isNaN(index)) {
+      current = current[index];
+      continue;
+    }
+
+    // 일반 객체 접근
+    current = current[key];
   }
 
-  return target;
+  return current;
 }
 
-// Json 노드 값 변경
-// setByPath(workflow, "nodes.MyNode.data.design.outputs.0.table", "NEW_TABLE");
-// getByPath(workflow, "nodes.abc123.data.design.outputs.0.table")
-
-// 일반 데이터 접근
-// getByPath(workflow, "data.run.inputs.INPUT_TABLE.0.service"));
-
 export function setByPath(obj, path, value) {
-  if (!obj || !path) return;
-  const keys = path.split(".").filter(Boolean);
-
-  let target = obj;
+  const keys = path.split(".");
+  let current = obj;
 
   for (let i = 0; i < keys.length - 1; i++) {
-    const key = keys[i];
-    const index = Number(key);
-    const realKey = !isNaN(index) ? index : key;
+    let key = keys[i];
 
-    // 🔹 nodes.<라벨 or id> 처리
-    if (keys[0] === "nodes" && i === 1) {
-      if (Array.isArray(target.nodes)) {
-        let node = target.nodes.find(
-          (n) => n.id === realKey || n.data?.label === realKey
-        );
-        if (!node) {
-          node = { id: realKey, data: {} };
-          target.nodes.push(node);
+    // Node label로 접근
+    if (key.startsWith("Node ")) {
+      if (Array.isArray(current)) {
+        let found = current.find((n) => n.data?.label === key);
+        if (!found) {
+          found = { id: key, data: { label: key } };
+          current.push(found);
         }
-        target = node;
+        current = found;
         continue;
       }
     }
 
-    if (target[realKey] == null) {
-      const nextKey = keys[i + 1];
-      const nextIndex = Number(nextKey);
-      target[realKey] = !isNaN(nextIndex) ? [] : {};
+    // Node id로 접근
+    if (Array.isArray(current) && /^[0-9a-fA-F-]{36}$/.test(key)) {
+      let found = current.find((n) => n.id === key);
+      if (!found) {
+        found = { id: key };
+        current.push(found);
+      }
+      current = found;
+      continue;
     }
 
-    target = target[realKey];
+    // 숫자 인덱스
+    const index = Number(key);
+    if (Array.isArray(current) && !isNaN(index)) {
+      if (!current[index]) current[index] = {};
+      current = current[index];
+      continue;
+    }
+
+    // 일반 객체
+    if (!current[key]) current[key] = {};
+    current = current[key];
   }
 
   const lastKey = keys[keys.length - 1];
-  const lastIndex = Number(lastKey);
-  target[!isNaN(lastIndex) ? lastIndex : lastKey] = value;
+  current[lastKey] = value;
 }
