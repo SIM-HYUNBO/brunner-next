@@ -368,7 +368,11 @@ export function registerBuiltInActions(): void {
 
           // 호출시 전달할 input data
           result = await executeWorkflow(subWorkflow, txContext, true);
-          node.data.run.outputs = subWorkflow.data.run.outputs || {};
+          node.data.run.outputs = {
+            ...(node.data.run.outputs || {}),
+            ...(subWorkflow.data.run.outputs || {}),
+          };
+
           if (result.error_code != 0) {
             throw new Error(result.error_message);
           }
@@ -647,7 +651,7 @@ export function registerBuiltInActions(): void {
             );
         }
 
-        // ✅ 결과 저장
+        //  결과  저장
         node.data.run.outputs = {};
         node.data.run.outputs[outputTableName] = rows;
 
