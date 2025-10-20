@@ -79,8 +79,8 @@ export const NodePropertyPanel: React.FC<NodePropertyPanelProps> = ({
 
   const prevActionName = useRef<string>("");
 
-  const [loopCurrentIndex, setCurrentIndex] = useState(
-    node?.data.design?.loopCurrentIndex ?? 0
+  const [loopCurrentValue, setCurrentIndex] = useState(
+    node?.data.design?.loopCurrentValue ?? 0
   );
 
   // 🧠 워크플로우 정보 변경 감지
@@ -94,8 +94,8 @@ export const NodePropertyPanel: React.FC<NodePropertyPanelProps> = ({
   }, [scriptTimeoutMs]);
 
   useEffect(() => {
-    setCurrentIndex(node?.data.design?.loopCurrentIndex ?? 0);
-  }, [node?.data.design?.loopCurrentIndex]);
+    setCurrentIndex(node?.data.design?.loopCurrentValue ?? 0);
+  }, [node?.data.design?.loopCurrentValue]);
 
   // 🧠 노드 변경 시 입력/출력 초기화
   useEffect(() => {
@@ -168,10 +168,10 @@ export const NodePropertyPanel: React.FC<NodePropertyPanelProps> = ({
     setInputs(latestNode.data.design?.inputs ?? []);
     setOutputs(latestNode.data.design?.outputs ?? []);
 
-    // loopCurrentIndex 갱신
+    // loopCurrentValue 갱신
     setCurrentIndex(
       latestNode.data.run?.currentIndex ??
-        latestNode.data.design?.loopCurrentIndex ??
+        latestNode.data.design?.loopCurrentValue ??
         0
     );
 
@@ -327,7 +327,7 @@ export const NodePropertyPanel: React.FC<NodePropertyPanelProps> = ({
           loopStepValue: node.data.design.loopStepValue,
           loopLimitValue: node.data.design.loopLimitValue,
           condition: node.data.design.condition,
-          loopCurrentIndex: node.data.design.loopCurrentIndex,
+          loopCurrentValue: node.data.design.loopCurrentValue,
         };
       } else {
         // 단순 값 변경 시: 기존 design에 변경 값만 덮어쓰기
@@ -421,7 +421,7 @@ export const NodePropertyPanel: React.FC<NodePropertyPanelProps> = ({
             </small>
 
             <div style={{ marginTop: 8 }}>
-              Current Index : <b>{loopCurrentIndex}</b>
+              Current Index : <b>{loopCurrentValue}</b>
             </div>
             <small className="w-full text-center semi-text-bg-color">
               ※ (Start ≤ Current &lt; Limit)

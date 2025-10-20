@@ -739,8 +739,8 @@ export function registerBuiltInActions(): void {
 
         // Loop 모드
         else if (mode === constants.workflowBranchNodeMode.Loop) {
-          const loopStartValue = design.loopStartValue;
-          const loopStepValue = design.loopStepValue;
+          const loopStartValue = design.loopStartValue ?? 0;
+          const loopStepValue = design.loopStepValue ?? 1;
 
           // JS 표현식으로 limit 계산
           let loopLimitValue = 0;
@@ -758,21 +758,21 @@ export function registerBuiltInActions(): void {
             loopLimitValue = 0;
           }
 
-          const loopCurrentIndex = design.loopCurrentIndex ?? loopStartValue;
-          node.data.design.loopCurrentIndex = loopCurrentIndex;
+          const loopCurrentValue = design.loopCurrentValue ?? loopStartValue;
+          node.data.design.loopCurrentValue = loopCurrentValue;
 
-          if (loopCurrentIndex < loopLimitValue) {
+          if (loopCurrentValue < loopLimitValue) {
             node.data.run.selectedPort = "true";
             // 다음 반복 인덱스 저장
-            node.data.design.loopCurrentIndex =
-              loopCurrentIndex + loopStepValue;
+            node.data.design.loopCurrentValue =
+              loopCurrentValue + loopStepValue;
           } else {
             node.data.run.selectedPort = "false"; // 루프 종료 후 다음 노드
-            node.data.design.loopCurrentIndex = undefined;
+            node.data.design.loopCurrentValue = undefined;
           }
 
           console.log(
-            `[Loop Node] currentIndex: ${loopCurrentIndex}, limit: ${loopLimitValue}, nextIndex: ${node.data.design.loopCurrentIndex}`
+            `[Loop Node] currentIndex: ${loopCurrentValue}, limit: ${loopLimitValue}, nextIndex: ${node.data.design.loopCurrentValue}`
           );
         } else {
           throw new Error(`Unknown Branch mode: ${mode}`);
