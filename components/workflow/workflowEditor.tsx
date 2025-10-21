@@ -183,6 +183,11 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
     y: number;
   } | null>(null);
 
+  const onFlowClick = () => {
+    setSelectedEdge(null);
+    setEdgeClickPos(null);
+  };
+
   const onEdgeClick = (event: any, edge: Edge) => {
     event.stopPropagation();
     setSelectedEdge(edge);
@@ -836,6 +841,7 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
                   height: flowHeightPx ? `${flowHeightPx}px` : "100%",
                   minHeight: 320,
                 }}
+                onClick={onFlowClick}
               >
                 <ReactFlow
                   nodes={nodes.map((n) => ({
