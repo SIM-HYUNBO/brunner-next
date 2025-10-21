@@ -451,8 +451,8 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
   const addNode = () => {
     const id = uuidv4();
     const randomPos = {
-      x: Math.random() * 400 + 50,
-      y: Math.random() * 400 + 50,
+      x: 100,
+      y: 200,
     };
     setNodes((nds) => [
       ...nds,
