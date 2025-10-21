@@ -824,7 +824,7 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
 
               {/* Flow 영역 안 버튼 (토글 방식) */}
               <Button
-                className="absolute top-2 right-2 z-50 px-2 py-1 semi-text-bg-color rounded"
+                className="absolute top-2 right-2 px-2 py-1 semi-text-bg-color rounded"
                 onClick={() => setIsRightPanelOpen((prev) => !prev)}
               >
                 ⚙️

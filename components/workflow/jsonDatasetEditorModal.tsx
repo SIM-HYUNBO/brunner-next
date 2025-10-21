@@ -615,7 +615,10 @@ export const JsonDatasetEditorModal: React.FC<JsonDatasetEditorModalProps> = ({
   const minColWidth = 100;
 
   return (
-    <div className="fixed inset-0 z-50" onClick={onCancel}>
+    <div
+      className="fixed inset-0 z-50 bg-black/30 backdrop-blur-sm"
+      // onClick={onCancel}
+    >
       <div
         ref={modalRef}
         className="semi-text-bg-color absolute shadow-lg flex flex-col "

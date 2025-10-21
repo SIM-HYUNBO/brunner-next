@@ -55,8 +55,8 @@ export const NodePropertyPanel: React.FC<NodePropertyPanelProps> = ({
   const [outputs, setOutputs] = useState<NodeDataTable[]>(
     node?.data.design?.outputs ?? []
   );
-  const [isInputModalOpen, setIsInputModalOpen] = useState(false);
-  const [isOutputModalOpen, setIsOutputModalOpen] = useState(false);
+  // const [isInputModalOpen, setIsInputModalOpen] = useState(false);
+  // const [isOutputModalOpen, setIsOutputModalOpen] = useState(false);
 
   const [localLabel, setLocalLabel] = useState(node?.data.label ?? "");
 
@@ -642,7 +642,7 @@ export const NodePropertyPanel: React.FC<NodePropertyPanelProps> = ({
       </div>
 
       {/* ✅ Input Modal */}
-      {isInputModalOpen && (
+      {/* {isInputModalOpen && (
         <JsonDatasetEditorModal
           open={isInputModalOpen}
           title="Input Data"
@@ -673,10 +673,10 @@ export const NodePropertyPanel: React.FC<NodePropertyPanelProps> = ({
           }}
           onCancel={() => setIsInputModalOpen(false)}
         />
-      )}
+      )} */}
 
       {/* ✅ Output Modal */}
-      {isOutputModalOpen && (
+      {/* {isOutputModalOpen && (
         <JsonDatasetEditorModal
           open={isOutputModalOpen}
           title="Output Data"
@@ -707,7 +707,7 @@ export const NodePropertyPanel: React.FC<NodePropertyPanelProps> = ({
           }}
           onCancel={() => setIsOutputModalOpen(false)}
         />
-      )}
+      )} */}
     </div>
   );
 };

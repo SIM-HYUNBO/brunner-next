@@ -173,7 +173,7 @@ export const SqlEditorModal: React.FC<SqlEditorModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center z-[9999]">
+    <div className="fixed inset-0 flex items-center justify-center bg-black/30 backdrop-blur-sm">
       <div
         ref={dragRef}
         className="absolute semi-text-bg-color rounded shadow-lg flex flex-col"

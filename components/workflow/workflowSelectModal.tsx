@@ -114,8 +114,8 @@ const WorkflowSelectModal: React.FC<WorkflowSelectModalProps> = ({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center"
-      onClick={onClose}
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 backdrop-blur-sm"
+      // onClick={onClose}
     >
       <div
         ref={modalRef}
