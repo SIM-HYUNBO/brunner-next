@@ -1,11 +1,12 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import RequestServer from "@/components/core/client/requestServer";
 import * as constants from "@/components/core/constants";
 import { useModal } from "@/components/core/client/brunnerMessageBox";
 import * as userInfo from "@/components/core/client/frames/userInfo";
-import { Input, Button, Table } from "antd";
+import { Button } from "antd";
+
 interface Workflow {
   id: string;
   workflow_data: any;
@@ -23,9 +24,15 @@ const WorkflowSelectModal: React.FC<WorkflowSelectModalProps> = ({
   onSelect,
 }) => {
   const [loading, setLoading] = useState(false);
-  const { BrunnerMessageBox, openModal } = useModal();
+  const { openModal } = useModal();
   const [workflows, setWorkflows] = useState<Workflow[]>([]);
   const [selected, setSelected] = useState<Workflow | null>(null);
+
+  // ✅ 모달 이동 관련 상태
+  const modalRef = useRef<HTMLDivElement>(null);
+  const [position, setPosition] = useState({ x: 0, y: 0 });
+  const [isDragging, setIsDragging] = useState(false);
+  const dragStart = useRef({ x: 0, y: 0, offsetX: 0, offsetY: 0 });
 
   useEffect(() => {
     if (open) {
@@ -35,26 +42,20 @@ const WorkflowSelectModal: React.FC<WorkflowSelectModalProps> = ({
 
   const getWorkflowList = async () => {
     try {
-      let jResponse = null;
-
       const jRequest = {
-        commandName: constants.commands.WORKFLOW_SELECT_WORKFLOW_LIST, // ✅ 서버 명령어 (목록 조회)
+        commandName: constants.commands.WORKFLOW_SELECT_WORKFLOW_LIST,
         systemCode: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE,
         userId: userInfo.getLoginUserId(),
       };
-
-      // 서버에 목록 조회 요청
-      jResponse = await RequestServer(jRequest);
+      const jResponse = await RequestServer(jRequest);
 
       if (jResponse.error_code === 0 && Array.isArray(jResponse.list.rows)) {
-        setWorkflows(jResponse.list.rows); // ✅ 목록 배열 반환 (id, name, description 등)
+        setWorkflows(jResponse.list.rows);
       } else {
         openModal(jResponse.error_message);
-        return [];
       }
     } catch (err) {
       openModal("❌ 워크플로우 목록 조회 실패: " + String(err));
-      return [];
     }
   };
 
@@ -65,6 +66,50 @@ const WorkflowSelectModal: React.FC<WorkflowSelectModalProps> = ({
     }
   };
 
+  // ✅ 드래그 시작
+  const handleMouseDown = (e: React.MouseEvent) => {
+    if (modalRef.current) {
+      setIsDragging(true);
+      dragStart.current = {
+        x: e.clientX,
+        y: e.clientY,
+        offsetX: position.x,
+        offsetY: position.y,
+      };
+    }
+  };
+
+  // ✅ 드래그 중
+  const handleMouseMove = (e: MouseEvent) => {
+    if (!isDragging) return;
+    const dx = e.clientX - dragStart.current.x;
+    const dy = e.clientY - dragStart.current.y;
+    setPosition({
+      x: dragStart.current.offsetX + dx,
+      y: dragStart.current.offsetY + dy,
+    });
+  };
+
+  // ✅ 드래그 종료
+  const handleMouseUp = () => {
+    setIsDragging(false);
+  };
+
+  // ✅ 전역 이벤트 등록
+  useEffect(() => {
+    if (isDragging) {
+      document.addEventListener("mousemove", handleMouseMove);
+      document.addEventListener("mouseup", handleMouseUp);
+    } else {
+      document.removeEventListener("mousemove", handleMouseMove);
+      document.removeEventListener("mouseup", handleMouseUp);
+    }
+    return () => {
+      document.removeEventListener("mousemove", handleMouseMove);
+      document.removeEventListener("mouseup", handleMouseUp);
+    };
+  }, [isDragging]);
+
   if (!open) return null;
 
   return (
@@ -73,15 +118,20 @@ const WorkflowSelectModal: React.FC<WorkflowSelectModalProps> = ({
       onClick={onClose}
     >
       <div
-        className="semi-text-bg-color rounded-lg shadow-lg w-[700px] max-h-[80vh] flex flex-col"
-        onClick={(e) => e.stopPropagation()} // 모달 내부 클릭시 닫히지 않게
+        ref={modalRef}
+        className="semi-text-bg-color rounded-lg shadow-lg w-[700px] max-h-[80vh] flex flex-col absolute"
+        style={{
+          transform: `translate(${position.x}px, ${position.y}px)`,
+        }}
+        onClick={(e) => e.stopPropagation()}
       >
-        {/* 헤더 */}
-        <div className="medium-text-bg-color flex items-center justify-between border-b px-2 py-1">
-          <h4 className="text-lg">Select workflow</h4>
-          <Button onClick={onClose} className="">
-            ✕
-          </Button>
+        {/* 헤더 (드래그 영역) */}
+        <div
+          className="medium-text-bg-color flex items-center justify-between border-b px-2 py-1 cursor-move"
+          onMouseDown={handleMouseDown}
+        >
+          <h4 className="text-lg select-none">Select workflow</h4>
+          <Button onClick={onClose}>✕</Button>
         </div>
 
         {/* 본문 */}
@@ -137,7 +187,7 @@ const WorkflowSelectModal: React.FC<WorkflowSelectModalProps> = ({
           <Button
             onClick={handleSelect}
             disabled={!selected}
-            className={`px-4 py-2 text-sm rounded-md general-text-bg-color`}
+            className="px-4 py-2 text-sm rounded-md general-text-bg-color"
           >
             Select
           </Button>
