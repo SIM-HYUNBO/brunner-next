@@ -481,6 +481,8 @@ export function registerBuiltInActions(): void {
       var res = null;
 
       try {
+        node.data.run.outputs = {};
+
         const AsyncFunction = Object.getPrototypeOf(async function () {})
           .constructor as any;
 
@@ -500,7 +502,8 @@ export function registerBuiltInActions(): void {
 
         logs.forEach((line: string) => console.log("[SCRIPT]", line));
 
-        // 스크립트 결과는 별도 저장 안함
+        node.data.run.outputs.scriptResult = JSON.stringify(res);
+
         postNodeCheck(node, workflowData);
 
         result.error_code = 0;
