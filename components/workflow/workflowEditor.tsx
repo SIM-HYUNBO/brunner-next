@@ -448,18 +448,20 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
     []
   );
 
-  const addNode = () => {
+  const addNode = (position: any) => {
     const id = uuidv4();
-    const randomPos = {
-      x: 100,
-      y: 200,
-    };
+    if (!position)
+      position = {
+        x: 100,
+        y: 200,
+      };
+
     setNodes((nds) => [
       ...nds,
       {
         id,
         type: "default",
-        position: snapToGrid(randomPos),
+        position: snapToGrid(position),
         data: {
           label: `Node ${id}`,
           actionName: constants.workflowActions.SCRIPT,
@@ -787,7 +789,7 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
 
   function handleInsertNode(edge: Edge) {
     // 1️⃣ 기존 addNode 사용
-    const newNodeId = addNode();
+    const newNodeId = addNode(edgeClickPos);
 
     // 2️⃣ 기존 edge 재연결
     const newEdges = rerouteEdgeThroughNode(
