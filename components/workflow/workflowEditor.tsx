@@ -177,6 +177,23 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
   const [workflowDescription, setWorkflowDescription] = useState("설명 없음");
   const [nodes, setNodes] = useState<Node<ActionNodeData>[]>(initialNodes);
   const [edges, setEdges] = useState<Edge<ConditionEdgeData>[]>(initialEdges);
+  const [selectedEdge, setSelectedEdge] = useState<Edge | null>();
+  const [edgeClickPos, setEdgeClickPos] = useState<{
+    x: number;
+    y: number;
+  } | null>(null);
+
+  const onEdgeClick = (event: any, edge: Edge) => {
+    event.stopPropagation();
+    setSelectedEdge(edge);
+
+    const flowWrapper = document.getElementById("flow-wrapper");
+    const bounds = flowWrapper?.getBoundingClientRect();
+    setEdgeClickPos({
+      x: event.clientX - bounds?.left!,
+      y: event.clientY - bounds?.top!,
+    });
+  };
 
   const [selectedNode, setSelectedNode] = useState<Node<ActionNodeData> | null>(
     null
@@ -456,6 +473,7 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
         },
       } as Node<ActionNodeData>,
     ]);
+    return id;
   };
 
   const deleteSelectedNode = () => {
@@ -762,6 +780,49 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
   }, []);
   // <<< /MOBILE-FIX
 
+  function handleInsertNode(edge: Edge) {
+    // 1️⃣ 기존 addNode 사용
+    const newNodeId = addNode();
+
+    // 2️⃣ 기존 edge 재연결
+    const newEdges = rerouteEdgeThroughNode(
+      edges,
+      edge.source,
+      edge.target,
+      newNodeId
+    );
+
+    setEdges(newEdges);
+
+    // 3️⃣ 선택 상태 초기화
+    setSelectedEdge(null);
+  }
+
+  function rerouteEdgeThroughNode(
+    edges: Edge[],
+    sourceId: string,
+    targetId: string,
+    newNodeId: string
+  ) {
+    return edges.flatMap((edge) => {
+      if (edge.source === sourceId && edge.target === targetId) {
+        return [
+          {
+            id: `edge_${sourceId}_${newNodeId}`,
+            source: sourceId,
+            target: newNodeId,
+          },
+          {
+            id: `edge_${newNodeId}_${targetId}`,
+            source: newNodeId,
+            target: targetId,
+          },
+        ];
+      }
+      return [edge];
+    });
+  }
+
   return (
     <>
       <ReactFlowProvider>
@@ -769,6 +830,7 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
           <div className="flex flex-col flex-grow h-full min-w-0">
             <div className="flex-1 relative">
               <div
+                id="flow-wrapper"
                 className="relative rounded-lg border shadow-sm overflow-hidden w-full"
                 style={{
                   height: flowHeightPx ? `${flowHeightPx}px` : "100%",
@@ -815,13 +877,27 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
                     rfInstanceRef.current = instance;
                   }}
                   nodeTypes={nodeTypes}
+                  onEdgeClick={onEdgeClick}
                 >
                   <MiniMap />
                   <Controls />
                   <Background />
                 </ReactFlow>
               </div>
-
+              {selectedEdge && (
+                <div
+                  style={{
+                    position: "absolute",
+                    left: edgeClickPos?.x,
+                    top: edgeClickPos?.y,
+                    transform: "translate(-50%, -50%)",
+                  }}
+                >
+                  <button onClick={() => handleInsertNode(selectedEdge)}>
+                    ＋ Node
+                  </button>
+                </div>
+              )}
               {/* Flow 영역 안 버튼 (토글 방식) */}
               <Button
                 className="absolute top-2 right-2 px-2 py-1 semi-text-bg-color rounded"
@@ -1109,10 +1185,10 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
 
                             return {
                               ...n,
-                              actionName:
-                                updates.actionName ?? n.data?.actionName,
                               data: {
                                 ...mergedData,
+                                actionName:
+                                  updates.actionName ?? n.data?.actionName,
                                 label: newLabel,
                                 design: newDesign,
                               },
