@@ -46,7 +46,7 @@ export default function HomeContent() {
       {loading && <Loading />}
       <div className={`w-full relative flex-row`}>
         <h2 className={`page-title`}>Noesis Pelagos</h2>
-        <div className="w-full flex flex-row items-center">
+        <div className="w-full flex flex-row items-center z-0">
           <div className="flex-1">
             <GoverningMessage
               governingMessage={`Thoughts are finite, but records are eternal.

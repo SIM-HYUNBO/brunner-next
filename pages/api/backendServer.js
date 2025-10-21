@@ -15,7 +15,7 @@ import * as workflow from "./biz/workflow";
 
 export const config = {
   api: {
-    responsLimit: "100mb",
+    responseLimit: "100mb",
     bodyParser: {
       sizeLimit: "100mb",
     },

@@ -96,7 +96,7 @@ export default function DropdownMenu({ reloadSignal, triggermenureload }) {
       {mobileMenuOpen && (
         <div
           ref={menuRef}
-          className="absolute right-4 mt-2 shadow-lg rounded-md z-50 min-w-[220px]"
+          className="absolute right-4 mt-2 shadow-lg rounded-md min-w-[220px]"
         >
           <ul className="divide-y">
             {menuItems.map((item, idx) => {
