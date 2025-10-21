@@ -198,7 +198,7 @@ export const SqlEditorModal: React.FC<SqlEditorModalProps> = ({
           <h3 className="font-semibold">SQL Editor</h3>
           <div className="flex gap-2">
             <Button
-              className="px-2 py-1 border rounded text-sm"
+              className="px-2 py-1 border rounded text-sm general-text-bg-color"
               onClick={() => setShowParamsPanel((s) => !s)}
             >
               {showParamsPanel ? "Hide params." : "View params"}
@@ -214,7 +214,7 @@ export const SqlEditorModal: React.FC<SqlEditorModalProps> = ({
               value={dbConnectionId}
               onChange={(e) => setDbConnectionId(e.target.value)}
               placeholder="myDbConnectionId"
-              className="w-64"
+              className="w-64 general-text-bg-color"
             />
           </div>
           <div className="flex flex-col">
@@ -223,7 +223,7 @@ export const SqlEditorModal: React.FC<SqlEditorModalProps> = ({
               type="text"
               value={outputTableName ?? ""}
               onChange={(e) => setOutputTableName(e.target.value)}
-              className="w-36"
+              className="w-36 general-text-bg-color"
             />
           </div>
         </div>
@@ -256,10 +256,10 @@ export const SqlEditorModal: React.FC<SqlEditorModalProps> = ({
               <>
                 <div className="p-3 h-full overflow-auto flex flex-col">
                   <div className="flex flex-col justify-between items-center mb-2">
-                    <h4>Parameters</h4>
-                    <div className="flex gap-2">
+                    <label>Parameters</label>
+                    <div className="flex gap-2 mt-2">
                       <Button
-                        className="px-2 py-1 text-sm"
+                        className="px-2 py-1 text-sm general-text-bg-color"
                         onClick={() =>
                           setParams((prev) => [
                             ...prev,
@@ -270,7 +270,7 @@ export const SqlEditorModal: React.FC<SqlEditorModalProps> = ({
                         Add Param.
                       </Button>
                       <Button
-                        className="px-2 py-1 text-sm"
+                        className="px-2 py-1 text-sm general-text-bg-color"
                         onClick={() => {
                           const matches = (sqlStmt.match(/@\w+/g) || []).map(
                             (m) => m.slice(1)

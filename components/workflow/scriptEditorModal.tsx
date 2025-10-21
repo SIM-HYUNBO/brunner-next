@@ -107,7 +107,7 @@ export const ScriptEditorModal: React.FC<ScriptEditorModalProps> = ({
             document.body.style.userSelect = "none"; // 드래그 중 텍스트 선택 방지
           }}
         >
-          Edit Script
+          <h3>Edit Script</h3>
         </div>
 
         {/* 본문 */}
