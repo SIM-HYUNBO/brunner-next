@@ -5,6 +5,7 @@ import { useState } from "react";
 import { WorkflowEditor } from "../workflow/workflowEditor";
 import { useModal } from "@/components/core/client/brunnerMessageBox";
 import { Input, Button, Table } from "antd";
+import { ReactFlowProvider } from "reactflow";
 interface Tab {
   id: string; // 탭 고유 ID
   workflowId: string; // 워크플로우 고유 ID
@@ -19,7 +20,7 @@ export function TabbedWorkflowEditor() {
     {
       id: "tab1",
       workflowId: "17dca48f-7fb2-4175-90a8-716e36efcd18",
-      workflowName: "new workflow",
+      workflowName: "New Workflow",
     },
   ]);
   const [activeTabId, setActiveTabId] = useState<string>("tab1");
@@ -95,7 +96,7 @@ export function TabbedWorkflowEditor() {
           <Button
             className="ml-auto px-4 py-2 general-text-bg-color border border-black"
             onClick={() =>
-              handleAddTab(`wf-${tabs.length + 1}`, "new workflow")
+              handleAddTab(`wf-${tabs.length + 1}`, "New Workflow")
             }
           >
             + Tab
@@ -105,12 +106,14 @@ export function TabbedWorkflowEditor() {
         {/* 액티브 탭 내용 */}
         <div className="flex flex-col h-full">
           {activeTab && (
-            <WorkflowEditor
-              key={activeTab.id}
-              workflowId={activeTab.workflowId}
-              openModal={openModal}
-              onWorkflowIDNameChange={handleWorkflowChange} // 이름 변경 콜백
-            />
+            <ReactFlowProvider>
+              <WorkflowEditor
+                key={activeTab.id}
+                workflowId={activeTab.workflowId}
+                openModal={openModal}
+                onWorkflowIDNameChange={handleWorkflowChange} // 이름 변경 콜백
+              />
+            </ReactFlowProvider>
           )}
         </div>
       </div>

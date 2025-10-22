@@ -44,7 +44,7 @@ import {
 } from "@/components/ui/accordion";
 import { WorkflowDataModal } from "./workflowDataModal";
 import BranchNode from "./customNode/branchNode";
-
+import { useReactFlow } from "reactflow";
 interface WorkflowEditorProps {
   workflowId?: string;
   initialNodes?: Node<ActionNodeData>[];
@@ -179,26 +179,9 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
   const [edges, setEdges] = useState<Edge<ConditionEdgeData>[]>(initialEdges);
   const [selectedEdge, setSelectedEdge] = useState<Edge | null>();
   const [edgeClickPos, setEdgeClickPos] = useState<{
-    x: number;
-    y: number;
+    screen: any;
+    flow: any;
   } | null>(null);
-
-  const onFlowClick = () => {
-    setSelectedEdge(null);
-    setEdgeClickPos(null);
-  };
-
-  const onEdgeClick = (event: any, edge: Edge) => {
-    event.stopPropagation();
-    setSelectedEdge(edge);
-
-    const flowWrapper = document.getElementById("flow-wrapper");
-    const bounds = flowWrapper?.getBoundingClientRect();
-    setEdgeClickPos({
-      x: event.clientX - bounds?.left!,
-      y: event.clientY - bounds?.top!,
-    });
-  };
 
   const [selectedNode, setSelectedNode] = useState<Node<ActionNodeData> | null>(
     null
@@ -291,8 +274,8 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
 
     setCurrentWorkflow({
       workflowId: uuidv4(),
-      workflowName: "new workflow",
-      workflowDescription: "new workflow",
+      workflowName: "New Workflow",
+      workflowDescription: "New Workflow",
       currentNodeId: "",
       data: {
         design: { inputs: [], outputs: [] },
@@ -448,20 +431,20 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
     []
   );
 
-  const addNode = (position: any) => {
+  const addNode = (position: any, snap: boolean = true) => {
     const id = uuidv4();
-    if (!position)
-      position = {
-        x: 100,
-        y: 200,
-      };
+    // if (!position)
+    //   position = {
+    //     x: 100,
+    //     y: 200,
+    //   };
 
     setNodes((nds) => [
       ...nds,
       {
         id,
         type: "default",
-        position: snapToGrid(position),
+        position: snap ? snapToGrid(position) : position,
         data: {
           label: `Node ${id}`,
           actionName: constants.workflowActions.SCRIPT,
@@ -788,47 +771,62 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
   // <<< /MOBILE-FIX
 
   function handleInsertNode(edge: Edge) {
-    // 1️⃣ 기존 addNode 사용
-    const newNodeId = addNode(edgeClickPos);
+    if (!edgeClickPos) return;
 
-    // 2️⃣ 기존 edge 재연결
-    const newEdges = rerouteEdgeThroughNode(
-      edges,
-      edge.source,
-      edge.target,
-      newNodeId
-    );
+    const flowPos = edgeClickPos.flow; // ✅ 이미 flow 좌표
 
-    setEdges(newEdges);
+    const newNodeId = addNode(flowPos); // snapToGrid 적용하려면 addNode 내부에서 처리
 
-    // 3️⃣ 선택 상태 초기화
-    setSelectedEdge(null);
-  }
-
-  function rerouteEdgeThroughNode(
-    edges: Edge[],
-    sourceId: string,
-    targetId: string,
-    newNodeId: string
-  ) {
-    return edges.flatMap((edge) => {
-      if (edge.source === sourceId && edge.target === targetId) {
-        return [
-          {
-            id: `edge_${sourceId}_${newNodeId}`,
-            source: sourceId,
-            target: newNodeId,
-          },
-          {
-            id: `edge_${newNodeId}_${targetId}`,
-            source: newNodeId,
-            target: targetId,
-          },
-        ];
-      }
-      return [edge];
+    setEdges((eds: any) => {
+      const filtered = eds.filter((e: any) => e.id !== edge.id);
+      return [
+        ...filtered,
+        {
+          id: `edge_${edge.source}_${newNodeId}`,
+          source: edge.source,
+          target: newNodeId,
+          data: { condition: "" },
+          markerEnd: { type: "arrowclosed" },
+          style: { stroke: "#ccc", strokeWidth: 2 },
+        },
+        {
+          id: `edge_${newNodeId}_${edge.target}`,
+          source: newNodeId,
+          target: edge.target,
+          data: { condition: "" },
+          markerEnd: { type: "arrowclosed" },
+          style: { stroke: "#ccc", strokeWidth: 2 },
+        },
+      ];
     });
+
+    setSelectedEdge(null);
+    setEdgeClickPos(null);
   }
+
+  const { project } = useReactFlow();
+  const onFlowClick = () => {
+    setSelectedEdge(null);
+    setEdgeClickPos(null);
+  };
+
+  const onEdgeClick = (event: any, edge: Edge) => {
+    event.stopPropagation();
+
+    const flowElement = document.querySelector(".react-flow__pane");
+
+    const bounds = flowElement?.getBoundingClientRect();
+    if (!bounds) return;
+
+    const screenPos = {
+      x: event.clientX - bounds.left,
+      y: event.clientY - bounds.top,
+    };
+    const flowPos = project(screenPos);
+
+    setSelectedEdge(edge);
+    setEdgeClickPos({ screen: screenPos, flow: flowPos });
+  };
 
   return (
     <>
@@ -892,18 +890,23 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
                   <Background />
                 </ReactFlow>
               </div>
-              {selectedEdge && (
+              {selectedEdge && edgeClickPos && (
                 <div
                   style={{
                     position: "absolute",
-                    left: edgeClickPos?.x,
-                    top: edgeClickPos?.y,
+                    left: edgeClickPos?.screen.x,
+                    top: edgeClickPos?.screen.y,
                     transform: "translate(-50%, -50%)",
+                    zIndex: 1000,
                   }}
                 >
-                  <button onClick={() => handleInsertNode(selectedEdge)}>
+                  <Button
+                    size="small"
+                    type="primary"
+                    onClick={() => handleInsertNode(selectedEdge)}
+                  >
                     ＋ Node
-                  </button>
+                  </Button>
                 </div>
               )}
               {/* Flow 영역 안 버튼 (토글 방식) */}
