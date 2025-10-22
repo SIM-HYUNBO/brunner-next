@@ -773,9 +773,9 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
   function handleInsertNode(edge: Edge) {
     if (!edgeClickPos) return;
 
-    const flowPos = edgeClickPos.flow; // ✅ 이미 flow 좌표
+    const screenPos = edgeClickPos.screen; // ✅ 이미 flow 좌표
 
-    const newNodeId = addNode(flowPos); // snapToGrid 적용하려면 addNode 내부에서 처리
+    const newNodeId = addNode(screenPos); // snapToGrid 적용하려면 addNode 내부에서 처리
 
     setEdges((eds: any) => {
       const filtered = eds.filter((e: any) => e.id !== edge.id);
