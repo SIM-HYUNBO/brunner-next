@@ -302,7 +302,7 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
   const [flowHeightPx, setFlowHeightPx] = useState<number | null>(null);
   const flowBottomReservedPx = 260; // 모바일에서 하단(Inputs/Outputs 등) 예상 높이
   const rfInstanceRef = useRef<any | null>(null); // ReactFlow instance ref
-  //
+  const [isDirty, setIsDirty] = useState(false);
 
   useEffect(() => {
     if (selectedNode) {
@@ -320,6 +320,25 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
   useEffect(() => {
     syncSelectedNode(selectedNode);
   }, [selectedNode]);
+
+  useEffect(() => {
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    return () => window.removeEventListener("beforeunload", handleBeforeUnload);
+  }, [isDirty]);
+
+  const handleWorkflowChange = (newWorkflow: any) => {
+    setCurrentWorkflow(newWorkflow);
+    setIsDirty(true);
+  };
+
+  const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+    if (isDirty) {
+      e.preventDefault();
+
+      // deprecated 경고 무시
+      (e as any).returnValue = "";
+    }
+  };
 
   // 선택 노드에 대한 동기화 작업
   const syncSelectedNode = (selectedNode: any) => {
@@ -397,17 +416,15 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
     }
   }, [designedOutputData]);
 
-  const onNodesChange = useCallback(
-    (changes: NodeChange[]) =>
-      setNodes((nds) => applyNodeChanges(changes, nds)),
-    []
-  );
+  const onNodesChange = useCallback((changes: NodeChange[]) => {
+    setNodes((nds) => applyNodeChanges(changes, nds));
+    setIsDirty(true); // ✅ 노드 변경 시 워크플로우가 수정되었음을 표시
+  }, []);
 
-  const onEdgesChange = useCallback(
-    (changes: EdgeChange[]) =>
-      setEdges((eds) => applyEdgeChanges(changes, eds)),
-    []
-  );
+  const onEdgesChange = useCallback((changes: EdgeChange[]) => {
+    setEdges((eds) => applyEdgeChanges(changes, eds));
+    setIsDirty(true); // ✅ 엣지 변경 시 워크플로우가 수정되었음을 표시
+  }, []);
 
   const onConnect = useCallback((connection: Connection) => {
     const id = uuidv4();
@@ -423,6 +440,7 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
         eds
       )
     );
+    setIsDirty(true);
   }, []);
 
   const onNodeClick = useCallback(
@@ -462,6 +480,7 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
         },
       } as Node<ActionNodeData>,
     ]);
+    setIsDirty(true);
     return id;
   };
 
@@ -481,6 +500,7 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
     setEdges((eds) =>
       eds.filter((e) => e.source !== nodeId && e.target !== nodeId)
     );
+    setIsDirty(true);
 
     // 3️⃣ 선택 상태 초기화
     setSelectedNode(null);
@@ -559,6 +579,7 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
 
       const jResponse = await RequestServer(jRequest);
       if (jResponse.error_code == 0) {
+        setIsDirty(false);
         openModal?.("Successfully updated workflow.");
         if (onWorkflowIDNameChange)
           onWorkflowIDNameChange(workflowId!, workflowName);

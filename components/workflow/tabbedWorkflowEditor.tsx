@@ -1,11 +1,9 @@
-// tabbedWorkflowEditor.tsx
-"use client";
-
-import { useState } from "react";
-import { WorkflowEditor } from "../workflow/workflowEditor";
+import { useEffect, useState, useCallback } from "react";
 import { useModal } from "@/components/core/client/brunnerMessageBox";
+import { WorkflowEditor } from "./workflowEditor";
+import { ReactFlowProvider, ReactFlow } from "reactflow";
 import { Input, Button, Table } from "antd";
-import { ReactFlowProvider } from "reactflow";
+
 interface Tab {
   id: string; // 탭 고유 ID
   workflowId: string; // 워크플로우 고유 ID
@@ -15,26 +13,26 @@ interface Tab {
 export function TabbedWorkflowEditor() {
   const { BrunnerMessageBox, openModal } = useModal();
 
-  // 탭 상태
-  const [tabs, setTabs] = useState<Tab[]>([
+  const [tabs, setTabs] = useState<(Tab & { isDirty?: boolean })[]>([
     {
       id: "tab1",
       workflowId: "17dca48f-7fb2-4175-90a8-716e36efcd18",
       workflowName: "New Workflow",
+      isDirty: false,
     },
   ]);
   const [activeTabId, setActiveTabId] = useState<string>("tab1");
 
-  // 액티브 탭 찾기
   const activeTab = tabs.find((tab) => tab.id === activeTabId);
 
-  // 워크플로우 이름 변경 콜백
+  // 워크플로우 수정 시 isDirty=true
   const handleWorkflowChange = (workflowId: string, name: string) => {
     setTabs((prev) =>
       prev.map((tab) => ({
         ...tab,
-        workflowId, // 무조건 덮어쓰기
+        workflowId,
         workflowName: name,
+        isDirty: true, // 수정됨 표시
       }))
     );
   };
@@ -42,30 +40,56 @@ export function TabbedWorkflowEditor() {
   // 새 탭 생성
   const handleAddTab = (workflowId: string, workflowName: string) => {
     const newTabId = `tab${tabs.length + 1}`;
-    setTabs([...tabs, { id: newTabId, workflowId, workflowName }]);
+    setTabs([
+      ...tabs,
+      { id: newTabId, workflowId, workflowName, isDirty: false },
+    ]);
     setActiveTabId(newTabId);
   };
 
-  // 탭 닫기
-  const handleCloseTab = (tabId: string) => {
-    setTabs((prevTabs) => {
-      const newTabs = prevTabs.filter((tab) => tab.id !== tabId);
-
-      // 닫은 탭이 현재 액티브 탭이면, 새 액티브 탭 지정
-      if (tabId === activeTabId && newTabs.length > 0) {
-        setActiveTabId(newTabs[newTabs.length - 1]!.id); // 마지막 탭으로 전환
-      } else if (newTabs.length === 0) {
-        setActiveTabId(""); // 탭이 하나도 없으면 빈 문자열
+  // 탭 닫기 전 확인
+  const handleCloseTab = useCallback(
+    (tabId: string) => {
+      const tab = tabs.find((t) => t.id === tabId);
+      if (tab?.isDirty) {
+        const confirmClose = window.confirm(
+          `"${tab.workflowName}" 워크플로우가 저장되지 않았습니다. 닫으시겠습니까?`
+        );
+        if (!confirmClose) return;
       }
 
-      return newTabs;
-    });
-  };
+      setTabs((prevTabs) => {
+        const newTabs = prevTabs.filter((t) => t.id !== tabId);
+
+        if (tabId === activeTabId && newTabs.length > 0) {
+          setActiveTabId(newTabs[newTabs.length - 1]!.id);
+        } else if (newTabs.length === 0) {
+          setActiveTabId("");
+        }
+
+        return newTabs;
+      });
+    },
+    [tabs, activeTabId]
+  );
+
+  // 브라우저 닫기/새로고침 확인
+  useEffect(() => {
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      const dirtyTab = tabs.find((t) => t.isDirty);
+      if (!dirtyTab) return;
+
+      e.preventDefault();
+      e.returnValue = ""; // Chrome/Edge는 기본 경고만 보여줌
+    };
+
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    return () => window.removeEventListener("beforeunload", handleBeforeUnload);
+  }, [tabs]);
 
   return (
     <>
       <BrunnerMessageBox />
-
       <div className="flex flex-col h-full">
         {/* 탭 바 */}
         <div className="flex border-b border-gray-300">
@@ -92,7 +116,6 @@ export function TabbedWorkflowEditor() {
               </Button>
             </div>
           ))}
-
           <Button
             className="ml-auto px-4 py-2 general-text-bg-color border border-black"
             onClick={() =>
