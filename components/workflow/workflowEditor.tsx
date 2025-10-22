@@ -44,7 +44,6 @@ import {
 } from "@/components/ui/accordion";
 import { WorkflowDataModal } from "./workflowDataModal";
 import BranchNode from "./customNode/branchNode";
-import { useReactFlow } from "reactflow";
 interface WorkflowEditorProps {
   workflowId?: string;
   initialNodes?: Node<ActionNodeData>[];
@@ -431,7 +430,7 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
     []
   );
 
-  const addNode = (position: any, snap: boolean = true) => {
+  const addNode = (position: any) => {
     const id = uuidv4();
     // if (!position)
     //   position = {
@@ -444,7 +443,7 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
       {
         id,
         type: "default",
-        position: snap ? snapToGrid(position) : position,
+        position: snapToGrid(position), // flow 좌표(react-flow 좌표)를 기대함
         data: {
           label: `Node ${id}`,
           actionName: constants.workflowActions.SCRIPT,
@@ -677,7 +676,7 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
         <div className="flex flex-row ml-1 mt-2">
           <Button
             className="w-full border border-black general-text-bg-color hover:bg-gray-400"
-            onClick={addNode}
+            onClick={() => addNode(undefined)}
           >
             Add Node
           </Button>
@@ -773,9 +772,9 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
   function handleInsertNode(edge: Edge) {
     if (!edgeClickPos) return;
 
-    const screenPos = edgeClickPos.screen; // ✅ 이미 flow 좌표
+    const flowPos = edgeClickPos.flow; // ✅ 이미 flow 좌표
 
-    const newNodeId = addNode(screenPos); // snapToGrid 적용하려면 addNode 내부에서 처리
+    const newNodeId = addNode(flowPos); // snapToGrid 적용하려면 addNode 내부에서 처리
 
     setEdges((eds: any) => {
       const filtered = eds.filter((e: any) => e.id !== edge.id);
@@ -804,7 +803,6 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
     setEdgeClickPos(null);
   }
 
-  const { project } = useReactFlow();
   const onFlowClick = () => {
     setSelectedEdge(null);
     setEdgeClickPos(null);
@@ -814,7 +812,6 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
     event.stopPropagation();
 
     const flowElement = document.querySelector(".react-flow__pane");
-
     const bounds = flowElement?.getBoundingClientRect();
     if (!bounds) return;
 
@@ -822,7 +819,20 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
       x: event.clientX - bounds.left,
       y: event.clientY - bounds.top,
     };
-    const flowPos = project(screenPos);
+
+    // useReactFlow 대신 rfInstanceRef.current.project 사용 (존재 확인)
+    let flowPos = { x: 0, y: 0 };
+    try {
+      const proj = rfInstanceRef.current?.project;
+      if (typeof proj === "function") {
+        flowPos = proj(screenPos);
+      } else {
+        // fallback: 대략적인 좌표 복사 (비정상 상황 방어)
+        flowPos = screenPos;
+      }
+    } catch (err) {
+      flowPos = screenPos;
+    }
 
     setSelectedEdge(edge);
     setEdgeClickPos({ screen: screenPos, flow: flowPos });
