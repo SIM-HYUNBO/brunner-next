@@ -60,6 +60,7 @@ export const messages = {
   WORKFLOW_NODE_NOT_FOUND: `Failed to find Node.`,
   WORKFLOW_NODES_NOT_CONNECTED: `From the Start node, nodes are not connected to the End node. Workflow cannot run.`,
   WORKFLOW_NOT_SUPPORTED_NODE_TYPE: `Not supported node type`,
+  WORKFLOW_SAVE_CONFIRM: `There are unsaved changes. Do you want to close?`,
   WORKFLOW_STARTNODE_NOT_FOUND: `Start node not found`,
 };
 

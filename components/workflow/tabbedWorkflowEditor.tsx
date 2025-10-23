@@ -1,5 +1,6 @@
 import { useEffect, useState, useCallback } from "react";
 import { useModal } from "@/components/core/client/brunnerMessageBox";
+import * as constants from "@/components/core/constants";
 import { WorkflowEditor } from "./workflowEditor";
 import { ReactFlowProvider, ReactFlow } from "reactflow";
 import { Input, Button, Table } from "antd";
@@ -49,11 +50,11 @@ export function TabbedWorkflowEditor() {
 
   // 탭 닫기 전 확인
   const handleCloseTab = useCallback(
-    (tabId: string) => {
+    async (tabId: string) => {
       const tab = tabs.find((t) => t.id === tabId);
       if (tab?.isDirty) {
-        const confirmClose = window.confirm(
-          `"${tab.workflowName}" 워크플로우가 저장되지 않았습니다. 닫으시겠습니까?`
+        const confirmClose = await openModal(
+          `"${tab.workflowName} ${constants.messages.WORKFLOW_SAVE_CONFIRM}`
         );
         if (!confirmClose) return;
       }
