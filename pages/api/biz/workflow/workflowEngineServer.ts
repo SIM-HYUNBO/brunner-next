@@ -854,7 +854,7 @@ function convertNamedParams(
         return resolved !== undefined ? resolved : "";
       });
 
-      return commonFunctions.getByPath(context, bindingStr);
+      return bindingStr; // 이미 치환된 값 반환
     }
 
     return p.value;
