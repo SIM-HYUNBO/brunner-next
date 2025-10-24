@@ -55,8 +55,6 @@ export const NodePropertyPanel: React.FC<NodePropertyPanelProps> = ({
   const [outputs, setOutputs] = useState<NodeDataTable[]>(
     node?.data.design?.outputs ?? []
   );
-  // const [isInputModalOpen, setIsInputModalOpen] = useState(false);
-  // const [isOutputModalOpen, setIsOutputModalOpen] = useState(false);
 
   const [localLabel, setLocalLabel] = useState(node?.data.label ?? "");
 
