@@ -321,14 +321,21 @@ export const NodePropertyPanel: React.FC<NodePropertyPanelProps> = ({
 
       if (isModeChange) {
         // 모드 변경 시: 화면상의 값 기반으로 완전히 새 design 생성
-        newDesign = {
-          mode: value, // 변경된 모드
-          loopStartValue: node.data.design.loopStartValue,
-          loopStepValue: node.data.design.loopStepValue,
-          loopLimitValue: node.data.design.loopLimitValue,
-          condition: node.data.design.condition,
-          loopCurrentValue: node.data.design.loopCurrentValue,
-        };
+        if (value == "Branch") {
+          newDesign = {
+            mode: value, // 변경된 모드
+            condition: node.data.design.condition,
+          };
+        }
+        if (value == "Loop") {
+          newDesign = {
+            mode: value, // 변경된 모드
+            loopStartValue: node.data.design.loopStartValue,
+            loopStepValue: node.data.design.loopStepValue,
+            loopLimitValue: node.data.design.loopLimitValue,
+            loopCurrentValue: node.data.design.loopCurrentValue,
+          };
+        }
       } else {
         // 단순 값 변경 시: 기존 design에 변경 값만 덮어쓰기
         newDesign = {

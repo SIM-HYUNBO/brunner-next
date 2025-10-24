@@ -450,11 +450,11 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
 
   const addNode = (position: any) => {
     const id = uuidv4();
-    // if (!position)
-    //   position = {
-    //     x: 100,
-    //     y: 200,
-    //   };
+    if (!position)
+      position = {
+        x: 100,
+        y: 200,
+      };
 
     setNodes((nds) => [
       ...nds,

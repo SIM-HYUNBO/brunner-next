@@ -812,10 +812,10 @@ function extractPath(input: string) {
 
 function convertNamedParams(
   sqlStmt: string,
-  sqlParams: { name: string; binding: string; value: any }[],
+  sqlParams: { name: string; binding?: string; value?: any }[] = [],
   dbType: string,
   context: any
-) {
+): { sql: string; params: any[] } {
   if (!sqlParams || sqlParams.length === 0) {
     return { sql: sqlStmt, params: [] };
   }
@@ -823,53 +823,56 @@ function convertNamedParams(
   let sql = sqlStmt;
   let params: any[] = [];
 
-  // 값인지 경로인지 판단해서 실제 값으로 변환
-  function resolveParamValue(value: any) {
-    if (typeof value === "string") {
-      const match = value.match(/^\$\{(.+)\}$|^\{\{(.+)\}\}$/);
-      if (match) {
-        const path = match[1] || match[2];
-        return commonFunctions.getByPath(context, path ?? ""); // context에서 경로값 가져오기
-      }
+  function resolveParam(p: { binding?: string; value?: any }): any {
+    if (p.binding) {
+      let bindingStr = p.binding;
+
+      // ${...} 안의 모든 표현식을 context에서 치환
+      bindingStr = bindingStr.replace(/\$\{([^}]+)\}/g, function (match, expr) {
+        const resolved = commonFunctions.getByPath(context, expr.trim());
+        return resolved !== undefined ? resolved : "";
+      });
+
+      return commonFunctions.getByPath(context, bindingStr);
     }
-    return value; // 일반 값이면 그대로
+
+    return p.value;
   }
 
   switch (dbType) {
-    case constants.dbType.postgres: {
+    case constants.dbType.postgres:
       sqlParams.forEach((p, i) => {
-        const pattern = new RegExp(`@${p.name}\\b`, "g");
-        sql = sql.replace(pattern, `$${i + 1}`);
-        params.push(resolveParamValue(p.binding));
+        const pattern = new RegExp("@" + p.name + "\\b", "g");
+        sql = sql.replace(pattern, "$" + (i + 1));
+        params.push(resolveParam(p));
       });
       break;
-    }
 
-    case constants.dbType.mysql: {
+    case constants.dbType.mysql:
       sqlParams.forEach((p) => {
-        const pattern = new RegExp(`@${p.name}\\b`, "g");
-        sql = sql.replace(pattern, `?`);
-        params.push(resolveParamValue(p.value));
+        const pattern = new RegExp("@" + p.name + "\\b", "g");
+        sql = sql.replace(pattern, "?");
+        params.push(resolveParam(p));
       });
       break;
-    }
 
-    case constants.dbType.mssql: {
+    case constants.dbType.mssql:
       params = sqlParams.map((p) => ({
-        ...p,
-        value: resolveParamValue(p.value),
+        name: p.name,
+        value: resolveParam(p),
       }));
       break;
-    }
 
-    case constants.dbType.oracle: {
+    case constants.dbType.oracle:
       sqlParams.forEach((p) => {
-        const pattern = new RegExp(`@${p.name}\\b`, "g");
-        sql = sql.replace(pattern, `:${p.name}`);
-        params.push(resolveParamValue(p.value));
+        const pattern = new RegExp("@" + p.name + "\\b", "g");
+        sql = sql.replace(pattern, ":" + p.name);
+        params.push(resolveParam(p));
       });
       break;
-    }
+
+    default:
+      throw new Error("Unsupported DB type: " + dbType);
   }
 
   return { sql, params };

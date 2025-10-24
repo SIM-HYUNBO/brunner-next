@@ -58,7 +58,7 @@ export default function BranchNode({ data }: NodeProps<BranchNodeData>) {
         <div style={{ fontSize: 8 }}>[{constants.workflowActions.BRANCH}]</div>
         {isLoopMode && <div style={{ fontSize: 8 }}>Loop</div>}
         {isBranchMode && <div style={{ fontSize: 8 }}>Branch</div>}
-        {isBranchMode && (
+        {/* {isBranchMode && (
           <div
             style={{
               fontSize: 10,
@@ -71,7 +71,7 @@ export default function BranchNode({ data }: NodeProps<BranchNodeData>) {
           >
             {condition || "—"}
           </div>
-        )}
+        )} */}
 
         {/* 🟢 입력 포트 2개 (상단 + 좌측) */}
         <Handle
