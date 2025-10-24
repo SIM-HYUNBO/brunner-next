@@ -157,8 +157,30 @@ export const NodePropertyPanel: React.FC<NodePropertyPanelProps> = ({
       setLoopLimitValue(node.data.design?.loopLimitValue ?? "");
     }, [node]);
 
-    const handleChange = (key: string, value: any) => {
-      const newDesign = { ...node.data.design, [key]: value };
+    const handleBranchNodeChange = (key: string, value: any) => {
+      let newDesign;
+
+      if (key === "mode") {
+        // 모드가 변경된 경우: 디자인 초기화
+        if (value === "Branch") {
+          newDesign = {
+            mode: "Branch",
+            condition: "",
+          };
+        } else if (value === "Loop") {
+          newDesign = {
+            mode: "Loop",
+            loopStartValue: 0,
+            loopStepValue: 1,
+            loopLimitValue: "",
+            loopCurrentValue: 0,
+          };
+        }
+      } else {
+        // 일반 변경
+        newDesign = { ...node.data.design, [key]: value };
+      }
+
       onNodeUpdate(node.id, { design: newDesign });
     };
 
@@ -172,7 +194,7 @@ export const NodePropertyPanel: React.FC<NodePropertyPanelProps> = ({
             value={mode}
             onChange={(e) => {
               setMode(e.target.value);
-              handleChange("mode", e.target.value);
+              handleBranchNodeChange("mode", e.target.value);
             }}
           >
             <option value="Branch">Branch</option>
@@ -186,7 +208,7 @@ export const NodePropertyPanel: React.FC<NodePropertyPanelProps> = ({
             <textarea
               value={condition}
               onChange={(e) => setCondition(e.target.value)}
-              onBlur={() => handleChange("condition", condition)}
+              onBlur={() => handleBranchNodeChange("condition", condition)}
               rows={3}
             />
           </div>
@@ -200,21 +222,27 @@ export const NodePropertyPanel: React.FC<NodePropertyPanelProps> = ({
                 type="number"
                 value={loopStartValue}
                 onChange={(e) => setLoopStartValue(Number(e.target.value))}
-                onBlur={() => handleChange("loopStartValue", loopStartValue)}
+                onBlur={() =>
+                  handleBranchNodeChange("loopStartValue", loopStartValue)
+                }
               />
               <label>Step:</label>
               <input
                 type="number"
                 value={loopStepValue}
                 onChange={(e) => setLoopStepValue(Number(e.target.value))}
-                onBlur={() => handleChange("loopStepValue", loopStepValue)}
+                onBlur={() =>
+                  handleBranchNodeChange("loopStepValue", loopStepValue)
+                }
               />
             </div>
             <label>Limit:</label>
             <textarea
               value={loopLimitValue}
               onChange={(e) => setLoopLimitValue(e.target.value)}
-              onBlur={() => handleChange("loopLimitValue", loopLimitValue)}
+              onBlur={() =>
+                handleBranchNodeChange("loopLimitValue", loopLimitValue)
+              }
               rows={2}
             />
             <div>Current Index: {loopCurrentValue}</div>

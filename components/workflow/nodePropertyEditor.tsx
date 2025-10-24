@@ -75,26 +75,6 @@ export const NodePropertyEditor: React.FC<NodePropertyEditorProps> = ({
     openModal?.(constants.messages.SUCCESS_APPLIED);
   };
 
-  // Script 내용 즉시 반영
-  const handleScriptChange = (value: string) => {
-    onNodeUpdate?.(node.id, {
-      design: {
-        ...node.data.design,
-        scriptContents: value,
-      },
-    });
-  };
-
-  // Script Timeout 즉시 반영
-  const handleTimeoutChange = (value: number) => {
-    onNodeUpdate?.(node.id, {
-      design: {
-        ...node.data.design,
-        scriptTimeoutMs: value,
-      },
-    });
-  };
-
   return (
     <div className="w-full">
       <div>ID: {node.id}</div>

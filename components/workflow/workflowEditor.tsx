@@ -1195,8 +1195,10 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
                             let newDesign: Partial<typeof n.data.design> =
                               n.data?.design || {};
                             if (
-                              updates.actionName &&
-                              updates.actionName !== n.data?.actionName
+                              (updates.actionName &&
+                                updates.actionName !== n.data?.actionName) ||
+                              (n.data.actionName === "Branch" &&
+                                n.data.design.mode !== updates.design.mode)
                             ) {
                               newDesign = {};
                             }

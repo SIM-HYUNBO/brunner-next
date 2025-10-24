@@ -20,8 +20,28 @@ export interface ActionNodeData {
   design: {
     inputs: NodeDataTable[];
     outputs: NodeDataTable[];
-    scriptContents: string;
-    scriptTimeoutMs: number;
+
+    // Script Node
+    scriptContents?: string;
+    scriptTimeoutMs?: number;
+
+    // Branch Node
+    mode?: string;
+    condition?: string;
+    loopStartValue?: any;
+    loopStepValue?: any;
+    loopLimitValue?: any;
+
+    // Sql Node
+
+    sqlStmt?: string;
+    sqlParams?: any[];
+    dbConnectionId?: string;
+    outputTableName?: string;
+
+    // Call Node
+    targetWorkflowId?: string;
+    targetWorkflowName?: string;
   };
   run: {
     inputs: NodeDataTable[];
