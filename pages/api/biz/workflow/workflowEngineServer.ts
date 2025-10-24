@@ -820,16 +820,9 @@ export function registerBuiltInActions(): void {
   );
 }
 
-function isPathValue(input: string) {
-  return /^\$\{(.+)\}$/.test(input) || /^\{\{(.+)\}\}$/.test(input);
-}
-
-function extractPath(input: string) {
-  const match = input.match(/^\$\{(.+)\}$|^\{\{(.+)\}\}$/);
-  if (!match) return null;
-  return match[1] || match[2]; // ${path} 또는 {{path}} 내부 내용
-}
-
+// SQL노드의 바인딩 변수에 해당하는 값을 찾아 매핑함
+// 바인딩 변수 지정 기호: ${}
+// 바인딩 변수 지정 경로 내에 인댁스 변수 지정 기호: #{}
 function convertNamedParams(
   sqlStmt: string,
   sqlParams: { name: string; binding?: string; value?: any }[] = [],
@@ -843,29 +836,42 @@ function convertNamedParams(
   let sql = sqlStmt;
   let params: any[] = [];
 
-  // 입력한 파라미터 값이 바인딩 변수인지 아닌지 확인 후 변수값 매핑
-  function resolveParam(p: { binding?: string; value?: any }): any {
-    if (p.binding) {
-      let bindingStr = p.binding;
+  // 파라미터 값이 바인딩인지 값인지 판단 후 실제 값으로 변환
+  function resolveParam(
+    p: { binding?: string; value?: any },
+    context: any
+  ): any {
+    // 값은 그대로 사용함.
+    if (!p.binding) return p.value;
 
-      // ${...} 안의 모든 표현식을 context에서 치환
-      bindingStr = bindingStr.replace(/\$\{([^}]+)\}/g, function (match, expr) {
-        const resolved = commonFunctions.getByPath(context, expr.trim());
-        return resolved !== undefined ? resolved : "";
-      });
+    let bindingStr = p.binding;
 
-      return bindingStr; // 이미 치환된 값 반환
-    }
+    // 1. 먼저 #{} 안의 인덱스/루프 변수 치환
+    bindingStr = bindingStr.replace(/#\{([^}]+)\}/g, (_, expr) => {
+      const resolved = commonFunctions.getByPath(context, expr.trim());
+      if (resolved === undefined)
+        throw new Error(`Loop variable not found: ${expr}`);
+      return resolved;
+    });
 
-    return p.value;
+    // 2. ${} 안의 일반 바인딩 변수 치환
+    bindingStr = bindingStr.replace(/\$\{([^}]+)\}/g, (_, expr) => {
+      const resolved = commonFunctions.getByPath(context, expr.trim());
+      return resolved !== undefined ? resolved : "";
+    });
+
+    // 3. 치환이 끝난 문자열이 단일 경로라면 실제 값 반환
+    const finalValue = commonFunctions.getByPath(context, bindingStr);
+    return finalValue !== undefined ? finalValue : bindingStr;
   }
 
+  // DB 타입별 변환
   switch (dbType) {
     case constants.dbType.postgres:
       sqlParams.forEach((p, i) => {
         const pattern = new RegExp("@" + p.name + "\\b", "g");
         sql = sql.replace(pattern, "$" + (i + 1));
-        params.push(resolveParam(p));
+        params.push(resolveParam(p, context));
       });
       break;
 
@@ -873,14 +879,14 @@ function convertNamedParams(
       sqlParams.forEach((p) => {
         const pattern = new RegExp("@" + p.name + "\\b", "g");
         sql = sql.replace(pattern, "?");
-        params.push(resolveParam(p));
+        params.push(resolveParam(p, context));
       });
       break;
 
     case constants.dbType.mssql:
       params = sqlParams.map((p) => ({
         name: p.name,
-        value: resolveParam(p),
+        value: resolveParam(p, context),
       }));
       break;
 
@@ -888,7 +894,7 @@ function convertNamedParams(
       sqlParams.forEach((p) => {
         const pattern = new RegExp("@" + p.name + "\\b", "g");
         sql = sql.replace(pattern, ":" + p.name);
-        params.push(resolveParam(p));
+        params.push(resolveParam(p, context));
       });
       break;
 
