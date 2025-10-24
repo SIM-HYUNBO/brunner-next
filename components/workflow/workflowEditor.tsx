@@ -1185,18 +1185,8 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
                   <AccordionContent>
                     <NodePropertyPanel
                       workflowId={workflowId}
-                      workflowName={workflowName}
-                      workflowDescription={workflowDescription}
-                      node={selectedNode}
                       nodes={nodes}
-                      scriptContents={selectedNodeScriptContents}
-                      scriptTimeoutMs={selectedNodeTimeoutMs}
-                      onWorkflowUpdate={(updates) => {
-                        if (updates.workflowName !== undefined)
-                          setWorkflowName(updates.workflowName);
-                        if (updates.workflowDescription !== undefined)
-                          setWorkflowDescription(updates.workflowDescription);
-                      }}
+                      node={selectedNode}
                       onNodeUpdate={(id, updates) => {
                         setNodes((nds) => {
                           const newNodes = nds.map((n) => {

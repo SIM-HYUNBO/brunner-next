@@ -1,14 +1,10 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import type { Node } from "reactflow";
 import * as constants from "@/components/core/constants";
-import type {
-  NodeDataTable,
-  DatasetColumn,
-} from "@/components/core/commonData";
+import type { NodeDataTable } from "@/components/core/commonData";
 import * as commmonFunctions from "@/components/core/commonFunctions";
 import { JsonDatasetEditorModal } from "@/components/workflow/jsonDatasetEditorModal";
-import { Input, Button, Table } from "antd";
-import type { JsonColumnType } from "@/components/workflow/jsonDatasetEditorModal";
+import { Button } from "antd";
 
 interface NodePropertyEditorProps {
   node: Node<any> | null;
@@ -21,32 +17,9 @@ export const NodePropertyEditor: React.FC<NodePropertyEditorProps> = ({
   onNodeUpdate,
   openModal,
 }) => {
-  // SCRIPT 노드 전용
-  const [scriptContents, setScriptContents] = useState(
-    node?.data.design.scriptContents || ""
-  );
-  const [scriptTimeoutMs, setTimeoutMs] = useState(
-    node?.data.design.scriptTimeoutMs ?? 5000
-  );
-
-  // useRef를 이용해 항상 최신 값을 추적
-  const scriptContentsRef = useRef(scriptContents);
-  const scriptTimeoutMsRef = useRef(scriptTimeoutMs);
-
-  useEffect(() => {
-    scriptContentsRef.current = scriptContents;
-  }, [scriptContents]);
-
-  useEffect(() => {
-    scriptTimeoutMsRef.current = scriptTimeoutMs;
-  }, [scriptTimeoutMs]);
-
   const [isNodeInputModalOpen, setIsNodeInputModalOpen] = useState(false);
   const [isNodeOutputModalOpen, setIsNodeOutputModalOpen] = useState(false);
 
-  const prevActionName = useRef<string>("");
-
-  // 컬럼 타입 추론
   const inferColumns = (data: any) => {
     const firstRow = Array.isArray(data) && data.length > 0 ? data[0] : {};
     return Object.entries(firstRow).map(([key, value]) => {
@@ -68,12 +41,11 @@ export const NodePropertyEditor: React.FC<NodePropertyEditorProps> = ({
     );
   }
 
-  // 액션 변경 시 UI + 자동 Apply
+  // 액션 변경 즉시 반영
   const handleActionChange = (newAction: string) => {
     const defaultInputs = commmonFunctions.getDefaultInputs(newAction) ?? [];
     const defaultOutputs = commmonFunctions.getDefaultOutputs(newAction) ?? [];
 
-    // design 초기화
     let design: any = {
       inputs: [...defaultInputs],
       outputs: [...defaultOutputs],
@@ -84,33 +56,50 @@ export const NodePropertyEditor: React.FC<NodePropertyEditorProps> = ({
       design.scriptTimeoutMs = 5000;
     } else if (newAction === constants.workflowActions.BRANCH) {
       design.mode = constants.workflowBranchNodeMode.Branch;
-      design.condition = ""; // 조건식 초기화
+      design.condition = "";
     } else if (newAction === constants.workflowActions.SQL) {
       design.sqlStmt = "";
       design.dbConnectionId = "";
       design.sqlParams = [];
-      // design.maxRows = 0;
       design.outputTableName = "";
     } else if (newAction === constants.workflowActions.CALL) {
       design.targetWorkflowId = "";
       design.targetWorkflowName = "";
     }
 
-    // 노드 업데이트
     onNodeUpdate?.(node.id, {
       actionName: newAction,
-      design: design,
+      design,
     });
 
-    prevActionName.current = newAction;
     openModal?.(constants.messages.SUCCESS_APPLIED);
+  };
+
+  // Script 내용 즉시 반영
+  const handleScriptChange = (value: string) => {
+    onNodeUpdate?.(node.id, {
+      design: {
+        ...node.data.design,
+        scriptContents: value,
+      },
+    });
+  };
+
+  // Script Timeout 즉시 반영
+  const handleTimeoutChange = (value: number) => {
+    onNodeUpdate?.(node.id, {
+      design: {
+        ...node.data.design,
+        scriptTimeoutMs: value,
+      },
+    });
   };
 
   return (
     <div className="w-full">
-      <div className="flex flex-row">{`ID : ${node.id}`}</div>
-      <div className="flex flex-row">{`Label : ${node.data.label}`}</div>
-      <div className="flex flex-row">{`Status : ${node.data.status}`}</div>
+      <div>ID: {node.id}</div>
+      <div>Label: {node.data.label}</div>
+      <div>Status: {node.data.status}</div>
 
       <div className="flex flex-row mt-2 items-center">
         <label>Action Name:</label>
@@ -141,32 +130,6 @@ export const NodePropertyEditor: React.FC<NodePropertyEditorProps> = ({
         >
           Node Outputs
         </Button>
-        <Button
-          className="px-2 py-1 general-text-bg-color border border-black rounded"
-          onClick={() => {
-            const prevDesign = node.data?.design ?? {};
-
-            const newDesign = {
-              ...prevDesign, // 기존 디자인 보존
-              scriptContents: scriptContentsRef.current,
-              scriptTimeoutMs: scriptTimeoutMsRef.current,
-              inputs: node.data.design.inputs,
-              outputs: node.data.design.outputs,
-            };
-
-            onNodeUpdate?.(node.id, {
-              actionName: node.data.actionName,
-              data: {
-                ...(node.data ?? {}),
-                design: newDesign,
-              },
-            });
-
-            openModal?.(constants.messages.SUCCESS_APPLIED);
-          }}
-        >
-          Apply
-        </Button>
       </div>
 
       {/* Input Modal */}
@@ -187,8 +150,8 @@ export const NodePropertyEditor: React.FC<NodePropertyEditorProps> = ({
             setIsNodeInputModalOpen(false);
             onNodeUpdate?.(node.id, {
               design: {
+                ...node.data.design,
                 inputs: newInputsArray,
-                outputs: node.data.run.outputs,
               },
             });
           }}
@@ -214,7 +177,7 @@ export const NodePropertyEditor: React.FC<NodePropertyEditorProps> = ({
             setIsNodeOutputModalOpen(false);
             onNodeUpdate?.(node.id, {
               design: {
-                inputs: node.data.run.inputs,
+                ...node.data.design,
                 outputs: newOutputsArray,
               },
             });

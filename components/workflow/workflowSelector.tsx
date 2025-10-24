@@ -43,17 +43,6 @@ export default function WorkflowSelector({
         Select ...
       </Button>
 
-      {/* 선택된 워크플로우 표시 */}
-      {localSelectedWorkflow && (
-        <div className="mt-3 semi-text-bg-color">
-          <b>{localSelectedWorkflow.workflowId}</b>
-          <br />
-          <b>{localSelectedWorkflow?.workflowName}</b>
-          <br />
-          <b>{localSelectedWorkflow?.workflowDescription}</b>
-        </div>
-      )}
-
       {/* 워크플로우 선택 모달 */}
       <WorkflowSelectModal
         open={workflowSelectModalOpen}

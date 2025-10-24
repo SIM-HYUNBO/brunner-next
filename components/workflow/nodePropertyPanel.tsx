@@ -1,236 +1,110 @@
 import React, { useState, useEffect, useRef } from "react";
 import type { Node } from "reactflow";
-import type {
-  NodeDataTable,
-  DatasetColumn,
-} from "@/components/core/commonData";
+import type { NodeDataTable } from "@/components/core/commonData";
 import * as commmonFunctions from "@/components/core/commonFunctions";
 import * as constants from "@/components/core/constants";
 import { JsonDatasetEditorModal } from "@/components/workflow/jsonDatasetEditorModal";
-import type { JsonColumnType } from "@/components/workflow/jsonDatasetEditorModal";
 import { NodePropertyEditor } from "@/components/workflow/nodePropertyEditor";
 import { ScriptEditorModal } from "@/components/workflow/scriptEditorModal";
 import { SqlEditorModal } from "./sqlEditorModal";
 import WorkflowSelectModal from "@/components/workflow/workflowSelectModal";
-
-import type { ScriptNodeDesignData } from "./types/nodeTypes";
-import type { SqlNodeDesignData } from "./types/nodeTypes";
-import { Input, Button, Table } from "antd";
+import { Input, Button } from "antd";
+import type {
+  ScriptNodeDesignData,
+  SqlNodeDesignData,
+} from "./types/nodeTypes";
 
 interface NodePropertyPanelProps {
-  node: Node<any> | null;
-  nodes: Node<any>[];
-  scriptContents: string;
-  scriptTimeoutMs: number | 5000;
   workflowId: string | null;
-  workflowName: string;
-  workflowDescription: string;
-  onWorkflowUpdate?: (updates: {
-    workflowId?: string;
-    workflowName?: string;
-    workflowDescription?: string;
-  }) => void;
-  onNodeUpdate?: (id: string, updates: any) => void;
+  nodes: Node<any>[];
+  node: Node<any> | null;
+  onNodeUpdate: (id: string, updates: any) => void;
   openModal: (message: string) => void;
 }
 
 export const NodePropertyPanel: React.FC<NodePropertyPanelProps> = ({
-  node,
-  nodes,
-  scriptContents,
-  scriptTimeoutMs,
   workflowId,
-  workflowName,
-  workflowDescription,
-  onWorkflowUpdate,
+  nodes,
+  node,
   onNodeUpdate,
   openModal,
 }) => {
-  const [actionName, setActionName] = useState(node?.data.actionName || "");
-
-  // Inputs /Outputs
-  const [inputs, setInputs] = useState<NodeDataTable[]>(
-    node?.data.design?.inputs ?? []
-  );
-  const [outputs, setOutputs] = useState<NodeDataTable[]>(
-    node?.data.design?.outputs ?? []
-  );
-
   const [localLabel, setLocalLabel] = useState(node?.data.label ?? "");
-
-  // SCRIPT 노드
   const [localScriptContents, setLocalScript] = useState("");
   const [localScriptTimeoutMs, setLocalTimeoutMs] = useState(5000);
-  const [isScriptModalOpen, setIsScriptModalOpen] = useState(false);
 
-  // SQL 노드
-  const [localSqlStmt, setLocalSqlStmt] = useState("");
   const [localDBConnectionId, setLocalDBConnectionId] = useState("");
+  const [localSqlStmt, setLocalSqlStmt] = useState("");
   const [localSqlOutputTableName, setLocalSqlOutputTableName] = useState("");
-  const [isSqlModalOpen, setIsSqlModalOpen] = useState(false);
   const [sqlModalData, setSqlModalData] = useState<SqlNodeDesignData | null>(
     null
   );
 
-  // CALL 노드
+  const [isScriptModalOpen, setIsScriptModalOpen] = useState(false);
+  const [isSqlModalOpen, setIsSqlModalOpen] = useState(false);
   const [workflowSelectModalOpen, setWorkflowSelectModalOpen] = useState(false);
 
   const prevActionName = useRef<string>("");
 
-  const [loopCurrentValue, setCurrentIndex] = useState(
-    node?.data.design?.loopCurrentValue ?? 0
-  );
-
-  // 🧠 워크플로우 정보 변경 감지
-
-  useEffect(() => {
-    setLocalScript(scriptContents); // prop 변경 시 동기화
-  }, [scriptContents]);
-
-  useEffect(() => {
-    setLocalTimeoutMs(scriptTimeoutMs); // prop 변경 시 동기화
-  }, [scriptTimeoutMs]);
-
-  useEffect(() => {
-    setCurrentIndex(node?.data.design?.loopCurrentValue ?? 0);
-  }, [node?.data.design?.loopCurrentValue]);
-
-  // 🧠 노드 변경 시 입력/출력 초기화
+  // Node 변경 시 state 초기화
   useEffect(() => {
     if (!node) return;
 
-    setLocalLabel(node.data.label);
-    setActionName(node.data.actionName);
+    setLocalLabel(node.data.label ?? "");
 
-    const defaultInputs =
-      commmonFunctions.getDefaultInputs?.(node.data.actionName) ?? [];
-    const defaultOutputs =
-      commmonFunctions.getDefaultOutputs?.(node.data.actionName) ?? [];
-
-    if (
-      prevActionName.current !== node.data.actionName ||
-      !node.data.design?.inputs ||
-      node.data.design.inputs.length === 0
-    ) {
-      setInputs(defaultInputs);
-      setOutputs(defaultOutputs);
-      prevActionName.current = node.data.actionName;
-    } else {
-      setInputs(node.data.design.inputs);
-      setOutputs(node.data.design.outputs);
+    if (node.data.actionName === constants.workflowActions.SCRIPT) {
+      setLocalScript(node.data.design?.scriptContents ?? "");
+      setLocalTimeoutMs(node.data.design?.scriptTimeoutMs ?? 5000);
     }
-  }, [
-    node?.id,
-    node?.data.label,
-    node?.data.actionName,
-    node?.data.design?.inputs,
-    node?.data.design?.outputs,
-  ]);
 
-  // 🧠 노드 변경 시 SQL 노드 초기화
-  useEffect(() => {
-    if (node?.data?.actionName == constants.workflowActions.SQL) {
+    if (node.data.actionName === constants.workflowActions.SQL) {
       const design = node.data.design || {};
-
-      setActionName(node.data.actionName);
-
-      setLocalSqlStmt(design.sqlStmt || "");
-      setLocalDBConnectionId(design.dbConnectionId || "");
-      // setLocalMaxRows(design.maxRows ?? 0);
+      setLocalDBConnectionId(design.dbConnectionId ?? "");
+      setLocalSqlStmt(design.sqlStmt ?? "");
       setLocalSqlOutputTableName(design.outputTableName ?? "");
       setSqlModalData({
-        sqlStmt: design.sqlStmt || "",
-        dbConnectionId: design.dbConnectionId || "",
-        sqlParams: design.sqlParams || [],
-        // maxRows: design.maxRows ?? 0,
+        sqlStmt: design.sqlStmt ?? "",
+        dbConnectionId: design.dbConnectionId ?? "",
+        sqlParams: design.sqlParams ?? [],
         outputTableName: design.outputTableName ?? "",
       });
     }
-  }, [
-    node?.id,
-    node?.data.actionName,
-    node?.data.design?.sqlStmt,
-    node?.data.design?.dbConnectionId,
-    node?.data.design?.sqlParams,
-    // node?.data.design?.maxRows,
-    node?.data.design?.outputTableName,
-  ]);
+  }, [node]);
 
-  // ✅ 외부 nodes 배열이 바뀌면, 현재 node.id 에 해당하는 최신 데이터를 반영
+  // 외부 nodes 배열 변경 시
   useEffect(() => {
     if (!node) return;
     const latestNode = nodes.find((n) => n.id === node.id);
     if (!latestNode) return;
 
-    // inputs / outputs 동기화
-    setInputs(latestNode.data.design?.inputs ?? []);
-    setOutputs(latestNode.data.design?.outputs ?? []);
-
-    // loopCurrentValue 갱신
-    setCurrentIndex(
-      latestNode.data.run?.currentIndex ??
-        latestNode.data.design?.loopCurrentValue ??
-        0
-    );
-
-    // SCRIPT 노드
+    // SCRIPT 동기화
     if (latestNode.data.actionName === constants.workflowActions.SCRIPT) {
       setLocalScript(latestNode.data.design?.scriptContents ?? "");
       setLocalTimeoutMs(latestNode.data.design?.scriptTimeoutMs ?? 5000);
     }
 
-    // SQL 노드
+    // SQL 동기화
     if (latestNode.data.actionName === constants.workflowActions.SQL) {
       const design = latestNode.data.design || {};
-      setLocalSqlStmt(design.sqlStmt ?? "");
       setLocalDBConnectionId(design.dbConnectionId ?? "");
-      // setLocalMaxRows(d.maxRows ?? 0);
-      setLocalSqlOutputTableName(design.outputTableName);
+      setLocalSqlStmt(design.sqlStmt ?? "");
+      setLocalSqlOutputTableName(design.outputTableName ?? "");
       setSqlModalData({
         sqlStmt: design.sqlStmt ?? "",
         dbConnectionId: design.dbConnectionId ?? "",
         sqlParams: design.sqlParams ?? [],
-        // maxRows: d.maxRows ?? 0,
         outputTableName: design.outputTableName ?? "",
       });
     }
   }, [nodes]);
 
-  const showHelp = () => {
-    const apiGuid: string = `
-        clone: (obj: any): any => JSON.parse(JSON.stringify(obj)),
-        error: (message: any) => safeApi.log(message, "error"),
-        formatDate: (date: Date, fmt: string): string => date.toISOString(),
-        jsonParse: (str: string): any => JSON.parse(str),
-        jsonStringify: (obj: any): string => JSON.stringify(obj),
-        getGlobalVar: (path: string) => getByPath(workflowData, path),
-        getVar: (path: string) => getByPath(node, path),
-        info: (message: any) => safeApi.log(message, "info"),
-        log: (message: any, level: "info" | "warn" | "error" = "info"),
-        now: (): Date => new Date(),
-        postJson: async (url: string, body: any): Promise<any>,
-        random: (min: number = 0, max: number = 1): number,
-        sleep: (ms: number) => new Promise((r) => setTimeout(r, ms)),
-        setGlobalVar: (path: string, value: any),
-        setVar: (path: string, value: any) => setByPath(node, path, value),
-        sql: async (connectionId: string, sql: string, params?: any[]),
-        timestamp: (): number => Date.now(),
-        warn: (message: any) => safeApi.log(message, "warn"),
-    `;
-    openModal(apiGuid);
-  };
-
-  const handleSqlModalClose = () => {
-    setIsSqlModalOpen(false);
-  };
-
   const handleScriptModalConfirm = (data: ScriptNodeDesignData) => {
     if (!node) return;
     setLocalScript(data.scriptContents ?? "");
     setLocalTimeoutMs(data.scriptTimeoutMs ?? 0);
-    onNodeUpdate?.(node.id, {
+    onNodeUpdate(node.id, {
       design: {
-        // 스크립트 노드 정보
+        ...node.data.design,
         scriptContents: data.scriptContents,
         scriptTimeoutMs: data.scriptTimeoutMs,
       },
@@ -238,180 +112,112 @@ export const NodePropertyPanel: React.FC<NodePropertyPanelProps> = ({
     setIsScriptModalOpen(false);
   };
 
-  const handleSqlModalConfirm = (sqlNodeDesignData: SqlNodeDesignData) => {
+  const handleSqlModalConfirm = (data: SqlNodeDesignData) => {
     if (!node) return;
-    console.log("SQL Editor 저장:", sqlNodeDesignData);
+    setLocalDBConnectionId(data.dbConnectionId ?? "");
+    setLocalSqlStmt(data.sqlStmt ?? "");
+    setLocalSqlOutputTableName(data.outputTableName ?? "");
+    setSqlModalData(data);
 
-    // ① 모달 내부 값 state 저장 (옵션)
-    setSqlModalData(sqlNodeDesignData);
-    setLocalSqlStmt(sqlNodeDesignData.sqlStmt || "");
-    setLocalDBConnectionId(sqlNodeDesignData.dbConnectionId || "");
-    // setLocalMaxRows(sqlNodeDesignData.maxRows || 0);
-    setLocalSqlOutputTableName(sqlNodeDesignData.outputTableName || "");
-
-    // ② node.data.design 갱신
-    onNodeUpdate?.(node.id, {
+    onNodeUpdate(node.id, {
       design: {
         ...node.data.design,
-        dbConnectionId: sqlNodeDesignData.dbConnectionId,
-        sqlStmt: sqlNodeDesignData.sqlStmt,
-        sqlParams: sqlNodeDesignData.sqlParams,
-        // maxRows: sqlNodeDesignData.maxRows,
-        outputTableName: sqlNodeDesignData.outputTableName,
+        dbConnectionId: data.dbConnectionId,
+        sqlStmt: data.sqlStmt,
+        sqlParams: data.sqlParams,
+        outputTableName: data.outputTableName,
       },
     });
 
-    // ③ 모달 닫기
     setIsSqlModalOpen(false);
   };
 
+  // Branch Node
   const BranchNodeProperties = ({ node }: { node: Node<any> }) => {
-    if (!node) return null;
-    const { data } = node;
-    const [localCondition, setLocalCondition] = useState(
-      data.design?.condition || ""
+    const [mode, setMode] = useState(node.data.design?.mode ?? "Branch");
+    const [condition, setCondition] = useState(
+      node.data.design?.condition ?? ""
     );
-    const [localloopStartValue, setLocalloopStartValue] = useState(
-      data.design?.loopStartValue ?? 0
+    const [loopStartValue, setLoopStartValue] = useState(
+      node.data.design?.loopStartValue ?? 0
     );
-    const [localLoopStepValue, setLocalLoopStepValue] = useState(
-      data.design?.loopStepValue ?? 1
+    const [loopStepValue, setLoopStepValue] = useState(
+      node.data.design?.loopStepValue ?? 1
     );
-    const [localLoopLimitValue, setLocalLoopLimitValue] = useState(
-      data.design?.loopLimitValue ?? ""
+    const [loopLimitValue, setLoopLimitValue] = useState(
+      node.data.design?.loopLimitValue ?? ""
     );
+    const loopCurrentValue = node.data.design?.loopCurrentValue ?? 0;
 
     useEffect(() => {
-      setLocalCondition(data.design?.condition ?? "");
-      setLocalloopStartValue(data.design?.loopStartValue ?? 0);
-      setLocalLoopStepValue(data.design?.loopStepValue ?? 1);
-      setLocalLoopLimitValue(data.design?.loopLimitValue ?? "");
-    }, [data.design]);
+      setMode(node.data.design?.mode ?? "Branch");
+      setCondition(node.data.design?.condition ?? "");
+      setLoopStartValue(node.data.design?.loopStartValue ?? 0);
+      setLoopStepValue(node.data.design?.loopStepValue ?? 1);
+      setLoopLimitValue(node.data.design?.loopLimitValue ?? "");
+    }, [node]);
 
-    // ✅ design 안에 안전하게 저장
-    const handleBranchNodeChange = (
-      key: keyof typeof node.data.design,
-      value: any,
-      isModeChange = false
-    ) => {
-      let newDesign;
-
-      isModeChange = key === "mode";
-
-      if (isModeChange) {
-        // 모드 변경 시: 화면상의 값 기반으로 완전히 새 design 생성
-        if (value == "Branch") {
-          newDesign = {
-            mode: value, // 변경된 모드
-            condition: node.data.design.condition,
-          };
-        }
-        if (value == "Loop") {
-          newDesign = {
-            mode: value, // 변경된 모드
-            loopStartValue: node.data.design.loopStartValue,
-            loopStepValue: node.data.design.loopStepValue,
-            loopLimitValue: node.data.design.loopLimitValue,
-            loopCurrentValue: node.data.design.loopCurrentValue,
-          };
-        }
-      } else {
-        // 단순 값 변경 시: 기존 design에 변경 값만 덮어쓰기
-        newDesign = {
-          ...node.data.design,
-          [key]: value,
-        };
-      }
-
-      // 업데이트
-      onNodeUpdate?.(node.id, { design: newDesign });
+    const handleChange = (key: string, value: any) => {
+      const newDesign = { ...node.data.design, [key]: value };
+      onNodeUpdate(node.id, { design: newDesign });
     };
 
-    const isLoopMode =
-      data.design?.mode === constants.workflowBranchNodeMode.Loop;
-    const isConditionMode =
-      data.design?.mode === constants.workflowBranchNodeMode.Branch;
-
     return (
-      <div className="mt-5 flex flex-col">
-        <h3>Branch Node Properties</h3>
-        <div className="flex flex-row space-x-1">
-          <label className="mt-2">Mode</label>
+      <div className="border p-3 rounded shadow-sm semi-text-bg-color mt-4">
+        <h3 className="font-semibold mb-2">Branch Node</h3>
+        <div className="flex items-center space-x-2 mb-2">
+          <label>Mode:</label>
           <select
-            className="ml-1 mt-2 flex-1 text-center"
-            value={data.design?.mode || "none"}
-            onChange={(e) => handleBranchNodeChange("mode", e.target.value)}
+            className="w-1/2 text-center"
+            value={mode}
+            onChange={(e) => {
+              setMode(e.target.value);
+              handleChange("mode", e.target.value);
+            }}
           >
-            <option value="none">선택하세요</option>
-            <option value={constants.workflowBranchNodeMode.Branch}>
-              분기 (Branch)
-            </option>
-            <option value={constants.workflowBranchNodeMode.Loop}>
-              반복 (Loop)
-            </option>
+            <option value="Branch">Branch</option>
+            <option value="Loop">Loop</option>
           </select>
         </div>
 
-        {isConditionMode && (
-          <div className="flex flex-col">
-            <label className="mt-2">Condition Expression</label>
+        {mode === "Branch" && (
+          <div className="flex flex-col mb-2">
+            <label>Condition:</label>
             <textarea
-              value={localCondition} // ✅ 로컬 상태 사용
-              onChange={(e) => setLocalCondition(e.target.value)} // ✅ 타이핑 시 로컬 상태만 변경
-              onBlur={() => handleBranchNodeChange("condition", localCondition)} // ✅ 포커스 떠날 때 부모에 저장
-              placeholder="예: workflow.value > 5"
+              value={condition}
+              onChange={(e) => setCondition(e.target.value)}
+              onBlur={() => handleChange("condition", condition)}
+              rows={3}
             />
           </div>
         )}
 
-        {isLoopMode && (
-          <div className="flex flex-col">
-            <div className="flex flex-row mt-2 space-x-3">
-              <label>Start</label>
+        {mode === "Loop" && (
+          <div className="flex flex-col mb-2">
+            <div className="flex space-x-2 mb-1">
+              <label>Start:</label>
               <input
-                className="flex text-center w-full ml-2"
                 type="number"
-                value={localloopStartValue}
-                onChange={(e) => setLocalloopStartValue(Number(e.target.value))}
-                onBlur={() =>
-                  handleBranchNodeChange("loopStartValue", localloopStartValue)
-                }
+                value={loopStartValue}
+                onChange={(e) => setLoopStartValue(Number(e.target.value))}
+                onBlur={() => handleChange("loopStartValue", loopStartValue)}
               />
-              <label>Step</label>
+              <label>Step:</label>
               <input
-                className="flex text-center w-full ml-2"
                 type="number"
-                value={localLoopStepValue}
-                onChange={(e) => setLocalLoopStepValue(Number(e.target.value))}
-                onBlur={() =>
-                  handleBranchNodeChange("loopStepValue", localLoopStepValue)
-                }
+                value={loopStepValue}
+                onChange={(e) => setLoopStepValue(Number(e.target.value))}
+                onBlur={() => handleChange("loopStepValue", loopStepValue)}
               />
             </div>
-
-            <div className="flex flex-col mt-2">
-              <label>Limit</label>
-              <textarea
-                className="w-full h-full text-left"
-                value={localLoopLimitValue}
-                rows={3}
-                onChange={(e) => setLocalLoopLimitValue(e.target.value)}
-                onBlur={() =>
-                  handleBranchNodeChange("loopLimitValue", localLoopLimitValue)
-                }
-                placeholder="숫자 또는 JS 표현식 입력"
-              />
-            </div>
-            <small className="w-full text-center semi-text-bg-color">
-              ※ Ex) <code>${"{workflow.items.length}"}</code>
-            </small>
-
-            <div style={{ marginTop: 8 }}>
-              Current Index : <b>{loopCurrentValue}</b>
-            </div>
-            <small className="w-full text-center semi-text-bg-color">
-              ※ (Start ≤ Current &lt; Limit)
-            </small>
+            <label>Limit:</label>
+            <textarea
+              value={loopLimitValue}
+              onChange={(e) => setLoopLimitValue(e.target.value)}
+              onBlur={() => handleChange("loopLimitValue", loopLimitValue)}
+              rows={2}
+            />
+            <div>Current Index: {loopCurrentValue}</div>
           </div>
         )}
       </div>
@@ -420,29 +226,23 @@ export const NodePropertyPanel: React.FC<NodePropertyPanelProps> = ({
 
   const ScriptNodeProperties = ({ node }: { node: Node<any> }) => {
     return (
-      <div className="flex flex-col mt-5">
-        <h3>Script Node Editor</h3>
-        <label className="mt-2">Script Preview:</label>
+      <div className="border p-3 rounded shadow-sm semi-text-bg-color mt-4">
+        <h3 className="font-semibold mb-2">Script Node</h3>
         <textarea
           readOnly
           value={localScriptContents}
           rows={5}
-          className="w-full border p-2 mt-1"
+          className="w-full border rounded px-2 py-1 mb-2"
         />
-        <div className="flex flex-col mt-2">
-          <div className="flex space-x-2 mt-2">
-            <label className="border">Timeout (ms):</label>
-            <input
-              type="number"
-              className="border w-[50px] text-center"
-              value={localScriptTimeoutMs}
-              readOnly
-            />
-          </div>
-          <Button
-            className="general-text-bg-color border border-black rounded mt-2 px-2 w-[100px]"
-            onClick={() => setIsScriptModalOpen(true)}
-          >
+        <div className="flex items-center space-x-2">
+          <label>Timeout (ms):</label>
+          <input
+            type="number"
+            readOnly
+            value={localScriptTimeoutMs}
+            className="border rounded px-2 py-1 w-[80px] text-center"
+          />
+          <Button onClick={() => setIsScriptModalOpen(true)}>
             Edit Script
           </Button>
         </div>
@@ -452,74 +252,57 @@ export const NodePropertyPanel: React.FC<NodePropertyPanelProps> = ({
 
   const SqlNodeProperties = ({ node }: { node: Node<any> }) => {
     return (
-      <div className="flex flex-col mt-5">
-        <h3>Sql Node Editor</h3>
-        <label className="mt-2">Database:</label>
+      <div className="border p-3 rounded shadow-sm semi-text-bg-color mt-4">
+        <h3 className="font-semibold mb-2">SQL Node</h3>
+        <label>Database:</label>
         <input
           type="text"
-          className="border px-2 py-1 w-full"
-          value={localDBConnectionId}
           readOnly
+          value={localDBConnectionId}
+          className="w-full border rounded px-2 py-1 mb-2"
         />
-        <label>Sql Preview:</label>
+        <label>SQL Statement:</label>
         <textarea
           readOnly
           value={localSqlStmt}
           rows={5}
-          className="w-full border p-2 font-mono"
+          className="w-full border rounded px-2 py-1 mb-2 font-mono"
         />
-        <div className="flex flex-row space-x-1">
-          <Button
-            className="mt-1 px-3 py-1 general-text-bg-color border border-black rounded"
-            onClick={() => {
-              setSqlModalData({
-                sqlStmt: localSqlStmt,
-                dbConnectionId: localDBConnectionId,
-                sqlParams: node.data.design?.sqlParams ?? [], // 최신값 보장
-                // maxRows: localSqlMaxRows,
-                outputTableName: localSqlOutputTableName,
-              });
-              setIsSqlModalOpen(true);
-            }}
-          >
-            Edit Sql
-          </Button>
-          <div className="flex flex-col">
-            {/* <div className="flex flex-row mt-1">
-              <label className="mt-2">Max Rows</label>
-              <input
-                type="number"
-                className="border px-2 py-1 w-[100px]"
-                value={localSqlMaxRows}
-                readOnly
-              />
-            </div> */}
-            <div className="flex flex-row mt-2"></div>
-            <label>Output Table</label>
-            <input
-              type="text"
-              className="border px-1 py-1"
-              value={localSqlOutputTableName}
-              readOnly
-            />
-          </div>
-        </div>
+        <label>Output Table:</label>
+        <input
+          type="text"
+          readOnly
+          value={localSqlOutputTableName}
+          className="w-full border rounded px-2 py-1 mb-2"
+        />
+        <Button
+          onClick={() => {
+            setSqlModalData({
+              sqlStmt: localSqlStmt,
+              dbConnectionId: localDBConnectionId,
+              sqlParams: node.data.design?.sqlParams ?? [],
+              outputTableName: localSqlOutputTableName,
+            });
+            setIsSqlModalOpen(true);
+          }}
+        >
+          Edit SQL
+        </Button>
       </div>
     );
   };
 
-  const CallNodeProperties = ({ node, onNodeUpdate }: any) => {
-    const [selectedWorkflowId, setSelectedWorkflowId] = useState<string>(
-      node.data.design?.targetWorkflowId || ""
+  const CallNodeProperties = ({ node }: { node: Node<any> }) => {
+    const [selectedWorkflowId, setSelectedWorkflowId] = useState(
+      node.data.design?.targetWorkflowId ?? ""
     );
-
     const handleSelectWorkflow = (workflow: any) => {
       if (workflow.id === workflowId) {
         openModal(constants.messages.WORKFLOW_INVALID_SELF_CALL);
+        return;
       }
-
       setSelectedWorkflowId(workflow.id);
-      onNodeUpdate?.(node.id, {
+      onNodeUpdate(node.id, {
         design: {
           ...node.data.design,
           targetWorkflowId: workflow.id,
@@ -529,103 +312,88 @@ export const NodePropertyPanel: React.FC<NodePropertyPanelProps> = ({
     };
 
     return (
-      <>
-        <Button
-          onClick={() => setWorkflowSelectModalOpen(true)}
-          className="p-2 rounded-md medium-text-bg-color"
-        >
-          Select ...
+      <div className="border p-3 rounded shadow-sm semi-text-bg-color mt-4">
+        <h3 className="font-semibold mb-2">Call Node</h3>
+        <Button onClick={() => setWorkflowSelectModalOpen(true)}>
+          Select Workflow...
         </Button>
-        <div className="flex flex-col gap-3 mt-2">
-          <label className="text-sm font-semibold">
-            Target Workflow: {selectedWorkflowId}
-          </label>
-          {/* 워크플로우 선택 모달 */}
-          <WorkflowSelectModal
-            open={workflowSelectModalOpen}
-            onClose={() => setWorkflowSelectModalOpen(false)}
-            onSelect={handleSelectWorkflow}
-          />
-        </div>
-      </>
+        <div>Selected Workflow: {selectedWorkflowId}</div>
+        <WorkflowSelectModal
+          open={workflowSelectModalOpen}
+          onClose={() => setWorkflowSelectModalOpen(false)}
+          onSelect={handleSelectWorkflow}
+        />
+      </div>
     );
   };
 
-  // 🧩 실제 렌더링
-  return (
-    <div className="w-auto">
-      <div className="">
-        {/* Node Property Editor */}
-        {node && (
-          <div>
-            <NodePropertyEditor
-              node={node}
-              onNodeUpdate={(id, updates) => {
-                onNodeUpdate?.(id, updates);
-              }}
-              openModal={openModal}
-            />
-            {/* 🏷️ Node Label Editor */}
-            {node && (
-              <div className="my-4">
-                <label className="block text-sm mb-1">Label</label>
-                <input
-                  type="text"
-                  className="border rounded px-2 py-1 w-full"
-                  value={localLabel}
-                  onChange={(e) => {
-                    const v = e.target.value;
-                    setLocalLabel(v); // UI 즉시 반영
-
-                    // 부모에 안전하게 현재 data 전체를 포함해서 보냄
-                    onNodeUpdate?.(node.id, {
-                      data: {
-                        ...(node.data ?? {}),
-                        label: v,
-                      },
-                    });
-                  }}
-                  placeholder="노드 이름을 입력하세요"
-                />
-              </div>
-            )}
-          </div>
-        )}
-        {node && node.data.actionName === constants.workflowActions.SCRIPT && (
-          <ScriptNodeProperties node={node} />
-        )}
-        {isScriptModalOpen && (
-          <ScriptEditorModal
-            open={isScriptModalOpen}
-            scriptContents={localScriptContents}
-            scriptTimeoutMs={localScriptTimeoutMs}
-            onConfirm={handleScriptModalConfirm}
-            onClose={() => setIsScriptModalOpen(false)}
-            onHelp={() => showHelp()}
-          />
-        )}
-        {node && node.data.actionName === constants.workflowActions.SQL && (
-          <SqlNodeProperties node={node} />
-        )}
-        {isSqlModalOpen && sqlModalData && (
-          <SqlEditorModal
-            open={isSqlModalOpen}
-            initialDbConnectionId={sqlModalData.dbConnectionId}
-            initialSqlStmt={sqlModalData.sqlStmt}
-            initialParams={sqlModalData.sqlParams}
-            // initialMaxRows={sqlModalData.maxRows}
-            initialOutputTableName={sqlModalData.outputTableName}
-            onConfirm={handleSqlModalConfirm}
-            onClose={handleSqlModalClose}
-          />
-        )}
-        {node && node.data.actionName === constants.workflowActions.BRANCH && (
-          <BranchNodeProperties node={node} />
-        )}
-        {node && node.data.actionName === constants.workflowActions.CALL && (
-          <CallNodeProperties node={node} onNodeUpdate={onNodeUpdate} />
-        )}
+  if (!node)
+    return (
+      <div className="p-4 semi-text-bg-color">
+        Select a node to see its properties.
       </div>
+    );
+
+  return (
+    <div className="w-full max-w-[450px] p-4 space-y-4 semi-text-bg-color">
+      {/* NodePropertyEditor */}
+      <NodePropertyEditor
+        node={node}
+        onNodeUpdate={onNodeUpdate}
+        openModal={openModal}
+      />
+
+      {/* Label Editor */}
+      <div className="border p-3 rounded shadow-sm semi-text-bg-color">
+        <label className="block font-semibold mb-1">Label</label>
+        <input
+          type="text"
+          value={localLabel}
+          onChange={(e) => {
+            const v = e.target.value;
+            setLocalLabel(v);
+            onNodeUpdate(node.id, { data: { ...node.data, label: v } });
+          }}
+          className="w-full border rounded px-2 py-1"
+        />
+      </div>
+
+      {/* Node type-specific */}
+      {node.data.actionName === constants.workflowActions.SCRIPT && (
+        <ScriptNodeProperties node={node} />
+      )}
+      {node.data.actionName === constants.workflowActions.SQL && (
+        <SqlNodeProperties node={node} />
+      )}
+      {node.data.actionName === constants.workflowActions.BRANCH && (
+        <BranchNodeProperties node={node} />
+      )}
+      {node.data.actionName === constants.workflowActions.CALL && (
+        <CallNodeProperties node={node} />
+      )}
+
+      {/* Modals */}
+      {isScriptModalOpen && (
+        <ScriptEditorModal
+          open={isScriptModalOpen}
+          scriptContents={localScriptContents}
+          scriptTimeoutMs={localScriptTimeoutMs}
+          onConfirm={handleScriptModalConfirm}
+          onClose={() => setIsScriptModalOpen(false)}
+          onHelp={() => openModal("Script API Help")}
+        />
+      )}
+      {isSqlModalOpen && sqlModalData && (
+        <SqlEditorModal
+          open={isSqlModalOpen}
+          initialDbConnectionId={sqlModalData.dbConnectionId}
+          initialSqlStmt={sqlModalData.sqlStmt}
+          initialParams={sqlModalData.sqlParams}
+          initialOutputTableName={sqlModalData.outputTableName}
+          onConfirm={handleSqlModalConfirm}
+          onClose={() => setIsSqlModalOpen(false)}
+        />
+      )}
     </div>
   );
 };
