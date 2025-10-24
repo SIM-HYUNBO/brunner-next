@@ -7,7 +7,11 @@ import type { Connection, Edge, Node, NodeChange, EdgeChange } from "reactflow";
 import * as commonData from "@/components/core/commonData";
 import * as commonFunctions from "@/components/core/commonFunctions";
 import { DBConnectionManager } from "@/pages/api/biz/workflow/dbConnectionManager";
-import type { DBConnectionConfig, DBType } from "./dbConnectionManager";
+import type {
+  DBConnectionConfig,
+  DBConnectionPool,
+  DBType,
+} from "./dbConnectionManager";
 
 import type { PoolClient } from "pg";
 import type { PoolConnection } from "mysql2/promise";
@@ -574,13 +578,14 @@ export function registerBuiltInActions(): void {
 
       const dbManager = DBConnectionManager.getInstance();
 
-      const dbConfig = await dbManager.get(dbConnectionId);
-      if (!dbConfig)
+      const dbConnectionPool: DBConnectionPool | null =
+        await dbManager.getDBConnectionPool(dbConnectionId);
+      if (!dbConnectionPool)
         throw new Error(
           `${constants.messages.NO_DATA_FOUND}: ${dbConnectionId}`
         );
 
-      const dbType = dbConfig.type;
+      const dbType = dbConnectionPool.type;
 
       let connection: any = null;
       let rows: any = null;
@@ -610,7 +615,11 @@ export function registerBuiltInActions(): void {
               workflowData
             );
             const result = await connection.dbConnection.query(sql, params);
-            rows = result.rows;
+            if (result.command === "SELECT") {
+              rows = result.rows;
+            } else if (result.rowCount) {
+              rows = [{ rowCount: result.rowCount }];
+            }
             break;
           }
 
@@ -656,7 +665,7 @@ export function registerBuiltInActions(): void {
 
         //  결과  저장
         node.data.run.outputs = {};
-        node.data.run.outputs[outputTableName] = rows;
+        if (rows) node.data.run.outputs[outputTableName] = rows;
 
         console.log(
           `[SQL_NODE] ${connection.type.toUpperCase()} 쿼리 실행 완료`
@@ -671,15 +680,22 @@ export function registerBuiltInActions(): void {
       } finally {
         // ✅ 커넥션 반환
         if (connection.dbConnection) {
+          var releaseResult = null;
           try {
-            if (
-              dbType === constants.dbType.mysql ||
-              dbType === constants.dbType.postgres
-            )
-              connection.dbConnection.release();
-            else if (dbType === constants.dbType.oracle)
-              await connection.dbConnection.close();
-            // mssql은 풀로 관리되므로 별도 close 없음
+            switch (dbType) {
+              case constants.dbType.mysql:
+              case constants.dbType.postgres:
+                releaseResult = await connection.dbConnection.release();
+                break;
+              case constants.dbType.oracle:
+                releaseResult = await connection.dbConnection.close();
+                break;
+              case constants.dbType.mssql:
+                // mssql은 풀로 관리되므로 별도 close 없음
+                break;
+              default:
+                throw new Error(constants.messages.NOT_SUPPORTED_DB_TYPE);
+            }
           } catch (closeErr) {
             console.warn("Connection close error:", closeErr);
           }
@@ -765,16 +781,20 @@ export function registerBuiltInActions(): void {
             loopLimitValue = 0;
           }
 
-          const loopCurrentValue = design.loopCurrentValue ?? loopStartValue;
+          var loopCurrentValue =
+            design.loopCurrentValue ?? loopStartValue - loopStepValue;
+
+          // 다음 반복 인덱스 저장
+          loopCurrentValue = loopCurrentValue + loopStepValue;
+
           node.data.design.loopCurrentValue = loopCurrentValue;
+          // node.data.design.loopCurrentValue = loopCurrentValue;
 
           if (loopCurrentValue < loopLimitValue) {
             node.data.run.selectedPort = "true";
-            // 다음 반복 인덱스 저장
-            node.data.design.loopCurrentValue =
-              loopCurrentValue + loopStepValue;
           } else {
             node.data.run.selectedPort = "false"; // 루프 종료 후 다음 노드
+            loopCurrentValue = -1;
             node.data.design.loopCurrentValue = undefined;
           }
 
@@ -823,6 +843,7 @@ function convertNamedParams(
   let sql = sqlStmt;
   let params: any[] = [];
 
+  // 입력한 파라미터 값이 바인딩 변수인지 아닌지 확인 후 변수값 매핑
   function resolveParam(p: { binding?: string; value?: any }): any {
     if (p.binding) {
       let bindingStr = p.binding;
@@ -974,46 +995,50 @@ export class TransactionNode {
         continue;
       }
 
-      // ③ 새 연결 생성
-      const pool = dbManager.getPool(connectionId);
+      try {
+        // ③ 새 연결 생성
+        const pool = dbManager.getPool(connectionId).pool;
 
-      switch (dbType) {
-        case constants.dbType.postgres:
-          connection = await pool.connect();
-          await connection.query("BEGIN");
-          break;
+        switch (dbType) {
+          case constants.dbType.postgres:
+            connection = await pool.connect();
+            await connection.query("BEGIN");
+            break;
 
-        case constants.dbType.mysql:
-          connection = await pool.getConnection();
-          await connection.beginTransaction();
-          break;
+          case constants.dbType.mysql:
+            connection = await pool.getConnection();
+            await connection.beginTransaction();
+            break;
 
-        case constants.dbType.mssql:
-          connection = pool; // MSSQL은 풀 그대로 사용
-          await connection.request().query("BEGIN TRANSACTION");
-          break;
+          case constants.dbType.mssql:
+            connection = pool; // MSSQL은 풀 그대로 사용
+            await connection.request().query("BEGIN TRANSACTION");
+            break;
 
-        case constants.dbType.oracle:
-          connection = await pool.getConnection();
-          await connection.execute("BEGIN");
-          break;
+          case constants.dbType.oracle:
+            connection = await pool.getConnection();
+            await connection.execute("BEGIN");
+            break;
 
-        default:
-          throw new Error(`Unsupported DBType: ${dbType}`);
+          default:
+            throw new Error(`Unsupported DBType: ${dbType}`);
+        }
+
+        // pools에서 name 가져오기
+        const poolInfo = dbManager.list().find((c) => c.id === connectionId);
+        if (poolInfo) connectionName = poolInfo.name;
+
+        this.txContexts.set(connectionId, {
+          connectionId,
+          connectionName,
+          dbType,
+          dbConnection: connection,
+          mode: "BUSINESS",
+          isDistributed: false,
+        });
+      } catch (Error) {
+        logger.error(Error);
       }
-
-      // pools에서 name 가져오기
-      const poolInfo = dbManager.list().find((c) => c.id === connectionId);
-      if (poolInfo) connectionName = poolInfo.name;
-
-      this.txContexts.set(connectionId, {
-        connectionId,
-        connectionName,
-        dbType,
-        dbConnection: connection,
-        mode: "BUSINESS",
-        isDistributed: false,
-      });
     }
   }
 

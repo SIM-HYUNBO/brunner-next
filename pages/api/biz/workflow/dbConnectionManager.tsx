@@ -422,7 +422,9 @@ export class DBConnectionManager {
     return result;
   }
 
-  async get(idOrName: string) {
+  async getDBConnectionPool(
+    idOrName: string
+  ): Promise<DBConnectionPool | null> {
     // UUID 형식 판별 (v1~v5)
     const isUUID =
       /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(
@@ -453,18 +455,18 @@ export class DBConnectionManager {
     if (!config) return null;
 
     // ✅ 실제 연결 풀에서 가져오기
-    const pool = this.getPool(config.id);
-    if (!pool) return null;
+    const pool: DBConnectionPool = this.getPool(config.id);
 
-    return pool; // 실제 DB 연결 풀 반환
+    return pool;
   }
 
   public getPool(id: string): any {
-    const info = this.pools.get(id);
-    if (!info || !info.pool) throw new Error("Pool not found");
+    const pool: DBConnectionPool | undefined = this.pools.get(id);
+    if (!pool || !pool.pool) throw new Error("Pool not found");
 
-    return info.pool;
+    return pool;
   }
+
   public getDBType(connectionId: string): DBType {
     const info = this.pools.get(connectionId);
     if (!info) throw new Error("DB not found");

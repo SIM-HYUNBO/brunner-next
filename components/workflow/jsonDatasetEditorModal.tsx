@@ -24,7 +24,39 @@ const CellEditor: React.FC<{
   onUpdate: (newValue: any) => void;
   autoFocus?: boolean;
 }> = ({ initialValue, colType, onUpdate, autoFocus }) => {
-  const [cellValue, setCellValue] = useState(String(initialValue));
+  const formatValue = (value: any) => {
+    // ISO 문자열이면 Date로 변환 후 로컬 시간으로 포맷
+    if (
+      typeof value === "string" &&
+      /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{3}Z$/.test(value)
+    ) {
+      const date = new Date(value);
+
+      const pad = (num: number, size = 2) => String(num).padStart(size, "0");
+      const pad3 = (num: number) => String(num).padStart(3, "0");
+
+      const year = date.getFullYear();
+      const month = pad(date.getMonth() + 1);
+      const day = pad(date.getDate());
+      const hour = pad(date.getHours());
+      const min = pad(date.getMinutes());
+      const sec = pad(date.getSeconds());
+      const ms = pad3(date.getMilliseconds());
+
+      // 브라우저 로컬 타임존 오프셋
+      const offsetMinutes = -date.getTimezoneOffset(); // getTimezoneOffset는 UTC 기준
+      const sign = offsetMinutes >= 0 ? "+" : "-";
+      const offsetHours = pad(Math.floor(Math.abs(offsetMinutes) / 60));
+      const offsetMins = pad(Math.abs(offsetMinutes) % 60);
+      const offsetStr = `${sign}${offsetHours}${offsetMins}`;
+
+      return `${year}-${month}-${day} ${hour}:${min}:${sec}.${ms} ${offsetStr}`;
+    }
+
+    return String(value);
+  };
+
+  const [cellValue, setCellValue] = useState(formatValue(initialValue));
   const inputRef = useRef<HTMLInputElement | HTMLSelectElement>(null);
 
   useEffect(() => {
@@ -348,7 +380,7 @@ export const JsonDatasetEditorModal: React.FC<JsonDatasetEditorModalProps> = ({
         setColumnWidths((prev) => ({
           ...prev,
           [resizeColStart.current!.colName]: Math.max(
-            minColWidth,
+            50, // 최소폭을 좀 더 작게
             resizeColStart.current!.startWidth + dx
           ),
         }));
@@ -508,7 +540,7 @@ export const JsonDatasetEditorModal: React.FC<JsonDatasetEditorModalProps> = ({
         {/* Header */}
         <div className="flex semi-text-bg-color border-b select-none">
           <div
-            className=" flex items-center justify-center text-center"
+            className="flex items-center justify-center text-center px-15"
             style={{ width: minColWidth }}
           >
             # (of {rows.length})
@@ -516,7 +548,7 @@ export const JsonDatasetEditorModal: React.FC<JsonDatasetEditorModalProps> = ({
           {columns.map((col: any) => (
             <div
               key={col.name}
-              className="border px-5 flex text-center justify-center items-center"
+              className="border px-15 flex text-center justify-center items-center"
               style={{
                 width: columnWidths[col.name] || 150,
                 minWidth: minColWidth,
@@ -524,12 +556,12 @@ export const JsonDatasetEditorModal: React.FC<JsonDatasetEditorModalProps> = ({
             >
               <span className="flex-1">{col.name}</span>
               <div
-                className="w-1 h-full cursor-col-resize semi-text-bg-color"
+                className="w-3 h-full cursor-col-resize medium-text-bg-color"
                 onMouseDown={(e) => startResizeCol(e, col.name)}
               />
             </div>
           ))}
-          <div className="border px-2 py-1">Action</div>
+          <div className="border px-15 py-1">Action</div>
         </div>
 
         {/* Body */}

@@ -222,25 +222,6 @@ export const NodePropertyPanel: React.FC<NodePropertyPanelProps> = ({
     openModal(apiGuid);
   };
 
-  // 🧩 유틸: 컬럼 타입 추론
-  const inferColumns = (data: any) => {
-    const firstRow = Array.isArray(data) && data.length > 0 ? data[0] : {};
-    return Object.entries(firstRow).map(([key, value]) => {
-      let type: "string" | "number" | "boolean" | "object" = "string";
-      if (typeof value === "number") type = "number";
-      else if (typeof value === "boolean") type = "boolean";
-      else if (typeof value === "object" && value !== null) type = "object";
-      return { key, type, value };
-    });
-  };
-
-  // 🧩 컬럼 타입 정규화
-  const normalizeColumnType = (type: string): DatasetColumn["type"] => {
-    return ["string", "number", "boolean"].includes(type)
-      ? (type as DatasetColumn["type"])
-      : "string";
-  };
-
   const handleSqlModalClose = () => {
     setIsSqlModalOpen(false);
   };
@@ -647,74 +628,6 @@ export const NodePropertyPanel: React.FC<NodePropertyPanelProps> = ({
           <CallNodeProperties node={node} onNodeUpdate={onNodeUpdate} />
         )}
       </div>
-
-      {/* ✅ Input Modal */}
-      {/* {isInputModalOpen && (
-        <JsonDatasetEditorModal
-          open={isInputModalOpen}
-          title="Input Data"
-          mode="schema"
-          value={inputs.reduce((acc, table) => {
-            acc[table.table] = table.columns.map((col) => ({
-              key: col.key,
-              type: col.type as JsonColumnType,
-            }));
-            return acc;
-          }, {} as Record<string, DatasetColumn[]>)}
-          onConfirm={(newSchema) => {
-            const newInputsArray: NodeDataTable[] = Object.entries(
-              newSchema
-            ).map(([table, data]) => ({
-              table,
-              columns: inferColumns(data),
-              rows: Array.isArray(data) ? data : [],
-            }));
-
-            setInputs(newInputsArray);
-            setIsInputModalOpen(false);
-
-            if (node)
-              onNodeUpdate?.(node.id, {
-                design: { inputs: newInputsArray, outputs },
-              });
-          }}
-          onCancel={() => setIsInputModalOpen(false)}
-        />
-      )} */}
-
-      {/* ✅ Output Modal */}
-      {/* {isOutputModalOpen && (
-        <JsonDatasetEditorModal
-          open={isOutputModalOpen}
-          title="Output Data"
-          mode="schema"
-          value={outputs.reduce((acc, table) => {
-            acc[table.table] = table.columns.map((col) => ({
-              key: col.key,
-              type: col.type as JsonColumnType,
-            }));
-            return acc;
-          }, {} as Record<string, DatasetColumn[]>)}
-          onConfirm={(newSchema) => {
-            const newOutputsArray: NodeDataTable[] = Object.entries(
-              newSchema
-            ).map(([table, data]) => ({
-              table,
-              columns: inferColumns(data),
-              rows: Array.isArray(data) ? data : [],
-            }));
-
-            setOutputs(newOutputsArray);
-            setIsOutputModalOpen(false);
-
-            if (node)
-              onNodeUpdate?.(node.id, {
-                design: { inputs, outputs: newOutputsArray },
-              });
-          }}
-          onCancel={() => setIsOutputModalOpen(false)}
-        />
-      )} */}
     </div>
   );
 };
