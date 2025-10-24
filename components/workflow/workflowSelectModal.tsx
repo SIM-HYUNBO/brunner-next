@@ -131,7 +131,9 @@ const WorkflowSelectModal: React.FC<WorkflowSelectModalProps> = ({
           onMouseDown={handleMouseDown}
         >
           <h4 className="text-lg select-none">Select workflow</h4>
-          <Button onClick={onClose}>✕</Button>
+          <Button className="semi-text-bg-color" onClick={onClose}>
+            ✕
+          </Button>
         </div>
 
         {/* 본문 */}
@@ -179,17 +181,17 @@ const WorkflowSelectModal: React.FC<WorkflowSelectModalProps> = ({
         {/* 푸터 */}
         <div className="flex justify-end gap-2 border-t px-5 py-3">
           <Button
+            onClick={handleSelect}
+            disabled={!selected}
+            className="general-text-bg-color px-4 py-2 text-sm rounded-md"
+          >
+            Select
+          </Button>{" "}
+          <Button
             onClick={onClose}
             className="semi-text-bg-color px-4 py-2 text-sm rounded-md"
           >
             Cancel
-          </Button>
-          <Button
-            onClick={handleSelect}
-            disabled={!selected}
-            className="px-4 py-2 text-sm rounded-md general-text-bg-color"
-          >
-            Select
           </Button>
         </div>
       </div>

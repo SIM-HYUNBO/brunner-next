@@ -90,7 +90,7 @@ export function TabbedWorkflowEditor() {
                 {tab.workflowName}
               </Button>
               <Button
-                className="px-2 text-red-500 font-bold"
+                className="px-2 semi-text-bg-color"
                 onClick={() => handleCloseTab(tab.id)}
               >
                 ×
