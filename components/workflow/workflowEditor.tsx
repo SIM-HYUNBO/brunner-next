@@ -36,6 +36,8 @@ import * as userInfo from "@/components/core/client/frames/userInfo";
 import { v4 as uuidv4 } from "uuid";
 import WorkflowSelector from "./workflowSelector";
 import * as commonFunctions from "@/components/core/commonFunctions";
+import * as commonData from "../core/commonData";
+
 import {
   Accordion,
   AccordionItem,
@@ -45,11 +47,22 @@ import {
 import { WorkflowDataModal } from "./workflowDataModal";
 import BranchNode from "./customNode/branchNode";
 interface WorkflowEditorProps {
-  workflowId?: string;
-  initialNodes?: Node<ActionNodeData>[];
-  initialEdges?: Edge<ConditionEdgeData>[];
-  onWorkflowIDNameChange?: (newId: string, newName: string) => void;
+  key: string;
+  workflow: {
+    workflowId: string;
+    workflowName: string;
+    nodes: Node<commonData.ActionNodeData>[];
+    edges: Edge<commonData.ConditionEdgeData>[];
+  };
   openModal?: (msg: string) => void; // 필요하면 타입 정의
+  onWorkflowChange?: (workflow: {
+    workflowId: string;
+    workflowName: string;
+    editorState: {
+      nodes: Node<commonData.ActionNodeData>[];
+      edges: Edge<commonData.ConditionEdgeData>[];
+    };
+  }) => void;
 }
 
 export type DesignColumn = {
@@ -109,73 +122,20 @@ const nodeTypes = {
 };
 
 export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
-  initialNodes = [
-    {
-      id: uuidv4(),
-      type: "default",
-      position: { x: 100, y: 100 },
-      data: {
-        label: constants.workflowActions.START,
-        actionName: constants.workflowActions.START,
-        status: constants.workflowRunStatus.idle,
-        design: {
-          inputs: commonFunctions.getDefaultInputs(
-            constants.workflowActions.START
-          ),
-          outputs: commonFunctions.getDefaultOutputs(
-            constants.workflowActions.START
-          ),
-          scriptContents: "",
-          scriptTimeoutMs: 5000,
-        },
-        run: { inputs: [], outputs: [] },
-      },
-    },
-    {
-      id: uuidv4(),
-      type: "default",
-      position: { x: 100, y: 500 },
-      data: {
-        label: constants.workflowActions.END,
-        actionName: constants.workflowActions.END,
-        status: constants.workflowRunStatus.idle,
-        design: {
-          inputs: commonFunctions.getDefaultInputs(
-            constants.workflowActions.END
-          ),
-          outputs: commonFunctions.getDefaultOutputs(
-            constants.workflowActions.END
-          ),
-          scriptContents: "",
-          scriptTimeoutMs: 5000,
-        },
-        run: { inputs: [], outputs: [] },
-      },
-    },
-  ],
-  initialEdges = [],
+  key,
+  workflow,
   openModal,
-  onWorkflowIDNameChange,
-  workflowId: initialWorkflowId, // props에서 받은 workflowId
+  onWorkflowChange,
 }) => {
   const jWorkflow = useRef<any | null>(null);
   // const stepCounterRef = useRef(0);
 
-  const [workflowId, setWorkflowId] = useState<string | null>(
-    initialWorkflowId || null
-  );
   // workflowId가 변경되면 필요한 로직 실행 가능
-  useEffect(() => {
-    if (initialWorkflowId) {
-      setWorkflowId(initialWorkflowId);
-      // workflowId에 맞는 워크플로우 로드 로직
-    }
-  }, [initialWorkflowId]);
 
   const [workflowName, setWorkflowName] = useState("새 워크플로우");
   const [workflowDescription, setWorkflowDescription] = useState("설명 없음");
-  const [nodes, setNodes] = useState<Node<ActionNodeData>[]>(initialNodes);
-  const [edges, setEdges] = useState<Edge<ConditionEdgeData>[]>(initialEdges);
+  const [nodes, setNodes] = useState<Node<ActionNodeData>[]>([]);
+  const [edges, setEdges] = useState<Edge<ConditionEdgeData>[]>([]);
   const [selectedEdge, setSelectedEdge] = useState<Edge | null>();
   const [edgeClickPos, setEdgeClickPos] = useState<{
     screen: any;
@@ -311,8 +271,11 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
   }, [selectedNode]);
 
   useEffect(() => {
-    setWorkflowId(uuidv4());
-    initWorkflow();
+    if (!workflow || !workflow.nodes?.length) {
+      initWorkflow();
+    } else {
+      setCurrentWorkflow(workflow);
+    }
   }, []);
 
   // 선택 노드 변경 시
@@ -371,6 +334,12 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
   useEffect(() => {
     if (!jWorkflow.current) return;
 
+    if (!jWorkflow.current.data) {
+      jWorkflow.current.data = {};
+      jWorkflow.current.data.design = {};
+      jWorkflow.current.data.run = {};
+    }
+
     jWorkflow.current.data.design.inputs = designedInputData; // 스키마 반영
   }, [designedInputData]);
 
@@ -397,11 +366,11 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
   }, [designedOutputData]);
 
   const onNodesChange = useCallback((changes: NodeChange[]) => {
-    setNodes((nds) => applyNodeChanges(changes, nds));
+    setNodes((nds) => applyNodeChanges(changes, nds!));
   }, []);
 
   const onEdgesChange = useCallback((changes: EdgeChange[]) => {
-    setEdges((eds) => applyEdgeChanges(changes, eds));
+    setEdges((eds) => applyEdgeChanges(changes, eds!));
   }, []);
 
   const onConnect = useCallback((connection: Connection) => {
@@ -415,7 +384,7 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
           markerEnd: { type: "arrowclosed" },
           style: { stroke: "#ccc", strokeWidth: 2 },
         } as Edge<ConditionEdgeData>,
-        eds
+        eds!
       )
     );
   }, []);
@@ -433,7 +402,7 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
         y: 200,
       };
 
-    setNodes((nds) => [
+    setNodes((nds: any) => [
       ...nds,
       {
         id,
@@ -470,11 +439,11 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
     const nodeId = selectedNode.id;
 
     // 1️⃣ 노드 삭제
-    setNodes((nds) => nds.filter((n) => n.id !== nodeId));
+    setNodes((nds) => nds?.filter((n) => n.id !== nodeId));
 
     // 2️⃣ 연결된 엣지 삭제 (source 또는 target이 해당 노드인 경우)
     setEdges((eds) =>
-      eds.filter((e) => e.source !== nodeId && e.target !== nodeId)
+      eds?.filter((e) => e.source !== nodeId && e.target !== nodeId)
     );
 
     // 3️⃣ 선택 상태 초기화
@@ -501,13 +470,13 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
   const setCurrentWorkflow = (newVal: any) => {
     if (!newVal) return;
 
-    setWorkflowInputData(newVal.data.run.inputs);
-    setWorkflowOutputData(newVal.data.run.outputs);
+    setWorkflowInputData(newVal.data?.run.inputs);
+    setWorkflowOutputData(newVal.data?.run.outputs);
 
     // 상태값도 새 워크플로우에 맞춰 업데이트
-    setWorkflowId(newVal.workflowId ?? uuidv4());
-    setWorkflowName(newVal.workflowName ?? "새 워크플로우");
-    setWorkflowDescription(newVal.workflowDescription ?? "설명 없음");
+    // setWorkflowId(newVal.workflowId ?? uuidv4());
+    setWorkflowName(newVal.workflowName ?? "New Workflow");
+    setWorkflowDescription(newVal.workflowDescription ?? "New Workflow");
 
     // 노드와 엣지 상태 반영
     setNodes(newVal.nodes ?? []);
@@ -530,10 +499,7 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
       })
     );
     setNodes(snappedNodes);
-    onWorkflowIDNameChange?.(
-      jWorkflow.current.workflowId,
-      jWorkflow.current.workflowName
-    );
+    onWorkflowChange?.(jWorkflow.current);
   };
 
   const saveWorkflow = async () => {
@@ -548,15 +514,14 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
         commandName: constants.commands.WORKFLOW_SAVE_WORKFLOW,
         systemCode: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE,
         userId: userInfo.getLoginUserId(),
-        workflowId: workflowId,
+        workflowId: jWorkflow.current.workflowId,
         workflowData: JSON.parse(getWorkflowJson()),
       };
 
       const jResponse = await RequestServer(jRequest);
       if (jResponse.error_code == 0) {
         openModal?.(constants.messages.SUCCESS_SAVED);
-        if (onWorkflowIDNameChange)
-          onWorkflowIDNameChange(workflowId!, workflowName);
+        if (onWorkflowChange) onWorkflowChange(jWorkflow.current);
       } else {
         openModal?.("❌ 저장 실패: " + jResponse.error_message);
       }
@@ -568,13 +533,13 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
 
   const resetWorkflow = async () => {
     try {
-      if (!workflowId) return;
+      if (!jWorkflow.current.workflowId) return;
 
       const jRequest = {
         commandName: constants.commands.WORKFLOW_RESET_WORKFLOW,
         systemCode: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE,
         userId: userInfo.getLoginUserId(),
-        workflowId: workflowId,
+        workflowId: jWorkflow.current.workflowId,
       };
 
       const jResponse = await RequestServer(jRequest);
@@ -604,7 +569,7 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
         commandName: constants.commands.WORKFLOW_DELETE_WORKFLOW,
         systemCode: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE,
         userId: userInfo.getLoginUserId(),
-        workflowId: workflowId,
+        workflowId: jWorkflow.current.workflowId,
       };
       const jResponse = await RequestServer(jRequest);
       if (jResponse.error_code == 0) {
@@ -694,7 +659,7 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
         commandName: constants.commands.WORKFLOW_EXECUTE_WORKFLOW,
         systemCode: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE,
         userId: userInfo.getLoginUserId(),
-        workflowId: workflowId,
+        workflowId: jWorkflow.current.workflowId,
         transactionMode: constants.transactionMode.System,
         inputs: workflowInputData,
       };
@@ -717,7 +682,7 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
         commandName: constants.commands.WORKFLOW_EXECUTE_WORKFLOW,
         systemCode: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE,
         userId: userInfo.getLoginUserId(),
-        workflowId: workflowId,
+        workflowId: jWorkflow.current.workflowId,
         transactionMode: constants.transactionMode.Business,
         currentNodeId: jWorkflow.current?.currentNodeId ?? "",
         inputs: workflowInputData,
@@ -851,7 +816,7 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
                 onClick={onFlowClick}
               >
                 <ReactFlow
-                  nodes={nodes.map((n) => ({
+                  nodes={nodes?.map((n) => ({
                     ...n,
                     type:
                       n.data.actionName === constants.workflowActions.BRANCH
@@ -873,7 +838,7 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
                       color: "#000",
                     },
                   }))}
-                  edges={edges.map((e) => ({
+                  edges={edges?.map((e) => ({
                     ...e,
                     markerEnd: { type: "arrowclosed" } as any,
                     style: { stroke: "#ccc", strokeWidth: 2 },
@@ -1116,7 +1081,7 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
                       selectedWorkflow={jWorkflow.current}
                     />
                     <div className="p-2 border rounded mt-2">
-                      <div>ID: {workflowId}</div>
+                      <div>ID: {jWorkflow.current.workflowId}</div>
                       <div className="flex flex-row mt-2">
                         Name:
                         <input
@@ -1160,12 +1125,12 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
                   <AccordionTrigger>🧩 Node Property</AccordionTrigger>
                   <AccordionContent>
                     <NodePropertyPanel
-                      workflowId={workflowId}
-                      nodes={nodes}
+                      workflowId={jWorkflow.current.workflowId}
+                      nodes={nodes!}
                       node={selectedNode}
                       onNodeUpdate={(id, updates) => {
                         setNodes((nds) => {
-                          const newNodes = nds.map((n) => {
+                          const newNodes = nds?.map((n) => {
                             if (n.id !== id) return n;
 
                             let newDesign: Partial<typeof n.data.design> =
@@ -1210,7 +1175,7 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
                             nodes: newNodes,
                           };
                           setSelectedNode(
-                            newNodes.find((nn) => nn.id === id) || null
+                            newNodes?.find((nn) => nn.id === id) || null
                           );
                           setCurrentWorkflow(updatedWorkflow);
 
@@ -1227,9 +1192,9 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
         </div>
 
         {/* WorkflowDataModal */}
-        {isViewWorkflowDataModalOpen && workflowId && (
+        {isViewWorkflowDataModalOpen && jWorkflow.current.workflowId && (
           <WorkflowDataModal
-            workflowId={workflowId}
+            workflowId={jWorkflow.current.workflowId}
             open={isViewWorkflowDataModalOpen}
             onClose={() => setIsViewWorkflowDataModalOpen(false)}
           />

@@ -2,13 +2,27 @@ import { useEffect, useState, useCallback } from "react";
 import { useModal } from "@/components/core/client/brunnerMessageBox";
 import * as constants from "@/components/core/constants";
 import { WorkflowEditor } from "./workflowEditor";
-import { ReactFlowProvider, ReactFlow } from "reactflow";
-import { Input, Button, Table } from "antd";
-
+import { ReactFlowProvider } from "reactflow";
+import { Button } from "antd";
+import { v4 as uuidv4 } from "uuid";
+import * as commonFunctions from "@/components/core/commonFunctions";
+import * as commonData from "../core/commonData";
+import type {
+  Connection,
+  Edge,
+  Node,
+  NodeChange,
+  EdgeChange,
+  NodeProps,
+} from "reactflow";
 interface Tab {
   id: string; // 탭 고유 ID
-  workflowId: string; // 워크플로우 고유 ID
-  workflowName: string; // 실제 워크플로우 이름
+  workflow: {
+    workflowId: string;
+    workflowName: string;
+    nodes: Node<commonData.ActionNodeData>[];
+    edges: Edge<commonData.ConditionEdgeData>[];
+  };
 }
 
 export function TabbedWorkflowEditor() {
@@ -17,39 +31,132 @@ export function TabbedWorkflowEditor() {
   const [tabs, setTabs] = useState<Tab[]>([
     {
       id: "tab1",
-      workflowId: "17dca48f-7fb2-4175-90a8-716e36efcd18",
-      workflowName: "New Workflow",
+      workflow: {
+        workflowId: uuidv4(),
+        workflowName: "New Workflow",
+        // editorState: {
+        nodes: [
+          {
+            id: uuidv4(),
+            type: "default",
+            position: { x: 100, y: 100 },
+            data: {
+              label: constants.workflowActions.START,
+              actionName: constants.workflowActions.START,
+              status: constants.workflowRunStatus.idle,
+              design: {
+                inputs: commonFunctions.getDefaultInputs(
+                  constants.workflowActions.START
+                ),
+                outputs: commonFunctions.getDefaultOutputs(
+                  constants.workflowActions.START
+                ),
+                scriptContents: "",
+                scriptTimeoutMs: 5000,
+              },
+              run: { inputs: [], outputs: [] },
+            },
+          },
+          {
+            id: uuidv4(),
+            type: "default",
+            position: { x: 100, y: 500 },
+            data: {
+              label: constants.workflowActions.END,
+              actionName: constants.workflowActions.END,
+              status: constants.workflowRunStatus.idle,
+              design: {
+                inputs: commonFunctions.getDefaultInputs(
+                  constants.workflowActions.END
+                ),
+                outputs: commonFunctions.getDefaultOutputs(
+                  constants.workflowActions.END
+                ),
+                scriptContents: "",
+                scriptTimeoutMs: 5000,
+              },
+              run: { inputs: [], outputs: [] },
+            },
+          },
+        ],
+        edges: [],
+      },
     },
   ]);
+
   const [activeTabId, setActiveTabId] = useState<string>("tab1");
 
   const activeTab = tabs.find((tab) => tab.id === activeTabId);
 
-  useEffect(() => {
-    if (!activeTab) return;
-
-    setTabs((prevTabs) =>
-      prevTabs.map((tab) =>
-        tab.id === activeTab.id
-          ? { ...tab } // 새로 연 워크플로우는 깨끗하게
-          : tab
-      )
-    );
-  }, [activeTab?.id]);
-
-  // 새 탭 생성
-  const handleAddTab = (workflowId: string, workflowName: string) => {
+  // 새 탭 추가
+  const handleAddTab = () => {
     const newTabId = `tab${tabs.length + 1}`;
-    setTabs([...tabs, { id: newTabId, workflowId, workflowName }]);
+    const newWorkflow = {
+      workflowId: uuidv4(),
+      workflowName: "New Workflow",
+      // editorState: {
+      nodes: [
+        {
+          id: uuidv4(),
+          type: "default",
+          position: { x: 100, y: 100 },
+          data: {
+            label: constants.workflowActions.START,
+            actionName: constants.workflowActions.START,
+            status: constants.workflowRunStatus.idle,
+            design: {
+              inputs: commonFunctions.getDefaultInputs(
+                constants.workflowActions.START
+              ),
+              outputs: commonFunctions.getDefaultOutputs(
+                constants.workflowActions.START
+              ),
+              scriptContents: "",
+              scriptTimeoutMs: 5000,
+            },
+            run: { inputs: [], outputs: [] },
+          },
+        },
+        {
+          id: uuidv4(),
+          type: "default",
+          position: { x: 100, y: 500 },
+          data: {
+            label: constants.workflowActions.END,
+            actionName: constants.workflowActions.END,
+            status: constants.workflowRunStatus.idle,
+            design: {
+              inputs: commonFunctions.getDefaultInputs(
+                constants.workflowActions.END
+              ),
+              outputs: commonFunctions.getDefaultOutputs(
+                constants.workflowActions.END
+              ),
+              scriptContents: "",
+              scriptTimeoutMs: 5000,
+            },
+            run: { inputs: [], outputs: [] },
+          },
+        },
+      ],
+      edges: [],
+    };
+
+    setTabs((prevTabs) => [
+      ...prevTabs,
+      { id: newTabId, workflow: newWorkflow },
+    ]);
     setActiveTabId(newTabId);
   };
 
-  // 탭 닫기 전 확인
+  // 탭 닫기
   const handleCloseTab = useCallback(
     async (tabId: string) => {
       const tab = tabs.find((t) => t.id === tabId);
+      if (!tab) return;
+
       const confirmClose = await openModal(
-        `"${tab?.workflowName} ${constants.messages.WORKFLOW_SAVE_CONFIRM}`
+        `"${tab.workflow.workflowName}" ${constants.messages.WORKFLOW_SAVE_CONFIRM}`
       );
       if (!confirmClose) return;
 
@@ -87,7 +194,7 @@ export function TabbedWorkflowEditor() {
                 }`}
                 onClick={() => setActiveTabId(tab.id)}
               >
-                {tab.workflowName}
+                {tab.workflow.workflowName}
               </Button>
               <Button
                 className="px-2 semi-text-bg-color"
@@ -99,9 +206,7 @@ export function TabbedWorkflowEditor() {
           ))}
           <Button
             className="ml-auto px-4 py-2 general-text-bg-color border border-black"
-            onClick={() =>
-              handleAddTab(`wf-${tabs.length + 1}`, "New Workflow")
-            }
+            onClick={handleAddTab}
           >
             + Tab
           </Button>
@@ -113,8 +218,17 @@ export function TabbedWorkflowEditor() {
             <ReactFlowProvider>
               <WorkflowEditor
                 key={activeTab.id}
-                workflowId={activeTab.workflowId}
+                workflow={activeTab.workflow}
                 openModal={openModal}
+                onWorkflowChange={(newWorkflow: any) => {
+                  setTabs((prevTabs) =>
+                    prevTabs.map((tab) =>
+                      tab.id === activeTab.id
+                        ? { ...tab, workflow: newWorkflow }
+                        : tab
+                    )
+                  );
+                }}
               />
             </ReactFlowProvider>
           )}

@@ -1,9 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import type { Node } from "reactflow";
-import type { NodeDataTable } from "@/components/core/commonData";
-import * as commmonFunctions from "@/components/core/commonFunctions";
 import * as constants from "@/components/core/constants";
-import { JsonDatasetEditorModal } from "@/components/workflow/jsonDatasetEditorModal";
 import { NodePropertyEditor } from "@/components/workflow/nodePropertyEditor";
 import { ScriptEditorModal } from "@/components/workflow/scriptEditorModal";
 import { SqlEditorModal } from "./sqlEditorModal";
