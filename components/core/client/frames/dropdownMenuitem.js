@@ -8,6 +8,7 @@ export async function getDropdownMenuItems() {
   let items = [
     { label: "Home", href: "/", type: "item" },
     { label: "Brunner e-Doc", href: "/mainPages/eDocDesigner", type: "item" },
+    { label: "Brunner Flow", href: "/mainPages/workflow", type: "item" },
     { label: "Contact", href: "/mainPages/contact", type: "item" },
   ];
 
@@ -15,11 +16,6 @@ export async function getDropdownMenuItems() {
     items.push({
       label: "Service SQL",
       href: "/mainPages/serviceSql",
-      type: "item",
-    });
-    items.push({
-      label: "Brunner Flow",
-      href: "/mainPages/workflow",
       type: "item",
     });
   }
