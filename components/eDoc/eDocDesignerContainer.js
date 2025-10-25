@@ -655,7 +655,7 @@ export default function EDocDesignerContainer({
       <div className="flex-1 overflow-auto relative">
         {loading && <Loading />}
       </div>
-      <h2 className={`page-title`}>Designer</h2>
+      <h2 className={`page-title`}>e-Doc Designer</h2>
       {/* 상단 메뉴 */}
       <EDocDesignerTopMenu
         mode={mode}
@@ -684,7 +684,7 @@ export default function EDocDesignerContainer({
                        overflow-auto 
                        border-r 
                        general-text-bg-color
-                       ${isLeftPanelOpen ? "w-24" : "w-0"}`}
+                       ${isLeftPanelOpen ? "w-28" : "w-0"}`}
           >
             {isLeftPanelOpen && (
               <EDocComponentPalette
@@ -832,9 +832,9 @@ export default function EDocDesignerContainer({
 
           {isRightPanelOpen && (
             <>
-              <h2 className="flex flex-col items-center text-lg font-semibold mb-4 general-text-color">
-                속성창
-              </h2>
+              <h5 className="flex flex-col items-center text-lg mb-4 general-text-color">
+                Properties
+              </h5>
               {selectedComponentId !== null &&
               documentData.pages[currentPageIdx]?.components[
                 selectedComponentId

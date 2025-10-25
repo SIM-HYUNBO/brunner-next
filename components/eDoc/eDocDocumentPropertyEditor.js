@@ -18,7 +18,7 @@ export default function EDocDocumentPropertyEditor({
     <div>
       {/* 문서 속성 영역 */}
       <section className="mb-6 border rounded shadow-sm">
-        <h2 className="text-lg font-semibold mb-3">문서 속성</h2>
+        <h6 className="text-lg mb-3">Document</h6>
 
         <label className="general-text-bg-color">Title</label>
         <input
@@ -67,7 +67,7 @@ export default function EDocDocumentPropertyEditor({
             Transparent
           </label>
         </div>
-        <label>문서 여백 (px)</label>
+        <label>Padding(px)</label>
         <input
           type="number"
           min="0"

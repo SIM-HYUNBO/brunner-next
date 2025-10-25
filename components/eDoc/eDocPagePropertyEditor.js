@@ -17,9 +17,9 @@ export default function EDocPagePropertyEditor({
 
   return (
     <section className="p-4 border rounded shadow-sm">
-      <h2 className="text-lg font-semibold mb-3">페이지 속성</h2>
+      <h6 className="text-lg mb-3">Page</h6>
 
-      <label>Padding (px)</label>
+      <label>Padding(px)</label>
       <input
         type="number"
         value={runtimeData.padding ?? 24}

@@ -14,14 +14,12 @@ export default function EDocComponentPalette({ templates, onAddComponent }) {
   }
 
   return (
-    <div className="space-y-3 mr-1">
-      <h2 className="flex flex-col items-center items-center text-lg font-semibold mb-4 general-text-color">
-        컴포넌트
-      </h2>
+    <div className="flex flex-col justify-center items-center space-y-3 mr-1 min-w-20">
+      <h5 className="flex mb-16 text-lg general-text-color">Components</h5>
       {templates.map((template) => (
         <Button
           key={template.id}
-          className="w-full text-center rounded border border-gray-300 general-text-bg-color"
+          className="w-full text-center justify-center items-center rounded border border-gray-300 general-text-bg-color"
           onClick={() => {
             onAddComponent(template);
           }}
