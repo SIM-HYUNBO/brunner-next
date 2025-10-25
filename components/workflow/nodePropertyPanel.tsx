@@ -216,7 +216,7 @@ export const NodePropertyPanel: React.FC<NodePropertyPanelProps> = ({
 
         {mode === "Loop" && (
           <div className="flex flex-col mb-2">
-            <div className="flex space-x-2 mb-1">
+            <div className="flex space-x-2 mt-1 mb-1">
               <label>Start:</label>
               <input
                 type="number"
@@ -236,8 +236,9 @@ export const NodePropertyPanel: React.FC<NodePropertyPanelProps> = ({
                 }
               />
             </div>
-            <label>Limit:</label>
+            <label className="mt-1">Limit:</label>
             <textarea
+              className="mt-1"
               value={loopLimitValue}
               onChange={(e) => setLoopLimitValue(e.target.value)}
               onBlur={() =>
@@ -245,7 +246,7 @@ export const NodePropertyPanel: React.FC<NodePropertyPanelProps> = ({
               }
               rows={2}
             />
-            <div>Current Index: {loopCurrentValue}</div>
+            <div className="mt-1">Current Index: {loopCurrentValue}</div>
           </div>
         )}
       </div>
@@ -372,8 +373,8 @@ export const NodePropertyPanel: React.FC<NodePropertyPanelProps> = ({
       />
 
       {/* Label Editor */}
-      <div className="border p-3 rounded shadow-sm semi-text-bg-color">
-        <label className="block font-semibold mb-1">Label</label>
+      <div className="flex flex-row border p-3 rounded shadow-sm semi-text-bg-color">
+        <label className="block font-semibold mb-1">Label:</label>
         <input
           type="text"
           value={localLabel}
@@ -382,7 +383,7 @@ export const NodePropertyPanel: React.FC<NodePropertyPanelProps> = ({
             setLocalLabel(v);
             onNodeUpdate(node.id, { data: { ...node.data, label: v } });
           }}
-          className="w-full border rounded px-2 py-1"
+          className="flex flex-1 w-full border rounded ml-2 px-2 py-1"
         />
       </div>
 

@@ -803,7 +803,7 @@ export const JsonDatasetEditorModal: React.FC<JsonDatasetEditorModalProps> = ({
         {/* 모달 크기조절 핸들 */}
         <div
           onMouseDown={startResize}
-          className="absolute w-4 h-4 bottom-0 right-0 cursor-se-resize"
+          className="medium-text-bg-color absolute w-4 h-4 bottom-0 right-0 cursor-se-resize"
         />
       </div>
     </div>

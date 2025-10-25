@@ -234,7 +234,7 @@ export const DBConnectionManagerModal: React.FC<
                 }
                 className="medium-text-bg-color border mb-4 w-full py-2 rounded"
               >
-                ➕
+                ➕ New
               </Button>
               {/* 푸터 */}
               <div className="fixed bottom-0 left-0 right-0 flex justify-end border semi-text-bg-color m-1">
@@ -265,19 +265,19 @@ export const DBConnectionManagerModal: React.FC<
                       <Button
                         onClick={() => handleTest(conn)}
                         disabled={testing}
-                        className="px-2 py-1 rounded border hover:bg-gray-50 whitespace-nowrap"
+                        className="semi-text-bg-color px-2 py-1 rounded border whitespace-nowrap"
                       >
                         🔄 Test
                       </Button>
                       <Button
                         onClick={() => setEditing(conn)}
-                        className="px-2 py-1 rounded border hover:bg-gray-50 whitespace-nowrap"
+                        className="semi-text-bg-color px-2 py-1 rounded border whitespace-nowrap"
                       >
                         ✏️ Change
                       </Button>
                       <Button
                         onClick={() => handleDelete(conn.id)}
-                        className="px-2 py-1 rounded border hover:bg-red-100 text-red-600 whitespace-nowrap"
+                        className="semi-text-bg-color px-2 py-1 rounded border whitespace-nowrap"
                       >
                         🗑 Delete
                       </Button>
