@@ -6,6 +6,9 @@ import type { NodeProps } from "reactflow";
 import * as constants from "@/components/core/constants";
 
 interface BranchNodeData {
+  label: string;
+  actionName: string;
+  status: string;
   design: any;
   run: any;
 }
@@ -55,23 +58,12 @@ export default function BranchNode({ data }: NodeProps<BranchNodeData>) {
           boxSizing: "border-box",
         }}
       >
-        <div style={{ fontSize: 8 }}>[{constants.workflowActions.BRANCH}]</div>
-        {isLoopMode && <div style={{ fontSize: 8 }}>Loop</div>}
-        {isBranchMode && <div style={{ fontSize: 8 }}>Branch</div>}
-        {/* {isBranchMode && (
-          <div
-            style={{
-              fontSize: 10,
-              fontFamily: "monospace",
-              background: "#fafafa",
-              padding: "2px 4px",
-              borderRadius: 3,
-              marginTop: 2,
-            }}
-          >
-            {condition || "—"}
-          </div>
-        )} */}
+        <div style={{ fontSize: 8 }}>
+          [{constants.workflowActions.BRANCH}-
+          {isLoopMode && constants.workflowBranchNodeMode.Loop}
+          {isBranchMode && constants.workflowBranchNodeMode.Branch}]
+        </div>
+        <div style={{ fontSize: 8 }}>{data.label}</div>
 
         {/* 🟢 입력 포트 2개 (상단 + 좌측) */}
         <Handle
