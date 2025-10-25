@@ -7,7 +7,7 @@ import * as commonFunctions from "@/components/core/commonFunctions";
 export async function getDropdownMenuItems() {
   let items = [
     { label: "Home", href: "/", type: "item" },
-    { label: "Designer", href: "/mainPages/eDocDesigner", type: "item" },
+    { label: "Brunner e-Doc", href: "/mainPages/eDocDesigner", type: "item" },
     { label: "Contact", href: "/mainPages/contact", type: "item" },
   ];
 
@@ -18,7 +18,7 @@ export async function getDropdownMenuItems() {
       type: "item",
     });
     items.push({
-      label: "Workflow",
+      label: "Brunner Flow",
       href: "/mainPages/workflow",
       type: "item",
     });
