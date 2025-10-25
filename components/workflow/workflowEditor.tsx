@@ -102,7 +102,7 @@ const WorkflowDefaultNode: React.FC<NodeProps<ActionNodeData>> = ({ data }) => {
   );
 };
 
-// 노드 유형별 렌더링 컴포넌트 등록
+// 노드 유형별 렌더링 컴포넌트 등록 (일반노드와 Custom노드 유형 구분)
 const nodeTypes = {
   default: WorkflowDefaultNode,
   branch: BranchNode,
@@ -619,52 +619,6 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
     }
   };
 
-  const executeWorkflowFromTableEditor = async () => {
-    try {
-      const jRequest = {
-        commandName: constants.commands.WORKFLOW_EXECUTE_WORKFLOW,
-        systemCode: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE,
-        userId: userInfo.getLoginUserId(),
-        workflowId: workflowId,
-        transactionMode: constants.transactionMode.System,
-        inputs: workflowInputData,
-      };
-      const jResponse = await RequestServer(jRequest);
-      if (jResponse.error_code == 0 && jResponse.jWorkflow) {
-        setCurrentWorkflow({ ...jResponse.jWorkflow });
-        openModal?.(constants.messages.SUCCESS_FINISHED);
-      } else {
-        openModal?.(jResponse.error_message);
-      }
-    } catch (err) {
-      openModal?.("❌ 실행 실패: " + String(err));
-    }
-  };
-
-  const executeWorkflowStepByStep = async () => {
-    try {
-      const jRequest = {
-        commandName: constants.commands.WORKFLOW_EXECUTE_WORKFLOW,
-        systemCode: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE,
-        userId: userInfo.getLoginUserId(),
-        workflowId: workflowId,
-        transactionMode: constants.transactionMode.Business,
-        currentNodeId: jWorkflow.current?.currentNodeId ?? "",
-        inputs: workflowInputData,
-      };
-      const jResponse = await RequestServer(jRequest);
-      if (jResponse.error_code == 0 && jResponse.jWorkflow) {
-        setCurrentWorkflow({ ...jResponse.jWorkflow });
-        openModal?.(constants.messages.SUCCESS_FINISHED);
-      } else {
-        openModal?.(jResponse.error_message);
-      }
-    } catch (err) {
-      console.error(err);
-      openModal?.("❌ 실행 실패: " + String(err));
-    }
-  };
-
   const WorkflowOperationPanel = () => {
     return (
       <>
@@ -691,13 +645,13 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
         <div className="flex flex-row ml-1 mt-1 space-x-1">
           <Button
             className="w-full border border-black general-text-bg-color hover:bg-gray-400"
-            onClick={executeWorkflowFromTableEditor}
+            onClick={executeWorkflow}
           >
             Run
           </Button>
           <Button
             className="w-full border border-black general-text-bg-color hover:bg-gray-400"
-            onClick={executeWorkflowStepByStep}
+            onClick={executeWorkflowByStep}
           >
             Run By Node
           </Button>
@@ -731,6 +685,54 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
         </div>
       </>
     );
+  };
+
+  // 워크플로우 실행-시스템 트랜잭션 모드
+  const executeWorkflow = async () => {
+    try {
+      const jRequest = {
+        commandName: constants.commands.WORKFLOW_EXECUTE_WORKFLOW,
+        systemCode: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE,
+        userId: userInfo.getLoginUserId(),
+        workflowId: workflowId,
+        transactionMode: constants.transactionMode.System,
+        inputs: workflowInputData,
+      };
+      const jResponse = await RequestServer(jRequest);
+      if (jResponse.error_code == 0 && jResponse.jWorkflow) {
+        setCurrentWorkflow({ ...jResponse.jWorkflow });
+        openModal?.(constants.messages.SUCCESS_FINISHED);
+      } else {
+        openModal?.(jResponse.error_message);
+      }
+    } catch (err) {
+      openModal?.("❌ 실행 실패: " + String(err));
+    }
+  };
+
+  // 워크플로우 실행-비즈니스 트랜잭션 모드
+  const executeWorkflowByStep = async () => {
+    try {
+      const jRequest = {
+        commandName: constants.commands.WORKFLOW_EXECUTE_WORKFLOW,
+        systemCode: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE,
+        userId: userInfo.getLoginUserId(),
+        workflowId: workflowId,
+        transactionMode: constants.transactionMode.Business,
+        currentNodeId: jWorkflow.current?.currentNodeId ?? "",
+        inputs: workflowInputData,
+      };
+      const jResponse = await RequestServer(jRequest);
+      if (jResponse.error_code == 0 && jResponse.jWorkflow) {
+        setCurrentWorkflow({ ...jResponse.jWorkflow });
+        openModal?.(constants.messages.SUCCESS_FINISHED);
+      } else {
+        openModal?.(jResponse.error_message);
+      }
+    } catch (err) {
+      console.error(err);
+      openModal?.("❌ 실행 실패: " + String(err));
+    }
   };
 
   // <<< MOBILE-FIX: resize handling to compute flow height and call fitView
