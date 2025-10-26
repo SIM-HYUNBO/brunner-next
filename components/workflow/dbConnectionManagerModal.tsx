@@ -302,10 +302,12 @@ export const DBConnectionManagerModal: React.FC<
                       }
                       className="border rounded px-2 py-1 flex-1"
                     >
-                      <option value="postgres">PostgreSQL</option>
-                      <option value="mysql">MySQL</option>
-                      <option value="mssql">MSSQL</option>
-                      <option value="oracle">Oracle</option>
+                      <option value={constants.dbType.postgres}>
+                        PostgreSQL
+                      </option>
+                      <option value={constants.dbType.mysql}>MySQL</option>
+                      <option value={constants.dbType.mssql}>MSSQL</option>
+                      <option value={constants.dbType.oracle}>Oracle</option>
                     </select>
                   </div>
 

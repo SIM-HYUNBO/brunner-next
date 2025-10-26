@@ -37,7 +37,7 @@ export default function EDocContent({ argDocumentId, argDocumentData }) {
                       text-gray-900 
                       dark:text-gray-100"
       >
-        문서를 불러오는 중입니다...
+        loading ...
       </div>
     );
   }

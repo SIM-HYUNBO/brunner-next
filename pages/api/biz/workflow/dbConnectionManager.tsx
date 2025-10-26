@@ -253,7 +253,7 @@ export class DBConnectionManager {
   // ✅ 연결풀 닫기
   private async closePool(poolObj: DBConnectionPool) {
     try {
-      if (poolObj.type === "mssql") await mssql.close();
+      if (poolObj.type === constants.dbType.mssql) await mssql.close();
       else if (poolObj.type === "oracle") await poolObj.pool.close(0);
       else await poolObj.pool.end();
     } catch (err) {
@@ -267,20 +267,20 @@ export class DBConnectionManager {
       const pool = await this.createPool(config);
       let conn: any;
       switch (config.type) {
-        case "postgres":
+        case constants.dbType.postgres:
           conn = await pool.connect();
           await conn.query("SELECT 1");
           conn.release();
           break;
-        case "mysql":
+        case constants.dbType.mysql:
           conn = await pool.getConnection();
           await conn.query("SELECT 1");
           conn.release();
           break;
-        case "mssql":
+        case constants.dbType.mssql:
           await pool.request().query("SELECT 1");
           break;
-        case "oracle":
+        case constants.dbType.oracle:
           conn = await pool.getConnection();
           await conn.execute("SELECT 1 FROM DUAL");
           await conn.close();

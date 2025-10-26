@@ -159,14 +159,14 @@ export const NodePropertyPanel: React.FC<NodePropertyPanelProps> = ({
 
       if (key === "mode") {
         // 모드가 변경된 경우: 디자인 초기화
-        if (value === "Branch") {
+        if (value === constants.workflowBranchNodeMode.Branch) {
           newDesign = {
-            mode: "Branch",
+            mode: value,
             condition: "",
           };
-        } else if (value === "Loop") {
+        } else if (value === constants.workflowBranchNodeMode.Loop) {
           newDesign = {
-            mode: "Loop",
+            mode: value,
             loopStartValue: 0,
             loopStepValue: 1,
             loopLimitValue: "",
@@ -194,12 +194,16 @@ export const NodePropertyPanel: React.FC<NodePropertyPanelProps> = ({
               handleBranchNodeChange("mode", e.target.value);
             }}
           >
-            <option value="Branch">Branch</option>
-            <option value="Loop">Loop</option>
+            <option value={constants.workflowBranchNodeMode.Branch}>
+              {constants.workflowBranchNodeMode.Branch}
+            </option>
+            <option value={constants.workflowBranchNodeMode.Loop}>
+              {constants.workflowBranchNodeMode.Loop}
+            </option>
           </select>
         </div>
 
-        {mode === "Branch" && (
+        {mode === constants.workflowBranchNodeMode.Branch && (
           <div className="flex flex-col mb-2">
             <label>Condition:</label>
             <textarea
@@ -211,7 +215,7 @@ export const NodePropertyPanel: React.FC<NodePropertyPanelProps> = ({
           </div>
         )}
 
-        {mode === "Loop" && (
+        {mode === constants.workflowBranchNodeMode.Loop && (
           <div className="flex flex-col mb-2">
             <div className="flex space-x-2 mt-1 mb-1">
               <label>Start:</label>
