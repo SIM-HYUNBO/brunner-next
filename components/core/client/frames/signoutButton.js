@@ -57,6 +57,7 @@ export default function SignoutButton({ handleLogout, triggermenureload }) {
               />
             </svg>
           }
+          onClick={requestSignout}
         />
       )}
     </>

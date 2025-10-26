@@ -76,6 +76,7 @@ export default function EDocDesignerContainer({
   const [resizeStartX, setResizeStartX] = useState(0);
   const [resizeStartWidth, setResizeStartWidth] = useState(0);
   const [aiInputModalOpen, setAIInputModalOpen] = useState(false);
+  const [copiedComponent, setCopiedComponent] = useState(null);
 
   useEffect(() => {
     async function fetchTemplates() {
@@ -112,6 +113,56 @@ export default function EDocDesignerContainer({
       window.removeEventListener("mouseup", handleMouseUp);
     };
   }, [isResizing]);
+
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      // Ctrl + C
+      if (e.ctrlKey && e.key.toLowerCase() === "c") {
+        e.preventDefault();
+        handleCopy();
+      }
+
+      // Ctrl + V
+      if (e.ctrlKey && e.key.toLowerCase() === "v") {
+        e.preventDefault();
+        handlePaste();
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [currentPageIdx, selectedComponentId]); // 의존성 배열은 빈 배열로, 컴포넌트 마운트/언마운트 시 한 번만
+
+  const handleCopy = () => {
+    if (selectedComponentId === null) return;
+
+    // 현재 페이지에서 선택된 컴포넌트만 복사
+    const currentPage = documentData.pages[currentPageIdx];
+    if (!currentPage) return;
+
+    const component = currentPage.components[selectedComponentId];
+    if (!component) return;
+
+    setCopiedComponent(JSON.parse(JSON.stringify(component))); // 깊은 복사
+  };
+
+  const handlePaste = () => {
+    if (!copiedComponent) return;
+
+    const newComponent = JSON.parse(JSON.stringify(copiedComponent));
+    // 붙여넣기 시 위치 조금 이동
+    newComponent.runtime_data.top = (newComponent.runtime_data.top || 0) + 20;
+    newComponent.runtime_data.left = (newComponent.runtime_data.left || 0) + 20;
+
+    setDocumentData((prev) => {
+      const newPages = [...prev.pages];
+      newPages[currentPageIdx] = {
+        ...newPages[currentPageIdx],
+        components: [...newPages[currentPageIdx].components, newComponent],
+      };
+      return { ...prev, pages: newPages };
+    });
+  };
 
   const handleMouseDown = (e) => {
     setIsResizing(true);
@@ -794,6 +845,8 @@ export default function EDocDesignerContainer({
                     onUpdateComponent={handleUpdateComponent}
                     isViewerMode={isExportingPdf}
                     mode={mode}
+                    copiedComponent={copiedComponent}
+                    setCopiedComponent={setCopiedComponent}
                   />
                 </div>
               </>

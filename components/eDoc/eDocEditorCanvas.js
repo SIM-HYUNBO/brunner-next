@@ -18,9 +18,13 @@ export default function EDocEditorCanvas({
   onUpdateComponent,
   isViewerMode = false,
   mode,
+  copiedComponent, // 전역/상위에서 관리되는 복사 컴포넌트
+  setCopiedComponent, // 복사 상태 변경 함수
+  pageId, // 현재 페이지 ID
 }) {
   useEffect(() => {
     const handleKeyDown = (e) => {
+      // ESC: 선택 해제
       if (e.key === "Escape") {
         if (!isViewerMode && typeof onComponentSelect === "function") {
           onComponentSelect(null);
@@ -29,10 +33,49 @@ export default function EDocEditorCanvas({
           document.activeElement.blur();
         }
       }
+
+      // Ctrl+C: 복사
+      if (e.ctrlKey && e.key.toLowerCase() === "c") {
+        if (!isViewerMode && selectedComponentId !== null) {
+          const compToCopy = pageData.components[selectedComponentId];
+          setCopiedComponent?.({ ...compToCopy });
+          e.preventDefault();
+        }
+      }
+
+      // Ctrl+V: 붙여넣기
+      if (e.ctrlKey && e.key.toLowerCase() === "v") {
+        if (!isViewerMode && copiedComponent) {
+          const newComponent = {
+            ...copiedComponent,
+            id: `comp_${Date.now()}`, // 새 고유 id
+            runtime_data: {
+              ...copiedComponent.runtime_data,
+              top: (copiedComponent.runtime_data?.top ?? 0) + 20,
+              left: (copiedComponent.runtime_data?.left ?? 0) + 20,
+            },
+          };
+          if (typeof onUpdateComponent === "function") {
+            // 붙여넣는 페이지 ID도 전달
+            onUpdateComponent(newComponent, "add", pageId);
+          }
+          e.preventDefault();
+        }
+      }
     };
+
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [onComponentSelect]);
+  }, [
+    selectedComponentId,
+    copiedComponent,
+    isViewerMode,
+    onComponentSelect,
+    pageData.components,
+    onUpdateComponent,
+    pageId,
+    setCopiedComponent,
+  ]);
 
   function getPageDimensionsPx(pageSize) {
     switch (pageSize) {
@@ -218,7 +261,6 @@ export default function EDocEditorCanvas({
   };
 
   return (
-    // 페이지간 간격 1 고정
     <div
       className={`overflow-x-auto 
                      flex 
@@ -226,11 +268,7 @@ export default function EDocEditorCanvas({
                      justify-center
                      ${isSelected ? "outline outline-2 outline-blue-400" : ""}`}
       style={{
-        marginTop: `${
-          pageData.runtime_data?.pageMargin
-            ? pageData.runtime_data?.pageMargin
-            : 0
-        }px`,
+        marginTop: `${pageData.runtime_data?.pageMargin ?? 0}px`,
       }}
     >
       <div
