@@ -231,21 +231,13 @@ export function TabbedWorkflowEditor() {
                 y={activeTab.y}
                 zoom={activeTab.zoom}
                 openModal={openModal}
-                onWorkflowChange={(
-                  newWorkflow: any,
-                  newX: number,
-                  newY: number,
-                  newZoom: number
-                ) => {
+                onWorkflowChange={(newWorkflow: any) => {
                   setTabs((prevTabs) =>
                     prevTabs.map((tab) =>
                       tab.id === activeTab.id
                         ? {
                             ...tab,
                             workflow: newWorkflow,
-                            x: newX,
-                            y: newY,
-                            zoom: newZoom,
                           }
                         : tab
                     )
