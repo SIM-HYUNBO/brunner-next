@@ -23,6 +23,8 @@ interface Tab {
     nodes: Node<commonData.ActionNodeData>[];
     edges: Edge<commonData.ConditionEdgeData>[];
   };
+  x: number;
+  y: number;
   zoom: number;
 }
 
@@ -82,6 +84,8 @@ export function TabbedWorkflowEditor() {
         ],
         edges: [],
       },
+      x: 0,
+      y: 0,
       zoom: 1.0,
     },
   ]);
@@ -144,10 +148,11 @@ export function TabbedWorkflowEditor() {
       edges: [],
     };
     const newZoom = 1.0;
-
+    const newX = 0;
+    const newY = 0;
     setTabs((prevTabs) => [
       ...prevTabs,
-      { id: newTabId, workflow: newWorkflow, zoom: newZoom },
+      { id: newTabId, workflow: newWorkflow, x: newX, y: newY, zoom: newZoom },
     ]);
     setActiveTabId(newTabId);
   };
@@ -222,13 +227,26 @@ export function TabbedWorkflowEditor() {
               <WorkflowEditor
                 // key={activeTab.id}
                 workflow={activeTab.workflow}
+                x={activeTab.x}
+                y={activeTab.y}
                 zoom={activeTab.zoom}
                 openModal={openModal}
-                onWorkflowChange={(newWorkflow: any, newZoom: number) => {
+                onWorkflowChange={(
+                  newWorkflow: any,
+                  newX: number,
+                  newY: number,
+                  newZoom: number
+                ) => {
                   setTabs((prevTabs) =>
                     prevTabs.map((tab) =>
                       tab.id === activeTab.id
-                        ? { ...tab, workflow: newWorkflow, zoom: newZoom } // workflow와 zoom 함께 업데이트
+                        ? {
+                            ...tab,
+                            workflow: newWorkflow,
+                            x: newX,
+                            y: newY,
+                            zoom: newZoom,
+                          } // workflow와 zoom 함께 업데이트
                         : tab
                     )
                   );

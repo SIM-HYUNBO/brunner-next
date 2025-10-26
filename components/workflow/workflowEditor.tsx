@@ -54,6 +54,8 @@ interface WorkflowEditorProps {
     nodes: Node<commonData.ActionNodeData>[];
     edges: Edge<commonData.ConditionEdgeData>[];
   };
+  x: number;
+  y: number;
   zoom: number;
   openModal?: (msg: string) => void; // 필요하면 타입 정의
   onWorkflowChange?: (
@@ -65,6 +67,8 @@ interface WorkflowEditorProps {
         edges: Edge<commonData.ConditionEdgeData>[];
       };
     },
+    x: number,
+    y: number,
     zoom: number
   ) => void;
 }
@@ -128,6 +132,8 @@ const nodeTypes = {
 export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
   // key,
   workflow,
+  x,
+  y,
   zoom,
   openModal,
   onWorkflowChange,
@@ -267,18 +273,31 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
   const [flowHeightPx, setFlowHeightPx] = useState<number | null>(null);
   const flowBottomReservedPx = 260; // 모바일에서 하단(Inputs/Outputs 등) 예상 높이
   const rfInstanceRef = useRef<any | null>(null); // ReactFlow instance ref
-  const currentZoomRef = useRef(1);
+
+  const currentXRef = useRef<number>(0);
+  const currentYRef = useRef<number>(0);
+  const currentZoomRef = useRef<number>(1);
 
   useEffect(() => {
-    if (rfInstanceRef.current && zoom !== undefined) {
+    if (
+      rfInstanceRef.current &&
+      x != undefined &&
+      y != undefined &&
+      zoom != undefined
+    ) {
+      currentXRef.current = x;
+      currentYRef.current = y;
+      currentZoomRef.current = zoom;
+
       const currentViewport = rfInstanceRef.current.toObject();
       rfInstanceRef.current.setViewport({
-        x: currentViewport.x,
-        y: currentViewport.y,
-        zoom,
+        ...currentViewport,
+        x: currentXRef.current,
+        y: currentYRef.current,
+        zoom: currentZoomRef.current,
       });
     }
-  }, [zoom]);
+  }, [x, y, zoom]);
 
   useEffect(() => {
     if (selectedNode) {
@@ -516,7 +535,12 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
       })
     );
     setNodes(snappedNodes);
-    onWorkflowChange?.(jWorkflow.current, currentZoomRef.current);
+    onWorkflowChange?.(
+      jWorkflow.current,
+      currentXRef.current,
+      currentYRef.current,
+      currentZoomRef.current
+    );
   };
 
   const saveWorkflow = async () => {
@@ -539,7 +563,12 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
       if (jResponse.error_code == 0) {
         openModal?.(constants.messages.SUCCESS_SAVED);
         if (onWorkflowChange)
-          onWorkflowChange(jWorkflow.current, currentZoomRef.current);
+          onWorkflowChange(
+            jWorkflow.current,
+            currentXRef.current,
+            currentYRef.current,
+            currentZoomRef.current
+          );
       } else {
         openModal?.("❌ 저장 실패: " + jResponse.error_message);
       }
@@ -835,9 +864,14 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
               >
                 <ReactFlow
                   onMove={(event: MouseEvent | TouchEvent, viewport) => {
+                    currentXRef.current = viewport.x;
+                    currentYRef.current = viewport.y;
                     currentZoomRef.current = viewport.zoom;
+
                     onWorkflowChange?.(
                       jWorkflow.current,
+                      currentXRef.current,
+                      currentYRef.current,
                       currentZoomRef.current
                     );
                   }}
