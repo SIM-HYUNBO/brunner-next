@@ -225,7 +225,7 @@ export function TabbedWorkflowEditor() {
           {activeTab && (
             <ReactFlowProvider>
               <WorkflowEditor
-                // key={activeTab.id}
+                key={activeTab.id}
                 workflow={activeTab.workflow}
                 x={activeTab.x}
                 y={activeTab.y}
@@ -246,7 +246,7 @@ export function TabbedWorkflowEditor() {
                             x: newX,
                             y: newY,
                             zoom: newZoom,
-                          } // workflow와 zoom 함께 업데이트
+                          }
                         : tab
                     )
                   );
