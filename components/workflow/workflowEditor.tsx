@@ -1149,7 +1149,7 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
                               (updates.actionName &&
                                 updates.actionName !== n.data?.actionName) ||
                               (n.data.actionName === "Branch" &&
-                                n.data.design.mode !== updates.design.mode)
+                                n.data.design.mode !== updates.design?.mode)
                             ) {
                               newDesign = {};
                             }

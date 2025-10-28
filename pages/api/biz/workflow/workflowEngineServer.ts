@@ -139,6 +139,17 @@ export function createSafeApi(workflowData: any, txContext: any) {
       });
       return await res.data;
     },
+    getJson: async (url: string, params: any): Promise<any> => {
+      // https 인증서 오류 무시
+      const agent = new https.Agent({ rejectUnauthorized: false });
+      const config = {
+        headers: { "Content-Type": "application/json" },
+        httpsAgent: agent,
+        params: params,
+      };
+      const res = await axios.get(url, config);
+      return await res.data;
+    },
     random: (min: number = 0, max: number = 1): number =>
       Math.random() * (max - min) + min,
     sendMail: async (transporterOption: any, mailOption: any): Promise<any> => {
@@ -485,7 +496,8 @@ export function registerBuiltInActions(): void {
       var res = null;
 
       try {
-        node.data.run.outputs = {};
+        // 스크립트 노드는 초기화 안함
+        // node.data.run.outputs = {};
 
         const AsyncFunction = Object.getPrototypeOf(async function () {})
           .constructor as any;
