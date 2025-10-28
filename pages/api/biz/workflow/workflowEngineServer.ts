@@ -526,33 +526,34 @@ export function registerBuiltInActions(): void {
         result.error_message = constants.messages.SUCCESS_FINISHED;
         return result;
       } catch (err: any) {
-        let errorMessage = "";
-        let errorStack: string | undefined;
+        throw err;
+        // let errorMessage = "";
+        // let errorStack: string | undefined;
 
-        if (err instanceof Error) {
-          errorMessage = err.message;
-          errorStack = err.stack;
-        } else {
-          errorMessage = String(err);
-        }
+        // if (err instanceof Error) {
+        //   errorMessage = err.message;
+        //   errorStack = err.stack;
+        // } else {
+        //   errorMessage = String(err);
+        // }
 
-        // stack에서 userScript 줄 정보 찾기
-        const stackLines = errorStack?.split("\n") || [];
-        const userScriptLine = stackLines.find((line) =>
-          line.includes("userScript.js")
-        );
-        const errorLocation = userScriptLine
-          ? `(at ${userScriptLine.trim()})`
-          : "";
+        // // stack에서 userScript 줄 정보 찾기
+        // const stackLines = errorStack?.split("\n") || [];
+        // const userScriptLine = stackLines.find((line) =>
+        //   line.includes("userScript.js")
+        // );
+        // const errorLocation = userScriptLine
+        //   ? `(at ${userScriptLine.trim()})`
+        //   : "";
 
-        // outputs에도 기록
-        node.data.run = node.data.run || {};
-        node.data.run.outputs = { err, location: errorLocation };
+        // // outputs에도 기록
+        // node.data.run = node.data.run || {};
+        // node.data.run.outputs = { err, location: errorLocation };
 
-        return {
-          error_code: -1,
-          error_message: `[${node.data.label}] ${errorMessage} ${errorLocation}`,
-        };
+        // return {
+        //   error_code: -1,
+        //   error_message: `[${node.data.label}] ${errorMessage} ${errorLocation}`,
+        // };
       }
     }
   );
