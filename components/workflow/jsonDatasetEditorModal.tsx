@@ -90,7 +90,7 @@ const CellEditor: React.FC<{
           setCellValue(e.target.value);
           onUpdate(e.target.value === "true");
         }}
-        className="w-full border-none outline-none general-text-bg-color"
+        className="w-full border-none outline-none"
       >
         <option value="true">true</option>
         <option value="false">false</option>
@@ -106,7 +106,7 @@ const CellEditor: React.FC<{
       onChange={(e) => setCellValue(e.target.value)}
       onBlur={commitChange}
       onKeyDown={(e) => e.key === "Enter" && commitChange()}
-      className="w-full border-none outline-none general-text-bg-color"
+      className="w-full border-none outline-none"
       autoFocus={autoFocus}
     />
   );
