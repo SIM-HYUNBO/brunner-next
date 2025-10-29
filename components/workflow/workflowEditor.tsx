@@ -854,6 +854,16 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
                   }))}
                   onNodesChange={onNodesChange}
                   onEdgesChange={onEdgesChange}
+                  onEdgeUpdate={(oldEdge, newConnection) => {
+                    // 엣지가 드래그되거나 수정될 때 호출됩니다.
+                    const updatedEdges: Edge<ConditionEdgeData>[] = edges.map(
+                      (edge) =>
+                        edge.id === oldEdge.id
+                          ? { ...oldEdge, ...newConnection }
+                          : edge
+                    ) as Edge<ConditionEdgeData>[];
+                    setEdges(updatedEdges);
+                  }}
                   onConnect={onConnect}
                   onNodeClick={onNodeClick}
                   onPaneClick={() => setSelectedNode(null)}
