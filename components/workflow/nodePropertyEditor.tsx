@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import type { Node } from "reactflow";
 import * as constants from "@/components/core/constants";
-import type { NodeDataTable } from "@/components/core/commonData";
+import type { DataTable } from "@/components/core/commonData";
 import * as commmonFunctions from "@/components/core/commonFunctions";
 import { JsonDatasetEditorModal } from "@/components/workflow/jsonDatasetEditorModal";
 import { Button } from "antd";
@@ -120,13 +120,13 @@ export const NodePropertyEditor: React.FC<NodePropertyEditorProps> = ({
           mode="data"
           value={node.data.run.inputs}
           onConfirm={(newSchema) => {
-            const newInputsArray: NodeDataTable[] = Object.entries(
-              newSchema
-            ).map(([table, data]) => ({
-              table,
-              columns: inferColumns(data),
-              rows: Array.isArray(data) ? data : [],
-            }));
+            const newInputsArray: DataTable[] = Object.entries(newSchema).map(
+              ([table, data]) => ({
+                table,
+                columns: inferColumns(data),
+                rows: Array.isArray(data) ? data : [],
+              })
+            );
             setIsNodeInputModalOpen(false);
             onNodeUpdate?.(node.id, {
               design: {
@@ -147,13 +147,13 @@ export const NodePropertyEditor: React.FC<NodePropertyEditorProps> = ({
           mode="data"
           value={node.data.run.outputs}
           onConfirm={(newSchema) => {
-            const newOutputsArray: NodeDataTable[] = Object.entries(
-              newSchema
-            ).map(([table, data]) => ({
-              table,
-              columns: inferColumns(data),
-              rows: Array.isArray(data) ? data : [],
-            }));
+            const newOutputsArray: DataTable[] = Object.entries(newSchema).map(
+              ([table, data]) => ({
+                table,
+                columns: inferColumns(data),
+                rows: Array.isArray(data) ? data : [],
+              })
+            );
             setIsNodeOutputModalOpen(false);
             onNodeUpdate?.(node.id, {
               design: {

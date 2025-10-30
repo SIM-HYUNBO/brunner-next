@@ -6,7 +6,7 @@ import { ReactFlowProvider } from "reactflow";
 import { Button } from "antd";
 import { v4 as uuidv4 } from "uuid";
 import * as commonFunctions from "@/components/core/commonFunctions";
-import * as commonData from "../core/commonData";
+import * as commonData_WF from "@/components/core/commonData_WF";
 import type {
   Connection,
   Edge,
@@ -20,8 +20,8 @@ interface Tab {
   workflow: {
     workflowId: string;
     workflowName: string;
-    nodes: Node<commonData.ActionNodeData>[];
-    edges: Edge<commonData.ConditionEdgeData>[];
+    nodes: Node<commonData_WF.ActionNodeData>[];
+    edges: Edge<commonData_WF.ConditionEdgeData>[];
   };
   x: number;
   y: number;

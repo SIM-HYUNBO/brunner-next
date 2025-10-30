@@ -39,8 +39,8 @@ const logger = require("./../../../../components/core/server/winston/logger");
 export type WorkflowContext = Record<string, any> & {
   runWorkflow?: (workflow: any, workflowData: WorkflowContext) => Promise<any>;
   router?: any;
-  input?: commonData.NodeDataTable[];
-  output?: commonData.NodeDataTable[];
+  input?: commonData.DataTable[];
+  output?: commonData.DataTable[];
 };
 
 // -------------------- 액션 타입 --------------------

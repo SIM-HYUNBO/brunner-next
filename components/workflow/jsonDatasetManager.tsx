@@ -22,10 +22,7 @@ export interface JsonDatasetValidationResult {
   };
 }
 
-import type {
-  NodeDataTable,
-  DatasetColumn,
-} from "@/components/core/commonData";
+import type { DataTable, DatasetColumn } from "@/components/core/commonData";
 
 export class JsonDatasetManager {
   private data: Record<string, JsonObject[]> = {};
@@ -139,14 +136,14 @@ export class JsonDatasetManager {
   }
 
   // ---------------- NodeDatasetField CRUD ----------------
-  initNode(nodeId: string, fields: NodeDataTable[]) {
+  initNode(nodeId: string, fields: DataTable[]) {
     for (const field of fields) {
       this.addTable(nodeId + "_" + field.table, field.rows ?? []);
     }
   }
 
-  getNodeDataset(nodeId: string): NodeDataTable[] {
-    const result: NodeDataTable[] = [];
+  getNodeDataset(nodeId: string): DataTable[] {
+    const result: DataTable[] = [];
 
     for (const tableKey of Object.keys(this.data)) {
       if (!tableKey.startsWith(`${nodeId}_`)) continue;
@@ -183,7 +180,7 @@ export class JsonDatasetManager {
     return result;
   }
 
-  resetNode(nodeId: string, fields: NodeDataTable[]) {
+  resetNode(nodeId: string, fields: DataTable[]) {
     for (const tableKey of Object.keys(this.data)) {
       if (tableKey.startsWith(nodeId + "_")) delete this.data[tableKey];
     }
