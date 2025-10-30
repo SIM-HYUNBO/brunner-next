@@ -1,9 +1,118 @@
-"use client";
-
-import React from "react";
-import { Handle, Position } from "reactflow";
-import type { NodeProps } from "reactflow";
 import * as constants from "@/components/core/constants";
+import { Handle, Position } from "reactflow";
+import type {
+  Connection,
+  Edge,
+  Node,
+  NodeChange,
+  EdgeChange,
+  NodeProps,
+} from "reactflow";
+
+// 컬럼 단위 정의
+export interface DatasetColumn {
+  key: string; // 항상 있어야 함
+  type: "string" | "number" | "boolean" | "object"; // 항상 있어야 함
+  bindingType?: "direct" | "ref";
+  sourceNodeId?: string; // 바인딩 되어 있을때
+}
+
+// -------------------- 타입 정의 --------------------
+export interface NodeDataTable {
+  table: string;
+  columns: DatasetColumn[];
+  rows: Record<string, any>[];
+}
+
+export interface ActionNodeData {
+  label: string;
+  actionName: string;
+  status: string;
+  design: {
+    inputs: NodeDataTable[];
+    outputs: NodeDataTable[];
+
+    // Script Node
+    scriptContents?: string;
+    scriptTimeoutMs?: number;
+
+    // Branch Node
+    mode?: string;
+    condition?: string;
+    loopStartValue?: any;
+    loopStepValue?: any;
+    loopLimitValue?: any;
+
+    // Sql Node
+
+    sqlStmt?: string;
+    sqlParams?: any[];
+    dbConnectionId?: string;
+    outputTableName?: string;
+
+    // Call Node
+    targetWorkflowId?: string;
+    targetWorkflowName?: string;
+  };
+  run: {
+    inputs: NodeDataTable[];
+    outputs: NodeDataTable[];
+  };
+}
+
+export interface ConditionEdgeData {
+  condition?: string;
+}
+
+export type DesignColumn = {
+  name: string;
+  type: "string" | "number" | "boolean" | "object";
+};
+
+export type DesignedDataset = Record<string, DesignColumn[]>;
+type InputDataset = Record<string, Record<string, any>[]>;
+
+const WorkflowDefaultNode: React.FC<NodeProps<ActionNodeData>> = ({ data }) => {
+  const isStart = data.actionName === constants.workflowActions.START;
+  const isEnd = data.actionName === constants.workflowActions.END;
+  const hasPorts = [
+    constants.workflowActions.SCRIPT,
+    constants.workflowActions.SQL,
+    constants.workflowActions.CALL,
+  ].includes(data.actionName);
+
+  return (
+    <div
+      style={{
+        padding: 6,
+        border: "1px dashed #222",
+        textAlign: "center",
+        fontSize: 8,
+      }}
+    >
+      [{data.actionName}] {data.label}
+      {/* Start: 하단 source */}
+      {isStart && <Handle type="source" position={Position.Bottom} />}
+      {/* End: 상단 target */}
+      {isEnd && <Handle type="target" position={Position.Top} />}
+      {/* 일반 노드: 상단 target / 하단 source */}
+      {hasPorts && !isStart && !isEnd && (
+        <>
+          <Handle
+            type="target"
+            position={Position.Top}
+            style={{ background: "green" }}
+          />
+          <Handle
+            type="source"
+            position={Position.Bottom}
+            style={{ background: "blue" }}
+          />
+        </>
+      )}
+    </div>
+  );
+};
 
 interface BranchNodeData {
   label: string;
@@ -137,3 +246,9 @@ export default function BranchNode({ data }: NodeProps<BranchNodeData>) {
     </div>
   );
 }
+
+// 노드 유형별 렌더링 컴포넌트 등록 (일반노드와 Custom노드 유형 구분)
+export const nodeTypes = {
+  default: WorkflowDefaultNode,
+  branch: BranchNode,
+};

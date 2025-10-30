@@ -11,6 +11,10 @@ import {
   applyNodeChanges,
   applyEdgeChanges,
 } from "reactflow";
+
+import * as commonFunctions from "@/components/core/commonFunctions";
+import * as commonData_WF from "../core/commonData_WF";
+
 import type {
   Connection,
   Edge,
@@ -19,24 +23,22 @@ import type {
   EdgeChange,
   NodeProps,
 } from "reactflow";
-import { Handle, Position } from "reactflow";
+
 import "reactflow/dist/base.css";
 import "reactflow/dist/style.css";
-import { nanoid } from "nanoid";
+
 import * as constants from "@/components/core/constants";
 import { NodePropertyPanel } from "@/components/workflow/nodePropertyPanel";
 import { JsonDatasetEditorModal } from "@/components/workflow/jsonDatasetEditorModal";
 import type {
   ActionNodeData,
   ConditionEdgeData,
-} from "@/components/core/commonData";
+} from "@/components/core/commonData_WF";
 import { DBConnectionManagerModal } from "@/components/workflow/dbConnectionManagerModal";
 import RequestServer from "@/components/core/client/requestServer";
 import * as userInfo from "@/components/core/client/frames/userInfo";
 import { v4 as uuidv4 } from "uuid";
 import WorkflowSelector from "./workflowSelector";
-import * as commonFunctions from "@/components/core/commonFunctions";
-import * as commonData from "../core/commonData";
 
 import {
   Accordion,
@@ -45,14 +47,14 @@ import {
   AccordionContent,
 } from "@/components/ui/accordion";
 import { WorkflowDataModal } from "./workflowDataModal";
-import BranchNode from "./customNode/branchNode";
+
 interface WorkflowEditorProps {
   // key: string;
   workflow: {
     workflowId: string;
     workflowName: string;
-    nodes: Node<commonData.ActionNodeData>[];
-    edges: Edge<commonData.ConditionEdgeData>[];
+    nodes: Node<commonData_WF.ActionNodeData>[];
+    edges: Edge<commonData_WF.ConditionEdgeData>[];
   };
   x: number;
   y: number;
@@ -62,67 +64,11 @@ interface WorkflowEditorProps {
     workflowId: string;
     workflowName: string;
     editorState: {
-      nodes: Node<commonData.ActionNodeData>[];
-      edges: Edge<commonData.ConditionEdgeData>[];
+      nodes: Node<commonData_WF.ActionNodeData>[];
+      edges: Edge<commonData_WF.ConditionEdgeData>[];
     };
   }) => void;
 }
-
-export type DesignColumn = {
-  name: string;
-  type: "string" | "number" | "boolean" | "object";
-};
-
-export type DesignedDataset = Record<string, DesignColumn[]>;
-type InputDataset = Record<string, Record<string, any>[]>;
-
-const WorkflowDefaultNode: React.FC<NodeProps<ActionNodeData>> = ({ data }) => {
-  const isStart = data.actionName === constants.workflowActions.START;
-  const isEnd = data.actionName === constants.workflowActions.END;
-  const hasPorts = [
-    constants.workflowActions.SCRIPT,
-    constants.workflowActions.SQL,
-    constants.workflowActions.CALL,
-  ].includes(data.actionName);
-
-  return (
-    <div
-      style={{
-        padding: 6,
-        border: "1px dashed #222",
-        textAlign: "center",
-        fontSize: 8,
-      }}
-    >
-      [{data.actionName}] {data.label}
-      {/* Start: 하단 source */}
-      {isStart && <Handle type="source" position={Position.Bottom} />}
-      {/* End: 상단 target */}
-      {isEnd && <Handle type="target" position={Position.Top} />}
-      {/* 일반 노드: 상단 target / 하단 source */}
-      {hasPorts && !isStart && !isEnd && (
-        <>
-          <Handle
-            type="target"
-            position={Position.Top}
-            style={{ background: "green" }}
-          />
-          <Handle
-            type="source"
-            position={Position.Bottom}
-            style={{ background: "blue" }}
-          />
-        </>
-      )}
-    </div>
-  );
-};
-
-// 노드 유형별 렌더링 컴포넌트 등록 (일반노드와 Custom노드 유형 구분)
-const nodeTypes = {
-  default: WorkflowDefaultNode,
-  branch: BranchNode,
-};
 
 export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
   // key,
@@ -153,12 +99,13 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
   );
 
   // Input Dataset 스키마
-  const [designedInputData, setDesignedInputData] = useState<DesignedDataset>({
-    INPUT_TABLE: [
-      { name: "column1", type: "string" },
-      { name: "column2", type: "number" },
-    ],
-  });
+  const [designedInputData, setDesignedInputData] =
+    useState<commonData_WF.DesignedDataset>({
+      INPUT_TABLE: [
+        { name: "column1", type: "string" },
+        { name: "column2", type: "number" },
+      ],
+    });
 
   // Input Dataset 문자열
   const [workflowInputData, setWorkflowInputData] = useState<
@@ -874,7 +821,7 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
                     // instance.setViewport({ x, y, zoom });
                     rfInstanceRef.current = instance;
                   }}
-                  nodeTypes={nodeTypes}
+                  nodeTypes={commonData_WF.nodeTypes}
                   onEdgeClick={onEdgeClick}
                 >
                   <MiniMap />
@@ -933,7 +880,7 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
                             value={designedInputData}
                             onConfirm={(newSchema) => {
                               setDesignedInputData(
-                                newSchema as DesignedDataset
+                                newSchema as commonData_WF.DesignedDataset
                               );
                               const newDataObj: Record<string, any> = {};
                               for (const [tableName, rows] of Object.entries(
@@ -1010,7 +957,7 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
                             value={designedOutputData}
                             onConfirm={(newSchema) => {
                               setDesignedOutputData(
-                                newSchema as DesignedDataset
+                                newSchema as commonData_WF.DesignedDataset
                               );
                               const newDataObj: Record<string, any> = {};
                               for (const [tableName, rows] of Object.entries(
