@@ -496,9 +496,6 @@ export function registerBuiltInActions(): void {
       var res = null;
 
       try {
-        // 스크립트 노드는 초기화 안함
-        // node.data.run.outputs = {};
-
         const AsyncFunction = Object.getPrototypeOf(async function () {})
           .constructor as any;
 
@@ -516,44 +513,14 @@ export function registerBuiltInActions(): void {
           ),
         ]);
 
-        logs.forEach((line: string) => console.log("[SCRIPT]", line));
-
-        node.data.run.outputs.scriptResult = JSON.stringify(res);
-
         postNodeCheck(node, workflowData);
 
         result.error_code = 0;
         result.error_message = constants.messages.SUCCESS_FINISHED;
         return result;
       } catch (err: any) {
+        // Exception 발생 시 트랜잭션을 rollback 처리 해야하므로 throw 처리 필요
         throw err;
-        // let errorMessage = "";
-        // let errorStack: string | undefined;
-
-        // if (err instanceof Error) {
-        //   errorMessage = err.message;
-        //   errorStack = err.stack;
-        // } else {
-        //   errorMessage = String(err);
-        // }
-
-        // // stack에서 userScript 줄 정보 찾기
-        // const stackLines = errorStack?.split("\n") || [];
-        // const userScriptLine = stackLines.find((line) =>
-        //   line.includes("userScript.js")
-        // );
-        // const errorLocation = userScriptLine
-        //   ? `(at ${userScriptLine.trim()})`
-        //   : "";
-
-        // // outputs에도 기록
-        // node.data.run = node.data.run || {};
-        // node.data.run.outputs = { err, location: errorLocation };
-
-        // return {
-        //   error_code: -1,
-        //   error_message: `[${node.data.label}] ${errorMessage} ${errorLocation}`,
-        // };
       }
     }
   );
@@ -563,49 +530,51 @@ export function registerBuiltInActions(): void {
     constants.workflowActions.SQL,
     async (node, workflowData, txContext, safeApi: any) => {
       var result = { error_code: -1, error_message: "" };
-
-      if (!node) {
-        result.error_code = -1;
-        result.error_message = constants.messages.NO_DATA_FOUND;
-        return result;
-      }
-
-      if (!preNodeCheck(node, workflowData)) {
-        postNodeCheck(node, workflowData);
-
-        result.error_code = -1;
-        result.error_message = `[${node.data.label}] node check result is invalid.`;
-      }
-
-      const { dbConnectionId, sqlStmt, sqlParams, outputTableName } =
-        node.data?.design || {};
-
-      if (!dbConnectionId)
-        throw new Error(
-          `${constants.messages.REQUIRED_FIELD}:node.data.design.connetionId`
-        );
-      if (!sqlStmt)
-        throw new Error(
-          `${constants.messages.REQUIRED_FIELD}:node.data.design.sqlStmt`
-        );
-
-      const dbManager = DBConnectionManager.getInstance();
-
-      const dbConnectionPool: DBConnectionPool | null =
-        await dbManager.getDBConnectionPool(dbConnectionId);
-      if (!dbConnectionPool)
-        throw new Error(
-          `${constants.messages.NO_DATA_FOUND}: ${dbConnectionId}`
-        );
-
-      const dbType = dbConnectionPool.type;
-
+      var dbConnectionPool: DBConnectionPool | null = null;
       let connection: any = null;
-      let rows: any = null;
 
       try {
+        if (!node) {
+          result.error_code = -1;
+          result.error_message = constants.messages.NO_DATA_FOUND;
+          return result;
+        }
+
+        if (!preNodeCheck(node, workflowData)) {
+          postNodeCheck(node, workflowData);
+
+          result.error_code = -1;
+          result.error_message = `[${node.data.label}] node check result is invalid.`;
+        }
+
+        const { dbConnectionId, sqlStmt, sqlParams, outputTableName } =
+          node.data?.design || {};
+
+        if (!dbConnectionId)
+          throw new Error(
+            `${constants.messages.REQUIRED_FIELD}:node.data.design.connetionId`
+          );
+        if (!sqlStmt)
+          throw new Error(
+            `${constants.messages.REQUIRED_FIELD}:node.data.design.sqlStmt`
+          );
+
+        dbConnectionPool =
+          await DBConnectionManager.getInstance().getDBConnectionPool(
+            dbConnectionId
+          );
+
+        if (!dbConnectionPool)
+          throw new Error(
+            `${constants.messages.NO_DATA_FOUND}: ${dbConnectionId}`
+          );
+
+        let rows: any = null;
+
         // ✅ 연결 가져오기
-        connection = await dbManager.getConnection(dbConnectionId);
+        connection = await DBConnectionManager.getInstance().getConnection(
+          dbConnectionId
+        );
 
         switch (connection.type) {
           case constants.dbType.mysql: {
@@ -672,7 +641,7 @@ export function registerBuiltInActions(): void {
           }
           default:
             throw new Error(
-              `${constants.messages.NOT_SUPPORTED_DB_TYPE}: ${dbType}`
+              `${constants.messages.NOT_SUPPORTED_DB_TYPE}: ${connection.type}`
             );
         }
 
@@ -680,22 +649,17 @@ export function registerBuiltInActions(): void {
         node.data.run.outputs = {};
         if (rows) node.data.run.outputs[outputTableName] = rows;
 
-        console.log(
-          `[SQL_NODE] ${connection.type.toUpperCase()} 쿼리 실행 완료`
-        );
-
         result.error_code = 0;
         result.error_message = constants.messages.SUCCESS_FINISHED;
         return result;
       } catch (err: any) {
-        console.error(`[SQL_NODE ERROR][${dbType}]`, err);
         throw err;
       } finally {
         // ✅ 커넥션 반환
         if (connection.dbConnection) {
           var releaseResult = null;
           try {
-            switch (dbType) {
+            switch (connection.dbType) {
               case constants.dbType.mysql:
               case constants.dbType.postgres:
                 releaseResult = await connection.dbConnection.release();
@@ -710,7 +674,8 @@ export function registerBuiltInActions(): void {
                 throw new Error(constants.messages.NOT_SUPPORTED_DB_TYPE);
             }
           } catch (closeErr) {
-            console.warn("Connection close error:", closeErr);
+            postNodeCheck(node, workflowData);
+            throw closeErr;
           }
         }
         postNodeCheck(node, workflowData);
@@ -719,9 +684,6 @@ export function registerBuiltInActions(): void {
   );
 
   // BRANCH 노드
-  // loop 모드에서 loopLimitValue 입력 예시 노드 이름으로 노드를 찾아서 건수 확인
-  // nodes.find(n => n.data.label === 'Node 1').data.run.outputs.length
-
   registerAction(
     constants.workflowActions.BRANCH,
     async (node: any, workflowData: any, txContext: any, safeApi: any) => {
@@ -746,13 +708,11 @@ export function registerBuiltInActions(): void {
         const design = node.data.design || {};
         const mode = design.mode;
 
-        // Branch 모드
         if (mode === constants.workflowBranchNodeMode.Branch) {
-          // condition 평가
           const conditionStr = design.condition || "false";
           let conditionResult = false;
+
           try {
-            // workflow, node 데이터 스코프에서 평가
             const fnCondition = new Function(
               "workflowData",
               "api",
@@ -768,21 +728,16 @@ export function registerBuiltInActions(): void {
 
           // true/false 포트 결정
           node.data.run.selectedPort = conditionResult ? "true" : "false";
-          console.log(
-            `[Branch Node] condition: ${conditionStr}, result: ${conditionResult}`
-          );
-        }
+          // console.log(
+          //   `[Branch Node] condition: ${conditionStr}, result: ${conditionResult}`
+          // );
+        } else if (mode === constants.workflowBranchNodeMode.Loop) {
+          const loopStartValue = design.loopStartValue;
+          const loopStepValue = design.loopStepValue;
+          let loopLimitValue = null;
 
-        // Loop 모드
-        else if (mode === constants.workflowBranchNodeMode.Loop) {
-          const loopStartValue = design.loopStartValue ?? 0;
-          const loopStepValue = design.loopStepValue ?? 1;
-
-          // JS 표현식으로 limit 계산
-          let loopLimitValue = 0;
           try {
             const nodes = workflowData.nodes;
-
             const fnLoopLimit = new Function(
               "workflowData",
               "api",
@@ -797,21 +752,19 @@ export function registerBuiltInActions(): void {
           var loopCurrentValue =
             design.loopCurrentValue ?? loopStartValue - loopStepValue;
 
-          // 다음 반복 인덱스 저장
+          // 현재 인덱스 저장
           loopCurrentValue = loopCurrentValue + loopStepValue;
-
           node.data.design.loopCurrentValue = loopCurrentValue;
-          // node.data.design.loopCurrentValue = loopCurrentValue;
 
           if (loopCurrentValue < loopLimitValue) {
-            node.data.run.selectedPort = "true";
+            node.data.run.selectedPort = "true"; // 루프 계속
           } else {
-            node.data.run.selectedPort = "false"; // 루프 종료 후 다음 노드
+            node.data.run.selectedPort = "false"; // 루프 종료 후 다음노드 이동
             loopCurrentValue = -1;
-            node.data.design.loopCurrentValue = undefined;
+            node.data.design.loopCurrentValue = loopStartValue - loopStepValue; // 시작변수 초기화
           }
 
-          console.log(
+          logger.log(
             `[Loop Node] currentIndex: ${loopCurrentValue}, limit: ${loopLimitValue}, nextIndex: ${node.data.design.loopCurrentValue}`
           );
         } else {
@@ -833,7 +786,7 @@ export function registerBuiltInActions(): void {
   );
 }
 
-// SQL노드의 바인딩 변수에 해당하는 값을 찾아 매핑함
+// SQL노드의 바인딩 변수에 매핑된 값을 찾아 매핑함
 // 바인딩 변수 지정 기호: ${}
 // 바인딩 변수 지정 경로 내에 인댁스 변수 지정 기호: #{}
 function convertNamedParams(
