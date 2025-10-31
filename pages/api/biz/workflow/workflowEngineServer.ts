@@ -575,7 +575,7 @@ export function registerBuiltInActions(): void {
         if (connection.dbConnection) {
           var releaseResult = null;
           try {
-            switch (connection.dbType) {
+            switch (connection.type) {
               case constants.dbType.mysql:
               case constants.dbType.postgres:
                 releaseResult = await connection.dbConnection.release();
@@ -718,8 +718,10 @@ function convertNamedParams(
     context: any
   ): any {
     // 값은 그대로 사용함.
-    if (!p.binding) return p.value;
-
+    if (!p.binding) {
+      if (p.value == null || p.value == undefined) return null;
+      else return p.value;
+    }
     let bindingStr = p.binding;
 
     // 1. 먼저 #{} 안의 인덱스/루프 변수 치환
