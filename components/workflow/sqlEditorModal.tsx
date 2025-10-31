@@ -129,11 +129,16 @@ export const SqlEditorModal: React.FC<SqlEditorModalProps> = ({
             placeholder="변수 경로 {{userId}} 또는 값 123"
             onChange={(e) =>
               setParams((prev) =>
-                prev.map((p, i) =>
-                  i === idx
-                    ? { ...p, binding: e.target.value } // 기존 binding이 있으면 binding 수정
-                    : p
-                )
+                prev.map((p, i) => {
+                  if (i !== idx) return p;
+                  const val = e.target.value;
+                  const isVar = /\{\{.*\}\}|\$\{.*\}/.test(val);
+                  return {
+                    ...p,
+                    binding: isVar ? val : undefined,
+                    value: isVar ? p.value : val,
+                  };
+                })
               )
             }
           />
@@ -213,17 +218,17 @@ export const SqlEditorModal: React.FC<SqlEditorModalProps> = ({
             <Input
               value={dbConnectionId}
               onChange={(e) => setDbConnectionId(e.target.value)}
-              placeholder="myDbConnectionId"
-              className="w-64 general-text-bg-color"
+              placeholder="DB Connection Id"
+              className="w-64 semi-text-bg-color hover:semi-text-bg-color"
             />
           </div>
           <div className="flex flex-col">
-            <label>Output Table Name)</label>
+            <label>Output Table Name</label>
             <Input
               type="text"
               value={outputTableName ?? ""}
               onChange={(e) => setOutputTableName(e.target.value)}
-              className="w-36 general-text-bg-color"
+              className="w-36 semi-text-bg-color hover:semi-text-bg-color"
             />
           </div>
         </div>

@@ -408,90 +408,14 @@ export function registerBuiltInActions(): void {
     }
   );
 
-  // SCRIPT
-
-  /*
-  const userScript: string =
-        node.data.design.scriptConents ||
-        `
-        // POST 요청 예제
-        const nameKor= api.getGlobalVar("data.run.inputs").INPUT_TABLE[0]?.name;
-        const nameEng= api.getGlobalVar("data.run.inputs").INPUT_TABLE[0]?.type;
-        const age= api.getGlobalVar("data.run.inputs").INPUT_TABLE[0]?.age;
-
-        const body = {
-          kor: nameKor,
-          eng: nameEng,
-          age: age
-        }
-
-        const response = await api.postJson(
-          "https://jsonplaceholder.typicode.com/posts",
-          body
-        );
-        api.setVar("data.run.outputs", []);
-        api.setVar("data.run.outputs.0", response);
-
-        `;
-
-      const userScript = `
-      SQL 실행 예제
-      node.data.run.inputs에서 connectionId, query, params를 가져와서 사용
-
-      const databaseId = "brunner"; // DB 연결 ID
-      const query = `
-      SELECT *
-        FROM brunner.tb_cor_user_mst
-       WHERE user_id = $1`;
-      const params = ['fredric']; // 파라미터
-
-      try {
-        const result = await api.sql(databaseId, query, params);
-        api.log("SQL 결과:", result);
-        return result; // 노드 실행 결과 리턴한 값은 node.data.run.output에 자동 저장됨
-      } catch (err) {
-        api.log("SQL 실행 오류:", err.message);
-        api.setVar("data.run.output", err);
-        return err; // 노드 실행 결과 리턴한 값은 node.data.run.output에 자동 저장됨
-      }
-      `;
-  */
-  /* nodes에서 특정 노드 이름 ("Node 1")으로 찾기
-  var targetNode = (api.getGlobalVar("nodes") || []).find(n => n.data.label === "Node 1");
-
-  if (targetNode) {
-    // outputs 배열 가져오기
-    var sourceOutputs = targetNode.data.run.outputs || [];
-
-    // user_name만 추출
-    var userNames = sourceOutputs.map(o => o?.user_name).filter(Boolean); // null/undefined 제거
-
-    if (userNames.length > 0) {
-      // 현재 노드 outputs에 복사
-      userNames.forEach((name, idx) => {
-        api.setVar(`data.run.outputs.${idx}`, name);
-      });
-
-      // ✅ 이 부분이 핵심: 반드시 백틱(`)으로 감싸야 함
-      api.log(`User names set to outputs: ${userNames.join(", ")}`);
-    } else {
-      api.log("No user_name found in Node 1 outputs", "warn");
-    }
-  } else {
-    api.log("Node with label 'Node 1' not found", "warn");
-  }
-  */
-  // SCRIPT 노드 액션
+  // SCRIPT 노드
   registerAction(
     constants.workflowActions.SCRIPT,
     async (node: any, workflowData: any, txContext: any, safeApi: any) => {
       var result = { error_code: -1, error_message: "" };
 
       const userScript = node.data.design.scriptContents || "";
-
       const timeoutMs: number = node.data.design.timeoutMs || 50000;
-
-      const logs: string[] = [];
 
       var res = null;
 
@@ -506,7 +430,7 @@ export function registerBuiltInActions(): void {
           userScript + "\n//# sourceURL=userScript.js"
         );
 
-        const res = await Promise.race([
+        res = await Promise.race([
           fn(node.data || {}, workflowData.data || {}, safeApi),
           new Promise<never>((_, reject) =>
             setTimeout(() => reject(new Error("timeout")), timeoutMs)
@@ -519,7 +443,6 @@ export function registerBuiltInActions(): void {
         result.error_message = constants.messages.SUCCESS_FINISHED;
         return result;
       } catch (err: any) {
-        // Exception 발생 시 트랜잭션을 rollback 처리 해야하므로 throw 처리 필요
         throw err;
       }
     }
@@ -534,15 +457,8 @@ export function registerBuiltInActions(): void {
       let connection: any = null;
 
       try {
-        if (!node) {
-          result.error_code = -1;
-          result.error_message = constants.messages.NO_DATA_FOUND;
-          return result;
-        }
-
         if (!preNodeCheck(node, workflowData)) {
           postNodeCheck(node, workflowData);
-
           result.error_code = -1;
           result.error_message = `[${node.data.label}] node check result is invalid.`;
         }
@@ -689,15 +605,8 @@ export function registerBuiltInActions(): void {
     async (node: any, workflowData: any, txContext: any, safeApi: any) => {
       var result = { error_code: -1, error_message: "" };
 
-      if (!node) {
-        result.error_code = -1;
-        result.error_message = constants.messages.NO_DATA_FOUND;
-        return result;
-      }
-
       if (!preNodeCheck(node, workflowData)) {
         postNodeCheck(node, workflowData);
-
         result.error_code = -1;
         result.error_message = `[${node.data.label}] node check result is invalid.`;
       }
@@ -764,7 +673,7 @@ export function registerBuiltInActions(): void {
             node.data.design.loopCurrentValue = loopStartValue - loopStepValue; // 시작변수 초기화
           }
 
-          logger.log(
+          logger.info(
             `[Loop Node] currentIndex: ${loopCurrentValue}, limit: ${loopLimitValue}, nextIndex: ${node.data.design.loopCurrentValue}`
           );
         } else {
@@ -773,6 +682,7 @@ export function registerBuiltInActions(): void {
 
         postNodeCheck(node, workflowData);
 
+        // 스크립트 노드는 결과저장을 별도로 하지 않으며 스크립트내에서 자체적으로 저장해야 함.
         result.error_code = 0;
         result.error_message = constants.messages.SUCCESS_FINISHED;
         return result;
