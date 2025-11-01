@@ -901,7 +901,6 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
                                 }
                               }
                               setWorkflowInputData(newDataObj);
-                              setIsInputSchemaEditorOpen(false);
                             }}
                             onCancel={() => setIsInputSchemaEditorOpen(false)}
                           />
@@ -915,7 +914,6 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
                             value={workflowInputData}
                             onConfirm={(newData) => {
                               setWorkflowInputData(newData);
-                              setIsInputDataEditorOpen(false);
                             }}
                             onCancel={() => setIsInputDataEditorOpen(false)}
                           />
@@ -978,7 +976,6 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
                                 }
                               }
                               setWorkflowOutputData(newDataObj);
-                              setIsOutputSchemaEditorOpen(false);
                             }}
                             onCancel={() => setIsOutputSchemaEditorOpen(false)}
                           />
@@ -991,7 +988,6 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
                             value={workflowOutputData}
                             onConfirm={(newData) => {
                               setWorkflowOutputData(newData);
-                              setIsOutputDataEditorOpen(false);
                             }}
                             onCancel={() => setIsOutputDataEditorOpen(false)}
                           />

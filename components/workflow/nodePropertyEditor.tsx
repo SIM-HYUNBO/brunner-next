@@ -127,7 +127,6 @@ export const NodePropertyEditor: React.FC<NodePropertyEditorProps> = ({
                 rows: Array.isArray(data) ? data : [],
               })
             );
-            setIsNodeInputModalOpen(false);
             onNodeUpdate?.(node.id, {
               design: {
                 ...node.data.design,
@@ -154,7 +153,6 @@ export const NodePropertyEditor: React.FC<NodePropertyEditorProps> = ({
                 rows: Array.isArray(data) ? data : [],
               })
             );
-            setIsNodeOutputModalOpen(false);
             onNodeUpdate?.(node.id, {
               design: {
                 ...node.data.design,
