@@ -1,6 +1,6 @@
 "use client";
 
-import RequestServer from "@/components/core/client/requestServer";
+import { RequestServer } from "@/components/core/client/requestServer";
 import { useState } from "react";
 import { useRouter } from "next/router";
 import { useModal } from "@/components/core/client/brunnerMessageBox";

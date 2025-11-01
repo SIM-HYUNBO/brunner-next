@@ -3,7 +3,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Rnd } from "react-rnd";
 import * as constants from "@/components/core/constants";
-import RequestServer from "@/components/core/client/requestServer";
+import { RequestServer } from "@/components/core/client/requestServer";
 import { JsonViewer } from "@textea/json-viewer";
 import copy from "copy-to-clipboard";
 import { getIsDarkMode } from "@/components/core/client/frames/darkModeToggleButton";

@@ -6,7 +6,7 @@ import Footer from "./footer";
 import BodySection from "@/components/core/client/frames/bodySection";
 import Script from "next/script";
 import Head from "next/head";
-import RequestServer from "@/components/core/client/requestServer";
+import { RequestServer } from "@/components/core/client/requestServer";
 import * as constants from "@/components/core/constants";
 import * as userInfo from "@/components/core/client/frames/userInfo";
 

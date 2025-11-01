@@ -3,7 +3,7 @@
 import { React, useState } from "react";
 import * as constants from "@/components/core/constants";
 import { useModal } from "@/components/core/client/brunnerMessageBox";
-import RequestServer from "@/components/core/client/requestServer";
+import { RequestServer } from "@/components/core/client/requestServer";
 import * as userInfo from "@/components/core/client/frames/userInfo";
 import * as commonFunctions from "@/components/core/commonFunctions";
 import { message } from "hawk/lib/client";

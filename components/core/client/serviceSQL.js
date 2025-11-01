@@ -7,7 +7,7 @@ import React, {
 } from "react";
 import * as constants from "@/components/core/constants";
 import * as userInfo from "@/components/core/client/frames/userInfo";
-import RequestServer from "@/components/core/client/requestServer";
+import { RequestServer } from "@/components/core/client/requestServer";
 import { useModal } from "@/components/core/client/brunnerMessageBox";
 import Loading from "@/components/core/client/loading";
 import { Input, Button, Table } from "antd";

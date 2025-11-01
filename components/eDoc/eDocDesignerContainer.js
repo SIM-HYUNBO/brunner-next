@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import * as constants from "@/components/core/constants";
 import * as userInfo from "@/components/core/client/frames/userInfo";
 import { useModal } from "@/components/core/client/brunnerMessageBox";
-import RequestServer from "@/components/core/client/requestServer";
+import { RequestServer } from "@/components/core/client/requestServer";
 
 import EDocComponentPalette from "./eDocComponentPalette";
 import EDocEditorCanvas from "./eDocEditorCanvas";

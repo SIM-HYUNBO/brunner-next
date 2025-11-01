@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import RequestServer from "@/components/core/client/requestServer";
+import { RequestServer } from "@/components/core/client/requestServer";
 import { useRouter } from "next/router";
 import * as constants from "@/components/core/constants";
 import { useModal } from "@/components/core/client/brunnerMessageBox";

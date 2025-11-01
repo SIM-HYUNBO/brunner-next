@@ -11,7 +11,7 @@ import * as ButtonComponent from "@/components/eDoc/eDocComponent/eDocComponent_
 import * as VideoComponent from "@/components/eDoc/eDocComponent/eDocComponent_Video";
 import * as LottieComponent from "@/components/eDoc/eDocComponent/eDocComponent_Lottie";
 
-import RequestServer from "@/components/core/client/requestServer";
+import { RequestServer } from "@/components/core/client/requestServer";
 import * as userInfo from "@/components/core/client/frames/userInfo";
 
 export function isJsonObject(obj) {

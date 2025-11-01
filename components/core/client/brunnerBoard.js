@@ -1,7 +1,7 @@
 `use strict`;
 
 import React, { useState, useEffect } from "react";
-import RequestServer from "@/components/core/client/requestServer";
+import { RequestServer } from "@/components/core/client/requestServer";
 import * as userInfo from "@/components/core/client/frames/userInfo";
 import { useModal } from "@/components/core/client/brunnerMessageBox";
 import * as constants from "@/components/core/constants";

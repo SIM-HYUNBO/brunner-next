@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from "react";
 import * as constants from "@/components/core/constants";
-import RequestServer from "@/components/core/client/requestServer";
+import { RequestServer } from "@/components/core/client/requestServer";
 import Loading from "@/components/core/client/loading";
 import { useModal } from "@/components/core/client/brunnerMessageBox";
 import * as userInfo from "@/components/core/client/frames/userInfo";

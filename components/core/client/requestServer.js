@@ -37,27 +37,16 @@ export async function RequestExecuteWorkflow(
   inputData
 ) {
   try {
-    var jRequest =
-      transactionMode == constants.transactionMode.System
-        ? {
-            commandName: constants.commands.WORKFLOW_EXECUTE_WORKFLOW,
-            systemCode: systemCode,
-            userId: userId,
-            workflowId: workflowId,
-            transactionMode: transactionMode,
-            inputs: inputData,
-          }
-        : {
-            commandName: constants.commands.WORKFLOW_EXECUTE_WORKFLOW,
-            systemCode: systemCode,
-            userId: userId,
-            workflowId: workflowId,
-            currentNodeId: currentNodeId,
-            transactionMode: transactionMode,
-            inputs: inputData,
-          };
+    var jRequest = {
+      commandName: constants.commands.WORKFLOW_EXECUTE_WORKFLOW,
+      systemCode: systemCode,
+      userId: userId,
+      workflowId: workflowId,
+      transactionMode: transactionMode,
+      inputs: inputData,
+    };
     const jResponse = await RequestServer(jRequest);
-    return jResponsse;
+    return jResponse;
   } catch (err) {
     throw err;
   }
