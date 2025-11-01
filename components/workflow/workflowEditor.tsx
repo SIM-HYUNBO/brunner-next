@@ -104,7 +104,7 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
   // Input Dataset 스키마
   const [designedInputData, setDesignedInputData] =
     useState<commonData_WF.DesignedDataset>({
-      INPUT_TABLE: [
+      INDATA: [
         { name: "column1", type: "string" },
         { name: "column2", type: "number" },
       ],
@@ -118,12 +118,12 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
   // Output Dataset 스키마
   const [designedOutputData, setDesignedOutputData] = useState<
     Record<string, any[]>
-  >({ OUTPUT_TABLE: [{ key1: "test", key2: 123 }] });
+  >({ OUTDATA: [{ key1: "test", key2: 123 }] });
   // Output Dataset 문자열
   const [workflowOutputData, setWorkflowOutputData] = useState<
     Record<string, any[]>
   >({
-    OUTPUT_TABLE: [],
+    OUTDATA: [],
   });
 
   const [isRightPanelOpen, setIsRightPanelOpen] = useState(false);

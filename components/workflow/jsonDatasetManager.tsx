@@ -2,15 +2,7 @@ export type JsonObject = { [key: string]: any };
 
 export interface ColumnSchema {
   name: string;
-  type:
-    | "string"
-    | "number"
-    | "boolean"
-    | "object"
-    | "array"
-    | "null"
-    | "date"
-    | "datetime";
+  type: JsonColumnType;
 }
 
 export interface JsonDatasetValidationResult {
@@ -23,6 +15,7 @@ export interface JsonDatasetValidationResult {
 }
 
 import type { DataTable, DatasetColumn } from "@/components/core/commonData";
+import type { JsonColumnType } from "./jsonDatasetEditorModal";
 
 export class JsonDatasetManager {
   private data: Record<string, JsonObject[]> = {};
@@ -75,15 +68,35 @@ export class JsonDatasetManager {
   addColumn(tableKey: string, column: ColumnSchema): void {
     const tableRows = this.ensureTable(tableKey);
 
-    // 모든 행에 새 컬럼 추가
-    for (const row of tableRows) {
-      (row as Record<string, any>)[column.name] = null;
+    // ✅ 1️⃣ 행이 하나도 없으면 기본 행 1개 생성
+    if (tableRows.length === 0) {
+      const newRow: Record<string, any> = {};
+      newRow[column.name] = this.getDefaultValue(column.type); // 새 컬럼 기본값 설정
+      this.data[tableKey]!.push(newRow);
+    } else {
+      // ✅ 2️⃣ 모든 행에 새 컬럼 추가
+      for (const row of tableRows) {
+        (row as Record<string, any>)[column.name] = this.getDefaultValue(
+          column.type
+        );
+      }
     }
 
-    // 컬럼 배열 보장 후 추가
-    this.columns[tableKey]!.push(column);
+    // ✅ 3️⃣ 컬럼 배열 보장 후 추가
+    const cols = this.ensureColumns(tableKey);
+    cols.push(column);
   }
-
+  private getDefaultValue(type: ColumnSchema["type"]) {
+    switch (type) {
+      case "number":
+        return 0;
+      case "boolean":
+        return false;
+      case "string":
+      default:
+        return "";
+    }
+  }
   // 컬럼 제거
   removeColumn(tableKey: string, columnName: string) {
     const tableRows = this.data[tableKey];
@@ -215,8 +228,6 @@ export class JsonDatasetManager {
   }
   // ---------------- Type 추론 ----------------
   private inferType(value: any): ColumnSchema["type"] {
-    if (value === null) return "null";
-    if (Array.isArray(value)) return "array";
     switch (typeof value) {
       case "string":
         return "string";
@@ -224,8 +235,6 @@ export class JsonDatasetManager {
         return "number";
       case "boolean":
         return "boolean";
-      case "object":
-        return "object";
       default:
         return "string";
     }
