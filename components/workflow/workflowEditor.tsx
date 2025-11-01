@@ -637,7 +637,6 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
         process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE,
         userInfo.getLoginUserId(),
         jWorkflow.current.workflowId,
-        jWorkflow.current?.currentNodeId ?? "",
         constants.transactionMode.Business,
         workflowInputData
       );

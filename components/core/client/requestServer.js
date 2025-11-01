@@ -32,7 +32,6 @@ export async function RequestExecuteWorkflow(
   systemCode,
   userId,
   workflowId,
-  currentNodeId,
   transactionMode,
   inputData
 ) {
