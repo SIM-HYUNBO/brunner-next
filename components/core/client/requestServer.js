@@ -1,7 +1,7 @@
 "use strict";
 import * as constants from "@/components/core/constants";
 
-export default async function RequestServer(
+export async function RequestServer(
   jRequest,
   method = constants.httpMethod.POST,
   serverUrl = `/api/backendServer/`
@@ -25,5 +25,40 @@ export default async function RequestServer(
     jResponse.error_code = -1;
     jResponse.error_message = `${constants.messages.SERVER_NOT_CONNECTTED} ${e}`;
     return jResponse;
+  }
+}
+
+export async function RequestExecuteWorkflow(
+  systemCode,
+  userId,
+  workflowId,
+  currentNodeId,
+  transactionMode,
+  inputData
+) {
+  try {
+    var jRequest =
+      transactionMode == constants.transactionMode.System
+        ? {
+            commandName: constants.commands.WORKFLOW_EXECUTE_WORKFLOW,
+            systemCode: systemCode,
+            userId: userId,
+            workflowId: workflowId,
+            transactionMode: transactionMode,
+            inputs: inputData,
+          }
+        : {
+            commandName: constants.commands.WORKFLOW_EXECUTE_WORKFLOW,
+            systemCode: systemCode,
+            userId: userId,
+            workflowId: workflowId,
+            currentNodeId: currentNodeId,
+            transactionMode: transactionMode,
+            inputs: inputData,
+          };
+    const jResponse = await RequestServer(jRequest);
+    return jResponsse;
+  } catch (err) {
+    throw err;
   }
 }

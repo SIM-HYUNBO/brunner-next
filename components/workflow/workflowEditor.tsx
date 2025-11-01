@@ -35,7 +35,10 @@ import type {
   ConditionEdgeData,
 } from "@/components/core/commonData_WF";
 import { DBConnectionManagerModal } from "@/components/workflow/dbConnectionManagerModal";
-import RequestServer from "@/components/core/client/requestServer";
+import {
+  RequestExecuteWorkflow,
+  RequestServer,
+} from "@/components/core/client/requestServer";
 import * as userInfo from "@/components/core/client/frames/userInfo";
 import { v4 as uuidv4 } from "uuid";
 import WorkflowSelector from "./workflowSelector";
@@ -608,15 +611,14 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
   // 워크플로우 실행-시스템 트랜잭션 모드
   const executeWorkflow = async () => {
     try {
-      const jRequest = {
-        commandName: constants.commands.WORKFLOW_EXECUTE_WORKFLOW,
-        systemCode: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE,
-        userId: userInfo.getLoginUserId(),
-        workflowId: jWorkflow.current.workflowId,
-        transactionMode: constants.transactionMode.System,
-        inputs: workflowInputData,
-      };
-      const jResponse = await RequestServer(jRequest);
+      const jResponse = await RequestExecuteWorkflow(
+        process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE,
+        userInfo.getLoginUserId(),
+        jWorkflow.current.workflowId,
+        constants.transactionMode.System,
+        workflowInputData
+      );
+
       if (jResponse.error_code == 0 && jResponse.jWorkflow) {
         setCurrentWorkflow({ ...jResponse.jWorkflow });
         openModal?.(constants.messages.SUCCESS_FINISHED);
@@ -631,16 +633,15 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
   // 워크플로우 실행-비즈니스 트랜잭션 모드
   const executeWorkflowByStep = async () => {
     try {
-      const jRequest = {
-        commandName: constants.commands.WORKFLOW_EXECUTE_WORKFLOW,
-        systemCode: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE,
-        userId: userInfo.getLoginUserId(),
-        workflowId: jWorkflow.current.workflowId,
-        transactionMode: constants.transactionMode.Business,
-        currentNodeId: jWorkflow.current?.currentNodeId ?? "",
-        inputs: workflowInputData,
-      };
-      const jResponse = await RequestServer(jRequest);
+      const jResponse = await RequestExecuteWorkflow(
+        process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE,
+        userInfo.getLoginUserId(),
+        jWorkflow.current.workflowId,
+        jWorkflow.current?.currentNodeId ?? "",
+        constants.transactionMode.Business,
+        workflowInputData
+      );
+
       if (jResponse.error_code == 0 && jResponse.jWorkflow) {
         setCurrentWorkflow({ ...jResponse.jWorkflow });
         openModal?.(constants.messages.SUCCESS_FINISHED);
@@ -653,7 +654,6 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
     }
   };
 
-  // <<< MOBILE-FIX: resize handling to compute flow height and call fitView
   useEffect(() => {
     const handleResize = () => {
       const iw = window.innerWidth;
