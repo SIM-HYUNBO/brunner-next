@@ -13,7 +13,6 @@ import * as LottieComponent from "@/components/eDoc/eDocComponent/eDocComponent_
 
 import { RequestServer } from "@/components/core/client/requestServer";
 import * as userInfo from "@/components/core/client/frames/userInfo";
-import { currentSystemCode } from "../contents/signinContent";
 
 export function isJsonObject(obj) {
   return obj && typeof obj === "object" && !Array.isArray(obj);
@@ -124,6 +123,8 @@ export async function getDocumentData(systemCode, userId, documentId) {
 }
 
 export const getAdminDocumentList = async (systemCode) => {
+  if (!userInfo.isLogin()) return;
+
   const jRequest = {
     commandName: constants.commands.EDOC_ADMIN_DOCUMENT_SELECT_ALL,
     systemCode: systemCode,

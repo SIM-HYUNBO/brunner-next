@@ -9,6 +9,7 @@ export default function UserInfo({
   reloadSignal,
   triggermenureload,
 }) {
+  const [currentSystemCode, setCurrentSystemCode] = useState(undefined);
   const [userName, setUserName] = useState("");
 
   // 최초 렌더링 시 userInfo 로딩
@@ -118,4 +119,17 @@ export const isLogin = () => {
     }
   }
   return false;
+};
+
+export const getCurrentSystemCode = () => {
+  if (typeof window !== "undefined") {
+    try {
+      const userInfoStr = localStorage.getItem("userInfo");
+      const userInfo = JSON.parse(userInfoStr);
+      return userInfo?.systemCode || "";
+    } catch {
+      return "";
+    }
+  }
+  return "";
 };

@@ -6,7 +6,6 @@ import { useModal } from "@/components/core/client/brunnerMessageBox";
 import AIModelSelector from "@/components/core/client/aiModelSelector";
 import * as userInfo from "@/components/core/client/frames/userInfo";
 import { Input, Button, Table } from "antd";
-import { currentSystemCode } from "@/components/contents/signinContent";
 
 export default function AIInputModal({
   isOpen,
@@ -140,7 +139,7 @@ export default function AIInputModal({
     try {
       const jRequest = {
         commandName: commandName,
-        systemCode: currentSystemCode,
+        systemCode: userInfo.getCurrentSystemCode(),
         instructionInfo: {
           instructions: instructions,
           apiKey: apiKey,

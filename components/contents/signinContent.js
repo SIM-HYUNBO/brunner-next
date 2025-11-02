@@ -9,7 +9,6 @@ import Loading from "@/components/core/client/loading";
 import { Button } from "antd";
 
 // 외부에서 import 가능하도록 export
-export let currentSystemCode = constants.SystemCode.defaultSystem;
 
 export default function SigninContent() {
   const [loading, setLoading] = useState(false);
@@ -23,11 +22,6 @@ export default function SigninContent() {
   const [systemCode, setSystemCode] = useState(
     constants.SystemCode.defaultSystem
   );
-
-  // systemCode 상태 변경 시 외부 변수도 갱신
-  useEffect(() => {
-    currentSystemCode = systemCode;
-  }, [systemCode]);
 
   // 초기 focus
   useEffect(() => {
@@ -52,6 +46,7 @@ export default function SigninContent() {
       setLoading(false);
 
       if (jResponse.error_code === 0) {
+        jResponse.systemCode = jRequest.systemCode;
         localStorage.setItem("userInfo", JSON.stringify(jResponse));
         router.push("/");
       } else {

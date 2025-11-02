@@ -2,7 +2,6 @@
 import * as constants from "@/components/core/constants";
 import * as userInfo from "@/components/core/client/frames/userInfo";
 import * as commonFunctions from "@/components/core/commonFunctions";
-import { currentSystemCode } from "@/components/contents/signinContent";
 
 // 왼쪽 메뉴 전체 구성 반환 함수
 export async function getDropdownMenuItems() {
@@ -22,23 +21,25 @@ export async function getDropdownMenuItems() {
   items.push({ type: "divider" });
 
   var documentList = await commonFunctions.getAdminDocumentList(
-    currentSystemCode
+    userInfo.getCurrentSystemCode()
   );
-  documentList.forEach((doc) => {
-    const hRef = `/${doc.id}`;
-    items.push({
-      label: doc.runtime_data?.title || "(제목 없음)",
-      href: hRef,
-      type: "item",
-      // parent: sectionLabel,
+
+  documentList &&
+    documentList.forEach((doc) => {
+      const hRef = `/${doc.id}`;
+      items.push({
+        label: doc.runtime_data?.title || "(제목 없음)",
+        href: hRef,
+        type: "item",
+        // parent: sectionLabel,
+      });
     });
-  });
 
   if (userInfo.getLoginUserId()) {
     items.push({ type: "divider" });
 
     documentList = await commonFunctions.getUsersDocumentList(
-      currentSystemCode
+      userInfo.getCurrentSystemCode()
     );
     documentList?.forEach((doc) => {
       if (

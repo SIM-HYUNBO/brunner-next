@@ -7,7 +7,6 @@ import { useModal } from "@/components/core/client/brunnerMessageBox";
 import * as constants from "@/components/core/constants";
 import Loading from "@/components/core/client/loading";
 import { Input, Button, Table } from "antd";
-import { currentSystemCode } from "@/components/contents/signinContent";
 
 function BrunnerBoard({ boardType }) {
   const [loading, setLoading] = useState(false);
@@ -20,7 +19,7 @@ function BrunnerBoard({ boardType }) {
     try {
       const jRequest = {
         commandName: constants.commands.POST_INFO_SELECT_ALL,
-        systemCode: currentSystemCode,
+        systemCode: userInfo.getCurrentSystemCode(),
         postInfo: { postType: boardType },
       };
       // setLoading(true);
@@ -65,7 +64,7 @@ function BrunnerBoard({ boardType }) {
         };
 
         jRequest.commandName = constants.commands.POST_INFO_INSERT_ONE;
-        jRequest.systemCode = currentSystemCode;
+        jRequest.systemCode = userInfo.getCurrentSystemCode();
         jRequest.postInfo = newPost;
 
         setLoading(true); // 데이터 로딩 시작
@@ -99,7 +98,7 @@ function BrunnerBoard({ boardType }) {
       }
 
       jRequest.commandName = constants.commands.POST_INFO_UPDATE_ONE;
-      jRequest.systemCode = currentSystemCode;
+      jRequest.systemCode = userInfo.getCurrentSystemCode();
       jRequest.postInfo = {
         postId: postId,
         content: newContent,
@@ -144,7 +143,7 @@ function BrunnerBoard({ boardType }) {
       }
 
       jRequest.commandName = constants.commands.POST_INFO_DELETE_ONE;
-      jRequest.systemCode = currentSystemCode;
+      jRequest.systemCode = userInfo.getCurrentSystemCode();
 
       jRequest.postInfo = {
         postId: postId,
@@ -177,7 +176,7 @@ function BrunnerBoard({ boardType }) {
       const userId = userInfo.getLoginUserId();
 
       jRequest.commandName = constants.commands.POST_COMMENT_INFO_INSERT_ONE;
-      jRequest.systemCode = currentSystemCode;
+      jRequest.systemCode = userInfo.getCurrentSystemCode();
 
       jRequest.commentInfo = {
         postId: postId,
@@ -222,7 +221,7 @@ function BrunnerBoard({ boardType }) {
       const post = posts.find((post) => post.post_id === postId);
 
       jRequest.commandName = constants.commands.POST_COMMENT_INFO_UPDATE_ONE;
-      jRequest.systemCode = currentSystemCode;
+      jRequest.systemCode = userInfo.getCurrentSystemCode();
       jRequest.commentInfo = {
         postId: postId,
         commentId: commentId,
@@ -267,7 +266,7 @@ function BrunnerBoard({ boardType }) {
       }
 
       jRequest.commandName = constants.commands.POST_COMMENT_INFO_DELETE_ONE;
-      jRequest.systemCode = currentSystemCode;
+      jRequest.systemCode = userInfo.getCurrentSystemCode();
 
       jRequest.commentInfo = {
         postId: postId,

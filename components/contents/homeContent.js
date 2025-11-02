@@ -10,7 +10,6 @@ import LottiePlayer from "@/components/core/client/lottiePlayer";
 import EDocContent from "@/components/eDoc/eDocContent";
 import Loading from "@/components/core/client/loading";
 import { Input, Button, Table } from "antd";
-import { currentSystemCode } from "./signinContent";
 
 export default function HomeContent() {
   const router = useRouter();
@@ -42,9 +41,7 @@ export default function HomeContent() {
       }
     }
 
-    getRandomPublicDocumentId(
-      currentSystemCode ?? constants.SystemCode.defaultSystem
-    );
+    getRandomPublicDocumentId(userInfo.getCurrentSystemCode());
   }, []);
 
   return (

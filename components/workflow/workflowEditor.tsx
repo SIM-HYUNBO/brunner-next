@@ -50,7 +50,6 @@ import {
   AccordionContent,
 } from "@/components/ui/accordion";
 import { WorkflowDataModal } from "./workflowDataModal";
-import { currentSystemCode } from "../contents/signinContent";
 
 interface WorkflowEditorProps {
   // key: string;
@@ -469,7 +468,7 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
 
       const jRequest = {
         commandName: constants.commands.WORKFLOW_SAVE_WORKFLOW,
-        systemCode: currentSystemCode,
+        systemCode: userInfo.getCurrentSystemCode(),
         userId: userInfo.getLoginUserId(),
         workflowId: jWorkflow.current.workflowId,
         workflowData: JSON.parse(getWorkflowJson()),
@@ -494,7 +493,7 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
 
       const jRequest = {
         commandName: constants.commands.WORKFLOW_RESET_WORKFLOW,
-        systemCode: currentSystemCode,
+        systemCode: userInfo.getCurrentSystemCode(),
         userId: userInfo.getLoginUserId(),
         workflowId: jWorkflow.current.workflowId,
       };
@@ -524,7 +523,7 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
 
       const jRequest = {
         commandName: constants.commands.WORKFLOW_DELETE_WORKFLOW,
-        systemCode: currentSystemCode,
+        systemCode: userInfo.getCurrentSystemCode(),
         userId: userInfo.getLoginUserId(),
         workflowId: jWorkflow.current.workflowId,
       };
@@ -613,7 +612,7 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
   const executeWorkflow = async () => {
     try {
       const jResponse = await RequestExecuteWorkflow(
-        currentSystemCode,
+        userInfo.getCurrentSystemCode(),
         userInfo.getLoginUserId(),
         jWorkflow.current.workflowId,
         constants.transactionMode.System,
@@ -635,7 +634,7 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
   const executeWorkflowByStep = async () => {
     try {
       const jResponse = await RequestExecuteWorkflow(
-        currentSystemCode,
+        userInfo.getCurrentSystemCode(),
         userInfo.getLoginUserId(),
         jWorkflow.current.workflowId,
         constants.transactionMode.Business,

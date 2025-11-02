@@ -8,7 +8,7 @@ import { JsonViewer } from "@textea/json-viewer";
 import copy from "copy-to-clipboard";
 import { getIsDarkMode } from "@/components/core/client/frames/darkModeToggleButton";
 import { Button, message } from "antd";
-import { currentSystemCode } from "../contents/signinContent";
+import * as userInfo from "@/components/core/client/frames/userInfo";
 
 interface WorkflowDataModalProps {
   workflowId: string;
@@ -54,7 +54,7 @@ export const WorkflowDataModal: React.FC<WorkflowDataModalProps> = ({
       const jRequest = {
         commandName: constants.commands.WORKFLOW_SELECT_WORKFLOW,
         workflowId: id,
-        systemCode: currentSystemCode,
+        systemCode: userInfo.getCurrentSystemCode(),
       };
       const jResponse = await RequestServer(jRequest);
       if (jResponse.error_code === 0) {
