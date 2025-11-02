@@ -117,7 +117,7 @@ export const SqlEditorModal: React.FC<SqlEditorModalProps> = ({
       render: (val) => <span>{val ?? "(unnamed)"}</span>,
     },
     {
-      title: "Path or Value",
+      title: "${Path} or Value",
       dataIndex: "binding",
       key: "binding",
       render: (_, rec, idx) => {
@@ -260,8 +260,14 @@ export const SqlEditorModal: React.FC<SqlEditorModalProps> = ({
             {showParamsPanel && (
               <>
                 <div className="p-3 h-full overflow-auto flex flex-col">
-                  <div className="flex flex-col justify-between items-center mb-2">
-                    <label>Parameters</label>
+                  <div className="flex flex-col mb-2">
+                    <label>Sql Parameters</label>
+                    <label className="flex flex-col justify-start text-left">
+                      {"Binding path: ${path}"}
+                    </label>
+                    <label className="flex flex-col justify-start text-left">
+                      {`Index variable path: #{path}`}
+                    </label>
                     <div className="flex gap-2 mt-2">
                       <Button
                         className="px-2 py-1 text-sm general-text-bg-color"
