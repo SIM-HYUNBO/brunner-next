@@ -2,6 +2,7 @@
 import * as constants from "@/components/core/constants";
 import * as userInfo from "@/components/core/client/frames/userInfo";
 import * as commonFunctions from "@/components/core/commonFunctions";
+import { currentSystemCode } from "@/components/contents/signinContent";
 
 // 왼쪽 메뉴 전체 구성 반환 함수
 export async function getDropdownMenuItems() {
@@ -20,7 +21,9 @@ export async function getDropdownMenuItems() {
 
   items.push({ type: "divider" });
 
-  var documentList = await commonFunctions.getAdminDocumentList();
+  var documentList = await commonFunctions.getAdminDocumentList(
+    currentSystemCode
+  );
   documentList.forEach((doc) => {
     const hRef = `/${doc.id}`;
     items.push({
@@ -34,7 +37,9 @@ export async function getDropdownMenuItems() {
   if (userInfo.getLoginUserId()) {
     items.push({ type: "divider" });
 
-    documentList = await commonFunctions.getUsersDocumentList();
+    documentList = await commonFunctions.getUsersDocumentList(
+      currentSystemCode
+    );
     documentList?.forEach((doc) => {
       if (
         (userInfo.isAdminUser() && doc.runtime_data?.isPublic === false) ||

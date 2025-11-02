@@ -3,12 +3,14 @@
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import * as userInfo from "@/components/core/client/frames/userInfo";
+import * as constants from "@/components/core/constants";
 import * as commonFunctions from "@/components/core/commonFunctions";
 import GoverningMessage from "@/components/core/client/governingMessage";
 import LottiePlayer from "@/components/core/client/lottiePlayer";
 import EDocContent from "@/components/eDoc/eDocContent";
 import Loading from "@/components/core/client/loading";
 import { Input, Button, Table } from "antd";
+import { currentSystemCode } from "./signinContent";
 
 export default function HomeContent() {
   const router = useRouter();
@@ -20,8 +22,8 @@ export default function HomeContent() {
   useEffect(() => {
     setIsMounted(true);
 
-    async function getRandomPublicDocumentId() {
-      var documentList = await commonFunctions.getAdminDocumentList();
+    async function getRandomPublicDocumentId(systemCode) {
+      var documentList = await commonFunctions.getAdminDocumentList(systemCode);
       if (!Array.isArray(documentList)) return null;
 
       // isPublic === true 인 문서만 필터링
@@ -40,7 +42,9 @@ export default function HomeContent() {
       }
     }
 
-    getRandomPublicDocumentId();
+    getRandomPublicDocumentId(
+      currentSystemCode ?? constants.SystemCode.defaultSystem
+    );
   }, []);
 
   return (

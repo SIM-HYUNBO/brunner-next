@@ -123,10 +123,10 @@ export async function getDocumentData(systemCode, userId, documentId) {
   }
 }
 
-export const getAdminDocumentList = async () => {
+export const getAdminDocumentList = async (systemCode) => {
   const jRequest = {
     commandName: constants.commands.EDOC_ADMIN_DOCUMENT_SELECT_ALL,
-    systemCode: currentSystemCode ?? constants.SystemCode.defaultSystem,
+    systemCode: systemCode,
     userId: userInfo.getLoginUserId(),
   };
 
@@ -141,13 +141,13 @@ export const getAdminDocumentList = async () => {
   return null;
 };
 
-export const getUsersDocumentList = async () => {
+export const getUsersDocumentList = async (systemCode) => {
   const userId = userInfo.getLoginUserId();
   if (!userId) return null;
 
   const jRequest = {
     commandName: constants.commands.EDOC_USER_DOCUMENT_SELECT_ALL,
-    systemCode: currentSystemCode,
+    systemCode: systemCode,
     userId: userId,
   };
 
