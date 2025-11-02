@@ -6,6 +6,7 @@ import { useModal } from "@/components/core/client/brunnerMessageBox";
 import * as userInfo from "@/components/core/client/frames/userInfo";
 import { Rnd } from "react-rnd";
 import { Input, Button, Table } from "antd";
+import { currentSystemCode } from "../contents/signinContent";
 
 export interface DBConnectionInfo {
   system_code: string;
@@ -69,7 +70,7 @@ export const DBConnectionManagerModal: React.FC<
     try {
       const jRequest = {
         commandName: constants.commands.WORKFLOW_SELECT_DB_CONNECTIONS_ALL,
-        systemCode: constants.SystemCode.default,
+        systemCode: currentSystemCode,
         userId: userInfo.getLoginUserId(),
       };
 
@@ -221,7 +222,7 @@ export const DBConnectionManagerModal: React.FC<
               <Button
                 onClick={() =>
                   setEditing({
-                    system_code: `${constants.SystemCode.default}`,
+                    system_code: `${currentSystemCode}`,
                     id: "",
                     name: "",
                     type: "postgres",

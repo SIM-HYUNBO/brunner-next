@@ -11,6 +11,7 @@ import { RequestServer } from "@/components/core/client/requestServer";
 import { useModal } from "@/components/core/client/brunnerMessageBox";
 import Loading from "@/components/core/client/loading";
 import { Input, Button, Table } from "antd";
+import { currentSystemCode } from "@/components/contents/signinContent";
 
 const AutoResizeTextarea = forwardRef(
   ({ name, value, onChange, readOnly }, ref) => {
@@ -112,7 +113,7 @@ const ServiceSQL = () => {
     try {
       const jRequest = {
         commandName: constants.commands.DYNAMIC_SEQ_SELECT_ALL,
-        systemCode: constants.SystemCode.default,
+        systemCode: currentSystemCode,
         userId: userId,
       };
 

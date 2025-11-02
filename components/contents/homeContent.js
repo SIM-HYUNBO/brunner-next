@@ -33,9 +33,11 @@ export default function HomeContent() {
         setMainDocumentId(null); // 없으면 null 반환
       }
 
-      // 랜덤으로 하나 선택
-      const randomIndex = Math.floor(Math.random() * publicDocs.length);
-      setMainDocumentId(publicDocs[randomIndex].id);
+      if (publicDocs.length > 0) {
+        // 랜덤으로 하나 선택
+        const randomIndex = Math.floor(Math.random() * publicDocs.length);
+        setMainDocumentId(publicDocs[randomIndex].id);
+      }
     }
 
     getRandomPublicDocumentId();

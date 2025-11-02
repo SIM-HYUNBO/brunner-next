@@ -1,122 +1,104 @@
-import { useState, useEffect, useRef } from "react";
+import { useState } from "react";
 import { RequestServer } from "@/components/core/client/requestServer";
 import { useRouter } from "next/router";
 import * as constants from "@/components/core/constants";
 import { useModal } from "@/components/core/client/brunnerMessageBox";
 import Loading from "@/components/core/client/loading";
-import { Input, Button, Table } from "antd";
+import { Button } from "antd";
 
 export default function ResetPasswordContent() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const { BrunnerMessageBox, openModal } = useModal();
 
+  const [systemCode, setSystemCode] = useState(
+    constants.SystemCode.defaultSystem
+  );
   const [userId, setUserId] = useState("");
-  const changeUserIdValue = (e) => {
-    setUserId(e.target.value);
-  };
-
   const [phoneNumber, setPhoneNumber] = useState("");
-  const changePhoneNumberValue = (e) => {
-    setPhoneNumber(e.target.value);
-  };
-
   const [email, setEmail] = useState("");
-  const changeEMailValue = (e) => {
-    setEmail(e.target.value);
-  };
-
   const [authCode, setAuthCode] = useState("");
-  const changeAuthCode = (e) => {
-    setAuthCode(e.target.value);
-  };
-
   const [newPassword, setNewPassword] = useState("");
-  const changePasswordValue = (e) => {
-    setNewPassword(e.target.value);
-  };
-
   const [confirmPassword, setConfirmPassword] = useState("");
-  const changeConfirmPasswordValue = (e) => {
-    setConfirmPassword(e.target.value);
-  };
 
-  // 1. 사용자 비밀번호 초기화를 위해 인증코드를 이메일로 발송요청
+  const changeSystemCodeValue = (e) => setSystemCode(e.target.value);
+  const changeUserIdValue = (e) => setUserId(e.target.value);
+  const changePhoneNumberValue = (e) => setPhoneNumber(e.target.value);
+  const changeEMailValue = (e) => setEmail(e.target.value);
+  const changeAuthCode = (e) => setAuthCode(e.target.value);
+  const changePasswordValue = (e) => setNewPassword(e.target.value);
+  const changeConfirmPasswordValue = (e) => setConfirmPassword(e.target.value);
+
   const sendEMailAuthCode = async () => {
-    var jRequest = {};
-    var jResponse = null;
+    const jRequest = {
+      commandName: constants.commands.SECURITY_SEND_EMAIL_AUTHCODE,
+      systemCode,
+      userId,
+      phoneNumber,
+      email,
+    };
 
     try {
-      jRequest.commandName = constants.commands.SECURITY_SEND_EMAIL_AUTHCODE;
-      jRequest.systemCode = constants.SystemCode.default;
-      jRequest.userId = userId;
-      jRequest.phoneNumber = phoneNumber;
-      jRequest.email = email; // 추가
-
-      setLoading(true); // 데이터 로딩 시작
-      jResponse = await RequestServer(jRequest);
-      setLoading(false); // 데이터 로딩 끝
+      setLoading(true);
+      const jResponse = await RequestServer(jRequest);
+      setLoading(false);
       openModal(jResponse.error_message);
     } catch (error) {
-      setLoading(false); // 데이터 로딩 끝
+      setLoading(false);
       openModal(error.message);
       console.error(`message:${error.message}\n stack:${error.stack}\n`);
     }
   };
 
   const requestResetPassword = async () => {
-    var jRequest = {};
-    var jResponse = null;
+    const jRequest = {
+      commandName: constants.commands.SECURITY_RESET_PASSWORD,
+      systemCode,
+      userId,
+      phoneNumber,
+      email,
+      authCode,
+      newPassword,
+      confirmPassword,
+    };
 
     try {
-      jRequest.commandName = constants.commands.SECURITY_RESET_PASSWORD;
-      jRequest.systemCode = constants.SystemCode.default;
-      jRequest.userId = userId;
-      jRequest.phoneNumber = phoneNumber;
-      jRequest.email = email; // 추가
-      jRequest.authCode = authCode; // 추가
-      jRequest.newPassword = newPassword;
-      jRequest.confirmPassword = confirmPassword;
-
-      setLoading(true); // 데이터 로딩 시작
-      jResponse = await RequestServer(jRequest);
-      setLoading(false); // 데이터 로딩 끝
-
+      setLoading(true);
+      const jResponse = await RequestServer(jRequest);
+      setLoading(false);
       const result = await openModal(jResponse.error_message);
-      if (jResponse.error_code == 0 && result) {
+      if (jResponse.error_code === 0 && result) {
         router.push("/mainPages/signin");
       }
     } catch (error) {
-      setLoading(false); // 데이터 로딩 끝
+      setLoading(false);
       openModal(error.message);
       console.error(`message:${error.message}\n stack:${error.stack}\n`);
     }
   };
 
   const requestDeleteAccount = async () => {
-    var jRequest = {};
-    var jResponse = null;
+    const jRequest = {
+      commandName: constants.commands.SECURITY_DELETE_ACCOUNT,
+      systemCode,
+      userId,
+      phoneNumber,
+      email,
+      authCode,
+      newPassword,
+      confirmPassword,
+    };
 
     try {
-      jRequest.commandName = constants.commands.SECURITY_DELETE_ACCOUNT;
-      jRequest.systemCode = constants.SystemCode.default;
-      jRequest.userId = userId;
-      jRequest.phoneNumber = phoneNumber;
-      jRequest.email = email;
-      jRequest.authCode = authCode;
-      jRequest.newPassword = newPassword;
-      jRequest.confirmPassword = confirmPassword;
-
-      setLoading(true); // 데이터 로딩 시작
-      jResponse = await RequestServer(jRequest);
-      setLoading(false); // 데이터 로딩 끝
-
+      setLoading(true);
+      const jResponse = await RequestServer(jRequest);
+      setLoading(false);
       const result = await openModal(jResponse.error_message);
-      if (jResponse.error_code == 0 && result) {
+      if (jResponse.error_code === 0 && result) {
         router.push("/mainPages/signin");
       }
     } catch (error) {
-      setLoading(false); // 데이터 로딩 끝
+      setLoading(false);
       openModal(error.message);
       console.error(`message:${error.message}\n stack:${error.stack}\n`);
     }
@@ -127,172 +109,120 @@ export default function ResetPasswordContent() {
       {loading && <Loading />}
       <BrunnerMessageBox />
 
-      <div className={`w-3/5 pr-0`}>
-        <h2 className={`title-font font-medium text-3xl text-gray-900`}>
+      <div className="w-3/5 pr-0">
+        <h2 className="title-font font-medium text-3xl text-gray-900">
           Protect your important information.
         </h2>
-        <p className={`mt-2`}>Enter information to leave or reset password.</p>
+        <p className="mt-2">Enter information to leave or reset password.</p>
       </div>
-      <div className={`w-full flex flex-col items-start text-left mb-16 mt-5`}>
-        <div className={`w-full`}>
-          <label htmlFor="id" className={`text-gray-400`}>
+
+      <div className="w-full flex flex-col items-start text-left mb-16 mt-5">
+        {/* 시스템코드 선택 */}
+        <div className="relative mb-4 w-40">
+          <label
+            htmlFor="systemCode"
+            className="leading-7 text-sm text-gray-400"
+          >
+            System Code
+          </label>
+          <select
+            id="systemCode"
+            value={systemCode}
+            onChange={changeSystemCodeValue}
+            className="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 px-3 py-1 leading-8 transition-colors duration-200 ease-in-out"
+          >
+            {Object.entries(constants.SystemCode).map(([key, value]) => (
+              <option key={key} value={value}>
+                {key}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <div className="w-full">
+          <label htmlFor="id" className="text-gray-400">
             ID
           </label>
           <input
             type="text"
             id="id"
             name="Id"
-            onChange={(e) => changeUserIdValue(e)}
-            className={`w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out`}
+            onChange={changeUserIdValue}
+            className="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"
           />
+
           <label
             htmlFor="phone-number"
-            className={`text-sm text-gray-400 w-full`}
+            className="text-sm text-gray-400 w-full"
           >
             Phone Number
           </label>
           <input
             type="text"
             id="phone-number"
-            name="Id"
-            onChange={(e) => changePhoneNumberValue(e)}
-            className={`w-full 
-                            bg-white 
-                            rounded 
-                            border 
-                            border-gray-300 
-                            focus:border-indigo-500 
-                            focus:ring-2 
-                            focus:ring-indigo-200 
-                            text-base 
-                            outline-none 
-                            text-gray-700 
-                            px-3 
-                            py-1 
-                            leading-8 
-                            transition-colors 
-                            duration-200 
-                            ease-in-out`}
+            onChange={changePhoneNumberValue}
+            className="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 px-3 py-1 leading-8 transition-colors duration-200 ease-in-out"
           />
-          <label htmlFor="email" className={`text-sm text-gray-400 w-full`}>
+
+          <label htmlFor="email" className="text-sm text-gray-400 w-full">
             E-Mail
           </label>
           <input
             type="email"
-            onChange={(e) => changeEMailValue(e)}
-            className={`w-full 
-                            bg-white 
-                            rounded 
-                            border 
-                            border-gray-300 
-                            focus:border-indigo-500 
-                            focus:ring-2 
-                            focus:ring-indigo-200 
-                            text-base 
-                            outline-none 
-                            text-gray-700 
-                            px-3 
-                            py-1 
-                            leading-8 
-                            transition-colors 
-                            duration-200 
-                            ease-in-out`}
+            onChange={changeEMailValue}
+            className="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 px-3 py-1 leading-8 transition-colors duration-200 ease-in-out"
           />
-          <div className={`relative w-full`}>
-            <Button
-              onClick={() => sendEMailAuthCode()}
-              className={`text-white bg-indigo-500 border-0 py-2 px-4 focus:outline-none hover:bg-indigo-600 rounded text-lg mt-2`}
-            >
-              Send Code
-            </Button>
-          </div>
+
+          <Button
+            onClick={sendEMailAuthCode}
+            className="text-white bg-indigo-500 border-0 py-2 px-4 focus:outline-none hover:bg-indigo-600 rounded text-lg mt-2"
+          >
+            Send Code
+          </Button>
         </div>
-        <div className={`mt-2 w-full`}>
-          <label htmlFor="email" className={`text-sm text-gray-400 w-full`}>
+
+        <div className="mt-2 w-full">
+          <label htmlFor="auth-code" className="text-sm text-gray-400 w-full">
             Authorization Code
           </label>
           <input
             type="text"
-            className={`w-full 
-                            bg-white 
-                            rounded 
-                            border 
-                            border-gray-300 
-                            focus:border-indigo-500 
-                            focus:ring-2 
-                            focus:ring-indigo-200 
-                            text-base 
-                            outline-none 
-                            text-gray-700 
-                            py-1 
-                            leading-8 
-                            transition-colors 
-                            duration-200 
-                            ease-in-out`}
-            onChange={(e) => changeAuthCode(e)}
+            onChange={changeAuthCode}
+            className="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 leading-8 transition-colors duration-200 ease-in-out"
           />
+
           <Button
-            onClick={() => requestDeleteAccount()}
-            className={`text-white bg-pink-500 border-0 py-2 px-4 focus:outline-none hover:bg-indigo-600 rounded text-lg mt-2`}
+            onClick={requestDeleteAccount}
+            className="text-white bg-pink-500 border-0 py-2 px-4 focus:outline-none hover:bg-indigo-600 rounded text-lg mt-2"
           >
             Delete account
           </Button>
         </div>
-        <div className={`relative mt-6 w-full`}>
-          <label htmlFor="new-password" className={`text-sm text-gray-400`}>
+
+        <div className="relative mt-6 w-full">
+          <label htmlFor="new-password" className="text-sm text-gray-400">
             New Password
           </label>
           <input
             type="password"
             id="new-password"
-            name="new-password"
-            className={`w-full 
-                            bg-white 
-                            rounded 
-                            border 
-                            border-gray-300 
-                            focus:border-indigo-500 
-                            focus:ring-2 
-                            focus:ring-indigo-200 
-                            text-base 
-                            outline-none 
-                            text-gray-700 
-                            px-3 
-                            py-1 
-                            leading-8 
-                            transition-colors 
-                            duration-200 
-                            ease-in-out`}
-            onChange={(e) => changePasswordValue(e)}
-          ></input>
-          <label htmlFor="confirm-password" className={`text-sm text-gray-400`}>
+            onChange={changePasswordValue}
+            className="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 px-3 py-1 leading-8 transition-colors duration-200 ease-in-out"
+          />
+
+          <label htmlFor="confirm-password" className="text-sm text-gray-400">
             Confirm Password
           </label>
           <input
             type="password"
-            className={`w-full 
-                            bg-white 
-                            rounded 
-                            border 
-                            border-gray-300 
-                            focus:border-indigo-500 
-                            focus:ring-2 
-                            focus:ring-indigo-200 
-                            text-base 
-                            outline-none 
-                            text-gray-700 
-                            px-3 
-                            py-1 
-                            leading-8 
-                            transition-colors 
-                            duration-200 
-                            ease-in-out`}
-            onChange={(e) => changeConfirmPasswordValue(e)}
-          ></input>
+            onChange={changeConfirmPasswordValue}
+            className="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 px-3 py-1 leading-8 transition-colors duration-200 ease-in-out"
+          />
         </div>
+
         <Button
-          onClick={() => requestResetPassword()}
-          className={`text-white bg-indigo-500 border-0 py-2 px-4 focus:outline-none hover:bg-indigo-600 rounded text-lg mt-2`}
+          onClick={requestResetPassword}
+          className="text-white bg-indigo-500 border-0 py-2 px-4 focus:outline-none hover:bg-indigo-600 rounded text-lg mt-2"
         >
           Reset password
         </Button>

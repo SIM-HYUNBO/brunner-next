@@ -1,7 +1,8 @@
 `use strict`;
 
 export const SystemCode = {
-  default: `00`,
+  defaultSystem: `00`,
+  pharmacySysetm: `01`,
 };
 
 export const modulePrefix = {

@@ -7,17 +7,15 @@ import * as commonFunctions from "@/components/core/commonFunctions";
 export async function getDropdownMenuItems() {
   let items = [
     { label: "Home", href: "/", type: "item" },
-    { label: "Brunner e-Doc", href: "/mainPages/eDocDesigner", type: "item" },
-    { label: "Brunner Flow", href: "/mainPages/workflow", type: "item" },
     { label: "Contact", href: "/mainPages/contact", type: "item" },
   ];
 
   if (userInfo.isAdminUser()) {
-    items.push({
-      label: "Service SQL",
-      href: "/mainPages/serviceSql",
-      type: "item",
-    });
+    items.push(
+      { label: "Service SQL", href: "/mainPages/serviceSql", type: "item" },
+      { label: "Brunner e-Doc", href: "/mainPages/eDocDesigner", type: "item" },
+      { label: "Brunner Flow", href: "/mainPages/workflow", type: "item" }
+    );
   }
 
   items.push({ type: "divider" });

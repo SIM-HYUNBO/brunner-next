@@ -4,6 +4,7 @@ import { RequestServer } from "@/components/core/client/requestServer";
 import * as userInfo from "@/components/core/client/frames/userInfo";
 import { useModal } from "@/components/core/client/brunnerMessageBox";
 import { Input, Button, Table } from "antd";
+import { currentSystemCode } from "@/components/contents/signinContent";
 
 export default function AIModelSelector({ model, setAIModel, apiKey }) {
   const [models, setModels] = useState([]);
@@ -29,7 +30,7 @@ export default function AIModelSelector({ model, setAIModel, apiKey }) {
       var jResponse = null;
 
       const userId = userInfo.getLoginUserId();
-      jRequest.systemCode = constants.SystemCode.default;
+      jRequest.systemCode = currentSystemCode;
       jRequest.commandName = constants.commands.EDOC_AI_GET_MODEL_LIST;
       jRequest.userId = userId;
       jRequest.apiKey = apiKey;

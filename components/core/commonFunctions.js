@@ -13,6 +13,7 @@ import * as LottieComponent from "@/components/eDoc/eDocComponent/eDocComponent_
 
 import { RequestServer } from "@/components/core/client/requestServer";
 import * as userInfo from "@/components/core/client/frames/userInfo";
+import { currentSystemCode } from "../contents/signinContent";
 
 export function isJsonObject(obj) {
   return obj && typeof obj === "object" && !Array.isArray(obj);
@@ -99,11 +100,11 @@ export function useDeviceType() {
   return device;
 }
 
-export async function getDocumentData(userId, documentId) {
+export async function getDocumentData(systemCode, userId, documentId) {
   try {
     const jRequest = {
       commandName: constants.commands.EDOC_DOCUMENT_SELECT_ONE,
-      systemCode: constants.SystemCode.default,
+      systemCode: systemCode,
       userId: userId,
       documentId: documentId,
     };
@@ -125,7 +126,7 @@ export async function getDocumentData(userId, documentId) {
 export const getAdminDocumentList = async () => {
   const jRequest = {
     commandName: constants.commands.EDOC_ADMIN_DOCUMENT_SELECT_ALL,
-    systemCode: constants.SystemCode.default,
+    systemCode: currentSystemCode ?? constants.SystemCode.defaultSystem,
     userId: userInfo.getLoginUserId(),
   };
 
@@ -146,7 +147,7 @@ export const getUsersDocumentList = async () => {
 
   const jRequest = {
     commandName: constants.commands.EDOC_USER_DOCUMENT_SELECT_ALL,
-    systemCode: constants.SystemCode.default,
+    systemCode: currentSystemCode,
     userId: userId,
   };
 

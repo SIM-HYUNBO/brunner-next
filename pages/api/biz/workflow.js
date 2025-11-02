@@ -199,6 +199,7 @@ const executeService = async (txnId, jRequest) => {
             if (!node) throw new Error(`Node not found: ${currentNodeId}`);
 
             const result = await workflowEngineServer.runWorkflowStep(
+              systemCode,
               node,
               workflowData,
               txInstances

@@ -9,6 +9,7 @@ import Head from "next/head";
 import { RequestServer } from "@/components/core/client/requestServer";
 import * as constants from "@/components/core/constants";
 import * as userInfo from "@/components/core/client/frames/userInfo";
+import { currentSystemCode } from "@/components/contents/signinContent";
 
 export default function Layout({ children, reloadSignal, triggermenureload }) {
   const [documentList, setDocumentList] = useState([]);
@@ -16,7 +17,7 @@ export default function Layout({ children, reloadSignal, triggermenureload }) {
   const reloadMenu = async () => {
     const jRequest = {
       commandName: constants.commands.EDOC_USER_DOCUMENT_SELECT_ALL,
-      systemCode: constants.SystemCode.default,
+      systemCode: currentSystemCode,
       userId: userInfo.getLoginUserId(),
     };
     const jResponse = await RequestServer(jRequest);

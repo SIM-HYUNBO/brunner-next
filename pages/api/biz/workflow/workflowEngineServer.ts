@@ -45,6 +45,7 @@ export type WorkflowContext = Record<string, any> & {
 
 // -------------------- 액션 타입 --------------------
 export type ActionHandler = (
+  systemCode: string,
   node: Node<any>,
   workflow: any,
   txContext: Map<string, TransactionContext>,
@@ -252,7 +253,7 @@ export function registerBuiltInActions(): void {
   // START 노드
   registerAction(
     constants.workflowActions.START,
-    async (node, workflowData, txContext, safeApi: any) => {
+    async (systemCode: string, node, workflowData, txContext, safeApi: any) => {
       var result = { error_code: -1, error_message: "" };
       try {
         if (!node) {
@@ -287,7 +288,7 @@ export function registerBuiltInActions(): void {
   // END 노드
   registerAction(
     constants.workflowActions.END,
-    async (node, workflowData, txContext, safeApi: any) => {
+    async (systemCode: string, node, workflowData, txContext, safeApi: any) => {
       var result = { error_code: -1, error_message: "" };
       try {
         if (!node) {
@@ -328,6 +329,7 @@ export function registerBuiltInActions(): void {
   registerAction(
     constants.workflowActions.CALL,
     async (
+      systemCode: string,
       node: any,
       workflowData: any,
       txContext: Map<string, TransactionContext>,
@@ -355,7 +357,7 @@ export function registerBuiltInActions(): void {
 
         // 하위 워크플로우 가져오기
         const subWorkflowResult = await getWorkflowById(
-          constants.SystemCode.default!, // 동일 시스템 코드 사용
+          systemCode, // 동일 시스템 코드 사용
           targetWorkflowId
         );
 
@@ -371,7 +373,7 @@ export function registerBuiltInActions(): void {
           const subWorkflow: any = subWorkflowResult.workflow_data;
           result = await resetWorkflow(
             subWorkflow,
-            constants.SystemCode.default!,
+            systemCode,
             workflowData.userId
           );
           if (result.error_code != 0) {
@@ -382,7 +384,12 @@ export function registerBuiltInActions(): void {
           subWorkflow.data.run.inputs = node.data.run.inputs;
 
           // 호출시 전달할 input data
-          result = await executeWorkflow(subWorkflow, txContext, true);
+          result = await executeWorkflow(
+            systemCode,
+            subWorkflow,
+            txContext,
+            true
+          );
           node.data.run.outputs = {
             ...(node.data.run.outputs || {}),
             ...(subWorkflow.data.run.outputs || {}),
@@ -411,7 +418,13 @@ export function registerBuiltInActions(): void {
   // SCRIPT 노드
   registerAction(
     constants.workflowActions.SCRIPT,
-    async (node: any, workflowData: any, txContext: any, safeApi: any) => {
+    async (
+      systemCode: string,
+      node: any,
+      workflowData: any,
+      txContext: any,
+      safeApi: any
+    ) => {
       var result = { error_code: -1, error_message: "" };
 
       const userScript = node.data.design.scriptContents || "";
@@ -451,7 +464,7 @@ export function registerBuiltInActions(): void {
   // SQL 노드
   registerAction(
     constants.workflowActions.SQL,
-    async (node, workflowData, txContext, safeApi: any) => {
+    async (systemCode: string, node, workflowData, txContext, safeApi: any) => {
       var result = { error_code: -1, error_message: "" };
       var dbConnectionPool: DBConnectionPool | null = null;
       let connection: any = null;
@@ -602,7 +615,13 @@ export function registerBuiltInActions(): void {
   // BRANCH 노드
   registerAction(
     constants.workflowActions.BRANCH,
-    async (node: any, workflowData: any, txContext: any, safeApi: any) => {
+    async (
+      systemCode: string,
+      node: any,
+      workflowData: any,
+      txContext: any,
+      safeApi: any
+    ) => {
       var result = { error_code: -1, error_message: "" };
 
       if (!preNodeCheck(node, workflowData)) {
@@ -987,6 +1006,7 @@ export function initializeWorkflowEngine() {
 // 4️⃣ 워크플로우 실행
 // ---------------------------
 export async function executeWorkflow(
+  systemCode: string,
   workflow: any,
   txContext: Map<string, TransactionContext> = new Map(),
   isSubWorkflow = false // 하위 워크플로우 여부
@@ -1005,6 +1025,7 @@ export async function executeWorkflow(
   });
 
   async function traverse(
+    systemCode: string,
     nodeId: string,
     txContext: Map<string, TransactionContext> = new Map(),
     isSubWorkflow = false
@@ -1015,7 +1036,7 @@ export async function executeWorkflow(
     if (!node) return result;
 
     // 노드 실행
-    result = await runWorkflowStep(node, workflow, txContext);
+    result = await runWorkflowStep(systemCode, node, workflow, txContext);
     if (result.error_code != 0) return result;
 
     // 다음 노드 선택
@@ -1029,7 +1050,12 @@ export async function executeWorkflow(
 
       if (!edge.data?.condition || Boolean(edge.data.condition)) {
         // 하위 워크플로우는 isSub=true
-        result = await traverse(edge.target, txContext, isSubWorkflow);
+        result = await traverse(
+          systemCode,
+          edge.target,
+          txContext,
+          isSubWorkflow
+        );
         if (result.error_code != 0) return result;
       }
     }
@@ -1041,12 +1067,13 @@ export async function executeWorkflow(
   );
   if (!startNode) throw new Error("Start node not found");
 
-  return await traverse(startNode.id, txContext, isSubWorkflow);
+  return await traverse(systemCode, startNode.id, txContext, isSubWorkflow);
 }
 // ---------------------------
 // 5️⃣ 노드 단위 실행
 // ---------------------------
 export async function runWorkflowStep(
+  systemCode: string,
   node: Node<any>,
   workflowData: any,
   txContext: Map<string, TransactionContext> = new Map()
@@ -1055,7 +1082,13 @@ export async function runWorkflowStep(
   if (!action) throw new Error(`Unknown action: ${node.data.actionName}`);
 
   const safeApi = createSafeApi(workflowData, txContext);
-  return await action(node, workflowData, txContext ?? undefined, safeApi);
+  return await action(
+    systemCode,
+    node,
+    workflowData,
+    txContext ?? undefined,
+    safeApi
+  );
 }
 
 export async function saveWorkflow(

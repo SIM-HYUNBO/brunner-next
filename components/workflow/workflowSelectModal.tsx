@@ -6,6 +6,7 @@ import * as constants from "@/components/core/constants";
 import { useModal } from "@/components/core/client/brunnerMessageBox";
 import * as userInfo from "@/components/core/client/frames/userInfo";
 import { Button } from "antd";
+import { currentSystemCode } from "../contents/signinContent";
 
 interface Workflow {
   id: string;
@@ -44,7 +45,7 @@ const WorkflowSelectModal: React.FC<WorkflowSelectModalProps> = ({
     try {
       const jRequest = {
         commandName: constants.commands.WORKFLOW_SELECT_WORKFLOW_LIST,
-        systemCode: constants.SystemCode.default,
+        systemCode: currentSystemCode,
         userId: userInfo.getLoginUserId(),
       };
       const jResponse = await RequestServer(jRequest);
