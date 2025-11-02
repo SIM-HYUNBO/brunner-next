@@ -53,7 +53,7 @@ export const WorkflowDataModal: React.FC<WorkflowDataModalProps> = ({
       const jRequest = {
         commandName: constants.commands.WORKFLOW_SELECT_WORKFLOW,
         workflowId: id,
-        systemCode: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE,
+        systemCode: constants.SystemCode.default,
       };
       const jResponse = await RequestServer(jRequest);
       if (jResponse.error_code === 0) {

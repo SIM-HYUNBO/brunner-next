@@ -139,7 +139,7 @@ export default function AIInputModal({
     try {
       const jRequest = {
         commandName: commandName,
-        systemCode: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE,
+        systemCode: constants.SystemCode.default,
         instructionInfo: {
           instructions: instructions,
           apiKey: apiKey,

@@ -44,7 +44,7 @@ const WorkflowSelectModal: React.FC<WorkflowSelectModalProps> = ({
     try {
       const jRequest = {
         commandName: constants.commands.WORKFLOW_SELECT_WORKFLOW_LIST,
-        systemCode: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE,
+        systemCode: constants.SystemCode.default,
         userId: userInfo.getLoginUserId(),
       };
       const jResponse = await RequestServer(jRequest);

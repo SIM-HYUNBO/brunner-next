@@ -1,5 +1,9 @@
 `use strict`;
 
+export const SystemCode = {
+  default: `00`,
+};
+
 export const modulePrefix = {
   security: `security`,
   dynamicSql: `dynamicSql`,

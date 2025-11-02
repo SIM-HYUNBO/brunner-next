@@ -48,7 +48,7 @@ export default function ResetPasswordContent() {
 
     try {
       jRequest.commandName = constants.commands.SECURITY_SEND_EMAIL_AUTHCODE;
-      jRequest.systemCode = process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE;
+      jRequest.systemCode = constants.SystemCode.default;
       jRequest.userId = userId;
       jRequest.phoneNumber = phoneNumber;
       jRequest.email = email; // 추가
@@ -70,7 +70,7 @@ export default function ResetPasswordContent() {
 
     try {
       jRequest.commandName = constants.commands.SECURITY_RESET_PASSWORD;
-      jRequest.systemCode = process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE;
+      jRequest.systemCode = constants.SystemCode.default;
       jRequest.userId = userId;
       jRequest.phoneNumber = phoneNumber;
       jRequest.email = email; // 추가
@@ -99,7 +99,7 @@ export default function ResetPasswordContent() {
 
     try {
       jRequest.commandName = constants.commands.SECURITY_DELETE_ACCOUNT;
-      jRequest.systemCode = process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE;
+      jRequest.systemCode = constants.SystemCode.default;
       jRequest.userId = userId;
       jRequest.phoneNumber = phoneNumber;
       jRequest.email = email;

@@ -355,7 +355,7 @@ export function registerBuiltInActions(): void {
 
         // 하위 워크플로우 가져오기
         const subWorkflowResult = await getWorkflowById(
-          process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE!, // 동일 시스템 코드 사용
+          constants.SystemCode.default!, // 동일 시스템 코드 사용
           targetWorkflowId
         );
 
@@ -371,7 +371,7 @@ export function registerBuiltInActions(): void {
           const subWorkflow: any = subWorkflowResult.workflow_data;
           result = await resetWorkflow(
             subWorkflow,
-            process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE!,
+            constants.SystemCode.default!,
             workflowData.userId
           );
           if (result.error_code != 0) {

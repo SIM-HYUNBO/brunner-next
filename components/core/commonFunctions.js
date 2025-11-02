@@ -103,7 +103,7 @@ export async function getDocumentData(userId, documentId) {
   try {
     const jRequest = {
       commandName: constants.commands.EDOC_DOCUMENT_SELECT_ONE,
-      systemCode: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE,
+      systemCode: constants.SystemCode.default,
       userId: userId,
       documentId: documentId,
     };
@@ -125,7 +125,7 @@ export async function getDocumentData(userId, documentId) {
 export const getAdminDocumentList = async () => {
   const jRequest = {
     commandName: constants.commands.EDOC_ADMIN_DOCUMENT_SELECT_ALL,
-    systemCode: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE,
+    systemCode: constants.SystemCode.default,
     userId: userInfo.getLoginUserId(),
   };
 
@@ -146,7 +146,7 @@ export const getUsersDocumentList = async () => {
 
   const jRequest = {
     commandName: constants.commands.EDOC_USER_DOCUMENT_SELECT_ALL,
-    systemCode: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE,
+    systemCode: constants.SystemCode.default,
     userId: userId,
   };
 

@@ -32,7 +32,7 @@ export default function SigninContent() {
     try {
       const jRequest = {
         commandName: constants.commands.SECURITY_SIGNIN,
-        systemCode: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE,
+        systemCode: constants.SystemCode.default,
         userId: userId,
         password: password,
       };

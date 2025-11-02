@@ -52,7 +52,7 @@ export default function SignupContent() {
 
     try {
       jRequest.commandName = constants.commands.SECURITY_SIGNUP;
-      jRequest.systemCode = process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE;
+      jRequest.systemCode = constants.SystemCode.default;
       jRequest.userId = userId;
       jRequest.password = password;
       jRequest.userName = userName;

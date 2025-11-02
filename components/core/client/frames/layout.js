@@ -16,7 +16,7 @@ export default function Layout({ children, reloadSignal, triggermenureload }) {
   const reloadMenu = async () => {
     const jRequest = {
       commandName: constants.commands.EDOC_USER_DOCUMENT_SELECT_ALL,
-      systemCode: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE,
+      systemCode: constants.SystemCode.default,
       userId: userInfo.getLoginUserId(),
     };
     const jResponse = await RequestServer(jRequest);

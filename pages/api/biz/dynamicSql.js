@@ -317,11 +317,7 @@ const deleteSQL = async (systemCode, sqlName, sqlSeq) => {
 
 const getSQL00 = async (sqlName, sqlSeq) => {
   try {
-    var sql = await getSQL(
-      process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE,
-      sqlName,
-      sqlSeq
-    );
+    var sql = await getSQL(constants.SystemCode.default, sqlName, sqlSeq);
     return sql;
   } catch (err) {
     throw err;

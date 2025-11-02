@@ -69,7 +69,7 @@ export const DBConnectionManagerModal: React.FC<
     try {
       const jRequest = {
         commandName: constants.commands.WORKFLOW_SELECT_DB_CONNECTIONS_ALL,
-        systemCode: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE,
+        systemCode: constants.SystemCode.default,
         userId: userInfo.getLoginUserId(),
       };
 
@@ -221,7 +221,7 @@ export const DBConnectionManagerModal: React.FC<
               <Button
                 onClick={() =>
                   setEditing({
-                    system_code: `${process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE}`,
+                    system_code: `${constants.SystemCode.default}`,
                     id: "",
                     name: "",
                     type: "postgres",

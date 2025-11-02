@@ -112,7 +112,7 @@ const ServiceSQL = () => {
     try {
       const jRequest = {
         commandName: constants.commands.DYNAMIC_SEQ_SELECT_ALL,
-        systemCode: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE,
+        systemCode: constants.SystemCode.default,
         userId: userId,
       };
 

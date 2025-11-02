@@ -19,7 +19,7 @@ function BrunnerBoard({ boardType }) {
     try {
       const jRequest = {
         commandName: constants.commands.POST_INFO_SELECT_ALL,
-        systemCode: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE,
+        systemCode: constants.SystemCode.default,
         postInfo: { postType: boardType },
       };
       // setLoading(true);
@@ -64,7 +64,7 @@ function BrunnerBoard({ boardType }) {
         };
 
         jRequest.commandName = constants.commands.POST_INFO_INSERT_ONE;
-        jRequest.systemCode = process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE;
+        jRequest.systemCode = constants.SystemCode.default;
         jRequest.postInfo = newPost;
 
         setLoading(true); // 데이터 로딩 시작
@@ -98,7 +98,7 @@ function BrunnerBoard({ boardType }) {
       }
 
       jRequest.commandName = constants.commands.POST_INFO_UPDATE_ONE;
-      jRequest.systemCode = process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE;
+      jRequest.systemCode = constants.SystemCode.default;
       jRequest.postInfo = {
         postId: postId,
         content: newContent,
@@ -143,7 +143,7 @@ function BrunnerBoard({ boardType }) {
       }
 
       jRequest.commandName = constants.commands.POST_INFO_DELETE_ONE;
-      jRequest.systemCode = process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE;
+      jRequest.systemCode = constants.SystemCode.default;
 
       jRequest.postInfo = {
         postId: postId,
@@ -176,7 +176,7 @@ function BrunnerBoard({ boardType }) {
       const userId = userInfo.getLoginUserId();
 
       jRequest.commandName = constants.commands.POST_COMMENT_INFO_INSERT_ONE;
-      jRequest.systemCode = process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE;
+      jRequest.systemCode = constants.SystemCode.default;
 
       jRequest.commentInfo = {
         postId: postId,
@@ -221,7 +221,7 @@ function BrunnerBoard({ boardType }) {
       const post = posts.find((post) => post.post_id === postId);
 
       jRequest.commandName = constants.commands.POST_COMMENT_INFO_UPDATE_ONE;
-      jRequest.systemCode = process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE;
+      jRequest.systemCode = constants.SystemCode.default;
       jRequest.commentInfo = {
         postId: postId,
         commentId: commentId,
@@ -266,7 +266,7 @@ function BrunnerBoard({ boardType }) {
       }
 
       jRequest.commandName = constants.commands.POST_COMMENT_INFO_DELETE_ONE;
-      jRequest.systemCode = process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE;
+      jRequest.systemCode = constants.SystemCode.default;
 
       jRequest.commentInfo = {
         postId: postId,

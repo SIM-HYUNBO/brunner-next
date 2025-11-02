@@ -55,7 +55,7 @@ export class DBConnectionManager {
 
   async loadAllFromDatabase(database: any, dynamicSql: any) {
     const dbConnections = await this.selectDBConnections(
-      process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE ?? "00",
+      constants.SystemCode.default ?? "00",
       database,
       dynamicSql
     );

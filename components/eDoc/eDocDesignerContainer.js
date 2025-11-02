@@ -82,7 +82,7 @@ export default function EDocDesignerContainer({
     async function fetchTemplates() {
       const jRequest = {
         commandName: constants.commands.EDOC_COMPONENT_TEMPLATES_SELECT_ALL,
-        systemCode: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE,
+        systemCode: constants.SystemCode.default,
         userId: userInfo.getLoginUserId(),
       };
       setLoading(true);
@@ -233,7 +233,7 @@ export default function EDocDesignerContainer({
 
     const jRequest = {
       commandName: constants.commands.EDOC_USER_DOCUMENT_SELECT_ALL,
-      systemCode: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE,
+      systemCode: constants.SystemCode.default,
       userId: userInfo.getLoginUserId(),
     };
     setLoading(true);
@@ -277,7 +277,7 @@ export default function EDocDesignerContainer({
 
     const jRequest = {
       commandName: constants.commands.EDOC_DOCUMENT_UPSERT_ONE,
-      systemCode: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE,
+      systemCode: constants.SystemCode.default,
       userId: userInfo.getLoginUserId(),
       documentData: documentData,
     };
@@ -306,7 +306,7 @@ export default function EDocDesignerContainer({
 
     const jRequest = {
       commandName: constants.commands.EDOC_DOCUMENT_DELETE_ONE,
-      systemCode: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE,
+      systemCode: constants.SystemCode.default,
       userId: userInfo.getLoginUserId(),
       documentId: documentData.id,
     };

@@ -468,7 +468,7 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
 
       const jRequest = {
         commandName: constants.commands.WORKFLOW_SAVE_WORKFLOW,
-        systemCode: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE,
+        systemCode: constants.SystemCode.default,
         userId: userInfo.getLoginUserId(),
         workflowId: jWorkflow.current.workflowId,
         workflowData: JSON.parse(getWorkflowJson()),
@@ -493,7 +493,7 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
 
       const jRequest = {
         commandName: constants.commands.WORKFLOW_RESET_WORKFLOW,
-        systemCode: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE,
+        systemCode: constants.SystemCode.default,
         userId: userInfo.getLoginUserId(),
         workflowId: jWorkflow.current.workflowId,
       };
@@ -523,7 +523,7 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
 
       const jRequest = {
         commandName: constants.commands.WORKFLOW_DELETE_WORKFLOW,
-        systemCode: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE,
+        systemCode: constants.SystemCode.default,
         userId: userInfo.getLoginUserId(),
         workflowId: jWorkflow.current.workflowId,
       };
@@ -612,7 +612,7 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
   const executeWorkflow = async () => {
     try {
       const jResponse = await RequestExecuteWorkflow(
-        process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE,
+        constants.SystemCode.default,
         userInfo.getLoginUserId(),
         jWorkflow.current.workflowId,
         constants.transactionMode.System,
@@ -634,7 +634,7 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
   const executeWorkflowByStep = async () => {
     try {
       const jResponse = await RequestExecuteWorkflow(
-        process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_CODE,
+        constants.SystemCode.default,
         userInfo.getLoginUserId(),
         jWorkflow.current.workflowId,
         constants.transactionMode.Business,
