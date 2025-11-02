@@ -277,9 +277,9 @@ export const SqlEditorModal: React.FC<SqlEditorModalProps> = ({
                       <Button
                         className="px-2 py-1 text-sm general-text-bg-color"
                         onClick={() => {
-                          const matches = (sqlStmt.match(/@\w+/g) || []).map(
-                            (m) => m.slice(1)
-                          );
+                          const matches = (
+                            sqlStmt.match(/@[\w가-힣]+/g) || []
+                          ).map((m) => m.slice(1));
                           const uniq = Array.from(new Set(matches));
                           setParams((prev) => {
                             const map = new Map(prev.map((p) => [p.name, p]));
