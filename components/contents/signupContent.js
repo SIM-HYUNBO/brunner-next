@@ -45,7 +45,7 @@ export default function SignupContent() {
   // 사업장 검색
   const searchBusiness = async () => {
     if (!searchKeyword) {
-      openModal("검색어를 입력하세요.");
+      openModal("Input keyword.");
       return;
     }
     try {
@@ -77,11 +77,11 @@ export default function SignupContent() {
   };
 
   const columns = [
-    { title: "사업장명", dataIndex: "bizName", key: "bizName" },
-    { title: "관리번호", dataIndex: "manageNo", key: "manageNo" },
-    { title: "주소", dataIndex: "address", key: "address" },
+    { title: "Pharmacy Name", dataIndex: "bizName", key: "bizName" },
+    { title: "ManageNo", dataIndex: "manageNo", key: "manageNo" },
+    { title: "Address", dataIndex: "address", key: "address" },
     {
-      title: "선택",
+      title: "Select Pharmacy",
       render: (_, record) => (
         <Button type="link" onClick={() => selectBusiness(record)}>
           선택
@@ -241,7 +241,7 @@ export default function SignupContent() {
                 <Input
                   className="min-w-60"
                   value={registerNo}
-                  placeholder="사업장 선택 시 자동입력"
+                  placeholder="Auto set by selection."
                   readOnly
                 />
                 <Button onClick={() => setShowBizModal(true)}>
@@ -318,7 +318,7 @@ export default function SignupContent() {
                 borderBottom: "1px solid #ccc",
               }}
             >
-              사업장 검색
+              Search
               <button
                 style={{ float: "right" }}
                 onClick={() => setShowBizModal(false)}
@@ -331,7 +331,7 @@ export default function SignupContent() {
             <div style={{ padding: 16, overflow: "auto", flex: 1 }}>
               <div style={{ display: "flex", marginBottom: 8, gap: 8 }}>
                 <Input
-                  placeholder="사업장명 또는 키워드 입력"
+                  placeholder="Pharamacy Name"
                   value={searchKeyword}
                   onChange={(e) => setSearchKeyword(e.target.value)}
                 />
