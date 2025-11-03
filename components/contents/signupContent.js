@@ -9,7 +9,8 @@ import {
 import * as userInfo from "@/components/core/client/frames/userInfo";
 import * as constants from "@/components/core/constants";
 import Loading from "@/components/core/client/loading";
-import { Button, Modal, Input, Table } from "antd";
+import { Button, Input, Table } from "antd";
+import { Rnd } from "react-rnd";
 
 export default function SignupContent() {
   const [loading, setLoading] = useState(false);
@@ -35,22 +36,20 @@ export default function SignupContent() {
   const changeSystemCodeValue = (e) => setSystemCode(e.target.value);
 
   // -------------------------------
-  // ✅ 추가: 사업장 검색 관련 상태
+  // 사업장 검색 상태
   // -------------------------------
   const [showBizModal, setShowBizModal] = useState(false);
   const [searchKeyword, setSearchKeyword] = useState("");
   const [searchResult, setSearchResult] = useState([]);
 
-  // 🔍 사업장 검색 요청 (RequestExecuteWorkflow 사용)
+  // 사업장 검색
   const searchBusiness = async () => {
     if (!searchKeyword) {
       openModal("검색어를 입력하세요.");
       return;
     }
-
     try {
       setLoading(true);
-      // ✅ 워크플로우 실행
       const jResponse = await RequestExecuteWorkflow(
         constants.SystemCode.Brunner,
         userInfo.getLoginUserId(),
@@ -62,7 +61,6 @@ export default function SignupContent() {
           ]
         }`)
       );
-
       setSearchResult(jResponse.jWorkflow?.data?.run?.outputs?.OUTDATA || []);
     } catch (err) {
       openModal(err.message);
@@ -71,15 +69,17 @@ export default function SignupContent() {
     }
   };
 
-  // ✅ 사업장 선택 시
+  // 사업장 선택 시 관리번호 + 주소 자동 입력
   const selectBusiness = (record) => {
-    setRegisterNo(record.manageNo); // 관리번호 자동 입력
+    setRegisterNo(record.manageNo);
+    setAddress(record.address || "");
     setShowBizModal(false);
   };
 
   const columns = [
     { title: "사업장명", dataIndex: "bizName", key: "bizName" },
     { title: "관리번호", dataIndex: "manageNo", key: "manageNo" },
+    { title: "주소", dataIndex: "address", key: "address" },
     {
       title: "선택",
       render: (_, record) => (
@@ -90,6 +90,7 @@ export default function SignupContent() {
     },
   ];
 
+  // 회원가입 요청
   const requestSignup = async () => {
     const jRequest = {
       commandName: constants.commands.SECURITY_SIGNUP,
@@ -102,12 +103,10 @@ export default function SignupContent() {
       registerNo,
       address,
     };
-
     try {
       setLoading(true);
       const jResponse = await RequestServer(jRequest);
       setLoading(false);
-
       if (jResponse.error_code === 0) {
         const result = await openModal(constants.messages.SUCCESS_SIGNUP);
         if (result) router.push("/mainPages/signin");
@@ -130,12 +129,11 @@ export default function SignupContent() {
         <h2 className="page-title title-font text-3xl mb-10 font-medium text-green-900">
           Create account
         </h2>
-
         <div className="md:pr-16 lg:pr-0 pr-0">
           <p className="leading-relaxed mt-4 mb-5">Enter your Information.</p>
         </div>
 
-        {/* 시스템코드 선택 콤보박스 */}
+        {/* 시스템코드 선택 */}
         <div className="relative mb-4 w-40">
           <label
             htmlFor="systemCode"
@@ -231,7 +229,6 @@ export default function SignupContent() {
             />
           </div>
 
-          {/* ✅ Register No: systemCode == '01'일 때 사업장 검색 */}
           <div className="relative mb-4 w-40">
             <label
               htmlFor="registerNo"
@@ -242,7 +239,7 @@ export default function SignupContent() {
             {systemCode === "01" ? (
               <div className="flex flex-row space-x-2">
                 <Input
-                  className="min-w-60 semi-text-bg-color" // ✅ 약 240px 정도
+                  className="min-w-60"
                   value={registerNo}
                   placeholder="사업장 선택 시 자동입력"
                   readOnly
@@ -289,29 +286,68 @@ export default function SignupContent() {
         <p className="text-xs text-gray-500 mt-3">Nice to meet you.</p>
       </div>
 
-      {/* ✅ 사업장 검색 모달 */}
-      <Modal
-        title="사업장 검색"
-        open={showBizModal}
-        onCancel={() => setShowBizModal(false)}
-        footer={null}
-        width={600}
-      >
-        <div className="flex mb-3 gap-2">
-          <Input
-            placeholder="사업장명 또는 키워드 입력"
-            value={searchKeyword}
-            onChange={(e) => setSearchKeyword(e.target.value)}
-          />
-          <Button onClick={searchBusiness}>검색</Button>
-        </div>
-        <Table
-          dataSource={searchResult}
-          columns={columns}
-          rowKey="manageNo"
-          pagination={false}
-        />
-      </Modal>
+      {/* Rnd 기반 사업장 검색 모달 */}
+      {showBizModal && (
+        <Rnd
+          default={{ x: 200, y: 150, width: 600, height: 400 }}
+          minWidth={500}
+          minHeight={300}
+          bounds="window"
+          dragHandleClassName="modal-header"
+        >
+          <div
+            style={{
+              position: "absolute",
+              zIndex: 9999,
+              width: "100%",
+              height: "100%",
+              backgroundColor: "white",
+              border: "1px solid #ccc",
+              borderRadius: "8px",
+              display: "flex",
+              flexDirection: "column",
+            }}
+          >
+            {/* 헤더 */}
+            <div
+              className="modal-header"
+              style={{
+                padding: "8px 16px",
+                cursor: "move",
+                backgroundColor: "#f0f0f0",
+                borderBottom: "1px solid #ccc",
+              }}
+            >
+              사업장 검색
+              <button
+                style={{ float: "right" }}
+                onClick={() => setShowBizModal(false)}
+              >
+                ×
+              </button>
+            </div>
+
+            {/* 내용 */}
+            <div style={{ padding: 16, overflow: "auto", flex: 1 }}>
+              <div style={{ display: "flex", marginBottom: 8, gap: 8 }}>
+                <Input
+                  placeholder="사업장명 또는 키워드 입력"
+                  value={searchKeyword}
+                  onChange={(e) => setSearchKeyword(e.target.value)}
+                />
+                <Button onClick={searchBusiness}>검색</Button>
+              </div>
+              <Table
+                dataSource={searchResult}
+                columns={columns}
+                rowKey="manageNo"
+                pagination={false}
+                size="small"
+              />
+            </div>
+          </div>
+        </Rnd>
+      )}
     </>
   );
 }
