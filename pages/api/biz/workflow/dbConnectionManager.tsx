@@ -53,7 +53,11 @@ export class DBConnectionManager {
   private dbConnectionConfig: Map<string, DBConnectionConfig> = new Map();
   private pools: Map<string, DBConnectionPool> = new Map();
 
-  async loadAllFromDatabase(systemCode: any, database: any, dynamicSql: any) {
+  async loadAllFromDatabase(
+    systemCode: string,
+    database: any,
+    dynamicSql: any
+  ) {
     const dbConnections = await this.selectDBConnections(
       systemCode,
       database,

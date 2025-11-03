@@ -278,8 +278,14 @@ async function loadAll(txnId, jRequest) {
   } catch (err) {
     throw err;
   } finally {
-    // ✅ 싱글톤 인스턴스
-    DBConnectionManager.getInstance().loadAllFromDatabase(database, dynamicSql);
+    for (const systemCode of Object.keys(constants.SystemCode)) {
+      // ✅ 싱글톤 인스턴스
+      DBConnectionManager.getInstance().loadAllFromDatabase(
+        constants.SystemCode[systemCode],
+        database,
+        dynamicSql
+      );
+    }
     return process.serviceSql;
   }
 }
