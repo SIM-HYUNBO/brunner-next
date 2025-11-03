@@ -20,9 +20,7 @@ export default function SignupContent() {
   const [phoneNumber, setPhoneNumber] = useState("");
   const [email, setEmail] = useState("");
   const [registerNo, setRegisterNo] = useState("");
-  const [systemCode, setSystemCode] = useState(
-    constants.SystemCode.defaultSystem
-  );
+  const [systemCode, setSystemCode] = useState(constants.SystemCode.Brunner);
 
   const changeUserIdValue = (e) => setUserId(e.target.value);
   const changePasswordValue = (e) => setPassword(e.target.value);

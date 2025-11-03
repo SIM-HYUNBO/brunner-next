@@ -19,9 +19,7 @@ export default function SigninContent() {
 
   const [userId, setUserId] = useState("");
   const [password, setPassword] = useState("");
-  const [systemCode, setSystemCode] = useState(
-    constants.SystemCode.defaultSystem
-  );
+  const [systemCode, setSystemCode] = useState(constants.SystemCode.Brunner);
 
   // 초기 focus
   useEffect(() => {

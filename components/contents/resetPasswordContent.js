@@ -11,9 +11,7 @@ export default function ResetPasswordContent() {
   const [loading, setLoading] = useState(false);
   const { BrunnerMessageBox, openModal } = useModal();
 
-  const [systemCode, setSystemCode] = useState(
-    constants.SystemCode.defaultSystem
-  );
+  const [systemCode, setSystemCode] = useState(constants.SystemCode.Brunner);
   const [userId, setUserId] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
   const [email, setEmail] = useState("");
