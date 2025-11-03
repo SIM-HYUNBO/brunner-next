@@ -142,7 +142,7 @@ const executeService = async (txnId, jRequest) => {
       case constants.commands.WORKFLOW_EXECUTE_WORKFLOW: {
         jResponse = { error_code: -1 };
 
-        const { systemCode, workflowId, transactionMode } = jRequest;
+        const { systemCode, workflowId, transactionMode, inputs } = jRequest;
 
         // workflowId로 DB에서 workflowData 조회
         var result = await workflowEngineServer.getWorkflowById(
@@ -188,6 +188,9 @@ const executeService = async (txnId, jRequest) => {
           // -----------------------
           // 3️⃣ 실행 분기
           // -----------------------
+
+          if (inputs) workflowData.data.run.inputs = inputs;
+
           if (transactionMode === constants.transactionMode.Business) {
             // Business 모드: 단일 노드부터 실행
             const node = currentNodeId

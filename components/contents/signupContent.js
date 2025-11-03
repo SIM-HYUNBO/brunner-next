@@ -188,7 +188,7 @@ export default function SignupContent() {
           </div>
         </div>
 
-        <div className="flex flex-wrap w-screen">
+        <div className="flex flex-col w-screen">
           <div className="relative mb-4 mr-5 w-40">
             <label htmlFor="name" className="leading-7 text-sm text-gray-400">
               Name
@@ -232,7 +232,7 @@ export default function SignupContent() {
           </div>
 
           {/* ✅ Register No: systemCode == '01'일 때 사업장 검색 */}
-          <div className="relative mb-4 mr-5 w-40">
+          <div className="relative mb-4 w-40">
             <label
               htmlFor="registerNo"
               className="leading-7 text-sm text-gray-400"
@@ -240,11 +240,12 @@ export default function SignupContent() {
               Register No
             </label>
             {systemCode === "01" ? (
-              <div className="flex gap-2">
+              <div className="flex flex-row space-x-2">
                 <Input
+                  className="min-w-60 semi-text-bg-color" // ✅ 약 240px 정도
                   value={registerNo}
                   placeholder="사업장 선택 시 자동입력"
-                  disabled
+                  readOnly
                 />
                 <Button onClick={() => setShowBizModal(true)}>
                   사업장 검색
@@ -261,7 +262,7 @@ export default function SignupContent() {
             )}
           </div>
 
-          <div className="relative mb-4 mr-5 w-96">
+          <div className="relative mb-4 w-96">
             <label
               htmlFor="address"
               className="leading-7 text-sm text-gray-400"
