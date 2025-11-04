@@ -31,7 +31,7 @@ export async function RequestServer(
 export async function RequestExecuteWorkflow(
   systemCode,
   userId,
-  workflowId,
+  workflowIdOrName,
   transactionMode,
   inputData
 ) {
@@ -40,7 +40,7 @@ export async function RequestExecuteWorkflow(
       commandName: constants.commands.WORKFLOW_EXECUTE_WORKFLOW,
       systemCode: systemCode,
       userId: userId,
-      workflowId: workflowId,
+      workflowIdOrName,
       transactionMode: transactionMode,
       inputs: inputData,
     };

@@ -34,7 +34,7 @@ const executeService = async (txnId, jRequest) => {
         break;
       }
       case constants.commands.WORKFLOW_SELECT_WORKFLOW: {
-        const result = await workflowEngineServer.getWorkflowById(
+        const result = await workflowEngineServer.getWorkflowByIdOrName(
           jRequest.systemCode,
           jRequest.workflowId
         );
@@ -142,12 +142,13 @@ const executeService = async (txnId, jRequest) => {
       case constants.commands.WORKFLOW_EXECUTE_WORKFLOW: {
         jResponse = { error_code: -1 };
 
-        const { systemCode, workflowId, transactionMode, inputs } = jRequest;
+        const { systemCode, workflowIdOrName, transactionMode, inputs } =
+          jRequest;
 
         // workflowId로 DB에서 workflowData 조회
-        var result = await workflowEngineServer.getWorkflowById(
+        var result = await workflowEngineServer.getWorkflowByIdOrName(
           systemCode,
-          workflowId
+          workflowIdOrName
         );
         if (result.error_code != 0) {
           throw new Error(result.error_message);
@@ -241,7 +242,7 @@ const executeService = async (txnId, jRequest) => {
             const saveResult = await workflowEngineServer.saveWorkflow(
               systemCode,
               jRequest.userId,
-              workflowId,
+              workflowIdOrName,
               workflowData
             );
 
@@ -304,7 +305,7 @@ const executeService = async (txnId, jRequest) => {
 
         try {
           // 1️⃣ workflowId로 DB에서 workflowData 조회
-          const result = await workflowEngineServer.getWorkflowById(
+          const result = await workflowEngineServer.getWorkflowByIdOrName(
             systemCode,
             workflowId
           );

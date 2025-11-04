@@ -356,7 +356,7 @@ export function registerBuiltInActions(): void {
         }
 
         // 하위 워크플로우 가져오기
-        const subWorkflowResult = await getWorkflowById(
+        const subWorkflowResult = await getWorkflowByIdOrName(
           systemCode, // 동일 시스템 코드 사용
           targetWorkflowId
         );
@@ -1256,13 +1256,13 @@ export async function getWorkflowList(systemCode: string, userId: string) {
   }
 }
 
-export async function getWorkflowById(systemCode: string, workflowId: string) {
+export async function getWorkflowByIdOrName(systemCode: string, workflowIdOrName: string) {
   try {
     // 1️⃣ SQL 조회
     const sql = await dynamicSql.getSQL00("select_TB_COR_WORKFLOW_MST", 1);
     const dbResult: any = await database.executeSQL(sql, [
       systemCode,
-      workflowId,
+      workflowIdOrName,
     ]);
 
     // 2️⃣ 조회 결과 확인

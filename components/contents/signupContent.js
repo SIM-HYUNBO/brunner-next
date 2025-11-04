@@ -53,7 +53,7 @@ export default function SignupContent() {
       const jResponse = await RequestExecuteWorkflow(
         constants.SystemCode.Brunner,
         userInfo.getLoginUserId(),
-        `805a3397-c2a5-40f1-a418-a8bc94262450`,
+        `약국목록조회`, //`805a3397-c2a5-40f1-a418-a8bc94262450`,
         constants.transactionMode.System,
         JSON.parse(`{
           "INDATA" : [
