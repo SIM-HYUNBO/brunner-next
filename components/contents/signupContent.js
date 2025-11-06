@@ -77,11 +77,11 @@ export default function SignupContent() {
   };
 
   const columns = [
-    { title: "Pharmacy Name", dataIndex: "bizName", key: "bizName" },
+    { title: "Name", dataIndex: "bizName", key: "bizName" },
     { title: "ManageNo", dataIndex: "manageNo", key: "manageNo" },
     { title: "Address", dataIndex: "address", key: "address" },
     {
-      title: "Select Pharmacy",
+      title: "Select",
       render: (_, record) => (
         <Button type="link" onClick={() => selectBusiness(record)}>
           선택
@@ -127,7 +127,7 @@ export default function SignupContent() {
 
       <div className="w-full pr-16 flex flex-col items-start text-left mb-16">
         <h2 className="page-title title-font text-3xl mb-10 font-medium text-green-900">
-          Create account
+          Sign Up
         </h2>
         <div className="md:pr-16 lg:pr-0 pr-0">
           <p className="leading-relaxed mt-4 mb-5">Enter your Information.</p>
@@ -299,7 +299,7 @@ export default function SignupContent() {
           <div
             style={{
               position: "absolute",
-              zIndex: 9999,
+              // zIndex: 9999,
               width: "100%",
               height: "100%",
               backgroundColor: "white",
