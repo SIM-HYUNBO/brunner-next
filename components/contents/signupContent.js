@@ -401,8 +401,8 @@ export default function SignupContent() {
                     borderRadius: "4px",
                   }}
                 >
-                  <option value="pharmacy">약국</option>
-                  <option value="supplier">공급자</option>
+                  <option value="pharmacy">Pharmacy</option>
+                  <option value="supplier">Supplier</option>
                 </select>
 
                 <Input
