@@ -34,9 +34,9 @@ const nextConfig = {
         "**/node_modules",
         "**/.git",
         "C:/DumpStack.log.tmp",
-        "C:/pagefile.sys",
-        "C:/hiberfil.sys",
-        "C:/System Volume Information",
+        "**/pagefile.sys",
+        "**/hiberfil.sys",
+        "**/System Volume Information",
       ],
     };
 
@@ -44,5 +44,4 @@ const nextConfig = {
   },
 };
 
-// ⚠️ 오타 주의: `module.exports` (s 빠졌어요)
 module.exports = nextConfig;
