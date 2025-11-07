@@ -71,7 +71,7 @@ export default function SigninContent() {
           Sign in
         </h2>
 
-        <div className="w-full mb-4">
+        <div className="flex flex-col mb-4">
           <label
             htmlFor="systemCode"
             className="leading-7 text-sm text-gray-400"
@@ -82,7 +82,7 @@ export default function SigninContent() {
             id="systemCode"
             value={systemCode}
             onChange={changeSystemCodeValue}
-            className="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 px-3 py-1 leading-8 transition-colors duration-200 ease-in-out"
+            className="bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 px-3 py-1 leading-8 transition-colors duration-200 ease-in-out"
           >
             {Object.entries(constants.SystemCode).map(([key, value]) => (
               <option key={key} value={value}>

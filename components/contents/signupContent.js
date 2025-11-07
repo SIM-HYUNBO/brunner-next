@@ -42,6 +42,9 @@ export default function SignupContent() {
   const [searchKeyword, setSearchKeyword] = useState("");
   const [searchResult, setSearchResult] = useState([]);
 
+  // ✅ 약국/공급자 선택 상태
+  const [searchType, setSearchType] = useState("pharmacy"); // pharmacy or supplier
+
   // 사업장 검색
   const searchBusiness = async () => {
     if (!searchKeyword) {
@@ -50,10 +53,15 @@ export default function SignupContent() {
     }
     try {
       setLoading(true);
+
+      // ✅ 선택된 검색타입에 따라 Workflow 다르게 지정
+      const workflowName =
+        searchType === "pharmacy" ? "약국목록조회" : "공급자목록조회";
+
       const jResponse = await RequestExecuteWorkflow(
         constants.SystemCode.Brunner,
         userInfo.getLoginUserId(),
-        `약국목록조회`, //`805a3397-c2a5-40f1-a418-a8bc94262450`,
+        workflowName,
         constants.transactionMode.System,
         JSON.parse(`{
           "INDATA" : [
@@ -61,6 +69,7 @@ export default function SignupContent() {
           ]
         }`)
       );
+
       setSearchResult(jResponse.jWorkflow?.data?.run?.outputs?.OUTDATA || []);
     } catch (err) {
       openModal(err.message);
@@ -71,24 +80,70 @@ export default function SignupContent() {
 
   // 사업장 선택 시 관리번호 + 주소 자동 입력
   const selectBusiness = (record) => {
-    setRegisterNo(record.manageNo);
-    setAddress(record.address || "");
-    setShowBizModal(false);
+    if (searchType === "pharmacy") {
+      setRegisterNo(record.manageNo);
+      setAddress(record.address || "");
+      setShowBizModal(false);
+    } else if (searchType === "supplier") {
+      setRegisterNo(record.register_no);
+      setPhoneNumber(record.phone_no);
+      setAddress(record.address || "");
+      setShowBizModal(false);
+    }
   };
 
-  const columns = [
-    { title: "Name", dataIndex: "bizName", key: "bizName" },
-    { title: "ManageNo", dataIndex: "manageNo", key: "manageNo" },
-    { title: "Address", dataIndex: "address", key: "address" },
-    {
-      title: "Select",
-      render: (_, record) => (
-        <Button type="link" onClick={() => selectBusiness(record)}>
-          선택
-        </Button>
-      ),
-    },
-  ];
+  // ✅ 검색타입에 따라 컬럼 다르게 구성
+  const columns =
+    searchType === "pharmacy"
+      ? [
+          { title: "Pharmacy Name", dataIndex: "bizName", key: "bizName" },
+          { title: "ManageNo", dataIndex: "manageNo", key: "manageNo" },
+          { title: "Address", dataIndex: "address", key: "address" },
+          {
+            title: "Select",
+            render: (_, record) => (
+              <Button type="link" onClick={() => selectBusiness(record)}>
+                선택
+              </Button>
+            ),
+          },
+        ]
+      : [
+          {
+            title: "Supplier Name",
+            dataIndex: "name",
+            key: "name",
+          },
+          {
+            title: "Address",
+            dataIndex: "address",
+            key: "address",
+          },
+          { title: "Phone Number", dataIndex: "phone_no", key: "phone_no" },
+          {
+            title: "Mobile Number",
+            dataIndex: "mobile_phone_no",
+            key: "mobile_phone_no",
+          },
+          {
+            title: "E-Mail Address",
+            dataIndex: "email_addr",
+            key: "email_addr",
+          },
+          {
+            title: "Register Number",
+            dataIndex: "register_no",
+            key: "register_no",
+          },
+          {
+            title: "Select",
+            render: (_, record) => (
+              <Button type="link" onClick={() => selectBusiness(record)}>
+                선택
+              </Button>
+            ),
+          },
+        ];
 
   // 회원가입 요청
   const requestSignup = async () => {
@@ -240,9 +295,8 @@ export default function SignupContent() {
               <div className="flex flex-row space-x-2">
                 <Input
                   className="min-w-60"
-                  value={registerNo}
                   placeholder="Auto set by selection."
-                  readOnly
+                  onChange={changeRegisterNoValue}
                 />
                 <Button onClick={() => setShowBizModal(true)}>
                   사업장 검색
@@ -287,10 +341,10 @@ export default function SignupContent() {
         <p className="text-xs text-gray-500 mt-3">Nice to meet you.</p>
       </div>
 
-      {/* Rnd 기반 사업장 검색 모달 */}
+      {/* ✅ Rnd 기반 사업장 검색 모달 */}
       {showBizModal && (
         <Rnd
-          default={{ x: 200, y: 150, width: 600, height: 400 }}
+          default={{ x: 200, y: 150, width: 650, height: 420 }}
           minWidth={500}
           minHeight={300}
           bounds="window"
@@ -299,7 +353,6 @@ export default function SignupContent() {
           <div
             style={{
               position: "absolute",
-              // zIndex: 9999,
               width: "100%",
               height: "100%",
               backgroundColor: "white",
@@ -319,7 +372,7 @@ export default function SignupContent() {
                 borderBottom: "1px solid #ccc",
               }}
             >
-              Search
+              Business Search
               <button
                 style={{ float: "right" }}
                 onClick={() => setShowBizModal(false)}
@@ -330,18 +383,42 @@ export default function SignupContent() {
 
             {/* 내용 */}
             <div style={{ padding: 16, overflow: "auto", flex: 1 }}>
+              {/* ✅ 검색타입 + 검색어 입력 */}
               <div style={{ display: "flex", marginBottom: 8, gap: 8 }}>
+                <select
+                  value={searchType}
+                  onChange={(e) => setSearchType(e.target.value)}
+                  style={{
+                    padding: "4px 8px",
+                    border: "1px solid #ccc",
+                    borderRadius: "4px",
+                  }}
+                >
+                  <option value="pharmacy">약국</option>
+                  <option value="supplier">공급자</option>
+                </select>
+
                 <Input
-                  placeholder="Pharamacy Name"
+                  placeholder={
+                    searchType === "pharmacy"
+                      ? "Pharmacy Name"
+                      : "Supplier Name"
+                  }
                   value={searchKeyword}
                   onChange={(e) => setSearchKeyword(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      searchBusiness();
+                    }
+                  }}
                 />
                 <Button onClick={searchBusiness}>검색</Button>
               </div>
+
               <Table
                 dataSource={searchResult}
                 columns={columns}
-                rowKey="manageNo"
+                rowKey={searchType === "pharmacy" ? "manageNo" : "supplierCode"}
                 pagination={false}
                 size="small"
               />

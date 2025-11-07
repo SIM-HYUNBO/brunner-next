@@ -123,7 +123,7 @@ export async function getDocumentData(systemCode, userId, documentId) {
 }
 
 export const getAdminDocumentList = async (systemCode) => {
-  if (!userInfo.isLogin()) return;
+  // if (!userInfo.isLogin()) return;
 
   const jRequest = {
     commandName: constants.commands.EDOC_ADMIN_DOCUMENT_SELECT_ALL,

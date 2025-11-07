@@ -126,7 +126,7 @@ export const getCurrentSystemCode = () => {
     try {
       const userInfoStr = localStorage.getItem("userInfo");
       const userInfo = JSON.parse(userInfoStr);
-      return userInfo?.systemCode || "";
+      return userInfo?.systemCode;
     } catch {
       return "";
     }

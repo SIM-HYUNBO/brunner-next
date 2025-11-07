@@ -41,7 +41,7 @@ export default function HomeContent() {
       }
     }
 
-    getRandomPublicDocumentId(userInfo.getCurrentSystemCode());
+    getRandomPublicDocumentId(userInfo.getCurrentSystemCode()) ?? "00";
   }, []);
 
   return (
