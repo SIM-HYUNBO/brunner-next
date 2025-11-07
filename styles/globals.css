@@ -121,16 +121,16 @@ neutral, stone
   }
 
   footer {
-    @apply h-5 
+    @apply h-24
            w-full
            relative 
            bottom-0 
-           mt-6
+           mt-5
            flex 
            flex-col 
            items-center
            justify-center
-           general-text-bg-color;
+           semi-text-bg-color;
   }
 
   /* 기본 라이트 모드 헤딩 스타일 */

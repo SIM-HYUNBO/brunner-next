@@ -33,7 +33,9 @@ export default function SignupContent() {
   const changePhoneNumberValue = (e) => setPhoneNumber(e.target.value);
   const changeEMailValue = (e) => setEmail(e.target.value);
   const changeRegisterNoValue = (e) => setRegisterNo(e.target.value);
-  const changeSystemCodeValue = (e) => setSystemCode(e.target.value);
+  const changeSystemCodeValue = (e) => {
+    setSystemCode(e.target.value);
+  };
 
   // -------------------------------
   // 사업장 검색 상태
@@ -297,6 +299,7 @@ export default function SignupContent() {
                   className="min-w-60"
                   placeholder="Auto set by selection."
                   onChange={changeRegisterNoValue}
+                  value={registerNo}
                 />
                 <Button onClick={() => setShowBizModal(true)}>
                   사업장 검색
@@ -309,6 +312,7 @@ export default function SignupContent() {
                 name="RegisterNo"
                 className="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"
                 onChange={changeRegisterNoValue}
+                value={registerNo}
               />
             )}
           </div>
@@ -387,7 +391,10 @@ export default function SignupContent() {
               <div style={{ display: "flex", marginBottom: 8, gap: 8 }}>
                 <select
                   value={searchType}
-                  onChange={(e) => setSearchType(e.target.value)}
+                  onChange={(e) => {
+                    setSearchResult([]);
+                    setSearchType(e.target.value);
+                  }}
                   style={{
                     padding: "4px 8px",
                     border: "1px solid #ccc",

@@ -76,7 +76,7 @@ export default function Layout({ children, reloadSignal, triggermenureload }) {
         </Head>
         <div className="Layout">
           <div className="flex flex-col w-full">
-            <main className="flex-grow md:overflow-x: auto">
+            <main className="flex-grow md:overflow-x: auto overflow-y:auto py-10">
               <Header
                 triggermenureload={triggermenureload}
                 reloadSignal={reloadSignal}
