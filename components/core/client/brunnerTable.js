@@ -13,8 +13,9 @@ import { Input, Button, Table } from "antd";
 const BrunnerTable = forwardRef(
   (
     {
-      tableTitle,
-      columnHeaders,
+      tableTitle, // 제목
+      FilteringConditions, // 조회조건
+      columnHeaders, // 컬럼목록
       fetchTableData,
       addNewTableData,
       updateTableData,
@@ -66,7 +67,7 @@ const BrunnerTable = forwardRef(
           accessor: "actions",
           id: "actions",
           headerClassName:
-            "text-center bg-purple-500 text-purple-100 w-[100px] !important",
+            "text-center semi-text-bg-color w-[100px] !important",
           Cell: ({ row }) => (
             <div className={`flex justify-center`}>
               <Button
@@ -115,32 +116,29 @@ const BrunnerTable = forwardRef(
     };
 
     const TableTitleArea = () => {
-      return (
-        <h2
-          className={`title-font sm:text-4xl text-3xl w-full my-10 font-medium text-green-900`}
-        >
-          {tableTitle}
-        </h2>
-      );
+      return <h2 className={`page-title`}>{tableTitle}</h2>;
     };
 
     const TableConditionArea = () => {
       return (
-        <div
-          className={`flex 
+        <>
+          {FilteringConditions && <FilteringConditions />}
+
+          <div
+            className={`flex 
                        justify-end 
                        w-full 
                        p-4 
-                       bg-gray-100 dark-bg-color
-                       mt-2`}
-        >
-          <Button
-            onClick={fetchTableData}
-            className={`text-white bg-indigo-500 border-0 py-2 px-6 focus:outline-none hover:bg-indigo-600 rounded text-lg mb-3`}
+                       bg-gray-100 dark-bg-color`}
           >
-            Refresh
-          </Button>
-        </div>
+            <Button
+              onClick={fetchTableData}
+              className={`text-white bg-indigo-500 border-0 py-2 px-6 focus:outline-none hover:bg-indigo-600 rounded text-lg mb-3`}
+            >
+              Refresh
+            </Button>
+          </div>
+        </>
       );
     };
 
@@ -177,7 +175,7 @@ const BrunnerTable = forwardRef(
                          table-auto 
                          mt-2`}
           >
-            <thead>
+            <thead className="semi-text-bg-color">
               {headerGroups.map((headerGroup) => (
                 <tr {...headerGroup.getHeaderGroupProps()}>
                   {headerGroup.headers.map((column) => (
