@@ -12,18 +12,16 @@ const executeService = async (txnId, jRequest) => {
   try {
     switch (jRequest.commandName) {
       case constants.commands.DYNAMIC_SEQ_SELECT_ALL:
-        jResponse = await selectAll(txnId, jRequest);
+        jResponse = await selectAll(jRequest.systemCode, txnId, jRequest);
         break;
       case constants.commands.DYNAMIC_SEQ_UPDATE_ONE:
-        jResponse = await updateOne(txnId, jRequest);
+        jResponse = await updateOne(jRequest.systemCode, txnId, jRequest);
         break;
       case constants.commands.DYNAMIC_SEQ_DELETE_ONE:
-        jResponse = await deleteOne(txnId, jRequest);
+        jResponse = await deleteOne(jRequest.systemCode, txnId, jRequest);
         break;
       default:
-      case constants.commands.DYNAMIC_SEQ_LOAD_ALL:
-        jResponse = await loadAll(txnId, jRequest);
-        break;
+        throw new Error(constants.messages.SERVER_NOT_SUPPORTED_MODULE);
     }
   } catch (error) {
     jResponse.error_message = error.message;
@@ -32,13 +30,13 @@ const executeService = async (txnId, jRequest) => {
   }
 };
 
-async function selectAll(txnId, jRequest) {
+async function selectAll(systemCode, txnId, jRequest) {
   var jResponse = {};
 
   try {
     var SQLs = [];
 
-    var sql = await dynamicSql.getSQL00(`select_TB_COR_SQL_INFO`, 1);
+    var sql = await dynamicSql.getSQL(systemCode, `select_TB_COR_SQL_INFO`, 1);
 
     const sql_result = await database.executeSQL(sql, []);
 
@@ -96,7 +94,11 @@ async function updateOne(txnId, jRequest) {
       return jResponse;
     }
 
-    var sql = await dynamicSql.getSQL00(`select_TB_COR_SQL_INFO`, 2);
+    var sql = await dynamicSql.getSQL(
+      jRequest.systemCode,
+      `select_TB_COR_SQL_INFO`,
+      2
+    );
     var select_TB_COR_SQL_INFO_02 = await database.executeSQL(sql, [
       jRequest.systemCode,
       jRequest.sqlName,
@@ -121,7 +123,11 @@ async function updateOne(txnId, jRequest) {
     }
 
     if (jRequest.action === "Update") {
-      sql = await dynamicSql.getSQL00(`update_TB_COR_SQL_INFO`, 1);
+      sql = await dynamicSql.getSQL(
+        jRequest.systemCode,
+        `update_TB_COR_SQL_INFO`,
+        1
+      );
       var update_TB_COR_SQL_INFO_01 = await database.executeSQL(sql, [
         jRequest.sqlContent,
         jRequest.userId,
@@ -145,7 +151,11 @@ async function updateOne(txnId, jRequest) {
         jResponse.error_message = `Failed to update serviceSQL.\n`;
       }
     } else if (jRequest.action === "Create") {
-      sql = await dynamicSql.getSQL00(`insert_TB_COR_SQL_INFO`, 1);
+      sql = await dynamicSql.getSQL(
+        jRequest.systemCode,
+        `insert_TB_COR_SQL_INFO`,
+        1
+      );
       var insert_TB_COR_SQL_INFO_01 = await database.executeSQL(sql, [
         jRequest.systemCode,
         jRequest.sqlName,
@@ -200,7 +210,11 @@ async function deleteOne(txnId, jRequest) {
       return jResponse;
     }
 
-    var sql = await dynamicSql.getSQL00(`select_TB_COR_SQL_INFO`, 2);
+    var sql = await dynamicSql.getSQL(
+      jRequest.systemCode,
+      `select_TB_COR_SQL_INFO`,
+      2
+    );
     var select_TB_COR_SQL_INFO_02 = await database.executeSQL(sql, [
       jRequest.systemCode,
       jRequest.sqlName,
@@ -213,7 +227,11 @@ async function deleteOne(txnId, jRequest) {
       return jResponse;
     }
 
-    sql = await dynamicSql.getSQL00(`delete_TB_COR_SQL_INFO`, 1);
+    sql = await dynamicSql.getSQL(
+      jRequest.systemCode,
+      `delete_TB_COR_SQL_INFO`,
+      1
+    );
     var delete_TB_COR_SQL_INFO_01 = await database.executeSQL(sql, [
       jRequest.systemCode,
       jRequest.sqlName,
@@ -243,14 +261,14 @@ async function deleteOne(txnId, jRequest) {
   }
 }
 
-async function loadAll(txnId, jRequest) {
+async function loadAll() {
   try {
     // 이미 로딩했으면 로딩 안하고 성공 리턴
     if (process && process.serviceSql && process.serviceSql.size > 0) {
       return process.serviceSql;
     }
 
-    logger.info(`Start loading service queries.\n`);
+    logger.warn(`Start loading service queries.\n`);
 
     var loadedSQLs = new Map();
 

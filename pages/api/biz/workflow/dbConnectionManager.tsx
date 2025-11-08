@@ -306,7 +306,8 @@ export class DBConnectionManager {
   ) {
     const jResponse: any = {};
     try {
-      const sql = await dynamicSql.getSQL00(
+      const sql = await dynamicSql.getSQL(
+        "00",
         "select_TB_COR_WORKFLOW_DBCONNECTIONS",
         1
       );
@@ -328,7 +329,8 @@ export class DBConnectionManager {
     var sqlResult = null;
 
     try {
-      const sql = await dynamicSql.getSQL00(
+      const sql = await dynamicSql.getSQL(
+        "00",
         "insert_TB_COR_WORKFLOW_DBCONNECTIONS",
         1
       );
@@ -365,7 +367,8 @@ export class DBConnectionManager {
   ) {
     var result: any = {};
     try {
-      var sql = await dynamicSql.getSQL00(
+      var sql = await dynamicSql.getSQL(
+        "00",
         "update_TB_COR_WORKFLOW_DBCONNECTIONS",
         1
       );
@@ -405,7 +408,8 @@ export class DBConnectionManager {
   ) {
     const result: any = {};
     try {
-      const sql = await dynamicSql.getSQL00(
+      const sql = await dynamicSql.getSQL(
+        "00",
         "delete_TB_COR_WORKFLOW_DBCONNECTIONS",
         1
       );

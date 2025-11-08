@@ -37,7 +37,11 @@ const insertOne = async (txnId, jRequest) => {
     jResponse.commanaName = jRequest.commandName;
     var coommentId = commonFunctions.generateUUID();
     var sql = null;
-    sql = await db_cor_sql_info.getSQL00("insert_TB_COR_POST_COMMENT_INFO", 1);
+    sql = await db_cor_sql_info.getSQL(
+      "00",
+      "insert_TB_COR_POST_COMMENT_INFO",
+      1
+    );
     var insert_TB_COR_POST_COMMENT_INFO_01 = await database.executeSQL(sql, [
       jRequest.systemCode,
       jRequest.commentInfo.postId,
@@ -48,7 +52,8 @@ const insertOne = async (txnId, jRequest) => {
 
     if (insert_TB_COR_POST_COMMENT_INFO_01.rowCount === 1) {
       sql = null;
-      sql = await db_cor_sql_info.getSQL00(
+      sql = await db_cor_sql_info.getSQL(
+        "00",
         "select_TB_COR_POST_COMMENT_INFO",
         2
       );
@@ -88,7 +93,11 @@ const updateOne = async (txnId, jRequest) => {
     }
 
     var sql = null;
-    sql = await db_cor_sql_info.getSQL00("update_TB_COR_POST_COMMENT_INFO", 2);
+    sql = await db_cor_sql_info.getSQL(
+      "00",
+      "update_TB_COR_POST_COMMENT_INFO",
+      2
+    );
     var update_TB_COR_POST_COMMENT_INFO_02 = await database.executeSQL(sql, [
       jRequest.systemCode,
       jRequest.commentInfo.postId,
@@ -127,7 +136,11 @@ const deleteOne = async (txnId, jRequest) => {
     }
 
     var sql = null;
-    sql = await db_cor_sql_info.getSQL00("delete_TB_COR_POST_COMMENT_INFO", 2);
+    sql = await db_cor_sql_info.getSQL(
+      "00",
+      "delete_TB_COR_POST_COMMENT_INFO",
+      2
+    );
     var delete_TB_COR_POST_COMMENT_INFO_02 = await database.executeSQL(sql, [
       jRequest.systemCode,
       jRequest.commentInfo.postId,

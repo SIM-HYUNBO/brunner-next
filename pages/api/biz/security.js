@@ -121,7 +121,11 @@ const signup = async (txnId, jRequest) => {
       return jResponse;
     }
 
-    var sql = await dynamicSql.getSQL00(`select_TB_COR_USER_MST`, 1);
+    var sql = await dynamicSql.getSQL(
+      jRequest.systemCode,
+      `select_TB_COR_USER_MST`,
+      1
+    );
     var select_TB_COR_USER_MST_01 = await database.executeSQL(sql, [
       jRequest.systemCode,
       jRequest.userId,
@@ -133,7 +137,11 @@ const signup = async (txnId, jRequest) => {
       return jResponse;
     }
 
-    sql = await dynamicSql.getSQL00(`insert_TB_COR_USER_MST`, 1);
+    sql = await dynamicSql.getSQL(
+      jRequest.systemCode,
+      `insert_TB_COR_USER_MST`,
+      1
+    );
     var insert_TB_COR_USER_MST_01 = await database.executeSQL(sql, [
       jRequest.systemCode,
       jRequest.userId,
@@ -190,7 +198,11 @@ const signin = async (txnId, jRequest) => {
     jResponse.commanaName = jRequest.commandName;
 
     var sql = null;
-    sql = await dynamicSql.getSQL00(`select_TB_COR_USER_MST`, 2);
+    sql = await dynamicSql.getSQL(
+      jRequest.systemCode,
+      `select_TB_COR_USER_MST`,
+      2
+    );
     var select_TB_COR_USER_MST_02 = await database.executeSQL(sql, [
       jRequest.systemCode,
       jRequest.userId,
@@ -295,7 +307,11 @@ const resetPassword = async (txnId, jRequest) => {
       return jResponse;
     }
 
-    var sql = await dynamicSql.getSQL00(`select_TB_COR_USER_MST`, 2);
+    var sql = await dynamicSql.getSQL(
+      jRequest.systemCode,
+      `select_TB_COR_USER_MST`,
+      2
+    );
     var select_TB_COR_USER_MST_02 = await database.executeSQL(sql, [
       jRequest.systemCode,
       jRequest.userId,
@@ -333,7 +349,11 @@ const resetPassword = async (txnId, jRequest) => {
       return jResponse;
     } else {
       const hashedNewPassword = await bcrypt.hash(jRequest.newPassword, 10);
-      var sql = await dynamicSql.getSQL00(`update_TB_COR_USER_MST`, 1);
+      var sql = await dynamicSql.getSQL(
+        jRequest.systemCode,
+        `update_TB_COR_USER_MST`,
+        1
+      );
       var update_TB_COR_USER_MST_01 = await database.executeSQL(sql, [
         hashedNewPassword,
         jRequest.systemCode,
@@ -386,7 +406,11 @@ const deleteAccount = async (txnId, jRequest) => {
       return jResponse;
     }
 
-    var sql = await dynamicSql.getSQL00(`select_TB_COR_USER_MST`, 2);
+    var sql = await dynamicSql.getSQL(
+      jRequest.systemCode,
+      `select_TB_COR_USER_MST`,
+      2
+    );
     var select_TB_COR_USER_MST_02 = await database.executeSQL(sql, [
       jRequest.systemCode,
       jRequest.userId,
@@ -408,7 +432,11 @@ const deleteAccount = async (txnId, jRequest) => {
       return jResponse;
     }
 
-    var sql = await dynamicSql.getSQL00(`update_TB_COR_USER_MST`, 3);
+    var sql = await dynamicSql.getSQL(
+      jRequest.systemCode,
+      `update_TB_COR_USER_MST`,
+      3
+    );
     var update_TB_COR_USER_MST_03 = await database.executeSQL(sql, [
       jRequest.systemCode,
       jRequest.userId,
@@ -457,7 +485,11 @@ const sendEMailAuthCode = async (txnId, jRequest) => {
       return jResponse;
     }
 
-    var sql = await dynamicSql.getSQL00(`select_TB_COR_USER_MST`, 3);
+    var sql = await dynamicSql.getSQL(
+      jRequest.systemCode,
+      `select_TB_COR_USER_MST`,
+      3
+    );
     var select_TB_COR_USER_MST_03 = await database.executeSQL(sql, [
       jRequest.systemCode,
       jRequest.userId,
@@ -497,7 +529,11 @@ const sendEMailAuthCode = async (txnId, jRequest) => {
         );
 
         // 해당 인증코드를 DB에 저장
-        var sql = await dynamicSql.getSQL00(`update_TB_COR_USER_MST`, 2);
+        var sql = await dynamicSql.getSQL(
+          jRequest.systemCode,
+          `update_TB_COR_USER_MST`,
+          2
+        );
         var update_TB_COR_USER_MST_02 = await database.executeSQL(sql, [
           authCode,
           jRequest.systemCode,

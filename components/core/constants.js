@@ -73,7 +73,6 @@ export const commands = {
   DYNAMIC_SEQ_SELECT_ALL: `dynamicSql.selectAll`,
   DYNAMIC_SEQ_UPDATE_ONE: `dynamicSql.updateOne`,
   DYNAMIC_SEQ_DELETE_ONE: `dynamicSql.deleteOne`,
-  DYNAMIC_SEQ_LOAD_ALL: `dynamicSql.loadAll`,
 
   EDOC_COMPONENT_TEMPLATES_SELECT_ALL: `edocComponentTemplate.selectAll`,
   EDOC_DOCUMENT_UPSERT_ONE: `edocDocument.upsertOne`,

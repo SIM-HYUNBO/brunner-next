@@ -1099,7 +1099,11 @@ export async function saveWorkflow(
 ) {
   var result = { error_code: -1, error_message: "", workflow_data: {} };
 
-  var sql = await dynamicSql.getSQL00(`select_TB_COR_WORKFLOW_MST`, 1);
+  var sql = await dynamicSql.getSQL(
+    systemCode,
+    `select_TB_COR_WORKFLOW_MST`,
+    1
+  );
   var select_TB_COR_WORKFLOW_MST: any = await database.executeSQL(sql, [
     systemCode,
     workflowId,
@@ -1108,7 +1112,7 @@ export async function saveWorkflow(
   var upsert_TB_COR_WORKFLOW_MST_01: any = null;
   if (select_TB_COR_WORKFLOW_MST.rowCount > 0) {
     // update
-    sql = await dynamicSql.getSQL00(`update_TB_COR_WORKFLOW_MST`, 1);
+    sql = await dynamicSql.getSQL(systemCode, `update_TB_COR_WORKFLOW_MST`, 1);
 
     upsert_TB_COR_WORKFLOW_MST_01 = await database.executeSQL(sql, [
       systemCode,
@@ -1118,7 +1122,7 @@ export async function saveWorkflow(
     ]);
   } else {
     // insert
-    sql = await dynamicSql.getSQL00(`insert_TB_COR_WORKFLOW_MST`, 1);
+    sql = await dynamicSql.getSQL(systemCode, `insert_TB_COR_WORKFLOW_MST`, 1);
 
     upsert_TB_COR_WORKFLOW_MST_01 = await database.executeSQL(sql, [
       systemCode,
@@ -1150,7 +1154,11 @@ export async function deleteWorkflow(
 ) {
   var result = { error_code: -1, error_message: "" };
 
-  var sql = await dynamicSql.getSQL00(`select_TB_COR_WORKFLOW_MST`, 1);
+  var sql = await dynamicSql.getSQL(
+    systemCode,
+    `select_TB_COR_WORKFLOW_MST`,
+    1
+  );
   var select_TB_COR_WORKFLOW_MST: any = await database.executeSQL(sql, [
     systemCode,
     workflowId,
@@ -1162,7 +1170,7 @@ export async function deleteWorkflow(
     result.error_message = constants.messages.NO_DATA_FOUND;
   } else {
     // delete
-    sql = await dynamicSql.getSQL00(`delete_TB_COR_WORKFLOW_MST`, 1);
+    sql = await dynamicSql.getSQL(systemCode, `delete_TB_COR_WORKFLOW_MST`, 1);
 
     delete_TB_COR_WORKFLOW_MST_01 = await database.executeSQL(sql, [
       systemCode,
@@ -1236,7 +1244,11 @@ export async function resetWorkflow(
 export async function getWorkflowList(systemCode: string, userId: string) {
   try {
     // 워크플로우 목록 조회 쿼리 (DB 구조에 맞게 수정 가능)
-    const sql = await dynamicSql.getSQL00(`select_TB_COR_WORKFLOW_MST`, 2);
+    const sql = await dynamicSql.getSQL(
+      systemCode,
+      `select_TB_COR_WORKFLOW_MST`,
+      2
+    );
 
     var select_TB_COR_WORKFLOW_MST: any = await database.executeSQL(sql, [
       systemCode,
@@ -1256,10 +1268,17 @@ export async function getWorkflowList(systemCode: string, userId: string) {
   }
 }
 
-export async function getWorkflowByIdOrName(systemCode: string, workflowIdOrName: string) {
+export async function getWorkflowByIdOrName(
+  systemCode: string,
+  workflowIdOrName: string
+) {
   try {
     // 1️⃣ SQL 조회
-    const sql = await dynamicSql.getSQL00("select_TB_COR_WORKFLOW_MST", 1);
+    const sql = await dynamicSql.getSQL(
+      systemCode,
+      "select_TB_COR_WORKFLOW_MST",
+      1
+    );
     const dbResult: any = await database.executeSQL(sql, [
       systemCode,
       workflowIdOrName,

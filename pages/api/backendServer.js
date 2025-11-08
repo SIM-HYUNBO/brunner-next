@@ -63,7 +63,13 @@ export default async (req, res) => {
     res.json(jResponse);
     logger.warn(`END TXN ${commandName} in ${durationMs} ms`);
 
-    // saveTxnHistoryAsync(remoteIp, txnId, jRequest, jResponse);
+    // saveTxnHistoryAsync(
+    //   jRequest.systemCode,
+    //   remoteIp,
+    //   txnId,
+    //   jRequest,
+    //   jResponse
+    // );
   }
 };
 
@@ -152,7 +158,13 @@ const executeService = async (method, req) => {
 /**
  * 트랜잭션 로그 비동기 저장
  */
-const saveTxnHistoryAsync = (remoteIp, txnId, jRequest, jResponse) => {
+const saveTxnHistoryAsync = (
+  systemCode,
+  remoteIp,
+  txnId,
+  jRequest,
+  jResponse
+) => {
   setImmediate(async () => {
     try {
       const reducedRequest = {
@@ -165,7 +177,11 @@ const saveTxnHistoryAsync = (remoteIp, txnId, jRequest, jResponse) => {
         exception: jResponse._exception,
       };
 
-      const sql = await dynamicSql.getSQL00("insert_TB_COR_TXN_HIST", 1);
+      const sql = await dynamicSql.getSQL(
+        systemCode,
+        "insert_TB_COR_TXN_HIST",
+        1
+      );
       await database.executeSQL(sql, [
         txnId,
         remoteIp,

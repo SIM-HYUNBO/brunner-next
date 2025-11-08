@@ -53,7 +53,11 @@ const selectAll = async (txnId, jRequest) => {
     }
 
     var sql = null;
-    sql = await dynamicSql.getSQL00("select_TB_COR_POST_INFO", 1);
+    sql = await dynamicSql.getSQL(
+      jRequest.systemCode,
+      "select_TB_COR_POST_INFO",
+      1
+    );
     var select_TB_COR_POST_INFO = await database.executeSQL(sql, [
       jRequest.systemCode,
       jRequest.postInfo.postType,
@@ -62,7 +66,11 @@ const selectAll = async (txnId, jRequest) => {
     for (var i = 0; i < select_TB_COR_POST_INFO.rows.length; i++) {
       const comments = [];
 
-      sql = await dynamicSql.getSQL00("select_TB_COR_POST_COMMENT_INFO", 1);
+      sql = await dynamicSql.getSQL(
+        jRequest.systemCode,
+        "select_TB_COR_POST_COMMENT_INFO",
+        1
+      );
       var select_TB_COR_POST_COMMENT_INFO = await database.executeSQL(sql, [
         jRequest.systemCode,
         select_TB_COR_POST_INFO.rows[i].post_id,
@@ -99,7 +107,11 @@ const insertOne = async (txnId, jRequest) => {
     }
 
     var sql = null;
-    sql = await dynamicSql.getSQL00("insert_TB_COR_POST_INFO", 1);
+    sql = await dynamicSql.getSQL(
+      jRequest.systemCode,
+      "insert_TB_COR_POST_INFO",
+      1
+    );
 
     var insert_TB_COR_POST_INFO_01 = await database.executeSQL(sql, [
       jRequest.systemCode,
@@ -110,7 +122,11 @@ const insertOne = async (txnId, jRequest) => {
     ]);
 
     if (insert_TB_COR_POST_INFO_01.rowCount === 1) {
-      sql = await dynamicSql.getSQL00("select_TB_COR_POST_INFO", 2);
+      sql = await dynamicSql.getSQL(
+        jRequest.systemCode,
+        "select_TB_COR_POST_INFO",
+        2
+      );
       var select_TB_COR_POST_INFO_02 = await database.executeSQL(sql, [
         jRequest.systemCode,
         postId,
@@ -140,7 +156,11 @@ const updateOne = async (txnId, jRequest) => {
     jResponse.commanaName = jRequest.commandName;
 
     var sql = null;
-    sql = await dynamicSql.getSQL00("update_TB_COR_POST_INFO", 1);
+    sql = await dynamicSql.getSQL(
+      jRequest.systemCode,
+      "update_TB_COR_POST_INFO",
+      1
+    );
     var update_TB_COR_POST_INFO_01 = await database.executeSQL(sql, [
       jRequest.systemCode,
       jRequest.postInfo.postId,
@@ -179,7 +199,11 @@ const deleteOne = async (txnId, jRequest) => {
     }
 
     var sql = null;
-    sql = await dynamicSql.getSQL00("delete_TB_COR_POST_INFO", 1);
+    sql = await dynamicSql.getSQL(
+      jRequest.systemCode,
+      "delete_TB_COR_POST_INFO",
+      1
+    );
     var delete_TB_COR_POST_INFO_01 = await database.executeSQL(sql, [
       jRequest.systemCode,
       jRequest.postInfo.postId,
@@ -187,7 +211,11 @@ const deleteOne = async (txnId, jRequest) => {
     ]);
 
     if (delete_TB_COR_POST_INFO_01.rowCount === 1) {
-      sql = await dynamicSql.getSQL00("delete_TB_COR_POST_COMMENT_INFO", 1);
+      sql = await dynamicSql.getSQL(
+        jRequest.systemCode,
+        "delete_TB_COR_POST_COMMENT_INFO",
+        1
+      );
       var delete_TB_COR_POST_INFO_01 = await database.executeSQL(sql, [
         jRequest.systemCode,
         jRequest.postInfo.postId,

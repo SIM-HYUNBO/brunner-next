@@ -31,7 +31,11 @@ const selectAll = async (txnId, jRequest) => {
     jResponse.userId = jRequest.userId;
 
     var sql = null;
-    sql = await dynamicSql.getSQL00("select_TB_DOC_COMPONENT_TEMPLATE", 1);
+    sql = await dynamicSql.getSQL(
+      jRequest.systemCode,
+      "select_TB_DOC_COMPONENT_TEMPLATE",
+      1
+    );
     var select_TB_DOC_COMPONENT_TEMPLATE = await database.executeSQL(sql, [
       jRequest.systemCode,
     ]);
