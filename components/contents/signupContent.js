@@ -26,6 +26,9 @@ export default function SignupContent() {
   const [registerNo, setRegisterNo] = useState("");
   const [systemCode, setSystemCode] = useState(constants.SystemCode.Brunner);
 
+  // ✅ 사용자 유형: Pharmacy / Supplier / Personal
+  const [userType, setUserType] = useState("Personal");
+
   const changeUserIdValue = (e) => setUserId(e.target.value);
   const changePasswordValue = (e) => setPassword(e.target.value);
   const changeUserNameValue = (e) => setUserName(e.target.value);
@@ -33,9 +36,7 @@ export default function SignupContent() {
   const changePhoneNumberValue = (e) => setPhoneNumber(e.target.value);
   const changeEMailValue = (e) => setEmail(e.target.value);
   const changeRegisterNoValue = (e) => setRegisterNo(e.target.value);
-  const changeSystemCodeValue = (e) => {
-    setSystemCode(e.target.value);
-  };
+  const changeSystemCodeValue = (e) => setSystemCode(e.target.value);
 
   // -------------------------------
   // 사업장 검색 상태
@@ -80,16 +81,18 @@ export default function SignupContent() {
     }
   };
 
-  // 사업장 선택 시 관리번호 + 주소 자동 입력
+  // 사업장 선택 시 관리번호 + 주소 자동 입력 + ✅ userType 자동 설정
   const selectBusiness = (record) => {
     if (searchType === "pharmacy") {
       setRegisterNo(record.manageNo);
       setAddress(record.address || "");
+      setUserType("Pharmacy"); // ✅ 자동 변경
       setShowBizModal(false);
     } else if (searchType === "supplier") {
       setRegisterNo(record.register_no);
       setPhoneNumber(record.phone_no);
       setAddress(record.address || "");
+      setUserType("Supplier"); // ✅ 자동 변경
       setShowBizModal(false);
     }
   };
@@ -111,16 +114,8 @@ export default function SignupContent() {
           },
         ]
       : [
-          {
-            title: "Supplier Name",
-            dataIndex: "name",
-            key: "name",
-          },
-          {
-            title: "Address",
-            dataIndex: "address",
-            key: "address",
-          },
+          { title: "Supplier Name", dataIndex: "name", key: "name" },
+          { title: "Address", dataIndex: "address", key: "address" },
           { title: "Phone Number", dataIndex: "phone_no", key: "phone_no" },
           {
             title: "Mobile Number",
@@ -159,6 +154,7 @@ export default function SignupContent() {
       email,
       registerNo,
       address,
+      userType, // ✅ 신규 추가 필드
     };
     try {
       setLoading(true);
@@ -209,6 +205,23 @@ export default function SignupContent() {
                 {key}
               </option>
             ))}
+          </select>
+        </div>
+
+        {/* ✅ 사용자 유형 선택 */}
+        <div className="relative mb-4 w-40">
+          <label htmlFor="userType" className="leading-7 text-sm text-gray-400">
+            User Type
+          </label>
+          <select
+            id="userType"
+            value={userType}
+            onChange={(e) => setUserType(e.target.value)}
+            className="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 px-3 py-1 leading-8 transition-colors duration-200 ease-in-out"
+          >
+            <option value="Personal">Personal</option>
+            <option value="Pharmacy">Pharmacy</option>
+            <option value="Supplier">Supplier</option>
           </select>
         </div>
 
@@ -301,9 +314,7 @@ export default function SignupContent() {
                   onChange={changeRegisterNoValue}
                   value={registerNo}
                 />
-                <Button onClick={() => setShowBizModal(true)}>
-                  사업장 검색
-                </Button>
+                <Button onClick={() => setShowBizModal(true)}>Search</Button>
               </div>
             ) : (
               <input
@@ -376,7 +387,7 @@ export default function SignupContent() {
                 borderBottom: "1px solid #ccc",
               }}
             >
-              Business Search
+              Find Pharmacy or Supplier
               <button
                 style={{ float: "right" }}
                 onClick={() => setShowBizModal(false)}
@@ -419,7 +430,7 @@ export default function SignupContent() {
                     }
                   }}
                 />
-                <Button onClick={searchBusiness}>검색</Button>
+                <Button onClick={searchBusiness}>Search</Button>
               </div>
 
               <Table

@@ -66,6 +66,12 @@ const signup = async (txnId, jRequest) => {
       return jResponse;
     }
 
+    if (!jRequest.userType) {
+      jResponse.error_code = -2;
+      jResponse.error_message = `${constants.messages.REQUIRED_FIELD} [userType]`;
+      return jResponse;
+    }
+
     // 비밀번호 해싱
     const hashedPassword = await bcrypt.hash(jRequest.password, 10);
 
@@ -139,6 +145,7 @@ const signup = async (txnId, jRequest) => {
       `Y`,
       jRequest.userId,
       jRequest.registerNo,
+      jRequest.userType,
     ]);
 
     logger.info(`\nRESULT:rowCount=\n${insert_TB_COR_USER_MST_01.rowCount}\n`);
