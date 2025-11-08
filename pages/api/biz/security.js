@@ -115,6 +115,7 @@ const signup = async (txnId, jRequest) => {
       jResponse.error_message = `${constants.messages.REQUIRED_FIELD} [registerNo]`;
       return jResponse;
     }
+
     if (!jRequest.address) {
       jResponse.error_code = -2;
       jResponse.error_message = `${constants.messages.REQUIRED_FIELD} [address]`;
@@ -133,7 +134,7 @@ const signup = async (txnId, jRequest) => {
 
     if (select_TB_COR_USER_MST_01.rowCount > 0) {
       jResponse.error_code = -1;
-      jResponse.error_message = `The user id is already used.`;
+      jResponse.error_message = `${constants.messages.USER_ID_ALREADY_EXIST}`;
       return jResponse;
     }
 
@@ -154,6 +155,7 @@ const signup = async (txnId, jRequest) => {
       jRequest.userId,
       jRequest.registerNo,
       jRequest.userType,
+      jRequest.registerName,
     ]);
 
     logger.info(`\nRESULT:rowCount=\n${insert_TB_COR_USER_MST_01.rowCount}\n`);
@@ -232,6 +234,10 @@ const signin = async (txnId, jRequest) => {
         jResponse.userId = select_TB_COR_USER_MST_02.rows[0].user_id;
         jResponse.userName = select_TB_COR_USER_MST_02.rows[0].user_name;
         jResponse.adminFlag = select_TB_COR_USER_MST_02.rows[0].admin_flag;
+        jResponse.userType = select_TB_COR_USER_MST_02.rows[0].user_type;
+        jResponse.registerNo = select_TB_COR_USER_MST_02.rows[0].register_no;
+        jResponse.registerName =
+          select_TB_COR_USER_MST_02.rows[0].register_name;
 
         // New User login report mail send
         mailSender.sendMail(

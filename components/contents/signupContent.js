@@ -26,8 +26,8 @@ export default function SignupContent() {
   const [registerNo, setRegisterNo] = useState("");
   const [systemCode, setSystemCode] = useState(constants.SystemCode.Brunner);
 
-  // ✅ 사용자 유형: Pharmacy / Supplier / Personal
-  const [userType, setUserType] = useState("Personal");
+  // ✅ 사용자 유형
+  const [userType, setUserType] = useState(constants.UserType.Personal);
 
   const changeUserIdValue = (e) => setUserId(e.target.value);
   const changePasswordValue = (e) => setPassword(e.target.value);
@@ -44,8 +44,9 @@ export default function SignupContent() {
   const [showBizModal, setShowBizModal] = useState(false);
   const [searchKeyword, setSearchKeyword] = useState("");
   const [searchResult, setSearchResult] = useState([]);
+  const [registerName, setRegisterName] = useState(""); // ✅ 선택된 이름 필드
 
-  // ✅ 약국/공급자 선택 상태
+  // ✅ 검색 타입
   const [searchType, setSearchType] = useState("pharmacy"); // pharmacy or supplier
 
   // 사업장 검색
@@ -57,7 +58,6 @@ export default function SignupContent() {
     try {
       setLoading(true);
 
-      // ✅ 선택된 검색타입에 따라 Workflow 다르게 지정
       const workflowName =
         searchType === "pharmacy" ? "약국목록조회" : "공급자목록조회";
 
@@ -81,23 +81,25 @@ export default function SignupContent() {
     }
   };
 
-  // 사업장 선택 시 관리번호 + 주소 자동 입력 + ✅ userType 자동 설정
+  // 사업장 선택 시 관리번호 + 주소 자동 입력 + userType + RegisterName 설정
   const selectBusiness = (record) => {
     if (searchType === "pharmacy") {
       setRegisterNo(record.manageNo);
       setAddress(record.address || "");
-      setUserType("Pharmacy"); // ✅ 자동 변경
+      setUserType("Pharmacy");
+      setRegisterName(record.bizName || ""); // ✅ RegisterName 설정
       setShowBizModal(false);
     } else if (searchType === "supplier") {
       setRegisterNo(record.register_no);
       setPhoneNumber(record.phone_no);
       setAddress(record.address || "");
-      setUserType("Supplier"); // ✅ 자동 변경
+      setUserType("Supplier");
+      setRegisterName(record.name || ""); // ✅ RegisterName 설정
       setShowBizModal(false);
     }
   };
 
-  // ✅ 검색타입에 따라 컬럼 다르게 구성
+  // 검색타입에 따라 컬럼 다르게 구성
   const columns =
     searchType === "pharmacy"
       ? [
@@ -154,7 +156,8 @@ export default function SignupContent() {
       email,
       registerNo,
       address,
-      userType, // ✅ 신규 추가 필드
+      userType,
+      registerName,
     };
     try {
       setLoading(true);
@@ -208,7 +211,7 @@ export default function SignupContent() {
           </select>
         </div>
 
-        {/* ✅ 사용자 유형 선택 */}
+        {/* 사용자 유형 선택 */}
         <div className="relative mb-4 w-40">
           <label htmlFor="userType" className="leading-7 text-sm text-gray-400">
             User Type
@@ -219,12 +222,13 @@ export default function SignupContent() {
             onChange={(e) => setUserType(e.target.value)}
             className="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 px-3 py-1 leading-8 transition-colors duration-200 ease-in-out"
           >
-            <option value="Personal">Personal</option>
-            <option value="Pharmacy">Pharmacy</option>
-            <option value="Supplier">Supplier</option>
+            <option value={constants.UserType.Personal}>Personal</option>
+            <option value={constants.UserType.Pharmacy}>Pharmacy</option>
+            <option value={constants.UserType.Supplier}>Supplier</option>
           </select>
         </div>
 
+        {/* ID / Password */}
         <div className="flex flex-wrap w-screen">
           <div className="relative mb-4 mr-5 w-40">
             <label htmlFor="id" className="leading-7 text-sm text-gray-400">
@@ -256,6 +260,7 @@ export default function SignupContent() {
           </div>
         </div>
 
+        {/* Name / Phone / Email */}
         <div className="flex flex-col w-screen">
           <div className="relative mb-4 mr-5 w-40">
             <label htmlFor="name" className="leading-7 text-sm text-gray-400">
@@ -286,7 +291,7 @@ export default function SignupContent() {
             />
           </div>
 
-          <div className="relative mb-4 mr-5 w-40">
+          <div className="relative mb-4 w-40">
             <label htmlFor="email" className="leading-7 text-sm text-gray-400">
               E-Mail
             </label>
@@ -299,6 +304,7 @@ export default function SignupContent() {
             />
           </div>
 
+          {/* Register No + Search */}
           <div className="relative mb-4 w-40">
             <label
               htmlFor="registerNo"
@@ -328,6 +334,27 @@ export default function SignupContent() {
             )}
           </div>
 
+          {/* Register Name */}
+          {registerName && (
+            <div className="relative mb-4 w-96">
+              <label
+                htmlFor="registerName"
+                className="leading-7 text-sm text-gray-400"
+              >
+                Register Name
+              </label>
+              <input
+                type="text"
+                id="registerName"
+                name="registerName"
+                className="w-full bg-gray-100 rounded border border-gray-300 text-base outline-none text-gray-700 py-1 px-3 leading-8"
+                value={registerName}
+                readOnly
+              />
+            </div>
+          )}
+
+          {/* Address */}
           <div className="relative mb-4 w-96">
             <label
               htmlFor="address"
@@ -356,7 +383,7 @@ export default function SignupContent() {
         <p className="text-xs text-gray-500 mt-3">Nice to meet you.</p>
       </div>
 
-      {/* ✅ Rnd 기반 사업장 검색 모달 */}
+      {/* Rnd 기반 사업장 검색 모달 */}
       {showBizModal && (
         <Rnd
           default={{ x: 200, y: 150, width: 650, height: 420 }}
@@ -398,7 +425,7 @@ export default function SignupContent() {
 
             {/* 내용 */}
             <div style={{ padding: 16, overflow: "auto", flex: 1 }}>
-              {/* ✅ 검색타입 + 검색어 입력 */}
+              {/* 검색타입 + 검색어 입력 */}
               <div style={{ display: "flex", marginBottom: 8, gap: 8 }}>
                 <select
                   value={searchType}
@@ -425,9 +452,7 @@ export default function SignupContent() {
                   value={searchKeyword}
                   onChange={(e) => setSearchKeyword(e.target.value)}
                   onKeyDown={(e) => {
-                    if (e.key === "Enter") {
-                      searchBusiness();
-                    }
+                    if (e.key === "Enter") searchBusiness();
                   }}
                 />
                 <Button onClick={searchBusiness}>Search</Button>

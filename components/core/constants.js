@@ -5,6 +5,12 @@ export const SystemCode = {
   Brunner: `00`,
 };
 
+export const UserType = {
+  Personal: `Personal`,
+  Pharmacy: `Pharmacy`,
+  Supplier: `Supplier`,
+};
+
 export const modulePrefix = {
   security: `security`,
   dynamicSql: `dynamicSql`,
@@ -14,6 +20,7 @@ export const modulePrefix = {
   edocDocument: `edocDocument`,
   edocCustom: `edocCustom`,
   workflow: `workflow`,
+  pharmacy: `pharmacy`,
 };
 
 export const messages = {
@@ -30,7 +37,9 @@ export const messages = {
   FAILED_TO_SAVE_TXN_HISTORY: `Failed to save transaction history.`,
   FAILED_TO_UPDATE_DATA: `Failed to update data.`,
   FAILED_REQUESTED: `Failed to request service.`,
-  INVALIED_NUMBER_AMOUNT: `Invalid number or amount.`,
+  INVALID_NUMBER_AMOUNT: `Invalid number or amount.`,
+  INVALID_SYSEM_CODE: `Invalid system code.`,
+  INVALID_USER_TYPE: `Invalid user type.`,
   LOGIN_REQUIRED: "Login Required.",
   MINIUM_PAGE_COUNT: `Minimum page count is 1.`,
   NO_DATA_FOUND: `No data found.`,
@@ -56,6 +65,7 @@ export const messages = {
   PHONE_NUMBER_NOT_VALID: `The [phoneNumber] is not valid.`,
   PHONE_NUMBER_OR_EMAIL_NOT_VALID: `Invalid user phone number or E-Mail.`,
   UNKNOWN_ERROR: `Unknown error occured.`,
+  USER_ID_ALREADY_EXIST: `The [userId] already exist.`,
   USER_ID_NOT_EXIST: `The [userId] does not exist.`,
   USER_ID_LENGTH_CHECK: `The [userId] length should be from 5 to 10.`,
   USER_NAME_LENGTH_CHECK: `The [password] length should be more than 5.`,
@@ -110,6 +120,8 @@ export const commands = {
   WORKFLOW_SELECT_WORKFLOW: "workflow.selectWorkflow",
   WORKFLOW_DELETE_WORKFLOW: "workflow.deleteWorkflow",
   WORKFLOW_SELECT_WORKFLOW_LIST: "workflow.selectWorkflowList",
+
+  PHARMACY_UPLOAD_DAILY_ORDER: "pharmacy.uploadDailyOrder",
 };
 
 export const edocComponentType = {

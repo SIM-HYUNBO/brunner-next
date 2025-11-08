@@ -13,6 +13,8 @@ import * as edocDocument from "./biz/eDoc/eDocDocument";
 import * as edocCustom from "./biz/eDoc/eDocCustom";
 import * as workflow from "./biz/workflow";
 
+import * as pharmacy from "./biz/pharmacy/pharmacy";
+
 export const config = {
   api: {
     responseLimit: "100mb",
@@ -126,6 +128,8 @@ const moduleMap = {
   [constants.modulePrefix.edocDocument]: edocDocument.executeService,
   [constants.modulePrefix.edocCustom]: edocCustom.executeService,
   [constants.modulePrefix.workflow]: workflow.executeService,
+
+  [constants.modulePrefix.pharmacy]: pharmacy.executeService,
 };
 
 const executeService = async (method, req) => {

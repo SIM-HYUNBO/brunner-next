@@ -22,7 +22,7 @@
     "antd": "^5.27.4",
     "apexcharts": "^3.50.0",
     "autoprefixer": "10.4.14",
-    "axios": "^1.7.2",
+    "axios": "^1.13.2",
     "bcryptjs": "^2.4.3",
     "chart.js": "^4.4.3",
     "class-variance-authority": "^0.7.1",
@@ -82,7 +82,8 @@
     "tls": "^0.0.1",
     "uuid": "^10.0.0",
     "winston": "^3.17.0",
-    "winston-daily-rotate-file": "^5.0.0"
+    "winston-daily-rotate-file": "^5.0.0",
+    "xlsx": "^0.18.5"
   },
   "devDependencies": {
     "@babel/cli": "^7.21.5",

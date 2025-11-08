@@ -48,7 +48,12 @@ export default function HomeContent() {
     <>
       {loading && <Loading />}
       <div className={`w-full relative flex-row`}>
-        <h2 className={`page-title`}>Noesis Pelagos</h2>
+        <h2 className="page-title">
+          {userInfo.getCurrentSystemCode() === constants.SystemCode.Pharmacy &&
+          userInfo.getLoginUserType() === constants.UserType.Pharmacy
+            ? userInfo.getLoginUserRegisterName()
+            : "Noesis Pelagos"}
+        </h2>
         <div className="w-full flex flex-row items-center z-0">
           <div className="flex-1">
             <GoverningMessage

@@ -95,6 +95,45 @@ export const getLoginName = () => {
   return "";
 };
 
+export const getLoginUserType = () => {
+  if (typeof window !== "undefined") {
+    try {
+      const userInfoStr = localStorage.getItem("userInfo");
+      const userInfo = JSON.parse(userInfoStr);
+      return userInfo?.userType || "";
+    } catch {
+      return "";
+    }
+  }
+  return "";
+};
+
+export const getLoginUserRegisterNo = () => {
+  if (typeof window !== "undefined") {
+    try {
+      const userInfoStr = localStorage.getItem("userInfo");
+      const userInfo = JSON.parse(userInfoStr);
+      return userInfo?.registerNo || "";
+    } catch {
+      return "";
+    }
+  }
+  return "";
+};
+
+export const getLoginUserRegisterName = () => {
+  if (typeof window !== "undefined") {
+    try {
+      const userInfoStr = localStorage.getItem("userInfo");
+      const userInfo = JSON.parse(userInfoStr);
+      return userInfo?.registerName || "";
+    } catch {
+      return "";
+    }
+  }
+  return "";
+};
+
 export const isAdminUser = () => {
   if (typeof window !== "undefined") {
     try {

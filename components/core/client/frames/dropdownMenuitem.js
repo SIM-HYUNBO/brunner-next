@@ -56,5 +56,13 @@ export async function getDropdownMenuItems() {
     });
   }
 
+  if (userInfo.getLoginUserType() == constants.UserType.Pharmacy) {
+    const hRef = `/pharmacy/excelUpload`;
+    items.push({
+      label: "Upload Daily Order",
+      href: hRef,
+      type: "item",
+    });
+  }
   return items;
 }
