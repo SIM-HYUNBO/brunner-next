@@ -88,6 +88,7 @@ const uploadDailyOrder = async (txnId, jRequest) => {
         row.drugName,
         row.supplierName,
         row.orderQty,
+        row.currentInventoryQty,
       ]);
     }
     jResponse.error_code = 0;

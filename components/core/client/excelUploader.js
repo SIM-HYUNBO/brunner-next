@@ -30,11 +30,16 @@ export function ExcelUploader() {
     for (let row = 4; row <= range.e.r; row++) {
       const drugNameCell = worksheet[XLSX.utils.encode_cell({ r: row, c: 2 })]; // C열 (index 2)
       const supplierCell = worksheet[XLSX.utils.encode_cell({ r: row, c: 3 })]; // D열 (index 3)
+      const currentInventoryCell =
+        worksheet[XLSX.utils.encode_cell({ r: row, c: 4 })]; // E열 (index 4)
       const orderQtyCell = worksheet[XLSX.utils.encode_cell({ r: row, c: 5 })]; // F열 (index 5)
 
       const drugName = drugNameCell ? drugNameCell.v : null;
       const supplierName = supplierCell ? supplierCell.v : null;
       const orderQty = orderQtyCell ? orderQtyCell.v : null;
+      const currentInventoryQty = currentInventoryCell
+        ? currentInventoryCell.v
+        : null;
 
       // ✅ 값이 모두 없으면 skip
       if (!drugName && !supplierName && !orderQty) continue;
@@ -43,6 +48,7 @@ export function ExcelUploader() {
         drugName,
         supplierName,
         orderQty,
+        currentInventoryQty,
       });
     }
 

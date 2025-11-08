@@ -1,6 +1,6 @@
 `use strict`;
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/router";
 import * as userInfo from "@/components/core/client/frames/userInfo";
 import * as constants from "@/components/core/constants";
@@ -18,8 +18,24 @@ export default function HomeContent() {
   const [isMounted, setIsMounted] = useState(false);
   const [mainDocumentId, setMainDocumentId] = useState(false);
 
+  const currentSystemCode = useRef(userInfo.getCurrentSystemCode());
+  const currentUserType = useRef(userInfo.getLoginUserType());
+  const currentRegisterName = useRef(userInfo.getLoginUserRegisterName());
+  const [pageTitle, setPageTitle] = useState("Noesis Pelagos"); // ✅ 타이틀 상태 추가
+
   useEffect(() => {
     setIsMounted(true);
+
+    // ✅ 클라이언트 렌더링 이후 약국 계정이면 타이틀을 registerName으로 변경
+    if (
+      currentSystemCode.current === constants.SystemCode.Pharmacy &&
+      currentUserType.current === constants.UserType.Pharmacy
+    ) {
+      const name = currentRegisterName.current;
+      if (name && name.trim() !== "") {
+        setPageTitle(name);
+      }
+    }
 
     async function getRandomPublicDocumentId(systemCode) {
       var documentList = await commonFunctions.getAdminDocumentList(systemCode);
@@ -48,12 +64,7 @@ export default function HomeContent() {
     <>
       {loading && <Loading />}
       <div className={`w-full relative flex-row`}>
-        <h2 className="page-title">
-          {userInfo.getCurrentSystemCode() === constants.SystemCode.Pharmacy &&
-          userInfo.getLoginUserType() === constants.UserType.Pharmacy
-            ? userInfo.getLoginUserRegisterName()
-            : "Noesis Pelagos"}
-        </h2>
+        <h2 className="page-title">{pageTitle}</h2>
         <div className="w-full flex flex-row items-center z-0">
           <div className="flex-1">
             <GoverningMessage
