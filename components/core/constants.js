@@ -122,6 +122,7 @@ export const commands = {
   WORKFLOW_SELECT_WORKFLOW_LIST: "workflow.selectWorkflowList",
 
   PHARMACY_UPLOAD_DAILY_ORDER: "pharmacy.uploadDailyOrder",
+  PHARMACY_VIEW_DAILY_ORDER: "pharmacy.viewDailyOrder",
 };
 
 export const edocComponentType = {

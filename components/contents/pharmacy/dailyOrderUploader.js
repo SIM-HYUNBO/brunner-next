@@ -6,7 +6,7 @@ import * as constants from "@/components/core/constants";
 import { useModal } from "@/components/core/client/brunnerMessageBox";
 import Loading from "@/components/core/client/loading";
 
-export function ExcelUploader() {
+export function DailyOrderUploader() {
   const { BrunnerMessageBox, openModal } = useModal();
   const [loading, setLoading] = useState(false);
   const [excelData, setExcelData] = useState([]);
@@ -21,38 +21,33 @@ export function ExcelUploader() {
     const sheetName = workbook.SheetNames[0];
     const worksheet = workbook.Sheets[sheetName];
 
-    // 📘 엑셀 전체 range 정보
     const range = XLSX.utils.decode_range(worksheet["!ref"]);
-
     const result = [];
 
-    // ✅ 5행부터 끝까지 읽기
     for (let row = 4; row <= range.e.r; row++) {
-      const drugNameCell = worksheet[XLSX.utils.encode_cell({ r: row, c: 2 })]; // C열 (index 2)
-      const supplierCell = worksheet[XLSX.utils.encode_cell({ r: row, c: 3 })]; // D열 (index 3)
+      const drugNameCell = worksheet[XLSX.utils.encode_cell({ r: row, c: 2 })];
+      const supplierCell = worksheet[XLSX.utils.encode_cell({ r: row, c: 3 })];
       const currentInventoryCell =
-        worksheet[XLSX.utils.encode_cell({ r: row, c: 4 })]; // E열 (index 4)
-      const orderQtyCell = worksheet[XLSX.utils.encode_cell({ r: row, c: 5 })]; // F열 (index 5)
+        worksheet[XLSX.utils.encode_cell({ r: row, c: 4 })];
+      const orderQtyCell = worksheet[XLSX.utils.encode_cell({ r: row, c: 5 })];
 
       const drugName = drugNameCell ? drugNameCell.v : null;
       const supplierName = supplierCell ? supplierCell.v : null;
-      const orderQty = orderQtyCell ? orderQtyCell.v : null;
-      const currentInventoryQty = currentInventoryCell
+      const currentInventory = currentInventoryCell
         ? currentInventoryCell.v
         : null;
+      const orderQty = orderQtyCell ? orderQtyCell.v : null;
 
-      // ✅ 값이 모두 없으면 skip
       if (!drugName && !supplierName && !orderQty) continue;
 
       result.push({
         drugName,
         supplierName,
         orderQty,
-        currentInventoryQty,
+        currentInventory,
       });
     }
 
-    // console.log("읽은 데이터:", result);
     setExcelData(result);
   };
 
@@ -78,32 +73,32 @@ export function ExcelUploader() {
   };
 
   return (
-    <div style={{ border: "1px solid #ccc", padding: 16, width: 400 }}>
+    <div className="border border-gray-300 p-4 w-96 rounded-lg general-text-bg-color">
       {loading && <Loading />}
       <BrunnerMessageBox />
-      <h2>Upload Daily Order</h2>
       <input
         type="file"
         accept=".xlsx,.xls"
         onChange={handleFileChange}
-        style={{ marginBottom: 10 }}
+        className="mb-2 file:border file:border-gray-300 file:rounded file:px-3 file:py-1 file:bg-gray-100 file:text-gray-700"
       />
 
       {excelData.length > 0 && (
-        <div
-          style={{
-            background: "#f7f7f7",
-            padding: 8,
-            marginBottom: 10,
-            maxHeight: 150,
-            overflow: "auto",
-          }}
-        >
-          <pre>{JSON.stringify(excelData.slice(0, 5), null, 2)}</pre>
+        <div className="bg-gray-100 p-2 mb-2 max-h-36 overflow-auto rounded">
+          <pre className="text-sm">
+            {JSON.stringify(excelData.slice(0, 5), null, 2)}
+          </pre>
         </div>
       )}
 
-      <button onClick={handleUpload}>Save</button>
+      <div className="flex justify-end">
+        <button
+          onClick={handleUpload}
+          className="bg-blue-600 px-4 py-2 rounded hover:bg-blue-700 semi-text-bg-color"
+        >
+          Save
+        </button>
+      </div>
     </div>
   );
 }

@@ -145,6 +145,7 @@ const BrunnerTable = forwardRef(
     };
 
     const TableBodyArea = () => {
+      if (!tableData) return;
       const hiddenColumns = columns
         .filter((column) => column.hidden)
         .map((column) => column.accessor || column.id);

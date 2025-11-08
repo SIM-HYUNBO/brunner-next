@@ -54,7 +54,8 @@
     "**/*.tsx",
     "**/*.js",
     "**/*.jsx",
-    "next.config.js"
+    "next.config.js",
+    "components/core/client/dailyOrderUploader"
   ],
   "exclude": ["node_modules"]
 }
