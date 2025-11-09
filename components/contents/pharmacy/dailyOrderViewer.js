@@ -11,14 +11,71 @@ export default function DailyOrderViewer() {
   const tableRef = useRef();
 
   // 🔹 조회조건 상태
-  const [orderDate, setOrderDate] = useState(""); // 필수
-  const supplierNameRef = useRef(""); // 선택
-  const productNameRef = useRef(""); // 선택
+  const orderDateRef = useRef(""); // 필수
+  const [orderDate, setOrderDate] = useState(orderDateRef.current.value);
+
+  const supplierNameRef = useRef(""); // 필수
+  const [supplierName, setSupplierName] = useState(
+    supplierNameRef.current.value
+  );
+
+  const productNameRef = useRef(""); // 필수
+  const [productName, setProductName] = useState(productNameRef.current.value);
+
   const [loading, setLoading] = useState(false);
+
+  /* 조회조건 */
+  const FilteringConditions = () => {
+    return (
+      <div className="flex flex-wrap items-end gap-4">
+        <div className="flex flex-col">
+          <label className="font-medium mb-1">
+            Order Date <span className="text-red-500">*</span>
+          </label>
+          <input
+            type="date"
+            ref={orderDateRef}
+            className="border rounded p-2"
+            // value={orderDate}
+          />
+        </div>
+
+        <div className="flex flex-col">
+          <label className="font-medium mb-1">Supplier Name</label>
+          <input
+            type="text"
+            ref={supplierNameRef}
+            // value={supplierName}
+            className="border rounded p-2"
+            placeholder="Optional"
+          />
+        </div>
+        <div className="flex flex-col">
+          <label className="font-medium mb-1">Product Name</label>
+          <input
+            type="text"
+            ref={productNameRef}
+            // value={productName}
+            className="border rounded p-2"
+            placeholder="Optional"
+          />
+        </div>
+
+        <button
+          onClick={() => tableRef.current.refreshTableData()}
+          className="bg-indigo-500 text-white px-4 py-2 rounded hover:bg-indigo-600"
+        >
+          조회
+        </button>
+      </div>
+    );
+  };
 
   // 🔹 서버에서 Daily Order 조회
   const fetchDailyOrders = async () => {
-    const formattedOrderDate = orderDate ? orderDate.replace(/-/g, "") : "";
+    const formattedOrderDate = orderDateRef.current
+      ? orderDateRef.current.value.replace(/-/g, "")
+      : "";
     const formattedSupplier = supplierNameRef.current.value?.trim() || null;
     const formattedProduct = productNameRef.current.value?.trim() || null;
 
@@ -31,11 +88,20 @@ export default function DailyOrderViewer() {
       productName: formattedProduct,
     };
 
+    const prevOrderDate = orderDateRef.current.value;
+    const prevSupplierName = supplierNameRef.current.value;
+    const prevProductName = productNameRef.current.value;
+
     try {
       setLoading(true);
       const jResponse = await RequestServer(jRequest);
       setLoading(false);
       openModal(jResponse.error_message);
+
+      orderDateRef.current.value = prevOrderDate;
+      productNameRef.current.value = prevProductName;
+      supplierNameRef.current.value = prevSupplierName;
+
       return jResponse.data?.rows || [];
     } catch (error) {
       setLoading(false);
@@ -61,55 +127,6 @@ export default function DailyOrderViewer() {
   const deleteTableData = (row) => {
     console.log("삭제:", row);
     tableRef.current.refreshTableData();
-  };
-
-  /* 조회조건 */
-  const FilteringConditions = () => {
-    return (
-      <div className="flex flex-wrap items-end gap-4">
-        <div className="flex flex-col">
-          <label className="font-medium mb-1">
-            Order Date <span className="text-red-500">*</span>
-          </label>
-          <input
-            type="date"
-            value={orderDate}
-            onChange={(e) => setOrderDate(e.target.value)}
-            className="border rounded p-2"
-          />
-        </div>
-
-        <div className="flex flex-col">
-          <label className="font-medium mb-1">Supplier Name</label>
-          <input
-            type="text"
-            ref={supplierNameRef}
-            // value={supplierName}
-            // onChange={(e) => setSupplierName(e.target.value)}
-            className="border rounded p-2"
-            placeholder="Optional"
-          />
-        </div>
-        <div className="flex flex-col">
-          <label className="font-medium mb-1">Product Name</label>
-          <input
-            type="text"
-            ref={productNameRef}
-            // value={productName}
-            // onChange={(e) => setProductName(e.target.value)}
-            className="border rounded p-2"
-            placeholder="Optional"
-          />
-        </div>
-
-        <button
-          onClick={() => tableRef.current.refreshTableData()}
-          className="bg-indigo-500 text-white px-4 py-2 rounded hover:bg-indigo-600"
-        >
-          조회
-        </button>
-      </div>
-    );
   };
 
   return (
