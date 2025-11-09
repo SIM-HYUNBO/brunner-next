@@ -7,6 +7,8 @@ import * as dynamicSql from "./../dynamicSql";
 import * as mailSender from "@/components/core/server/mailSender";
 import puppeteer from "puppeteer";
 import bcrypt from "bcryptjs";
+import qs from "qs"; // querystring 변환용
+import axios from "axios";
 
 const executeService = async (txnId, jRequest) => {
   var jResponse = {};
@@ -264,78 +266,20 @@ const automaticOrder = async (txnId, jRequest) => {
 };
 
 export async function runHanshinOrder(row) {
-  const browser = await puppeteer.launch({
-    headless: true,
-    args: [
-      "--no-sandbox",
-      "--disable-setuid-sandbox",
-      "--ignore-certificate-errors", // ✅ 인증서 오류 무시
-      "--ignore-certificate-errors-spki-list",
-    ],
-  });
-  const page = await browser.newPage();
-
-  const url = "https://www.hanshinpharm.com/";
-  const loginId = "chif2000";
-  const loginPw = "542500";
-
+  var ret = { error_code: -1, error_message: `` };
   try {
-    // 1️⃣ 로그인
-    await page.goto(url, { waitUntil: "networkidle0" });
+    logger.warn(`HanshinOrder: ${JSON.stringify(row, null, 2)}`);
 
-    // 1️⃣ 아이디/비밀번호 입력
-    await page.waitForSelector("#tx_id");
-    await page.type("#tx_id", loginId);
-
-    await page.waitForSelector("#tx_pw");
-    await page.type("#tx_pw", loginPw);
-
-    // 2️⃣ 로그인 버튼 클릭 (a.login)
-    await page.waitForSelector("a.login");
-    await Promise.all([
-      page.click("a.login"),
-      page.waitForNavigation({ waitUntil: "networkidle0" }), // 로그인 후 페이지 로딩 대기
-    ]);
-
-    // 2️⃣ 상세페이지로 이동
-    const detailUrl = `https://www.hanshinpharm.com/Service/Order/PhysicInfo.asp?pc=${row.product_code}&ln=0&currVenCd=5046E&currMkind=&cookPView=&wPhyCd=&currLoc='00001'`;
-    await page.goto(detailUrl, { waitUntil: "networkidle2" });
-
-    // 3️⃣ 페이지 안정화 대기
-    await new Promise((resolve) => setTimeout(resolve, 1500));
-
-    // 4️⃣ 수량 입력 (row.orderQty 만큼)
-    await page.evaluate((orderQty) => {
-      const qtyInput = document.querySelector("input.setInput_h18_qty");
-      if (!qtyInput) throw new Error("수량 입력 필드 없음");
-      qtyInput.value = orderQty;
-      qtyInput.dispatchEvent(new Event("input", { bubbles: true }));
-    }, row.orderQty);
-
-    await new Promise((resolve) => setTimeout(resolve, 500));
-
-    // 5️⃣ 장바구니 버튼 클릭
-    await page.evaluate(() => {
-      const cartBtn = document.querySelector("#btn_saveBag");
-      if (!cartBtn) throw new Error("장바구니 버튼 없음");
-      cartBtn.click();
-    });
-
-    // 6️⃣ 처리 완료 후 안정화 딜레이
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-
-    return { error_code: 0, error_message: "장바구니 담기 완료" };
-
-    // 3️⃣ 주문 제출 (주석 해제하면 자동 주문 가능)
-    // await page.goto("https://mall.hanshinpharm.co.kr/cart");
-    // await page.click("#orderAllButton");
-    // await page.waitForNavigation();
-
-    return { error_code: 0, error_message: "주문이 완료되었습니다." };
+    const ret = {
+      error_code: 0,
+      error_message: `${constants.messages.SUCCESS_FINISHED}`,
+    };
+    logger.warn(`${JSON.stringify(ret, null, 2)}`);
+    return ret;
   } catch (e) {
-    return { error_code: -1, error_message: e.message };
-  } finally {
-    await browser.close();
+    const ret = { error_code: -1, error_message: e.message };
+    logger.warn(`${JSON.stringify(ret, null, 2)}`);
+    return ret;
   }
 }
 
