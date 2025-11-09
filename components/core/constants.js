@@ -121,6 +121,7 @@ export const commands = {
   WORKFLOW_DELETE_WORKFLOW: "workflow.deleteWorkflow",
   WORKFLOW_SELECT_WORKFLOW_LIST: "workflow.selectWorkflowList",
 
+  PHARMACY_AUTOMATIC_ORDER: "pharmacy.automaticOrder",
   PHARMACY_UPLOAD_DAILY_ORDER: "pharmacy.uploadDailyOrder",
   PHARMACY_VIEW_DAILY_ORDER: "pharmacy.viewDailyOrder",
 };

@@ -67,6 +67,12 @@ export default function DailyOrderViewer() {
         >
           조회
         </button>
+        <button
+          onClick={() => requestAutomaticDailyOrder()}
+          className="bg-indigo-500 text-white px-4 py-2 rounded hover:bg-indigo-600"
+        >
+          자동주문
+        </button>
       </div>
     );
   };
@@ -127,6 +133,35 @@ export default function DailyOrderViewer() {
   const deleteTableData = (row) => {
     console.log("삭제:", row);
     tableRef.current.refreshTableData();
+  };
+
+  const requestAutomaticDailyOrder = async () => {
+    const formattedOrderDate = orderDateRef.current
+      ? orderDateRef.current.value.replace(/-/g, "")
+      : "";
+    const formattedSupplier = supplierNameRef.current.value?.trim() || null;
+    const formattedProduct = productNameRef.current.value?.trim() || null;
+
+    const jRequest = {
+      commandName: constants.commands.PHARMACY_AUTOMATIC_ORDER,
+      systemCode: userInfo.getCurrentSystemCode(),
+      userId: userInfo.getLoginUserId(),
+      orderDate: formattedOrderDate,
+      supplierName: formattedSupplier,
+      productName: formattedProduct,
+    };
+
+    try {
+      setLoading(true);
+      const jResponse = await RequestServer(jRequest);
+      setLoading(false);
+      openModal(jResponse.error_message);
+
+      return jResponse.data?.rows || [];
+    } catch (error) {
+      setLoading(false);
+      openModal(error.message);
+    }
   };
 
   return (

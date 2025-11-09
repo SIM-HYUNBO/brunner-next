@@ -25,23 +25,28 @@ export function DailyOrderUploader() {
     const result = [];
 
     for (let row = 4; row <= range.e.r; row++) {
-      const drugNameCell = worksheet[XLSX.utils.encode_cell({ r: row, c: 2 })];
+      const productCodeCell =
+        worksheet[XLSX.utils.encode_cell({ r: row, c: 1 })];
+      const productNameCell =
+        worksheet[XLSX.utils.encode_cell({ r: row, c: 2 })];
       const supplierCell = worksheet[XLSX.utils.encode_cell({ r: row, c: 3 })];
       const currentInventoryCell =
         worksheet[XLSX.utils.encode_cell({ r: row, c: 4 })];
       const orderQtyCell = worksheet[XLSX.utils.encode_cell({ r: row, c: 5 })];
 
-      const drugName = drugNameCell ? drugNameCell.v : null;
+      const productCode = productCodeCell ? productCodeCell.v : null;
+      const productName = productNameCell ? productNameCell.v : null;
       const supplierName = supplierCell ? supplierCell.v : null;
       const currentInventory = currentInventoryCell
         ? currentInventoryCell.v
         : null;
       const orderQty = orderQtyCell ? orderQtyCell.v : null;
 
-      if (!drugName && !supplierName && !orderQty) continue;
+      if (!productName && !supplierName && !orderQty) continue;
 
       result.push({
-        drugName,
+        productCode,
+        productName,
         supplierName,
         orderQty,
         currentInventory,
