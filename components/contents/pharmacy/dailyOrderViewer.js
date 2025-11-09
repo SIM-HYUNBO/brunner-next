@@ -12,15 +12,15 @@ export default function DailyOrderViewer() {
 
   // 🔹 조회조건 상태
   const [orderDate, setOrderDate] = useState(""); // 필수
-  const [supplierName, setSupplierName] = useState(""); // 선택
-  const [productName, setProductName] = useState(""); // 선택
+  const supplierNameRef = useRef(""); // 선택
+  const productNameRef = useRef(""); // 선택
   const [loading, setLoading] = useState(false);
 
   // 🔹 서버에서 Daily Order 조회
-  const fetchDailyOrders = useCallback(async () => {
+  const fetchDailyOrders = async () => {
     const formattedOrderDate = orderDate ? orderDate.replace(/-/g, "") : "";
-    const formattedSupplier = supplierName?.trim() || null;
-    const formattedProduct = productName?.trim() || null;
+    const formattedSupplier = supplierNameRef.current.value?.trim() || null;
+    const formattedProduct = productNameRef.current.value?.trim() || null;
 
     const jRequest = {
       commandName: constants.commands.PHARMACY_VIEW_DAILY_ORDER,
@@ -41,7 +41,7 @@ export default function DailyOrderViewer() {
       setLoading(false);
       openModal(error.message);
     }
-  }, [orderDate, supplierName, productName]);
+  };
 
   // 🔹 컬럼 정의
   const columns = [
@@ -83,8 +83,9 @@ export default function DailyOrderViewer() {
           <label className="font-medium mb-1">Supplier Name</label>
           <input
             type="text"
-            value={supplierName}
-            onChange={(e) => setSupplierName(e.target.value)}
+            ref={supplierNameRef}
+            // value={supplierName}
+            // onChange={(e) => setSupplierName(e.target.value)}
             className="border rounded p-2"
             placeholder="Optional"
           />
@@ -93,8 +94,9 @@ export default function DailyOrderViewer() {
           <label className="font-medium mb-1">Product Name</label>
           <input
             type="text"
-            value={productName}
-            onChange={(e) => setProductName(e.target.value)}
+            ref={productNameRef}
+            // value={productName}
+            // onChange={(e) => setProductName(e.target.value)}
             className="border rounded p-2"
             placeholder="Optional"
           />
