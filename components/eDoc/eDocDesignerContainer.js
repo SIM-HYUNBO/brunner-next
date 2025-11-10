@@ -779,7 +779,7 @@ export default function EDocDesignerContainer({
             style={{
               backgroundColor:
                 documentData?.runtime_data.backgroundColor || "#f8f8f8",
-              padding: `${documentData.runtime_data.padding}px`,
+              padding: `${documentData?.runtime_data.padding}px`,
             }}
           >
             {documentData.pages.map((page, idx) => (
