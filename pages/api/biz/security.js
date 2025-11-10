@@ -52,7 +52,7 @@ const signup = async (txnId, jRequest) => {
     // 입력 필드값 유효성 검사
     if (!jRequest.userId) {
       jResponse.error_code = -2;
-      jResponse.error_message = `${constants.messages.REQUIRED_FIELD} [userId`;
+      jResponse.error_message = `${constants.messages.REQUIRED_FIELD} [userId]`;
       return jResponse;
     }
     if (jRequest.userId.length < 5 || jRequest.userId.length > 10) {

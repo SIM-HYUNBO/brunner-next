@@ -67,7 +67,7 @@ async function updateOne(txnId, jRequest) {
 
     if (!jRequest.userId) {
       jResponse.error_code = -2;
-      jResponse.error_message = `${constants.messages.REQUIRED_FIELD} [userId`;
+      jResponse.error_message = `${constants.messages.REQUIRED_FIELD} [userId]`;
       return jResponse;
     }
     if (!jRequest.systemCode) {
