@@ -137,7 +137,7 @@ export default function EDocDesignerContainer({
     if (selectedComponentId === null) return;
 
     // 현재 페이지에서 선택된 컴포넌트만 복사
-    const currentPage = documentData.pages[currentPageIdx];
+    const currentPage = documentData?.pages[currentPageIdx];
     if (!currentPage) return;
 
     const component = currentPage.components[selectedComponentId];
@@ -351,7 +351,7 @@ export default function EDocDesignerContainer({
       return;
     }
 
-    const newPageId = `page-${documentData.pages.length + 1}`;
+    const newPageId = `page-${documentData?.pages.length + 1}`;
     const newPage = {
       id: newPageId,
       components: [],
@@ -362,7 +362,7 @@ export default function EDocDesignerContainer({
       ...prev,
       pages: [...prev.pages, newPage],
     }));
-    setCurrentPageIdx(documentData.pages.length);
+    setCurrentPageIdx(documentData?.pages.length);
   };
 
   const handleDeleteCurrentPage = async () => {
@@ -371,7 +371,7 @@ export default function EDocDesignerContainer({
       return;
     }
 
-    if (documentData.pages.length === 1) {
+    if (documentData?.pages.length === 1) {
       openModal(constants.messages.MINIUM_PAGE_COUNT);
       return;
     }
@@ -485,7 +485,7 @@ export default function EDocDesignerContainer({
   };
 
   const handleMoveComponentDown = () => {
-    const comps = documentData.pages[currentPageIdx].components;
+    const comps = documentData?.pages[currentPageIdx].components;
     if (selectedComponentId === null || selectedComponentId >= comps.length - 1)
       return;
     setDocumentData((prev) => {
@@ -616,7 +616,7 @@ export default function EDocDesignerContainer({
 
   // 현재 페이지를 아래로 이동
   const handleMovePageDown = () => {
-    if (currentPageIdx >= documentData.pages.length - 1) return; // 마지막 페이지는 이동 불가
+    if (currentPageIdx >= documentData?.pages.length - 1) return; // 마지막 페이지는 이동 불가
     setDocumentData((prev) => {
       const newPages = [...prev.pages];
       [newPages[currentPageIdx + 1], newPages[currentPageIdx]] = [
@@ -822,7 +822,7 @@ export default function EDocDesignerContainer({
                         onClick={handleMovePageDown}
                         className="mb-1 px-2 py-1 rounded bg-gray-200 hover:bg-gray-300"
                         disabled={
-                          currentPageIdx === documentData.pages.length - 1
+                          currentPageIdx === documentData?.pages.length - 1
                         }
                       >
                         ▼
@@ -889,12 +889,12 @@ export default function EDocDesignerContainer({
                 Properties
               </h5>
               {selectedComponentId !== null &&
-              documentData.pages[currentPageIdx]?.components[
+              documentData?.pages[currentPageIdx]?.components[
                 selectedComponentId
               ] ? (
                 <EDocComponentPropertyEditor
                   component={
-                    documentData.pages[currentPageIdx].components[
+                    documentData?.pages[currentPageIdx].components[
                       selectedComponentId
                     ]
                   }
@@ -913,7 +913,7 @@ export default function EDocDesignerContainer({
                   />
                   <EDocPagePropertyEditor
                     runtimeData={
-                      documentData.pages[currentPageIdx]?.runtime_data || {}
+                      documentData?.pages[currentPageIdx]?.runtime_data || {}
                     }
                     onChangeRuntimeData={(updatedPageRuntimeData) =>
                       setDocumentData((prev) => {
