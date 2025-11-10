@@ -782,7 +782,7 @@ export default function EDocDesignerContainer({
               padding: `${documentData?.runtime_data.padding}px`,
             }}
           >
-            {documentData.pages.map((page, idx) => (
+            {documentData?.pages.map((page, idx) => (
               <>
                 <div
                   key={page.id}
