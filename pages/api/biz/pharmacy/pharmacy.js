@@ -8,7 +8,6 @@ import * as mailSender from "@/components/core/server/mailSender";
 import puppeteer from "puppeteer";
 import bcrypt from "bcryptjs";
 import qs from "qs"; // querystring 변환용
-import axios from "axios";
 
 const executeService = async (txnId, jRequest) => {
   var jResponse = {};
@@ -273,6 +272,33 @@ export async function runHanshinOrder(row) {
     const url = "https://www.hanshinpharm.com";
     const loginId = "chif2000";
     const loginPw = "542500";
+
+    // headless: true, 화면을 띄우지 않음
+    const browser = await puppeteer.launch({ headless: false });
+    const page = await browser.newPage();
+
+    // 로그인 페이지로 이동
+    await page.goto("https://www.hanshinpharm.com");
+
+    // 로그인 폼에 ID와 비밀번호 입력
+    await page.type("#tx_id", loginId); // 실제 폼의 셀렉터로 수정
+    await page.type("#tx_pw", loginPw); // 실제 폼의 셀렉터로 수정
+
+    // 로그인 버튼 클릭
+    await page.evaluate(() => {
+      const form = document.querySelector("form");
+      form.submit();
+    });
+
+    // 로그인 후 페이지 로딩 대기
+    await page.waitForNavigation();
+
+    // 로그인 후 쿠키 가져오기
+    const cookies = await page.cookies();
+    console.log("쿠키:", cookies);
+
+    // 브라우저 종료
+    await browser.close();
 
     const ret = {
       error_code: 0,
