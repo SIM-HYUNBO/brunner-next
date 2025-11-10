@@ -270,6 +270,10 @@ export async function runHanshinOrder(row) {
   try {
     logger.warn(`HanshinOrder: ${JSON.stringify(row, null, 2)}`);
 
+    const url = "https://www.hanshinpharm.com";
+    const loginId = "chif2000";
+    const loginPw = "542500";
+
     const ret = {
       error_code: 0,
       error_message: `${constants.messages.SUCCESS_FINISHED}`,

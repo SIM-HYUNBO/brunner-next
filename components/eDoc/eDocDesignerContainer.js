@@ -778,7 +778,7 @@ export default function EDocDesignerContainer({
             className="pt-16 flex-grow edoc-designer-canvas"
             style={{
               backgroundColor:
-                documentData.runtime_data.backgroundColor || "#f8f8f8",
+                documentData?.runtime_data.backgroundColor || "#f8f8f8",
               padding: `${documentData.runtime_data.padding}px`,
             }}
           >
