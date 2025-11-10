@@ -2,7 +2,7 @@
 
 import React from "react";
 import Layout from "@/components/core/client/frames/layout";
-import HomeContent from "@/components/contents/pharmacy/homeContent";
+import HomeContent from "@/components/contents/homeContent";
 
 // Home 페이지
 export default function Home() {

@@ -26,7 +26,7 @@ export function DailyOrderUploader() {
 
     for (let row = 4; row <= range.e.r; row++) {
       const productCodeCell =
-        worksheet[XLSX.utils.encode_cell({ r: row, c: 1 })];
+        worksheet[XLSX.utils.encode_cell({ r: row, c: 0 })];
       const productNameCell =
         worksheet[XLSX.utils.encode_cell({ r: row, c: 2 })];
       const supplierCell = worksheet[XLSX.utils.encode_cell({ r: row, c: 3 })];
