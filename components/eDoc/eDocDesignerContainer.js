@@ -267,7 +267,7 @@ export default function EDocDesignerContainer({
 
     if (
       !documentData.id &&
-      documentData.runtime_data.title === "New Document"
+      documentData?.runtime_data.title === "New Document"
     ) {
       const result = await openModal(
         constants.messages.SAVE_DOCUMENT_WITHOUT_TITLE
@@ -530,7 +530,7 @@ export default function EDocDesignerContainer({
     const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
 
     pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
-    pdf.save(`${documentData.runtime_data.title || "document"}.pdf`);
+    pdf.save(`${documentData?.runtime_data.title || "document"}.pdf`);
 
     setIsExportingPdf(false);
   };
@@ -538,7 +538,7 @@ export default function EDocDesignerContainer({
   const handleAIResponse = async (aiResponse) => {
     const newDoc = {
       ...aiResponse.documentData,
-      title: aiResponse.documentData.runtime_data.title,
+      title: aiResponse.documentData?.runtime_data.title,
     };
 
     setDocumentData(newDoc);
@@ -769,7 +769,7 @@ export default function EDocDesignerContainer({
                           text-center
                           general-text-color"
             >
-              {documentData.runtime_data.title || ""} : {documentData.id}
+              {documentData?.runtime_data.title || ""} : {documentData.id}
             </h1>
           )}
 
@@ -903,7 +903,7 @@ export default function EDocDesignerContainer({
               ) : (
                 <>
                   <EDocDocumentPropertyEditor
-                    runtimeData={documentData.runtime_data}
+                    runtimeData={documentData?.runtime_data}
                     onChangeRuntimeData={(updatedRuntimeData) =>
                       setDocumentData((prev) => ({
                         ...prev,
