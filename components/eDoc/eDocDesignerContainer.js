@@ -137,7 +137,7 @@ export default function EDocDesignerContainer({
     if (selectedComponentId === null) return;
 
     // 현재 페이지에서 선택된 컴포넌트만 복사
-    const currentPage = documentData?.pages[currentPageIdx];
+    const currentPage = documentData.pages[currentPageIdx];
     if (!currentPage) return;
 
     const component = currentPage.components[selectedComponentId];
@@ -249,6 +249,7 @@ export default function EDocDesignerContainer({
   const openDocumentById = async (id) => {
     setLoading(true);
     const loadedDocument = await commonFunctions.getDocumentData(
+      userInfo.getCurrentSystemCode(),
       userInfo.getLoginUserId(),
       id
     );
@@ -267,7 +268,7 @@ export default function EDocDesignerContainer({
 
     if (
       !documentData.id &&
-      documentData?.runtime_data.title === "New Document"
+      documentData.runtime_data.title === "New Document"
     ) {
       const result = await openModal(
         constants.messages.SAVE_DOCUMENT_WITHOUT_TITLE
@@ -351,7 +352,7 @@ export default function EDocDesignerContainer({
       return;
     }
 
-    const newPageId = `page-${documentData?.pages.length + 1}`;
+    const newPageId = `page-${documentData.pages.length + 1}`;
     const newPage = {
       id: newPageId,
       components: [],
@@ -362,7 +363,7 @@ export default function EDocDesignerContainer({
       ...prev,
       pages: [...prev.pages, newPage],
     }));
-    setCurrentPageIdx(documentData?.pages.length);
+    setCurrentPageIdx(documentData.pages.length);
   };
 
   const handleDeleteCurrentPage = async () => {
@@ -371,7 +372,7 @@ export default function EDocDesignerContainer({
       return;
     }
 
-    if (documentData?.pages.length === 1) {
+    if (documentData.pages.length === 1) {
       openModal(constants.messages.MINIUM_PAGE_COUNT);
       return;
     }
@@ -485,7 +486,7 @@ export default function EDocDesignerContainer({
   };
 
   const handleMoveComponentDown = () => {
-    const comps = documentData?.pages[currentPageIdx].components;
+    const comps = documentData.pages[currentPageIdx].components;
     if (selectedComponentId === null || selectedComponentId >= comps.length - 1)
       return;
     setDocumentData((prev) => {
@@ -530,7 +531,7 @@ export default function EDocDesignerContainer({
     const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
 
     pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
-    pdf.save(`${documentData?.runtime_data.title || "document"}.pdf`);
+    pdf.save(`${documentData.runtime_data.title || "document"}.pdf`);
 
     setIsExportingPdf(false);
   };
@@ -538,7 +539,7 @@ export default function EDocDesignerContainer({
   const handleAIResponse = async (aiResponse) => {
     const newDoc = {
       ...aiResponse.documentData,
-      title: aiResponse.documentData?.runtime_data.title,
+      title: aiResponse.documentData.runtime_data.title,
     };
 
     setDocumentData(newDoc);
@@ -616,7 +617,7 @@ export default function EDocDesignerContainer({
 
   // 현재 페이지를 아래로 이동
   const handleMovePageDown = () => {
-    if (currentPageIdx >= documentData?.pages.length - 1) return; // 마지막 페이지는 이동 불가
+    if (currentPageIdx >= documentData.pages.length - 1) return; // 마지막 페이지는 이동 불가
     setDocumentData((prev) => {
       const newPages = [...prev.pages];
       [newPages[currentPageIdx + 1], newPages[currentPageIdx]] = [
@@ -719,7 +720,7 @@ export default function EDocDesignerContainer({
         onDeleteCurrentPage={handleDeleteCurrentPage}
         onExportPdf={handleExportPdf}
         currentPageIdx={currentPageIdx}
-        totalPageCount={documentData?.pages?.length}
+        totalPageCount={documentData.pages?.length}
         setCurrentPageIdx={setCurrentPageIdx}
         setAIInputModalOpen={setAIInputModalOpen}
       />
@@ -769,7 +770,7 @@ export default function EDocDesignerContainer({
                           text-center
                           general-text-color"
             >
-              {documentData?.runtime_data.title || ""} : {documentData.id}
+              {documentData.runtime_data.title || ""} : {documentData.id}
             </h1>
           )}
 
@@ -778,11 +779,11 @@ export default function EDocDesignerContainer({
             className="pt-16 flex-grow edoc-designer-canvas"
             style={{
               backgroundColor:
-                documentData?.runtime_data.backgroundColor || "#f8f8f8",
-              padding: `${documentData?.runtime_data.padding}px`,
+                documentData.runtime_data.backgroundColor || "#f8f8f8",
+              padding: `${documentData.runtime_data.padding}px`,
             }}
           >
-            {documentData?.pages.map((page, idx) => (
+            {documentData.pages.map((page, idx) => (
               <>
                 <div
                   key={page.id}
@@ -822,7 +823,7 @@ export default function EDocDesignerContainer({
                         onClick={handleMovePageDown}
                         className="mb-1 px-2 py-1 rounded bg-gray-200 hover:bg-gray-300"
                         disabled={
-                          currentPageIdx === documentData?.pages.length - 1
+                          currentPageIdx === documentData.pages.length - 1
                         }
                       >
                         ▼
@@ -889,12 +890,12 @@ export default function EDocDesignerContainer({
                 Properties
               </h5>
               {selectedComponentId !== null &&
-              documentData?.pages[currentPageIdx]?.components[
+              documentData.pages[currentPageIdx]?.components[
                 selectedComponentId
               ] ? (
                 <EDocComponentPropertyEditor
                   component={
-                    documentData?.pages[currentPageIdx].components[
+                    documentData.pages[currentPageIdx].components[
                       selectedComponentId
                     ]
                   }
@@ -903,7 +904,7 @@ export default function EDocDesignerContainer({
               ) : (
                 <>
                   <EDocDocumentPropertyEditor
-                    runtimeData={documentData?.runtime_data}
+                    runtimeData={documentData.runtime_data}
                     onChangeRuntimeData={(updatedRuntimeData) =>
                       setDocumentData((prev) => ({
                         ...prev,
@@ -913,7 +914,7 @@ export default function EDocDesignerContainer({
                   />
                   <EDocPagePropertyEditor
                     runtimeData={
-                      documentData?.pages[currentPageIdx]?.runtime_data || {}
+                      documentData.pages[currentPageIdx]?.runtime_data || {}
                     }
                     onChangeRuntimeData={(updatedPageRuntimeData) =>
                       setDocumentData((prev) => {
