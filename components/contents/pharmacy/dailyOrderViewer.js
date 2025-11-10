@@ -67,12 +67,12 @@ export default function DailyOrderViewer() {
         >
           조회
         </button>
-        {/* <button
+        <button
           onClick={() => requestAutomaticDailyOrder()}
           className="bg-indigo-500 text-white px-4 py-2 rounded hover:bg-indigo-600"
         >
           자동주문
-        </button> */}
+        </button>
       </div>
     );
   };

@@ -281,13 +281,15 @@ export async function runHanshinOrder(row) {
     await page.goto("https://www.hanshinpharm.com");
 
     // 로그인 폼에 ID와 비밀번호 입력
-    await page.type("#tx_id", loginId); // 실제 폼의 셀렉터로 수정
-    await page.type("#tx_pw", loginPw); // 실제 폼의 셀렉터로 수정
+    await page.type("#tx_id", loginId);
+    await page.type("#tx_pw", loginPw);
 
     // 로그인 버튼 클릭
     await page.evaluate(() => {
-      const form = document.querySelector("form");
-      form.submit();
+      const loginButton = document.querySelector(`a.login`);
+      if (loginButton) {
+        loginButton.click();
+      }
     });
 
     // 로그인 후 페이지 로딩 대기
@@ -296,6 +298,18 @@ export async function runHanshinOrder(row) {
     // 로그인 후 쿠키 가져오기
     const cookies = await page.cookies();
     console.log("쿠키:", cookies);
+
+    if (cookies?.length <= 0) {
+      const ret = {
+        error_code: -1,
+        error_message: `${constants.messages.FAILED_REQUESTED}`,
+      };
+      return ret;
+    }
+
+    // 로그인 성공
+
+    // 로그인 성공후에 정확한 조회 필요
 
     // 브라우저 종료
     await browser.close();
