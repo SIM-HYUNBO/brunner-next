@@ -373,7 +373,7 @@ const uploadDailyOrder = async (txnId, jRequest) => {
     );
 
     for (const row of jRequest.excelData) {
-      const insert_TB_PHM_DAILY_ORDER = await database.executeSQL(sql, [
+      const insert_TB_PHM_DAILY_ORDER_01 = await database.executeSQL(sql, [
         jRequest.userId,
         uploadHour,
         row.productCode,
@@ -544,11 +544,17 @@ const automaticOrder = async (txnId, jRequest) => {
             rowDailyOrder.supplier_name === rowSupplierInfo.supplier_name
         );
 
-        result = await runOrderBySupplier(supplierName, filteredRows);
+        result = await runOrderBySupplier(
+          jRequest.systemCode,
+          jRequest.userId,
+          rowSupplierInfo.supplier_name,
+          rowSupplierInfo.supplier_params,
+          filteredRows
+        );
       }
     }
     jResponse.error_code = result.error_code;
-    jResponse.data = result.error_message;
+    jResponse.error_message = result.error_message;
   } catch (e) {
     logger.error(e);
     jResponse.error_code = -1; // exception
@@ -558,36 +564,42 @@ const automaticOrder = async (txnId, jRequest) => {
   }
 };
 
-export async function runOrderBySupplier(supplierName, rows) {
-  var ret = { error_code: -1, error_message: `` };
+export async function runOrderBySupplier(
+  systemCode,
+  user_id,
+  supplierName,
+  supplier_params,
+  rows
+) {
+  var ret = { error_code: -1, error_message: constants.messages.EMPTY_STRING };
   try {
     switch (supplierName) {
       case `한신약품`:
-        ret = await runHanshinOrder(rows);
+        ret = await runHanshinOrder(systemCode, user_id, supplier_params, rows);
         break;
     }
   } catch (e) {
-    const ret = { error_code: -1, error_message: e.message };
+    ret = { error_code: -1, error_message: e.message };
     logger.warn(`${JSON.stringify(ret, null, 2)}`);
-    return ret;
   }
+  return ret;
 }
 
-async function runHanshinOrder(rows) {
+async function runHanshinOrder(systemCode, user_id, supplier_params, rows) {
   logger.warn(`Start HanshinOrder`);
 
-  const url = "https://www.hanshinpharm.com";
-  const loginId = "chif2000";
-  const loginPw = "542500";
+  const loginUrl = supplier_params.loginUrl; //"https://www.hanshinpharm.com";
+  const loginId = supplier_params.loginId; // = "chif2000";
+  const loginPassword = supplier_params.loginPassword; //= "542500";
 
   const browser = await puppeteer.launch({ headless: false });
   const page = await browser.newPage();
 
   // 1️⃣ 로그인
-  await page.goto(url, { waitUntil: "domcontentloaded" });
+  await page.goto(loginUrl, { waitUntil: "domcontentloaded" });
 
   await page.type("#tx_id", loginId);
-  await page.type("#tx_pw", loginPw);
+  await page.type("#tx_pw", loginPassword);
 
   await page.evaluate(() => {
     const loginButton = document.querySelector(`a.login`);
@@ -608,66 +620,104 @@ async function runHanshinOrder(rows) {
   }
 
   // 2️⃣ 주문/상품조회 페이지 이동
-  await page.goto(`${url}/Service/Order/Order.asp`, {
+  await page.goto(`${loginUrl}/Service/Order/Order.asp`, {
     waitUntil: "domcontentloaded",
   });
 
   for (const row of rows) {
-    if (!row.product_code) continue;
+    try {
+      if (!row.product_code) {
+        throw new Error("입력 제품 없음"); // 입력 제품 없음
+      }
 
-    // --- 검색조건 세팅 ---
-    await page.select("#so3", "2"); // KD코드 선택
-    await page.evaluate((kdCode) => {
-      document.querySelector("#tx_physic").value = kdCode;
-    }, row.product_code);
+      // --- 검색조건 세팅 ---
+      await page.select("#so3", "2"); // KD코드 선택
+      await page.evaluate((kdCode) => {
+        document.querySelector("#tx_physic").value = kdCode;
+      }, row.product_code);
 
-    // 조회 버튼 클릭
-    await page.click("#btn_search2");
+      // 조회 버튼 클릭
+      await page.click("#btn_search2");
 
-    // --- AJAX 로딩 대기: tbody 안에 tr 생길 때까지 ---
-    await page.waitForFunction(
-      () => document.querySelectorAll(".tbl_list.bdtN tbody tr").length > 0,
-      { timeout: 20000 }
-    );
+      // --- AJAX 로딩 대기: tbody 안에 tr 생길 때까지 ---
+      await page.waitForFunction(
+        () => document.querySelectorAll(".tbl_list.bdtN tbody tr").length > 0,
+        { timeout: 20000 }
+      );
 
-    // 렌더링 여유
-    await new Promise((resolve) => setTimeout(resolve, 500));
+      // 렌더링 여유
+      await new Promise((resolve) => setTimeout(resolve, 500));
 
-    // --- 조회 결과 파싱 ---
-    const searchResultRows = await page.$$eval(
-      ".tbl_list.bdtN tbody tr",
-      (trs) =>
-        trs.map((tr) => {
-          const tds = tr.querySelectorAll("td");
-          return {
-            kdCode: tds[0]?.innerText.trim() || "",
-            manufacturer: tds[1]?.innerText.trim() || "",
-            productName: tds[2]?.innerText.trim() || "",
-            standard: tds[3]?.innerText.trim() || "",
-            category: tds[4]?.innerText.trim() || "",
-            price: tds[5]?.innerText.trim() || "",
-            stock: tds[6]?.innerText.trim() || "",
-            quantityInput: tr.querySelector("input[type='text']")?.id || "",
-            productId: tr.querySelector("input[name^='pc_']")?.value || "",
-          };
-        })
-    );
+      // --- 조회 결과 파싱 ---
+      const searchResultRows = await page.$$eval(
+        ".tbl_list.bdtN tbody tr",
+        (trs) =>
+          trs.map((tr) => {
+            const tds = tr.querySelectorAll("td");
+            return {
+              kdCode: tds[0]?.innerText.trim() || "",
+              manufacturer: tds[1]?.innerText.trim() || "",
+              productName: tds[2]?.innerText.trim() || "",
+              standard: tds[3]?.innerText.trim() || "",
+              category: tds[4]?.innerText.trim() || "",
+              price: tds[5]?.innerText.trim() || "",
+              stock: tds[6]?.innerText.trim() || "",
+              quantityInput: tr.querySelector("input[type='text']")?.id || "",
+              productId: tr.querySelector("input[name^='pc_']")?.value || "",
+            };
+          })
+      );
 
-    console.log(searchResultRows);
+      console.log(searchResultRows);
 
-    // --- 1건만 주문 처리 ---
-    if (searchResultRows.length > 0) {
-      const qtyId = searchResultRows[0].quantityInput;
+      // --- 1건만 주문 처리 ---
+      if (searchResultRows.length == 0) {
+        throw new Error("검색된 제품 없음"); // 검색 제품 없음
+      }
+
+      const item = searchResultRows[0];
+      const { stock, quantityInput: qtyId } = item;
+
+      const n_stock = Number(item.stock);
+      const n_orderQty = Number(row.order_qty);
+
+      if (isNaN(n_stock) || isNaN(n_orderQty)) {
+        throw new Error("수량 정보가 잘못되었습니다.");
+      }
+
+      if (n_stock <= 0 || n_orderQty > n_stock) {
+        throw new Error("재고 부족");
+      }
+
       if (qtyId) {
+        // 주문수량 입력
         await page.focus(`#${qtyId}`);
         await page.keyboard.type(String(row.order_qty));
-        console.log(`✅ 주문 수량(${row.order_qty}) 입력 완료`);
       }
 
       // 장바구니 담기 버튼 클릭
       await page.click("#btn_saveBag");
-      console.log("✅ 장바구니 담기 완료");
       await new Promise((resolve) => setTimeout(resolve, 500));
+
+      // 상태 저장
+      const result = await updateOrderStatus(
+        systemCode,
+        user_id,
+        row.upload_hour,
+        row.product_code,
+        row.supplier_name,
+        "장바구니 담음"
+      );
+    } catch (Error) {
+      // 에러코드 상태 저장
+      const result = await updateOrderStatus(
+        systemCode,
+        user_id,
+        row.upload_hour,
+        row.product_code,
+        row.supplier_name,
+        Error.message
+      );
     }
   }
 
@@ -679,6 +729,31 @@ async function runHanshinOrder(rows) {
   };
   logger.warn(`Finished HanshinOrder: ${JSON.stringify(ret, null, 2)}`);
   return ret;
+}
+
+async function updateOrderStatus(
+  systemCode,
+  userId,
+  uploadHour,
+  productCode,
+  supplierName,
+  orderStatus
+) {
+  const sql = await dynamicSql.getSQL(
+    systemCode,
+    `update_TB_PHM_DAILY_ORDER`,
+    1
+  );
+
+  const update_TB_PHM_DAILY_ORDER_01 = await database.executeSQL(sql, [
+    userId,
+    uploadHour,
+    productCode,
+    supplierName,
+    orderStatus,
+  ]);
+
+  return update_TB_PHM_DAILY_ORDER_01.rowCount === 1;
 }
 
 export { executeService };

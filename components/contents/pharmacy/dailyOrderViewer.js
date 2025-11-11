@@ -1,4 +1,4 @@
-import React, { useRef, useState, useCallback } from "react";
+import React, { useEffect, useRef, useState, useCallback } from "react";
 import BrunnerTable from "@/components/core/client/brunnerTable";
 import { RequestServer } from "@/components/core/client/requestServer";
 import * as constants from "@/components/core/constants";
@@ -9,6 +9,7 @@ import { useModal } from "@/components/core/client/brunnerMessageBox";
 export default function DailyOrderViewer() {
   const { BrunnerMessageBox, openModal } = useModal();
   const tableRef = useRef();
+  const [supplierList, setSupplierList] = useState([]);
 
   // 🔹 조회조건 상태
   const orderDateRef = useRef(""); // 필수
@@ -32,7 +33,28 @@ export default function DailyOrderViewer() {
     { Header: "Supplier Name", accessor: "supplier_name", type: "text" },
     { Header: "Order Qty", accessor: "order_qty", type: "number" },
     { Header: "Inventory Qty", accessor: "current_inventory", type: "number" },
+    { Header: "Order State", accessor: "order_status", type: "text" },
   ];
+
+  useEffect(() => {
+    // 🔹 공급처 목록 불러오기
+    const fetchSuppliers = async () => {
+      const jRequest = {
+        commandName: constants.commands.PHARMACY_USER_SUPPLIER_SELECT_ALL,
+        systemCode: userInfo.getCurrentSystemCode(),
+        userId: userInfo.getLoginUserId(),
+      };
+
+      setLoading(true);
+      const jResponse = await RequestServer(jRequest);
+      setLoading(false);
+
+      if (jResponse && jResponse.data) {
+        setSupplierList(jResponse.data.rows);
+      }
+    };
+    fetchSuppliers();
+  }, []);
 
   /* 조회조건 */
   const FilteringConditions = () => {
@@ -52,13 +74,18 @@ export default function DailyOrderViewer() {
 
         <div className="flex flex-col">
           <label className="font-medium mb-1">Supplier Name</label>
-          <input
-            type="text"
+          <select
             ref={supplierNameRef}
-            // value={supplierName}
             className="border rounded p-2"
-            placeholder="Optional"
-          />
+            defaultValue=""
+          >
+            <option value={supplierName}>Select ...</option>
+            {supplierList.map((s) => (
+              <option key={s.supplier_name} value={s.supplier_name}>
+                {s.supplier_name}
+              </option>
+            ))}
+          </select>
         </div>
         <div className="flex flex-col">
           <label className="font-medium mb-1">Product Name</label>
