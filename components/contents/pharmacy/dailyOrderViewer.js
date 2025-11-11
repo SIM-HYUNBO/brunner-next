@@ -76,7 +76,7 @@ export default function DailyOrderViewer() {
           <label className="font-medium mb-1">Supplier Name</label>
           <select
             ref={supplierNameRef}
-            className="border rounded p-2"
+            className="border rounded p-2 w-[200px]"
             defaultValue=""
           >
             <option value={supplierName}>Select ...</option>
