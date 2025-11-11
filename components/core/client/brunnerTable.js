@@ -271,8 +271,26 @@ const BrunnerTable = forwardRef(
       };
 
       const handleChange = (e) => {
-        setNewValue(e.target.value);
+        // ✅ checkbox일 때는 e.target.checked, 나머지는 e.target.value
+        const val = type === "checkbox" ? e.target.checked : e.target.value;
+        setNewValue(val);
       };
+
+      // ✅ 타입별 렌더링 처리
+      if (type === "checkbox") {
+        return (
+          <input
+            type="checkbox"
+            checked={!!newValue}
+            onChange={(e) => {
+              const checked = e.target.checked;
+              setNewValue(checked);
+              onValueChange(checked, rowIndex, columnId);
+            }}
+            className="cursor-pointer"
+          />
+        );
+      }
 
       return isEditing ? (
         (type === "number" || type === "text" || type === "datetime-local") &&
@@ -289,7 +307,7 @@ const BrunnerTable = forwardRef(
             />
           )
       ) : (
-        <span onClick={() => setIsEditing(true)}>{value}</span>
+        <span onClick={() => setIsEditing(true)}>{String(value ?? "")}</span>
       );
     };
 
@@ -302,7 +320,22 @@ const BrunnerTable = forwardRef(
     const TableInputDataArea = () => {
       const initialInputState = {};
       columnHeaders.forEach((header) => {
-        initialInputState[header.accessor] = ``;
+        switch (header.type) {
+          case "number":
+            initialInputState[header.accessor] = 0;
+            break;
+          case "checkbox":
+            initialInputState[header.accessor] = false;
+            break;
+          case "datetime-local":
+            initialInputState[header.accessor] = new Date()
+              .toISOString()
+              .slice(0, 16);
+            break;
+          default:
+            initialInputState[header.accessor] = ``;
+            break;
+        }
       });
 
       const [inputValues, setInputValues] = useState(initialInputState);

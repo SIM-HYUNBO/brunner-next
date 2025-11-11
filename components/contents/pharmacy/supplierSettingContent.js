@@ -25,15 +25,6 @@ const SupplierSettingContent = () => {
 
   // 공급처 목록 불러오기
   useEffect(() => {
-    const fetchTableData = async () => {
-      // try {
-      //   const response = await axios.get("/api/supplier-info");
-      //   setSupplierList(response.data);
-      // } catch (error) {
-      //   console.error("Error fetching suppliers:", error);
-      // }
-    };
-
     fetchTableData();
   }, []);
 
@@ -102,8 +93,13 @@ const SupplierSettingContent = () => {
 
   const columns = [
     { Header: "Name", accessor: "supplier_name", type: "text" },
-    { Header: "Parameters", accessor: "supplier_params", type: "json" },
-    { Header: "Use Flag", accessor: "use_flag", type: "checkbox" },
+    { Header: "Parameters", accessor: "supplier_params", type: "text" },
+    {
+      Header: "Use Flag",
+      accessor: "use_flag",
+      type: "checkbox",
+      Cell: ({ value }) => <input type="checkbox" checked={!!value} readOnly />,
+    },
   ];
 
   /* 조회조건 */
@@ -126,6 +122,11 @@ const SupplierSettingContent = () => {
       setLoading(false);
 
       openModal(jResponse.error_message);
+
+      return (jResponse.data?.rows || []).map((row) => ({
+        ...row,
+        supplier_params: JSON.stringify(row.supplier_params, null, 2),
+      }));
     } catch (error) {
       setLoading(false);
       openModal(error.message);
@@ -166,9 +167,29 @@ const SupplierSettingContent = () => {
     // 서버 작업
   };
 
-  const deleteTableData = async () => {
-    // console.log("데이터 삭제:");
-    // 서버 작업
+  const deleteTableData = async (row) => {
+    // console.log("새 데이터 추가:", newData);
+    const supplierName = row.values.supplier_name;
+
+    const jRequest = {
+      commandName: constants.commands.PHARMACY_SUPPLIER_DELETE_ONE,
+      systemCode: userInfo.getCurrentSystemCode(),
+      userId: userInfo.getLoginUserId(),
+      supplierName: supplierName,
+    };
+
+    try {
+      setLoading(true);
+      const jResponse = await RequestServer(jRequest);
+      setLoading(false);
+
+      openModal(jResponse.error_message);
+    } catch (error) {
+      setLoading(false);
+      openModal(error.message);
+    }
+
+    tableRef.current.refreshTableData();
   };
 
   return (
