@@ -36,7 +36,7 @@ const BrunnerTable = forwardRef(
 
     const columns = React.useMemo(() => {
       const dynamicColumns = [
-        ...columnHeaders.map((col) => {
+        ...columnHeaders?.map((col) => {
           // `datetime-local` 타입의 컬럼을 처리
           if (col.type === "datetime-local") {
             return {
@@ -62,7 +62,10 @@ const BrunnerTable = forwardRef(
           // `datetime-local`이 아닌 다른 컬럼은 원래의 설정대로 반환
           return col;
         }),
-        {
+      ];
+
+      if (updateTableData || deleteTableData) {
+        dynamicColumns.push({
           Header: "Actions",
           accessor: "actions",
           id: "actions",
@@ -70,30 +73,33 @@ const BrunnerTable = forwardRef(
             "text-center semi-text-bg-color w-[100px] !important",
           Cell: ({ row }) => (
             <div className={`flex justify-center`}>
-              <Button
-                onClick={() => updateTableData(row)}
-                className={`p-2 rounded`}
-                title="Save"
-              >
-                {" "}
-                <img src="/save-icon.png" alt="Save" className={`w-6 h-6`} />
-              </Button>
-              <Button
-                onClick={() => deleteTableData(row)}
-                className={`p-2 rounded`}
-                title="Delete"
-              >
-                <img
-                  src="/delete-icon.png"
-                  alt="Delete"
-                  className={`w-6 h-6`}
-                />
-              </Button>
+              {updateTableData && (
+                <Button
+                  onClick={() => updateTableData(row)}
+                  className={`p-2 rounded`}
+                  title="Save"
+                >
+                  {" "}
+                  <img src="/save-icon.png" alt="Save" className={`w-6 h-6`} />
+                </Button>
+              )}
+              {deleteTableData && (
+                <Button
+                  onClick={() => deleteTableData(row)}
+                  className={`p-2 rounded`}
+                  title="Delete"
+                >
+                  <img
+                    src="/delete-icon.png"
+                    alt="Delete"
+                    className={`w-6 h-6`}
+                  />
+                </Button>
+              )}
             </div>
           ),
-        },
-      ];
-
+        });
+      }
       return dynamicColumns;
     }, [columnHeaders]);
 
@@ -345,15 +351,17 @@ const BrunnerTable = forwardRef(
                 </div>
               )
           )}
-          <Button
-            onClick={() => {
-              addNewTableData(inputValues);
-            }}
-            className={`bg-green-500 text-white py-2 px-4 rounded hover:bg-green-600 mt-2`}
-            style={{ alignSelf: "flex-end" }}
-          >
-            Add
-          </Button>
+          {addNewTableData && (
+            <Button
+              onClick={() => {
+                addNewTableData(inputValues);
+              }}
+              className={`bg-green-500 text-white py-2 px-4 rounded hover:bg-green-600 mt-2`}
+              style={{ alignSelf: "flex-end" }}
+            >
+              Add
+            </Button>
+          )}
         </div>
       );
     };
@@ -364,6 +372,8 @@ const BrunnerTable = forwardRef(
     }));
 
     const refreshTableData = async () => {
+      if (!fetchTableData) return;
+
       const tableData = await fetchTableData();
 
       setTableDataRef(tableData);

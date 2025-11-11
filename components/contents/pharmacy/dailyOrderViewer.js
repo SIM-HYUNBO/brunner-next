@@ -24,6 +24,15 @@ export default function DailyOrderViewer() {
 
   const [loading, setLoading] = useState(false);
 
+  // 🔹 컬럼 정의
+  const columns = [
+    { Header: "Order Date", accessor: "upload_hour", type: "text" },
+    { Header: "Product Name", accessor: "product_name", type: "text" },
+    { Header: "Supplier Name", accessor: "supplier_name", type: "text" },
+    { Header: "Order Qty", accessor: "order_qty", type: "number" },
+    { Header: "Inventory Qty", accessor: "current_inventory", type: "number" },
+  ];
+
   /* 조회조건 */
   const FilteringConditions = () => {
     return (
@@ -78,7 +87,7 @@ export default function DailyOrderViewer() {
   };
 
   // 🔹 서버에서 Daily Order 조회
-  const fetchDailyOrders = async () => {
+  const fetchTableData = async () => {
     const formattedOrderDate = orderDateRef.current
       ? orderDateRef.current.value.replace(/-/g, "")
       : "";
@@ -115,14 +124,10 @@ export default function DailyOrderViewer() {
     }
   };
 
-  // 🔹 컬럼 정의
-  const columns = [
-    { Header: "Order Date", accessor: "upload_hour", type: "text" },
-    { Header: "Product Name", accessor: "product_name", type: "text" },
-    { Header: "Supplier Name", accessor: "supplier_name", type: "text" },
-    { Header: "Order Qty", accessor: "order_qty", type: "number" },
-    { Header: "Inventory Qty", accessor: "current_inventory", type: "number" },
-  ];
+  const addNewTableData = async (newData) => {
+    console.log("새 데이터 추가:", newData);
+    tableRef.current.refreshTableData();
+  };
 
   // 🔹 테이블에서 수정, 삭제 기능 (필요 시 구현)
   const updateTableData = (row) => {
@@ -175,11 +180,8 @@ export default function DailyOrderViewer() {
         tableTitle="Daily Order List"
         FilteringConditions={FilteringConditions}
         columnHeaders={columns}
-        fetchTableData={fetchDailyOrders}
-        addNewTableData={async (newData) => {
-          console.log("새 데이터 추가:", newData);
-          tableRef.current.refreshTableData();
-        }}
+        fetchTableData={fetchTableData}
+        addNewTableData={addNewTableData}
         updateTableData={updateTableData}
         deleteTableData={deleteTableData}
       />

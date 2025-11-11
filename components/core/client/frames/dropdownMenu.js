@@ -13,17 +13,6 @@ export default function DropdownMenu({ reloadSignal, triggermenureload }) {
   const menuRef = useRef(null);
 
   useEffect(() => {
-    const loadMenu = async () => {
-      const items = await getDropdownMenuItems();
-      const sections = items
-        .filter((item) => item.type === "section")
-        .reduce((acc, cur) => {
-          acc[cur.label] = false;
-          return acc;
-        }, {});
-      setOpenSections(sections);
-      setMenuItems(items);
-    };
     loadMenu();
   }, [reloadSignal]);
 
@@ -46,6 +35,18 @@ export default function DropdownMenu({ reloadSignal, triggermenureload }) {
       ...prev,
       [label]: !prev[label],
     }));
+  };
+
+  const loadMenu = async () => {
+    const items = await getDropdownMenuItems();
+    const sections = items
+      .filter((item) => item.type === "section")
+      .reduce((acc, cur) => {
+        acc[cur.label] = false;
+        return acc;
+      }, {});
+    setOpenSections(sections);
+    setMenuItems(items);
   };
 
   const getSectionLabel = (item) => item.parent || "";
@@ -73,7 +74,10 @@ export default function DropdownMenu({ reloadSignal, triggermenureload }) {
       {/* 햄버거 버튼 */}
       <Button
         className="p-2 rounded-md transition-colors general-text-bg-color"
-        onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+        onClick={async () => {
+          await loadMenu();
+          setMobileMenuOpen(!mobileMenuOpen);
+        }}
         aria-label="메뉴 열기"
         aria-expanded={mobileMenuOpen}
       >

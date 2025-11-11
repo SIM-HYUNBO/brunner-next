@@ -57,9 +57,15 @@ export async function getDropdownMenuItems() {
   }
 
   if (userInfo.getLoginUserType() == constants.UserType.Pharmacy) {
-    const hRef = `/pharmacy/excelUpload`;
+    var hRef = `/pharmacy/excelUpload`;
     items.push({
       label: "Daily Order",
+      href: hRef,
+      type: "item",
+    });
+    hRef = `/pharmacy/supplierSetting`;
+    items.push({
+      label: "Supplier Setting",
       href: hRef,
       type: "item",
     });

@@ -1,0 +1,154 @@
+import { useState, useEffect, useRef } from "react";
+import BrunnerTable from "@/components/core/client/brunnerTable";
+import GoverningMessage from "@/components/core/client/governingMessage";
+import BrunnerBoard from "@/components/core/client/brunnerBoard";
+
+const SupplierSettingContent = () => {
+  const tableRef = useRef();
+  const [userId, setUserId] = useState("");
+  const [supplierName, setSupplierName] = useState("");
+  const [supplierParams, setSupplierParams] = useState({
+    url: "",
+    id: "",
+    pw: "",
+  });
+  const [useFlag, setUseFlag] = useState(true);
+  const [supplierList, setSupplierList] = useState([]);
+  const [editingSupplier, setEditingSupplier] = useState(null);
+
+  // 공급처 목록 불러오기
+  useEffect(() => {
+    const fetchTableData = async () => {
+      // try {
+      //   const response = await axios.get("/api/supplier-info");
+      //   setSupplierList(response.data);
+      // } catch (error) {
+      //   console.error("Error fetching suppliers:", error);
+      // }
+    };
+
+    fetchTableData();
+  }, []);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    const data = {
+      user_id: userId,
+      supplier_name: supplierName,
+      supplier_params: supplierParams,
+      use_flag: useFlag,
+    };
+
+    if (editingSupplier) {
+      // 수정
+      try {
+        await axios.put(`/api/supplier-info/${editingSupplier.id}`, data);
+        alert("수정 완료");
+      } catch (error) {
+        console.error("Error updating supplier:", error);
+        alert("수정 실패");
+      }
+    } else {
+      // 생성
+      try {
+        await axios.post("/api/supplier-info", data);
+        alert("공급처 등록 완료");
+      } catch (error) {
+        console.error("Error creating supplier:", error);
+        alert("등록 실패");
+      }
+    }
+
+    // 폼 초기화
+    setUserId("");
+    setSupplierName("");
+    setSupplierParams({ url: "", id: "", pw: "" });
+    setUseFlag(true);
+    setEditingSupplier(null);
+
+    // 공급처 목록 새로고침
+    // const response = await axios.get("/api/supplier-info");
+    setSupplierList(response.data);
+  };
+
+  const handleEdit = (supplier) => {
+    setUserId(supplier.user_id);
+    setSupplierName(supplier.supplier_name);
+    setSupplierParams(supplier.supplier_params);
+    setUseFlag(supplier.use_flag);
+    setEditingSupplier(supplier);
+  };
+
+  const handleDelete = async (id) => {
+    try {
+      await axios.delete(`/api/supplier-info/${id}`);
+      alert("삭제 완료");
+      // 삭제 후 목록 새로고침
+      // const response = await axios.get("/api/supplier-info");
+      setSupplierList(response.data);
+    } catch (error) {
+      console.error("Error deleting supplier:", error);
+      alert("삭제 실패");
+    }
+  };
+
+  const columns = [
+    { Header: "Name", accessor: "supplier_name", type: "text" },
+    { Header: "Parameters", accessor: "supplier_params", type: "json" },
+    { Header: "Use Flag", accessor: "use_flag", type: "checkbox" },
+  ];
+
+  /* 조회조건 */
+  const FilteringConditions = () => {
+    return <></>;
+  };
+
+  const fetchTableData = async () => {
+    // console.log("데이터 조회:");
+    // 서버 작업
+  };
+
+  const addNewTableData = async (newData) => {
+    // console.log("새 데이터 추가:", newData);
+    // 서버 작업
+
+    tableRef.current.refreshTableData();
+  };
+
+  const updateTableData = async () => {
+    // console.log("데이터 수정:");
+    // 서버 작업
+  };
+
+  const deleteTableData = async () => {
+    // console.log("데이터 삭제:");
+    // 서버 작업
+  };
+
+  return (
+    <>
+      <div>
+        <div className={`w-full items-start text-left`}>
+          <h2 className={`page-title`}>Supplier Setting</h2>
+          <GoverningMessage
+            governingMessage={"Configure your Supplier here."}
+          />
+
+          <BrunnerTable
+            ref={tableRef}
+            tableTitle="Supplier List"
+            FilteringConditions={FilteringConditions}
+            columnHeaders={columns}
+            fetchTableData={fetchTableData}
+            addNewTableData={addNewTableData}
+            updateTableData={updateTableData}
+            deleteTableData={deleteTableData}
+          />
+        </div>
+      </div>
+    </>
+  );
+};
+
+export default SupplierSettingContent;
