@@ -59,7 +59,7 @@ async function selectAll(systemCode, txnId, jRequest) {
   }
 }
 
-async function updateOne(txnId, jRequest) {
+async function updateOne(systemCode, txnId, jRequest) {
   var jResponse = {};
 
   try {
@@ -181,7 +181,7 @@ async function updateOne(txnId, jRequest) {
   }
 }
 
-async function deleteOne(txnId, jRequest) {
+async function deleteOne(systemCode, txnId, jRequest) {
   var jResponse = {};
 
   try {

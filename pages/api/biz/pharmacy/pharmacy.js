@@ -117,7 +117,6 @@ const upsertSupplierOne = async (txnId, jRequest) => {
         jRequest.supplierName,
         jRequest.parameters,
         jRequest.useFlag,
-        jRequest.userId,
       ]);
     } else {
       sql = await dynamicSql.getSQL(
