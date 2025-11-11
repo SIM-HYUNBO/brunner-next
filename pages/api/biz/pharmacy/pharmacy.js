@@ -525,16 +525,38 @@ const automaticOrder = async (txnId, jRequest) => {
       return jResponse;
     }
 
-    const supplierName = "한신약품";
-
-    const filteredRows = select_TB_PHM_DAILY_ORDER_01.rows.filter(
-      (row) => row.supplier_name === supplierName
+    sql = await dynamicSql.getSQL(
+      jRequest.systemCode,
+      `select_TB_PHM_SUPPLIER_INFO`,
+      1
     );
 
-    result = await runOrderBySupplier(supplierName, filteredRows);
+    const select_TB_PHM_SUPPLIER_INFO_01 = await database.executeSQL(sql, [
+      jRequest.userId,
+      jRequest.supplierName,
+    ]);
 
-    jResponse.error_code = 0;
-    jResponse.data = result;
+    if (select_TB_PHM_SUPPLIER_INFO_01.rows.length > 0) {
+      var result;
+      for (const rowSupplierInfo of select_TB_PHM_SUPPLIER_INFO_01.rows) {
+        const filteredRows = select_TB_PHM_DAILY_ORDER_01.rows.filter(
+          (rowDailyOrder) =>
+            rowDailyOrder.supplier_name === rowSupplierInfo.supplier_name
+        );
+        switch (rowSupplierInfo.supplier_name) {
+          case "한신약품":
+            result = await runOrderBySupplier(supplierName, filteredRows);
+            break;
+          default:
+            jResponse.error_code = -1;
+            jResponse.data = constants.messages.SERVER_NOT_SUPPORTED_MODULE;
+
+            break;
+        }
+      }
+    }
+    jResponse.error_code = result.error_code;
+    jResponse.data = result.error_message;
   } catch (e) {
     logger.error(e);
     jResponse.error_code = -1; // exception
