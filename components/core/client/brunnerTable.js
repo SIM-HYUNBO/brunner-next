@@ -308,10 +308,10 @@ const BrunnerTable = forwardRef(
       const [inputValues, setInputValues] = useState(initialInputState);
 
       const handleInputChange = (e, accessor) => {
-        const { value } = e.target;
+        const { value, checked } = e.target;
         setInputValues((prevState) => ({
           ...prevState,
-          [accessor]: value,
+          [accessor]: e.target.type == "checkbox" ? checked : value,
         }));
       };
 

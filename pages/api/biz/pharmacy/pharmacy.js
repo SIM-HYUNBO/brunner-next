@@ -23,11 +23,197 @@ const executeService = async (txnId, jRequest) => {
       case constants.commands.PHARMACY_AUTOMATIC_ORDER:
         jResponse = await automaticOrder(txnId, jRequest);
         break;
+      case constants.commands.PHARMACY_SUPPLIER_UPSERT_ONE:
+        jResponse = await upsertSupplierOne(txnId, jRequest);
+        break;
+      case constants.commands.PHARMACY_USER_SUPPLIER_SELECT_ALL:
+        jResponse = await userSupplierSelectAll(txnId, jRequest);
+        break;
       default:
         break;
     }
   } catch (error) {
     logger.error(`message:${error.message}\n stack:${error.stack}\n`);
+  } finally {
+    return jResponse;
+  }
+};
+
+const upsertSupplierOne = async (txnId, jRequest) => {
+  var jResponse = {};
+
+  try {
+    jResponse.commanaName = jRequest.commandName;
+
+    // 입력 필드값 유효성 검사
+    if (jRequest.systemCode !== constants.SystemCode.Pharmacy) {
+      jResponse.error_code = -1;
+      jResponse.error_message = constants.messages.INVALID_SYSEM_CODE;
+      return jResponse;
+    }
+
+    if (!jRequest.userId) {
+      jResponse.error_code = -2;
+      jResponse.error_message = `${constants.messages.REQUIRED_FIELD} [userId]`;
+      return jResponse;
+    }
+
+    var sql = await dynamicSql.getSQL(
+      jRequest.systemCode,
+      `select_TB_COR_USER_MST`,
+      1
+    );
+    var select_TB_COR_USER_MST_01 = await database.executeSQL(sql, [
+      jRequest.systemCode,
+      jRequest.userId,
+    ]);
+
+    if (select_TB_COR_USER_MST_01.rowCount != 1) {
+      jResponse.error_code = -1;
+      jResponse.error_message = `The user not exist.`;
+      return jResponse;
+    }
+
+    if (
+      select_TB_COR_USER_MST_01.rows[0].user_type !==
+      constants.UserType.Pharmacy
+    ) {
+      jResponse.error_code = -1;
+      jResponse.error_message = constants.messages.INVALID_USER_TYPE;
+      return jResponse;
+    }
+
+    sql = await dynamicSql.getSQL(
+      jRequest.systemCode,
+      `select_TB_PHM_SUPPLIER_INFO`,
+      1
+    );
+
+    const select_TB_PHM_SUPPLIER_INFO_01 = await database.executeSQL(sql, [
+      jRequest.userId,
+      jRequest.supplierName,
+    ]);
+
+    var isInsert = true;
+    if (select_TB_PHM_SUPPLIER_INFO_01.level == "error") {
+      jResponse.error_code = -1;
+      jResponse.error_message = select_TB_PHM_SUPPLIER_INFO_01.message;
+      return jResponse;
+    } else {
+      if (select_TB_PHM_SUPPLIER_INFO_01.rows.length > 0) {
+        isInsert = false;
+      }
+    }
+
+    var upsert_TB_PHM_SUPPLIER_INFO_01 = null;
+    if (isInsert) {
+      sql = await dynamicSql.getSQL(
+        jRequest.systemCode,
+        `insert_TB_PHM_SUPPLIER_INFO`,
+        1
+      );
+      upsert_TB_PHM_SUPPLIER_INFO_01 = await database.executeSQL(sql, [
+        jRequest.userId,
+        jRequest.supplierName,
+        jRequest.parameters,
+        jRequest.useFlag,
+        jRequest.userId,
+      ]);
+    } else {
+      sql = await dynamicSql.getSQL(
+        jRequest.systemCode,
+        `update_TB_PHM_SUPPLIER_INFO`,
+        1
+      );
+      upsert_TB_PHM_SUPPLIER_INFO_01 = await database.executeSQL(sql, [
+        jRequest.userId,
+        jRequest.supplierName,
+        jRequest.parameters,
+        jRequest.useFlag,
+      ]);
+    }
+
+    if (upsert_TB_PHM_SUPPLIER_INFO_01.rowCount == 1) {
+      jResponse.error_code = 0;
+      jResponse.error_message = constants.messages.EMPTY_STRING;
+    } else {
+      jResponse.error_code = -3;
+      jResponse.error_message = `Failed to create serviceSQL.\n`;
+    }
+  } catch (e) {
+    logger.error(e);
+    jResponse.error_code = -3; // exception
+    jResponse.error_message = e.message;
+  } finally {
+    return jResponse;
+  }
+};
+
+const userSupplierSelectAll = async (txnId, jRequest) => {
+  var jResponse = {};
+
+  try {
+    jResponse.commanaName = jRequest.commandName;
+
+    // 입력 필드값 유효성 검사
+    if (jRequest.systemCode !== constants.SystemCode.Pharmacy) {
+      jResponse.error_code = -1;
+      jResponse.error_message = constants.messages.INVALID_SYSEM_CODE;
+      return jResponse;
+    }
+
+    if (!jRequest.userId) {
+      jResponse.error_code = -2;
+      jResponse.error_message = `${constants.messages.REQUIRED_FIELD} [userId]`;
+      return jResponse;
+    }
+
+    var sql = await dynamicSql.getSQL(
+      jRequest.systemCode,
+      `select_TB_COR_USER_MST`,
+      1
+    );
+    var select_TB_COR_USER_MST_01 = await database.executeSQL(sql, [
+      jRequest.systemCode,
+      jRequest.userId,
+    ]);
+
+    if (select_TB_COR_USER_MST_01.rowCount != 1) {
+      jResponse.error_code = -1;
+      jResponse.error_message = `The user not exist.`;
+      return jResponse;
+    }
+
+    if (
+      select_TB_COR_USER_MST_01.rows[0].user_type != constants.UserType.Pharmacy
+    ) {
+      jResponse.error_code = -1;
+      jResponse.error_message = constants.messages.INVALID_USER_TYPE;
+      return jResponse;
+    }
+
+    sql = await dynamicSql.getSQL(
+      jRequest.systemCode,
+      `select_TB_PHM_SUPPLIER_INFO`,
+      2
+    );
+
+    const select_TB_PHM_SUPPLIER_INFO_01 = await database.executeSQL(sql, [
+      jRequest.userId,
+    ]);
+
+    if (select_TB_PHM_SUPPLIER_INFO_01.level == "error") {
+      jResponse.error_code = -1;
+      jResponse.error_message = select_TB_PHM_DAILY_ORDER_01.message;
+    } else {
+      jResponse.error_code = 0;
+      jResponse.error_message = constants.messages.SUCCESS_FINISHED;
+      jResponse.data = select_TB_PHM_SUPPLIER_INFO_01;
+    }
+  } catch (e) {
+    logger.error(e);
+    jResponse.error_code = -3; // exception
+    jResponse.error_message = e.message;
   } finally {
     return jResponse;
   }

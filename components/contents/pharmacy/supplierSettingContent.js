@@ -1,9 +1,16 @@
 import { useState, useEffect, useRef } from "react";
+import * as constants from "@/components/core/constants";
+import * as userInfo from "@/components/core/client/frames/userInfo";
+import { RequestServer } from "@/components/core/client/requestServer";
+import { useModal } from "@/components/core/client/brunnerMessageBox";
+import Loading from "@/components/core/client/loading";
 import BrunnerTable from "@/components/core/client/brunnerTable";
 import GoverningMessage from "@/components/core/client/governingMessage";
-import BrunnerBoard from "@/components/core/client/brunnerBoard";
 
 const SupplierSettingContent = () => {
+  const [loading, setLoading] = useState(false);
+  const { BrunnerMessageBox, openModal } = useModal();
+
   const tableRef = useRef();
   const [userId, setUserId] = useState("");
   const [supplierName, setSupplierName] = useState("");
@@ -106,12 +113,50 @@ const SupplierSettingContent = () => {
 
   const fetchTableData = async () => {
     // console.log("데이터 조회:");
-    // 서버 작업
+
+    const jRequest = {
+      commandName: constants.commands.PHARMACY_USER_SUPPLIER_SELECT_ALL,
+      systemCode: userInfo.getCurrentSystemCode(),
+      userId: userInfo.getLoginUserId(),
+    };
+
+    try {
+      setLoading(true);
+      const jResponse = await RequestServer(jRequest);
+      setLoading(false);
+
+      openModal(jResponse.error_message);
+    } catch (error) {
+      setLoading(false);
+      openModal(error.message);
+    }
   };
 
   const addNewTableData = async (newData) => {
     // console.log("새 데이터 추가:", newData);
-    // 서버 작업
+    const supplierName = newData.supplier_name;
+    const parameters = newData.supplier_params;
+    const useFlag = newData.use_flag;
+
+    const jRequest = {
+      commandName: constants.commands.PHARMACY_SUPPLIER_UPSERT_ONE,
+      systemCode: userInfo.getCurrentSystemCode(),
+      userId: userInfo.getLoginUserId(),
+      supplierName: supplierName,
+      parameters: parameters,
+      useFlag: useFlag,
+    };
+
+    try {
+      setLoading(true);
+      const jResponse = await RequestServer(jRequest);
+      setLoading(false);
+
+      openModal(jResponse.error_message);
+    } catch (error) {
+      setLoading(false);
+      openModal(error.message);
+    }
 
     tableRef.current.refreshTableData();
   };
@@ -128,6 +173,8 @@ const SupplierSettingContent = () => {
 
   return (
     <>
+      {loading && <Loading />}
+      <BrunnerMessageBox />
       <div>
         <div className={`w-full items-start text-left`}>
           <h2 className={`page-title`}>Supplier Setting</h2>
