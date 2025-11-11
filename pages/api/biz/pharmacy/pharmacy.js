@@ -543,16 +543,8 @@ const automaticOrder = async (txnId, jRequest) => {
           (rowDailyOrder) =>
             rowDailyOrder.supplier_name === rowSupplierInfo.supplier_name
         );
-        switch (rowSupplierInfo.supplier_name) {
-          case "한신약품":
-            result = await runOrderBySupplier(supplierName, filteredRows);
-            break;
-          default:
-            jResponse.error_code = -1;
-            jResponse.data = constants.messages.SERVER_NOT_SUPPORTED_MODULE;
 
-            break;
-        }
+        result = await runOrderBySupplier(supplierName, filteredRows);
       }
     }
     jResponse.error_code = result.error_code;
