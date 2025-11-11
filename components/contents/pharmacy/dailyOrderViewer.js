@@ -124,6 +124,16 @@ export default function DailyOrderViewer() {
     }
   };
 
+  // 🔹 컬럼 정의
+  const columns = [
+    { Header: "Order Date", accessor: "upload_hour", type: "text" },
+    { Header: "Product Code", accessor: "product_code", type: "text" },
+    { Header: "Product Name", accessor: "product_name", type: "text" },
+    { Header: "Supplier Name", accessor: "supplier_name", type: "text" },
+    { Header: "Order Qty", accessor: "order_qty", type: "number" },
+    { Header: "Inventory Qty", accessor: "current_inventory", type: "number" },
+  ];
+
   const addNewTableData = async (newData) => {
     console.log("새 데이터 추가:", newData);
     tableRef.current.refreshTableData();
