@@ -18,8 +18,6 @@ export async function getDropdownMenuItems() {
     );
   }
 
-  items.push({ type: "divider" });
-
   var documentList = await commonFunctions.getAdminDocumentList(
     userInfo.getCurrentSystemCode()
   );
@@ -36,8 +34,6 @@ export async function getDropdownMenuItems() {
     });
 
   if (userInfo.getLoginUserId()) {
-    items.push({ type: "divider" });
-
     documentList = await commonFunctions.getUsersDocumentList(
       userInfo.getCurrentSystemCode()
     );
