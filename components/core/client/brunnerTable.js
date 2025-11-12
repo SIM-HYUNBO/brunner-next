@@ -349,7 +349,7 @@ const BrunnerTable = forwardRef(
       };
 
       return (
-        <div className={`mb-2 table w-full dark-bg-color mt-2 p-2`}>
+        <div className={`mb-2 table w-full border mt-5 p-2`}>
           {columnHeaders.map(
             (header) =>
               !header.input_hidden && (

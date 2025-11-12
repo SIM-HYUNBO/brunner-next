@@ -102,13 +102,13 @@ export default function DailyOrderViewer() {
           onClick={() => tableRef.current.refreshTableData()}
           className="bg-indigo-500 text-white px-4 py-2 rounded hover:bg-indigo-600"
         >
-          조회
+          Search
         </button>
         <button
           onClick={() => requestAutomaticDailyOrder()}
           className="bg-indigo-500 text-white px-4 py-2 rounded hover:bg-indigo-600"
         >
-          자동주문
+          Order
         </button>
       </div>
     );
