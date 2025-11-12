@@ -33,7 +33,7 @@ export default function DailyOrderViewer() {
     { Header: "Supplier Name", accessor: "supplier_name", type: "text" },
     { Header: "Order Qty", accessor: "order_qty", type: "number" },
     { Header: "Inventory Qty", accessor: "current_inventory", type: "number" },
-    { Header: "Order State", accessor: "order_status", type: "text" },
+    { Header: "Order Result", accessor: "order_status", type: "text" },
   ];
 
   useEffect(() => {
