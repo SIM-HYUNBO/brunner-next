@@ -1,3 +1,5 @@
+"use client";
+
 import * as constants from "@/components/core/constants";
 import * as commonData from "@/components/core/commonData";
 

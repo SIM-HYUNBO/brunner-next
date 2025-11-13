@@ -1,3 +1,5 @@
+"use client";
+
 import { useEffect, useState, useCallback } from "react";
 import { useModal } from "@/components/core/client/brunnerMessageBox";
 import * as constants from "@/components/core/constants";
@@ -6,7 +8,7 @@ import { ReactFlowProvider } from "reactflow";
 import { Button } from "antd";
 import { v4 as uuidv4 } from "uuid";
 import * as commonFunctions from "@/components/core/commonFunctions";
-import * as commonData_WF from "@/components/core/commonData_WF";
+import * as commonData_WF from "@/components/core/client/commonData_WF";
 import type {
   Connection,
   Edge,

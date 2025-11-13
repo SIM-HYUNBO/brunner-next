@@ -607,7 +607,7 @@ async function runHanshinOrder(systemCode, user_id, supplier_params, rows) {
   });
 
   // 로그인 후 잠시 대기
-  await new Promise((resolve) => setTimeout(resolve, 2000));
+  await new Promise((resolve) => setTimeout(resolve, 1000));
 
   const cookies = await page.cookies();
   console.log("쿠키:", cookies);
@@ -645,7 +645,7 @@ async function runHanshinOrder(systemCode, user_id, supplier_params, rows) {
         { timeout: 20000 }
       );
 
-      // 렌더링 여유
+      // 렌더링 대기
       await new Promise((resolve) => setTimeout(resolve, 500));
 
       // --- 조회 결과 파싱 ---
@@ -671,8 +671,8 @@ async function runHanshinOrder(systemCode, user_id, supplier_params, rows) {
       console.log(searchResultRows);
 
       // --- 1건만 주문 처리 ---
-      if (searchResultRows.length == 0) {
-        throw new Error("검색된 제품 없음"); // 검색 제품 없음
+      if (searchResultRows.length === 0) {
+        throw new Error("제품 검색 불가");
       }
 
       const item = searchResultRows[0];
@@ -682,7 +682,7 @@ async function runHanshinOrder(systemCode, user_id, supplier_params, rows) {
       const n_orderQty = Number(row.order_qty);
 
       if (isNaN(n_stock) || isNaN(n_orderQty)) {
-        throw new Error("수량 정보가 잘못되었습니다.");
+        throw new Error("수량 이상");
       }
 
       if (n_stock <= 0 || n_orderQty > n_stock) {
@@ -706,7 +706,7 @@ async function runHanshinOrder(systemCode, user_id, supplier_params, rows) {
         row.upload_hour,
         row.product_code,
         row.supplier_name,
-        "장바구니 담음"
+        "장바구니 전송"
       );
     } catch (Error) {
       // 에러코드 상태 저장

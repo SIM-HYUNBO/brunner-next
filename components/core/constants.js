@@ -6,9 +6,9 @@ export const SystemCode = {
 };
 
 export const UserType = {
-  Personal: `Personal`,
-  Pharmacy: `Pharmacy`,
-  Supplier: `Supplier`,
+  Personal: `Personal`, // 개인
+  Pharmacy: `Pharmacy`, // 약국
+  Supplier: `Supplier`, // 도매상
 };
 
 export const modulePrefix = {
@@ -20,6 +20,7 @@ export const modulePrefix = {
   edocDocument: `edocDocument`,
   edocCustom: `edocCustom`,
   workflow: `workflow`,
+
   pharmacy: `pharmacy`,
 };
 

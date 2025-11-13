@@ -13,7 +13,7 @@ import {
 } from "reactflow";
 
 import * as commonFunctions from "@/components/core/commonFunctions";
-import * as commonData_WF from "../core/commonData_WF";
+import * as commonData_WF from "../core/client/commonData_WF";
 
 import type {
   Connection,
@@ -33,7 +33,7 @@ import { JsonDatasetEditorModal } from "@/components/workflow/jsonDatasetEditorM
 import type {
   ActionNodeData,
   ConditionEdgeData,
-} from "@/components/core/commonData_WF";
+} from "@/components/core/client/commonData_WF";
 import { DBConnectionManagerModal } from "@/components/workflow/dbConnectionManagerModal";
 import {
   RequestExecuteWorkflow,
