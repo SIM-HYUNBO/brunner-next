@@ -602,6 +602,7 @@ async function runHanshinOrder(systemCode, user_id, supplier_params, rows) {
 
   const browser = await puppeteer.launch({ headless: false });
   const page = await browser.newPage();
+  var lastRowResult = "";
 
   // 1️⃣ 로그인
   await page.goto(loginUrl, { waitUntil: "domcontentloaded" });
@@ -635,7 +636,8 @@ async function runHanshinOrder(systemCode, user_id, supplier_params, rows) {
   for (const row of rows) {
     try {
       if (!row.product_code) {
-        throw new Error("입력 제품 없음"); // 입력 제품 없음
+        lastRowResult = "입력 제품 없음";
+        throw new Error(lastRowResult); // 입력 제품 없음
       }
 
       // --- 검색조건 세팅 ---
@@ -679,8 +681,12 @@ async function runHanshinOrder(systemCode, user_id, supplier_params, rows) {
       console.log(searchResultRows);
 
       // --- 1건만 주문 처리 ---
-      if (searchResultRows.length === 0) {
-        throw new Error("제품 검색 불가");
+      if (
+        searchResultRows.length === 0 ||
+        searchResultRows[0].productId === ""
+      ) {
+        lastRowResult = "제품 검색 불가";
+        throw new Error(lastRowResult);
       }
 
       const item = searchResultRows[0];
@@ -690,11 +696,13 @@ async function runHanshinOrder(systemCode, user_id, supplier_params, rows) {
       const n_orderQty = Number(row.order_qty);
 
       if (isNaN(n_stock) || isNaN(n_orderQty)) {
-        throw new Error("수량 이상");
+        lastRowResult = "수량 이상";
+        throw new Error(lastRowResult);
       }
 
       if (n_stock <= 0 || n_orderQty > n_stock) {
-        throw new Error("재고 부족");
+        lastRowResult = "재고 부족";
+        throw new Error(lastRowResult);
       }
 
       if (qtyId) {
@@ -707,6 +715,7 @@ async function runHanshinOrder(systemCode, user_id, supplier_params, rows) {
       await page.click("#btn_saveBag");
       await new Promise((resolve) => setTimeout(resolve, 500));
 
+      lastRowResult = "장바구니 전송";
       // 상태 저장
       const result = await updateOrderStatus(
         systemCode,
@@ -714,7 +723,7 @@ async function runHanshinOrder(systemCode, user_id, supplier_params, rows) {
         row.upload_hour,
         row.product_code,
         row.supplier_name,
-        "장바구니 전송"
+        lastRowResult
       );
     } catch (Error) {
       // 에러코드 상태 저장
@@ -731,10 +740,19 @@ async function runHanshinOrder(systemCode, user_id, supplier_params, rows) {
 
   await browser.close();
 
-  const ret = {
-    error_code: 0,
-    error_message: `${constants.messages.SUCCESS_FINISHED}`,
-  };
+  var ret;
+
+  ret =
+    rows.length != 1
+      ? {
+          error_code: 0,
+          error_message: `${constants.messages.SUCCESS_FINISHED}`,
+        }
+      : {
+          error_code: 0,
+          error_message: `${lastRowResult}`,
+        };
+
   logger.warn(`Finished HanshinOrder: ${JSON.stringify(ret, null, 2)}`);
   return ret;
 }
