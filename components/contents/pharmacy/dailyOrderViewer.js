@@ -79,7 +79,7 @@ export default function DailyOrderViewer() {
             className="border rounded p-2 w-[200px]"
             defaultValue=""
           >
-            <option value={supplierName}>Select ...</option>
+            <option value={supplierName}></option>
             {supplierList.map((s) => (
               <option key={s.supplier_name} value={s.supplier_name}>
                 {s.supplier_name}
@@ -152,20 +152,26 @@ export default function DailyOrderViewer() {
     }
   };
 
-  const addNewTableData = async (newData) => {
+  const addNewRowData = async (newData) => {
     console.log("새 데이터 추가:", newData);
     tableRef.current.refreshTableData();
   };
 
   // 🔹 테이블에서 수정, 삭제 기능 (필요 시 구현)
-  const updateTableData = (row) => {
+  const updateRowData = (row) => {
     console.log("업데이트:", row);
     tableRef.current.refreshTableData();
   };
 
-  const deleteTableData = (row) => {
+  const deleteRowData = (row) => {
     console.log("삭제:", row);
     tableRef.current.refreshTableData();
+  };
+
+  const orderByRow = (row) => {
+    console.log("Order:", row);
+
+    requestOrderByRow(row);
   };
 
   const requestAutomaticDailyOrder = async () => {
@@ -197,6 +203,35 @@ export default function DailyOrderViewer() {
     }
   };
 
+  const requestOrderByRow = async (row) => {
+    const formattedOrderDate = row.values.upload_hour;
+    const formattedSupplier = row.values.supplier_name?.trim() || null;
+    const formattedProduct = row.values.product_name?.trim() || null;
+    const productCode = row.values.product_code;
+
+    const jRequest = {
+      commandName: constants.commands.PHARMACY_AUTOMATIC_ORDER,
+      systemCode: userInfo.getCurrentSystemCode(),
+      userId: userInfo.getLoginUserId(),
+      orderDate: formattedOrderDate,
+      supplierName: formattedSupplier,
+      productName: formattedProduct,
+      productCode: row.values.product_code,
+    };
+
+    try {
+      setLoading(true);
+      const jResponse = await RequestServer(jRequest);
+      setLoading(false);
+      openModal(jResponse.error_message);
+
+      return jResponse.data?.rows || [];
+    } catch (error) {
+      setLoading(false);
+      openModal(error.message);
+    }
+  };
+
   return (
     <div className="w-full px-2">
       {loading && <Loading />}
@@ -208,10 +243,12 @@ export default function DailyOrderViewer() {
         tableTitle="Daily Order List"
         FilteringConditions={FilteringConditions}
         columnHeaders={columns}
-        fetchTableData={fetchTableData}
-        // addNewTableData={addNewTableData}
-        // updateTableData={updateTableData}
-        // deleteTableData={deleteTableData}
+        fetchTableDataHandler={fetchTableData}
+        // addNewRowDataHandler={addNewRowData}
+        // saveRowDataHandler={saveRowData}
+        // deleteRowDataHandler={deleteRowData}
+        actionRowDataHandler={orderByRow}
+        actionTitle="Order"
       />
     </div>
   );

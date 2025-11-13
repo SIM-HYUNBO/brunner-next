@@ -540,8 +540,16 @@ const automaticOrder = async (txnId, jRequest) => {
       var result;
       for (const rowSupplierInfo of select_TB_PHM_SUPPLIER_INFO_01.rows) {
         const filteredRows = select_TB_PHM_DAILY_ORDER_01.rows.filter(
-          (rowDailyOrder) =>
-            rowDailyOrder.supplier_name === rowSupplierInfo.supplier_name
+          (rowDailyOrder) => {
+            const matchSupplier =
+              rowDailyOrder.supplier_name === rowSupplierInfo.supplier_name;
+            const matchProduct =
+              !jRequest.productCode || jRequest.productCode === ""
+                ? true
+                : rowDailyOrder.product_code === jRequest.productCode;
+
+            return matchSupplier && matchProduct;
+          }
         );
 
         result = await runOrderBySupplier(

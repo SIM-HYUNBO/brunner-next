@@ -16,10 +16,12 @@ const BrunnerTable = forwardRef(
       tableTitle, // 제목
       FilteringConditions, // 조회조건
       columnHeaders, // 컬럼목록
-      fetchTableData,
-      addNewTableData,
-      updateTableData,
-      deleteTableData,
+      fetchTableDataHandler,
+      addNewRowDataHanlder,
+      saveRowDataHandler,
+      deleteRowDataHandler,
+      actionRowDataHandler,
+      actionTitle,
     },
     ref
   ) => {
@@ -64,7 +66,7 @@ const BrunnerTable = forwardRef(
         }),
       ];
 
-      if (updateTableData || deleteTableData) {
+      if (saveRowDataHandler || deleteRowDataHandler || actionRowDataHandler) {
         dynamicColumns.push({
           Header: "Actions",
           accessor: "actions",
@@ -73,9 +75,9 @@ const BrunnerTable = forwardRef(
             "text-center semi-text-bg-color w-[100px] !important",
           Cell: ({ row }) => (
             <div className={`flex justify-center`}>
-              {updateTableData && (
+              {saveRowDataHandler && (
                 <Button
-                  onClick={() => updateTableData(row)}
+                  onClick={() => saveRowDataHandler(row)}
                   className={`p-2 rounded`}
                   title="Save"
                 >
@@ -83,9 +85,9 @@ const BrunnerTable = forwardRef(
                   <img src="/save-icon.png" alt="Save" className={`w-6 h-6`} />
                 </Button>
               )}
-              {deleteTableData && (
+              {deleteRowDataHandler && (
                 <Button
-                  onClick={() => deleteTableData(row)}
+                  onClick={() => deleteRowDataHandler(row)}
                   className={`p-2 rounded`}
                   title="Delete"
                 >
@@ -96,6 +98,19 @@ const BrunnerTable = forwardRef(
                   />
                 </Button>
               )}
+              {actionRowDataHandler && (
+                <Button
+                  onClick={() => actionRowDataHandler(row)}
+                  className={`p-2 rounded`}
+                  title={actionTitle ?? "Action"}
+                >
+                  <img
+                    src="/action-icon.png"
+                    alt="Execute"
+                    className={`w-6 h-6`}
+                  />
+                </Button>
+              )}{" "}
             </div>
           ),
         });
@@ -137,12 +152,14 @@ const BrunnerTable = forwardRef(
                        p-4 
                        bg-gray-100 dark-bg-color`}
           >
-            <Button
-              onClick={fetchTableData}
-              className={`text-white bg-indigo-500 border-0 py-2 px-6 focus:outline-none hover:bg-indigo-600 rounded text-lg mb-3`}
-            >
-              Refresh
-            </Button>
+            {fetchTableDataHandler && (
+              <Button
+                onClick={fetchTableDataHandler}
+                className={`text-white bg-indigo-500 border-0 py-2 px-6 focus:outline-none hover:bg-indigo-600 rounded text-lg mb-3`}
+              >
+                Refresh
+              </Button>
+            )}
           </div>
         </>
       );
@@ -384,10 +401,10 @@ const BrunnerTable = forwardRef(
                 </div>
               )
           )}
-          {addNewTableData && (
+          {addNewRowDataHanlder && (
             <Button
               onClick={() => {
-                addNewTableData(inputValues);
+                addNewRowDataHanlder(inputValues);
               }}
               className={`bg-green-500 text-white py-2 px-4 rounded hover:bg-green-600 mt-2`}
               style={{ alignSelf: "flex-end" }}
@@ -405,9 +422,9 @@ const BrunnerTable = forwardRef(
     }));
 
     const refreshTableData = async () => {
-      if (!fetchTableData) return;
+      if (!fetchTableDataHandler) return;
 
-      const tableData = await fetchTableData();
+      const tableData = await fetchTableDataHandler();
 
       setTableDataRef(tableData);
     };

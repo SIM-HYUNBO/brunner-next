@@ -133,7 +133,7 @@ const SupplierSettingContent = () => {
     }
   };
 
-  const addNewTableData = async (newData) => {
+  const addNewRowData = async (newData) => {
     // console.log("새 데이터 추가:", newData);
     const supplierName = newData.supplier_name;
     const parameters = newData.supplier_params;
@@ -162,12 +162,12 @@ const SupplierSettingContent = () => {
     tableRef.current.refreshTableData();
   };
 
-  const updateTableData = async () => {
+  const saveRowData = async () => {
     // console.log("데이터 수정:");
     // 서버 작업
   };
 
-  const deleteTableData = async (row) => {
+  const deleteRowData = async (row) => {
     // console.log("새 데이터 추가:", newData);
     const supplierName = row.values.supplier_name;
 
@@ -208,10 +208,10 @@ const SupplierSettingContent = () => {
             tableTitle="Supplier List"
             FilteringConditions={FilteringConditions}
             columnHeaders={columns}
-            fetchTableData={fetchTableData}
-            addNewTableData={addNewTableData}
-            updateTableData={updateTableData}
-            deleteTableData={deleteTableData}
+            fetchTableDataHandler={fetchTableData}
+            addNewRowDataHandler={addNewRowData}
+            saveRowDataHandler={saveRowData}
+            deleteRowDataHandler={deleteRowData}
           />
         </div>
       </div>
