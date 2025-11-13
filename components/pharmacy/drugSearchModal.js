@@ -11,7 +11,7 @@ export default function DrugSearchModal({ isOpen, onClose, onSelect }) {
   const [searchType, setSearchType] = useState("name");
   const [selectedRow, setSelectedRow] = useState(null);
   const [filteredData, setFilteredData] = useState([]);
-  const orderQtyRef = useRef(0);
+  const orderQtyRef = useRef(1);
   const [loading, setLoading] = useState(false);
 
   const searchDrug = async (searchType, searchTerm) => {

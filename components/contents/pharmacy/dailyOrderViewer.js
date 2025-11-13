@@ -36,7 +36,7 @@ export default function DailyOrderViewer() {
   };
 
   const onSelectDrugSearchModal = async (selectedData, orderQty) => {
-    if (!selectedData.edi_code || selectedData.edi_code == "") {
+    if (!selectedData?.edi_code || selectedData?.edi_code == "") {
       selectedData = null;
       openModal(constants.messages.INVALID_DATA_SELECTED);
       return;

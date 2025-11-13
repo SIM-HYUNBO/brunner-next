@@ -566,6 +566,9 @@ const automaticOrder = async (txnId, jRequest) => {
           filteredRows
         );
       }
+    } else {
+      result.error_code = -1;
+      result.error_message = constants.messages.NO_DATA_FOUND;
     }
     jResponse.error_code = result.error_code;
     jResponse.error_message = result.error_message;
@@ -951,7 +954,9 @@ const updateDailyOrderOne = async (txnId, jRequest) => {
       jRequest.userId,
       jRequest.uploadHour,
       jRequest.productCode,
-      jRequest.orderQty,
+      jRequest.newProductCode,
+      jRequest.newProductName,
+      jRequest.newOrderQty,
     ]);
 
     if (updata_TB_PHM_DAILY_ORDER_02.rowCount == 1) {
