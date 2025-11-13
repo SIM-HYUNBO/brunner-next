@@ -17,7 +17,7 @@ const BrunnerTable = forwardRef(
       FilteringConditions, // 조회조건
       columnHeaders, // 컬럼목록
       fetchTableDataHandler,
-      addNewRowDataHanlder,
+      addNewRowDataHandler,
       saveRowDataHandler,
       deleteRowDataHandler,
       actionRowDataHandler,
@@ -401,10 +401,10 @@ const BrunnerTable = forwardRef(
                 </div>
               )
           )}
-          {addNewRowDataHanlder && (
+          {addNewRowDataHandler && (
             <Button
               onClick={() => {
-                addNewRowDataHanlder(inputValues);
+                addNewRowDataHandler(inputValues);
               }}
               className={`bg-green-500 text-white py-2 px-4 rounded hover:bg-green-600 mt-2`}
               style={{ alignSelf: "flex-end" }}
