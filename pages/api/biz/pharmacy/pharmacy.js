@@ -547,6 +547,7 @@ const automaticOrder = async (txnId, jRequest) => {
       for (const rowSupplierInfo of select_TB_PHM_SUPPLIER_INFO_01.rows) {
         const filteredRows = select_TB_PHM_DAILY_ORDER_01.rows.filter(
           (rowDailyOrder) => {
+            const matchStatus = rowDailyOrder.order_status !== "장바구니 전송"; // 완료된 주문은 제외
             const matchSupplier =
               rowDailyOrder.supplier_name === rowSupplierInfo.supplier_name;
             const matchProduct =
@@ -554,7 +555,7 @@ const automaticOrder = async (txnId, jRequest) => {
                 ? true
                 : rowDailyOrder.product_code === jRequest.productCode;
 
-            return matchSupplier && matchProduct;
+            return matchSupplier && matchProduct && matchStatus;
           }
         );
 

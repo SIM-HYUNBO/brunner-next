@@ -145,7 +145,10 @@ export default function DailyOrderViewer() {
           Search
         </button>
         <button
-          onClick={() => requestAutomaticDailyOrder()}
+          onClick={async () => {
+            await requestAutomaticDailyOrder();
+            tableRef.current.refreshTableData();
+          }}
           className="bg-indigo-500 text-white px-4 py-2 rounded hover:bg-indigo-600"
         >
           Order
@@ -203,9 +206,9 @@ export default function DailyOrderViewer() {
     setShowDrugSearchModal(true);
   };
 
-  const orderByRow = (row) => {
-    console.log("Order:", row);
-    requestOrderByRow(row);
+  const orderByRow = async (row) => {
+    await requestOrderByRow(row);
+    tableRef.current.refreshTableData();
   };
 
   const requestAutomaticDailyOrder = async () => {
