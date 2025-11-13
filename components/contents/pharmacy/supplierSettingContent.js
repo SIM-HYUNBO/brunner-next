@@ -162,7 +162,7 @@ const SupplierSettingContent = () => {
     tableRef.current.refreshTableData();
   };
 
-  const saveRowData = async () => {
+  const editRowData = async (row) => {
     // console.log("데이터 수정:");
     // 서버 작업
   };
@@ -210,7 +210,7 @@ const SupplierSettingContent = () => {
             columnHeaders={columns}
             fetchTableDataHandler={fetchTableData}
             addNewRowDataHandler={addNewRowData}
-            saveRowDataHandler={saveRowData}
+            editRowDataHandler={editRowData}
             deleteRowDataHandler={deleteRowData}
           />
         </div>

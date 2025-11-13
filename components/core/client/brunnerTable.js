@@ -18,7 +18,7 @@ const BrunnerTable = forwardRef(
       columnHeaders, // 컬럼목록
       fetchTableDataHandler,
       addNewRowDataHandler,
-      saveRowDataHandler,
+      editRowDataHandler,
       deleteRowDataHandler,
       actionRowDataHandler,
       actionTitle,
@@ -66,7 +66,7 @@ const BrunnerTable = forwardRef(
         }),
       ];
 
-      if (saveRowDataHandler || deleteRowDataHandler || actionRowDataHandler) {
+      if (editRowDataHandler || deleteRowDataHandler || actionRowDataHandler) {
         dynamicColumns.push({
           Header: "Actions",
           accessor: "actions",
@@ -75,11 +75,11 @@ const BrunnerTable = forwardRef(
             "text-center semi-text-bg-color w-[100px] !important",
           Cell: ({ row }) => (
             <div className={`flex justify-center`}>
-              {saveRowDataHandler && (
+              {editRowDataHandler && (
                 <Button
-                  onClick={() => saveRowDataHandler(row)}
+                  onClick={() => editRowDataHandler(row)}
                   className={`p-2 rounded`}
-                  title="Save"
+                  title="Edit"
                 >
                   {" "}
                   <img src="/save-icon.png" alt="Save" className={`w-6 h-6`} />

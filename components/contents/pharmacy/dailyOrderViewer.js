@@ -4,11 +4,14 @@ import { RequestServer } from "@/components/core/client/requestServer";
 import * as constants from "@/components/core/constants";
 import * as userInfo from "@/components/core/client/frames/userInfo";
 import Loading from "@/components/core/client/loading";
+import DrugSearchModal from "@/components/pharmacy/drugSearchModal";
 import { useModal } from "@/components/core/client/brunnerMessageBox";
 
 export default function DailyOrderViewer() {
   const { BrunnerMessageBox, openModal } = useModal();
   const tableRef = useRef();
+  const [editingRow, setEditingRow] = useState(null);
+
   const [supplierList, setSupplierList] = useState([]);
 
   // 🔹 조회조건 상태
@@ -24,6 +27,44 @@ export default function DailyOrderViewer() {
   const [productName, setProductName] = useState(productNameRef.current.value);
 
   const [loading, setLoading] = useState(false);
+
+  const [showDrugSearchModal, setShowDrugSearchModal] = useState(false);
+
+  const onCloseDrugSearchModal = () => {
+    setEditingRow(null);
+    setShowDrugSearchModal(false);
+  };
+
+  const onSelectDrugSearchModal = async (selectedData, orderQty) => {
+    if (!selectedData.edi_code || selectedData.edi_code == "") {
+      selectedData = null;
+      openModal(constants.messages.INVALID_DATA_SELECTED);
+      return;
+    }
+
+    // 행 데이터 수정
+    if (editingRow) {
+      const jRequest = {
+        commandName: constants.commands.PHARMACY_DAILY_ORDER_UPDATE_ONE,
+        systemCode: userInfo.getCurrentSystemCode(),
+        userId: userInfo.getLoginUserId(),
+        uploadHour: editingRow.values.upload_hour,
+        productCode: editingRow.values.product_code,
+        newProductCode: selectedData.edi_code,
+        newProductName: selectedData.item_name,
+        newOrderQty: orderQty,
+      };
+
+      setLoading(true);
+      const jResponse = await RequestServer(jRequest);
+      setLoading(false);
+
+      if (jResponse && jResponse.error_message) {
+        openModal(jResponse.error_message);
+        tableRef.current.refreshTableData();
+      }
+    }
+  };
 
   // 🔹 컬럼 정의
   const columns = [
@@ -68,7 +109,6 @@ export default function DailyOrderViewer() {
             type="date"
             ref={orderDateRef}
             className="border rounded p-2"
-            // value={orderDate}
           />
         </div>
 
@@ -87,12 +127,12 @@ export default function DailyOrderViewer() {
             ))}
           </select>
         </div>
+
         <div className="flex flex-col">
           <label className="font-medium mb-1">Product Name</label>
           <input
             type="text"
             ref={productNameRef}
-            // value={productName}
             className="border rounded p-2"
             placeholder="Optional"
           />
@@ -157,20 +197,14 @@ export default function DailyOrderViewer() {
     tableRef.current.refreshTableData();
   };
 
-  // 🔹 테이블에서 수정, 삭제 기능 (필요 시 구현)
-  const updateRowData = (row) => {
-    console.log("업데이트:", row);
-    tableRef.current.refreshTableData();
-  };
-
-  const deleteRowData = (row) => {
-    console.log("삭제:", row);
-    tableRef.current.refreshTableData();
+  // ✅ editRowData 클릭 시 검색 모달창 표시
+  const editRowData = async (row) => {
+    setEditingRow(row);
+    setShowDrugSearchModal(true);
   };
 
   const orderByRow = (row) => {
     console.log("Order:", row);
-
     requestOrderByRow(row);
   };
 
@@ -216,7 +250,7 @@ export default function DailyOrderViewer() {
       orderDate: formattedOrderDate,
       supplierName: formattedSupplier,
       productName: formattedProduct,
-      productCode: row.values.product_code,
+      productCode: productCode,
     };
 
     try {
@@ -237,6 +271,14 @@ export default function DailyOrderViewer() {
       {loading && <Loading />}
       <BrunnerMessageBox />
 
+      {showDrugSearchModal && (
+        <DrugSearchModal
+          isOpen={showDrugSearchModal}
+          onClose={onCloseDrugSearchModal}
+          onSelect={onSelectDrugSearchModal}
+        />
+      )}
+
       {/* 테이블 */}
       <BrunnerTable
         ref={tableRef}
@@ -244,9 +286,7 @@ export default function DailyOrderViewer() {
         FilteringConditions={FilteringConditions}
         columnHeaders={columns}
         fetchTableDataHandler={fetchTableData}
-        // addNewRowDataHandler={addNewRowData}
-        // saveRowDataHandler={saveRowData}
-        // deleteRowDataHandler={deleteRowData}
+        editRowDataHandler={editRowData}
         actionRowDataHandler={orderByRow}
         actionTitle="Order"
       />

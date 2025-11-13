@@ -38,6 +38,7 @@ export const messages = {
   FAILED_TO_SAVE_TXN_HISTORY: `Failed to save transaction history.`,
   FAILED_TO_UPDATE_DATA: `Failed to update data.`,
   FAILED_REQUESTED: `Failed to request service.`,
+  INVALID_DATA_SELECTED: `Invalid data selected.`,
   INVALID_NUMBER_AMOUNT: `Invalid number or amount.`,
   INVALID_SYSEM_CODE: `Invalid system code.`,
   INVALID_USER_TYPE: `Invalid user type.`,
@@ -122,11 +123,13 @@ export const commands = {
   WORKFLOW_DELETE_WORKFLOW: "workflow.deleteWorkflow",
   WORKFLOW_SELECT_WORKFLOW_LIST: "workflow.selectWorkflowList",
 
-  PHARMACY_SUPPLIER_DELETE_ONE: "pharmacy.deleteSupplierOne",
-  PHARMACY_USER_SUPPLIER_SELECT_ALL: "pharmacy.userSupplierSelectAll",
-  PHARMACY_SUPPLIER_UPSERT_ONE: "pharmacy.upsertSupplierOne",
   PHARMACY_AUTOMATIC_ORDER: "pharmacy.automaticOrder",
+  PHARMACY_DAILY_ORDER_UPDATE_ONE: "pharmacy.updateDailyOrderOne",
+  PHARMACY_SEARCH_DRUG: "pharmacy.searchDrug",
+  PHARMACY_SUPPLIER_DELETE_ONE: "pharmacy.deleteSupplierOne",
+  PHARMACY_SUPPLIER_UPSERT_ONE: "pharmacy.upsertSupplierOne",
   PHARMACY_UPLOAD_DAILY_ORDER: "pharmacy.uploadDailyOrder",
+  PHARMACY_USER_SUPPLIER_SELECT_ALL: "pharmacy.userSupplierSelectAll",
   PHARMACY_VIEW_DAILY_ORDER: "pharmacy.viewDailyOrder",
 };
 

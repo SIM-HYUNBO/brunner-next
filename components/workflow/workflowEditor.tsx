@@ -48,7 +48,7 @@ import {
   AccordionItem,
   AccordionTrigger,
   AccordionContent,
-} from "@/components/ui/accordion";
+} from "@/components/core/client/accordion";
 import { WorkflowDataModal } from "./workflowDataModal";
 
 interface WorkflowEditorProps {
