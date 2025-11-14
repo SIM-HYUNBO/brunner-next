@@ -26,8 +26,10 @@ export default function DrugSearchModal({ isOpen, onClose, onSelect }) {
   const [columnsWidth, setColumnsWidth] = useState([200, 300, 300]);
 
   const searchDrug = async (searchType, searchTerm) => {
-    if (searchTerm.trim().length === 0) {
-      openModal(`${constants.messages.REQUIRED_FIELD} [key-word]`);
+    if (searchTerm.trim().length <= 2) {
+      openModal(
+        `${constants.messages.REQUIRED_FIELD} [key-word]. more than 2 characters`
+      );
       return;
     }
     const jRequest = {
