@@ -41,7 +41,7 @@ export const messages = {
   FAILED_TO_SAVE_TXN_HISTORY: `Failed to save transaction history.`,
   FAILED_TO_UPDATE_DATA: `Failed to update data.`,
   FAILED_REQUESTED: `Failed to request service.`,
-  INVALID_DATA_SELECTED: `Invalid data selected.`,
+  NO_DATA_SELECTED: `No data selected.`,
   INVALID_NUMBER_AMOUNT: `Invalid number or amount.`,
   INVALID_SYSEM_CODE: `Invalid system code.`,
   INVALID_USER_TYPE: `Invalid user type.`,

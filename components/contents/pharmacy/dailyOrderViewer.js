@@ -41,7 +41,7 @@ export default function DailyOrderViewer() {
       selectedData?.edi_code == constants.General.EmptyString
     ) {
       selectedData = null;
-      openModal(constants.messages.INVALID_DATA_SELECTED);
+      openModal(constants.messages.NO_DATA_SELECTED);
       return;
     }
 
