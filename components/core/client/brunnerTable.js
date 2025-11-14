@@ -26,10 +26,6 @@ const BrunnerTable = forwardRef(
     },
     ref
   ) => {
-    useEffect(() => {
-      refreshTableData();
-    }, []);
-
     const [tableData, setTableData] = useState([]);
     const tableDataRef = useRef(tableData);
     const setTableDataRef = (data) => {
@@ -152,16 +148,7 @@ const BrunnerTable = forwardRef(
                        w-full 
                        p-4 
                        bg-gray-100 dark-bg-color`}
-          >
-            {fetchTableDataHandler && (
-              <Button
-                onClick={fetchTableDataHandler}
-                className={`text-white bg-indigo-500 border-0 py-2 px-6 focus:outline-none hover:bg-indigo-600 rounded text-lg mb-3`}
-              >
-                Refresh
-              </Button>
-            )}
-          </div>
+          ></div>
         </>
       );
     };
