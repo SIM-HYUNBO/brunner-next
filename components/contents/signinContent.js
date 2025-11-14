@@ -17,8 +17,8 @@ export default function SigninContent() {
 
   const userIdRef = useRef();
 
-  const [userId, setUserId] = useState("");
-  const [password, setPassword] = useState("");
+  const [userId, setUserId] = useState(constants.General.EmptyString);
+  const [password, setPassword] = useState(constants.General.EmptyString);
   const [systemCode, setSystemCode] = useState(constants.SystemCode.Brunner);
 
   // 초기 focus

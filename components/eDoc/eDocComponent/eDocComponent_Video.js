@@ -3,12 +3,13 @@
 import React, { useState, useEffect, useRef } from "react";
 import dynamic from "next/dynamic";
 import BrunnerVideo from "@/components/core/client/brunnerVideo";
+import * as constants from "@/components/core/constants";
 
 /**
  * 기본 runtime_data 초기화
  */
 export const initDefaultRuntimeData = (defaultRuntimeData) => {
-  defaultRuntimeData.url = "";
+  defaultRuntimeData.url = constants.General.EmptyString;
   defaultRuntimeData.title = "영상 제목";
   defaultRuntimeData.originalWidth = 640;
   defaultRuntimeData.originalHeight = 360;
@@ -51,7 +52,9 @@ export function renderProperty(
         <label>Binding Key:</label>
         <input
           type="text"
-          value={component.runtime_data?.bindingKey || ""}
+          value={
+            component.runtime_data?.bindingKey || constants.General.EmptyString
+          }
           onChange={(e) => updateRuntimeData("bindingKey", e.target.value)}
           className="w-full border border-gray-300 rounded p-2 mb-2"
         />
@@ -59,7 +62,7 @@ export function renderProperty(
         <label>영상 제목:</label>
         <input
           type="text"
-          value={component.runtime_data?.title || ""}
+          value={component.runtime_data?.title || constants.General.EmptyString}
           onChange={(e) => updateRuntimeData("title", e.target.value)}
           className="w-full border border-gray-300 rounded p-2 mb-2"
         />
@@ -67,7 +70,7 @@ export function renderProperty(
         <label>영상 URL:</label>
         <input
           type="text"
-          value={component.runtime_data?.url || ""}
+          value={component.runtime_data?.url || constants.General.EmptyString}
           onChange={(e) => updateRuntimeData("url", e.target.value)}
           className="w-full border border-gray-300 rounded p-2 mb-2"
         />
@@ -120,7 +123,7 @@ export default function RenderComponent(props) {
 
   const {
     title = "영상 제목",
-    url = "",
+    url = constants.General.EmptyString,
     originalWidth = 640,
     originalHeight = 360,
   } = component.runtime_data || {};

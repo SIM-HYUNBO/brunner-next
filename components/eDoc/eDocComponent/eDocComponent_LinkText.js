@@ -42,7 +42,7 @@ export function renderProperty(
       <label>링크 텍스트:</label>
       <input
         type="text"
-        value={component.runtime_data?.content || ""}
+        value={component.runtime_data?.content || constants.General.EmptyString}
         onChange={(e) => updateRuntimeData("content", e.target.value)}
         className="w-full border border-gray-300 rounded p-2 mb-2"
       />
@@ -50,7 +50,7 @@ export function renderProperty(
       <label>URL:</label>
       <input
         type="text"
-        value={component.runtime_data?.url || ""}
+        value={component.runtime_data?.url || constants.General.EmptyString}
         onChange={(e) => updateRuntimeData("url", e.target.value)}
         className="w-full border border-gray-300 rounded p-2 mb-2"
         placeholder="https://example.com"

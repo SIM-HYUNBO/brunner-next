@@ -4,6 +4,7 @@ import { JsonDatasetManager } from "@/components/workflow/jsonDatasetManager";
 import type { JsonObject } from "@/components/workflow/jsonDatasetManager";
 import * as ReactWindow from "react-window";
 import { Input, Button, Table } from "antd";
+import * as constants from "@/components/core/constants";
 
 export type JsonColumnType = "string" | "number" | "boolean";
 type JsonDatasetEditorMode = "schema" | "data";
@@ -224,7 +225,9 @@ export const JsonDatasetEditorModal: React.FC<JsonDatasetEditorModalProps> = ({
     setSelectedTable(Object.keys(initData)[0] || null);
     // 기본 컬럼 폭 초기화
     const firstTableCols = Object.keys(
-      initData[Object.keys(initData)[0] || ""]?.[0] || {}
+      initData[
+        Object.keys(initData)[0] || constants.General.EmptyString
+      ]?.[0] || {}
     );
     const widths: { [key: string]: number } = {};
     firstTableCols.forEach((col) => (widths[col] = 120));
@@ -241,7 +244,7 @@ export const JsonDatasetEditorModal: React.FC<JsonDatasetEditorModalProps> = ({
   const getDefaultValue = (type: JsonColumnType) => {
     switch (type) {
       case "string":
-        return "";
+        return constants.General.EmptyString;
       case "number":
         return 0;
       case "boolean":
@@ -453,7 +456,11 @@ export const JsonDatasetEditorModal: React.FC<JsonDatasetEditorModalProps> = ({
         const sorted = [...selectedRows].sort((a, b) => a - b);
         const text = sorted
           .map((i) =>
-            columns.map((c: any) => rows[i]?.[c.name] ?? "").join("\t")
+            columns
+              .map(
+                (c: any) => rows[i]?.[c.name] ?? constants.General.EmptyString
+              )
+              .join("\t")
           )
           .join("\n");
         await navigator.clipboard.writeText(text);
@@ -463,7 +470,8 @@ export const JsonDatasetEditorModal: React.FC<JsonDatasetEditorModalProps> = ({
       // 셀만 선택된 경우 → 전체 값 복사
       if (selectedCell) {
         const { rowIndex, colName } = selectedCell;
-        const cellValue = rows[rowIndex]?.[colName] ?? "";
+        const cellValue =
+          rows[rowIndex]?.[colName] ?? constants.General.EmptyString;
         await navigator.clipboard.writeText(String(cellValue));
       }
     };
@@ -491,7 +499,7 @@ export const JsonDatasetEditorModal: React.FC<JsonDatasetEditorModalProps> = ({
           const newRow: any = {};
 
           columns.forEach((c: any, j: any) => {
-            newRow[c.name] = line![j] ?? "";
+            newRow[c.name] = line![j] ?? constants.General.EmptyString;
           });
 
           if (targetIndex < newData.length) newData[targetIndex] = newRow;
@@ -507,7 +515,7 @@ export const JsonDatasetEditorModal: React.FC<JsonDatasetEditorModalProps> = ({
         // ✅ 아무 선택 없으면 맨 끝에 추가
         const newRow: any = {};
         columns.forEach((c: any, j: any) => {
-          newRow[c.name] = lines[0]![j] ?? "";
+          newRow[c.name] = lines[0]![j] ?? constants.General.EmptyString;
         });
         newData.push(newRow);
       }

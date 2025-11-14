@@ -2,6 +2,7 @@
 
 import React from "react";
 import EDocTextStyleEditor from "@/components/eDoc/eDocTextStyleEditor";
+import * as constants from "@/components/core/constants";
 
 export const initDefaultRuntimeData = (defaultRuntimeData) => {
   defaultRuntimeData.content = "여기에 텍스트를 설정하세요";
@@ -46,14 +47,18 @@ export function renderProperty(
         <label>Binding Key:</label>
         <input
           type="text"
-          value={component.runtime_data?.bindingKey || ""}
+          value={
+            component.runtime_data?.bindingKey || constants.General.EmptyString
+          }
           onChange={(e) => updateRuntimeData("bindingKey", e.target.value)}
           className="w-full border border-gray-300 rounded p-2 mb-2"
         />
 
         <label>텍스트:</label>
         <textarea
-          value={component.runtime_data?.content || ""}
+          value={
+            component.runtime_data?.content || constants.General.EmptyString
+          }
           onChange={(e) => updateRuntimeData("content", e.target.value)}
           rows={4}
           className="w-full border border-gray-300 rounded p-2"
@@ -135,12 +140,14 @@ export default function RenderComponent(props) {
       style={style}
       onClick={handleComponentClick}
     >
-      {(component.runtime_data?.content || "").split("\n").map((line, idx) => (
-        <React.Fragment key={idx}>
-          {line}
-          <br />
-        </React.Fragment>
-      ))}
+      {(component.runtime_data?.content || constants.General.EmptyString)
+        .split("\n")
+        .map((line, idx) => (
+          <React.Fragment key={idx}>
+            {line}
+            <br />
+          </React.Fragment>
+        ))}
     </p>
   );
 }

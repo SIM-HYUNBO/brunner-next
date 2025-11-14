@@ -32,7 +32,7 @@ export default function HomeContent() {
       currentUserType.current === constants.UserType.Pharmacy
     ) {
       const name = currentRegisterName.current;
-      if (name && name.trim() !== "") {
+      if (name && name.trim() !== constants.General.EmptyString) {
         setPageTitle(name);
       }
     }

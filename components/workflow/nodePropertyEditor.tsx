@@ -52,19 +52,19 @@ export const NodePropertyEditor: React.FC<NodePropertyEditorProps> = ({
     };
 
     if (newAction === constants.workflowActions.SCRIPT) {
-      design.scriptContents = "";
+      design.scriptContents = constants.General.EmptyString;
       design.scriptTimeoutMs = 5000;
     } else if (newAction === constants.workflowActions.BRANCH) {
       design.mode = constants.workflowBranchNodeMode.Branch;
-      design.condition = "";
+      design.condition = constants.General.EmptyString;
     } else if (newAction === constants.workflowActions.SQL) {
-      design.sqlStmt = "";
-      design.dbConnectionId = "";
+      design.sqlStmt = constants.General.EmptyString;
+      design.dbConnectionId = constants.General.EmptyString;
       design.sqlParams = [];
-      design.outputTableName = "";
+      design.outputTableName = constants.General.EmptyString;
     } else if (newAction === constants.workflowActions.CALL) {
-      design.targetWorkflowId = "";
-      design.targetWorkflowName = "";
+      design.targetWorkflowId = constants.General.EmptyString;
+      design.targetWorkflowName = constants.General.EmptyString;
     }
 
     onNodeUpdate?.(node.id, {

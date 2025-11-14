@@ -8,7 +8,7 @@ import { Input, Button, Table } from "antd";
 export default function AIModelSelector({ model, setAIModel, apiKey }) {
   const [models, setModels] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
+  const [error, setError] = useState(constants.General.EmptyString);
   const { BrunnerMessageBox, openModal } = useModal();
 
   const fetchModels = async () => {
@@ -23,7 +23,7 @@ export default function AIModelSelector({ model, setAIModel, apiKey }) {
     }
 
     setLoading(true);
-    setError("");
+    setError(constants.General.EmptyString);
     try {
       var jRequest = {};
       var jResponse = null;
@@ -50,15 +50,17 @@ export default function AIModelSelector({ model, setAIModel, apiKey }) {
     <div>
       <BrunnerMessageBox />
       <select
-        value={model || ""}
+        value={model || constants.General.EmptyString}
         onChange={(e) => setAIModel(e.target.value)}
         onFocus={fetchModels}
         disabled={disabled}
         className={`w-full border p-2 rounded mb-2 ${
-          disabled ? "bg-gray-100 text-gray-400 cursor-not-allowed" : ""
+          disabled
+            ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+            : constants.General.EmptyString
         }`}
       >
-        <option value="" disabled>
+        <option value={constants.General.EmptyString} disabled>
           {disabled
             ? "API Key를 먼저 입력하세요"
             : loading

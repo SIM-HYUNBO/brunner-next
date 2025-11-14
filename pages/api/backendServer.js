@@ -39,7 +39,7 @@ export default async (req, res) => {
       : req.body;
   const txnId = await generateTxnId();
   jRequest._txnId = txnId;
-  const commandName = jRequest.commandName || "";
+  const commandName = jRequest.commandName || constants.General.EmptyString;
 
   let jResponse = {};
   let exception = null;
@@ -80,7 +80,9 @@ export default async (req, res) => {
  */
 const generateTxnId = async () => {
   const now = new Date();
-  const currentDateTime = now.toISOString().replace(/[-:.TZ]/g, "");
+  const currentDateTime = now
+    .toISOString()
+    .replace(/[-:.TZ]/g, constants.General.EmptyString);
   const hrtime = process.hrtime();
   return `${currentDateTime}${hrtime[0]}${hrtime[1]}`;
 };

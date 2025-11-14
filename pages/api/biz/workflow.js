@@ -26,7 +26,7 @@ const executeService = async (txnId, jRequest) => {
         if (result.error_code === 0) {
           jResponse.error_code = 0;
           jResponse.list = result.list; // [{ id, name, description }]
-          jResponse.message = "";
+          jResponse.message = constants.General.EmptyString;
         } else {
           jResponse.error_code = -1;
           jResponse.error_message = result.error_message;
@@ -41,7 +41,7 @@ const executeService = async (txnId, jRequest) => {
 
         if (result.error_code === 0) {
           jResponse.error_code = 0;
-          jResponse.message = "";
+          jResponse.message = constants.General.EmptyString;
           jResponse.workflow_data = result.workflow_data;
         } else {
           jResponse.error_code = -1;

@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import DropdownMenu from "@/components/core/client/frames/dropdownMenu";
+import * as constants from "@/components/core/constants";
 
 export default function Header({ triggermenureload, reloadSignal }) {
   return (
@@ -15,7 +16,7 @@ export default function Header({ triggermenureload, reloadSignal }) {
       </div>
 
       {/* 전체 너비로 확장된 컨테이너 */}
-      <div className="">
+      <div className={constants.General.EmptyString}>
         {/* 로고 */}
         <Link href="/" className="inline-block">
           <Image

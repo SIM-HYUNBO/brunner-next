@@ -2,6 +2,7 @@
 
 import React from "react";
 import EDocTextStyleEditor from "@/components/eDoc/eDocTextStyleEditor";
+import * as constants from "@/components/core/constants";
 
 /**
  * 초기 RuntimeData 생성
@@ -9,7 +10,9 @@ import EDocTextStyleEditor from "@/components/eDoc/eDocTextStyleEditor";
 export const initDefaultRuntimeData = (defaultRuntimeData) => {
   defaultRuntimeData.columnCount = 3;
   defaultRuntimeData.rowCount = 3;
-  defaultRuntimeData.rows = Array.from({ length: 3 }, () => Array(3).fill(""));
+  defaultRuntimeData.rows = Array.from({ length: 3 }, () =>
+    Array(3).fill(constants.General.EmptyString)
+  );
   defaultRuntimeData.columns = [
     { width: "33%", header: "Header1", align: "center" },
     { width: "200px", header: "Header2", align: "center" },
@@ -81,7 +84,10 @@ export function renderProperty(
       const oldColumns = component.runtime_data?.columns || [];
 
       const newData = Array.from({ length: newRows }, (_, r) =>
-        Array.from({ length: newCols }, (_, c) => oldData[r]?.[c] ?? "")
+        Array.from(
+          { length: newCols },
+          (_, c) => oldData[r]?.[c] ?? constants.General.EmptyString
+        )
       );
       const newColumns = Array.from(
         { length: newCols },
@@ -106,7 +112,9 @@ export function renderProperty(
         <label>Binding Key:</label>
         <input
           type="text"
-          value={component.runtime_data?.bindingKey || ""}
+          value={
+            component.runtime_data?.bindingKey || constants.General.EmptyString
+          }
           onChange={(e) => updateRuntimeData("bindingKey", e.target.value)}
           className="w-full border border-gray-300 rounded p-2 mb-2"
         />
@@ -144,7 +152,7 @@ export function renderProperty(
           <div key={idx} className="flex gap-2 mb-2 items-center">
             <input
               type="text"
-              value={col.header || ""}
+              value={col.header || constants.General.EmptyString}
               onChange={(e) => {
                 const newColumns = [...component.runtime_data.columns];
                 newColumns[idx] = {
@@ -158,7 +166,7 @@ export function renderProperty(
             />
             <input
               type="text"
-              value={col.width || ""}
+              value={col.width || constants.General.EmptyString}
               onChange={(e) => {
                 const newColumns = [...component.runtime_data.columns];
                 newColumns[idx] = { ...newColumns[idx], width: e.target.value };
@@ -302,7 +310,7 @@ export default function RenderComponent(props) {
                     backgroundColor: "transparent",
                     textDecoration: style.textDecoration,
                   }}
-                  value={row[colIdx] || ""}
+                  value={row[colIdx] || constants.General.EmptyString}
                   onChange={(e) => {
                     const updatedRuntimeData = getNewRuntimeData(
                       comp,

@@ -280,29 +280,29 @@ const resetPassword = async (txnId, jRequest) => {
     jResponse.commanaName = jRequest.commandName;
     jResponse.userId = jRequest.userId;
 
-    if (jRequest.userId === ``) {
+    if (jRequest.userId === constants.General.EmptyString) {
       jResponse.error_code = -2;
       jResponse.error_message = `${constants.messages.REQUIRED_FIELD} [userId]`;
       return jResponse;
     }
-    if (jRequest.phoneNumber === ``) {
+    if (jRequest.phoneNumber === constants.General.EmptyString) {
       jResponse.error_code = -2;
       jResponse.error_message = `${constants.messages.REQUIRED_FIELD} [phoneNumber]`;
       return jResponse;
     }
 
-    if (jRequest.authCode === "") {
+    if (jRequest.authCode === constants.General.EmptyString) {
       jResponse.error_code = -2;
       jResponse.error_message = `${constants.messages.REQUIRED_FIELD} [authCode]`;
       return jResponse;
     }
 
-    if (jRequest.newPassword === ``) {
+    if (jRequest.newPassword === constants.General.EmptyString) {
       jResponse.error_code = -2;
       jResponse.error_message = `${constants.messages.REQUIRED_FIELD} [newPassword]`;
       return jResponse;
     }
-    if (jRequest.confirmPassword === ``) {
+    if (jRequest.confirmPassword === constants.General.EmptyString) {
       jResponse.error_code = -2;
       jResponse.error_message = `${constants.messages.REQUIRED_FIELD} [confirmPassword]`;
       return jResponse;
@@ -395,18 +395,18 @@ const deleteAccount = async (txnId, jRequest) => {
     jResponse.commanaName = jRequest.commandName;
     jResponse.userId = jRequest.userId;
 
-    if (jRequest.userId === ``) {
+    if (jRequest.userId === constants.General.EmptyString) {
       jResponse.error_code = -2;
       jResponse.error_message = `${constants.messages.REQUIRED_FIELD} [userId]`;
       return jResponse;
     }
-    if (jRequest.phoneNumber === ``) {
+    if (jRequest.phoneNumber === constants.General.EmptyString) {
       jResponse.error_code = -2;
       jResponse.error_message = `${constants.messages.REQUIRED_FIELD} [phoneNumber]`;
       return jResponse;
     }
 
-    if (jRequest.authCode === "") {
+    if (jRequest.authCode === constants.General.EmptyString) {
       jResponse.error_code = -2;
       jResponse.error_message = `${constants.messages.REQUIRED_FIELD} [authCode]`;
       return jResponse;
@@ -475,17 +475,17 @@ const sendEMailAuthCode = async (txnId, jRequest) => {
     jResponse.commanaName = jRequest.commandName;
     jResponse.userId = jRequest.userId;
 
-    if (jRequest.userId === ``) {
+    if (jRequest.userId === constants.General.EmptyString) {
       jResponse.error_code = -2;
       jResponse.error_message = `${constants.messages.REQUIRED_FIELD} [userId]`;
       return jResponse;
     }
-    if (jRequest.phoneNumber === ``) {
+    if (jRequest.phoneNumber === constants.General.EmptyString) {
       jResponse.error_code = -2;
       jResponse.error_message = `${constants.messages.REQUIRED_FIELD} [phoneNumber]`;
       return jResponse;
     }
-    if (jRequest.email === ``) {
+    if (jRequest.email === constants.General.EmptyString) {
       jResponse.error_code = -2;
       jResponse.error_message = `${constants.messages.REQUIRED_FIELD} [email]`;
       return jResponse;
@@ -576,7 +576,7 @@ Please check the received email and enter the code.`;
 const generateRandomString = (length) => {
   const characters =
     "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-  let result = "";
+  let result = constants.General.EmptyString;
   const charactersLength = characters.length;
 
   for (let i = 0; i < length; i++) {

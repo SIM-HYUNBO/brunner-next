@@ -1,5 +1,8 @@
 `use strict`;
 
+export const General = {
+  EmptyString: ``,
+};
 export const SystemCode = {
   Pharmacy: `01`,
   Brunner: `00`,

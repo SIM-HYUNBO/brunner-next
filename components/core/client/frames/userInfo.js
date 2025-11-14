@@ -3,6 +3,7 @@
 import SignoutButton from "./signoutButton";
 import DarkModeToggleButton from "./darkModeToggleButton";
 import { useState, useEffect } from "react";
+import * as constants from "@/components/core/constants";
 
 export default function UserInfo({
   handleLogout,
@@ -10,7 +11,7 @@ export default function UserInfo({
   triggermenureload,
 }) {
   const [currentSystemCode, setCurrentSystemCode] = useState(undefined);
-  const [userName, setUserName] = useState("");
+  const [userName, setUserName] = useState(constants.General.EmptyString);
 
   // 최초 렌더링 시 userInfo 로딩
   useEffect(() => {
@@ -19,7 +20,7 @@ export default function UserInfo({
         const userInfoStr = localStorage.getItem("userInfo");
         if (userInfoStr) {
           const userInfo = JSON.parse(userInfoStr);
-          setUserName(userInfo?.userName || "");
+          setUserName(userInfo?.userName || constants.General.EmptyString);
         }
       } catch (e) {
         console.error("Invalid userInfo JSON:", e);
@@ -34,7 +35,7 @@ export default function UserInfo({
         const userInfoStr = localStorage.getItem("userInfo");
         if (userInfoStr) {
           const userInfo = JSON.parse(userInfoStr);
-          setUserName(userInfo?.userName || "");
+          setUserName(userInfo?.userName || constants.General.EmptyString);
         }
       } catch (e) {
         console.error("Invalid userInfo JSON:", e);
@@ -74,12 +75,12 @@ export const getLoginUserId = () => {
     try {
       const userInfoStr = localStorage.getItem("userInfo");
       const userInfo = JSON.parse(userInfoStr);
-      return userInfo?.userId || "";
+      return userInfo?.userId || constants.General.EmptyString;
     } catch {
-      return "";
+      return constants.General.EmptyString;
     }
   }
-  return "";
+  return constants.General.EmptyString;
 };
 
 export const getLoginName = () => {
@@ -87,12 +88,12 @@ export const getLoginName = () => {
     try {
       const userInfoStr = localStorage.getItem("userInfo");
       const userInfo = JSON.parse(userInfoStr);
-      return userInfo?.userName || "";
+      return userInfo?.userName || constants.General.EmptyString;
     } catch {
-      return "";
+      return constants.General.EmptyString;
     }
   }
-  return "";
+  return constants.General.EmptyString;
 };
 
 export const getLoginUserType = () => {
@@ -100,12 +101,12 @@ export const getLoginUserType = () => {
     try {
       const userInfoStr = localStorage.getItem("userInfo");
       const userInfo = JSON.parse(userInfoStr);
-      return userInfo?.userType || "";
+      return userInfo?.userType || constants.General.EmptyString;
     } catch {
-      return "";
+      return constants.General.EmptyString;
     }
   }
-  return "";
+  return constants.General.EmptyString;
 };
 
 export const getLoginUserRegisterNo = () => {
@@ -113,12 +114,12 @@ export const getLoginUserRegisterNo = () => {
     try {
       const userInfoStr = localStorage.getItem("userInfo");
       const userInfo = JSON.parse(userInfoStr);
-      return userInfo?.registerNo || "";
+      return userInfo?.registerNo || constants.General.EmptyString;
     } catch {
-      return "";
+      return constants.General.EmptyString;
     }
   }
-  return "";
+  return constants.General.EmptyString;
 };
 
 export const getLoginUserRegisterName = () => {
@@ -126,12 +127,12 @@ export const getLoginUserRegisterName = () => {
     try {
       const userInfoStr = localStorage.getItem("userInfo");
       const userInfo = JSON.parse(userInfoStr);
-      return userInfo?.registerName || "";
+      return userInfo?.registerName || constants.General.EmptyString;
     } catch {
-      return "";
+      return constants.General.EmptyString;
     }
   }
-  return "";
+  return constants.General.EmptyString;
 };
 
 export const isAdminUser = () => {
@@ -167,8 +168,8 @@ export const getCurrentSystemCode = () => {
       const userInfo = JSON.parse(userInfoStr);
       return userInfo?.systemCode;
     } catch {
-      return "";
+      return constants.General.EmptyString;
     }
   }
-  return "";
+  return constants.General.EmptyString;
 };

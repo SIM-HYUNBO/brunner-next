@@ -650,7 +650,7 @@ JSON 문서 포맷은 아래와 같고 상기 컴포넌트의 기본값을 모�
       commanaName: jRequest.commandName,
       documentData: aiResult.aiResultData,
       error_code: 0,
-      error_message: "",
+      error_message: constants.General.EmptyString,
     };
   } catch (e) {
     jResponse = {
@@ -667,7 +667,7 @@ export const getAIModelList = async (txnId, jRequest) => {
   jResponse = {
     commandName: jRequest.commandName,
     error_code: 0,
-    error_message: "",
+    error_message: constants.General.EmptyString,
   };
 
   try {

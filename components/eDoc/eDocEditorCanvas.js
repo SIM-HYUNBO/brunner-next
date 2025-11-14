@@ -178,7 +178,7 @@ export default function EDocEditorCanvas({
                 <div
                   className={`relative group rounded ${
                     isViewerMode
-                      ? ""
+                      ? constants.General.EmptyString
                       : selectedComponentId === compIdx
                       ? "border-2 border-blue-500"
                       : "border border-transparent hover:border-gray-300"
@@ -266,7 +266,11 @@ export default function EDocEditorCanvas({
                      flex 
                      w-full 
                      justify-center
-                     ${isSelected ? "outline outline-2 outline-blue-400" : ""}`}
+                     ${
+                       isSelected
+                         ? "outline outline-2 outline-blue-400"
+                         : constants.General.EmptyString
+                     }`}
       style={{
         marginTop: `${pageData.runtime_data?.pageMargin ?? 0}px`,
       }}

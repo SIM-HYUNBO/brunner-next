@@ -49,7 +49,8 @@ export default function DropdownMenu({ reloadSignal, triggermenureload }) {
     setMenuItems(items);
   };
 
-  const getSectionLabel = (item) => item.parent || "";
+  const getSectionLabel = (item) =>
+    item.parent || constants.General.EmptyString;
 
   const getItemDepth = (item, items) => {
     let depth = 0;
@@ -104,7 +105,10 @@ export default function DropdownMenu({ reloadSignal, triggermenureload }) {
         >
           <ul className="divide-y">
             {menuItems.map((item, idx) => {
-              if (item.type === "divider") return <hr key={idx} className="" />;
+              if (item.type === "divider")
+                return (
+                  <hr key={idx} className={constants.General.EmptyString} />
+                );
 
               if (item.type === "section") {
                 return (
@@ -114,7 +118,7 @@ export default function DropdownMenu({ reloadSignal, triggermenureload }) {
                     onClick={() => toggleSection(item.label)}
                   >
                     <span>{item.label}</span>
-                    <span className="">
+                    <span className={constants.General.EmptyString}>
                       {openSections[item.label] ? "▼" : "▶"}
                     </span>
                   </li>
@@ -141,7 +145,7 @@ export default function DropdownMenu({ reloadSignal, triggermenureload }) {
             })}
           </ul>
 
-          <hr className="" />
+          <hr className={constants.General.EmptyString} />
 
           <div className="p-3 semi-text-bg-color">
             <UserInfo

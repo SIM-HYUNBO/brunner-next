@@ -199,7 +199,7 @@ export function getJsonDefaultTypedValue(value) {
   const type = value?.type ?? typeof value;
   switch (type) {
     case "string":
-      return "";
+      return constants.General.EmptyString;
     case "number":
       return 0;
     case "boolean":

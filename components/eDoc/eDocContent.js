@@ -59,7 +59,12 @@ export default function EDocContent({ argDocumentId, argDocumentData }) {
           c.type === constants.edocComponentType._TEXT ||
           c.type === constants.edocComponentType._INPUT
       )
-      .map((c) => c.runtime_data?.text || c.runtime_data?.label || "")
+      .map(
+        (c) =>
+          c.runtime_data?.text ||
+          c.runtime_data?.label ||
+          constants.General.EmptyString
+      )
       .join(" ")
       .slice(0, 160) || "내용 요약";
 

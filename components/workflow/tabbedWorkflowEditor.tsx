@@ -56,7 +56,7 @@ export function TabbedWorkflowEditor() {
                 outputs: commonFunctions.getDefaultOutputs(
                   constants.workflowActions.START
                 ),
-                scriptContents: "",
+                scriptContents: constants.General.EmptyString,
                 scriptTimeoutMs: 5000,
               },
               run: { inputs: [], outputs: [] },
@@ -77,7 +77,7 @@ export function TabbedWorkflowEditor() {
                 outputs: commonFunctions.getDefaultOutputs(
                   constants.workflowActions.END
                 ),
-                scriptContents: "",
+                scriptContents: constants.General.EmptyString,
                 scriptTimeoutMs: 5000,
               },
               run: { inputs: [], outputs: [] },
@@ -119,7 +119,7 @@ export function TabbedWorkflowEditor() {
               outputs: commonFunctions.getDefaultOutputs(
                 constants.workflowActions.START
               ),
-              scriptContents: "",
+              scriptContents: constants.General.EmptyString,
               scriptTimeoutMs: 5000,
             },
             run: { inputs: [], outputs: [] },
@@ -140,7 +140,7 @@ export function TabbedWorkflowEditor() {
               outputs: commonFunctions.getDefaultOutputs(
                 constants.workflowActions.END
               ),
-              scriptContents: "",
+              scriptContents: constants.General.EmptyString,
               scriptTimeoutMs: 5000,
             },
             run: { inputs: [], outputs: [] },
@@ -176,7 +176,7 @@ export function TabbedWorkflowEditor() {
         if (tabId === activeTabId && newTabs.length > 0) {
           setActiveTabId(newTabs[newTabs.length - 1]!.id);
         } else if (newTabs.length === 0) {
-          setActiveTabId("");
+          setActiveTabId(constants.General.EmptyString);
         }
 
         return newTabs;

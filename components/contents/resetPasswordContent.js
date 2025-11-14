@@ -12,12 +12,14 @@ export default function ResetPasswordContent() {
   const { BrunnerMessageBox, openModal } = useModal();
 
   const [systemCode, setSystemCode] = useState(constants.SystemCode.Brunner);
-  const [userId, setUserId] = useState("");
-  const [phoneNumber, setPhoneNumber] = useState("");
-  const [email, setEmail] = useState("");
-  const [authCode, setAuthCode] = useState("");
-  const [newPassword, setNewPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
+  const [userId, setUserId] = useState(constants.General.EmptyString);
+  const [phoneNumber, setPhoneNumber] = useState(constants.General.EmptyString);
+  const [email, setEmail] = useState(constants.General.EmptyString);
+  const [authCode, setAuthCode] = useState(constants.General.EmptyString);
+  const [newPassword, setNewPassword] = useState(constants.General.EmptyString);
+  const [confirmPassword, setConfirmPassword] = useState(
+    constants.General.EmptyString
+  );
 
   const changeSystemCodeValue = (e) => setSystemCode(e.target.value);
   const changeUserIdValue = (e) => setUserId(e.target.value);

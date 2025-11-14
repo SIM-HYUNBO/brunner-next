@@ -1,11 +1,12 @@
 import React, { useState } from "react";
 import Loading from "@/components/core/client/loading";
 import { Input, Button, Table } from "antd";
+import * as constants from "@/components/core/constants";
 
 export const useModal = () => {
   const [modalContent, setModalContent] = useState({
     isOpen: false,
-    message: "",
+    message: constants.General.EmptyString,
     onConfirm: () => {},
     onClose: () => {},
   });
@@ -33,7 +34,7 @@ export const useModal = () => {
   const closeModal = () => {
     setModalContent({
       isOpen: false,
-      message: "",
+      message: constants.General.EmptyString,
       onConfirm: () => {},
       onClose: () => {},
     });

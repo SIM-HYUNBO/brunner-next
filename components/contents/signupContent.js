@@ -17,13 +17,13 @@ export default function SignupContent() {
   const { BrunnerMessageBox, openModal } = useModal();
   const router = useRouter();
 
-  const [userId, setUserId] = useState("");
-  const [password, setPassword] = useState("");
-  const [userName, setUserName] = useState("");
-  const [address, setAddress] = useState("");
-  const [phoneNumber, setPhoneNumber] = useState("");
-  const [email, setEmail] = useState("");
-  const [registerNo, setRegisterNo] = useState("");
+  const [userId, setUserId] = useState(constants.General.EmptyString);
+  const [password, setPassword] = useState(constants.General.EmptyString);
+  const [userName, setUserName] = useState(constants.General.EmptyString);
+  const [address, setAddress] = useState(constants.General.EmptyString);
+  const [phoneNumber, setPhoneNumber] = useState(constants.General.EmptyString);
+  const [email, setEmail] = useState(constants.General.EmptyString);
+  const [registerNo, setRegisterNo] = useState(constants.General.EmptyString);
   const [systemCode, setSystemCode] = useState(constants.SystemCode.Brunner);
 
   // ✅ 사용자 유형
@@ -42,12 +42,16 @@ export default function SignupContent() {
   // 사업장 검색 상태
   // -------------------------------
   const [showBizModal, setShowBizModal] = useState(false);
-  const [searchKeyword, setSearchKeyword] = useState("");
+  const [searchKeyword, setSearchKeyword] = useState(
+    constants.General.EmptyString
+  );
   const [searchResult, setSearchResult] = useState([]);
-  const [registerName, setRegisterName] = useState(""); // ✅ 선택된 이름 필드
+  const [registerName, setRegisterName] = useState(
+    constants.General.EmptyString
+  ); // ✅ 선택된 이름 필드
 
   // ✅ 검색 타입
-  const [searchType, setSearchType] = useState("pharmacy"); // pharmacy or supplier
+  const [searchType, setSearchType] = useState(constants.UserType.Pharmacy); // pharmacy or supplier
 
   // 사업장 검색
   const searchBusiness = async () => {
@@ -59,7 +63,9 @@ export default function SignupContent() {
       setLoading(true);
 
       const workflowName =
-        searchType === "pharmacy" ? "약국목록조회" : "공급자목록조회";
+        searchType === constants.UserType.Pharmacy
+          ? "약국목록조회"
+          : "공급자목록조회";
 
       const jResponse = await RequestExecuteWorkflow(
         constants.SystemCode.Brunner,
@@ -83,25 +89,25 @@ export default function SignupContent() {
 
   // 사업장 선택 시 관리번호 + 주소 자동 입력 + userType + RegisterName 설정
   const selectBusiness = (record) => {
-    if (searchType === "pharmacy") {
+    if (searchType === constants.UserType.Pharmacy) {
       setRegisterNo(record.manageNo);
-      setAddress(record.address || "");
-      setUserType("Pharmacy");
-      setRegisterName(record.bizName || ""); // ✅ RegisterName 설정
+      setAddress(record.address || constants.General.EmptyString);
+      setUserType(constants.UserType.Pharmacy);
+      setRegisterName(record.bizName || constants.General.EmptyString); // ✅ RegisterName 설정
       setShowBizModal(false);
-    } else if (searchType === "supplier") {
+    } else if (searchType === constants.UserType.Supplier) {
       setRegisterNo(record.register_no);
       setPhoneNumber(record.phone_no);
-      setAddress(record.address || "");
-      setUserType("Supplier");
-      setRegisterName(record.name || ""); // ✅ RegisterName 설정
+      setAddress(record.address || constants.General.EmptyString);
+      setUserType(constants.userType.Supplier);
+      setRegisterName(record.name || constants.General.EmptyString); // ✅ RegisterName 설정
       setShowBizModal(false);
     }
   };
 
   // 검색타입에 따라 컬럼 다르게 구성
   const columns =
-    searchType === "pharmacy"
+    searchType === constants.UserType.Pharmacy
       ? [
           { title: "Pharmacy Name", dataIndex: "bizName", key: "bizName" },
           { title: "ManageNo", dataIndex: "manageNo", key: "manageNo" },
@@ -222,9 +228,15 @@ export default function SignupContent() {
             onChange={(e) => setUserType(e.target.value)}
             className="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 px-3 py-1 leading-8 transition-colors duration-200 ease-in-out"
           >
-            <option value={constants.UserType.Personal}>Personal</option>
-            <option value={constants.UserType.Pharmacy}>Pharmacy</option>
-            <option value={constants.UserType.Supplier}>Supplier</option>
+            <option value={constants.UserType.Personal}>
+              {constants.UserType.Personal}
+            </option>
+            <option value={constants.UserType.Pharmacy}>
+              {constants.UserType.Pharmacy}
+            </option>
+            <option value={constants.UserType.Supplier}>
+              {constants.UserType.Supplier}
+            </option>
           </select>
         </div>
 
@@ -439,13 +451,17 @@ export default function SignupContent() {
                     borderRadius: "4px",
                   }}
                 >
-                  <option value="pharmacy">Pharmacy</option>
-                  <option value="supplier">Supplier</option>
+                  <option value={constants.UserType.Pharmacy}>
+                    {constants.UserType.Pharmacy}
+                  </option>
+                  <option value={constants.UserType.Supplier}>
+                    {constants.UserType.Supplier}
+                  </option>
                 </select>
 
                 <Input
                   placeholder={
-                    searchType === "pharmacy"
+                    searchType === constants.UserType.Pharmacy
                       ? "Pharmacy Name"
                       : "Supplier Name"
                   }
@@ -461,7 +477,11 @@ export default function SignupContent() {
               <Table
                 dataSource={searchResult}
                 columns={columns}
-                rowKey={searchType === "pharmacy" ? "manageNo" : "supplierCode"}
+                rowKey={
+                  searchType === constants.UserType.Pharmacy
+                    ? "manageNo"
+                    : "supplierCode"
+                }
                 pagination={false}
                 size="small"
               />

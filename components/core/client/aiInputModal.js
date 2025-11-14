@@ -15,10 +15,14 @@ export default function AIInputModal({
 }) {
   const [loading, setLoading] = useState(false);
   const { BrunnerMessageBox, openModal } = useModal();
-  const [instructions, setInstructions] = useState("");
-  const [apiKey, setApiKey] = useState("");
+  const [instructions, setInstructions] = useState(
+    constants.General.EmptyString
+  );
+  const [apiKey, setApiKey] = useState(constants.General.EmptyString);
   const [aiModel, setAIModel] = useState();
-  const [errorMessage, setErrorMessage] = useState("");
+  const [errorMessage, setErrorMessage] = useState(
+    constants.General.EmptyString
+  );
   const modalRef = useRef(null);
 
   // 이동(드래그) 상태
@@ -134,7 +138,7 @@ export default function AIInputModal({
       return;
     }
 
-    setErrorMessage("");
+    setErrorMessage(constants.General.EmptyString);
 
     try {
       const jRequest = {

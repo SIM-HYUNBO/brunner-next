@@ -15,15 +15,15 @@ export default function DailyOrderViewer() {
   const [supplierList, setSupplierList] = useState([]);
 
   // 🔹 조회조건 상태
-  const orderDateRef = useRef(""); // 필수
+  const orderDateRef = useRef(constants.General.EmptyString); // 필수
   const [orderDate, setOrderDate] = useState(orderDateRef.current.value);
 
-  const supplierNameRef = useRef(""); // 필수
+  const supplierNameRef = useRef(constants.General.EmptyString); // 필수
   const [supplierName, setSupplierName] = useState(
     supplierNameRef.current.value
   );
 
-  const productNameRef = useRef(""); // 필수
+  const productNameRef = useRef(constants.General.EmptyString); // 필수
   const [productName, setProductName] = useState(productNameRef.current.value);
 
   const [loading, setLoading] = useState(false);
@@ -36,7 +36,10 @@ export default function DailyOrderViewer() {
   };
 
   const onSelectDrugSearchModal = async (selectedData, orderQty) => {
-    if (!selectedData?.edi_code || selectedData?.edi_code == "") {
+    if (
+      !selectedData?.edi_code ||
+      selectedData?.edi_code == constants.General.EmptyString
+    ) {
       selectedData = null;
       openModal(constants.messages.INVALID_DATA_SELECTED);
       return;
@@ -117,7 +120,7 @@ export default function DailyOrderViewer() {
           <select
             ref={supplierNameRef}
             className="border rounded p-2 w-[200px]"
-            defaultValue=""
+            defaultValue={constants.General.EmptyString}
           >
             <option value={supplierName}></option>
             {supplierList.map((s) => (
@@ -160,8 +163,8 @@ export default function DailyOrderViewer() {
   // 🔹 서버에서 Daily Order 조회
   const fetchTableData = async () => {
     const formattedOrderDate = orderDateRef.current
-      ? orderDateRef.current.value.replace(/-/g, "")
-      : "";
+      ? orderDateRef.current.value.replace(/-/g, constants.General.EmptyString)
+      : constants.General.EmptyString;
     const formattedSupplier = supplierNameRef.current.value?.trim() || null;
     const formattedProduct = productNameRef.current.value?.trim() || null;
 
@@ -213,8 +216,8 @@ export default function DailyOrderViewer() {
 
   const requestAutomaticDailyOrder = async () => {
     const formattedOrderDate = orderDateRef.current
-      ? orderDateRef.current.value.replace(/-/g, "")
-      : "";
+      ? orderDateRef.current.value.replace(/-/g, constants.General.EmptyString)
+      : constants.General.EmptyString;
     const formattedSupplier = supplierNameRef.current.value?.trim() || null;
     const formattedProduct = productNameRef.current.value?.trim() || null;
 

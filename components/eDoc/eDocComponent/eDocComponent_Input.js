@@ -49,7 +49,9 @@ export function renderProperty(
         <label>Binding Key:</label>
         <input
           type="text"
-          value={component.runtime_data?.bindingKey || ""}
+          value={
+            component.runtime_data?.bindingKey || constants.General.EmptyString
+          }
           onChange={(e) => updateRuntimeData("bindingKey", e.target.value)}
           className="w-full border border-gray-300 rounded p-2 mb-2"
         />
@@ -57,7 +59,7 @@ export function renderProperty(
         <label>입력값:</label>
         <input
           type="text"
-          value={component.runtime_data?.value || ""}
+          value={component.runtime_data?.value || constants.General.EmptyString}
           onChange={(e) => updateRuntimeData("value", e.target.value)}
           className="w-full border border-gray-300 rounded p-2 mb-2"
         />
@@ -142,10 +144,12 @@ export default function RenderComponent(props) {
       type="text"
       className={`${selectedClass} ${alignmentClass} h-8 ${
         isEditable ? "cursor-text" : "cursor-default"
-      } ${!isEditable ? "bg-gray-100" : ""}`}
+      } ${!isEditable ? "bg-gray-100" : constants.General.EmptyString}`}
       style={style}
-      value={component.runtime_data?.value || ""}
-      placeholder={component.runtime_data?.placeholder || ""}
+      value={component.runtime_data?.value || constants.General.EmptyString}
+      placeholder={
+        component.runtime_data?.placeholder || constants.General.EmptyString
+      }
       readOnly={!isEditable}
       onClick={handleComponentClick}
       onChange={(e) => {

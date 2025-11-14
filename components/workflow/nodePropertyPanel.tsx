@@ -26,13 +26,23 @@ export const NodePropertyPanel: React.FC<NodePropertyPanelProps> = ({
   onNodeUpdate,
   openModal,
 }) => {
-  const [localLabel, setLocalLabel] = useState(node?.data.label ?? "");
-  const [localScriptContents, setLocalScript] = useState("");
+  const [localLabel, setLocalLabel] = useState(
+    node?.data.label ?? constants.General.EmptyString
+  );
+  const [localScriptContents, setLocalScript] = useState(
+    constants.General.EmptyString
+  );
   const [localScriptTimeoutMs, setLocalTimeoutMs] = useState(5000);
 
-  const [localDBConnectionId, setLocalDBConnectionId] = useState("");
-  const [localSqlStmt, setLocalSqlStmt] = useState("");
-  const [localSqlOutputTableName, setLocalSqlOutputTableName] = useState("");
+  const [localDBConnectionId, setLocalDBConnectionId] = useState(
+    constants.General.EmptyString
+  );
+  const [localSqlStmt, setLocalSqlStmt] = useState(
+    constants.General.EmptyString
+  );
+  const [localSqlOutputTableName, setLocalSqlOutputTableName] = useState(
+    constants.General.EmptyString
+  );
   const [sqlModalData, setSqlModalData] = useState<SqlNodeDesignData | null>(
     null
   );
@@ -41,29 +51,36 @@ export const NodePropertyPanel: React.FC<NodePropertyPanelProps> = ({
   const [isSqlModalOpen, setIsSqlModalOpen] = useState(false);
   const [workflowSelectModalOpen, setWorkflowSelectModalOpen] = useState(false);
 
-  const prevActionName = useRef<string>("");
+  const prevActionName = useRef<string>(constants.General.EmptyString);
 
   // Node 변경 시 state 초기화
   useEffect(() => {
     if (!node) return;
 
-    setLocalLabel(node.data.label ?? "");
+    setLocalLabel(node.data.label ?? constants.General.EmptyString);
 
     if (node.data.actionName === constants.workflowActions.SCRIPT) {
-      setLocalScript(node.data.design?.scriptContents ?? "");
+      setLocalScript(
+        node.data.design?.scriptContents ?? constants.General.EmptyString
+      );
       setLocalTimeoutMs(node.data.design?.scriptTimeoutMs ?? 5000);
     }
 
     if (node.data.actionName === constants.workflowActions.SQL) {
       const design = node.data.design || {};
-      setLocalDBConnectionId(design.dbConnectionId ?? "");
-      setLocalSqlStmt(design.sqlStmt ?? "");
-      setLocalSqlOutputTableName(design.outputTableName ?? "");
+      setLocalDBConnectionId(
+        design.dbConnectionId ?? constants.General.EmptyString
+      );
+      setLocalSqlStmt(design.sqlStmt ?? constants.General.EmptyString);
+      setLocalSqlOutputTableName(
+        design.outputTableName ?? constants.General.EmptyString
+      );
       setSqlModalData({
-        sqlStmt: design.sqlStmt ?? "",
-        dbConnectionId: design.dbConnectionId ?? "",
+        sqlStmt: design.sqlStmt ?? constants.General.EmptyString,
+        dbConnectionId: design.dbConnectionId ?? constants.General.EmptyString,
         sqlParams: design.sqlParams ?? [],
-        outputTableName: design.outputTableName ?? "",
+        outputTableName:
+          design.outputTableName ?? constants.General.EmptyString,
       });
     }
   }, [node]);
@@ -76,28 +93,35 @@ export const NodePropertyPanel: React.FC<NodePropertyPanelProps> = ({
 
     // SCRIPT 동기화
     if (latestNode.data.actionName === constants.workflowActions.SCRIPT) {
-      setLocalScript(latestNode.data.design?.scriptContents ?? "");
+      setLocalScript(
+        latestNode.data.design?.scriptContents ?? constants.General.EmptyString
+      );
       setLocalTimeoutMs(latestNode.data.design?.scriptTimeoutMs ?? 5000);
     }
 
     // SQL 동기화
     if (latestNode.data.actionName === constants.workflowActions.SQL) {
       const design = latestNode.data.design || {};
-      setLocalDBConnectionId(design.dbConnectionId ?? "");
-      setLocalSqlStmt(design.sqlStmt ?? "");
-      setLocalSqlOutputTableName(design.outputTableName ?? "");
+      setLocalDBConnectionId(
+        design.dbConnectionId ?? constants.General.EmptyString
+      );
+      setLocalSqlStmt(design.sqlStmt ?? constants.General.EmptyString);
+      setLocalSqlOutputTableName(
+        design.outputTableName ?? constants.General.EmptyString
+      );
       setSqlModalData({
-        sqlStmt: design.sqlStmt ?? "",
-        dbConnectionId: design.dbConnectionId ?? "",
+        sqlStmt: design.sqlStmt ?? constants.General.EmptyString,
+        dbConnectionId: design.dbConnectionId ?? constants.General.EmptyString,
         sqlParams: design.sqlParams ?? [],
-        outputTableName: design.outputTableName ?? "",
+        outputTableName:
+          design.outputTableName ?? constants.General.EmptyString,
       });
     }
   }, [nodes]);
 
   const handleScriptModalConfirm = (data: ScriptNodeDesignData) => {
     if (!node) return;
-    setLocalScript(data.scriptContents ?? "");
+    setLocalScript(data.scriptContents ?? constants.General.EmptyString);
     setLocalTimeoutMs(data.scriptTimeoutMs ?? 0);
     onNodeUpdate(node.id, {
       design: {
@@ -111,9 +135,13 @@ export const NodePropertyPanel: React.FC<NodePropertyPanelProps> = ({
 
   const handleSqlModalConfirm = (data: SqlNodeDesignData) => {
     if (!node) return;
-    setLocalDBConnectionId(data.dbConnectionId ?? "");
-    setLocalSqlStmt(data.sqlStmt ?? "");
-    setLocalSqlOutputTableName(data.outputTableName ?? "");
+    setLocalDBConnectionId(
+      data.dbConnectionId ?? constants.General.EmptyString
+    );
+    setLocalSqlStmt(data.sqlStmt ?? constants.General.EmptyString);
+    setLocalSqlOutputTableName(
+      data.outputTableName ?? constants.General.EmptyString
+    );
     setSqlModalData(data);
 
     onNodeUpdate(node.id, {
@@ -133,7 +161,7 @@ export const NodePropertyPanel: React.FC<NodePropertyPanelProps> = ({
   const BranchNodeProperties = ({ node }: { node: Node<any> }) => {
     const [mode, setMode] = useState(node.data.design?.mode ?? "Branch");
     const [condition, setCondition] = useState(
-      node.data.design?.condition ?? ""
+      node.data.design?.condition ?? constants.General.EmptyString
     );
     const [loopStartValue, setLoopStartValue] = useState(
       node.data.design?.loopStartValue ?? 0
@@ -142,16 +170,20 @@ export const NodePropertyPanel: React.FC<NodePropertyPanelProps> = ({
       node.data.design?.loopStepValue ?? 1
     );
     const [loopLimitValue, setLoopLimitValue] = useState(
-      node.data.design?.loopLimitValue ?? ""
+      node.data.design?.loopLimitValue ?? constants.General.EmptyString
     );
     const loopCurrentValue = node.data.design?.loopCurrentValue ?? 0;
 
     useEffect(() => {
       setMode(node.data.design?.mode ?? "Branch");
-      setCondition(node.data.design?.condition ?? "");
+      setCondition(
+        node.data.design?.condition ?? constants.General.EmptyString
+      );
       setLoopStartValue(node.data.design?.loopStartValue ?? 0);
       setLoopStepValue(node.data.design?.loopStepValue ?? 1);
-      setLoopLimitValue(node.data.design?.loopLimitValue ?? "");
+      setLoopLimitValue(
+        node.data.design?.loopLimitValue ?? constants.General.EmptyString
+      );
     }, [node]);
 
     const handleBranchNodeChange = (key: string, value: any) => {
@@ -162,14 +194,14 @@ export const NodePropertyPanel: React.FC<NodePropertyPanelProps> = ({
         if (value === constants.workflowBranchNodeMode.Branch) {
           newDesign = {
             mode: value,
-            condition: "",
+            condition: constants.General.EmptyString,
           };
         } else if (value === constants.workflowBranchNodeMode.Loop) {
           newDesign = {
             mode: value,
             loopStartValue: 0,
             loopStepValue: 1,
-            loopLimitValue: "",
+            loopLimitValue: constants.General.EmptyString,
             loopCurrentValue: 0,
           };
         }
@@ -324,7 +356,7 @@ export const NodePropertyPanel: React.FC<NodePropertyPanelProps> = ({
 
   const CallNodeProperties = ({ node }: { node: Node<any> }) => {
     const [selectedWorkflowId, setSelectedWorkflowId] = useState(
-      node.data.design?.targetWorkflowId ?? ""
+      node.data.design?.targetWorkflowId ?? constants.General.EmptyString
     );
     const handleSelectWorkflow = (workflow: any) => {
       if (workflow.id === workflowId) {

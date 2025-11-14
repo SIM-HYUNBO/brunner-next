@@ -7,7 +7,7 @@ import { useModal } from "@/components/core/client/brunnerMessageBox";
 
 export default function DrugSearchModal({ isOpen, onClose, onSelect }) {
   const { BrunnerMessageBox, openModal } = useModal();
-  const [searchTerm, setSearchTerm] = useState("");
+  const [searchTerm, setSearchTerm] = useState(constants.General.EmptyString);
   const [searchType, setSearchType] = useState("name");
   const [selectedRow, setSelectedRow] = useState(null);
   const [filteredData, setFilteredData] = useState([]);
@@ -90,7 +90,9 @@ export default function DrugSearchModal({ isOpen, onClose, onSelect }) {
                   key={row.item_seq}
                   onClick={() => setSelectedRow(row)}
                   className={`cursor-pointer hover:bg-blue-100 ${
-                    selectedRow?.item_seq === row.item_seq ? "bg-blue-200" : ""
+                    selectedRow?.item_seq === row.item_seq
+                      ? "bg-blue-200"
+                      : constants.General.EmptyString
                   }`}
                 >
                   <td className="p-2 border-b">{row.edi_code}</td>

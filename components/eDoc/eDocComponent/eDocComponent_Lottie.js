@@ -6,7 +6,7 @@ import dynamic from "next/dynamic";
 const Lottie = dynamic(() => import("lottie-react"), { ssr: false });
 
 export const initDefaultRuntimeData = (defaultRuntimeData) => {
-  defaultRuntimeData.jsonString = "";
+  defaultRuntimeData.jsonString = constants.General.EmptyString;
   defaultRuntimeData.positionAlign = "center";
   defaultRuntimeData.loop = true;
   defaultRuntimeData.autoplay = true;
@@ -38,14 +38,18 @@ export function renderProperty(
       <label className="block mb-1">Binding Key:</label>
       <input
         type="text"
-        value={component.runtime_data?.bindingKey || ""}
+        value={
+          component.runtime_data?.bindingKey || constants.General.EmptyString
+        }
         onChange={(e) => updateRuntimeData("bindingKey", e.target.value)}
         className="w-full border border-gray-300 rounded p-2 mb-2"
       />
 
       <label className="block mb-1">Lottie JSON:</label>
       <textarea
-        value={component.runtime_data?.jsonString || ""}
+        value={
+          component.runtime_data?.jsonString || constants.General.EmptyString
+        }
         onChange={(e) => updateRuntimeData("jsonString", e.target.value)}
         placeholder="여기에 JSON 문자열을 입력하세요"
         className="w-full border border-gray-300 rounded p-2 mb-4 h-32"

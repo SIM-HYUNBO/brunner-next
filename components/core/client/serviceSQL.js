@@ -79,10 +79,10 @@ const ServiceSQL = () => {
 
   const [queries, setQueries] = useState([]);
   const [sqlInput, setSqlInput] = useState({
-    system_code: "",
-    sql_name: "",
-    sql_seq: "",
-    sql_content: "",
+    system_code: constants.General.EmptyString,
+    sql_name: constants.General.EmptyString,
+    sql_seq: constants.General.EmptyString,
+    sql_content: constants.General.EmptyString,
   });
   var [currentServiceSQL, setCurrentServiceSQL] = useState(null);
 
@@ -127,10 +127,10 @@ const ServiceSQL = () => {
       }
 
       setSqlInput({
-        system_code: "",
-        sql_name: "",
-        sql_seq: "",
-        sql_content: "",
+        system_code: constants.General.EmptyString,
+        sql_name: constants.General.EmptyString,
+        sql_seq: constants.General.EmptyString,
+        sql_content: constants.General.EmptyString,
       });
       setCurrentServiceSQL(null);
       setIsEditing(false);
@@ -176,16 +176,16 @@ const ServiceSQL = () => {
 
   const handleNew = () => {
     setSqlInput({
-      system_code: "",
-      sql_name: "",
-      sql_seq: "",
-      sql_content: "",
+      system_code: constants.General.EmptyString,
+      sql_name: constants.General.EmptyString,
+      sql_seq: constants.General.EmptyString,
+      sql_content: constants.General.EmptyString,
     });
     setCurrentServiceSQL({
-      system_code: "",
-      sql_name: "",
-      sql_seq: "",
-      sql_content: "",
+      system_code: constants.General.EmptyString,
+      sql_name: constants.General.EmptyString,
+      sql_seq: constants.General.EmptyString,
+      sql_content: constants.General.EmptyString,
     });
     setIsCreating(true); // 신규 데이터 생성 모드 활성화
   };
@@ -369,7 +369,7 @@ const ServiceSQL = () => {
                 readOnly={!isEditing && !isCreating}
               />
             </label>
-            <div className={``}>
+            <div className={constants.General.EmptyString}>
               <CreateUpdateButton />
               <ClearInputButton />
             </div>

@@ -7,6 +7,7 @@ import { Input, Button, Table } from "antd";
 import type { ColumnsType } from "antd/es/table";
 import type { SqlParam, SqlNodeDesignData } from "./types/nodeTypes";
 import { getIsDarkMode } from "@/components/core/client/frames/darkModeToggleButton";
+import * as constants from "@/components/core/constants";
 
 interface SqlEditorModalProps {
   open: boolean;
@@ -21,11 +22,11 @@ interface SqlEditorModalProps {
 
 export const SqlEditorModal: React.FC<SqlEditorModalProps> = ({
   open,
-  initialDbConnectionId = "",
-  initialSqlStmt = "",
+  initialDbConnectionId = constants.General.EmptyString,
+  initialSqlStmt = constants.General.EmptyString,
   initialParams = [],
   // initialMaxRows,
-  initialOutputTableName = "",
+  initialOutputTableName = constants.General.EmptyString,
   onConfirm,
   onClose,
 }) => {
@@ -94,7 +95,7 @@ export const SqlEditorModal: React.FC<SqlEditorModalProps> = ({
       isDragging.current = false;
       isResizing.current = false;
       panelResizing.current = false;
-      document.body.style.userSelect = "";
+      document.body.style.userSelect = constants.General.EmptyString;
     };
 
     if (!window) return;
@@ -121,7 +122,8 @@ export const SqlEditorModal: React.FC<SqlEditorModalProps> = ({
       dataIndex: "binding",
       key: "binding",
       render: (_, rec, idx) => {
-        const displayValue = rec.binding ?? rec.value ?? "";
+        const displayValue =
+          rec.binding ?? rec.value ?? constants.General.EmptyString;
         return (
           <input
             className="w-full general-text-bg-color border rounded px-2 py-1"
@@ -164,7 +166,9 @@ export const SqlEditorModal: React.FC<SqlEditorModalProps> = ({
       dbConnectionId,
       sqlStmt,
       sqlParams: params.map((p) => {
-        const isVar = /\{\{.*\}\}|\$\{.*\}/.test(p.binding ?? "");
+        const isVar = /\{\{.*\}\}|\$\{.*\}/.test(
+          p.binding ?? constants.General.EmptyString
+        );
         return {
           ...p,
           value: isVar ? undefined : p.value,
@@ -226,7 +230,7 @@ export const SqlEditorModal: React.FC<SqlEditorModalProps> = ({
             <label>Output Table Name</label>
             <Input
               type="text"
-              value={outputTableName ?? ""}
+              value={outputTableName ?? constants.General.EmptyString}
               onChange={(e) => setOutputTableName(e.target.value)}
               className="w-36 semi-text-bg-color hover:semi-text-bg-color"
             />
@@ -274,7 +278,10 @@ export const SqlEditorModal: React.FC<SqlEditorModalProps> = ({
                         onClick={() =>
                           setParams((prev) => [
                             ...prev,
-                            { name: "", binding: "" },
+                            {
+                              name: constants.General.EmptyString,
+                              binding: constants.General.EmptyString,
+                            },
                           ])
                         }
                       >
@@ -290,7 +297,11 @@ export const SqlEditorModal: React.FC<SqlEditorModalProps> = ({
                           setParams((prev) => {
                             const map = new Map(prev.map((p) => [p.name, p]));
                             return uniq.map(
-                              (name) => map.get(name) ?? { name, binding: "" }
+                              (name) =>
+                                map.get(name) ?? {
+                                  name,
+                                  binding: constants.General.EmptyString,
+                                }
                             );
                           });
                         }}

@@ -68,7 +68,7 @@ function interpolate(value: any, ctx: any): any {
     return value.replace(/\$\{(.+?)\}|\{\{(.+?)\}\}/g, (_, g1, g2) => {
       const path = g1 || g2;
       const result = commonFunctions.getByPath(ctx, path);
-      return result !== undefined ? result : "";
+      return result !== undefined ? result : constants.General.EmptyString;
     });
   }
   return value;
@@ -78,7 +78,9 @@ function interpolate(value: any, ctx: any): any {
 export function evalCondition(cond: any, workflowData: any) {
   if (!cond) return true;
   const res = interpolate(cond, workflowData).trim().toLowerCase();
-  return res !== "" && res !== "false" && res !== "0";
+  return (
+    res !== constants.General.EmptyString && res !== "false" && res !== "0"
+  );
 }
 
 const nodeActionLogging = (node: Node<any>, stepInputs: WorkflowContext) => {
@@ -254,7 +256,10 @@ export function registerBuiltInActions(): void {
   registerAction(
     constants.workflowActions.START,
     async (systemCode: string, node, workflowData, txContext, safeApi: any) => {
-      var result = { error_code: -1, error_message: "" };
+      var result = {
+        error_code: -1,
+        error_message: constants.General.EmptyString,
+      };
       try {
         if (!node) {
           result.error_code = -1;
@@ -289,7 +294,10 @@ export function registerBuiltInActions(): void {
   registerAction(
     constants.workflowActions.END,
     async (systemCode: string, node, workflowData, txContext, safeApi: any) => {
-      var result = { error_code: -1, error_message: "" };
+      var result = {
+        error_code: -1,
+        error_message: constants.General.EmptyString,
+      };
       try {
         if (!node) {
           result.error_code = -1;
@@ -335,7 +343,10 @@ export function registerBuiltInActions(): void {
       txContext: Map<string, TransactionContext>,
       safeApi: any
     ) => {
-      var result = { error_code: -1, error_message: "" };
+      var result = {
+        error_code: -1,
+        error_message: constants.General.EmptyString,
+      };
       try {
         if (!node) {
           result.error_code = -1;
@@ -425,9 +436,13 @@ export function registerBuiltInActions(): void {
       txContext: any,
       safeApi: any
     ) => {
-      var result = { error_code: -1, error_message: "" };
+      var result = {
+        error_code: -1,
+        error_message: constants.General.EmptyString,
+      };
 
-      const userScript = node.data.design.scriptContents || "";
+      const userScript =
+        node.data.design.scriptContents || constants.General.EmptyString;
       const timeoutMs: number = node.data.design.timeoutMs || 50000;
 
       var res = null;
@@ -465,7 +480,10 @@ export function registerBuiltInActions(): void {
   registerAction(
     constants.workflowActions.SQL,
     async (systemCode: string, node, workflowData, txContext, safeApi: any) => {
-      var result = { error_code: -1, error_message: "" };
+      var result = {
+        error_code: -1,
+        error_message: constants.General.EmptyString,
+      };
       var dbConnectionPool: DBConnectionPool | null = null;
       let connection: any = null;
 
@@ -622,7 +640,10 @@ export function registerBuiltInActions(): void {
       txContext: any,
       safeApi: any
     ) => {
-      var result = { error_code: -1, error_message: "" };
+      var result = {
+        error_code: -1,
+        error_message: constants.General.EmptyString,
+      };
 
       if (!preNodeCheck(node, workflowData)) {
         postNodeCheck(node, workflowData);
@@ -754,7 +775,7 @@ function convertNamedParams(
     // 2. ${} 안의 일반 바인딩 변수 치환
     bindingStr = bindingStr.replace(/\$\{([^}]+)\}/g, (_, expr) => {
       const resolved = commonFunctions.getByPath(context, expr.trim());
-      return resolved !== undefined ? resolved : "";
+      return resolved !== undefined ? resolved : constants.General.EmptyString;
     });
 
     // 3. 치환이 끝난 문자열이 단일 경로라면 실제 값 반환
@@ -864,7 +885,10 @@ export class TransactionNode {
         ? Object.fromEntries(
             Object.entries(workflow.dbConnections).map(([id, type]) => [
               id,
-              { dbType: type as DBType, connectionName: "" }, // 타입 단언
+              {
+                dbType: type as DBType,
+                connectionName: constants.General.EmptyString,
+              }, // 타입 단언
             ])
           )
         : Object.fromEntries(
@@ -876,7 +900,7 @@ export class TransactionNode {
 
     for (const [connectionId, info] of Object.entries(connections)) {
       const dbType = info.dbType;
-      let connectionName = info.connectionName || "";
+      let connectionName = info.connectionName || constants.General.EmptyString;
       let connection;
 
       // ② 이미 주어진 connectionId가 있으면 사용
@@ -1011,7 +1035,7 @@ export async function executeWorkflow(
   txContext: Map<string, TransactionContext> = new Map(),
   isSubWorkflow = false // 하위 워크플로우 여부
 ) {
-  let result = { error_code: -1, error_message: "" };
+  let result = { error_code: -1, error_message: constants.General.EmptyString };
 
   const nodesList = workflow.nodes;
   const edgesList = workflow.edges;
@@ -1030,7 +1054,10 @@ export async function executeWorkflow(
     txContext: Map<string, TransactionContext> = new Map(),
     isSubWorkflow = false
   ) {
-    let result = { error_code: -1, error_message: "" };
+    let result = {
+      error_code: -1,
+      error_message: constants.General.EmptyString,
+    };
 
     const node = nodesList.find((n: any) => n.id === nodeId);
     if (!node) return result;
@@ -1097,7 +1124,11 @@ export async function saveWorkflow(
   workflowId: string,
   workflowData: any
 ) {
-  var result = { error_code: -1, error_message: "", workflow_data: {} };
+  var result = {
+    error_code: -1,
+    error_message: constants.General.EmptyString,
+    workflow_data: {},
+  };
 
   var sql = await dynamicSql.getSQL(
     systemCode,
@@ -1152,7 +1183,7 @@ export async function deleteWorkflow(
   userId: string,
   workflowId: string
 ) {
-  var result = { error_code: -1, error_message: "" };
+  var result = { error_code: -1, error_message: constants.General.EmptyString };
 
   var sql = await dynamicSql.getSQL(
     systemCode,
@@ -1285,7 +1316,11 @@ export async function getWorkflowByIdOrName(
     ]);
 
     // 2️⃣ 조회 결과 확인
-    var result = { error_code: -1, error_message: "", workflow_data: {} };
+    var result = {
+      error_code: -1,
+      error_message: constants.General.EmptyString,
+      workflow_data: {},
+    };
     if (!dbResult || dbResult.rowCount === 0) {
       return {
         error_code: -1,

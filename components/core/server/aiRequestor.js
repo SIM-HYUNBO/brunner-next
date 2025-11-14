@@ -77,8 +77,8 @@ export const requestPrompt = async (
 ) => {
   var result = {
     errror_code: -1,
-    error_message: "",
-    aiResultData: "",
+    error_message: constants.General.EmptyString,
+    aiResultData: constants.General.EmptyString,
   };
 
   const serverUrl = "https://api.openai.com/v1/chat/completions";

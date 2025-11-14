@@ -3,7 +3,7 @@
 import React from "react";
 
 export const initDefaultRuntimeData = (defaultRuntimeData) => {
-  defaultRuntimeData.src = "";
+  defaultRuntimeData.src = constants.General.EmptyString;
   defaultRuntimeData.positionAlign = "center"; // 기본 정렬은 중앙
 
   // font 관련 기본 설정
@@ -57,7 +57,9 @@ export function renderProperty(
         <label className="block mb-1">Binding Key:</label>
         <input
           type="text"
-          value={component.runtime_data?.bindingKey || ""}
+          value={
+            component.runtime_data?.bindingKey || constants.General.EmptyString
+          }
           onChange={(e) => updateRuntimeData("bindingKey", e.target.value)}
           className="w-full border border-gray-300 rounded p-2 mb-2"
         />
@@ -65,7 +67,7 @@ export function renderProperty(
         <label className="block mb-1">이미지 URL:</label>
         <input
           type="text"
-          value={component.runtime_data?.src || ""}
+          value={component.runtime_data?.src || constants.General.EmptyString}
           readOnly // 👉 직접 입력 불가!
           placeholder="파일을 선택하면 자동으로 채워집니다"
           className="w-full border border-gray-300 rounded p-2 mb-2 bg-gray-100 cursor-not-allowed"

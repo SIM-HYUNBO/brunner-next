@@ -1,3 +1,7 @@
+import * as constants from "@/components/core/constants";
+import type { DataTable, DatasetColumn } from "@/components/core/commonData";
+import type { JsonColumnType } from "./jsonDatasetEditorModal";
+
 export type JsonObject = { [key: string]: any };
 
 export interface ColumnSchema {
@@ -13,9 +17,6 @@ export interface JsonDatasetValidationResult {
     message: string;
   };
 }
-
-import type { DataTable, DatasetColumn } from "@/components/core/commonData";
-import type { JsonColumnType } from "./jsonDatasetEditorModal";
 
 export class JsonDatasetManager {
   private data: Record<string, JsonObject[]> = {};
@@ -94,7 +95,7 @@ export class JsonDatasetManager {
         return false;
       case "string":
       default:
-        return "";
+        return constants.General.EmptyString;
     }
   }
   // 컬럼 제거
@@ -184,7 +185,7 @@ export class JsonDatasetManager {
         : [];
 
       result.push({
-        table: tableKey.replace(`${nodeId}_`, ""),
+        table: tableKey.replace(`${nodeId}_`, constants.General.EmptyString),
         rows: tableData,
         columns,
       });
@@ -245,7 +246,10 @@ export class JsonDatasetManager {
     if (typeof this.data !== "object" || this.data === null) {
       return {
         valid: false,
-        error: { tableKey: "", message: "Top-level data is not an object" },
+        error: {
+          tableKey: constants.General.EmptyString,
+          message: "Top-level data is not an object",
+        },
       };
     }
 
@@ -281,7 +285,7 @@ export class JsonDatasetManager {
     const idxPart =
       err.arrayIndex !== undefined
         ? ` 배열 ${err.arrayIndex + 1}번째 객체`
-        : "";
+        : constants.General.EmptyString;
     const tablePart = err.tableKey ? `${err.tableKey}${idxPart}` : "데이터";
     return `${tablePart}: ${err.message}`;
   }

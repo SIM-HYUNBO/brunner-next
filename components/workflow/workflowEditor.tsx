@@ -156,7 +156,7 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
             outputs: commonFunctions.getDefaultOutputs(
               constants.workflowActions.START
             ),
-            scriptContents: "",
+            scriptContents: constants.General.EmptyString,
             scriptTimeoutMs: 5000,
           },
           run: { inputs: [], outputs: [] },
@@ -177,7 +177,7 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
             outputs: commonFunctions.getDefaultOutputs(
               constants.workflowActions.END
             ),
-            scriptContents: "",
+            scriptContents: constants.General.EmptyString,
             scriptTimeoutMs: 5000,
           },
           run: { inputs: [], outputs: [] },
@@ -191,7 +191,7 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
       workflowId: uuidv4(),
       workflowName: "New Workflow",
       workflowDescription: "New Workflow",
-      currentNodeId: "",
+      currentNodeId: constants.General.EmptyString,
       data: {
         design: { inputs: [], outputs: [] },
         run: { inputs: [], outputs: [] },
@@ -211,7 +211,7 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
 
   // SCRIPT 노드 속성
   const [selectedNodeScriptContents, setSelectedNodeScriptContents] =
-    useState<string>("");
+    useState<string>(constants.General.EmptyString);
   const [selectedNodeTimeoutMs, setSelectedNodeTimeoutMs] = useState(5000);
 
   // 모바일
@@ -242,34 +242,35 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
   // 선택 노드에 대한 동기화 작업
   const syncSelectedNode = (selectedNode: any) => {
     if (!selectedNode) {
-      setSelectedNodeScriptContents("");
+      setSelectedNodeScriptContents(constants.General.EmptyString);
       setSelectedNodeTimeoutMs(5000);
       return;
     }
 
     switch (selectedNode.data.actionName) {
       case constants.workflowActions.START:
-        setSelectedNodeScriptContents(""); // 스크립트 노드가 아니면 초기화
+        setSelectedNodeScriptContents(constants.General.EmptyString); // 스크립트 노드가 아니면 초기화
         setSelectedNodeTimeoutMs(0);
         break;
       case constants.workflowActions.END:
-        setSelectedNodeScriptContents(""); // 스크립트 노드가 아니면 초기화
+        setSelectedNodeScriptContents(constants.General.EmptyString); // 스크립트 노드가 아니면 초기화
         setSelectedNodeTimeoutMs(0);
         break;
       case constants.workflowActions.SCRIPT:
         setSelectedNodeScriptContents(
-          selectedNode.data.design.scriptContents ?? ""
+          selectedNode.data.design.scriptContents ??
+            constants.General.EmptyString
         );
         setSelectedNodeTimeoutMs(
           selectedNode.data.design.scriptTimeoutMs ?? 5000
         );
         break;
       case constants.workflowActions.BRANCH:
-        setSelectedNodeScriptContents(""); // 스크립트 노드가 아니면 초기화
+        setSelectedNodeScriptContents(constants.General.EmptyString); // 스크립트 노드가 아니면 초기화
         setSelectedNodeTimeoutMs(0);
         break;
       case constants.workflowActions.CALL:
-        setSelectedNodeScriptContents(""); // 스크립트 노드가 아니면 초기화
+        setSelectedNodeScriptContents(constants.General.EmptyString); // 스크립트 노드가 아니면 초기화
         setSelectedNodeTimeoutMs(0);
         break;
       default:
@@ -336,7 +337,7 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
         {
           ...connection,
           id,
-          data: { condition: "" },
+          data: { condition: constants.General.EmptyString },
           markerEnd: { type: "arrowclosed" },
           style: { stroke: "#ccc", strokeWidth: 2 },
         } as Edge<ConditionEdgeData>,
@@ -375,7 +376,7 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
             outputs: commonFunctions.getDefaultOutputs(
               constants.workflowActions.SCRIPT
             ),
-            scriptContents: "",
+            scriptContents: constants.General.EmptyString,
             scriptTimeoutMs: 0,
           },
           run: { inputs: [], outputs: [] },
@@ -414,7 +415,7 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
     const workflowJson = getWorkflowJson();
     if (!window) return;
 
-    const win = window.open("", "_blank");
+    const win = window.open(constants.General.EmptyString, "_blank");
     if (win) {
       win.document.write(
         `<pre style="white-space: pre-wrap; word-wrap: break-word;">${workflowJson}</pre>`
@@ -698,7 +699,7 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
           id: `edge_${edge.source}_${newNodeId}`,
           source: edge.source,
           target: newNodeId,
-          data: { condition: "" },
+          data: { condition: constants.General.EmptyString },
           markerEnd: { type: "arrowclosed" },
           style: { stroke: "#ccc", strokeWidth: 2 },
         },
@@ -706,7 +707,7 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
           id: `edge_${newNodeId}_${edge.target}`,
           source: newNodeId,
           target: edge.target,
-          data: { condition: "" },
+          data: { condition: constants.General.EmptyString },
           markerEnd: { type: "arrowclosed" },
           style: { stroke: "#ccc", strokeWidth: 2 },
         },

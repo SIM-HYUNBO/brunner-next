@@ -403,7 +403,7 @@ export default function EDocDesignerContainer({
     const baseComponent = { ...component };
     const defaultRuntimeData = {
       width: "auto",
-      height: "",
+      height: constants.General.EmptyString,
       forceNewLine: true,
     };
     switch (component.template_json.type) {
@@ -770,7 +770,8 @@ export default function EDocDesignerContainer({
                           text-center
                           general-text-color"
             >
-              {documentData.runtime_data.title || ""} : {documentData.id}
+              {documentData.runtime_data.title || constants.General.EmptyString}
+              : {documentData.id}
             </h1>
           )}
 

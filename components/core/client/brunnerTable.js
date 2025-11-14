@@ -7,6 +7,7 @@ import React, {
   useImperativeHandle,
   forwardRef,
 } from "react";
+import * as constants from "@/components/core/constants";
 import { useTable, useSortBy } from "react-table";
 import { Input, Button, Table } from "antd";
 
@@ -208,7 +209,7 @@ const BrunnerTable = forwardRef(
                                 ${
                                   column.headerClassName
                                     ? column.headerClassName
-                                    : ""
+                                    : constants.General.EmptyString
                                 }`,
                       })}
                     >
@@ -218,7 +219,7 @@ const BrunnerTable = forwardRef(
                           ? column.isSortedDesc
                             ? " 🔽"
                             : " 🔼"
-                          : ""}
+                          : constants.General.EmptyString}
                       </span>
                     </th>
                   ))}
@@ -324,7 +325,9 @@ const BrunnerTable = forwardRef(
             />
           )
       ) : (
-        <span onClick={() => setIsEditing(true)}>{String(value ?? "")}</span>
+        <span onClick={() => setIsEditing(true)}>
+          {String(value ?? constants.General.EmptyString)}
+        </span>
       );
     };
 
@@ -350,7 +353,7 @@ const BrunnerTable = forwardRef(
               .slice(0, 16);
             break;
           default:
-            initialInputState[header.accessor] = ``;
+            initialInputState[header.accessor] = constants.General.EmptyString;
             break;
         }
       });

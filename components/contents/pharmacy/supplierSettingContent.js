@@ -12,12 +12,14 @@ const SupplierSettingContent = () => {
   const { BrunnerMessageBox, openModal } = useModal();
 
   const tableRef = useRef();
-  const [userId, setUserId] = useState("");
-  const [supplierName, setSupplierName] = useState("");
+  const [userId, setUserId] = useState(constants.General.EmptyString);
+  const [supplierName, setSupplierName] = useState(
+    constants.General.EmptyString
+  );
   const [supplierParams, setSupplierParams] = useState({
-    url: "",
-    id: "",
-    pw: "",
+    url: constants.General.EmptyString,
+    id: constants.General.EmptyString,
+    pw: constants.General.EmptyString,
   });
   const [useFlag, setUseFlag] = useState(true);
   const [supplierList, setSupplierList] = useState([]);
@@ -59,9 +61,13 @@ const SupplierSettingContent = () => {
     }
 
     // 폼 초기화
-    setUserId("");
-    setSupplierName("");
-    setSupplierParams({ url: "", id: "", pw: "" });
+    setUserId(constants.General.EmptyString);
+    setSupplierName(constants.General.EmptyString);
+    setSupplierParams({
+      url: constants.General.EmptyString,
+      id: constants.General.EmptyString,
+      pw: constants.General.EmptyString,
+    });
     setUseFlag(true);
     setEditingSupplier(null);
 

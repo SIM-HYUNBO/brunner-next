@@ -452,8 +452,8 @@ const viewDailyOrder = async (txnId, jRequest) => {
     const select_TB_PHM_DAILY_ORDER_01 = await database.executeSQL(sql, [
       jRequest.userId,
       jRequest.orderDate,
-      jRequest.supplierName ?? "",
-      jRequest.productName ?? "",
+      jRequest.supplierName ?? constants.General.EmptyString,
+      jRequest.productName ?? constants.General.EmptyString,
     ]);
 
     if (select_TB_PHM_DAILY_ORDER_01.level == "error") {
@@ -521,8 +521,8 @@ const automaticOrder = async (txnId, jRequest) => {
     const select_TB_PHM_DAILY_ORDER_01 = await database.executeSQL(sql, [
       jRequest.userId,
       jRequest.orderDate,
-      jRequest.supplierName ?? "",
-      jRequest.productName ?? "",
+      jRequest.supplierName ?? constants.General.EmptyString,
+      jRequest.productName ?? constants.General.EmptyString,
     ]);
 
     if (select_TB_PHM_DAILY_ORDER_01.level == "error") {
@@ -551,7 +551,8 @@ const automaticOrder = async (txnId, jRequest) => {
             const matchSupplier =
               rowDailyOrder.supplier_name === rowSupplierInfo.supplier_name;
             const matchProduct =
-              !jRequest.productCode || jRequest.productCode === ""
+              !jRequest.productCode ||
+              jRequest.productCode === constants.General.EmptyString
                 ? true
                 : rowDailyOrder.product_code === jRequest.productCode;
 
@@ -612,7 +613,7 @@ async function runHanshinOrder(systemCode, user_id, supplier_params, rows) {
 
   const browser = await puppeteer.launch({ headless: false });
   const page = await browser.newPage();
-  var lastRowResult = "";
+  var lastRowResult = constants.General.EmptyString;
 
   // 1️⃣ 로그인
   await page.goto(loginUrl, { waitUntil: "domcontentloaded" });
@@ -675,15 +676,23 @@ async function runHanshinOrder(systemCode, user_id, supplier_params, rows) {
           trs.map((tr) => {
             const tds = tr.querySelectorAll("td");
             return {
-              kdCode: tds[0]?.innerText.trim() || "",
-              manufacturer: tds[1]?.innerText.trim() || "",
-              productName: tds[2]?.innerText.trim() || "",
-              standard: tds[3]?.innerText.trim() || "",
-              category: tds[4]?.innerText.trim() || "",
-              price: tds[5]?.innerText.trim() || "",
-              stock: tds[6]?.innerText.trim() || "",
-              quantityInput: tr.querySelector("input[type='text']")?.id || "",
-              productId: tr.querySelector("input[name^='pc_']")?.value || "",
+              kdCode: tds[0]?.innerText.trim() || constants.General.EmptyString,
+              manufacturer:
+                tds[1]?.innerText.trim() || constants.General.EmptyString,
+              productName:
+                tds[2]?.innerText.trim() || constants.General.EmptyString,
+              standard:
+                tds[3]?.innerText.trim() || constants.General.EmptyString,
+              category:
+                tds[4]?.innerText.trim() || constants.General.EmptyString,
+              price: tds[5]?.innerText.trim() || constants.General.EmptyString,
+              stock: tds[6]?.innerText.trim() || constants.General.EmptyString,
+              quantityInput:
+                tr.querySelector("input[type='text']")?.id ||
+                constants.General.EmptyString,
+              productId:
+                tr.querySelector("input[name^='pc_']")?.value ||
+                constants.General.EmptyString,
             };
           })
       );
@@ -693,7 +702,7 @@ async function runHanshinOrder(systemCode, user_id, supplier_params, rows) {
       // --- 1건만 주문 처리 ---
       if (
         searchResultRows.length === 0 ||
-        searchResultRows[0].productId === ""
+        searchResultRows[0].productId === constants.General.EmptyString
       ) {
         lastRowResult = "제품 검색 불가";
         throw new Error(lastRowResult);

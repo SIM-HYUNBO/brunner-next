@@ -23,7 +23,7 @@ export default function EDocDocumentPropertyEditor({
         <label className="general-text-bg-color">Title</label>
         <input
           type="text"
-          value={runtimeData.title || ""}
+          value={runtimeData.title || constants.General.EmptyString}
           onChange={(e) => updateProperty("title", e.target.value)}
           className="w-full border border-gray-300 rounded p-2 mb-3"
           placeholder="문서 제목 입력"

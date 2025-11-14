@@ -44,7 +44,9 @@ export const WorkflowDataModal: React.FC<WorkflowDataModalProps> = ({
   const [workflowData, setWorkflowData] = useState<any>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [selectedPath, setSelectedPath] = useState<string>("");
+  const [selectedPath, setSelectedPath] = useState<string>(
+    constants.General.EmptyString
+  );
   const containerRef = useRef<HTMLDivElement>(null);
 
   const fetchWorkflowData = async (id: string) => {
@@ -76,7 +78,7 @@ export const WorkflowDataModal: React.FC<WorkflowDataModalProps> = ({
     else {
       setWorkflowData(null);
       setError(null);
-      setSelectedPath("");
+      setSelectedPath(constants.General.EmptyString);
     }
   }, [open, workflowId]);
 
@@ -130,7 +132,9 @@ export const WorkflowDataModal: React.FC<WorkflowDataModalProps> = ({
       <div className="flex medium-text-bg-color justify-between items-center cursor-move p-2.5 rounded-t-lg">
         <h2 className="font-bold">
           Workflow JSON - {workflowId}
-          {currentNodeId ? ` / Node: ${currentNodeId}` : ""}
+          {currentNodeId
+            ? ` / Node: ${currentNodeId}`
+            : constants.General.EmptyString}
         </h2>
         <div className="flex gap-2">
           <Button

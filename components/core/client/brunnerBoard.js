@@ -12,7 +12,7 @@ function BrunnerBoard({ boardType }) {
   const [loading, setLoading] = useState(false);
   const { BrunnerMessageBox, openModal } = useModal();
   const [posts, setPosts] = useState([]);
-  const [postText, setPostText] = useState("");
+  const [postText, setPostText] = useState(constants.General.EmptyString);
 
   // 게시글 목록 조회
   const fetchPosts = async () => {
@@ -73,7 +73,7 @@ function BrunnerBoard({ boardType }) {
 
         if (jResponse.error_code === 0) {
           setPosts([jResponse.postInfo, ...posts]);
-          setPostText("");
+          setPostText(constants.General.EmptyString);
         } else {
           openModal(jResponse.error_message);
         }
@@ -366,11 +366,13 @@ function BoardContent({
   // {
   const [loading, setLoading] = useState(false);
   const { BrunnerMessageBox, openModal } = useModal();
-  const [commentText, setCommentText] = useState("");
+  const [commentText, setCommentText] = useState(constants.General.EmptyString);
   const [isEditingPost, setIsEditingPost] = useState(false);
   const [editedPostText, setEditedPostText] = useState(post.post_content);
   const [editingCommentId, setEditingCommentId] = useState(null);
-  const [editedCommentText, setEditedCommentText] = useState("");
+  const [editedCommentText, setEditedCommentText] = useState(
+    constants.General.EmptyString
+  );
 
   const handleCommentChange = (e) => {
     setCommentText(e.target.value);
@@ -379,7 +381,7 @@ function BoardContent({
   const handleAddComment = () => {
     if (commentText.trim()) {
       onAddComment(post.post_id, commentText);
-      setCommentText("");
+      setCommentText(constants.General.EmptyString);
     }
   };
 

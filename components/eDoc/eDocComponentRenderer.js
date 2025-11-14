@@ -24,7 +24,7 @@ export default function DocComponentRenderer({
 }) {
   const selectedClass = isSelected
     ? "outline outline-2 outline-blue-500 rounded bg-blue-50"
-    : "";
+    : constants.General.EmptyString;
 
   // 내부 텍스트 정렬 (content 정렬용)
   const textAlign =
@@ -46,7 +46,7 @@ export default function DocComponentRenderer({
         ? "flex justify-start"
         : positionAlign === "center"
         ? "flex justify-center"
-        : "";
+        : constants.General.EmptyString;
   }
 
   const handleComponentClick = (e) => {

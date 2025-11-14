@@ -222,14 +222,14 @@ export const DBConnectionManagerModal: React.FC<
                 onClick={() =>
                   setEditing({
                     system_code: `${userInfo.getCurrentSystemCode()}`,
-                    id: "",
-                    name: "",
+                    id: constants.General.EmptyString,
+                    name: constants.General.EmptyString,
                     type: "postgres",
-                    host: "",
+                    host: constants.General.EmptyString,
                     port: 5432,
-                    username: "",
-                    password: "",
-                    database_name: "",
+                    username: constants.General.EmptyString,
+                    password: constants.General.EmptyString,
+                    database_name: constants.General.EmptyString,
                   })
                 }
                 className="medium-text-bg-color border mb-4 w-full py-2 rounded"

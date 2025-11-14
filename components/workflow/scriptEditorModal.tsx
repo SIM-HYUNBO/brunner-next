@@ -5,6 +5,7 @@ import { githubLight, githubDark } from "@uiw/codemirror-theme-github";
 import { getIsDarkMode } from "@/components/core/client/frames/darkModeToggleButton";
 import type { ScriptNodeDesignData } from "./types/nodeTypes";
 import { Input, Button, Table } from "antd";
+import * as constants from "@/components/core/constants";
 
 interface ScriptEditorModalProps {
   open: boolean;
@@ -59,7 +60,7 @@ export const ScriptEditorModal: React.FC<ScriptEditorModalProps> = ({
     const handleMouseUp = () => {
       isResizing.current = false;
       isDragging.current = false;
-      document.body.style.userSelect = "";
+      document.body.style.userSelect = constants.General.EmptyString;
     };
 
     if (!window) return;

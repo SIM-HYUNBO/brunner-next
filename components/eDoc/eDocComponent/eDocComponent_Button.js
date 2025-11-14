@@ -76,7 +76,7 @@ const RenderComponent = (props) => {
 
 export const initDefaultRuntimeData = (defaultRuntimeData) => {
   defaultRuntimeData.buttonText = "버튼";
-  defaultRuntimeData.actionName = "";
+  defaultRuntimeData.actionName = constants.General.EmptyString;
   defaultRuntimeData.buttonColor = "#4F46E5";
   defaultRuntimeData.textColor = "#FFFFFF";
   defaultRuntimeData.padding = "10px 20px";
@@ -113,7 +113,9 @@ export function renderProperty(
         <label>버튼 텍스트:</label>
         <input
           type="text"
-          value={component.runtime_data?.buttonText || ""}
+          value={
+            component.runtime_data?.buttonText || constants.General.EmptyString
+          }
           onChange={(e) => updateRuntimeData("buttonText", e.target.value)}
           className="w-full border border-gray-300 rounded p-2 mb-2"
         />
