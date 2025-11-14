@@ -17,10 +17,8 @@ import * as pharmacy from "./biz/pharmacy/pharmacy";
 
 export const config = {
   api: {
+    bodyParser: false, // multipart 업로드 하려면 무조건 끄기
     responseLimit: "100mb",
-    bodyParser: {
-      sizeLimit: "100mb",
-    },
   },
 };
 

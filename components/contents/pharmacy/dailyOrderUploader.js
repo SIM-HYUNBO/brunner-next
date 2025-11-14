@@ -67,7 +67,12 @@ export function DailyOrderUploader() {
 
     try {
       setLoading(true);
-      const jResponse = await RequestServer(jRequest);
+      const jResponse = await RequestServer(
+        jRequest,
+        constants.httpMethod.POST,
+        `/api/backendServer/`,
+        constants.General.EmptyString
+      );
       setLoading(false);
       openModal(jResponse.error_message);
     } catch (error) {
