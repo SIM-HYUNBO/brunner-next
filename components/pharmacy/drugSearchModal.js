@@ -18,11 +18,8 @@ export default function DrugSearchModal({ isOpen, onClose, onSelect }) {
   const orderQtyRef = useRef(1);
   const [loading, setLoading] = useState(false);
 
-  // 모달 크기
   const [modalHeight, setModalHeight] = useState(500);
   const [modalWidth, setModalWidth] = useState(800);
-
-  // 컬럼 폭 상태
   const [columnsWidth, setColumnsWidth] = useState([200, 300, 300]);
 
   const searchDrug = async (searchType, searchTerm) => {
@@ -65,9 +62,40 @@ export default function DrugSearchModal({ isOpen, onClose, onSelect }) {
     setColumnsWidth(newCols);
   };
 
-  // 화면 가운데 초기 위치
   const initialX = window.innerWidth / 2 - modalWidth / 2;
   const initialY = window.innerHeight / 2 - modalHeight / 2;
+
+  const resizableTitle = (title, idx) => ({
+    title: (
+      <Resizable
+        width={columnsWidth[idx]}
+        height={0}
+        handle={<span className="react-resizable-handle" />}
+        onResize={(e, data) => handleResize(idx, e, data)}
+        draggableOpts={{ enableUserSelectHack: false }}
+      >
+        <div style={{ width: columnsWidth[idx] }}>{title}</div>
+      </Resizable>
+    ),
+  });
+
+  const columns = [
+    {
+      dataIndex: "edi_code",
+      ...resizableTitle("Product Code", 0),
+      width: columnsWidth[0],
+    },
+    {
+      dataIndex: "item_name",
+      ...resizableTitle("Product Name", 1),
+      width: columnsWidth[1],
+    },
+    {
+      dataIndex: "entp_name",
+      ...resizableTitle("Company Name", 2),
+      width: columnsWidth[2],
+    },
+  ];
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
@@ -124,35 +152,7 @@ export default function DrugSearchModal({ isOpen, onClose, onSelect }) {
         {/* 테이블 */}
         <div className="flex-1 px-6 overflow-hidden">
           <Table
-            columns={[
-              {
-                title: "Product Code",
-                dataIndex: "edi_code",
-                width: columnsWidth[0],
-                onHeaderCell: (_, idx = 0) => ({
-                  width: columnsWidth[0],
-                  onResize: (e, data) => handleResize(0, e, data),
-                }),
-              },
-              {
-                title: "Product Name",
-                dataIndex: "item_name",
-                width: columnsWidth[1],
-                onHeaderCell: (_, idx = 1) => ({
-                  width: columnsWidth[1],
-                  onResize: (e, data) => handleResize(1, e, data),
-                }),
-              },
-              {
-                title: "Company Name",
-                dataIndex: "entp_name",
-                width: columnsWidth[2],
-                onHeaderCell: (_, idx = 2) => ({
-                  width: columnsWidth[2],
-                  onResize: (e, data) => handleResize(2, e, data),
-                }),
-              },
-            ]}
+            columns={columns}
             dataSource={filteredData}
             rowKey="item_seq"
             pagination={false}
