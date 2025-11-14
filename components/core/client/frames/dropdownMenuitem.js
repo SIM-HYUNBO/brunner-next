@@ -6,7 +6,13 @@ import * as commonFunctions from "@/components/core/commonFunctions";
 // 왼쪽 메뉴 전체 구성 반환 함수
 export async function getDropdownMenuItems() {
   let items = [
-    { label: "Home", href: "/", type: "item" },
+    {
+      label: `${Object.keys(obj).find(
+        (key) => obj[key] === userInfo.getCurrentSystemCode()
+      )} Home`,
+      href: "/",
+      type: "item",
+    },
     { label: "Contact", href: "/mainPages/contact", type: "item" },
   ];
 
