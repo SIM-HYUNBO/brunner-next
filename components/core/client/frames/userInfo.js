@@ -175,9 +175,9 @@ export const getCurrentSystemCode = () => {
 };
 
 export const getCurrentSystemName = () => {
-  return userInfo.getCurrentSystemCode()
+  return getCurrentSystemCode()
     ? Object.keys(constants.SystemCode).find(
-        (key) => constants.SystemCode[key] === userInfo.getCurrentSystemCode()
+        (key) => constants.SystemCode[key] === getCurrentSystemCode()
       )
     : ``;
 };
