@@ -66,6 +66,12 @@ export function DailyOrderUploader() {
     setLoading(true);
 
     try {
+      const uploadHour =
+        new Date().getFullYear().toString() +
+        String(new Date().getMonth() + 1).padStart(2, "0") +
+        String(new Date().getDate()).padStart(2, "0") +
+        String(new Date().getHours()).padStart(2, "0");
+
       for (let i = 0; i < totalBatches; i++) {
         const batchData = excelData.slice(i * batchSize, (i + 1) * batchSize);
 
@@ -73,6 +79,7 @@ export function DailyOrderUploader() {
           commandName: constants.commands.PHARMACY_UPLOAD_DAILY_ORDER,
           systemCode: userInfo.getCurrentSystemCode(),
           userId: userInfo.getLoginUserId(),
+          uploadHour: uploadHour,
           excelData: batchData,
         };
 

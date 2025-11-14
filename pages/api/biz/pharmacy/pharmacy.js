@@ -366,11 +366,7 @@ const uploadDailyOrder = async (txnId, jRequest) => {
       return jResponse;
     }
 
-    const uploadHour =
-      new Date().getFullYear().toString() +
-      String(new Date().getMonth() + 1).padStart(2, "0") +
-      String(new Date().getDate()).padStart(2, "0") +
-      String(new Date().getHours()).padStart(2, "0");
+    const uploadHour = jRequest.uploadHour;
 
     sql = await dynamicSql.getSQL(
       jRequest.systemCode,
