@@ -518,7 +518,6 @@ const automaticOrder = async (txnId, jRequest) => {
       jRequest.userId,
       jRequest.orderDate,
       jRequest.supplierName ?? constants.General.EmptyString,
-      jRequest.productName ?? constants.General.EmptyString,
     ]);
 
     if (select_TB_PHM_DAILY_ORDER_01.level == "error") {

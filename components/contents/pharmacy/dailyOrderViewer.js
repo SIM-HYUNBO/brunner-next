@@ -154,7 +154,6 @@ export default function DailyOrderViewer() {
       userId: userInfo.getLoginUserId(),
       orderDate: orderDate.replace(/-/g, "") || "",
       supplierName: supplierName?.trim() || null,
-      productName: productName?.trim() || null,
     };
 
     try {
@@ -186,7 +185,6 @@ export default function DailyOrderViewer() {
       userId: userInfo.getLoginUserId(),
       orderDate: orderDate.replace(/-/g, "") || "",
       supplierName: supplierName?.trim() || null,
-      productName: productName?.trim() || null,
     };
 
     try {
