@@ -7,8 +7,8 @@ import * as commonFunctions from "@/components/core/commonFunctions";
 export async function getDropdownMenuItems() {
   let items = [
     {
-      label: `${Object.keys(obj).find(
-        (key) => obj[key] === userInfo.getCurrentSystemCode()
+      label: `${Object.keys(constants.SystemCode).find(
+        (key) => constants.SystemCode[key] === userInfo.getCurrentSystemCode()
       )} Home`,
       href: "/",
       type: "item",
