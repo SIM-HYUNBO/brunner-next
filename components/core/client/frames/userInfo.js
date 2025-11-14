@@ -173,3 +173,11 @@ export const getCurrentSystemCode = () => {
   }
   return constants.General.EmptyString;
 };
+
+export const getCurrentSystemName = () => {
+  return userInfo.getCurrentSystemCode()
+    ? Object.keys(constants.SystemCode).find(
+        (key) => constants.SystemCode[key] === userInfo.getCurrentSystemCode()
+      )
+    : ``;
+};
