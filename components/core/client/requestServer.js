@@ -4,27 +4,19 @@ import * as constants from "@/components/core/constants";
 export async function RequestServer(
   jRequest,
   method = constants.httpMethod.POST,
-  serverUrl = `/api/backendServer/`,
-  ContentType = `application/json`
+  serverUrl = `/api/backendServer/`
 ) {
   let res = null;
   let jResponse = null;
-  let params =
-    ContentType == constants.General.EmptyString
-      ? {
-          method: method,
-          body: JSON.stringify(jRequest),
-        }
-      : {
-          method: method,
-          headers: {
-            "Content-Type": ContentType,
-          },
-          body: JSON.stringify(jRequest),
-        };
 
   try {
-    res = await fetch(serverUrl, params);
+    res = await fetch(serverUrl, {
+      method: method,
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(jRequest),
+    });
 
     jResponse = res.json();
     return jResponse;
