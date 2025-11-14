@@ -6,28 +6,76 @@ import * as userInfo from "@/components/core/client/frames/userInfo";
 import Loading from "@/components/core/client/loading";
 import DrugSearchModal from "@/components/pharmacy/drugSearchModal";
 import { useModal } from "@/components/core/client/brunnerMessageBox";
+import { Input, Button, Table } from "antd";
+
+const FilteringConditions = React.memo(
+  ({
+    orderDate,
+    setOrderDate,
+    supplierName,
+    setSupplierName,
+    supplierList,
+    onSearch,
+    onOrder,
+  }) => {
+    return (
+      <div className="flex flex-wrap items-end gap-4">
+        <div className="flex flex-col">
+          <label className="font-medium mb-1">
+            Order Date <span className="text-red-500">*</span>
+          </label>
+          <input
+            type="date"
+            className="border rounded p-2"
+            value={orderDate}
+            onChange={(e) => setOrderDate(e.target.value)}
+          />
+        </div>
+
+        <div className="flex flex-col">
+          <label className="font-medium mb-1">Supplier Name</label>
+          <select
+            className="border rounded p-2 w-[200px]"
+            value={supplierName}
+            onChange={(e) => setSupplierName(e.target.value)}
+          >
+            <option value=""></option>
+            {supplierList.map((s) => (
+              <option key={s.supplier_name} value={s.supplier_name}>
+                {s.supplier_name}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <Button
+          onClick={onSearch}
+          className="bg-indigo-500 text-white px-4 py-2 rounded hover:bg-indigo-600"
+        >
+          Search
+        </Button>
+
+        <Button
+          onClick={onOrder}
+          className="bg-indigo-500 text-white px-4 py-2 rounded hover:bg-indigo-600"
+        >
+          Order
+        </Button>
+      </div>
+    );
+  }
+);
 
 export default function DailyOrderViewer() {
   const { BrunnerMessageBox, openModal } = useModal();
   const tableRef = useRef();
   const [editingRow, setEditingRow] = useState(null);
-
   const [supplierList, setSupplierList] = useState([]);
 
-  // 🔹 조회조건 상태
-  const orderDateRef = useRef(constants.General.EmptyString); // 필수
-  const [orderDate, setOrderDate] = useState(orderDateRef.current.value);
-
-  const supplierNameRef = useRef(constants.General.EmptyString); // 필수
-  const [supplierName, setSupplierName] = useState(
-    supplierNameRef.current.value
-  );
-
-  const productNameRef = useRef(constants.General.EmptyString); // 필수
-  const [productName, setProductName] = useState(productNameRef.current.value);
+  const [orderDate, setOrderDate] = useState("");
+  const [supplierName, setSupplierName] = useState("");
 
   const [loading, setLoading] = useState(false);
-
   const [showDrugSearchModal, setShowDrugSearchModal] = useState(false);
 
   const onCloseDrugSearchModal = () => {
@@ -36,16 +84,11 @@ export default function DailyOrderViewer() {
   };
 
   const onSelectDrugSearchModal = async (selectedData, orderQty) => {
-    if (
-      !selectedData?.edi_code ||
-      selectedData?.edi_code == constants.General.EmptyString
-    ) {
-      selectedData = null;
+    if (!selectedData?.edi_code || selectedData.edi_code === "") {
       openModal(constants.messages.NO_DATA_SELECTED);
       return;
     }
 
-    // 행 데이터 수정
     if (editingRow) {
       const jRequest = {
         commandName: constants.commands.PHARMACY_DAILY_ORDER_UPDATE_ONE,
@@ -69,8 +112,13 @@ export default function DailyOrderViewer() {
     }
   };
 
-  // 🔹 컬럼 정의
   const columns = [
+    {
+      Header: "No",
+      accessor: "rowNumber",
+      type: "number",
+      Cell: ({ row }) => row.index + 1, // 0부터 시작하니까 +1
+    },
     { Header: "Order Date", accessor: "upload_hour", type: "text" },
     { Header: "Product Code", accessor: "product_code", type: "text" },
     { Header: "Product Name", accessor: "product_name", type: "text" },
@@ -81,7 +129,6 @@ export default function DailyOrderViewer() {
   ];
 
   useEffect(() => {
-    // 🔹 공급처 목록 불러오기
     const fetchSuppliers = async () => {
       const jRequest = {
         commandName: constants.commands.PHARMACY_USER_SUPPLIER_SELECT_ALL,
@@ -100,111 +147,29 @@ export default function DailyOrderViewer() {
     fetchSuppliers();
   }, []);
 
-  /* 조회조건 */
-  const FilteringConditions = () => {
-    return (
-      <div className="flex flex-wrap items-end gap-4">
-        <div className="flex flex-col">
-          <label className="font-medium mb-1">
-            Order Date <span className="text-red-500">*</span>
-          </label>
-          <input
-            type="date"
-            ref={orderDateRef}
-            className="border rounded p-2"
-          />
-        </div>
-
-        <div className="flex flex-col">
-          <label className="font-medium mb-1">Supplier Name</label>
-          <select
-            ref={supplierNameRef}
-            className="border rounded p-2 w-[200px]"
-            defaultValue={constants.General.EmptyString}
-          >
-            <option value={supplierName}></option>
-            {supplierList.map((s) => (
-              <option key={s.supplier_name} value={s.supplier_name}>
-                {s.supplier_name}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        <div className="flex flex-col">
-          <label className="font-medium mb-1">Product Name</label>
-          <input
-            type="text"
-            ref={productNameRef}
-            className="border rounded p-2"
-            placeholder="Optional"
-          />
-        </div>
-
-        <button
-          onClick={() => tableRef.current.refreshTableData()}
-          className="bg-indigo-500 text-white px-4 py-2 rounded hover:bg-indigo-600"
-        >
-          Search
-        </button>
-        <button
-          onClick={async () => {
-            await requestAutomaticDailyOrder();
-            tableRef.current.refreshTableData();
-          }}
-          className="bg-indigo-500 text-white px-4 py-2 rounded hover:bg-indigo-600"
-        >
-          Order
-        </button>
-      </div>
-    );
-  };
-
-  // 🔹 서버에서 Daily Order 조회
   const fetchTableData = async () => {
-    const formattedOrderDate = orderDateRef.current
-      ? orderDateRef.current.value.replace(/-/g, constants.General.EmptyString)
-      : constants.General.EmptyString;
-    const formattedSupplier = supplierNameRef.current.value?.trim() || null;
-    const formattedProduct = productNameRef.current.value?.trim() || null;
-
     const jRequest = {
       commandName: constants.commands.PHARMACY_VIEW_DAILY_ORDER,
       systemCode: userInfo.getCurrentSystemCode(),
       userId: userInfo.getLoginUserId(),
-      orderDate: formattedOrderDate,
-      supplierName: formattedSupplier,
-      productName: formattedProduct,
+      orderDate: orderDate.replace(/-/g, "") || "",
+      supplierName: supplierName?.trim() || null,
+      productName: productName?.trim() || null,
     };
-
-    const prevOrderDate = orderDateRef.current.value;
-    const prevSupplierName = supplierNameRef.current.value;
-    const prevProductName = productNameRef.current.value;
 
     try {
       setLoading(true);
       const jResponse = await RequestServer(jRequest);
       setLoading(false);
-      openModal(jResponse.error_message);
-
-      orderDateRef.current.value = prevOrderDate;
-      productNameRef.current.value = prevProductName;
-      supplierNameRef.current.value = prevSupplierName;
-
+      if (jResponse?.error_message) openModal(jResponse.error_message);
       return jResponse.data?.rows || [];
-    } catch (error) {
+    } catch (err) {
       setLoading(false);
-      openModal(error.message);
+      openModal(err.message);
     }
   };
 
-  const addNewRowData = async (newData) => {
-    console.log("새 데이터 추가:", newData);
-    tableRef.current.refreshTableData();
-  };
-
-  // ✅ editRowData 클릭 시 검색 모달창 표시
-  const editRowData = async (row) => {
+  const editRowData = (row) => {
     setEditingRow(row);
     setShowDrugSearchModal(true);
   };
@@ -215,62 +180,67 @@ export default function DailyOrderViewer() {
   };
 
   const requestAutomaticDailyOrder = async () => {
-    const formattedOrderDate = orderDateRef.current
-      ? orderDateRef.current.value.replace(/-/g, constants.General.EmptyString)
-      : constants.General.EmptyString;
-    const formattedSupplier = supplierNameRef.current.value?.trim() || null;
-    const formattedProduct = productNameRef.current.value?.trim() || null;
-
     const jRequest = {
       commandName: constants.commands.PHARMACY_AUTOMATIC_ORDER,
       systemCode: userInfo.getCurrentSystemCode(),
       userId: userInfo.getLoginUserId(),
-      orderDate: formattedOrderDate,
-      supplierName: formattedSupplier,
-      productName: formattedProduct,
+      orderDate: orderDate.replace(/-/g, "") || "",
+      supplierName: supplierName?.trim() || null,
+      productName: productName?.trim() || null,
     };
 
     try {
       setLoading(true);
       const jResponse = await RequestServer(jRequest);
       setLoading(false);
-      openModal(jResponse.error_message);
-
+      if (jResponse?.error_message) openModal(jResponse.error_message);
       return jResponse.data?.rows || [];
-    } catch (error) {
+    } catch (err) {
       setLoading(false);
-      openModal(error.message);
+      openModal(err.message);
     }
   };
 
   const requestOrderByRow = async (row) => {
-    const formattedOrderDate = row.values.upload_hour;
-    const formattedSupplier = row.values.supplier_name?.trim() || null;
-    const formattedProduct = row.values.product_name?.trim() || null;
-    const productCode = row.values.product_code;
-
     const jRequest = {
       commandName: constants.commands.PHARMACY_AUTOMATIC_ORDER,
       systemCode: userInfo.getCurrentSystemCode(),
       userId: userInfo.getLoginUserId(),
-      orderDate: formattedOrderDate,
-      supplierName: formattedSupplier,
-      productName: formattedProduct,
-      productCode: productCode,
+      orderDate: row.values.upload_hour,
+      supplierName: row.values.supplier_name?.trim() || null,
+      productName: row.values.product_name?.trim() || null,
+      productCode: row.values.product_code,
     };
 
     try {
       setLoading(true);
       const jResponse = await RequestServer(jRequest);
       setLoading(false);
-      openModal(jResponse.error_message);
-
+      if (jResponse?.error_message) openModal(jResponse.error_message);
       return jResponse.data?.rows || [];
-    } catch (error) {
+    } catch (err) {
       setLoading(false);
-      openModal(error.message);
+      openModal(err.message);
     }
   };
+
+  const filteringConditions = useCallback(
+    () => (
+      <FilteringConditions
+        orderDate={orderDate}
+        setOrderDate={setOrderDate}
+        supplierName={supplierName}
+        setSupplierName={setSupplierName}
+        supplierList={supplierList}
+        onSearch={() => tableRef.current.refreshTableData()}
+        onOrder={async () => {
+          await requestAutomaticDailyOrder();
+          tableRef.current.refreshTableData();
+        }}
+      />
+    ),
+    [orderDate, supplierName, productName, supplierList]
+  );
 
   return (
     <div className="w-full px-2">
@@ -285,11 +255,10 @@ export default function DailyOrderViewer() {
         />
       )}
 
-      {/* 테이블 */}
       <BrunnerTable
         ref={tableRef}
         tableTitle="Daily Order List"
-        FilteringConditions={FilteringConditions}
+        FilteringConditions={filteringConditions} // 함수형으로 전달
         columnHeaders={columns}
         fetchTableDataHandler={fetchTableData}
         editRowDataHandler={editRowData}
