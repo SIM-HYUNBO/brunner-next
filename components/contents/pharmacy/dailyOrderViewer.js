@@ -239,7 +239,7 @@ export default function DailyOrderViewer() {
         }}
       />
     ),
-    [orderDate, supplierName, productName, supplierList]
+    [orderDate, supplierName, supplierList]
   );
 
   return (
