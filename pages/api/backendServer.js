@@ -26,15 +26,23 @@ export const config = {
  * 최종 서버 핸들러
  */
 export default async (req, res) => {
-  // ✅ 서버 준비 상태 대기
   await initializeServer();
   await waitUntilReady();
 
   const remoteIp = req.headers["x-forwarded-for"] || req.socket.remoteAddress;
-  let jRequest =
-    req.method === constants.httpMethod.GET
-      ? JSON.parse(req.params.requestJson)
-      : req.body;
+
+  // GET 요청 처리
+  let jRequest;
+  if (req.method === constants.httpMethod.GET) {
+    throw new Error(constants.messages.SERVER_NOT_SUPPORTED_METHOD);
+  } else {
+    // POST/PUT 등은 bodyParser가 꺼졌으므로 직접 읽기
+    const buffers = [];
+    for await (const chunk of req) buffers.push(chunk);
+    const rawBody = Buffer.concat(buffers).toString();
+    jRequest = JSON.parse(rawBody);
+  }
+
   const txnId = await generateTxnId();
   jRequest._txnId = txnId;
   const commandName = jRequest.commandName || constants.General.EmptyString;
@@ -43,10 +51,10 @@ export default async (req, res) => {
   let exception = null;
 
   logger.warn(`START TXN ${commandName} from ${remoteIp}`);
-
   const startTxnTime = Date.now();
+
   try {
-    const response = await executeService(req.method, req);
+    const response = await executeService(jRequest);
     jResponse = commonFunctions.isJsonObject(response)
       ? response
       : JSON.parse(response.toString());
@@ -62,14 +70,6 @@ export default async (req, res) => {
 
     res.json(jResponse);
     logger.warn(`END TXN ${commandName} in ${durationMs} ms`);
-
-    // saveTxnHistoryAsync(
-    //   jRequest.systemCode,
-    //   remoteIp,
-    //   txnId,
-    //   jRequest,
-    //   jResponse
-    // );
   }
 };
 
@@ -132,11 +132,7 @@ const moduleMap = {
   [constants.modulePrefix.pharmacy]: pharmacy.executeService,
 };
 
-const executeService = async (method, req) => {
-  const jRequest =
-    method === constants.httpMethod.GET
-      ? JSON.parse(req.params.requestJson)
-      : req.body;
+const executeService = async (jRequest) => {
   const commandName = jRequest.commandName;
 
   if (!commandName) {
