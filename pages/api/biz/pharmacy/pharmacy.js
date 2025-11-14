@@ -708,6 +708,11 @@ async function runHanshinOrder(systemCode, user_id, supplier_params, rows) {
         throw new Error(lastRowResult);
       }
 
+      if (searchResultRows.length > 1) {
+        lastRowResult = "제품 중복 검색";
+        throw new Error(lastRowResult);
+      }
+
       const item = searchResultRows[0];
       const { stock, quantityInput: qtyId } = item;
 
