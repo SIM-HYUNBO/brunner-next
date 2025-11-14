@@ -56,24 +56,41 @@ export function DailyOrderUploader() {
     setExcelData(result);
   };
 
-  // 📤 서버로 업로드
+  // 서버로 10개씩 나눠서 업로드
   const handleUpload = async () => {
-    const jRequest = {
-      commandName: constants.commands.PHARMACY_UPLOAD_DAILY_ORDER,
-      systemCode: userInfo.getCurrentSystemCode(),
-      userId: userInfo.getLoginUserId(),
-      excelData: excelData,
-    };
+    if (!excelData || excelData.length === 0) return;
+
+    const batchSize = 10; // 10개씩 나누기
+    const totalBatches = Math.ceil(excelData.length / batchSize);
+
+    setLoading(true);
 
     try {
-      setLoading(true);
-      const jResponse = await RequestServer(jRequest);
-      setLoading(false);
-      openModal(jResponse.error_message);
+      for (let i = 0; i < totalBatches; i++) {
+        const batchData = excelData.slice(i * batchSize, (i + 1) * batchSize);
+
+        const jRequest = {
+          commandName: constants.commands.PHARMACY_UPLOAD_DAILY_ORDER,
+          systemCode: userInfo.getCurrentSystemCode(),
+          userId: userInfo.getLoginUserId(),
+          excelData: batchData,
+        };
+
+        const jResponse = await RequestServer(jRequest);
+
+        // 요청 결과 확인 (원하면 여기서 오류 처리)
+        if (jResponse.error_code) {
+          console.error(`Batch ${i + 1} error:`, jResponse.error_message);
+          openModal(`Batch ${i + 1} 실패: ${jResponse.error_message}`);
+        }
+      }
+
+      openModal("모든 배치 업로드 완료");
     } catch (error) {
-      setLoading(false);
-      openModal(error.message);
       console.error(`message:${error.message}\n stack:${error.stack}\n`);
+      openModal(error.message);
+    } finally {
+      setLoading(false);
     }
   };
 
