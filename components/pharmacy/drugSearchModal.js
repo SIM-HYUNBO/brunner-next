@@ -166,12 +166,12 @@ export default function DrugSearchModal({ isOpen, onClose, onSelect }) {
         </div>
 
         {/* Order Qty */}
-        <div className="absolute left-0 w-full bottom-16 p-4 flex justify-end space-x-2 bg-gray-50 border-t">
+        <div className="absolute left-0 w-full bottom-16 p-4 flex justify-end space-x-2 border-t">
           <label className="leading-7 text-sm text-gray-400">Order Qty</label>
           <input
             ref={orderQtyRef}
             type="number"
-            className="px-4 py-2 rounded bg-gray-300 hover:bg-gray-400"
+            className="px-4 py-2 rounded general-text-bg-color"
             defaultValue={1}
           />
         </div>
