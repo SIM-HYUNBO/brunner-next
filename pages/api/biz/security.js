@@ -156,6 +156,7 @@ const signup = async (txnId, jRequest) => {
       jRequest.registerNo,
       jRequest.userType,
       jRequest.registerName,
+      new Date(new Date().getTime() + 1 * 60 * 60 * 1000), // 만료시간은 한시간 뒤 시간
     ]);
 
     logger.info(`\nRESULT:rowCount=\n${insert_TB_COR_USER_MST_01.rowCount}\n`);
@@ -215,6 +216,14 @@ const signin = async (txnId, jRequest) => {
         `RESULT:\n${JSON.stringify(select_TB_COR_USER_MST_02.rows[0])}\n`
       );
 
+      // 계정 사용기간 만료 체크
+      const expireTime = select_TB_COR_USER_MST_02.rows[0].expire_time;
+      if (!expireTime || expireTime < new Date()) {
+        jResponse.error_code = -1;
+        jResponse.error_message = constants.messages.FAILED_TO_SIGN_IN_EXPIRED;
+        return jResponse;
+      }
+
       // 비밀번호 비교
       const storedHashedPassword = select_TB_COR_USER_MST_02.rows[0].password;
 
@@ -257,11 +266,11 @@ const signin = async (txnId, jRequest) => {
         );
       } else {
         jResponse.error_code = -1;
-        jResponse.error_message = `Incorrect password`;
+        jResponse.error_message = constants.messages.INCORRECT_PASSWORD;
       }
     } else {
       jResponse.error_code = -2;
-      jResponse.error_message = `Incorrect user info`;
+      jResponse.error_message = constants.messages.INCORRECT_USER_INFO;
     }
   } catch (e) {
     logger.error(e);
