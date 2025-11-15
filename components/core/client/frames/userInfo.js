@@ -4,6 +4,7 @@ import SignoutButton from "./signoutButton";
 import DarkModeToggleButton from "./darkModeToggleButton";
 import { useState, useEffect } from "react";
 import * as constants from "@/components/core/constants";
+import Link from "next/link";
 
 export default function UserInfo({
   handleLogout,
@@ -53,7 +54,9 @@ export default function UserInfo({
       {/* 가운데 고정: 사용자 이름 */}
       <div className="absolute inset-y-0 left-1/2 flex items-center -translate-x-1/2">
         {getLoginUserId() && (
-          <span className="text-base text-center">{userName}</span>
+          <Link href="/mainPages/userAccount" className="text-base text-center">
+            {userName}
+          </Link>
         )}
       </div>
 

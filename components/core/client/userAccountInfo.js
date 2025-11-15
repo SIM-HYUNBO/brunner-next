@@ -20,11 +20,11 @@ const UserAccountInfo = () => {
     if (!isAdmin) {
       // 일반 사용자 → 본인 정보 조회
       setSearchUserId(loginUserId);
-      fetchUserInfo(userInfo.getCurrentSystemCode(), loginUserId);
+      searchUserInfo(userInfo.getCurrentSystemCode(), loginUserId);
     }
   }, []);
 
-  const fetchUserInfo = async (systemCode, userId) => {
+  const searchUserInfo = async (systemCode, userId) => {
     if (!userId)
       return await openModal(`${constants.messages.REQUIRED_FIELD} [User id]`);
 
@@ -72,7 +72,7 @@ const UserAccountInfo = () => {
       await openModal(jResponse.error_message);
 
       if (jResponse.error_code === 0) {
-        await fetchUserInfo(jRequest.systemCode, userData.user_id);
+        await searchUserInfo(jRequest.systemCode, userData.user_id);
       }
     } catch (err) {
       await openModal(err);
@@ -157,12 +157,16 @@ const UserAccountInfo = () => {
             value={searchUserId}
             readOnly={!isAdmin}
             onChange={(e) => setSearchUserId(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter")
+                searchUserInfo(userInfo.getCurrentSystemCode(), searchUserId);
+            }}
           />
           {isAdmin && (
             <Button
               className="flex items-center ml-2"
               onClick={() =>
-                fetchUserInfo(userInfo.getCurrentSystemCode(), searchUserId)
+                searchUserInfo(userInfo.getCurrentSystemCode(), searchUserId)
               }
               disabled={loading}
             >

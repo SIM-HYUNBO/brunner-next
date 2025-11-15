@@ -14,14 +14,6 @@ export async function getDropdownMenuItems() {
     { label: "Contact", href: "/mainPages/contact", type: "item" },
   ];
 
-  if (userInfo.isLogin()) {
-    items.push({
-      label: "User Account",
-      href: "/mainPages/userAccount",
-      type: "item",
-    });
-  }
-
   if (userInfo.isAdminUser()) {
     items.push(
       { label: "Service SQL", href: "/mainPages/serviceSql", type: "item" },
