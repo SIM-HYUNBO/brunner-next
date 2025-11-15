@@ -26,7 +26,7 @@ const UserAccountInfo = () => {
 
   const fetchUserInfo = async (systemCode, userId) => {
     if (!userId)
-      return openModal(`${constants.messages.REQUIRED_FIELD} [User id]`);
+      return await openModal(`${constants.messages.REQUIRED_FIELD} [User id]`);
 
     try {
       const jRequest = {
@@ -39,14 +39,14 @@ const UserAccountInfo = () => {
       const jResponse = await RequestServer(jRequest);
 
       if (jResponse.error_code === 0) {
-        openModal(constants.messages.SUCCESS_FINISHED);
+        await openModal(constants.messages.SUCCESS_FINISHED);
         setUserData(jResponse.data.length > 0 ? jResponse.data[0] : null);
       } else {
-        openModal(jResoponse.error_message);
+        await openModal(jResponse.error_message);
         setUserData(null);
       }
     } catch (err) {
-      openModal(err);
+      await openModal(err.messages);
     }
     setLoading(false);
   };
@@ -59,6 +59,7 @@ const UserAccountInfo = () => {
       const jRequest = {
         commandName: constants.commands.SECURITY_USER_INFO_UPDATE_ONE,
         systemCode: userInfo.getCurrentSystemCode(),
+        loginUserId: userInfo.getLoginUserId(),
         userId: userData.user_id,
         userName: userData.user_name,
         address: userData.address,
@@ -68,15 +69,13 @@ const UserAccountInfo = () => {
       };
 
       const jResponse = await RequestServer(jRequest);
+      await openModal(jResponse.error_message);
 
       if (jResponse.error_code === 0) {
-        openModal(constants.messages.SUCCESS_SAVED);
-        fetchUserInfo(userData.system_code, userData.user_id);
-      } else {
-        openModal(jResponse.error_message);
+        await fetchUserInfo(jRequest.systemCode, userData.user_id);
       }
     } catch (err) {
-      openModal(err);
+      await openModal(err);
     }
 
     setSaving(false);
@@ -153,7 +152,7 @@ const UserAccountInfo = () => {
         <div className="flex flex-row mt-5">
           <label className="flex w-[120px]">User ID</label>
           <Input
-            className="flex ml-3"
+            className="flex"
             type="text"
             value={searchUserId}
             readOnly={!isAdmin}
