@@ -337,19 +337,13 @@ const executeService = async (txnId, jRequest) => {
       }
       // ❌ 정의되지 않은 commandName
       default: {
-        jResponse = {
-          error_code: -1,
-          error_message: `지원되지 않는 commandName입니다: ${jRequest.commandName}`,
-        };
-        break;
+        throw new Error(constants.messages.SERVER_NOT_SUPPORTED_METHOD);
       }
     }
   } catch (error) {
+    jResponse.error_code = -1;
+    jResponse.error_message = error.message;
     logger.error(`message:${error.message}\n stack:${error.stack}\n`);
-    jResponse = {
-      error_code: -1,
-      error_message: `${constants.messages.FAILED_TO_EXECUTE_WORKFLOW} ${error.message}`,
-    };
   } finally {
     return jResponse;
   }

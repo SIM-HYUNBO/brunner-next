@@ -21,9 +21,10 @@ const executeService = async (txnId, jRequest) => {
         jResponse = await deleteOne(jRequest.systemCode, txnId, jRequest);
         break;
       default:
-        throw new Error(constants.messages.SERVER_NOT_SUPPORTED_MODULE);
+        throw new Error(constants.messages.SERVER_NOT_SUPPORTED_METHOD);
     }
   } catch (error) {
+    jResponse.error_code = -1;
     jResponse.error_message = error.message;
   } finally {
     return jResponse;

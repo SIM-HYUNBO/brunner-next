@@ -39,9 +39,12 @@ const executeService = async (txnId, jRequest) => {
         jResponse = await updateDailyOrderOne(txnId, jRequest);
         break;
       default:
+        throw new Error(constants.messages.SERVER_NOT_SUPPORTED_METHOD);
         break;
     }
   } catch (error) {
+    jResponse.error_code = -1;
+    jResponse.error_message = error.message;
     logger.error(`message:${error.message}\n stack:${error.stack}\n`);
   } finally {
     return jResponse;

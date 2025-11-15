@@ -31,10 +31,16 @@ const executeService = async (txnId, jRequest) => {
       case constants.commands.SECURITY_SEND_EMAIL_AUTHCODE:
         jResponse = await sendEMailAuthCode(txnId, jRequest);
         break;
+      case constants.commands.SECURITY_USER_INFO_SELECT_ONE:
+        jResponse = await selectAccount(txnId, jRequest);
+        break;
       default:
+        throw new Error(constants.messages.SERVER_NOT_SUPPORTED_METHOD);
         break;
     }
   } catch (error) {
+    jResponse.error_code = -1;
+    jResponse.error_message = error.message;
     logger.error(`message:${error.message}\n stack:${error.stack}\n`);
   } finally {
     return jResponse;
@@ -628,6 +634,45 @@ const verifyEMail = (email) => {
   const re =
     /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
   return re.test(String(email).toLowerCase());
+};
+
+const selectAccount = async (txnId, jRequest) => {
+  var jResponse = {};
+
+  try {
+    jResponse.commanaName = jRequest.commandName;
+
+    var sql = null;
+    sql = await dynamicSql.getSQL(
+      jRequest.systemCode,
+      `select_TB_COR_USER_MST`,
+      4
+    );
+    var select_TB_COR_USER_MST_04 = await database.executeSQL(sql, [
+      jRequest.systemCode,
+      jRequest.userId,
+    ]);
+
+    jResponse.error_code = 0;
+    jResponse.error_message = constants.messages.SUCCESS_FINISHED;
+
+    if (select_TB_COR_USER_MST_04.rows.length == 1) {
+      logger.info(
+        `RESULT:\n${JSON.stringify(select_TB_COR_USER_MST_04.rows[0])}\n`
+      );
+      jResponse.data = select_TB_COR_USER_MST_04.rows;
+    } else {
+      jResponse.error_code = -2;
+      jResponse.error_message = constants.messages.INCORRECT_USER_INFO;
+    }
+  } catch (e) {
+    logger.error(e);
+    jResponse.error_code = -3; // exception
+    jResponse.error_message = e.message;
+  } finally {
+    logger.warn(`return ${JSON.stringify(jResponse)}\n`);
+    return jResponse;
+  }
 };
 
 export { executeService };

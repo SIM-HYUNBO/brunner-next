@@ -108,6 +108,8 @@ export const commands = {
   SECURITY_SIGNOUT: `security.signout`,
   SECURITY_SIGNUP: `security.signup`,
   SECURITY_SIGNIN: `security.signin`,
+  SECURITY_USER_INFO_SELECT_ONE: `security.userInfoSelectOne`,
+  SECURITY_USER_INFO_UPDATE_ONE: `security.userInfoUpdateOne`,
 
   POST_INFO_INSERT_ONE: `postInfo.insertOne`,
   POST_INFO_UPDATE_ONE: `postInfo.updateOne`,
