@@ -39,7 +39,7 @@ const UserAccountInfo = () => {
       const jResponse = await RequestServer(jRequest);
 
       if (jResponse.error_code === 0) {
-        await openModal(constants.messages.SUCCESS_FINISHED);
+        // await openModal(constants.messages.SUCCESS_FINISHED);
         setUserData(jResponse.data.length > 0 ? jResponse.data[0] : null);
       } else {
         await openModal(jResponse.error_message);
