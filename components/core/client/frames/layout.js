@@ -10,28 +10,7 @@ import { RequestServer } from "@/components/core/client/requestServer";
 import * as constants from "@/components/core/constants";
 import * as userInfo from "@/components/core/client/frames/userInfo";
 
-export default function Layout({ children, reloadSignal, triggermenureload }) {
-  const [documentList, setDocumentList] = useState([]);
-
-  const reloadMenu = async () => {
-    const jRequest = {
-      commandName: constants.commands.EDOC_USER_DOCUMENT_SELECT_ALL,
-      systemCode: userInfo.getCurrentSystemCode(),
-      userId: userInfo.getLoginUserId(),
-    };
-    const jResponse = await RequestServer(jRequest);
-
-    if (jResponse.error_code === 0) {
-      setDocumentList(jResponse.documentList || []);
-    } else {
-      console.error(jResponse.error_message);
-    }
-  };
-
-  useEffect(() => {
-    reloadMenu();
-  }, [reloadSignal]);
-
+export default function Layout({ children }) {
   const GoogleAdScript = () => {
     return (
       <>
@@ -51,7 +30,7 @@ export default function Layout({ children, reloadSignal, triggermenureload }) {
 
   return (
     <>
-      <BodySection triggermenureload={triggermenureload}>
+      <BodySection>
         <Head>
           <title>Noesis Pelagos - Brunner-Next</title>
           <meta
@@ -77,14 +56,9 @@ export default function Layout({ children, reloadSignal, triggermenureload }) {
         <div className="Layout">
           <div className="flex flex-col w-full">
             <main className="flex-grow md:overflow-x: auto overflow-y:auto py-10">
-              <Header
-                triggermenureload={triggermenureload}
-                reloadSignal={reloadSignal}
-              />
+              <Header />
               {React.Children.map(children, (child) =>
-                React.isValidElement(child)
-                  ? React.cloneElement(child, { triggermenureload })
-                  : child
+                React.isValidElement(child) ? React.cloneElement(child) : child
               )}
               <Footer />
             </main>

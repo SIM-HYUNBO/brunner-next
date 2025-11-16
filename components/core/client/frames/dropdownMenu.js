@@ -4,18 +4,37 @@ import { useEffect, useState, useRef } from "react";
 import Link from "next/link";
 import { getDropdownMenuItems } from "@/components/core/client/frames/dropdownMenuitem";
 import UserInfo from "@/components/core/client/frames/userInfo";
-import { Input, Button, Table } from "antd";
+import * as userInfo from "@/components/core/client/frames/userInfo";
+import { Button } from "antd";
 import * as constants from "@/components/core/constants";
 
-export default function DropdownMenu({ reloadSignal, triggermenureload }) {
+export const loadMenu = async () => {
+  var items = userInfo.getMenuItems();
+
+  if (!items) {
+    items = await getDropdownMenuItems();
+
+    const sections = items
+      .filter((item) => item.type === "section")
+      .reduce((acc, cur) => {
+        acc[cur.label] = false;
+        return acc;
+      }, {});
+
+    return { items, sections };
+  } else {
+    return items;
+  }
+};
+
+/* -----------------------------------------------------------
+   🔹 DropdownMenu 컴포넌트
+   ----------------------------------------------------------- */
+export default function DropdownMenu() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [menuItems, setMenuItems] = useState([]);
   const [openSections, setOpenSections] = useState({});
   const menuRef = useRef(null);
-
-  useEffect(() => {
-    loadMenu();
-  }, [reloadSignal]);
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -38,16 +57,10 @@ export default function DropdownMenu({ reloadSignal, triggermenureload }) {
     }));
   };
 
-  const loadMenu = async () => {
-    const items = await getDropdownMenuItems();
-    const sections = items
-      .filter((item) => item.type === "section")
-      .reduce((acc, cur) => {
-        acc[cur.label] = false;
-        return acc;
-      }, {});
-    setOpenSections(sections);
+  const openMenu = async () => {
+    const { items, sections } = await loadMenu();
     setMenuItems(items);
+    setOpenSections(sections);
   };
 
   const getSectionLabel = (item) =>
@@ -65,9 +78,9 @@ export default function DropdownMenu({ reloadSignal, triggermenureload }) {
     return depth;
   };
 
+  // 로그아웃 시 메뉴 리로드
   const handleLogout = async () => {
-    if (triggermenureload) triggermenureload();
-    const items = await getDropdownMenuItems();
+    const { items } = await loadMenu();
     setMenuItems(items);
   };
 
@@ -77,7 +90,7 @@ export default function DropdownMenu({ reloadSignal, triggermenureload }) {
       <Button
         className="p-2 rounded-md transition-colors general-text-bg-color"
         onClick={async () => {
-          await loadMenu();
+          await openMenu();
           setMobileMenuOpen(!mobileMenuOpen);
         }}
         aria-label="메뉴 열기"
@@ -115,13 +128,11 @@ export default function DropdownMenu({ reloadSignal, triggermenureload }) {
                 return (
                   <li
                     key={idx}
-                    className="cursor-pointer select-none flex items-center justify-between px-4 py-2 rounded-md  transition-colors"
+                    className="cursor-pointer select-none flex items-center justify-between px-4 py-2 rounded-md transition-colors"
                     onClick={() => toggleSection(item.label)}
                   >
                     <span>{item.label}</span>
-                    <span className={constants.General.EmptyString}>
-                      {openSections[item.label] ? "▼" : "▶"}
-                    </span>
+                    <span>{openSections[item.label] ? "▼" : "▶"}</span>
                   </li>
                 );
               }
@@ -136,7 +147,7 @@ export default function DropdownMenu({ reloadSignal, triggermenureload }) {
                   <Link
                     href={item.href}
                     onClick={() => setMobileMenuOpen(false)}
-                    className={`semi-text-bg-color block px-4 py-2 text-sm rounded-md transition-colors`}
+                    className="semi-text-bg-color block px-4 py-2 text-sm rounded-md transition-colors"
                     style={{ paddingLeft: `${16 * (depth + 1)}px` }}
                   >
                     {item.label}
@@ -149,10 +160,7 @@ export default function DropdownMenu({ reloadSignal, triggermenureload }) {
           <hr className={constants.General.EmptyString} />
 
           <div className="p-3 semi-text-bg-color">
-            <UserInfo
-              handleLogout={handleLogout}
-              triggermenureload={triggermenureload}
-            />
+            <UserInfo handleLogout={handleLogout} />
           </div>
         </div>
       )}

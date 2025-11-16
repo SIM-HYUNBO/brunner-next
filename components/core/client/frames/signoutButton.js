@@ -8,7 +8,7 @@ import * as constants from "@/components/core/constants";
 import * as userInfo from "@/components/core/client/frames/userInfo";
 import { Button } from "antd";
 
-export default function SignoutButton({ handleLogout, triggermenureload }) {
+export default function SignoutButton({ handleLogout }) {
   const router = useRouter();
   const { BrunnerMessageBox, openModal } = useModal();
   const [loading, setLoading] = useState(false);
@@ -25,7 +25,6 @@ export default function SignoutButton({ handleLogout, triggermenureload }) {
 
     if (jResponse.error_code === 0) {
       localStorage.removeItem("userInfo");
-      triggermenureload?.();
       handleLogout?.();
       router.push("/");
     } else {

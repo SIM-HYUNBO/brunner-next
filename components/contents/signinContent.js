@@ -7,6 +7,7 @@ import { RequestServer } from "@/components/core/client/requestServer";
 import * as constants from "@/components/core/constants";
 import Loading from "@/components/core/client/loading";
 import { Button } from "antd";
+import { loadMenu } from "../core/client/frames/dropdownMenu";
 
 // 외부에서 import 가능하도록 export
 
@@ -45,7 +46,15 @@ export default function SigninContent() {
 
       if (jResponse.error_code === 0) {
         jResponse.systemCode = jRequest.systemCode;
-        localStorage.setItem("userInfo", JSON.stringify(jResponse));
+
+        // 사용자 기본정보를 먼저 저장하고 나서
+        const userInfo = jResponse;
+        localStorage.setItem("userInfo", JSON.stringify(userInfo));
+
+        // 메뉴를 추가로 저장
+        userInfo.menuItems = await loadMenu();
+        localStorage.setItem("userInfo", JSON.stringify(userInfo));
+
         router.push("/");
       } else {
         openModal(jResponse.error_message);

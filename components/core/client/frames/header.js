@@ -4,15 +4,12 @@ import Image from "next/image";
 import DropdownMenu from "@/components/core/client/frames/dropdownMenu";
 import * as constants from "@/components/core/constants";
 
-export default function Header({ triggermenureload, reloadSignal }) {
+export default function Header() {
   return (
     <header className="header">
       {/* 햄버거 메뉴 */}
       <div className="absolute top-0 right-0 z-50">
-        <DropdownMenu
-          triggermenureload={triggermenureload}
-          reloadSignal={reloadSignal}
-        />
+        <DropdownMenu />
       </div>
 
       {/* 전체 너비로 확장된 컨테이너 */}

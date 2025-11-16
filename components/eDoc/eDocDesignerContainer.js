@@ -30,10 +30,7 @@ import * as VideoComponent from "@/components/eDoc/eDocComponent/eDocComponent_V
 import * as LinkTextComponent from "@/components/eDoc/eDocComponent/eDocComponent_LinkText";
 import * as LottieComponent from "@/components/eDoc/eDocComponent/eDocComponent_Lottie";
 
-export default function EDocDesignerContainer({
-  documentId,
-  triggermenureload,
-}) {
+export default function EDocDesignerContainer({ documentId }) {
   const { BrunnerMessageBox, openModal } = useModal();
 
   const [loading, setLoading] = useState(false);
@@ -287,7 +284,6 @@ export default function EDocDesignerContainer({
     setLoading(false);
 
     if (jResponse.error_code === 0) {
-      if (triggermenureload) triggermenureload();
       openModal(constants.messages.SUCCESS_SAVED);
       setDocumentData(jResponse.documentData);
       setCurrentPageIdx(0);
@@ -316,7 +312,6 @@ export default function EDocDesignerContainer({
     setLoading(false);
 
     if (jResponse.error_code === 0) {
-      if (triggermenureload) triggermenureload();
       openModal(constants.messages.SUCCESS_DELETED);
       setDocumentData({
         id: null,

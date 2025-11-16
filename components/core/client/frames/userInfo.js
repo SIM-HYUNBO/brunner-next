@@ -6,11 +6,7 @@ import { useState, useEffect } from "react";
 import * as constants from "@/components/core/constants";
 import Link from "next/link";
 
-export default function UserInfo({
-  handleLogout,
-  reloadSignal,
-  triggermenureload,
-}) {
+export default function UserInfo({ handleLogout }) {
   const [currentSystemCode, setCurrentSystemCode] = useState(undefined);
   const [userName, setUserName] = useState(constants.General.EmptyString);
 
@@ -28,21 +24,6 @@ export default function UserInfo({
       }
     }
   }, []);
-
-  // reloadSignal이 바뀔 때 userInfo 갱신
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      try {
-        const userInfoStr = localStorage.getItem("userInfo");
-        if (userInfoStr) {
-          const userInfo = JSON.parse(userInfoStr);
-          setUserName(userInfo?.userName || constants.General.EmptyString);
-        }
-      } catch (e) {
-        console.error("Invalid userInfo JSON:", e);
-      }
-    }
-  }, [reloadSignal]);
 
   return (
     <div className="relative w-full h-2 mt-1">
@@ -62,10 +43,7 @@ export default function UserInfo({
 
       {/* 오른쪽 고정: 로그아웃 버튼 */}
       <div className="absolute inset-y-0 right-0 flex items-center pr-2">
-        <SignoutButton
-          handleLogout={handleLogout}
-          triggermenureload={triggermenureload}
-        />
+        <SignoutButton handleLogout={handleLogout} />
       </div>
     </div>
   );
@@ -183,4 +161,17 @@ export const getCurrentSystemName = () => {
         (key) => constants.SystemCode[key] === getCurrentSystemCode()
       )
     : ``;
+};
+
+export const getMenuItems = () => {
+  if (typeof window !== "undefined") {
+    try {
+      const userInfoStr = localStorage.getItem("userInfo");
+      const userInfo = JSON.parse(userInfoStr);
+      return userInfo?.menuItems;
+    } catch {
+      return undefined;
+    }
+  }
+  return undefined;
 };
