@@ -14,11 +14,28 @@ export async function getDropdownMenuItems() {
     { label: "Contact", href: "/mainPages/contact", type: "item" },
   ];
 
+  const adminSectionLabel = "Admin's pages";
   if (userInfo.isAdminUser()) {
+    items.push({ label: adminSectionLabel, type: "section" });
     items.push(
-      { label: "Service SQL", href: "/mainPages/serviceSql", type: "item" },
-      { label: "Brunner e-Doc", href: "/mainPages/eDocDesigner", type: "item" },
-      { label: "Brunner Flow", href: "/mainPages/workflow", type: "item" }
+      {
+        label: "Service SQL",
+        href: "/mainPages/serviceSql",
+        type: "item",
+        parent: "Admin's pages",
+      },
+      {
+        label: "Brunner e-Doc",
+        href: "/mainPages/eDocDesigner",
+        type: "item",
+        parent: "Admin's pages",
+      },
+      {
+        label: "Brunner Flow",
+        href: "/mainPages/workflow",
+        type: "item",
+        parent: "Admin's pages",
+      }
     );
   }
 
@@ -33,11 +50,12 @@ export async function getDropdownMenuItems() {
         label: doc.runtime_data?.title || "(제목 없음)",
         href: hRef,
         type: "item",
-        // parent: sectionLabel,
       });
     });
 
   if (userInfo.getLoginUserId()) {
+    const userSectionLabel = `${userInfo.getLoginName()}'s pages`;
+    items.push({ label: userSectionLabel, type: "section" });
     documentList = await commonFunctions.getUsersDocumentList(
       userInfo.getCurrentSystemCode()
     );
@@ -51,6 +69,7 @@ export async function getDropdownMenuItems() {
           label: doc.runtime_data?.title || "(제목 없음)",
           href: hRef,
           type: "item",
+          parent: userSectionLabel,
         });
       }
     });

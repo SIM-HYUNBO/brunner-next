@@ -35,7 +35,10 @@ export default function UserInfo({ handleLogout }) {
       {/* 가운데 고정: 사용자 이름 */}
       <div className="absolute inset-y-0 left-1/2 flex items-center -translate-x-1/2">
         {getLoginUserId() && (
-          <Link href="/mainPages/userAccount" className="text-base text-center">
+          <Link
+            href="/mainPages/userAccount"
+            className="semi-text-bg-color text-center"
+          >
             {userName}
           </Link>
         )}

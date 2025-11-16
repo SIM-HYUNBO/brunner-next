@@ -123,8 +123,6 @@ export async function getDocumentData(systemCode, userId, documentId) {
 }
 
 export const getAdminDocumentList = async (systemCode) => {
-  // if (!userInfo.isLogin()) return;
-
   const jRequest = {
     commandName: constants.commands.EDOC_ADMIN_DOCUMENT_SELECT_ALL,
     systemCode: systemCode,
@@ -133,9 +131,6 @@ export const getAdminDocumentList = async (systemCode) => {
 
   const jResponse = await RequestServer(jRequest);
   if (jResponse.error_code === 0 && Array.isArray(jResponse.documentList)) {
-    // const sectionLabel = "Admin's pages";
-    // items.push({ label: sectionLabel, type: "section" });
-
     return jResponse.documentList;
   }
 
