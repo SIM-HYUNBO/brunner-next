@@ -128,7 +128,7 @@ export default function DropdownMenu() {
                 return (
                   <li
                     key={idx}
-                    className="cursor-pointer select-none flex items-center justify-between px-4 py-2 rounded-md transition-colors"
+                    className="cursor-pointer select-none flex items-center justify-between px-4 py-2 rounded-md semi-text-bg-color"
                     onClick={() => toggleSection(item.label)}
                   >
                     <span>{item.label}</span>
