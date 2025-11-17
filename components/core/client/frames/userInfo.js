@@ -9,6 +9,7 @@ import Link from "next/link";
 export default function UserInfo({ handleLogout }) {
   const [currentSystemCode, setCurrentSystemCode] = useState(undefined);
   const [userName, setUserName] = useState(constants.General.EmptyString);
+  const [profileImage, setProfileImage] = useState(undefined);
 
   // 최초 렌더링 시 userInfo 로딩
   useEffect(() => {
@@ -18,6 +19,7 @@ export default function UserInfo({ handleLogout }) {
         if (userInfoStr) {
           const userInfo = JSON.parse(userInfoStr);
           setUserName(userInfo?.userName || constants.General.EmptyString);
+          setProfileImage(userInfo?.profileImageBase64);
         }
       } catch (e) {
         console.error("Invalid userInfo JSON:", e);
@@ -26,20 +28,30 @@ export default function UserInfo({ handleLogout }) {
   }, []);
 
   return (
-    <div className="relative w-full h-2 mt-1">
+    <div className="relative w-full h-8 mt-1">
       {/* 왼쪽 고정: 다크모드 토글 */}
       <div className="absolute inset-y-0 left-0 flex items-center pl-2">
         <DarkModeToggleButton />
       </div>
 
-      {/* 가운데 고정: 사용자 이름 */}
-      <div className="absolute inset-y-0 left-1/2 flex items-center -translate-x-1/2">
+      {/* 가운데 고정: 프로필 이미지 + 사용자 이름 */}
+      <div className="absolute inset-y-0 left-1/2 flex items-center -translate-x-1/2 gap-2">
         {getLoginUserId() && (
           <Link
             href="/mainPages/userAccount"
-            className="semi-text-bg-color text-center"
+            className="semi-text-bg-color text-center flex items-center gap-2"
           >
-            {userName}
+            {/* 프로필 이미지 */}
+            {profileImage && (
+              <img
+                src={profileImage}
+                alt="profile"
+                className="w-6 h-6 rounded-full object-cover border"
+              />
+            )}
+
+            {/* 사용자 이름 */}
+            <span>{userName}</span>
           </Link>
         )}
       </div>
@@ -172,6 +184,19 @@ export const getMenuItems = () => {
       const userInfoStr = localStorage.getItem("userInfo");
       const userInfo = JSON.parse(userInfoStr);
       return userInfo?.menuItems;
+    } catch {
+      return undefined;
+    }
+  }
+  return undefined;
+};
+
+export const getLoginProfileImage = () => {
+  if (typeof window !== "undefined") {
+    try {
+      const userInfoStr = localStorage.getItem("userInfo");
+      const userInfo = JSON.parse(userInfoStr);
+      return userInfo?.profileImageBase64;
     } catch {
       return undefined;
     }

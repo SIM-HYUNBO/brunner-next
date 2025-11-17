@@ -256,6 +256,8 @@ const signin = async (txnId, jRequest) => {
         jResponse.registerNo = select_TB_COR_USER_MST_02.rows[0].register_no;
         jResponse.registerName =
           select_TB_COR_USER_MST_02.rows[0].register_name;
+        jResponse.profileImageBase64 =
+          select_TB_COR_USER_MST_02.rows[0].profile_image_base64;
 
         // New User login report mail send
         mailSender.sendMail(
@@ -727,6 +729,7 @@ const updateAccount = async (txnId, jRequest) => {
         jRequest.address,
         jRequest.phoneNumber,
         jRequest.emailId,
+        jRequest.profileImageBase64,
       ]);
       nEffected = update_TB_COR_USER_MST_04.rowCount;
     } else {

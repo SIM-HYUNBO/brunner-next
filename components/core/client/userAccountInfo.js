@@ -4,7 +4,7 @@ import * as userInfo from "@/components/core/client/frames/userInfo";
 import { useModal } from "@/components/core/client/brunnerMessageBox";
 import * as constants from "@/components/core/constants";
 import Loading from "@/components/core/client/loading";
-import { Input, Button, Table } from "antd";
+import { Input, Button } from "antd";
 
 const UserAccountInfo = () => {
   const { BrunnerMessageBox, openModal } = useModal();
@@ -13,12 +13,15 @@ const UserAccountInfo = () => {
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
 
+  // 🔥 프로필 이미지 신규 추가
+  const [profilePreview, setProfilePreview] = useState(null); // 화면 미리보기용
+  const [profileFile, setProfileFile] = useState(null); // 서버 전송용
+
   const isAdmin = userInfo.isAdminUser();
   const loginUserId = userInfo.getLoginUserId();
 
   useEffect(() => {
     if (!isAdmin) {
-      // 일반 사용자 → 본인 정보 조회
       setSearchUserId(loginUserId);
       searchUserInfo(userInfo.getCurrentSystemCode(), loginUserId);
     }
@@ -39,8 +42,15 @@ const UserAccountInfo = () => {
       const jResponse = await RequestServer(jRequest);
 
       if (jResponse.error_code === 0) {
-        // await openModal(constants.messages.SUCCESS_FINISHED);
-        setUserData(jResponse.data.length > 0 ? jResponse.data[0] : null);
+        const data = jResponse.data.length > 0 ? jResponse.data[0] : null;
+        setUserData(data);
+
+        // 🔥 프로필 이미지 미리보기 반영
+        if (data?.profile_image_base64) {
+          setProfilePreview(data.profile_image_base64);
+        } else {
+          setProfilePreview(null);
+        }
       } else {
         await openModal(jResponse.error_message);
         setUserData(null);
@@ -48,7 +58,20 @@ const UserAccountInfo = () => {
     } catch (err) {
       await openModal(err.messages);
     }
+
     setLoading(false);
+  };
+
+  // 🔥 프로필 이미지 선택 시
+  const handleImageChange = (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setProfileFile(file);
+
+    const reader = new FileReader();
+    reader.onload = () => setProfilePreview(reader.result);
+    reader.readAsDataURL(file);
   };
 
   const updateUserAccount = async () => {
@@ -56,16 +79,30 @@ const UserAccountInfo = () => {
 
     setSaving(true);
     try {
+      // 🔥 프로필 이미지 base64 생성 (파일 업로드 방식이면 multipart로 변경 가능)
+      let base64Image = null;
+      if (profileFile) {
+        base64Image = await new Promise((resolve) => {
+          const reader = new FileReader();
+          reader.onload = () => resolve(reader.result);
+          reader.readAsDataURL(profileFile);
+        });
+      }
+
       const jRequest = {
         commandName: constants.commands.SECURITY_USER_INFO_UPDATE_ONE,
         systemCode: userInfo.getCurrentSystemCode(),
         loginUserId: userInfo.getLoginUserId(),
+
         userId: userData.user_id,
         userName: userData.user_name,
         address: userData.address,
         phoneNumber: userData.phone_number,
         emailId: userData.email_id,
         expireTime: userData.expire_time,
+
+        // 🔥 새로 추가된 파라미터
+        profileImageBase64: base64Image || userData.profile_image || null,
       };
 
       const jResponse = await RequestServer(jRequest);
@@ -81,10 +118,9 @@ const UserAccountInfo = () => {
     setSaving(false);
   };
 
-  // editable 여부 판단 로직
   const isEditable = (key) => {
     if (isAdmin) {
-      return key === "expire_time"; // 관리자 → expire_time만 수정 가능
+      return key === "expire_time";
     } else {
       return ["user_name", "address", "phone_number", "email_id"].includes(key);
     }
@@ -92,7 +128,6 @@ const UserAccountInfo = () => {
 
   const renderField = (key, value) => {
     const labelMap = {
-      // user_id: "User Id",
       user_name: "User Name",
       address: "Address",
       phone_number: "Phone No",
@@ -101,10 +136,8 @@ const UserAccountInfo = () => {
     };
 
     const label = labelMap[key] || key;
-
     const editable = isEditable(key);
 
-    // expire_time은 date input
     if (key === "expire_time") {
       const dateValue = value ? value.substring(0, 10) : "";
       return (
@@ -128,7 +161,6 @@ const UserAccountInfo = () => {
         <div className="flex flex-row mt-2" key={key}>
           <label className="flex w-[120px]">{label}</label>
           <Input
-            className=""
             type="text"
             value={value || ""}
             onChange={(e) =>
@@ -145,14 +177,14 @@ const UserAccountInfo = () => {
     <>
       {loading && <Loading />}
       <BrunnerMessageBox />
+
       <div className="ml-5 w-1/2">
         <h2>User Account</h2>
 
-        {/* 사용자 ID 입력 영역 */}
+        {/* User ID */}
         <div className="flex flex-row mt-5">
           <label className="flex w-[120px]">User ID</label>
           <Input
-            className="flex"
             type="text"
             value={searchUserId}
             readOnly={!isAdmin}
@@ -164,7 +196,7 @@ const UserAccountInfo = () => {
           />
           {isAdmin && (
             <Button
-              className="flex items-center ml-2"
+              className="ml-2"
               onClick={() =>
                 searchUserInfo(userInfo.getCurrentSystemCode(), searchUserId)
               }
@@ -175,21 +207,42 @@ const UserAccountInfo = () => {
           )}
         </div>
 
-        {/* 데이터 표시 */}
+        {/* 🔥 프로필 사진 업로드 UI */}
+        {userData && (
+          <div className="mt-5">
+            <label className="flex w-[120px] mb-2">Profile Image</label>
+
+            <div className="flex flex-col">
+              {/* 미리보기 */}
+              {profilePreview && (
+                <img
+                  src={profilePreview}
+                  alt="Preview"
+                  className="w-32 h-32 object-cover rounded mb-2 border"
+                />
+              )}
+
+              {/* 파일 업로드 */}
+              <input
+                type="file"
+                accept="image/*"
+                onChange={handleImageChange}
+              />
+            </div>
+          </div>
+        )}
+
+        {/* 기존 데이터 렌더링 */}
         {!loading && userData && (
           <>
             {Object.entries(userData).map(([key, value]) =>
               renderField(key, value)
             )}
 
-            {/* 저장 버튼 */}
             <Button
               onClick={updateUserAccount}
               disabled={saving}
-              style={{
-                marginTop: 16,
-                padding: "10px 16px",
-              }}
+              style={{ marginTop: 16, padding: "10px 16px" }}
             >
               {saving ? "Saving..." : "Save"}
             </Button>
