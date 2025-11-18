@@ -26,6 +26,15 @@ const BrunnerTable = forwardRef(
     },
     ref
   ) => {
+    useEffect(() => {
+      async function load() {
+        const data = await fetchTableDataHandler();
+        setTableData(data);
+      }
+
+      if (fetchTableDataHandler) load();
+    }, []);
+
     const [tableData, setTableData] = useState([]);
     const tableDataRef = useRef(tableData);
     const setTableDataRef = (data) => {

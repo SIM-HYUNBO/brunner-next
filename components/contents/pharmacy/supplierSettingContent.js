@@ -114,8 +114,6 @@ const SupplierSettingContent = () => {
   };
 
   const fetchTableData = async () => {
-    // console.log("데이터 조회:");
-
     const jRequest = {
       commandName: constants.commands.PHARMACY_USER_SUPPLIER_SELECT_ALL,
       systemCode: userInfo.getCurrentSystemCode(),
@@ -127,7 +125,10 @@ const SupplierSettingContent = () => {
       const jResponse = await RequestServer(jRequest);
       setLoading(false);
 
-      openModal(jResponse.error_message);
+      if (jResponse.error_code !== 0) {
+        openModal(jResponse.error_message);
+        return [];
+      }
 
       return (jResponse.data?.rows || []).map((row) => ({
         ...row,
@@ -136,6 +137,7 @@ const SupplierSettingContent = () => {
     } catch (error) {
       setLoading(false);
       openModal(error.message);
+      return [];
     }
   };
 
