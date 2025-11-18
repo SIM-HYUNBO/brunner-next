@@ -802,6 +802,12 @@ export async function runOrderBySupplier(
       case `한신약품`:
         ret = await runHanshinOrder(systemCode, user_id, supplier_params, rows);
         break;
+      default:
+        ret = {
+          error_code: -1,
+          error_message: constants.messages.SERVER_NOT_SUPPORTED_MODULE,
+        };
+        break;
     }
   } catch (e) {
     ret = { error_code: -1, error_message: e.message };
@@ -814,7 +820,7 @@ export async function runOrderBySupplier(
 const runHanshinOrder = async (systemCode, user_id, supplier_params, rows) => {
   logger.warn(`Start HanshinOrder`);
 
-  const loginUrl = supplier_params.loginUrl; //"https://www.hanshinpharm.com";
+  const loginUrl = supplier_params.loginUrl;
   const loginId = supplier_params.loginId; // = "chif2000";
   const loginPassword = supplier_params.loginPassword; //= "542500";
 
@@ -880,25 +886,26 @@ const runHanshinOrder = async (systemCode, user_id, supplier_params, rows) => {
         ".tbl_list.bdtN tbody tr",
         (trs) =>
           trs.map((tr) => {
-            const tds = tr.querySelectorAll("td");
+            const kdCode =
+              tr.querySelector("td:nth-child(1)")?.innerText.trim() || "";
+            const manufacturer =
+              tr.querySelector("td:nth-child(2)")?.innerText.trim() || "";
+            const productName =
+              tr.querySelector("td:nth-child(3)")?.innerText.trim() || "";
+            const standard =
+              tr.querySelector("td:nth-child(4)")?.innerText.trim() || "";
+            const price =
+              tr.querySelector("td:nth-child(6)")?.innerText.trim() || "";
+
             return {
-              kdCode: tds[0]?.innerText.trim() || constants.General.EmptyString,
-              manufacturer:
-                tds[1]?.innerText.trim() || constants.General.EmptyString,
-              productName:
-                tds[2]?.innerText.trim() || constants.General.EmptyString,
-              standard:
-                tds[3]?.innerText.trim() || constants.General.EmptyString,
-              category:
-                tds[4]?.innerText.trim() || constants.General.EmptyString,
-              price: tds[5]?.innerText.trim() || constants.General.EmptyString,
-              stock: tds[6]?.innerText.trim() || constants.General.EmptyString,
-              quantityInput:
-                tr.querySelector("input[type='text']")?.id ||
-                constants.General.EmptyString,
-              productId:
-                tr.querySelector("input[name^='pc_']")?.value ||
-                constants.General.EmptyString,
+              kdCode,
+              manufacturer,
+              productName,
+              standard,
+              price,
+              stock: tr.querySelector("input[name^='stock_']")?.value || "",
+              productId: tr.querySelector("input[name^='pc_']")?.value || "",
+              quantityInput: tr.querySelector("input[name^='qty_']")?.id || "",
             };
           })
       );
