@@ -7,7 +7,7 @@ export default function Footer() {
     <>
       <footer>
         <Link className={`flex text-gray-600 dark:text-gray-400`} href="/">
-          ©2020 Brunner BLD Corp.
+          ©2020 Brunner at BLD Corp.
         </Link>
         <span
           className={`inline-flex 
