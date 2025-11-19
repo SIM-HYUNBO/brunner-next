@@ -43,10 +43,9 @@ export default function ResetPasswordContent() {
       const jResponse = await RequestServer(jRequest);
       setLoading(false);
       openModal(jResponse.error_message);
-    } catch (error) {
+    } catch (e) {
       setLoading(false);
-      openModal(error.message);
-      console.error(`message:${error.message}\n stack:${error.stack}\n`);
+      openModal(e.message);
     }
   };
 
@@ -70,10 +69,9 @@ export default function ResetPasswordContent() {
       if (jResponse.error_code === 0 && result) {
         router.push("/mainPages/signin");
       }
-    } catch (error) {
+    } catch (e) {
       setLoading(false);
-      openModal(error.message);
-      console.error(`message:${error.message}\n stack:${error.stack}\n`);
+      openModal(e.message);
     }
   };
 
@@ -97,10 +95,9 @@ export default function ResetPasswordContent() {
       if (jResponse.error_code === 0 && result) {
         router.push("/mainPages/signin");
       }
-    } catch (error) {
+    } catch (e) {
       setLoading(false);
-      openModal(error.message);
-      console.error(`message:${error.message}\n stack:${error.stack}\n`);
+      openModal(e.message);
     }
   };
 

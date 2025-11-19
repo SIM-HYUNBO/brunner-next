@@ -80,8 +80,8 @@ export default function SignupContent() {
       );
 
       setSearchResult(jResponse.jWorkflow?.data?.run?.outputs?.OUTDATA || []);
-    } catch (err) {
-      openModal(err.message);
+    } catch (e) {
+      openModal(e.message);
     } finally {
       setLoading(false);
     }
@@ -175,10 +175,9 @@ export default function SignupContent() {
       } else {
         openModal(jResponse.error_message);
       }
-    } catch (error) {
+    } catch (e) {
       setLoading(false);
-      openModal(error.message);
-      console.error(`message:${error.message}\n stack:${error.stack}\n`);
+      openModal(e.message);
     }
   };
 

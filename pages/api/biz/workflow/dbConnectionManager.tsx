@@ -260,8 +260,8 @@ export class DBConnectionManager {
       if (poolObj.type === constants.dbType.mssql) await mssql.close();
       else if (poolObj.type === "oracle") await poolObj.pool.close(0);
       else await poolObj.pool.end();
-    } catch (err) {
-      console.error(`Error closing pool:`, err);
+    } catch (e) {
+      console.error(`Error closing pool:`, e);
     }
   }
 
@@ -292,8 +292,8 @@ export class DBConnectionManager {
       }
       await this.closePool({ name: config.name, type: config.type, pool });
       return true;
-    } catch (err) {
-      console.error(`DB connection test failed:`, err);
+    } catch (e) {
+      console.error(`DB connection test failed:`, e);
       return false;
     }
   }
@@ -314,8 +314,8 @@ export class DBConnectionManager {
       const sqlResult = await database.executeSQL(sql, [systemCode]); // 필요 시 파라미터 사용
 
       return sqlResult.rows;
-    } catch (err: any) {
-      throw err;
+    } catch (e: any) {
+      throw e;
     }
   }
 
@@ -351,10 +351,10 @@ export class DBConnectionManager {
       }
       result.error_code = 0;
       result.error_message = constants.messages.EMPTY_STRING;
-    } catch (err: any) {
-      console.error(err);
+    } catch (e: any) {
+      console.error(e);
       result.error_code = -1;
-      result.error_message = err.message;
+      result.error_message = e.message;
     }
     return result;
   }
@@ -392,10 +392,10 @@ export class DBConnectionManager {
         result.error_code = -1;
         result.error_message = constants.messages.FAILED_TO_UPDATE_DATA;
       }
-    } catch (err: any) {
-      console.error(err);
+    } catch (e: any) {
+      console.error(e);
       result.error_code = -1;
-      result.error_message = err.message;
+      result.error_message = e.message;
     }
     return result;
   }
@@ -422,10 +422,10 @@ export class DBConnectionManager {
         result.error_code = -1;
         result.error_message = constants.messages.FAILED_TO_DELETE_DATA;
       }
-    } catch (err: any) {
-      console.error(err);
+    } catch (e: any) {
+      console.error(e);
       result.error_code = -1;
-      result.error_message = err.message;
+      result.error_message = e.message;
     }
     return result;
   }

@@ -135,9 +135,9 @@ const ServiceSQL = () => {
       setCurrentServiceSQL(null);
       setIsEditing(false);
       setIsCreating(false);
-    } catch (error) {
+    } catch (e) {
       setLoading(false); // 데이터 로딩 끝
-      openModal(error.message);
+      openModal(e.message);
     }
   };
 
@@ -168,9 +168,9 @@ const ServiceSQL = () => {
         openModal(constants.messages.SUCCESS_SAVED);
         fetchSQLList();
       } else openModal(jResponse.error_message);
-    } catch (error) {
-      openModal(error.message);
-      console.error(`message:${error.message}\n stack:${error.stack}\n`);
+    } catch (e) {
+      openModal(e.message);
+      console.error(`message:${e.message}\n stack:${e.stack}\n`);
     }
   };
 
@@ -270,9 +270,9 @@ const ServiceSQL = () => {
         openModal(constants.messages.SUCCESS_DELETED);
         fetchSQLList();
       } else openModal(jResponse.error_message);
-    } catch (error) {
-      openModal(error.message);
-      console.error(`message:${error.message}\n stack:${error.stack}\n`);
+    } catch (e) {
+      openModal(e.message);
+      console.error(`message:${e.message}\n stack:${e.stack}\n`);
     }
   };
 

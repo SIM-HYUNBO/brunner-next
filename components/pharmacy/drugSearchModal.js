@@ -43,10 +43,10 @@ export default function DrugSearchModal({ isOpen, onClose, onSelect }) {
       setLoading(false);
       setFilteredData(jResponse.data.rows || []);
       if (jResponse.error_message) openModal(jResponse.error_message);
-    } catch (error) {
+    } catch (e) {
       setLoading(false);
-      openModal(error.message);
-      console.error(`message:${error.message}\n stack:${error.stack}`);
+      openModal(e.message);
+      console.error(`message:${e.message}\n stack:${e.stack}`);
     }
   };
 

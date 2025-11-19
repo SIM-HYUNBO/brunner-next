@@ -87,15 +87,13 @@ export function DailyOrderUploader() {
 
         // 요청 결과 확인 (원하면 여기서 오류 처리)
         if (jResponse.error_code) {
-          console.error(`Batch ${i + 1} error:`, jResponse.error_message);
           openModal(`Batch ${i + 1} Failed: ${jResponse.error_message}`);
         }
       }
 
       openModal(constants.messages.SUCCESS_FINISHED);
-    } catch (error) {
-      console.error(`message:${error.message}\n stack:${error.stack}\n`);
-      openModal(error.message);
+    } catch (e) {
+      openModal(e.message);
     } finally {
       setLoading(false);
     }

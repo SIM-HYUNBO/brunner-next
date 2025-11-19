@@ -158,8 +158,8 @@ export default function AIInputModal({
       if (jResponse.error_code == 0) {
         await onAIResponse(jResponse);
       }
-    } catch (err) {
-      setErrorMessage(`문서를 생성하는 중 오류가 발생했습니다. ${err}`);
+    } catch (e) {
+      setErrorMessage(`문서를 생성하는 중 오류가 발생했습니다. ${e}`);
     } finally {
       setLoading(false);
     }

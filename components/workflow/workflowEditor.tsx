@@ -305,8 +305,8 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
 
     try {
       jWorkflow.current.data.run.inputs = workflowInputData;
-    } catch (err) {
-      console.warn("workflowInputData JSON parse failed:", err);
+    } catch (e) {
+      console.warn("workflowInputData JSON parse failed:", e);
     }
   }, [workflowInputData]);
 
@@ -317,8 +317,8 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
     try {
       jWorkflow.current.data.design.outputs = designedOutputData; // 스키마 반영
       jWorkflow.current.data.run.outputs = designedOutputData; // 실제 데이터 반영
-    } catch (err) {
-      console.warn("designedOutputData parse failed:", err);
+    } catch (e) {
+      console.warn("designedOutputData parse failed:", e);
     }
   }, [designedOutputData]);
 
@@ -482,9 +482,9 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
       } else {
         openModal?.("❌ 저장 실패: " + jResponse.error_message);
       }
-    } catch (err) {
-      console.error(err);
-      openModal?.("❌ 실행 실패: " + String(err));
+    } catch (e) {
+      console.error(e);
+      openModal?.("❌ 실행 실패: " + String(e));
     }
   };
 
@@ -511,9 +511,9 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
       } else {
         openModal?.(jResponse.error_message);
       }
-    } catch (err) {
-      console.error(err);
-      openModal?.(String(err));
+    } catch (e) {
+      console.error(e);
+      openModal?.(String(e));
     }
   };
 
@@ -535,9 +535,9 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
       } else {
         openModal?.(jResponse.error_message);
       }
-    } catch (err) {
-      console.error(err);
-      openModal?.("❌ 실행 실패: " + String(err));
+    } catch (e) {
+      console.error(e);
+      openModal?.("❌ 실행 실패: " + String(e));
     }
   };
 
@@ -626,8 +626,8 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
       } else {
         openModal?.(jResponse.error_message);
       }
-    } catch (err) {
-      openModal?.("❌ 실행 실패: " + String(err));
+    } catch (e) {
+      openModal?.("❌ 실행 실패: " + String(e));
     }
   };
 
@@ -648,9 +648,9 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
       } else {
         openModal?.(jResponse.error_message);
       }
-    } catch (err) {
-      console.error(err);
-      openModal?.("❌ 실행 실패: " + String(err));
+    } catch (e) {
+      console.error(e);
+      openModal?.("❌ 실행 실패: " + String(e));
     }
   };
 
@@ -745,7 +745,7 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
         // fallback: 대략적인 좌표 복사 (비정상 상황 방어)
         flowPos = screenPos;
       }
-    } catch (err) {
+    } catch (e) {
       flowPos = screenPos;
     }
 

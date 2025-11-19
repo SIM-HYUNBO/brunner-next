@@ -32,9 +32,9 @@ const executeSQL = async (sql, params) => {
 
     var pool = await getPool();
     return await pool.query(sql, params);
-  } catch (err) {
-    logger.error(err);
-    return err;
+  } catch (e) {
+    logger.error(e);
+    return e;
   }
 };
 

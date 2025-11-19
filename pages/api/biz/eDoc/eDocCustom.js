@@ -28,8 +28,8 @@ const executeService = async (txnId, jRequest) => {
       error_code: 0,
       error_message: `The custom service [${cmd}] executed.`,
     };
-  } catch (error) {
-    logger.error(`message:${error.message}\n stack:${error.stack}\n`);
+  } catch (e) {
+    logger.error(`message:${e.message}\n stack:${e.stack}\n`);
   } finally {
     return jResponse;
   }

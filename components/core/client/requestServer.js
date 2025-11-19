@@ -46,7 +46,7 @@ export async function RequestExecuteWorkflow(
     };
     const jResponse = await RequestServer(jRequest);
     return jResponse;
-  } catch (err) {
-    throw err;
+  } catch (e) {
+    throw e;
   }
 }

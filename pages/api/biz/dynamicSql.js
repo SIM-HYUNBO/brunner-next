@@ -1,6 +1,6 @@
 `use strict`;
 
-import logger from "../../../components/core/server/winston/logger";
+import logger from "@/components/core/server/winston/logger";
 import * as constants from "@/components/core/constants";
 import * as database from "./database/database";
 import * as dynamicSql from "./dynamicSql";
@@ -23,9 +23,9 @@ const executeService = async (txnId, jRequest) => {
       default:
         throw new Error(constants.messages.SERVER_NOT_SUPPORTED_METHOD);
     }
-  } catch (error) {
+  } catch (e) {
     jResponse.error_code = -1;
-    jResponse.error_message = error.message;
+    jResponse.error_message = e.message;
   } finally {
     return jResponse;
   }
@@ -51,7 +51,7 @@ async function selectAll(systemCode, txnId, jRequest) {
     } else {
       throw new Error(constants.messages.SERVER_SQL_NOT_LOADED);
     }
-  } catch (err) {
+  } catch (e) {
     logger.error(e);
     jResponse.error_code = -3; // exception
     jResponse.error_message = e.message;
@@ -294,8 +294,8 @@ async function loadAll() {
     } else {
       throw new Error(constants.messages.SERVER_SQL_NOT_LOADED);
     }
-  } catch (err) {
-    throw err;
+  } catch (e) {
+    throw e;
   } finally {
     for (const systemCode of Object.keys(constants.SystemCode)) {
       // ✅ 싱글톤 인스턴스
@@ -314,8 +314,8 @@ const getSQL = async (systemCode, sqlName, sqlSeq) => {
     var sql = process.serviceSql.get(`${systemCode}_${sqlName}_${sqlSeq}`);
     if (!sql) throw new Error(constants.messages.DATABASE_FAILED);
     return sql;
-  } catch (err) {
-    throw err;
+  } catch (e) {
+    throw e;
   }
 };
 
@@ -326,8 +326,8 @@ const setSQL = async (systemCode, sqlName, sqlSeq, sqlContent) => {
       sqlContent
     );
     return sql;
-  } catch (err) {
-    throw err;
+  } catch (e) {
+    throw e;
   }
 };
 
@@ -335,8 +335,8 @@ const deleteSQL = async (systemCode, sqlName, sqlSeq) => {
   try {
     var sql = process.serviceSql.delete(`${systemCode}_${sqlName}_${sqlSeq}`);
     return sql;
-  } catch (err) {
-    throw err;
+  } catch (e) {
+    throw e;
   }
 };
 
@@ -344,8 +344,8 @@ const getSQL00 = async (sqlName, sqlSeq) => {
   try {
     var sql = await getSQL(constants.SystemCode.Brunner, sqlName, sqlSeq);
     return sql;
-  } catch (err) {
-    throw err;
+  } catch (e) {
+    throw e;
   }
 };
 

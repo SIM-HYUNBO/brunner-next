@@ -55,8 +55,8 @@ const UserAccountInfo = () => {
         await openModal(jResponse.error_message);
         setUserData(null);
       }
-    } catch (err) {
-      await openModal(err.messages);
+    } catch (e) {
+      await openModal(e.messages);
     }
 
     setLoading(false);
@@ -111,8 +111,8 @@ const UserAccountInfo = () => {
       if (jResponse.error_code === 0) {
         await searchUserInfo(jRequest.systemCode, userData.user_id);
       }
-    } catch (err) {
-      await openModal(err);
+    } catch (e) {
+      await openModal(e);
     }
 
     setSaving(false);

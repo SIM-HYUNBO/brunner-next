@@ -85,7 +85,6 @@ export function evalCondition(cond: any, workflowData: any) {
 
 const nodeActionLogging = (node: Node<any>, stepInputs: WorkflowContext) => {
   logger.info(`Execute Node [${node.id}:${node.data.label}]`);
-  // console.log(`Inputs:`, JSON.stringify(node.data, null, 2));
 };
 
 const preNodeCheck = (node: Node<any>, workflowData: any) => {
@@ -281,9 +280,9 @@ export function registerBuiltInActions(): void {
         postNodeCheck(node, workflowData);
         result.error_code = 0;
         result.error_message = constants.messages.SUCCESS_FINISHED;
-      } catch (error) {
+      } catch (e) {
         result.error_code = -1;
-        result.error_message = `[${node.data.label}] ${JSON.stringify(error)}`;
+        result.error_message = `[${node.data.label}] ${JSON.stringify(e)}`;
         return result;
       }
       return result;
@@ -325,9 +324,9 @@ export function registerBuiltInActions(): void {
         result.error_code = 0;
         result.error_message = constants.messages.SUCCESS_FINISHED;
         return result;
-      } catch (error) {
+      } catch (e) {
         result.error_code = -1;
-        result.error_message = `[${node.data.label}] ${JSON.stringify(error)}`;
+        result.error_message = `[${node.data.label}] ${JSON.stringify(e)}`;
         return result;
       }
     }
@@ -417,10 +416,9 @@ export function registerBuiltInActions(): void {
 
         postNodeCheck(node, workflowData);
         return result;
-      } catch (err: any) {
-        console.error(`[CALL Node ERROR]`, err);
+      } catch (e: any) {
         result.error_code = -1;
-        result.error_message = `[${node?.data?.label}] ${err.message}`;
+        result.error_message = `[${node?.data?.label}] ${e.message}`;
         return result;
       }
     }
@@ -470,8 +468,8 @@ export function registerBuiltInActions(): void {
         result.error_code = 0;
         result.error_message = constants.messages.SUCCESS_FINISHED;
         return result;
-      } catch (err: any) {
-        throw err;
+      } catch (e: any) {
+        throw e;
       }
     }
   );
@@ -599,8 +597,8 @@ export function registerBuiltInActions(): void {
         result.error_code = 0;
         result.error_message = constants.messages.SUCCESS_FINISHED;
         return result;
-      } catch (err: any) {
-        throw err;
+      } catch (e: any) {
+        throw e;
       } finally {
         // ✅ 커넥션 반환
         if (connection.dbConnection) {
@@ -668,18 +666,15 @@ export function registerBuiltInActions(): void {
               `return ${conditionStr}`
             );
             conditionResult = !!fnCondition(workflowData, safeApi);
-          } catch (err) {
+          } catch (e) {
             console.warn(
               `[Branch Node] condition 평가 오류: ${conditionStr}`,
-              err
+              e
             );
           }
 
           // true/false 포트 결정
           node.data.run.selectedPort = conditionResult ? "true" : "false";
-          // console.log(
-          //   `[Branch Node] condition: ${conditionStr}, result: ${conditionResult}`
-          // );
         } else if (mode === constants.workflowBranchNodeMode.Loop) {
           const loopStartValue = design.loopStartValue;
           const loopStepValue = design.loopStepValue;
@@ -726,10 +721,10 @@ export function registerBuiltInActions(): void {
         result.error_code = 0;
         result.error_message = constants.messages.SUCCESS_FINISHED;
         return result;
-      } catch (err: any) {
-        console.error(`[Branch Node ERROR]`, err);
+      } catch (e: any) {
+        console.error(`[Branch Node ERROR]`, e);
         result.error_code = -1;
-        result.error_message = `[${node?.data?.label}] ${err.message}`;
+        result.error_message = `[${node?.data?.label}] ${e.message}`;
         return result;
       }
     }
@@ -963,8 +958,8 @@ export class TransactionNode {
           mode: "BUSINESS",
           isDistributed: false,
         });
-      } catch (Error) {
-        logger.error(Error);
+      } catch (e) {
+        logger.error(e);
       }
     }
   }
@@ -1289,11 +1284,11 @@ export async function getWorkflowList(systemCode: string, userId: string) {
       error_code: 0,
       list: select_TB_COR_WORKFLOW_MST, // [{id, workflow_data}, ...]
     };
-  } catch (err: any) {
-    console.error("getWorkflowList 오류:", err);
+  } catch (e: any) {
+    console.error("getWorkflowList 오류:", e);
     return {
       error_code: -1,
-      error_message: String(err.message || err),
+      error_message: String(e.message || e),
       list: [],
     };
   }
@@ -1334,7 +1329,7 @@ export async function getWorkflowByIdOrName(
     }
 
     return result;
-  } catch (err: any) {
+  } catch (e: any) {
     return null;
   }
 }

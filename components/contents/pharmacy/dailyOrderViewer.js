@@ -162,9 +162,9 @@ export default function DailyOrderViewer() {
       setLoading(false);
       if (jResponse?.error_message) openModal(jResponse.error_message);
       return jResponse.data?.rows || [];
-    } catch (err) {
+    } catch (e) {
       setLoading(false);
-      openModal(err.message);
+      openModal(e.message);
     }
   };
 
@@ -193,9 +193,9 @@ export default function DailyOrderViewer() {
       setLoading(false);
       if (jResponse?.error_message) openModal(jResponse.error_message);
       return jResponse.data?.rows || [];
-    } catch (err) {
+    } catch (e) {
       setLoading(false);
-      openModal(err.message);
+      openModal(e.message);
     }
   };
 
@@ -216,9 +216,9 @@ export default function DailyOrderViewer() {
       setLoading(false);
       if (jResponse?.error_message) openModal(jResponse.error_message);
       return jResponse.data?.rows || [];
-    } catch (err) {
+    } catch (e) {
       setLoading(false);
-      openModal(err.message);
+      openModal(e.message);
     }
   };
 

@@ -59,10 +59,9 @@ export default function SigninContent() {
       } else {
         openModal(jResponse.error_message);
       }
-    } catch (error) {
+    } catch (e) {
       setLoading(false);
-      openModal(error.message);
-      console.error(`message:${error.message}\n stack:${error.stack}\n`);
+      openModal(e.message);
     }
   };
 

@@ -116,7 +116,7 @@ export async function getDocumentData(systemCode, userId, documentId) {
     } else {
       return null;
     }
-  } catch (error) {
+  } catch (e) {
     return null;
   } finally {
   }

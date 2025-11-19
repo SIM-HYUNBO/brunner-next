@@ -82,10 +82,10 @@ export const DBConnectionManagerModal: React.FC<
       } else {
         openModal(jResponse.error_message);
       }
-    } catch (error) {
+    } catch (e) {
       setLoading(false);
-      openModal((error as Error).message);
-      console.error(error);
+      openModal((e as Error).message);
+      console.error(e);
     }
   };
 
@@ -116,9 +116,9 @@ export const DBConnectionManagerModal: React.FC<
       } else {
         alert("저장 실패: " + jResponse.error_message);
       }
-    } catch (error) {
-      alert("저장 실패: " + (error as Error).message);
-      console.error(error);
+    } catch (e) {
+      alert("저장 실패: " + (e as Error).message);
+      console.error(e);
     }
   };
 
@@ -138,9 +138,9 @@ export const DBConnectionManagerModal: React.FC<
       } else {
         alert("삭제 실패: " + jResponse.error_message);
       }
-    } catch (error) {
-      alert("삭제 실패: " + (error as Error).message);
-      console.error(error);
+    } catch (e) {
+      alert("삭제 실패: " + (e as Error).message);
+      console.error(e);
     }
   };
 
@@ -159,9 +159,9 @@ export const DBConnectionManagerModal: React.FC<
       } else {
         alert("연결 실패: " + jResponse.error_message);
       }
-    } catch (error) {
-      alert("테스트 실패: " + (error as Error).message);
-      console.error(error);
+    } catch (e) {
+      alert("테스트 실패: " + (e as Error).message);
+      console.error(e);
     } finally {
       setTesting(false);
     }

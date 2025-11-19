@@ -31,9 +31,9 @@ function BrunnerBoard({ boardType }) {
       } else {
         openModal(jResponse.error_message);
       }
-    } catch (error) {
+    } catch (e) {
       setLoading(false);
-      openModal(error.message);
+      openModal(e.message);
     }
   };
 
@@ -78,10 +78,9 @@ function BrunnerBoard({ boardType }) {
           openModal(jResponse.error_message);
         }
       }
-    } catch (error) {
+    } catch (e) {
       setLoading(false);
-      openModal(error.message);
-      console.error(`message:${error.message}\n stack:${error.stack}\n`);
+      openModal(e.message);
     }
   };
 
@@ -123,10 +122,9 @@ function BrunnerBoard({ boardType }) {
       } else {
         openModal(jResponse.error_message);
       }
-    } catch (error) {
+    } catch (e) {
       setLoading(false);
-      openModal(error.message);
-      console.error(`message:${error.message}\n stack:${error.stack}\n`);
+      openModal(e.message);
     }
   };
 
@@ -160,10 +158,9 @@ function BrunnerBoard({ boardType }) {
       } else {
         openModal(jResponse.error_message);
       }
-    } catch (error) {
+    } catch (e) {
       setLoading(false);
-      openModal(error.message);
-      console.error(`message:${error.message}\n stack:${error.stack}\n`);
+      openModal(e.message);
     }
   };
 
@@ -200,9 +197,8 @@ function BrunnerBoard({ boardType }) {
       } else {
         openModal(jResponse.error_message);
       }
-    } catch (error) {
-      openModal(error.message);
-      console.error(`message:${error.message}\n stack:${error.stack}\n`);
+    } catch (e) {
+      openModal(e.message);
     }
   };
 
@@ -247,9 +243,8 @@ function BrunnerBoard({ boardType }) {
       } else {
         openModal(jResponse.error_message);
       }
-    } catch (error) {
-      openModal(error.message);
-      console.error(`message:${error.message}\n stack:${error.stack}\n`);
+    } catch (e) {
+      openModal(e.message);
     }
   };
 
@@ -290,9 +285,9 @@ function BrunnerBoard({ boardType }) {
       } else {
         openModal(jResponse.error_message);
       }
-    } catch (error) {
+    } catch (e) {
       console.error(
-        `Error deleting comment: message:${error.message}\n stack:${error.stack}\n`
+        `Error deleting comment: message:${e.message}\n stack:${e.stack}\n`
       );
     }
   };

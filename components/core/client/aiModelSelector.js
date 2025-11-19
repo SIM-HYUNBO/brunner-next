@@ -37,8 +37,8 @@ export default function AIModelSelector({ model, setAIModel, apiKey }) {
       setLoading(true); // 데이터 로딩 시작
       jResponse = await RequestServer(jRequest);
       setModels(jResponse.models);
-    } catch (error) {
-      console.error("모델 목록 불러오기 실패:", error);
+    } catch (e) {
+      console.error("모델 목록 불러오기 실패:", e);
     } finally {
       setLoading(false);
     }

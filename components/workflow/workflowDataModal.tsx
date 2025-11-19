@@ -65,8 +65,8 @@ export const WorkflowDataModal: React.FC<WorkflowDataModalProps> = ({
         setError(jResponse.error_message || "워크플로우 조회 실패");
         setWorkflowData(null);
       }
-    } catch (err) {
-      setError("❌ 서버 요청 실패: " + String(err));
+    } catch (e) {
+      setError("❌ 서버 요청 실패: " + String(e));
       setWorkflowData(null);
     } finally {
       setLoading(false);

@@ -1,6 +1,6 @@
 "use strict";
 
-import logger from "../../../components/core/server/winston/logger";
+import logger from "@/components/core/server/winston/logger";
 import * as constants from "@/components/core/constants";
 import * as commonFunctions from "@/components/core/commonFunctions";
 import { DBConnectionManager } from "./workflow/dbConnectionManager";
@@ -280,20 +280,20 @@ const executeService = async (txnId, jRequest) => {
             jResponse.jWorkflow = workflowData;
             jResponse.message = result.error_message;
           }
-        } catch (err) {
+        } catch (e) {
           // -----------------------
           // 5️⃣ 에러 발생 시 롤백
           // -----------------------
           try {
             if (txNode) await txNode?.rollback();
           } catch (rollbackErr) {
-            console.error(
+            logger.error(
               `${constants.messages.DATABASE_FAILED}: ${rollbackErr}`
             );
           }
 
           jResponse.error_code = -1;
-          jResponse.error_message = String(err.message || err);
+          jResponse.error_message = String(e.message || e);
         }
 
         break;
@@ -328,9 +328,9 @@ const executeService = async (txnId, jRequest) => {
           jResponse.error_code = saveResult.error_code;
           jResponse.error_message = constants.messages.SUCCESS_FINISHED;
           jResponse.workflow_data = saveResult.workflow_data;
-        } catch (err) {
+        } catch (e) {
           jResponse.error_code = -1;
-          jResponse.error_message = String(err.message || err);
+          jResponse.error_message = String(e.message || e);
         }
 
         break;
@@ -340,10 +340,10 @@ const executeService = async (txnId, jRequest) => {
         throw new Error(constants.messages.SERVER_NOT_SUPPORTED_METHOD);
       }
     }
-  } catch (error) {
+  } catch (e) {
     jResponse.error_code = -1;
-    jResponse.error_message = error.message;
-    logger.error(`message:${error.message}\n stack:${error.stack}\n`);
+    jResponse.error_message = e.message;
+    logger.error(`message:${e.message}\n stack:${e.stack}\n`);
   } finally {
     return jResponse;
   }

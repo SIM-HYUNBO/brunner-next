@@ -93,7 +93,7 @@ export async function initializeServer() {
   if (isReady) return Promise.resolve(); // 이미 초기화가 완료되었으면 그냥 통과
   if (readyPromise) return readyPromise; // 이미 초기화가 시작되었으면 실행중인 함수 promise 반환
 
-  console.log("Loading Service SQL ...");
+  logger.info("Loading Service SQL ...");
 
   // 즉시 실행 async 함수로 Promise 생성
   readyPromise = (async () => {

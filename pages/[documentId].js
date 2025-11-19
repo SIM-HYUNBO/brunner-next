@@ -24,8 +24,8 @@ export default function EDocument() {
           documentId
         );
         setDocumentData(docData);
-      } catch (err) {
-        console.error("문서 데이터 로드 실패:", err);
+      } catch (e) {
+        console.error("문서 데이터 로드 실패:", e);
       } finally {
         setLoading(false);
       }

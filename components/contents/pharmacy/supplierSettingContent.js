@@ -45,8 +45,7 @@ const SupplierSettingContent = () => {
       try {
         await axios.put(`/api/supplier-info/${editingSupplier.id}`, data);
         alert("수정 완료");
-      } catch (error) {
-        console.error("Error updating supplier:", error);
+      } catch (e) {
         alert("수정 실패");
       }
     } else {
@@ -54,8 +53,7 @@ const SupplierSettingContent = () => {
       try {
         await axios.post("/api/supplier-info", data);
         alert("공급처 등록 완료");
-      } catch (error) {
-        console.error("Error creating supplier:", error);
+      } catch (e) {
         alert("등록 실패");
       }
     }
@@ -91,8 +89,8 @@ const SupplierSettingContent = () => {
       // 삭제 후 목록 새로고침
       // const response = await axios.get("/api/supplier-info");
       setSupplierList(response.data);
-    } catch (error) {
-      console.error("Error deleting supplier:", error);
+    } catch (e) {
+      console.error("Error deleting supplier:", e);
       alert("삭제 실패");
     }
   };
@@ -134,9 +132,9 @@ const SupplierSettingContent = () => {
         ...row,
         supplier_params: JSON.stringify(row.supplier_params, null, 2),
       }));
-    } catch (error) {
+    } catch (e) {
       setLoading(false);
-      openModal(error.message);
+      openModal(e.message);
       return [];
     }
   };
@@ -162,9 +160,9 @@ const SupplierSettingContent = () => {
       setLoading(false);
 
       openModal(jResponse.error_message);
-    } catch (error) {
+    } catch (e) {
       setLoading(false);
-      openModal(error.message);
+      openModal(e.message);
     }
 
     tableRef.current.refreshTableData();
@@ -192,9 +190,9 @@ const SupplierSettingContent = () => {
       setLoading(false);
 
       openModal(jResponse.error_message);
-    } catch (error) {
+    } catch (e) {
       setLoading(false);
-      openModal(error.message);
+      openModal(e.message);
     }
 
     tableRef.current.refreshTableData();

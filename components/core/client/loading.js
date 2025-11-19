@@ -137,7 +137,7 @@ export default function Loading() {
         });
 
         setReady(true);
-      } catch (err) {
+      } catch (e) {
         // 실패해도 전체 화면 오버레이로 안전하게 처리
         setOverlayStyle({
           position: "fixed",
