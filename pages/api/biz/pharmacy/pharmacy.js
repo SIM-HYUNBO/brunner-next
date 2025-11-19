@@ -807,7 +807,8 @@ export async function runOrderBySupplier(
           systemCode,
           user_id,
           supplier_params,
-          rows
+          rows,
+          "서울"
         );
         break;
       default:
@@ -1035,7 +1036,13 @@ const runHanshinOrder = async (systemCode, user_id, supplier_params, rows) => {
 // https://orderpharm.geo-pharm.com
 // 아이디 chif2000
 // 비번 542500
-const runGeoPharmOrder = async (systemCode, user_id, supplier_params, rows) => {
+const runGeoPharmOrder = async (
+  systemCode,
+  user_id,
+  supplier_params,
+  rows,
+  loginarea
+) => {
   logger.warn(`Start GeoPharmOrder`);
 
   const loginUrl = supplier_params.loginUrl;
@@ -1049,12 +1056,24 @@ const runGeoPharmOrder = async (systemCode, user_id, supplier_params, rows) => {
 
   // 1️⃣ 로그인
   await page.goto(loginUrl, { waitUntil: "domcontentloaded" });
-  await page.type("#tx_id", loginId);
-  await page.type("#tx_pw", loginPassword);
-  await page.evaluate(() => {
-    const loginButton = document.querySelector(`a.login`);
-    if (loginButton) loginButton.click();
+
+  await page.waitForSelector("#loginarea");
+  const options = await page.evaluate(() => {
+    const opts = Array.from(document.querySelectorAll("#loginarea option"));
+    return opts.map((option) => ({
+      value: option.value,
+      text: option.textContent.trim(),
+    }));
   });
+  const tagetOption = options.find((option) => option.text === loginarea);
+  if (tagetOption) {
+    await page.select("#loginarea", tagetOption.value);
+  }
+
+  await page.type("#user_id", loginId);
+  await page.type("#user_pwd", loginPassword);
+  await page.click('input[type="submit"][value="로그인"]');
+  await page.waitForNavigation();
 
   // 로그인 후 잠시 대기
   await new Promise((resolve) => setTimeout(resolve, 1000));
@@ -1070,7 +1089,7 @@ const runGeoPharmOrder = async (systemCode, user_id, supplier_params, rows) => {
   }
 
   // 2️⃣ 주문/상품조회 페이지 이동
-  await page.goto(`${loginUrl}/Service/Order/Order.asp`, {
+  await page.goto(`${loginUrl}/pharmorder/order.php`, {
     waitUntil: "domcontentloaded",
   });
 
