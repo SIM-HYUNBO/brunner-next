@@ -1074,13 +1074,10 @@ const runGeoPharmOrder = async (
   await page.type("#user_pwd", loginPassword);
 
   // 로그인 전 잠시 대기
-
-  await Promise.all([
-    await page.click('input[type="submit"][value="로그인"]', {
-      delay: 100,
-    }),
-    page.waitForNavigation({ waitUntil: "networkidle0" }),
-  ]);
+  await page.waitForSelector('input[type="submit"][value="로그인"]');
+  await page.evaluate(() => {
+    document.querySelector("form").submit();
+  });
 
   const cookies = await page.cookies();
   console.log("쿠키:", cookies);
