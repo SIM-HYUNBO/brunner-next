@@ -1072,11 +1072,15 @@ const runGeoPharmOrder = async (
 
   await page.type("#user_id", loginId);
   await page.type("#user_pwd", loginPassword);
-  await page.click('input[type="submit"][value="로그인"]');
-  await page.waitForNavigation();
 
-  // 로그인 후 잠시 대기
-  await new Promise((resolve) => setTimeout(resolve, 1000));
+  // 로그인 전 잠시 대기
+
+  await Promise.all([
+    await page.click('input[type="submit"][value="로그인"]', {
+      delay: 100,
+    }),
+    page.waitForNavigation({ waitUntil: "networkidle0" }),
+  ]);
 
   const cookies = await page.cookies();
   console.log("쿠키:", cookies);
@@ -1088,10 +1092,14 @@ const runGeoPharmOrder = async (
     };
   }
 
+  await new Promise((resolve) => setTimeout(resolve, 1000));
+
   // 2️⃣ 주문/상품조회 페이지 이동
   await page.goto(`${loginUrl}/pharmorder/order.php`, {
     waitUntil: "domcontentloaded",
   });
+
+  page.waitForNavigation();
 
   for (const row of rows) {
     try {
