@@ -816,7 +816,11 @@ export async function runOrderBySupplier(
   return ret;
 }
 
-// 한신약품 주문
+// 한신약품
+// https://www.hanshinpharm.com
+// 아이디: chif2000
+비번: 542500;
+
 const runHanshinOrder = async (systemCode, user_id, supplier_params, rows) => {
   logger.warn(`Start HanshinOrder`);
 
@@ -993,5 +997,45 @@ const runHanshinOrder = async (systemCode, user_id, supplier_params, rows) => {
   logger.warn(`Finished HanshinOrder: ${JSON.stringify(ret, null, 2)}`);
   return ret;
 };
+
+// 건화약품
+// http://kh-pharm.co.kr
+// 아이디 chif2000
+// 비번 542500
+
+//남신약품
+// http://namsinp.com
+// 아이디 chif2000
+// 비번 542500
+
+// 유팜몰
+// https://www.upharmmall.co.kr
+// 아이디 chif2000
+// 비번 5425abcd
+
+// (주) 훼밀리팜
+// http://family-pharm.co.kr
+// 아이디 chif2000
+// 비번 542500
+
+// (주)함께하는약품
+// http://withus2022.com
+// 아이디 chif2000
+// 비번 542500
+
+// 지오팜 약국주문 시스템
+// https://orderpharm.geo-pharm.com
+// 아이디 chif2000
+// 비번 542500
+
+// 지오웹
+// https://order.geoweb.kr
+// 아이디 chif2000
+// 비번 1234abcd
+
+//브릿지팜
+// http://bridgepharm.net
+// 아이디 chif2000
+// 비번 1234
 
 export { executeService };
