@@ -1129,12 +1129,47 @@ const runGeoPharmOrder = async (
       await page.waitForNavigation({ waitUntil: "domcontentloaded" });
 
       // --- AJAX 로딩 대기: tbody 안에 tr 생길 때까지 ---
-      // 주문수량 입력
-
-      const orderQtyInput = Number(row.order_qty);
 
       const iframeElement = await page.$("#order_item_view_iframe");
       const iframe = await iframeElement.contentFrame();
+
+      // 주문수량 입력
+      // 2) 프레임 내부 DOM에서 '재고수량' th 옆 td 의 텍스트(숫자) 읽기
+      const stockQtyText = await iframe.evaluate(() => {
+        // 모든 th를 검사해서 '재고수량' 텍스트를 포함하는 th를 찾음
+        const ths = Array.from(document.querySelectorAll("th"));
+        const targetTh = ths.find(
+          (t) => t.textContent && t.textContent.trim().includes("재고수량")
+        );
+        if (!targetTh) return null;
+
+        // 바로 다음 형제 td (재고 수량)
+        const stockTd = targetTh.nextElementSibling;
+        return stockTd ? stockTd.textContent.trim() : null;
+      });
+
+      if (stockQtyText == null) {
+        throw new Error("프레임 내부에서 '재고수량' td를 찾지 못했습니다.");
+      }
+
+      // 숫자만 뽑아서 Number 변환 (예: "4,100" 처리)
+      const stockQty = Number(stockQtyText.replace(/[^0-9]/g, ""));
+      if (Number.isNaN(stockQty)) {
+        throw new Error(
+          `재고수량을 숫자로 변환할 수 없습니다: "${stockQtyText}"`
+        );
+      }
+
+      const orderQtyInput = Number(row.order_qty);
+
+      //
+      // 2. 재고 체크
+      //
+      if (orderQtyInput > stockQty) {
+        lastRowResult = "재고 부족";
+        throw new Error(lastRowResult);
+      }
+
       await iframe.waitForSelector(`#item_order_count`, {
         visible: true,
         timeout: 30000,
