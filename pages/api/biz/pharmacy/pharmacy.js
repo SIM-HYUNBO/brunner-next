@@ -8,6 +8,7 @@ import * as mailSender from "@/components/core/server/mailSender";
 import puppeteer from "puppeteer";
 import bcrypt from "bcryptjs";
 import qs from "qs"; // querystring 변환용
+import { time } from "console";
 
 const executeService = async (txnId, jRequest) => {
   var jResponse = {};
@@ -1045,6 +1046,14 @@ const runGeoPharmOrder = async (
 ) => {
   logger.warn(`Start GeoPharmOrder`);
 
+  if (rows.length === 0) {
+    ret = {
+      error_code: 0,
+      error_message: `${constants.messages.SUCCESS_FINISHED}`,
+    };
+    return ret;
+  }
+
   const loginUrl = supplier_params.loginUrl;
   const loginId = supplier_params.loginId; // = "chif2000";
   const loginPassword = supplier_params.loginPassword; //= "542500";
@@ -1106,95 +1115,37 @@ const runGeoPharmOrder = async (
       }
 
       // --- 검색조건 세팅 ---
-      await page.select("#so3", "2"); // 조회조건 중 KD코드 선택
+      // await page.select("#so3", "2"); // 조회조건 중 KD코드 선택
       await page.evaluate((kdCode) => {
-        document.querySelector("#tx_physic").value = kdCode;
+        document.querySelector("#item_name").value = kdCode;
       }, row.product_code);
 
       // 조회 버튼 클릭
-      await page.click("#btn_search2");
+      await page.evaluate(() => {
+        const form = document.querySelector("form");
+        form.submit();
+      });
+
+      await page.waitForNavigation({ waitUntil: "domcontentloaded" });
 
       // --- AJAX 로딩 대기: tbody 안에 tr 생길 때까지 ---
-      await page.waitForFunction(
-        () => document.querySelectorAll(".tbl_list.bdtN tbody tr").length > 0,
-        { timeout: 20000 }
-      );
+      // 주문수량 입력
 
-      // 렌더링 대기
-      await new Promise((resolve) => setTimeout(resolve, 500));
+      const orderQtyInput = Number(row.order_qty);
 
-      // --- 조회 결과 파싱 ---
-      const searchResultRows = await page.$$eval(
-        ".tbl_list.bdtN tbody tr",
-        (trs) =>
-          trs.map((tr) => {
-            const kdCode =
-              tr.querySelector("td:nth-child(1)")?.innerText.trim() || "";
-            const manufacturer =
-              tr.querySelector("td:nth-child(2)")?.innerText.trim() || "";
-            const productName =
-              tr.querySelector("td:nth-child(3)")?.innerText.trim() || "";
-            const standard =
-              tr.querySelector("td:nth-child(4)")?.innerText.trim() || "";
-            const price =
-              tr.querySelector("td:nth-child(6)")?.innerText.trim() || "";
+      const iframeElement = await page.$("#order_item_view_iframe");
+      const iframe = await iframeElement.contentFrame();
+      await iframe.waitForSelector(`#item_order_count`, {
+        visible: true,
+        timeout: 30000,
+      });
 
-            return {
-              kdCode,
-              manufacturer,
-              productName,
-              standard,
-              price,
-              stock: tr.querySelector("input[name^='stock_']")?.value || "",
-              productId: tr.querySelector("input[name^='pc_']")?.value || "",
-              quantityInput: tr.querySelector("input[name^='qty_']")?.id || "",
-            };
-          })
-      );
+      await iframe.type(`#item_order_count`, `${orderQtyInput}`);
 
-      console.log(searchResultRows);
-
-      // 조회결과가 1건만 조회되어야 주문 처리 가능 ---
-      if (
-        searchResultRows.length === 0 ||
-        searchResultRows[0].productId === constants.General.EmptyString
-      ) {
-        lastRowResult = "제품 검색 불가";
-        throw new Error(lastRowResult);
-      }
-
-      if (searchResultRows.length > 1) {
-        lastRowResult = "제품 중복 검색";
-        throw new Error(lastRowResult);
-      }
-
-      const item = searchResultRows[0];
-      const { stock, quantityInput: qtyId } = item;
-
-      const n_stock = Number(item.stock);
-      const n_orderQty = Number(row.order_qty);
-
-      if (isNaN(n_stock) || isNaN(n_orderQty)) {
-        lastRowResult = "수량 이상";
-        throw new Error(lastRowResult);
-      }
-
-      if (n_stock <= 0 || n_orderQty > n_stock) {
-        lastRowResult = "재고 부족";
-        throw new Error(lastRowResult);
-      }
-
-      if (qtyId) {
-        // 주문수량 입력
-        await page.focus(`#${qtyId}`);
-        await page.keyboard.type(String(row.order_qty));
-      }
-
-      // 장바구니 담기 버튼 클릭
-      await page.click("#btn_saveBag");
-      await new Promise((resolve) => setTimeout(resolve, 500));
-
+      // 주무담기 버튼 클릭
+      await iframe.click("#btn_add_cart");
       lastRowResult = "장바구니 전송";
+
       // 상태 저장
       const result = await updateOrderStatus(
         systemCode,
