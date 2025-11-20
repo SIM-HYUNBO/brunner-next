@@ -568,7 +568,7 @@ const automaticOrder = async (txnId, jRequest) => {
       }
     } else {
       result.error_code = -1;
-      result.error_message = constants.messages.NO_DATA_FOUND;
+      result.error_message = `${constants.messages.NO_DATA_FOUND} ${jRequest.userId} ${jRequest.supplierName}`;
     }
     jResponse.error_code = result.error_code;
     jResponse.error_message = result.error_message;
@@ -812,6 +812,9 @@ export async function runOrderBySupplier(
           "서울"
         );
         break;
+      case `지오영네트웍스`:
+        ret = await runGeoWebOrder(systemCode, user_id, supplier_params, rows);
+        break;
       default:
         ret = {
           error_code: -1,
@@ -1042,7 +1045,7 @@ const runGeoPharmOrder = async (
   user_id,
   supplier_params,
   rows,
-  loginarea
+  loginArea
 ) => {
   logger.warn(`Start GeoPharmOrder`);
 
@@ -1074,9 +1077,9 @@ const runGeoPharmOrder = async (
       text: option.textContent.trim(),
     }));
   });
-  const tagetOption = options.find((option) => option.text === loginarea);
-  if (tagetOption) {
-    await page.select("#loginarea", tagetOption.value);
+  const targetOption = options.find((option) => option.text === loginArea);
+  if (targetOption) {
+    await page.select("#loginarea", targetOption.value);
   }
 
   await page.type("#user_id", loginId);
@@ -1226,6 +1229,172 @@ const runGeoPharmOrder = async (
 // https://order.geoweb.kr
 // 아이디 chif2000
 // 비번 1234abcd
+const runGeoWebOrder = async (systemCode, user_id, supplier_params, rows) => {
+  logger.warn(`Start GeoWebOrder`);
+
+  if (rows.length === 0) {
+    ret = {
+      error_code: 0,
+      error_message: `${constants.messages.SUCCESS_FINISHED}`,
+    };
+    return ret;
+  }
+
+  const loginUrl = supplier_params.loginUrl;
+  const loginId = supplier_params.loginId; // = "chif2000";
+  const loginPassword = supplier_params.loginPassword; //= "542500";
+
+  // 브라우저를 보면서 작업내용 확인
+  const browser = await puppeteer.launch({ headless: false });
+  const page = await browser.newPage();
+  var lastRowResult = constants.General.EmptyString;
+
+  // 1️⃣ 로그인
+  await page.goto(loginUrl, { waitUntil: "domcontentloaded" });
+
+  await page.type("#LoginID", loginId);
+  await page.type("#Password", loginPassword);
+  await page.click("button.btn_login");
+
+  // 로그인 후 잠시 대기
+  await new Promise((resolve) => setTimeout(resolve, 1000));
+
+  const cookies = await page.cookies();
+  console.log("쿠키:", cookies);
+
+  if (!cookies || cookies.length <= 0) {
+    return {
+      error_code: -1,
+      error_message: `${constants.messages.FAILED_REQUESTED}`,
+    };
+  }
+
+  await new Promise((resolve) => setTimeout(resolve, 1000));
+
+  // 팝업 닫기 시도
+  try {
+    await page.waitForSelector("button.btn_close", { timeout: 2000 });
+    await page.click("button.btn_close");
+  } catch (e) {
+    // 팝업이 없어도 에러 안나도록 무시
+  }
+
+  // 2️⃣ 주문/상품조회 페이지
+
+  for (const row of rows) {
+    try {
+      if (!row.product_code) {
+        lastRowResult = "입력 제품 없음";
+        throw new Error(lastRowResult); // 입력 제품 없음
+      }
+
+      // --- 검색조건 세팅 ---
+      // await page.select("#so3", "2"); // 조회조건 중 KD코드 선택
+      await page.evaluate((kdCode) => {
+        document.querySelector("#item_name").value = kdCode;
+      }, row.product_code);
+
+      // 조회 버튼 클릭
+      await page.evaluate(() => {
+        const form = document.querySelector("form");
+        form.submit();
+      });
+
+      await page.waitForNavigation({ waitUntil: "domcontentloaded" });
+
+      // --- AJAX 로딩 대기: tbody 안에 tr 생길 때까지 ---
+
+      const iframeElement = await page.$("#order_item_view_iframe");
+      const iframe = await iframeElement.contentFrame();
+
+      // 주문수량 입력
+      // 2) 프레임 내부 DOM에서 '재고수량' th 옆 td 의 텍스트(숫자) 읽기
+      const stockQtyText = await iframe.evaluate(() => {
+        // 모든 th를 검사해서 '재고수량' 텍스트를 포함하는 th를 찾음
+        const ths = Array.from(document.querySelectorAll("th"));
+        const targetTh = ths.find(
+          (t) => t.textContent && t.textContent.trim().includes("재고수량")
+        );
+        if (!targetTh) return null;
+
+        // 바로 다음 형제 td (재고 수량)
+        const stockTd = targetTh.nextElementSibling;
+        return stockTd ? stockTd.textContent.trim() : null;
+      });
+
+      if (stockQtyText == null) {
+        throw new Error("프레임 내부에서 '재고수량' td를 찾지 못했습니다.");
+      }
+
+      // 숫자만 뽑아서 Number 변환 (예: "4,100" 처리)
+      const stockQty = Number(stockQtyText.replace(/[^0-9]/g, ""));
+      if (Number.isNaN(stockQty)) {
+        throw new Error(
+          `재고수량을 숫자로 변환할 수 없습니다: "${stockQtyText}"`
+        );
+      }
+
+      const orderQtyInput = Number(row.order_qty);
+
+      //
+      // 2. 재고 체크
+      //
+      if (orderQtyInput > stockQty) {
+        lastRowResult = "재고 부족";
+        throw new Error(lastRowResult);
+      }
+
+      await iframe.waitForSelector(`#item_order_count`, {
+        visible: true,
+        timeout: 30000,
+      });
+
+      await iframe.type(`#item_order_count`, `${orderQtyInput}`);
+
+      // 주무담기 버튼 클릭
+      await iframe.click("#btn_add_cart");
+      lastRowResult = "장바구니 전송";
+
+      // 상태 저장
+      const result = await updateOrderStatus(
+        systemCode,
+        user_id,
+        row.upload_hour,
+        row.product_code,
+        row.supplier_name,
+        lastRowResult
+      );
+    } catch (e) {
+      // 에러코드 상태 저장
+      const result = await updateOrderStatus(
+        systemCode,
+        user_id,
+        row.upload_hour,
+        row.product_code,
+        row.supplier_name,
+        e.message
+      );
+    }
+  }
+
+  await browser.close();
+
+  var ret;
+
+  ret =
+    rows.length != 1
+      ? {
+          error_code: 0,
+          error_message: `${constants.messages.SUCCESS_FINISHED}`,
+        }
+      : {
+          error_code: 0,
+          error_message: `${lastRowResult}`,
+        };
+
+  logger.warn(`Finished HanshinOrder: ${JSON.stringify(ret, null, 2)}`);
+  return ret;
+};
 
 //브릿지팜
 // http://bridgepharm.net
