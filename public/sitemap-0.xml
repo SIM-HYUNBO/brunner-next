@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:news="http://www.google.com/schemas/sitemap-news/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml" xmlns:mobile="http://www.google.com/schemas/sitemap-mobile/1.0" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1" xmlns:video="http://www.google.com/schemas/sitemap-video/1.1">
-<url><loc>https://brunner-next.vercel.app</loc><lastmod>2025-11-21T11:11:59.233Z</lastmod><changefreq>daily</changefreq><priority>1</priority></url>
-<url><loc>https://brunner-next.vercel.app/mainPages/contact</loc><lastmod>2025-11-21T11:11:59.238Z</lastmod><changefreq>daily</changefreq><priority>1</priority></url>
-<url><loc>https://brunner-next.vercel.app/mainPages/eDocDesigner</loc><lastmod>2025-11-21T11:11:59.238Z</lastmod><changefreq>daily</changefreq><priority>1</priority></url>
-<url><loc>https://brunner-next.vercel.app/mainPages/resetPassword</loc><lastmod>2025-11-21T11:11:59.238Z</lastmod><changefreq>daily</changefreq><priority>1</priority></url>
-<url><loc>https://brunner-next.vercel.app/mainPages/serviceSql</loc><lastmod>2025-11-21T11:11:59.238Z</lastmod><changefreq>daily</changefreq><priority>1</priority></url>
-<url><loc>https://brunner-next.vercel.app/mainPages/signin</loc><lastmod>2025-11-21T11:11:59.238Z</lastmod><changefreq>daily</changefreq><priority>1</priority></url>
-<url><loc>https://brunner-next.vercel.app/mainPages/signup</loc><lastmod>2025-11-21T11:11:59.238Z</lastmod><changefreq>daily</changefreq><priority>1</priority></url>
-<url><loc>https://brunner-next.vercel.app/mainPages/userAccount</loc><lastmod>2025-11-21T11:11:59.238Z</lastmod><changefreq>daily</changefreq><priority>1</priority></url>
-<url><loc>https://brunner-next.vercel.app/mainPages/workflow</loc><lastmod>2025-11-21T11:11:59.238Z</lastmod><changefreq>daily</changefreq><priority>1</priority></url>
-<url><loc>https://brunner-next.vercel.app/pharmacy/excelUpload</loc><lastmod>2025-11-21T11:11:59.238Z</lastmod><changefreq>daily</changefreq><priority>1</priority></url>
-<url><loc>https://brunner-next.vercel.app/pharmacy/supplierSetting</loc><lastmod>2025-11-21T11:11:59.238Z</lastmod><changefreq>daily</changefreq><priority>1</priority></url>
+<url><loc>https://brunner-next.vercel.app</loc><lastmod>2025-11-21T17:48:23.081Z</lastmod><changefreq>daily</changefreq><priority>1</priority></url>
+<url><loc>https://brunner-next.vercel.app/mainPages/contact</loc><lastmod>2025-11-21T17:48:23.107Z</lastmod><changefreq>daily</changefreq><priority>1</priority></url>
+<url><loc>https://brunner-next.vercel.app/mainPages/eDocDesigner</loc><lastmod>2025-11-21T17:48:23.107Z</lastmod><changefreq>daily</changefreq><priority>1</priority></url>
+<url><loc>https://brunner-next.vercel.app/mainPages/resetPassword</loc><lastmod>2025-11-21T17:48:23.107Z</lastmod><changefreq>daily</changefreq><priority>1</priority></url>
+<url><loc>https://brunner-next.vercel.app/mainPages/serviceSql</loc><lastmod>2025-11-21T17:48:23.107Z</lastmod><changefreq>daily</changefreq><priority>1</priority></url>
+<url><loc>https://brunner-next.vercel.app/mainPages/signin</loc><lastmod>2025-11-21T17:48:23.107Z</lastmod><changefreq>daily</changefreq><priority>1</priority></url>
+<url><loc>https://brunner-next.vercel.app/mainPages/signup</loc><lastmod>2025-11-21T17:48:23.107Z</lastmod><changefreq>daily</changefreq><priority>1</priority></url>
+<url><loc>https://brunner-next.vercel.app/mainPages/userAccount</loc><lastmod>2025-11-21T17:48:23.107Z</lastmod><changefreq>daily</changefreq><priority>1</priority></url>
+<url><loc>https://brunner-next.vercel.app/mainPages/workflow</loc><lastmod>2025-11-21T17:48:23.107Z</lastmod><changefreq>daily</changefreq><priority>1</priority></url>
+<url><loc>https://brunner-next.vercel.app/pharmacy/excelUpload</loc><lastmod>2025-11-21T17:48:23.107Z</lastmod><changefreq>daily</changefreq><priority>1</priority></url>
+<url><loc>https://brunner-next.vercel.app/pharmacy/supplierSetting</loc><lastmod>2025-11-21T17:48:23.107Z</lastmod><changefreq>daily</changefreq><priority>1</priority></url>
 </urlset>
