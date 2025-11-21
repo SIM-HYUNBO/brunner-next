@@ -10,7 +10,6 @@ import qs from "qs"; // querystring 변환용
 import { time } from "console";
 import { execSync } from "child_process";
 import path from "path";
-import chromium from "chrome-aws-lambda";
 
 const executeService = async (txnId, jRequest) => {
   var jResponse = {};
@@ -875,7 +874,7 @@ const runHanshinOrder = async (systemCode, user_id, supplier_params, rows) => {
 
   if (isVercel) {
     puppeteer = await import("puppeteer-core");
-    chromium = await import("chrome-aws-lambda");
+    chromium = await import("@sparticuz/chromium");
   } else {
     puppeteer = await import("puppeteer");
   }
@@ -1112,7 +1111,7 @@ const runKeonHwaOrder = async (systemCode, user_id, supplier_params, rows) => {
 
   if (isVercel) {
     puppeteer = await import("puppeteer-core");
-    chromium = await import("chrome-aws-lambda");
+    chromium = await import("@sparticuz/chromium");
   } else {
     puppeteer = await import("puppeteer");
   }
@@ -1379,7 +1378,7 @@ const runNamshinOrder = async (systemCode, user_id, supplier_params, rows) => {
 
   if (isVercel) {
     puppeteer = await import("puppeteer-core");
-    chromium = await import("chrome-aws-lambda");
+    chromium = await import("@sparticuz/chromium");
   } else {
     puppeteer = await import("puppeteer");
   }
@@ -1621,7 +1620,7 @@ const runUPharmMallOrder = async (
 
   if (isVercel) {
     puppeteer = await import("puppeteer-core");
-    chromium = await import("chrome-aws-lambda");
+    chromium = await import("@sparticuz/chromium");
   } else {
     puppeteer = await import("puppeteer");
   }
@@ -1855,7 +1854,7 @@ const runWithUsOrder = async (systemCode, user_id, supplier_params, rows) => {
 
   if (isVercel) {
     puppeteer = await import("puppeteer-core");
-    chromium = await import("chrome-aws-lambda");
+    chromium = await import("@sparticuz/chromium");
   } else {
     puppeteer = await import("puppeteer");
   }
@@ -2117,7 +2116,7 @@ const runGeoPharmOrder = async (
 
   if (isVercel) {
     puppeteer = await import("puppeteer-core");
-    chromium = await import("chrome-aws-lambda");
+    chromium = await import("@sparticuz/chromium");
   } else {
     puppeteer = await import("puppeteer");
   }
@@ -2344,7 +2343,7 @@ const runGeoWebOrder = async (systemCode, user_id, supplier_params, rows) => {
 
   if (isVercel) {
     puppeteer = await import("puppeteer-core");
-    chromium = await import("chrome-aws-lambda");
+    chromium = await import("@sparticuz/chromium");
   } else {
     puppeteer = await import("puppeteer");
   }
@@ -2582,7 +2581,7 @@ const runBridgePharmOrder = async (
 
   if (isVercel) {
     puppeteer = await import("puppeteer-core");
-    chromium = await import("chrome-aws-lambda");
+    chromium = await import("@sparticuz/chromium");
   } else {
     puppeteer = await import("puppeteer");
   }
