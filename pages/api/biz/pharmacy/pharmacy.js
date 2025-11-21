@@ -875,7 +875,6 @@ const runHanshinOrder = async (systemCode, user_id, supplier_params, rows) => {
   if (isVercel) {
     puppeteer = await import("puppeteer-core");
     chromium = await import("@sparticuz/chromium");
-    throw new Error(`크롬 실행경로 변수값은 ${chromium.executablePath}`);
   } else {
     puppeteer = await import("puppeteer");
   }
@@ -886,7 +885,7 @@ const runHanshinOrder = async (systemCode, user_id, supplier_params, rows) => {
       ? {
           args: chromium.args,
           defaultViewport: chromium.defaultViewport,
-          executablePath: chromium.executablePath,
+          executablePath: await chromium.executablePath(),
           headless: chromium.headless,
         }
       : {
@@ -1123,7 +1122,7 @@ const runKeonHwaOrder = async (systemCode, user_id, supplier_params, rows) => {
       ? {
           args: chromium.args,
           defaultViewport: chromium.defaultViewport,
-          executablePath: chromium.executablePath,
+          executablePath: await chromium.executablePath(),
           headless: chromium.headless,
         }
       : {
@@ -1390,7 +1389,7 @@ const runNamshinOrder = async (systemCode, user_id, supplier_params, rows) => {
       ? {
           args: chromium.args,
           defaultViewport: chromium.defaultViewport,
-          executablePath: chromium.executablePath,
+          executablePath: await chromium.executablePath(),
           headless: chromium.headless,
         }
       : {
@@ -1632,7 +1631,7 @@ const runUPharmMallOrder = async (
       ? {
           args: chromium.args,
           defaultViewport: chromium.defaultViewport,
-          executablePath: chromium.executablePath,
+          executablePath: await chromium.executablePath(),
           headless: chromium.headless,
         }
       : {
@@ -1866,7 +1865,7 @@ const runWithUsOrder = async (systemCode, user_id, supplier_params, rows) => {
       ? {
           args: chromium.args,
           defaultViewport: chromium.defaultViewport,
-          executablePath: chromium.executablePath,
+          executablePath: await chromium.executablePath(),
           headless: chromium.headless,
         }
       : {
@@ -2128,7 +2127,7 @@ const runGeoPharmOrder = async (
       ? {
           args: chromium.args,
           defaultViewport: chromium.defaultViewport,
-          executablePath: chromium.executablePath,
+          executablePath: await chromium.executablePath(),
           headless: chromium.headless,
         }
       : {
@@ -2355,7 +2354,7 @@ const runGeoWebOrder = async (systemCode, user_id, supplier_params, rows) => {
       ? {
           args: chromium.args,
           defaultViewport: chromium.defaultViewport,
-          executablePath: chromium.executablePath,
+          executablePath: await chromium.executablePath(),
           headless: chromium.headless,
         }
       : {
@@ -2593,7 +2592,7 @@ const runBridgePharmOrder = async (
       ? {
           args: chromium.args,
           defaultViewport: chromium.defaultViewport,
-          executablePath: chromium.executablePath,
+          executablePath: await chromium.executablePath(),
           headless: chromium.headless,
         }
       : {
