@@ -815,6 +815,16 @@ export async function runOrderBySupplier(
       case `지오영네트웍스`:
         ret = await runGeoWebOrder(systemCode, user_id, supplier_params, rows);
         break;
+      case `동원헬스케어`:
+        ret = await runUPharmMallOrder(
+          systemCode,
+          user_id,
+          supplier_params,
+          rows,
+          supplierName
+        );
+        break;
+
       default:
         ret = {
           error_code: -1,
@@ -842,7 +852,10 @@ const runHanshinOrder = async (systemCode, user_id, supplier_params, rows) => {
   const loginPassword = supplier_params.loginPassword; //= "542500";
 
   // 브라우저를 보면서 작업내용 확인
-  const browser = await puppeteer.launch({ headless: false });
+  const browser = await puppeteer.launch({
+    headless: false,
+    args: ["--start-maximized"],
+  });
   const page = await browser.newPage();
   var lastRowResult = constants.General.EmptyString;
 
@@ -1021,10 +1034,200 @@ const runHanshinOrder = async (systemCode, user_id, supplier_params, rows) => {
 // 아이디 chif2000
 // 비번 542500
 
-// 유팜몰
+// 유팜몰(동원헬스케어)
 // https://www.upharmmall.co.kr
 // 아이디 chif2000
 // 비번 5425abcd
+const runUPharmMallOrder = async (
+  systemCode,
+  user_id,
+  supplier_params,
+  rows,
+  supplierName
+) => {
+  logger.warn(`Start UPharmMallOrder`);
+
+  if (rows.length === 0) {
+    ret = {
+      error_code: 0,
+      error_message: `${constants.messages.SUCCESS_FINISHED}`,
+    };
+    return ret;
+  }
+
+  const loginUrl = supplier_params.loginUrl;
+  const loginId = supplier_params.loginId; // = "chif2000";
+  const loginPassword = supplier_params.loginPassword; //= "542500";
+
+  // 브라우저를 보면서 작업내용 확인
+  const browser = await puppeteer.launch({
+    headless: false,
+    args: ["--start-maximized"],
+  });
+  const page = await browser.newPage();
+  var lastRowResult = constants.General.EmptyString;
+
+  // 1️⃣ 로그인
+  await page.goto(loginUrl, { waitUntil: "domcontentloaded" });
+
+  await page.type("#ctl00_HeaderControl_txtTopUserID", loginId);
+  await page.type("#ctl00_HeaderControl_txtTopPwd", loginPassword);
+
+  // 로그인 전 잠시 대기
+  await page.waitForSelector('input[type="submit"][value="로그인"]');
+  // 로그인 버튼 클릭 후 페이지 로딩 대기
+  await page.click("#ctl00_HeaderControl_ibtnTopLogin");
+  await page.waitForNavigation({ waitUntil: "load" }); // 페이지 로딩 대기
+
+  const cookies = await page.cookies();
+  console.log("쿠키:", cookies);
+
+  if (!cookies || cookies.length <= 0) {
+    return {
+      error_code: -1,
+      error_message: `${constants.messages.FAILED_REQUESTED}`,
+    };
+  }
+
+  await new Promise((resolve) => setTimeout(resolve, 1000));
+
+  page.waitForNavigation();
+
+  // 2️⃣ 주문/상품조회 페이지 이동 (동원헬스케어)
+  switch (supplierName) {
+    case "동원헬스케어":
+      await page.click("a[onclick^='fnMemberChange']");
+      break;
+    default:
+      return {
+        error_code: -1,
+        error_message: `${constants.messages.SERVER_NOT_SUPPORTED_MODULE}`,
+      };
+  }
+
+  for (const row of rows) {
+    try {
+      if (!row.product_code) {
+        lastRowResult = "입력 제품 없음";
+        throw new Error(lastRowResult); // 입력 제품 없음
+      }
+
+      // --- 검색조건 세팅 ---
+      await page.waitForSelector("#itemName", { visible: true });
+
+      // 2) 검색어 입력
+      await page.click("#itemName", { clickCount: 3 }); // 기존 값 지우기
+      await page.type("#itemName", row.product_code);
+
+      // 3) 검색 버튼 클릭
+      await page.click("#btnSearch");
+
+      // 4) 검색 결과 테이블 로딩 대기
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+
+      // 1) 테이블 로딩 대기
+      await page.waitForSelector("#list1 tbody");
+
+      // 2) 모든 row 데이터 배열로 추출
+      const rowsResult = await page.$$eval("#list1 tbody tr", (rows) => {
+        return rows.map((row) => {
+          const tds = row.querySelectorAll("td");
+          const stockHidden = row.querySelector("input[id^='stocQty']"); // hidden input에서 재고
+          const stockQty = stockHidden
+            ? parseInt(stockHidden.value.trim().replace(/,/g, ""), 10)
+            : 0;
+          if (stockQty > 0) {
+            return {
+              insuranceCode: tds[0]?.innerText.trim() || "",
+              manufacturer: tds[1]?.innerText.trim() || "",
+              productName: tds[2]?.innerText.trim() || "",
+              standard: tds[4]?.innerText.trim() || "",
+              price: tds[5]?.innerText.trim() || "",
+              stock: stockHidden
+                ? parseInt(stockHidden.value.trim().replace(/,/g, ""), 10)
+                : 0,
+              orderInputId: tds[7]?.querySelector("input")?.id || null,
+            };
+          }
+        });
+      });
+
+      // 3) 결과 체크
+      if (rowsResult.length === 0) {
+        lastRowResult = "제품 검색 불가";
+        throw new Error(lastRowResult); // 입력 제품 없음
+      } else if (rowsResult.length > 1) {
+        lastRowResult = "제품 중복 검색";
+        throw new Error(lastRowResult); // 입력 제품 없음
+      }
+
+      //
+      // 2. 재고 체크
+      //
+      if (row.order_qty > rowsResult[0].stock) {
+        lastRowResult = "재고 부족";
+        throw new Error(lastRowResult);
+      }
+
+      // 3. 주문수량 입력
+      const firstRow = await page.$("#list1 tbody tr:first-child");
+
+      // 2) 첫 번째 row의 주문수량 input 가져오기
+      const orderInput = await firstRow.$("input[id^='orderQty']");
+      await orderInput.click({ clickCount: 3 }); // 기존 값 지우기
+      await orderInput.type(`${row.order_qty}`);
+
+      // 주문담기 버튼 클릭
+      const cartBtn = await firstRow.$('button, input[type="button"]');
+      if (!cartBtn) {
+        throw new Error("첫 번째 행에서 장바구니 버튼을 찾지 못했습니다.");
+      }
+
+      // 4) 버튼 클릭
+      await cartBtn.click();
+
+      lastRowResult = "장바구니 전송";
+
+      // 상태 저장
+      const result = await updateOrderStatus(
+        systemCode,
+        user_id,
+        row.upload_hour,
+        row.product_code,
+        row.supplier_name,
+        lastRowResult
+      );
+    } catch (e) {
+      // 에러코드 상태 저장
+      const result = await updateOrderStatus(
+        systemCode,
+        user_id,
+        row.upload_hour,
+        row.product_code,
+        row.supplier_name,
+        e.message
+      );
+    }
+  }
+
+  await browser.close();
+
+  var ret;
+
+  ret =
+    rows.length != 1
+      ? {
+          error_code: 0,
+          error_message: `${constants.messages.SUCCESS_FINISHED}`,
+        }
+      : {
+          error_code: 0,
+          error_message: `${lastRowResult}`,
+        };
+
+  logger.warn(`Finished HanshinOrder: ${JSON.stringify(ret, null, 2)}`);
+  return ret;
+};
 
 // (주) 훼밀리팜
 // http://family-pharm.co.kr
@@ -1062,7 +1265,10 @@ const runGeoPharmOrder = async (
   const loginPassword = supplier_params.loginPassword; //= "542500";
 
   // 브라우저를 보면서 작업내용 확인
-  const browser = await puppeteer.launch({ headless: false });
+  const browser = await puppeteer.launch({
+    headless: false,
+    args: ["--start-maximized"],
+  });
   const page = await browser.newPage();
   var lastRowResult = constants.General.EmptyString;
 
@@ -1245,7 +1451,10 @@ const runGeoWebOrder = async (systemCode, user_id, supplier_params, rows) => {
   const loginPassword = supplier_params.loginPassword; //= "542500";
 
   // 브라우저를 보면서 작업내용 확인
-  const browser = await puppeteer.launch({ headless: false });
+  const browser = await puppeteer.launch({
+    headless: false,
+    args: ["--start-maximized"],
+  });
   const page = await browser.newPage();
   var lastRowResult = constants.General.EmptyString;
 
