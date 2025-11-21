@@ -97,12 +97,18 @@ const SupplierSettingContent = () => {
 
   const columns = [
     { Header: "Name", accessor: "supplier_name", type: "text" },
-    { Header: "Parameters", accessor: "supplier_params", type: "text" },
+    {
+      Header: "Parameters",
+      accessor: "supplier_params",
+      type: "text",
+      editable: true,
+    },
     {
       Header: "Use Flag",
       accessor: "use_flag",
       type: "checkbox",
       Cell: ({ value }) => <input type="checkbox" checked={!!value} readOnly />,
+      editable: true,
     },
   ];
 
@@ -169,8 +175,32 @@ const SupplierSettingContent = () => {
   };
 
   const editRowData = async (row) => {
-    // console.log("데이터 수정:");
-    // 서버 작업
+    const supplierName = row.values.supplier_name;
+    const parameters = row.values.supplier_params;
+    const useFlag = row.values.use_flag;
+
+    const jRequest = {
+      commandName: constants.commands.PHARMACY_SUPPLIER_UPSERT_ONE, // 기존 upsert 사용
+      systemCode: userInfo.getCurrentSystemCode(),
+      userId: userInfo.getLoginUserId(),
+      supplierName: supplierName,
+      parameters: parameters,
+      useFlag: useFlag,
+    };
+
+    try {
+      setLoading(true);
+      const jResponse = await RequestServer(jRequest);
+      setLoading(false);
+
+      openModal(jResponse.error_message || "수정 완료");
+    } catch (e) {
+      setLoading(false);
+      openModal(e.message);
+    }
+
+    // 테이블 새로고침
+    tableRef.current.refreshTableData();
   };
 
   const deleteRowData = async (row) => {
