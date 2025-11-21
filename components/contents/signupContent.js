@@ -99,7 +99,7 @@ export default function SignupContent() {
       setRegisterNo(record.register_no);
       setPhoneNumber(record.phone_no);
       setAddress(record.address || constants.General.EmptyString);
-      setUserType(constants.userType.Supplier);
+      setUserType(constants.UserType.Supplier);
       setRegisterName(record.name || constants.General.EmptyString); // ✅ RegisterName 설정
       setShowBizModal(false);
     }
