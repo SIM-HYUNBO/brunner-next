@@ -887,7 +887,7 @@ const runHanshinOrder = async (systemCode, user_id, supplier_params, rows) => {
           args: chromium.args,
           defaultViewport: chromium.defaultViewport,
           executablePath: chromium.executablePath,
-          headless: true,
+          headless: chromium.headless,
         }
       : {
           headless: false,
@@ -1124,7 +1124,7 @@ const runKeonHwaOrder = async (systemCode, user_id, supplier_params, rows) => {
           args: chromium.args,
           defaultViewport: chromium.defaultViewport,
           executablePath: chromium.executablePath,
-          headless: true,
+          headless: chromium.headless,
         }
       : {
           headless: false,
@@ -1391,7 +1391,7 @@ const runNamshinOrder = async (systemCode, user_id, supplier_params, rows) => {
           args: chromium.args,
           defaultViewport: chromium.defaultViewport,
           executablePath: chromium.executablePath,
-          headless: true,
+          headless: chromium.headless,
         }
       : {
           headless: false,
@@ -1633,7 +1633,7 @@ const runUPharmMallOrder = async (
           args: chromium.args,
           defaultViewport: chromium.defaultViewport,
           executablePath: chromium.executablePath,
-          headless: true,
+          headless: chromium.headless,
         }
       : {
           headless: false,
@@ -1867,7 +1867,7 @@ const runWithUsOrder = async (systemCode, user_id, supplier_params, rows) => {
           args: chromium.args,
           defaultViewport: chromium.defaultViewport,
           executablePath: chromium.executablePath,
-          headless: true,
+          headless: chromium.headless,
         }
       : {
           headless: false,
@@ -2129,7 +2129,7 @@ const runGeoPharmOrder = async (
           args: chromium.args,
           defaultViewport: chromium.defaultViewport,
           executablePath: chromium.executablePath,
-          headless: true,
+          headless: chromium.headless,
         }
       : {
           headless: false,
@@ -2356,7 +2356,7 @@ const runGeoWebOrder = async (systemCode, user_id, supplier_params, rows) => {
           args: chromium.args,
           defaultViewport: chromium.defaultViewport,
           executablePath: chromium.executablePath,
-          headless: true,
+          headless: chromium.headless,
         }
       : {
           headless: false,
@@ -2594,7 +2594,7 @@ const runBridgePharmOrder = async (
           args: chromium.args,
           defaultViewport: chromium.defaultViewport,
           executablePath: chromium.executablePath,
-          headless: true,
+          headless: chromium.headless,
         }
       : {
           headless: false,
