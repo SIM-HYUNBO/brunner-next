@@ -10,6 +10,7 @@ import qs from "qs"; // querystring 변환용
 import { time } from "console";
 import { execSync } from "child_process";
 import path from "path";
+import dynamic from "next/dynamic";
 
 const executeService = async (txnId, jRequest) => {
   var jResponse = {};
