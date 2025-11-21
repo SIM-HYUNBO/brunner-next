@@ -19,7 +19,9 @@ const getPool = async () => {
     database: process.env.DB_DATABASE,
     password: process.env.DB_PASSWORD,
     port: process.env.DB_PORT,
-    ssl: true,
+    ssl: {
+      rejectUnauthorized: false, // self-signed 인증서 허용
+    },
   });
 };
 
