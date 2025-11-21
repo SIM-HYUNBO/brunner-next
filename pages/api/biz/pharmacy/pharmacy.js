@@ -10,6 +10,8 @@ import qs from "qs"; // querystring 변환용
 import { time } from "console";
 import { execSync } from "child_process";
 import path from "path";
+import puppeteer from "puppeteer-core";
+import chromium from "@sparticuz/chromium";
 
 const executeService = async (txnId, jRequest) => {
   var jResponse = {};
@@ -873,8 +875,8 @@ const runHanshinOrder = async (systemCode, user_id, supplier_params, rows) => {
   const isVercel = !!process.env.VERCEL;
 
   if (isVercel) {
-    puppeteer = await import("puppeteer-core");
-    chromium = await import("@sparticuz/chromium");
+    // puppeteer = await import("puppeteer-core");
+    // chromium = await import("@sparticuz/chromium");
   } else {
     puppeteer = await import("puppeteer");
   }
