@@ -871,7 +871,7 @@ const runHanshinOrder = async (systemCode, user_id, supplier_params, rows) => {
   const edgePath = getEdgePath();
 
   let puppeteer, chromium;
-  const isVercel = true;
+  const isVercel = !!process.env.VERCEL;
 
   if (isVercel) {
     puppeteer = await import("puppeteer-core");
@@ -1108,7 +1108,7 @@ const runKeonHwaOrder = async (systemCode, user_id, supplier_params, rows) => {
   const edgePath = getEdgePath();
 
   let puppeteer, chromium;
-  const isVercel = true;
+  const isVercel = !!process.env.VERCEL;
 
   if (isVercel) {
     puppeteer = await import("puppeteer-core");
@@ -1375,7 +1375,7 @@ const runNamshinOrder = async (systemCode, user_id, supplier_params, rows) => {
 
   // 브라우저를 보면서 작업내용 확인
   let puppeteer, chromium;
-  const isVercel = true;
+  const isVercel = !!process.env.VERCEL;
 
   if (isVercel) {
     puppeteer = await import("puppeteer-core");
@@ -1617,7 +1617,7 @@ const runUPharmMallOrder = async (
   const edgePath = getEdgePath();
 
   let puppeteer, chromium;
-  const isVercel = true;
+  const isVercel = !!process.env.VERCEL;
 
   if (isVercel) {
     puppeteer = await import("puppeteer-core");
@@ -1851,7 +1851,7 @@ const runWithUsOrder = async (systemCode, user_id, supplier_params, rows) => {
   const edgePath = getEdgePath();
 
   let puppeteer, chromium;
-  const isVercel = true;
+  const isVercel = !!process.env.VERCEL;
 
   if (isVercel) {
     puppeteer = await import("puppeteer-core");
@@ -2113,7 +2113,7 @@ const runGeoPharmOrder = async (
 
   // 브라우저를 보면서 작업내용 확인
   let puppeteer, chromium;
-  const isVercel = true;
+  const isVercel = !!process.env.VERCEL;
 
   if (isVercel) {
     puppeteer = await import("puppeteer-core");
@@ -2340,7 +2340,7 @@ const runGeoWebOrder = async (systemCode, user_id, supplier_params, rows) => {
 
   // 브라우저를 보면서 작업내용 확인
   let puppeteer, chromium;
-  const isVercel = true;
+  const isVercel = !!process.env.VERCEL;
 
   if (isVercel) {
     puppeteer = await import("puppeteer-core");
@@ -2578,7 +2578,7 @@ const runBridgePharmOrder = async (
 
   // 브라우저를 보면서 작업내용 확인
   let puppeteer, chromium;
-  const isVercel = true;
+  const isVercel = !!process.env.VERCEL;
 
   if (isVercel) {
     puppeteer = await import("puppeteer-core");
