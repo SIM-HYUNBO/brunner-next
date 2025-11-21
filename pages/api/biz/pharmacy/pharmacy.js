@@ -1321,19 +1321,21 @@ const runKeonHwaOrder = async (systemCode, user_id, supplier_params, rows) => {
 };
 
 //남신약품
-// http://namsinp.com
+// http://namsinp.com/Contents/Main/Main0.asp
 // 아이디 chif2000
 // 비번 542500
 const runNamshinOrder = async (systemCode, user_id, supplier_params, rows) => {
-  logger.warn(`Start HanshinOrder`);
+  logger.warn(`Start NamshinOrder`);
 
   const loginUrl = supplier_params.loginUrl;
   const loginId = supplier_params.loginId; // = "chif2000";
   const loginPassword = supplier_params.loginPassword; //= "542500";
+  const edgePath = getEdgePath();
 
   // 브라우저를 보면서 작업내용 확인
   const browser = await puppeteer.launch({
     headless: false,
+    executablePath: edgePath, // Edge 경로
     args: [
       "--start-maximized",
       "--no-sandbox",
@@ -1347,6 +1349,7 @@ const runNamshinOrder = async (systemCode, user_id, supplier_params, rows) => {
       "--disable-web-security",
       "--allow-running-insecure-content",
       "--ignore-certificate-errors",
+      "--disable-features=UpgradeHTTPToHTTPS",
     ],
   });
   const page = await browser.newPage();
