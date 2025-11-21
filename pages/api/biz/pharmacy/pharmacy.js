@@ -5,12 +5,12 @@ import * as constants from "@/components/core/constants";
 import * as database from "./../database/database";
 import * as dynamicSql from "./../dynamicSql";
 import * as mailSender from "@/components/core/server/mailSender";
-import puppeteer from "puppeteer";
 import bcrypt from "bcryptjs";
 import qs from "qs"; // querystring 변환용
 import { time } from "console";
 import { execSync } from "child_process";
 import path from "path";
+import chromium from "chrome-aws-lambda";
 
 const executeService = async (txnId, jRequest) => {
   var jResponse = {};
@@ -870,25 +870,45 @@ const runHanshinOrder = async (systemCode, user_id, supplier_params, rows) => {
   const loginPassword = supplier_params.loginPassword; //= "542500";
   const edgePath = getEdgePath();
 
+  let puppeteer, chromium;
+  const isVercel = !!process.env.VERCEL;
+
+  if (isVercel) {
+    puppeteer = await import("puppeteer-core");
+    chromium = await import("chrome-aws-lambda");
+  } else {
+    puppeteer = await import("puppeteer");
+  }
+
   // 브라우저를 보면서 작업내용 확인
-  const browser = await puppeteer.launch({
-    headless: false,
-    executablePath: edgePath, // Edge 경로
-    args: [
-      "--start-maximized",
-      "--no-sandbox",
-      "--disable-setuid-sandbox",
-      "--disable-extensions", // ★ 확장 기능 완전 비활성화
-      "--disable-popup-blocking",
-      "--disable-client-side-phishing-detection", // ★ SafeBrowsing 완전 끄기
-      "--disable-features=SafeBrowsing", // ★ 광고/추적 차단 기능 끄기
-      "--disable-default-apps",
-      "--disable-sync",
-      "--disable-web-security",
-      "--allow-running-insecure-content",
-      "--ignore-certificate-errors",
-    ],
-  });
+  const browser = await puppeteer.launch(
+    isVercel
+      ? {
+          args: chromium.args,
+          defaultViewport: chromium.defaultViewport,
+          executablePath: await chromium.executablePath,
+          headless: chromium.headless,
+        }
+      : {
+          headless: false,
+          executablePath: edgePath,
+          args: [
+            "--start-maximized",
+            "--no-sandbox",
+            "--disable-setuid-sandbox",
+            "--disable-extensions",
+            "--disable-popup-blocking",
+            "--disable-client-side-phishing-detection",
+            "--disable-features=SafeBrowsing",
+            "--disable-default-apps",
+            "--disable-sync",
+            "--disable-web-security",
+            "--allow-running-insecure-content",
+            "--ignore-certificate-errors",
+          ],
+        }
+  );
+
   const page = await browser.newPage();
 
   page.on("requestfailed", (request) => {
@@ -1087,26 +1107,45 @@ const runKeonHwaOrder = async (systemCode, user_id, supplier_params, rows) => {
   const loginPassword = supplier_params.loginPassword; //= "542500";
   const edgePath = getEdgePath();
 
+  let puppeteer, chromium;
+  const isVercel = !!process.env.VERCEL;
+
+  if (isVercel) {
+    puppeteer = await import("puppeteer-core");
+    chromium = await import("chrome-aws-lambda");
+  } else {
+    puppeteer = await import("puppeteer");
+  }
+
   // 브라우저를 보면서 작업내용 확인
-  const browser = await puppeteer.launch({
-    headless: false,
-    executablePath: edgePath, // Edge 경로
-    args: [
-      "--start-maximized",
-      "--no-sandbox",
-      "--disable-setuid-sandbox",
-      "--disable-extensions", // ★ 확장 기능 완전 비활성화
-      "--disable-popup-blocking",
-      "--disable-client-side-phishing-detection", // ★ SafeBrowsing 완전 끄기
-      "--disable-features=SafeBrowsing", // ★ 광고/추적 차단 기능 끄기
-      "--disable-default-apps",
-      "--disable-sync",
-      "--disable-web-security",
-      "--allow-running-insecure-content",
-      "--ignore-certificate-errors",
-      "--disable-features=UpgradeHTTPToHTTPS",
-    ],
-  });
+  const browser = await puppeteer.launch(
+    isVercel
+      ? {
+          args: chromium.args,
+          defaultViewport: chromium.defaultViewport,
+          executablePath: await chromium.executablePath,
+          headless: chromium.headless,
+        }
+      : {
+          headless: false,
+          executablePath: edgePath,
+          args: [
+            "--start-maximized",
+            "--no-sandbox",
+            "--disable-setuid-sandbox",
+            "--disable-extensions",
+            "--disable-popup-blocking",
+            "--disable-client-side-phishing-detection",
+            "--disable-features=SafeBrowsing",
+            "--disable-default-apps",
+            "--disable-sync",
+            "--disable-web-security",
+            "--allow-running-insecure-content",
+            "--ignore-certificate-errors",
+          ],
+        }
+  );
+
   const page = await browser.newPage();
 
   page.on("requestfailed", (request) => {
@@ -1335,25 +1374,44 @@ const runNamshinOrder = async (systemCode, user_id, supplier_params, rows) => {
   const edgePath = getEdgePath();
 
   // 브라우저를 보면서 작업내용 확인
-  const browser = await puppeteer.launch({
-    headless: false,
-    executablePath: edgePath, // Edge 경로
-    args: [
-      "--start-maximized",
-      "--no-sandbox",
-      "--disable-setuid-sandbox",
-      "--disable-extensions", // ★ 확장 기능 완전 비활성화
-      "--disable-popup-blocking",
-      "--disable-client-side-phishing-detection", // ★ SafeBrowsing 완전 끄기
-      "--disable-features=SafeBrowsing", // ★ 광고/추적 차단 기능 끄기
-      "--disable-default-apps",
-      "--disable-sync",
-      "--disable-web-security",
-      "--allow-running-insecure-content",
-      "--ignore-certificate-errors",
-      "--disable-features=UpgradeHTTPToHTTPS",
-    ],
-  });
+  let puppeteer, chromium;
+  const isVercel = !!process.env.VERCEL;
+
+  if (isVercel) {
+    puppeteer = await import("puppeteer-core");
+    chromium = await import("chrome-aws-lambda");
+  } else {
+    puppeteer = await import("puppeteer");
+  }
+
+  // 브라우저를 보면서 작업내용 확인
+  const browser = await puppeteer.launch(
+    isVercel
+      ? {
+          args: chromium.args,
+          defaultViewport: chromium.defaultViewport,
+          executablePath: await chromium.executablePath,
+          headless: chromium.headless,
+        }
+      : {
+          headless: false,
+          executablePath: edgePath,
+          args: [
+            "--start-maximized",
+            "--no-sandbox",
+            "--disable-setuid-sandbox",
+            "--disable-extensions",
+            "--disable-popup-blocking",
+            "--disable-client-side-phishing-detection",
+            "--disable-features=SafeBrowsing",
+            "--disable-default-apps",
+            "--disable-sync",
+            "--disable-web-security",
+            "--allow-running-insecure-content",
+            "--ignore-certificate-errors",
+          ],
+        }
+  );
   const page = await browser.newPage();
 
   page.on("requestfailed", (request) => {
@@ -1558,25 +1616,45 @@ const runUPharmMallOrder = async (
   const loginPassword = supplier_params.loginPassword; //= "542500";
   const edgePath = getEdgePath();
 
+  let puppeteer, chromium;
+  const isVercel = !!process.env.VERCEL;
+
+  if (isVercel) {
+    puppeteer = await import("puppeteer-core");
+    chromium = await import("chrome-aws-lambda");
+  } else {
+    puppeteer = await import("puppeteer");
+  }
+
   // 브라우저를 보면서 작업내용 확인
-  const browser = await puppeteer.launch({
-    headless: false,
-    executablePath: edgePath, // Edge 경로
-    args: [
-      "--start-maximized",
-      "--no-sandbox",
-      "--disable-setuid-sandbox",
-      "--disable-extensions", // ★ 확장 기능 완전 비활성화
-      "--disable-popup-blocking",
-      "--disable-client-side-phishing-detection", // ★ SafeBrowsing 완전 끄기
-      "--disable-features=SafeBrowsing", // ★ 광고/추적 차단 기능 끄기
-      "--disable-default-apps",
-      "--disable-sync",
-      "--disable-web-security",
-      "--allow-running-insecure-content",
-      "--ignore-certificate-errors",
-    ],
-  });
+  const browser = await puppeteer.launch(
+    isVercel
+      ? {
+          args: chromium.args,
+          defaultViewport: chromium.defaultViewport,
+          executablePath: await chromium.executablePath,
+          headless: chromium.headless,
+        }
+      : {
+          headless: false,
+          executablePath: edgePath,
+          args: [
+            "--start-maximized",
+            "--no-sandbox",
+            "--disable-setuid-sandbox",
+            "--disable-extensions",
+            "--disable-popup-blocking",
+            "--disable-client-side-phishing-detection",
+            "--disable-features=SafeBrowsing",
+            "--disable-default-apps",
+            "--disable-sync",
+            "--disable-web-security",
+            "--allow-running-insecure-content",
+            "--ignore-certificate-errors",
+          ],
+        }
+  );
+
   const page = await browser.newPage();
 
   page.on("requestfailed", (request) => {
@@ -1772,26 +1850,45 @@ const runWithUsOrder = async (systemCode, user_id, supplier_params, rows) => {
   const loginPassword = supplier_params.loginPassword; //= "542500";
   const edgePath = getEdgePath();
 
+  let puppeteer, chromium;
+  const isVercel = !!process.env.VERCEL;
+
+  if (isVercel) {
+    puppeteer = await import("puppeteer-core");
+    chromium = await import("chrome-aws-lambda");
+  } else {
+    puppeteer = await import("puppeteer");
+  }
+
   // 브라우저를 보면서 작업내용 확인
-  const browser = await puppeteer.launch({
-    headless: false,
-    executablePath: edgePath, // Edge 경로
-    args: [
-      "--start-maximized",
-      "--no-sandbox",
-      "--disable-setuid-sandbox",
-      "--disable-extensions", // ★ 확장 기능 완전 비활성화
-      "--disable-popup-blocking",
-      "--disable-client-side-phishing-detection", // ★ SafeBrowsing 완전 끄기
-      "--disable-features=SafeBrowsing", // ★ 광고/추적 차단 기능 끄기
-      "--disable-default-apps",
-      "--disable-sync",
-      "--disable-web-security",
-      "--allow-running-insecure-content",
-      "--ignore-certificate-errors",
-      "--disable-features=UpgradeHTTPToHTTPS",
-    ],
-  });
+  const browser = await puppeteer.launch(
+    isVercel
+      ? {
+          args: chromium.args,
+          defaultViewport: chromium.defaultViewport,
+          executablePath: await chromium.executablePath,
+          headless: chromium.headless,
+        }
+      : {
+          headless: false,
+          executablePath: edgePath,
+          args: [
+            "--start-maximized",
+            "--no-sandbox",
+            "--disable-setuid-sandbox",
+            "--disable-extensions",
+            "--disable-popup-blocking",
+            "--disable-client-side-phishing-detection",
+            "--disable-features=SafeBrowsing",
+            "--disable-default-apps",
+            "--disable-sync",
+            "--disable-web-security",
+            "--allow-running-insecure-content",
+            "--ignore-certificate-errors",
+          ],
+        }
+  );
+
   const page = await browser.newPage();
 
   page.on("requestfailed", (request) => {
@@ -2015,24 +2112,45 @@ const runGeoPharmOrder = async (
   const edgePath = getEdgePath();
 
   // 브라우저를 보면서 작업내용 확인
-  const browser = await puppeteer.launch({
-    headless: false,
-    executablePath: edgePath, // Edge 경로
-    args: [
-      "--start-maximized",
-      "--no-sandbox",
-      "--disable-setuid-sandbox",
-      "--disable-extensions", // ★ 확장 기능 완전 비활성화
-      "--disable-popup-blocking",
-      "--disable-client-side-phishing-detection", // ★ SafeBrowsing 완전 끄기
-      "--disable-features=SafeBrowsing", // ★ 광고/추적 차단 기능 끄기
-      "--disable-default-apps",
-      "--disable-sync",
-      "--disable-web-security",
-      "--allow-running-insecure-content",
-      "--ignore-certificate-errors",
-    ],
-  });
+  let puppeteer, chromium;
+  const isVercel = !!process.env.VERCEL;
+
+  if (isVercel) {
+    puppeteer = await import("puppeteer-core");
+    chromium = await import("chrome-aws-lambda");
+  } else {
+    puppeteer = await import("puppeteer");
+  }
+
+  // 브라우저를 보면서 작업내용 확인
+  const browser = await puppeteer.launch(
+    isVercel
+      ? {
+          args: chromium.args,
+          defaultViewport: chromium.defaultViewport,
+          executablePath: await chromium.executablePath,
+          headless: chromium.headless,
+        }
+      : {
+          headless: false,
+          executablePath: edgePath,
+          args: [
+            "--start-maximized",
+            "--no-sandbox",
+            "--disable-setuid-sandbox",
+            "--disable-extensions",
+            "--disable-popup-blocking",
+            "--disable-client-side-phishing-detection",
+            "--disable-features=SafeBrowsing",
+            "--disable-default-apps",
+            "--disable-sync",
+            "--disable-web-security",
+            "--allow-running-insecure-content",
+            "--ignore-certificate-errors",
+          ],
+        }
+  );
+
   const page = await browser.newPage();
 
   page.on("requestfailed", (request) => {
@@ -2221,24 +2339,44 @@ const runGeoWebOrder = async (systemCode, user_id, supplier_params, rows) => {
   const edgePath = getEdgePath();
 
   // 브라우저를 보면서 작업내용 확인
-  const browser = await puppeteer.launch({
-    headless: false,
-    executablePath: edgePath, // Edge 경로
-    args: [
-      "--start-maximized",
-      "--no-sandbox",
-      "--disable-setuid-sandbox",
-      "--disable-extensions", // ★ 확장 기능 완전 비활성화
-      "--disable-popup-blocking",
-      "--disable-client-side-phishing-detection", // ★ SafeBrowsing 완전 끄기
-      "--disable-features=SafeBrowsing", // ★ 광고/추적 차단 기능 끄기
-      "--disable-default-apps",
-      "--disable-sync",
-      "--disable-web-security",
-      "--allow-running-insecure-content",
-      "--ignore-certificate-errors",
-    ],
-  });
+  let puppeteer, chromium;
+  const isVercel = !!process.env.VERCEL;
+
+  if (isVercel) {
+    puppeteer = await import("puppeteer-core");
+    chromium = await import("chrome-aws-lambda");
+  } else {
+    puppeteer = await import("puppeteer");
+  }
+
+  // 브라우저를 보면서 작업내용 확인
+  const browser = await puppeteer.launch(
+    isVercel
+      ? {
+          args: chromium.args,
+          defaultViewport: chromium.defaultViewport,
+          executablePath: await chromium.executablePath,
+          headless: chromium.headless,
+        }
+      : {
+          headless: false,
+          executablePath: edgePath,
+          args: [
+            "--start-maximized",
+            "--no-sandbox",
+            "--disable-setuid-sandbox",
+            "--disable-extensions",
+            "--disable-popup-blocking",
+            "--disable-client-side-phishing-detection",
+            "--disable-features=SafeBrowsing",
+            "--disable-default-apps",
+            "--disable-sync",
+            "--disable-web-security",
+            "--allow-running-insecure-content",
+            "--ignore-certificate-errors",
+          ],
+        }
+  );
 
   page.on("requestfailed", (request) => {
     console.log("❌ FAILED:", request.url(), request.failure());
@@ -2439,25 +2577,45 @@ const runBridgePharmOrder = async (
   const edgePath = getEdgePath();
 
   // 브라우저를 보면서 작업내용 확인
-  const browser = await puppeteer.launch({
-    headless: false,
-    executablePath: edgePath, // Edge 경로
-    args: [
-      "--start-maximized",
-      "--no-sandbox",
-      "--disable-setuid-sandbox",
-      "--disable-extensions", // ★ 확장 기능 완전 비활성화
-      "--disable-popup-blocking",
-      "--disable-client-side-phishing-detection", // ★ SafeBrowsing 완전 끄기
-      "--disable-features=SafeBrowsing", // ★ 광고/추적 차단 기능 끄기
-      "--disable-default-apps",
-      "--disable-sync",
-      "--disable-web-security",
-      "--allow-running-insecure-content",
-      "--ignore-certificate-errors",
-      "--disable-features=UpgradeHTTPToHTTPS",
-    ],
-  });
+  let puppeteer, chromium;
+  const isVercel = !!process.env.VERCEL;
+
+  if (isVercel) {
+    puppeteer = await import("puppeteer-core");
+    chromium = await import("chrome-aws-lambda");
+  } else {
+    puppeteer = await import("puppeteer");
+  }
+
+  // 브라우저를 보면서 작업내용 확인
+  const browser = await puppeteer.launch(
+    isVercel
+      ? {
+          args: chromium.args,
+          defaultViewport: chromium.defaultViewport,
+          executablePath: await chromium.executablePath,
+          headless: chromium.headless,
+        }
+      : {
+          headless: false,
+          executablePath: edgePath,
+          args: [
+            "--start-maximized",
+            "--no-sandbox",
+            "--disable-setuid-sandbox",
+            "--disable-extensions",
+            "--disable-popup-blocking",
+            "--disable-client-side-phishing-detection",
+            "--disable-features=SafeBrowsing",
+            "--disable-default-apps",
+            "--disable-sync",
+            "--disable-web-security",
+            "--allow-running-insecure-content",
+            "--ignore-certificate-errors",
+          ],
+        }
+  );
+
   const page = await browser.newPage();
 
   page.on("requestfailed", (request) => {
