@@ -871,7 +871,7 @@ const runHanshinOrder = async (systemCode, user_id, supplier_params, rows) => {
   const loginPassword = supplier_params.loginPassword; //= "542500";
   const edgePath = getEdgePath();
 
-  let puppeteer, chromium;
+  // let puppeteer, chromium;
   const isVercel = !!process.env.VERCEL;
 
   if (isVercel) {
