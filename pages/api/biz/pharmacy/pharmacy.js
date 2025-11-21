@@ -805,6 +805,9 @@ export async function runOrderBySupplier(
       case `한신약품`:
         ret = await runHanshinOrder(systemCode, user_id, supplier_params, rows);
         break;
+      case `건화약품`:
+        ret = await runKeonHwaOrder(systemCode, user_id, supplier_params, rows);
+        break;
       case `서울지오팜`:
         ret = await runGeoPharmOrder(
           systemCode,
@@ -945,29 +948,34 @@ const runHanshinOrder = async (systemCode, user_id, supplier_params, rows) => {
       const searchResultRows = await page.$$eval(
         ".tbl_list.bdtN tbody tr",
         (trs) =>
-          trs.map((tr) => {
-            const kdCode =
-              tr.querySelector("td:nth-child(1)")?.innerText.trim() || "";
-            const manufacturer =
-              tr.querySelector("td:nth-child(2)")?.innerText.trim() || "";
-            const productName =
-              tr.querySelector("td:nth-child(3)")?.innerText.trim() || "";
-            const standard =
-              tr.querySelector("td:nth-child(4)")?.innerText.trim() || "";
-            const price =
-              tr.querySelector("td:nth-child(6)")?.innerText.trim() || "";
+          trs
+            .map((tr) => {
+              const kdCode =
+                tr.querySelector("td:nth-child(1)")?.innerText.trim() || "";
+              const manufacturer =
+                tr.querySelector("td:nth-child(2)")?.innerText.trim() || "";
+              const productName =
+                tr.querySelector("td:nth-child(3)")?.innerText.trim() || "";
+              const standard =
+                tr.querySelector("td:nth-child(4)")?.innerText.trim() || ""; //규격
+              const price =
+                tr.querySelector("td:nth-child(6)")?.innerText.trim() || ""; //단가
+              const stock =
+                tr.querySelector("td:nth-child(7)")?.innerText.trim() || ""; //재고
 
-            return {
-              kdCode,
-              manufacturer,
-              productName,
-              standard,
-              price,
-              stock: tr.querySelector("input[name^='stock_']")?.value || "",
-              productId: tr.querySelector("input[name^='pc_']")?.value || "",
-              quantityInput: tr.querySelector("input[name^='qty_']")?.id || "",
-            };
-          })
+              return {
+                kdCode,
+                manufacturer,
+                productName,
+                standard,
+                price,
+                stock: tr.querySelector("input[name^='stock_']")?.value || "",
+                productId: tr.querySelector("input[name^='pc_']")?.value || "",
+                quantityInput:
+                  tr.querySelector("input[name^='qty_']")?.id || "",
+              };
+            })
+            .filter((item) => item.stock > 0) // 재고 0 이상만 남김
       );
 
       console.log(searchResultRows);
@@ -1058,6 +1066,256 @@ const runHanshinOrder = async (systemCode, user_id, supplier_params, rows) => {
 // http://kh-pharm.co.kr
 // 아이디 chif2000
 // 비번 542500
+const runKeonHwaOrder = async (systemCode, user_id, supplier_params, rows) => {
+  logger.warn(`Start BridgePharmOrder`);
+
+  if (rows.length === 0) {
+    ret = {
+      error_code: 0,
+      error_message: `${constants.messages.SUCCESS_FINISHED}`,
+    };
+    return ret;
+  }
+
+  const loginUrl = supplier_params.loginUrl;
+  const loginId = supplier_params.loginId; // = "chif2000";
+  const loginPassword = supplier_params.loginPassword; //= "542500";
+  const edgePath = getEdgePath();
+
+  // 브라우저를 보면서 작업내용 확인
+  const browser = await puppeteer.launch({
+    headless: false,
+    executablePath: edgePath, // Edge 경로
+    args: [
+      "--start-maximized",
+      "--no-sandbox",
+      "--disable-setuid-sandbox",
+      "--disable-extensions", // ★ 확장 기능 완전 비활성화
+      "--disable-popup-blocking",
+      "--disable-client-side-phishing-detection", // ★ SafeBrowsing 완전 끄기
+      "--disable-features=SafeBrowsing", // ★ 광고/추적 차단 기능 끄기
+      "--disable-default-apps",
+      "--disable-sync",
+      "--disable-web-security",
+      "--allow-running-insecure-content",
+      "--ignore-certificate-errors",
+      "--disable-features=UpgradeHTTPToHTTPS",
+    ],
+  });
+  const page = await browser.newPage();
+
+  page.on("requestfailed", (request) => {
+    console.log("❌ FAILED:", request.url(), request.failure());
+  });
+
+  var lastRowResult = constants.General.EmptyString;
+
+  // 1️⃣ 로그인
+  await page.setRequestInterception(true);
+  page.on("request", (req) => {
+    // 광고/추적으로 분류되는 요청도 전부 허용
+    req.continue();
+  });
+
+  await page.evaluateOnNewDocument(() => {
+    // alert, confirm, prompt 무력화
+    window.alert = () => {};
+    window.confirm = () => true;
+    window.prompt = () => "";
+    // window.open 무력화 (팝업 생성 방지)
+    window.open = () => null;
+  });
+  // 1️⃣ 로그인
+  await page.goto(loginUrl, { waitUntil: "domcontentloaded" });
+
+  // 페이지 로드 후
+  await page.waitForSelector('input[name="tx_id"]', { visible: true });
+  await page.waitForSelector('input[name="tx_pw"]', { visible: true });
+
+  await page.evaluate(
+    (id, pw) => {
+      // 1. ID/PW 입력
+      const idInput = document.querySelector('input[name="tx_id"]');
+      const pwInput = document.querySelector('input[name="tx_pw"]');
+      idInput.value = id;
+      pwInput.value = pw;
+
+      // 2. 이벤트 강제 트리거 (필요 시)
+      idInput.dispatchEvent(new Event("input", { bubbles: true }));
+      pwInput.dispatchEvent(new Event("input", { bubbles: true }));
+
+      // 3. SendData() 함수 호출 (페이지에 정의됨)
+      if (typeof SendData === "function") {
+        SendData();
+      } else {
+        // fallback: form submit
+        document.LoginForm.submit();
+      }
+    },
+    loginId,
+    loginPassword
+  );
+
+  // 로그인 후 페이지 이동 대기
+  await page.waitForNavigation({ waitUntil: "networkidle0" });
+
+  const cookies = await page.cookies();
+  console.log("쿠키:", cookies);
+
+  if (!cookies || cookies.length <= 0) {
+    return {
+      error_code: -1,
+      error_message: `${constants.messages.FAILED_REQUESTED}`,
+    };
+  }
+
+  // 2️⃣ 주문/상품조회 페이지 이동
+  await page.goto(`${loginUrl}/Service/Order/Order.asp`, {
+    waitUntil: "domcontentloaded",
+  });
+
+  for (const row of rows) {
+    try {
+      if (!row.product_code) {
+        lastRowResult = "입력 제품 없음";
+        throw new Error(lastRowResult); // 입력 제품 없음
+      }
+
+      // --- 검색조건 세팅 ---
+      await page.select("#so3", "2"); // 조회조건 중 KD코드 선택
+      await page.evaluate((kdCode) => {
+        document.querySelector("#tx_physic").value = kdCode;
+      }, row.product_code);
+
+      // 조회 버튼 클릭
+      await page.click("#btn_search2");
+
+      // --- AJAX 로딩 대기: tbody 안에 tr 생길 때까지 ---
+      await page.waitForFunction(
+        () => document.querySelectorAll(".tbl_list.bdtN tbody tr").length > 0,
+        { timeout: 20000 }
+      );
+
+      // 렌더링 대기
+      await new Promise((resolve) => setTimeout(resolve, 500));
+
+      // --- 조회 결과 파싱 ---
+      const searchResultRows = await page.$$eval(
+        ".tbl_list.bdtN tbody tr",
+        (trs) =>
+          trs
+            .map((tr) => {
+              const kdCode =
+                tr.querySelector("td:nth-child(1)")?.innerText.trim() || "";
+              const manufacturer =
+                tr.querySelector("td:nth-child(2)")?.innerText.trim() || "";
+              const productName =
+                tr.querySelector("td:nth-child(3)")?.innerText.trim() || "";
+              const standard =
+                tr.querySelector("td:nth-child(4)")?.innerText.trim() || ""; //규격
+              const price =
+                tr.querySelector("td:nth-child(6)")?.innerText.trim() || ""; //단가
+              const stock =
+                tr.querySelector("td:nth-child(7)")?.innerText.trim() || ""; //재고
+
+              return {
+                kdCode,
+                manufacturer,
+                productName,
+                standard,
+                price,
+                stock: tr.querySelector("input[name^='stock_']")?.value || "",
+                productId: tr.querySelector("input[name^='pc_']")?.value || "",
+                quantityInput:
+                  tr.querySelector("input[name^='qty_']")?.id || "",
+              };
+            })
+            .filter((item) => item.stock > 0) // 재고 0 이상만 남김
+      );
+
+      console.log(searchResultRows);
+
+      // 조회결과가 1건만 조회되어야 주문 처리 가능 ---
+      if (
+        searchResultRows.length === 0 ||
+        searchResultRows[0].productId === constants.General.EmptyString
+      ) {
+        lastRowResult = "제품 검색 불가";
+        throw new Error(lastRowResult);
+      }
+
+      if (searchResultRows.length > 1) {
+        lastRowResult = "제품 중복 검색";
+        throw new Error(lastRowResult);
+      }
+
+      const item = searchResultRows[0];
+      const { stock, quantityInput: qtyId } = item;
+
+      const n_stock = Number(item.stock);
+      const n_orderQty = Number(row.order_qty);
+
+      if (isNaN(n_stock) || isNaN(n_orderQty)) {
+        lastRowResult = "수량 이상";
+        throw new Error(lastRowResult);
+      }
+
+      if (n_stock <= 0 || n_orderQty > n_stock) {
+        lastRowResult = "재고 부족";
+        throw new Error(lastRowResult);
+      }
+
+      if (qtyId) {
+        // 주문수량 입력
+        await page.focus(`#${qtyId}`);
+        await page.keyboard.type(String(row.order_qty));
+      }
+
+      // 장바구니 담기 버튼 클릭
+      await page.click("#btn_saveBag");
+      await new Promise((resolve) => setTimeout(resolve, 500));
+
+      lastRowResult = "장바구니 전송";
+      // 상태 저장
+      const result = await updateOrderStatus(
+        systemCode,
+        user_id,
+        row.upload_hour,
+        row.product_code,
+        row.supplier_name,
+        lastRowResult
+      );
+    } catch (e) {
+      // 에러코드 상태 저장
+      const result = await updateOrderStatus(
+        systemCode,
+        user_id,
+        row.upload_hour,
+        row.product_code,
+        row.supplier_name,
+        e.message
+      );
+    }
+  }
+
+  await browser.close();
+
+  var ret;
+
+  ret =
+    rows.length != 1
+      ? {
+          error_code: 0,
+          error_message: `${constants.messages.SUCCESS_FINISHED}`,
+        }
+      : {
+          error_code: 0,
+          error_message: `${lastRowResult}`,
+        };
+
+  logger.warn(`Finished HanshinOrder: ${JSON.stringify(ret, null, 2)}`);
+  return ret;
+};
 
 //남신약품
 // http://namsinp.com
@@ -1404,29 +1662,34 @@ const runWithUsOrder = async (systemCode, user_id, supplier_params, rows) => {
       const searchResultRows = await page.$$eval(
         ".tbl_list.bdtN tbody tr",
         (trs) =>
-          trs.map((tr) => {
-            const kdCode =
-              tr.querySelector("td:nth-child(1)")?.innerText.trim() || "";
-            const manufacturer =
-              tr.querySelector("td:nth-child(2)")?.innerText.trim() || "";
-            const productName =
-              tr.querySelector("td:nth-child(3)")?.innerText.trim() || "";
-            const standard =
-              tr.querySelector("td:nth-child(4)")?.innerText.trim() || "";
-            const price =
-              tr.querySelector("td:nth-child(6)")?.innerText.trim() || "";
+          trs
+            .map((tr) => {
+              const kdCode =
+                tr.querySelector("td:nth-child(1)")?.innerText.trim() || "";
+              const manufacturer =
+                tr.querySelector("td:nth-child(2)")?.innerText.trim() || "";
+              const productName =
+                tr.querySelector("td:nth-child(3)")?.innerText.trim() || "";
+              const standard =
+                tr.querySelector("td:nth-child(4)")?.innerText.trim() || ""; //규격
+              const price =
+                tr.querySelector("td:nth-child(6)")?.innerText.trim() || ""; //단가
+              const stock =
+                tr.querySelector("td:nth-child(7)")?.innerText.trim() || ""; //재고
 
-            return {
-              kdCode,
-              manufacturer,
-              productName,
-              standard,
-              price,
-              stock: tr.querySelector("input[name^='stock_']")?.value || "",
-              productId: tr.querySelector("input[name^='pc_']")?.value || "",
-              quantityInput: tr.querySelector("input[name^='qty_']")?.id || "",
-            };
-          })
+              return {
+                kdCode,
+                manufacturer,
+                productName,
+                standard,
+                price,
+                stock: tr.querySelector("input[name^='stock_']")?.value || "",
+                productId: tr.querySelector("input[name^='pc_']")?.value || "",
+                quantityInput:
+                  tr.querySelector("input[name^='qty_']")?.id || "",
+              };
+            })
+            .filter((item) => item.stock > 0) // 재고 0 이상만 남김
       );
 
       console.log(searchResultRows);
@@ -2061,29 +2324,34 @@ const runBridgePharmOrder = async (
       const searchResultRows = await page.$$eval(
         ".tbl_list.bdtN tbody tr",
         (trs) =>
-          trs.map((tr) => {
-            const kdCode =
-              tr.querySelector("td:nth-child(1)")?.innerText.trim() || "";
-            const manufacturer =
-              tr.querySelector("td:nth-child(2)")?.innerText.trim() || "";
-            const productName =
-              tr.querySelector("td:nth-child(3)")?.innerText.trim() || "";
-            const standard =
-              tr.querySelector("td:nth-child(4)")?.innerText.trim() || "";
-            const price =
-              tr.querySelector("td:nth-child(6)")?.innerText.trim() || "";
+          trs
+            .map((tr) => {
+              const kdCode =
+                tr.querySelector("td:nth-child(1)")?.innerText.trim() || "";
+              const manufacturer =
+                tr.querySelector("td:nth-child(2)")?.innerText.trim() || "";
+              const productName =
+                tr.querySelector("td:nth-child(3)")?.innerText.trim() || "";
+              const standard =
+                tr.querySelector("td:nth-child(4)")?.innerText.trim() || ""; //규격
+              const price =
+                tr.querySelector("td:nth-child(6)")?.innerText.trim() || ""; //단가
+              const stock =
+                tr.querySelector("td:nth-child(7)")?.innerText.trim() || ""; //재고
 
-            return {
-              kdCode,
-              manufacturer,
-              productName,
-              standard,
-              price,
-              stock: tr.querySelector("input[name^='stock_']")?.value || "",
-              productId: tr.querySelector("input[name^='pc_']")?.value || "",
-              quantityInput: tr.querySelector("input[name^='qty_']")?.id || "",
-            };
-          })
+              return {
+                kdCode,
+                manufacturer,
+                productName,
+                standard,
+                price,
+                stock: tr.querySelector("input[name^='stock_']")?.value || "",
+                productId: tr.querySelector("input[name^='pc_']")?.value || "",
+                quantityInput:
+                  tr.querySelector("input[name^='qty_']")?.id || "",
+              };
+            })
+            .filter((item) => item.stock > 0) // 재고 0 이상만 남김
       );
 
       console.log(searchResultRows);
