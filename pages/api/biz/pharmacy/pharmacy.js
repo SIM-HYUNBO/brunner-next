@@ -869,20 +869,31 @@ const runHanshinOrder = async (systemCode, user_id, supplier_params, rows) => {
   const loginUrl = supplier_params.loginUrl;
   const loginId = supplier_params.loginId; // = "chif2000";
   const loginPassword = supplier_params.loginPassword; //= "542500";
-  const edgePath = getEdgePath();
 
   // 브라우저를 보면서 작업내용 확인
   const browser = await puppeteer.launch(
-    isVercel
+    process.env.NODE_ENV === "production"
       ? {
-          args: chromium.args,
-          defaultViewport: chromium.defaultViewport,
+          headless: true,
           executablePath: await chromium.executablePath(),
-          headless: process.env.NODE_ENV === "production",
+          args: [
+            "--start-maximized",
+            "--no-sandbox",
+            "--disable-setuid-sandbox",
+            "--disable-extensions",
+            "--disable-popup-blocking",
+            "--disable-client-side-phishing-detection",
+            "--disable-features=SafeBrowsing",
+            "--disable-default-apps",
+            "--disable-sync",
+            "--disable-web-security",
+            "--allow-running-insecure-content",
+            "--ignore-certificate-errors",
+          ],
         }
       : {
-          headless: process.env.NODE_ENV === "production",
-          // executablePath: edgePath,
+          headless: false,
+          executablePath: getEdgePath(),
           args: [
             "--start-maximized",
             "--no-sandbox",
@@ -1096,7 +1107,6 @@ const runKeonHwaOrder = async (systemCode, user_id, supplier_params, rows) => {
   const loginUrl = supplier_params.loginUrl;
   const loginId = supplier_params.loginId; // = "chif2000";
   const loginPassword = supplier_params.loginPassword; //= "542500";
-  const edgePath = getEdgePath();
 
   // 브라우저를 보면서 작업내용 확인
   const browser = await puppeteer.launch(
@@ -1121,7 +1131,7 @@ const runKeonHwaOrder = async (systemCode, user_id, supplier_params, rows) => {
         }
       : {
           headless: false,
-          executablePath: edgePath,
+          executablePath: getEdgePath(),
           args: [
             "--start-maximized",
             "--no-sandbox",
@@ -1364,7 +1374,6 @@ const runNamshinOrder = async (systemCode, user_id, supplier_params, rows) => {
   const loginUrl = supplier_params.loginUrl;
   const loginId = supplier_params.loginId; // = "chif2000";
   const loginPassword = supplier_params.loginPassword; //= "542500";
-  const edgePath = getEdgePath();
 
   // 브라우저를 보면서 작업내용 확인
   const browser = await puppeteer.launch(
@@ -1389,7 +1398,7 @@ const runNamshinOrder = async (systemCode, user_id, supplier_params, rows) => {
         }
       : {
           headless: false,
-          executablePath: edgePath,
+          executablePath: getEdgePath(),
           args: [
             "--start-maximized",
             "--no-sandbox",
@@ -1609,7 +1618,6 @@ const runUPharmMallOrder = async (
   const loginUrl = supplier_params.loginUrl;
   const loginId = supplier_params.loginId; // = "chif2000";
   const loginPassword = supplier_params.loginPassword; //= "542500";
-  const edgePath = getEdgePath();
 
   // 브라우저를 보면서 작업내용 확인
   const browser = await puppeteer.launch(
@@ -1634,7 +1642,7 @@ const runUPharmMallOrder = async (
         }
       : {
           headless: false,
-          executablePath: edgePath,
+          executablePath: getEdgePath(),
           args: [
             "--start-maximized",
             "--no-sandbox",
@@ -1845,7 +1853,6 @@ const runWithUsOrder = async (systemCode, user_id, supplier_params, rows) => {
   const loginUrl = supplier_params.loginUrl;
   const loginId = supplier_params.loginId; // = "chif2000";
   const loginPassword = supplier_params.loginPassword; //= "542500";
-  const edgePath = getEdgePath();
 
   // 브라우저를 보면서 작업내용 확인
   const browser = await puppeteer.launch(
@@ -1870,7 +1877,7 @@ const runWithUsOrder = async (systemCode, user_id, supplier_params, rows) => {
         }
       : {
           headless: false,
-          executablePath: edgePath,
+          executablePath: getEdgePath(),
           args: [
             "--start-maximized",
             "--no-sandbox",
@@ -2108,7 +2115,6 @@ const runGeoPharmOrder = async (
   const loginUrl = supplier_params.loginUrl;
   const loginId = supplier_params.loginId; // = "chif2000";
   const loginPassword = supplier_params.loginPassword; //= "542500";
-  const edgePath = getEdgePath();
 
   // 브라우저를 보면서 작업내용 확인
   const browser = await puppeteer.launch(
@@ -2133,7 +2139,7 @@ const runGeoPharmOrder = async (
         }
       : {
           headless: false,
-          executablePath: edgePath,
+          executablePath: getEdgePath(),
           args: [
             "--start-maximized",
             "--no-sandbox",
@@ -2336,7 +2342,6 @@ const runGeoWebOrder = async (systemCode, user_id, supplier_params, rows) => {
   const loginUrl = supplier_params.loginUrl;
   const loginId = supplier_params.loginId; // = "chif2000";
   const loginPassword = supplier_params.loginPassword; //= "542500";
-  const edgePath = getEdgePath();
 
   // 브라우저를 보면서 작업내용 확인
   const browser = await puppeteer.launch(
@@ -2361,7 +2366,7 @@ const runGeoWebOrder = async (systemCode, user_id, supplier_params, rows) => {
         }
       : {
           headless: false,
-          executablePath: edgePath,
+          executablePath: getEdgePath(),
           args: [
             "--start-maximized",
             "--no-sandbox",
@@ -2575,7 +2580,6 @@ const runBridgePharmOrder = async (
   const loginUrl = supplier_params.loginUrl;
   const loginId = supplier_params.loginId; // = "chif2000";
   const loginPassword = supplier_params.loginPassword; //= "542500";
-  const edgePath = getEdgePath();
 
   // 브라우저를 보면서 작업내용 확인
   const browser = await puppeteer.launch(
@@ -2600,7 +2604,7 @@ const runBridgePharmOrder = async (
         }
       : {
           headless: false,
-          executablePath: edgePath,
+          executablePath: getEdgePath(),
           args: [
             "--start-maximized",
             "--no-sandbox",
