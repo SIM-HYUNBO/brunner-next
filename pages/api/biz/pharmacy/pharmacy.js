@@ -1180,7 +1180,7 @@ const runGeoPharmOrder = async (
 
       await iframe.type(`#item_order_count`, `${orderQtyInput}`);
 
-      // 주무담기 버튼 클릭
+      // 주문담기 버튼 클릭
       await iframe.click("#btn_add_cart");
       lastRowResult = "장바구니 전송";
 
@@ -1257,7 +1257,7 @@ const runGeoWebOrder = async (systemCode, user_id, supplier_params, rows) => {
   await page.click("button.btn_login");
 
   // 로그인 후 잠시 대기
-  await new Promise((resolve) => setTimeout(resolve, 1000));
+  await new Promise((resolve) => setTimeout(resolve, 2000));
 
   const cookies = await page.cookies();
   console.log("쿠키:", cookies);
@@ -1269,7 +1269,7 @@ const runGeoWebOrder = async (systemCode, user_id, supplier_params, rows) => {
     };
   }
 
-  await new Promise((resolve) => setTimeout(resolve, 1000));
+  await new Promise((resolve) => setTimeout(resolve, 2000));
 
   // 팝업 닫기 시도
   try {
@@ -1285,74 +1285,93 @@ const runGeoWebOrder = async (systemCode, user_id, supplier_params, rows) => {
     try {
       if (!row.product_code) {
         lastRowResult = "입력 제품 없음";
-        throw new Error(lastRowResult); // 입력 제품 없음
+        throw new Error(lastRowResult);
       }
 
       // --- 검색조건 세팅 ---
-      // await page.select("#so3", "2"); // 조회조건 중 KD코드 선택
       await page.evaluate((kdCode) => {
-        document.querySelector("#item_name").value = kdCode;
+        document.querySelector("#txt_product").value = kdCode;
       }, row.product_code);
 
       // 조회 버튼 클릭
-      await page.evaluate(() => {
-        const form = document.querySelector("form");
-        form.submit();
-      });
+      // await page.waitForSelector("btn_main_search", { timeout: 2000 });
+      await page.click("#btn_main_search");
 
-      await page.waitForNavigation({ waitUntil: "domcontentloaded" });
+      await new Promise((resolve) => setTimeout(resolve, 2000));
 
-      // --- AJAX 로딩 대기: tbody 안에 tr 생길 때까지 ---
-
-      const iframeElement = await page.$("#order_item_view_iframe");
-      const iframe = await iframeElement.contentFrame();
-
-      // 주문수량 입력
-      // 2) 프레임 내부 DOM에서 '재고수량' th 옆 td 의 텍스트(숫자) 읽기
-      const stockQtyText = await iframe.evaluate(() => {
-        // 모든 th를 검사해서 '재고수량' 텍스트를 포함하는 th를 찾음
-        const ths = Array.from(document.querySelectorAll("th"));
-        const targetTh = ths.find(
-          (t) => t.textContent && t.textContent.trim().includes("재고수량")
-        );
-        if (!targetTh) return null;
-
-        // 바로 다음 형제 td (재고 수량)
-        const stockTd = targetTh.nextElementSibling;
-        return stockTd ? stockTd.textContent.trim() : null;
-      });
-
-      if (stockQtyText == null) {
-        throw new Error("프레임 내부에서 '재고수량' td를 찾지 못했습니다.");
+      // 팝업 닫기 시도
+      try {
+        await page.waitForSelector("button.btn_close", { timeout: 2000 });
+        await page.click("button.btn_close");
+      } catch (e) {
+        // 팝업이 없어도 에러 안나도록 무시
       }
 
-      // 숫자만 뽑아서 Number 변환 (예: "4,100" 처리)
-      const stockQty = Number(stockQtyText.replace(/[^0-9]/g, ""));
-      if (Number.isNaN(stockQty)) {
-        throw new Error(
-          `재고수량을 숫자로 변환할 수 없습니다: "${stockQtyText}"`
-        );
+      const rowsResult = await page.$$eval("tr.tr-product-list", (rows) => {
+        return rows
+          .map((row) => {
+            const tds = row.querySelectorAll("td");
+
+            const stock = parseInt(tds[5].innerText.trim(), 10); // 재고 TD = index 5
+
+            if (stock > 0) {
+              return {
+                code: tds[1].innerText.trim(), // 보험코드
+                company: tds[2].innerText.trim(), // 제약사
+                name: tds[3].innerText.trim(), // 제품명
+                standard: tds[4].innerText.trim(), // 규격
+                stock: stock, // 재고
+              };
+            }
+            return null;
+          })
+          .filter((item) => item !== null);
+      });
+
+      if (rowsResult.length === 0) {
+        lastRowResult = "제품 검색 불가";
+        throw new Error(lastRowResult);
       }
 
-      const orderQtyInput = Number(row.order_qty);
+      if (rowsResult.length > 1) {
+        lastRowResult = "제품 중복 검색";
+        throw new Error(lastRowResult);
+      }
+
+      const rows = await page.$$("tr.tr-product-list");
+      const validRows = [];
+      var stockQty = 0;
+
+      for (const row of rows) {
+        const stockEl = await row.$("td.stock"); // ElementHandle 또는 null
+        if (!stockEl) continue;
+
+        // ElementHandle에서 텍스트를 얻을 때는 page.evaluate를 사용
+        const stockText = await page.evaluate((el) => el.innerText, stockEl);
+        const stock = parseInt(stockText.trim().replace(/,/g, ""), 10) || 0;
+        stockQty = stock;
+        if (stock > 0) validRows.push(row);
+      }
+
+      if (validRows.length === 1) {
+        await validRows[0].click();
+      } else {
+        lastRowResult = "제품 검색 불가";
+        throw new Error(lastRowResult);
+      }
+
+      await page.type("#product-detail-qty", String(row.order_qty));
 
       //
       // 2. 재고 체크
       //
-      if (orderQtyInput > stockQty) {
+      if (row.order_qty > stockQty) {
         lastRowResult = "재고 부족";
         throw new Error(lastRowResult);
       }
 
-      await iframe.waitForSelector(`#item_order_count`, {
-        visible: true,
-        timeout: 30000,
-      });
-
-      await iframe.type(`#item_order_count`, `${orderQtyInput}`);
-
-      // 주무담기 버튼 클릭
-      await iframe.click("#btn_add_cart");
+      // 주문담기 버튼 클릭
+      await page.click("#product-detail-btn-add-product");
       lastRowResult = "장바구니 전송";
 
       // 상태 저장
