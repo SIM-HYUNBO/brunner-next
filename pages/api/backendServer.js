@@ -31,6 +31,13 @@ export default async (req, res) => {
 
   const remoteIp = req.headers["x-forwarded-for"] || req.socket.remoteAddress;
 
+  // 모든 도메인 허용 (테스트용)
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader("Access-Control-Allow-Methods", "GET,POST,PUT,DELETE,OPTIONS");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
+
+  if (req.method === "OPTIONS") return res.status(200).end();
+
   // GET 요청 처리
   let jRequest;
   if (req.method === constants.httpMethod.GET) {
