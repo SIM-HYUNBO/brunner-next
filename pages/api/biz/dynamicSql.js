@@ -174,7 +174,7 @@ async function updateOne(systemCode, txnId, jRequest) {
       }
     }
   } catch (e) {
-    logger.error(e);
+    loggerlogger.error(e);
     jResponse.error_code = -3; // exception
     jResponse.error_message = e.message;
   } finally {
