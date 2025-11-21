@@ -1103,6 +1103,7 @@ const runKeonHwaOrder = async (systemCode, user_id, supplier_params, rows) => {
     process.env.NODE_ENV === "production"
       ? {
           headless: true,
+          executablePath: await chromium.executablePath(),
           args: [
             "--start-maximized",
             "--no-sandbox",
@@ -1370,6 +1371,7 @@ const runNamshinOrder = async (systemCode, user_id, supplier_params, rows) => {
     process.env.NODE_ENV === "production"
       ? {
           headless: true,
+          executablePath: await chromium.executablePath(),
           args: [
             "--start-maximized",
             "--no-sandbox",
@@ -1614,6 +1616,7 @@ const runUPharmMallOrder = async (
     process.env.NODE_ENV === "production"
       ? {
           headless: true,
+          executablePath: await chromium.executablePath(),
           args: [
             "--start-maximized",
             "--no-sandbox",
@@ -1849,6 +1852,7 @@ const runWithUsOrder = async (systemCode, user_id, supplier_params, rows) => {
     process.env.NODE_ENV === "production"
       ? {
           headless: true,
+          executablePath: await chromium.executablePath(),
           args: [
             "--start-maximized",
             "--no-sandbox",
@@ -2111,6 +2115,7 @@ const runGeoPharmOrder = async (
     process.env.NODE_ENV === "production"
       ? {
           headless: true,
+          executablePath: await chromium.executablePath(),
           args: [
             "--start-maximized",
             "--no-sandbox",
@@ -2338,6 +2343,7 @@ const runGeoWebOrder = async (systemCode, user_id, supplier_params, rows) => {
     process.env.NODE_ENV === "production"
       ? {
           headless: true,
+          executablePath: await chromium.executablePath(),
           args: [
             "--start-maximized",
             "--no-sandbox",
@@ -2576,6 +2582,7 @@ const runBridgePharmOrder = async (
     process.env.NODE_ENV === "production"
       ? {
           headless: true,
+          executablePath: await chromium.executablePath(),
           args: [
             "--start-maximized",
             "--no-sandbox",
