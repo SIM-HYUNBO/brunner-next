@@ -877,7 +877,7 @@ const runHanshinOrder = async (systemCode, user_id, supplier_params, rows) => {
     puppeteer = await import("puppeteer-core");
     chromium = await import("chrome-aws-lambda");
   } else {
-    puppeteer = await import("puppeteer");
+    // puppeteer = await import("puppeteer");
   }
 
   // 브라우저를 보면서 작업내용 확인
@@ -1114,7 +1114,7 @@ const runKeonHwaOrder = async (systemCode, user_id, supplier_params, rows) => {
     puppeteer = await import("puppeteer-core");
     chromium = await import("chrome-aws-lambda");
   } else {
-    puppeteer = await import("puppeteer");
+    // puppeteer = await import("puppeteer");
   }
 
   // 브라우저를 보면서 작업내용 확인
@@ -1381,7 +1381,7 @@ const runNamshinOrder = async (systemCode, user_id, supplier_params, rows) => {
     puppeteer = await import("puppeteer-core");
     chromium = await import("chrome-aws-lambda");
   } else {
-    puppeteer = await import("puppeteer");
+    // puppeteer = await import("puppeteer");
   }
 
   // 브라우저를 보면서 작업내용 확인
@@ -1623,7 +1623,7 @@ const runUPharmMallOrder = async (
     puppeteer = await import("puppeteer-core");
     chromium = await import("chrome-aws-lambda");
   } else {
-    puppeteer = await import("puppeteer");
+    // puppeteer = await import("puppeteer");
   }
 
   // 브라우저를 보면서 작업내용 확인
@@ -1857,7 +1857,7 @@ const runWithUsOrder = async (systemCode, user_id, supplier_params, rows) => {
     puppeteer = await import("puppeteer-core");
     chromium = await import("chrome-aws-lambda");
   } else {
-    puppeteer = await import("puppeteer");
+    // puppeteer = await import("puppeteer");
   }
 
   // 브라우저를 보면서 작업내용 확인
@@ -2119,7 +2119,7 @@ const runGeoPharmOrder = async (
     puppeteer = await import("puppeteer-core");
     chromium = await import("chrome-aws-lambda");
   } else {
-    puppeteer = await import("puppeteer");
+    // puppeteer = await import("puppeteer");
   }
 
   // 브라우저를 보면서 작업내용 확인
@@ -2346,7 +2346,7 @@ const runGeoWebOrder = async (systemCode, user_id, supplier_params, rows) => {
     puppeteer = await import("puppeteer-core");
     chromium = await import("chrome-aws-lambda");
   } else {
-    puppeteer = await import("puppeteer");
+    // puppeteer = await import("puppeteer");
   }
 
   // 브라우저를 보면서 작업내용 확인
@@ -2584,7 +2584,7 @@ const runBridgePharmOrder = async (
     puppeteer = await import("puppeteer-core");
     chromium = await import("chrome-aws-lambda");
   } else {
-    puppeteer = await import("puppeteer");
+    // puppeteer = await import("puppeteer");
   }
 
   // 브라우저를 보면서 작업내용 확인
