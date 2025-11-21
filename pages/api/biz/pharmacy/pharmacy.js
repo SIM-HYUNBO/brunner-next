@@ -875,7 +875,7 @@ const runHanshinOrder = async (systemCode, user_id, supplier_params, rows) => {
   if (isVercel) {
     puppeteer = await import("puppeteer-core");
     chromium = await import("@sparticuz/chromium");
-    throw new Error(`${chromium.executablePath}`);
+    throw new Error(`크롬 실행경로 변수값은 ${chromium.executablePath}`);
   } else {
     puppeteer = await import("puppeteer");
   }
