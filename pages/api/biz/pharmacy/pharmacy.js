@@ -8,8 +8,10 @@ import * as mailSender from "@/components/core/server/mailSender";
 import bcrypt from "bcryptjs";
 import qs from "qs"; // querystring 변환용
 import { time } from "console";
-import { execSync } from "child_process";
+import { exec, execSync } from "child_process";
 import path from "path";
+import puppeteer from "puppeteer-core";
+import chromium from "@sparticuz/chromium";
 
 const executeService = async (txnId, jRequest) => {
   var jResponse = {};
@@ -867,10 +869,9 @@ const runHanshinOrder = async (systemCode, user_id, supplier_params, rows) => {
   const loginUrl = supplier_params.loginUrl;
   const loginId = supplier_params.loginId; // = "chif2000";
   const loginPassword = supplier_params.loginPassword; //= "542500";
-  const edgePath = getEdgePath();
+  // const edgePath = getEdgePath();
 
   let puppeteer, chromium;
-  const isVercel = !!process.env.VERCEL;
 
   if (isVercel) {
     puppeteer = await import("puppeteer-core");
@@ -889,8 +890,8 @@ const runHanshinOrder = async (systemCode, user_id, supplier_params, rows) => {
           headless: process.env.NODE_ENV === "production",
         }
       : {
-          headless: false,
-          executablePath: edgePath,
+          headless: process.env.NODE_ENV === "production",
+          // executablePath: edgePath,
           args: [
             "--start-maximized",
             "--no-sandbox",
@@ -1104,26 +1105,29 @@ const runKeonHwaOrder = async (systemCode, user_id, supplier_params, rows) => {
   const loginUrl = supplier_params.loginUrl;
   const loginId = supplier_params.loginId; // = "chif2000";
   const loginPassword = supplier_params.loginPassword; //= "542500";
-  const edgePath = getEdgePath();
+  // const edgePath = getEdgePath();
 
   let puppeteer, chromium;
-  const isVercel = !!process.env.VERCEL;
-
-  if (isVercel) {
-    puppeteer = await import("puppeteer-core");
-    chromium = await import("@sparticuz/chromium");
-  } else {
-    puppeteer = await import("puppeteer");
-  }
 
   // 브라우저를 보면서 작업내용 확인
   const browser = await puppeteer.launch(
-    isVercel
+    process.env.NODE_ENV === "production"
       ? {
-          args: chromium.args,
-          defaultViewport: chromium.defaultViewport,
-          executablePath: await chromium.executablePath(),
-          headless: process.env.NODE_ENV === "production",
+          headless: true,
+          args: [
+            "--start-maximized",
+            "--no-sandbox",
+            "--disable-setuid-sandbox",
+            "--disable-extensions",
+            "--disable-popup-blocking",
+            "--disable-client-side-phishing-detection",
+            "--disable-features=SafeBrowsing",
+            "--disable-default-apps",
+            "--disable-sync",
+            "--disable-web-security",
+            "--allow-running-insecure-content",
+            "--ignore-certificate-errors",
+          ],
         }
       : {
           headless: false,
@@ -1370,27 +1374,30 @@ const runNamshinOrder = async (systemCode, user_id, supplier_params, rows) => {
   const loginUrl = supplier_params.loginUrl;
   const loginId = supplier_params.loginId; // = "chif2000";
   const loginPassword = supplier_params.loginPassword; //= "542500";
-  const edgePath = getEdgePath();
+  // const edgePath = getEdgePath();
 
   // 브라우저를 보면서 작업내용 확인
   let puppeteer, chromium;
-  const isVercel = !!process.env.VERCEL;
-
-  if (isVercel) {
-    puppeteer = await import("puppeteer-core");
-    chromium = await import("@sparticuz/chromium");
-  } else {
-    puppeteer = await import("puppeteer");
-  }
 
   // 브라우저를 보면서 작업내용 확인
   const browser = await puppeteer.launch(
-    isVercel
+    process.env.NODE_ENV === "production"
       ? {
-          args: chromium.args,
-          defaultViewport: chromium.defaultViewport,
-          executablePath: await chromium.executablePath(),
-          headless: process.env.NODE_ENV === "production",
+          headless: true,
+          args: [
+            "--start-maximized",
+            "--no-sandbox",
+            "--disable-setuid-sandbox",
+            "--disable-extensions",
+            "--disable-popup-blocking",
+            "--disable-client-side-phishing-detection",
+            "--disable-features=SafeBrowsing",
+            "--disable-default-apps",
+            "--disable-sync",
+            "--disable-web-security",
+            "--allow-running-insecure-content",
+            "--ignore-certificate-errors",
+          ],
         }
       : {
           headless: false,
@@ -1411,6 +1418,7 @@ const runNamshinOrder = async (systemCode, user_id, supplier_params, rows) => {
           ],
         }
   );
+
   const page = await browser.newPage();
 
   page.on("requestfailed", (request) => {
@@ -1613,26 +1621,29 @@ const runUPharmMallOrder = async (
   const loginUrl = supplier_params.loginUrl;
   const loginId = supplier_params.loginId; // = "chif2000";
   const loginPassword = supplier_params.loginPassword; //= "542500";
-  const edgePath = getEdgePath();
+  // const edgePath = getEdgePath();
 
   let puppeteer, chromium;
-  const isVercel = !!process.env.VERCEL;
-
-  if (isVercel) {
-    puppeteer = await import("puppeteer-core");
-    chromium = await import("@sparticuz/chromium");
-  } else {
-    puppeteer = await import("puppeteer");
-  }
 
   // 브라우저를 보면서 작업내용 확인
   const browser = await puppeteer.launch(
-    isVercel
+    process.env.NODE_ENV === "production"
       ? {
-          args: chromium.args,
-          defaultViewport: chromium.defaultViewport,
-          executablePath: await chromium.executablePath(),
-          headless: process.env.NODE_ENV === "production",
+          headless: true,
+          args: [
+            "--start-maximized",
+            "--no-sandbox",
+            "--disable-setuid-sandbox",
+            "--disable-extensions",
+            "--disable-popup-blocking",
+            "--disable-client-side-phishing-detection",
+            "--disable-features=SafeBrowsing",
+            "--disable-default-apps",
+            "--disable-sync",
+            "--disable-web-security",
+            "--allow-running-insecure-content",
+            "--ignore-certificate-errors",
+          ],
         }
       : {
           headless: false,
@@ -1847,26 +1858,29 @@ const runWithUsOrder = async (systemCode, user_id, supplier_params, rows) => {
   const loginUrl = supplier_params.loginUrl;
   const loginId = supplier_params.loginId; // = "chif2000";
   const loginPassword = supplier_params.loginPassword; //= "542500";
-  const edgePath = getEdgePath();
+  // const edgePath = getEdgePath();
 
   let puppeteer, chromium;
-  const isVercel = !!process.env.VERCEL;
-
-  if (isVercel) {
-    puppeteer = await import("puppeteer-core");
-    chromium = await import("@sparticuz/chromium");
-  } else {
-    puppeteer = await import("puppeteer");
-  }
 
   // 브라우저를 보면서 작업내용 확인
   const browser = await puppeteer.launch(
-    isVercel
+    process.env.NODE_ENV === "production"
       ? {
-          args: chromium.args,
-          defaultViewport: chromium.defaultViewport,
-          executablePath: await chromium.executablePath(),
-          headless: process.env.NODE_ENV === "production",
+          headless: true,
+          args: [
+            "--start-maximized",
+            "--no-sandbox",
+            "--disable-setuid-sandbox",
+            "--disable-extensions",
+            "--disable-popup-blocking",
+            "--disable-client-side-phishing-detection",
+            "--disable-features=SafeBrowsing",
+            "--disable-default-apps",
+            "--disable-sync",
+            "--disable-web-security",
+            "--allow-running-insecure-content",
+            "--ignore-certificate-errors",
+          ],
         }
       : {
           headless: false,
@@ -2108,27 +2122,30 @@ const runGeoPharmOrder = async (
   const loginUrl = supplier_params.loginUrl;
   const loginId = supplier_params.loginId; // = "chif2000";
   const loginPassword = supplier_params.loginPassword; //= "542500";
-  const edgePath = getEdgePath();
+  // const edgePath = getEdgePath();
 
   // 브라우저를 보면서 작업내용 확인
   let puppeteer, chromium;
-  const isVercel = !!process.env.VERCEL;
-
-  if (isVercel) {
-    puppeteer = await import("puppeteer-core");
-    chromium = await import("@sparticuz/chromium");
-  } else {
-    puppeteer = await import("puppeteer");
-  }
 
   // 브라우저를 보면서 작업내용 확인
   const browser = await puppeteer.launch(
-    isVercel
+    process.env.NODE_ENV === "production"
       ? {
-          args: chromium.args,
-          defaultViewport: chromium.defaultViewport,
-          executablePath: await chromium.executablePath(),
-          headless: process.env.NODE_ENV === "production",
+          headless: true,
+          args: [
+            "--start-maximized",
+            "--no-sandbox",
+            "--disable-setuid-sandbox",
+            "--disable-extensions",
+            "--disable-popup-blocking",
+            "--disable-client-side-phishing-detection",
+            "--disable-features=SafeBrowsing",
+            "--disable-default-apps",
+            "--disable-sync",
+            "--disable-web-security",
+            "--allow-running-insecure-content",
+            "--ignore-certificate-errors",
+          ],
         }
       : {
           headless: false,
@@ -2335,27 +2352,30 @@ const runGeoWebOrder = async (systemCode, user_id, supplier_params, rows) => {
   const loginUrl = supplier_params.loginUrl;
   const loginId = supplier_params.loginId; // = "chif2000";
   const loginPassword = supplier_params.loginPassword; //= "542500";
-  const edgePath = getEdgePath();
+  // const edgePath = getEdgePath();
 
   // 브라우저를 보면서 작업내용 확인
   let puppeteer, chromium;
-  const isVercel = !!process.env.VERCEL;
-
-  if (isVercel) {
-    puppeteer = await import("puppeteer-core");
-    chromium = await import("@sparticuz/chromium");
-  } else {
-    puppeteer = await import("puppeteer");
-  }
 
   // 브라우저를 보면서 작업내용 확인
   const browser = await puppeteer.launch(
-    isVercel
+    process.env.NODE_ENV === "production"
       ? {
-          args: chromium.args,
-          defaultViewport: chromium.defaultViewport,
-          executablePath: await chromium.executablePath(),
-          headless: process.env.NODE_ENV === "production",
+          headless: true,
+          args: [
+            "--start-maximized",
+            "--no-sandbox",
+            "--disable-setuid-sandbox",
+            "--disable-extensions",
+            "--disable-popup-blocking",
+            "--disable-client-side-phishing-detection",
+            "--disable-features=SafeBrowsing",
+            "--disable-default-apps",
+            "--disable-sync",
+            "--disable-web-security",
+            "--allow-running-insecure-content",
+            "--ignore-certificate-errors",
+          ],
         }
       : {
           headless: false,
@@ -2573,27 +2593,30 @@ const runBridgePharmOrder = async (
   const loginUrl = supplier_params.loginUrl;
   const loginId = supplier_params.loginId; // = "chif2000";
   const loginPassword = supplier_params.loginPassword; //= "542500";
-  const edgePath = getEdgePath();
+  // const edgePath = getEdgePath();
 
   // 브라우저를 보면서 작업내용 확인
   let puppeteer, chromium;
-  const isVercel = !!process.env.VERCEL;
-
-  if (isVercel) {
-    puppeteer = await import("puppeteer-core");
-    chromium = await import("@sparticuz/chromium");
-  } else {
-    puppeteer = await import("puppeteer");
-  }
 
   // 브라우저를 보면서 작업내용 확인
   const browser = await puppeteer.launch(
-    isVercel
+    process.env.NODE_ENV === "production"
       ? {
-          args: chromium.args,
-          defaultViewport: chromium.defaultViewport,
-          executablePath: await chromium.executablePath(),
-          headless: process.env.NODE_ENV === "production",
+          headless: true,
+          args: [
+            "--start-maximized",
+            "--no-sandbox",
+            "--disable-setuid-sandbox",
+            "--disable-extensions",
+            "--disable-popup-blocking",
+            "--disable-client-side-phishing-detection",
+            "--disable-features=SafeBrowsing",
+            "--disable-default-apps",
+            "--disable-sync",
+            "--disable-web-security",
+            "--allow-running-insecure-content",
+            "--ignore-certificate-errors",
+          ],
         }
       : {
           headless: false,
