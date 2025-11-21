@@ -869,16 +869,7 @@ const runHanshinOrder = async (systemCode, user_id, supplier_params, rows) => {
   const loginUrl = supplier_params.loginUrl;
   const loginId = supplier_params.loginId; // = "chif2000";
   const loginPassword = supplier_params.loginPassword; //= "542500";
-  // const edgePath = getEdgePath();
-
-  let puppeteer, chromium;
-
-  if (isVercel) {
-    puppeteer = await import("puppeteer-core");
-    chromium = await import("@sparticuz/chromium");
-  } else {
-    puppeteer = await import("puppeteer");
-  }
+  const edgePath = getEdgePath();
 
   // 브라우저를 보면서 작업내용 확인
   const browser = await puppeteer.launch(
@@ -1105,9 +1096,7 @@ const runKeonHwaOrder = async (systemCode, user_id, supplier_params, rows) => {
   const loginUrl = supplier_params.loginUrl;
   const loginId = supplier_params.loginId; // = "chif2000";
   const loginPassword = supplier_params.loginPassword; //= "542500";
-  // const edgePath = getEdgePath();
-
-  let puppeteer, chromium;
+  const edgePath = getEdgePath();
 
   // 브라우저를 보면서 작업내용 확인
   const browser = await puppeteer.launch(
@@ -1374,10 +1363,7 @@ const runNamshinOrder = async (systemCode, user_id, supplier_params, rows) => {
   const loginUrl = supplier_params.loginUrl;
   const loginId = supplier_params.loginId; // = "chif2000";
   const loginPassword = supplier_params.loginPassword; //= "542500";
-  // const edgePath = getEdgePath();
-
-  // 브라우저를 보면서 작업내용 확인
-  let puppeteer, chromium;
+  const edgePath = getEdgePath();
 
   // 브라우저를 보면서 작업내용 확인
   const browser = await puppeteer.launch(
@@ -1621,9 +1607,7 @@ const runUPharmMallOrder = async (
   const loginUrl = supplier_params.loginUrl;
   const loginId = supplier_params.loginId; // = "chif2000";
   const loginPassword = supplier_params.loginPassword; //= "542500";
-  // const edgePath = getEdgePath();
-
-  let puppeteer, chromium;
+  const edgePath = getEdgePath();
 
   // 브라우저를 보면서 작업내용 확인
   const browser = await puppeteer.launch(
@@ -1858,9 +1842,7 @@ const runWithUsOrder = async (systemCode, user_id, supplier_params, rows) => {
   const loginUrl = supplier_params.loginUrl;
   const loginId = supplier_params.loginId; // = "chif2000";
   const loginPassword = supplier_params.loginPassword; //= "542500";
-  // const edgePath = getEdgePath();
-
-  let puppeteer, chromium;
+  const edgePath = getEdgePath();
 
   // 브라우저를 보면서 작업내용 확인
   const browser = await puppeteer.launch(
@@ -2122,10 +2104,7 @@ const runGeoPharmOrder = async (
   const loginUrl = supplier_params.loginUrl;
   const loginId = supplier_params.loginId; // = "chif2000";
   const loginPassword = supplier_params.loginPassword; //= "542500";
-  // const edgePath = getEdgePath();
-
-  // 브라우저를 보면서 작업내용 확인
-  let puppeteer, chromium;
+  const edgePath = getEdgePath();
 
   // 브라우저를 보면서 작업내용 확인
   const browser = await puppeteer.launch(
@@ -2352,10 +2331,7 @@ const runGeoWebOrder = async (systemCode, user_id, supplier_params, rows) => {
   const loginUrl = supplier_params.loginUrl;
   const loginId = supplier_params.loginId; // = "chif2000";
   const loginPassword = supplier_params.loginPassword; //= "542500";
-  // const edgePath = getEdgePath();
-
-  // 브라우저를 보면서 작업내용 확인
-  let puppeteer, chromium;
+  const edgePath = getEdgePath();
 
   // 브라우저를 보면서 작업내용 확인
   const browser = await puppeteer.launch(
@@ -2593,10 +2569,7 @@ const runBridgePharmOrder = async (
   const loginUrl = supplier_params.loginUrl;
   const loginId = supplier_params.loginId; // = "chif2000";
   const loginPassword = supplier_params.loginPassword; //= "542500";
-  // const edgePath = getEdgePath();
-
-  // 브라우저를 보면서 작업내용 확인
-  let puppeteer, chromium;
+  const edgePath = getEdgePath();
 
   // 브라우저를 보면서 작업내용 확인
   const browser = await puppeteer.launch(
