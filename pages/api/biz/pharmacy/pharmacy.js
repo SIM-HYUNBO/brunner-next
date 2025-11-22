@@ -969,7 +969,7 @@ const runHanshinOrder = async (systemCode, user_id, supplier_params, rows) => {
       );
 
       // 렌더링 대기
-      await new Promise((resolve) => setTimeout(resolve, 500));
+      await new Promise((resolve) => setTimeout(resolve, 1000));
 
       // --- 조회 결과 파싱 ---
       const searchResultRows = await page.$$eval(
@@ -1045,7 +1045,7 @@ const runHanshinOrder = async (systemCode, user_id, supplier_params, rows) => {
 
       // 장바구니 담기 버튼 클릭
       await page.click("#btn_saveBag");
-      await new Promise((resolve) => setTimeout(resolve, 500));
+      await new Promise((resolve) => setTimeout(resolve, 1000));
 
       lastRowResult = "장바구니 전송";
       // 상태 저장
@@ -1244,7 +1244,7 @@ const runKeonHwaOrder = async (systemCode, user_id, supplier_params, rows) => {
       );
 
       // 렌더링 대기
-      await new Promise((resolve) => setTimeout(resolve, 500));
+      await new Promise((resolve) => setTimeout(resolve, 1000));
 
       // --- 조회 결과 파싱 ---
       const searchResultRows = await page.$$eval(
@@ -1320,7 +1320,7 @@ const runKeonHwaOrder = async (systemCode, user_id, supplier_params, rows) => {
 
       // 장바구니 담기 버튼 클릭
       await page.click("#btn_saveBag");
-      await new Promise((resolve) => setTimeout(resolve, 500));
+      await new Promise((resolve) => setTimeout(resolve, 1000));
 
       lastRowResult = "장바구니 전송";
       // 상태 저장
@@ -1474,7 +1474,7 @@ const runNamshinOrder = async (systemCode, user_id, supplier_params, rows) => {
       );
 
       // 렌더링 대기
-      await new Promise((resolve) => setTimeout(resolve, 500));
+      await new Promise((resolve) => setTimeout(resolve, 1000));
 
       // --- 조회 결과 파싱 ---
       const searchResultRows = await page.$$eval(
@@ -1550,7 +1550,7 @@ const runNamshinOrder = async (systemCode, user_id, supplier_params, rows) => {
 
       // 장바구니 담기 버튼 클릭
       await page.click("#btn_saveBag");
-      await new Promise((resolve) => setTimeout(resolve, 500));
+      await new Promise((resolve) => setTimeout(resolve, 1000));
 
       lastRowResult = "장바구니 전송";
       // 상태 저장
@@ -1724,7 +1724,7 @@ const runUPharmMallOrder = async (
       await page.click("#btnSearch");
 
       // 4) 검색 결과 테이블 로딩 대기
-      await new Promise((resolve) => setTimeout(resolve, 2000));
+      await new Promise((resolve) => setTimeout(resolve, 1000));
 
       // 1) 테이블 로딩 대기
       await page.waitForSelector("#list1 tbody");
@@ -1971,7 +1971,7 @@ const runWithUsOrder = async (systemCode, user_id, supplier_params, rows) => {
       );
 
       // 렌더링 대기
-      await new Promise((resolve) => setTimeout(resolve, 500));
+      await new Promise((resolve) => setTimeout(resolve, 1000));
 
       // --- 조회 결과 파싱 ---
       const searchResultRows = await page.$$eval(
@@ -2047,7 +2047,7 @@ const runWithUsOrder = async (systemCode, user_id, supplier_params, rows) => {
 
       // 장바구니 담기 버튼 클릭
       await page.click("#btn_saveBag");
-      await new Promise((resolve) => setTimeout(resolve, 500));
+      await new Promise((resolve) => setTimeout(resolve, 1000));
 
       lastRowResult = "장바구니 전송";
       // 상태 저장
@@ -2399,7 +2399,7 @@ const runGeoWebOrder = async (systemCode, user_id, supplier_params, rows) => {
   await page.click("button.btn_login");
 
   // 로그인 후 잠시 대기
-  await new Promise((resolve) => setTimeout(resolve, 2000));
+  await new Promise((resolve) => setTimeout(resolve, 1000));
 
   const cookies = await page.cookies();
   console.log("쿠키:", cookies);
@@ -2411,7 +2411,7 @@ const runGeoWebOrder = async (systemCode, user_id, supplier_params, rows) => {
     };
   }
 
-  await new Promise((resolve) => setTimeout(resolve, 2000));
+  await new Promise((resolve) => setTimeout(resolve, 1000));
 
   // 팝업 닫기 시도
   try {
@@ -2439,7 +2439,7 @@ const runGeoWebOrder = async (systemCode, user_id, supplier_params, rows) => {
       // await page.waitForSelector("btn_main_search", { timeout: 2000 });
       await page.click("#btn_main_search");
 
-      await new Promise((resolve) => setTimeout(resolve, 2000));
+      await new Promise((resolve) => setTimeout(resolve, 1000));
 
       // 팝업 닫기 시도
       try {
@@ -2698,7 +2698,7 @@ const runBridgePharmOrder = async (
       );
 
       // 렌더링 대기
-      await new Promise((resolve) => setTimeout(resolve, 500));
+      await new Promise((resolve) => setTimeout(resolve, 1000));
 
       // --- 조회 결과 파싱 ---
       const searchResultRows = await page.$$eval(
@@ -2774,7 +2774,7 @@ const runBridgePharmOrder = async (
 
       // 장바구니 담기 버튼 클릭
       await page.click("#btn_saveBag");
-      await new Promise((resolve) => setTimeout(resolve, 500));
+      await new Promise((resolve) => setTimeout(resolve, 1000));
 
       lastRowResult = "장바구니 전송";
       // 상태 저장
