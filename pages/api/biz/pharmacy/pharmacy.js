@@ -13,6 +13,15 @@ import path from "path";
 import puppeteer from "puppeteer-core";
 import chromium from "@sparticuz/chromium";
 
+export const orderStatus = {
+  ErrorNoInputProduct: "입력 제품 없음",
+  ErrorNoProductSearch: "제품 검색 불가",
+  ErrorMultipleSearchProduct: "제품 중복 검색",
+  ErrorInvalidQty: "수량 이상",
+  ErrorRackOfStock: "재고 부족",
+  SuccessOrderToCart: "장바구니 전송",
+};
+
 const executeService = async (txnId, jRequest) => {
   var jResponse = {};
 
@@ -543,8 +552,8 @@ const automaticOrder = async (txnId, jRequest) => {
       jRequest.supplierName,
     ]);
 
+    var result = {};
     if (select_TB_PHM_SUPPLIER_INFO_01.rows.length > 0) {
-      var result;
       for (const rowSupplierInfo of select_TB_PHM_SUPPLIER_INFO_01.rows) {
         const filteredRows = select_TB_PHM_DAILY_ORDER_01.rows.filter(
           (rowDailyOrder) => {
@@ -833,6 +842,14 @@ export async function runOrderBySupplier(
           supplierName
         );
         break;
+      case `훼밀리팜`:
+        ret = await runFamilyPharmOrder(
+          systemCode,
+          user_id,
+          supplier_params,
+          rows
+        );
+        break;
       case `주식회사 브릿지팜`:
         ret = await runBridgePharmOrder(
           systemCode,
@@ -949,7 +966,7 @@ const runHanshinOrder = async (systemCode, user_id, supplier_params, rows) => {
   for (const row of rows) {
     try {
       if (!row.product_code) {
-        lastRowResult = "입력 제품 없음";
+        lastRowResult = orderStatus.ErrorNoInputProduct;
         throw new Error(lastRowResult); // 입력 제품 없음
       }
 
@@ -1012,12 +1029,12 @@ const runHanshinOrder = async (systemCode, user_id, supplier_params, rows) => {
         searchResultRows.length === 0 ||
         searchResultRows[0].productId === constants.General.EmptyString
       ) {
-        lastRowResult = "제품 검색 불가";
+        lastRowResult = orderStatus.ErrorNoSearchProduct;
         throw new Error(lastRowResult);
       }
 
       if (searchResultRows.length > 1) {
-        lastRowResult = "제품 중복 검색";
+        lastRowResult = orderStatus.ErrorMultipleSearchProduct;
         throw new Error(lastRowResult);
       }
 
@@ -1028,12 +1045,12 @@ const runHanshinOrder = async (systemCode, user_id, supplier_params, rows) => {
       const n_orderQty = Number(row.order_qty);
 
       if (isNaN(n_stock) || isNaN(n_orderQty)) {
-        lastRowResult = "수량 이상";
+        lastRowResult = orderStatus.ErrorInvalidQty;
         throw new Error(lastRowResult);
       }
 
       if (n_stock <= 0 || n_orderQty > n_stock) {
-        lastRowResult = "재고 부족";
+        lastRowResult = orderStatus.ErrorRackOfStock;
         throw new Error(lastRowResult);
       }
 
@@ -1047,7 +1064,7 @@ const runHanshinOrder = async (systemCode, user_id, supplier_params, rows) => {
       await page.click("#btn_saveBag");
       await new Promise((resolve) => setTimeout(resolve, 1000));
 
-      lastRowResult = "장바구니 전송";
+      lastRowResult = orderStatus.SuccessOrderToCart;
       // 상태 저장
       const result = await updateOrderStatus(
         systemCode,
@@ -1224,7 +1241,7 @@ const runKeonHwaOrder = async (systemCode, user_id, supplier_params, rows) => {
   for (const row of rows) {
     try {
       if (!row.product_code) {
-        lastRowResult = "입력 제품 없음";
+        lastRowResult = orderStatus.ErrorNoInputProduct;
         throw new Error(lastRowResult); // 입력 제품 없음
       }
 
@@ -1287,12 +1304,12 @@ const runKeonHwaOrder = async (systemCode, user_id, supplier_params, rows) => {
         searchResultRows.length === 0 ||
         searchResultRows[0].productId === constants.General.EmptyString
       ) {
-        lastRowResult = "제품 검색 불가";
+        lastRowResult = orderStatus.ErrorNoSearchProduct;
         throw new Error(lastRowResult);
       }
 
       if (searchResultRows.length > 1) {
-        lastRowResult = "제품 중복 검색";
+        lastRowResult = orderStatus.ErrorMultipleSearchProduct;
         throw new Error(lastRowResult);
       }
 
@@ -1303,12 +1320,12 @@ const runKeonHwaOrder = async (systemCode, user_id, supplier_params, rows) => {
       const n_orderQty = Number(row.order_qty);
 
       if (isNaN(n_stock) || isNaN(n_orderQty)) {
-        lastRowResult = "수량 이상";
+        lastRowResult = orderStatus.ErrorInvalidQty;
         throw new Error(lastRowResult);
       }
 
       if (n_stock <= 0 || n_orderQty > n_stock) {
-        lastRowResult = "재고 부족";
+        lastRowResult = orderStatus.ErrorRackOfStock;
         throw new Error(lastRowResult);
       }
 
@@ -1322,7 +1339,7 @@ const runKeonHwaOrder = async (systemCode, user_id, supplier_params, rows) => {
       await page.click("#btn_saveBag");
       await new Promise((resolve) => setTimeout(resolve, 1000));
 
-      lastRowResult = "장바구니 전송";
+      lastRowResult = orderStatus.SuccessOrderToCart;
       // 상태 저장
       const result = await updateOrderStatus(
         systemCode,
@@ -1360,7 +1377,7 @@ const runKeonHwaOrder = async (systemCode, user_id, supplier_params, rows) => {
           error_message: `${lastRowResult}`,
         };
 
-  logger.warn(`Finished HanshinOrder: ${JSON.stringify(ret, null, 2)}`);
+  logger.warn(`Finished KeonHwaOrder: ${JSON.stringify(ret, null, 2)}`);
   return ret;
 };
 
@@ -1454,7 +1471,7 @@ const runNamshinOrder = async (systemCode, user_id, supplier_params, rows) => {
   for (const row of rows) {
     try {
       if (!row.product_code) {
-        lastRowResult = "입력 제품 없음";
+        lastRowResult = orderStatus.ErrorNoInputProduct;
         throw new Error(lastRowResult); // 입력 제품 없음
       }
 
@@ -1517,12 +1534,12 @@ const runNamshinOrder = async (systemCode, user_id, supplier_params, rows) => {
         searchResultRows.length === 0 ||
         searchResultRows[0].productId === constants.General.EmptyString
       ) {
-        lastRowResult = "제품 검색 불가";
+        lastRowResult = orderStatus.ErrorNoSearchProduct;
         throw new Error(lastRowResult);
       }
 
       if (searchResultRows.length > 1) {
-        lastRowResult = "제품 중복 검색";
+        lastRowResult = orderStatus.ErrorMultipleSearchProduct;
         throw new Error(lastRowResult);
       }
 
@@ -1533,12 +1550,12 @@ const runNamshinOrder = async (systemCode, user_id, supplier_params, rows) => {
       const n_orderQty = Number(row.order_qty);
 
       if (isNaN(n_stock) || isNaN(n_orderQty)) {
-        lastRowResult = "수량 이상";
+        lastRowResult = orderStatus.ErrorInvalidQty;
         throw new Error(lastRowResult);
       }
 
       if (n_stock <= 0 || n_orderQty > n_stock) {
-        lastRowResult = "재고 부족";
+        lastRowResult = orderStatus.ErrorRackOfStock;
         throw new Error(lastRowResult);
       }
 
@@ -1552,7 +1569,7 @@ const runNamshinOrder = async (systemCode, user_id, supplier_params, rows) => {
       await page.click("#btn_saveBag");
       await new Promise((resolve) => setTimeout(resolve, 1000));
 
-      lastRowResult = "장바구니 전송";
+      lastRowResult = orderStatus.SuccessOrderToCart;
       // 상태 저장
       const result = await updateOrderStatus(
         systemCode,
@@ -1590,7 +1607,7 @@ const runNamshinOrder = async (systemCode, user_id, supplier_params, rows) => {
           error_message: `${lastRowResult}`,
         };
 
-  logger.warn(`Finished HanshinOrder: ${JSON.stringify(ret, null, 2)}`);
+  logger.warn(`Finished NamshinOrder: ${JSON.stringify(ret, null, 2)}`);
   return ret;
 };
 
@@ -1709,7 +1726,7 @@ const runUPharmMallOrder = async (
   for (const row of rows) {
     try {
       if (!row.product_code) {
-        lastRowResult = "입력 제품 없음";
+        lastRowResult = orderStatus.ErrorNoInputProduct;
         throw new Error(lastRowResult); // 입력 제품 없음
       }
 
@@ -1755,10 +1772,10 @@ const runUPharmMallOrder = async (
 
       // 3) 결과 체크
       if (rowsResult.length === 0) {
-        lastRowResult = "제품 검색 불가";
+        lastRowResult = orderStatus.ErrorNoSearchProduct;
         throw new Error(lastRowResult); // 입력 제품 없음
       } else if (rowsResult.length > 1) {
-        lastRowResult = "제품 중복 검색";
+        lastRowResult = orderStatus.ErrorMultipleSearchProduct;
         throw new Error(lastRowResult); // 입력 제품 없음
       }
 
@@ -1766,7 +1783,7 @@ const runUPharmMallOrder = async (
       // 2. 재고 체크
       //
       if (row.order_qty > rowsResult[0].stock) {
-        lastRowResult = "재고 부족";
+        lastRowResult = orderStatus.ErrorRackOfStock;
         throw new Error(lastRowResult);
       }
 
@@ -1787,7 +1804,7 @@ const runUPharmMallOrder = async (
       // 4) 버튼 클릭
       await cartBtn.click();
 
-      lastRowResult = "장바구니 전송";
+      lastRowResult = orderStatus.SuccessOrderToCart;
 
       // 상태 저장
       const result = await updateOrderStatus(
@@ -1834,6 +1851,245 @@ const runUPharmMallOrder = async (
 // http://family-pharm.co.kr
 // 아이디 chif2000
 // 비번 542500
+const runFamilyPharmOrder = async (
+  systemCode,
+  user_id,
+  supplier_params,
+  rows
+) => {
+  logger.warn(`Start FamilyPharmOrder`);
+
+  const loginUrl = supplier_params.loginUrl;
+  const loginId = supplier_params.loginId; // = "chif2000";
+  const loginPassword = supplier_params.loginPassword; //= "542500";
+
+  // 브라우저를 보면서 작업내용 확인
+  const browser = await puppeteer.launch(
+    process.env.NODE_ENV === "production"
+      ? {
+          headless: true,
+          executablePath: await chromium.executablePath(),
+          args: [
+            "--start-maximized",
+            "--no-sandbox",
+            "--disable-setuid-sandbox",
+            "--disable-extensions",
+            "--disable-popup-blocking",
+            "--disable-client-side-phishing-detection",
+            "--disable-features=SafeBrowsing",
+            "--disable-default-apps",
+            "--disable-sync",
+            "--disable-web-security",
+            "--allow-running-insecure-content",
+            "--ignore-certificate-errors",
+          ],
+        }
+      : {
+          headless: false,
+          executablePath: getEdgePath(),
+          args: [
+            "--start-maximized",
+            "--no-sandbox",
+            "--disable-setuid-sandbox",
+            "--disable-extensions",
+            "--disable-popup-blocking",
+            "--disable-client-side-phishing-detection",
+            "--disable-features=SafeBrowsing",
+            "--disable-default-apps",
+            "--disable-sync",
+            "--disable-web-security",
+            "--allow-running-insecure-content",
+            "--ignore-certificate-errors",
+          ],
+        }
+  );
+
+  const page = await browser.newPage();
+
+  page.on("requestfailed", (request) => {
+    console.log("❌ FAILED:", request.url(), request.failure());
+  });
+
+  var lastRowResult = constants.General.EmptyString;
+
+  // 1️⃣ 로그인
+  await page.goto(`${loginUrl}/member`, { waitUntil: "domcontentloaded" });
+  await page.waitForSelector('form[name="signinFrm"]');
+
+  await page.type('input[name="user_id"]', loginId, { delay: 50 });
+  await page.type('input[name="user_pwd"]', loginPassword, { delay: 50 });
+
+  // 회원 선택 (type1)
+  await page.click("input#member_type1"); // 또는 #member_type2
+
+  await Promise.all([
+    page.click('button[type="submit"]'),
+    page.waitForNavigation({ waitUntil: "networkidle0" }),
+  ]);
+
+  // 로그인 후 잠시 대기
+  await new Promise((resolve) => setTimeout(resolve, 1000));
+
+  const cookies = await page.cookies();
+  console.log("쿠키:", cookies);
+
+  if (!cookies || cookies.length <= 0) {
+    return {
+      error_code: -1,
+      error_message: `${constants.messages.FAILED_REQUESTED}`,
+    };
+  }
+
+  // 2️⃣ 주문/상품조회 페이지 이동
+  await page.goto(`${loginUrl}/order/order_search.jsp`, {
+    waitUntil: "domcontentloaded",
+  });
+
+  for (const row of rows) {
+    try {
+      if (!row.product_code) {
+        lastRowResult = orderStatus.ErrorNoInputProduct;
+        throw new Error(lastRowResult); // 입력 제품 없음
+      }
+
+      // --- 검색조건 세팅 ---
+      // 폼 로딩 대기
+      await page.waitForSelector('form[name="orderform"]');
+
+      // 검색 기준을 보험코드로 선택
+      await page.select("#selkeyword", "yakga_cd");
+
+      // 검색어 입력
+      await page.type("#keywordtext", row.product_code, { delay: 50 });
+
+      // 조회 버튼 클릭 + 검색 결과 로딩 대기
+      await Promise.all([
+        page.click('input[type="submit"].btn'),
+        await page.waitForNetworkIdle({ idleTime: 800 }),
+      ]);
+
+      // 렌더링 대기
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+
+      // --- 조회 결과 파싱 ---
+      const searchResultRows = await page.$$eval(
+        "table .resultlist tr",
+        (trs) =>
+          trs
+            .map((tr) => {
+              const tds = tr.querySelectorAll("td");
+
+              // 재고 td: 클래스 stock
+              const stockTd = tr.querySelector("td.stock");
+              const stock = Number(stockTd?.innerText.trim()) || 0;
+
+              // 주문수량 input은 재고 td 바로 오른쪽 셀
+              const stockIndex = Array.from(tds).indexOf(stockTd);
+
+              return {
+                trSelector: null, // elementHandle은 page.$eval 밖에서 다시 잡아야 함
+                stock,
+                stockIndex,
+                yakgacd: tr.querySelector("td.yakgacd")?.innerText.trim() || "",
+                manufacturer:
+                  tr.querySelector("td.prodnm")?.innerText.trim() || "",
+                productName:
+                  tr.querySelector("td.goodsnm")?.innerText.trim() || "",
+                standard: tr.querySelector("td.spc")?.innerText.trim() || "",
+                price: tr.querySelector("td.prc")?.innerText.trim() || "",
+                productId:
+                  tr.querySelector("input.qtyctr")?.getAttribute("goodscd") ||
+                  "",
+              };
+            })
+            .filter((item) => item.stock > 0) // 재고 0 제외
+      );
+
+      console.log(searchResultRows);
+
+      // 조회 결과 체크
+      if (
+        searchResultRows.length === 0 ||
+        searchResultRows[0].productId === ""
+      ) {
+        lastRowResult = orderStatus.ErrorNoSearchProduct;
+        throw new Error(lastRowResult);
+      }
+
+      // 첫 번째 아이템만 처리
+      const item = searchResultRows[0];
+      const n_stock = Number(item.stock);
+      const n_orderQty = Number(row.order_qty);
+
+      if (isNaN(n_stock) || isNaN(n_orderQty)) {
+        lastRowResult = orderStatus.ErrorInvalidQty;
+        throw new Error(lastRowResult);
+      }
+
+      if (n_stock <= 0 || n_orderQty > n_stock) {
+        lastRowResult = orderStatus.ErrorRackOfStock;
+        throw new Error(lastRowResult);
+      }
+
+      // --- tr elementHandle 다시 가져오기 ---
+      const trHandles = await page.$$("table .resultlist tr");
+      const rowEl = trHandles[0];
+
+      // 재고 <td> 셀 찾아서 오른쪽 input
+      const tdHandles = await rowEl.$$("td");
+      const qtyTd = tdHandles[item.stockIndex + 1];
+      const qtyInput = await qtyTd.$("input");
+
+      // 주문수량 입력
+      await qtyInput.focus();
+      await qtyInput.click({ clickCount: 3 }); // 기존 값 삭제
+      await qtyInput.type(String(row.order_qty));
+
+      // ----- 장바구니 클릭 -----
+      await page.click("a.btn_bag");
+      await page.waitForTimeout(1000);
+
+      lastRowResult = orderStatus.SuccessOrderToCart;
+      // 상태 저장
+      const result = await updateOrderStatus(
+        systemCode,
+        user_id,
+        row.upload_hour,
+        row.product_code,
+        row.supplier_name,
+        lastRowResult
+      );
+    } catch (e) {
+      // 에러코드 상태 저장
+      const result = await updateOrderStatus(
+        systemCode,
+        user_id,
+        row.upload_hour,
+        row.product_code,
+        row.supplier_name,
+        e.message
+      );
+    }
+  }
+
+  await browser.close();
+
+  var ret;
+
+  ret =
+    rows.length != 1
+      ? {
+          error_code: 0,
+          error_message: `${constants.messages.SUCCESS_FINISHED}`,
+        }
+      : {
+          error_code: 0,
+          error_message: `${lastRowResult}`,
+        };
+
+  logger.warn(`Finished FamilyPharmOrder: ${JSON.stringify(ret, null, 2)}`);
+  return ret;
+};
 
 // (주)함께하는약품
 // http://withus2022.com
@@ -1951,7 +2207,7 @@ const runWithUsOrder = async (systemCode, user_id, supplier_params, rows) => {
   for (const row of rows) {
     try {
       if (!row.product_code) {
-        lastRowResult = "입력 제품 없음";
+        lastRowResult = orderStatus.ErrorNoInputProduct;
         throw new Error(lastRowResult); // 입력 제품 없음
       }
 
@@ -2014,12 +2270,12 @@ const runWithUsOrder = async (systemCode, user_id, supplier_params, rows) => {
         searchResultRows.length === 0 ||
         searchResultRows[0].productId === constants.General.EmptyString
       ) {
-        lastRowResult = "제품 검색 불가";
+        lastRowResult = orderStatus.ErrorNoSearchProduct;
         throw new Error(lastRowResult);
       }
 
       if (searchResultRows.length > 1) {
-        lastRowResult = "제품 중복 검색";
+        lastRowResult = orderStatus.ErrorMultipleSearchProduct;
         throw new Error(lastRowResult);
       }
 
@@ -2030,12 +2286,12 @@ const runWithUsOrder = async (systemCode, user_id, supplier_params, rows) => {
       const n_orderQty = Number(row.order_qty);
 
       if (isNaN(n_stock) || isNaN(n_orderQty)) {
-        lastRowResult = "수량 이상";
+        lastRowResult = orderStatus.ErrorInvalidQty;
         throw new Error(lastRowResult);
       }
 
       if (n_stock <= 0 || n_orderQty > n_stock) {
-        lastRowResult = "재고 부족";
+        lastRowResult = orderStatus.ErrorRackOfStock;
         throw new Error(lastRowResult);
       }
 
@@ -2049,7 +2305,7 @@ const runWithUsOrder = async (systemCode, user_id, supplier_params, rows) => {
       await page.click("#btn_saveBag");
       await new Promise((resolve) => setTimeout(resolve, 1000));
 
-      lastRowResult = "장바구니 전송";
+      lastRowResult = orderStatus.SuccessOrderToCart;
       // 상태 저장
       const result = await updateOrderStatus(
         systemCode,
@@ -2087,7 +2343,7 @@ const runWithUsOrder = async (systemCode, user_id, supplier_params, rows) => {
           error_message: `${lastRowResult}`,
         };
 
-  logger.warn(`Finished HanshinOrder: ${JSON.stringify(ret, null, 2)}`);
+  logger.warn(`Finished WithUsOrder: ${JSON.stringify(ret, null, 2)}`);
   return ret;
 };
 
@@ -2212,7 +2468,7 @@ const runGeoPharmOrder = async (
   for (const row of rows) {
     try {
       if (!row.product_code) {
-        lastRowResult = "입력 제품 없음";
+        lastRowResult = orderStatus.ErrorNoInputProduct;
         throw new Error(lastRowResult); // 입력 제품 없음
       }
 
@@ -2268,7 +2524,7 @@ const runGeoPharmOrder = async (
       // 2. 재고 체크
       //
       if (orderQtyInput > stockQty) {
-        lastRowResult = "재고 부족";
+        lastRowResult = orderStatus.ErrorRackOfStock;
         throw new Error(lastRowResult);
       }
 
@@ -2281,7 +2537,7 @@ const runGeoPharmOrder = async (
 
       // 주문담기 버튼 클릭
       await iframe.click("#btn_add_cart");
-      lastRowResult = "장바구니 전송";
+      lastRowResult = orderStatus.SuccessOrderToCart;
 
       // 상태 저장
       const result = await updateOrderStatus(
@@ -2320,7 +2576,7 @@ const runGeoPharmOrder = async (
           error_message: `${lastRowResult}`,
         };
 
-  logger.warn(`Finished HanshinOrder: ${JSON.stringify(ret, null, 2)}`);
+  logger.warn(`Finished GeoPharmOrder: ${JSON.stringify(ret, null, 2)}`);
   return ret;
 };
 
@@ -2426,7 +2682,7 @@ const runGeoWebOrder = async (systemCode, user_id, supplier_params, rows) => {
   for (const row of rows) {
     try {
       if (!row.product_code) {
-        lastRowResult = "입력 제품 없음";
+        lastRowResult = orderStatus.ErrorNoInputProduct;
         throw new Error(lastRowResult);
       }
 
@@ -2471,12 +2727,12 @@ const runGeoWebOrder = async (systemCode, user_id, supplier_params, rows) => {
       });
 
       if (rowsResult.length === 0) {
-        lastRowResult = "제품 검색 불가";
+        lastRowResult = orderStatus.ErrorNoSearchProduct;
         throw new Error(lastRowResult);
       }
 
       if (rowsResult.length > 1) {
-        lastRowResult = "제품 중복 검색";
+        lastRowResult = orderStatus.ErrorMultipleSearchProduct;
         throw new Error(lastRowResult);
       }
 
@@ -2498,7 +2754,7 @@ const runGeoWebOrder = async (systemCode, user_id, supplier_params, rows) => {
       if (validRows.length === 1) {
         await validRows[0].click();
       } else {
-        lastRowResult = "제품 검색 불가";
+        lastRowResult = orderStatus.ErrorNoSearchProduct;
         throw new Error(lastRowResult);
       }
 
@@ -2508,13 +2764,13 @@ const runGeoWebOrder = async (systemCode, user_id, supplier_params, rows) => {
       // 2. 재고 체크
       //
       if (row.order_qty > stockQty) {
-        lastRowResult = "재고 부족";
+        lastRowResult = orderStatus.ErrorRackOfStock;
         throw new Error(lastRowResult);
       }
 
       // 주문담기 버튼 클릭
       await page.click("#product-detail-btn-add-product");
-      lastRowResult = "장바구니 전송";
+      lastRowResult = orderStatus.SuccessOrderToCart;
 
       // 상태 저장
       const result = await updateOrderStatus(
@@ -2553,7 +2809,7 @@ const runGeoWebOrder = async (systemCode, user_id, supplier_params, rows) => {
           error_message: `${lastRowResult}`,
         };
 
-  logger.warn(`Finished HanshinOrder: ${JSON.stringify(ret, null, 2)}`);
+  logger.warn(`Finished GeoWebOrder: ${JSON.stringify(ret, null, 2)}`);
   return ret;
 };
 
@@ -2678,7 +2934,7 @@ const runBridgePharmOrder = async (
   for (const row of rows) {
     try {
       if (!row.product_code) {
-        lastRowResult = "입력 제품 없음";
+        lastRowResult = orderStatus.ErrorNoInputProduct;
         throw new Error(lastRowResult); // 입력 제품 없음
       }
 
@@ -2741,12 +2997,12 @@ const runBridgePharmOrder = async (
         searchResultRows.length === 0 ||
         searchResultRows[0].productId === constants.General.EmptyString
       ) {
-        lastRowResult = "제품 검색 불가";
+        lastRowResult = orderStatus.ErrorNoSearchProduct;
         throw new Error(lastRowResult);
       }
 
       if (searchResultRows.length > 1) {
-        lastRowResult = "제품 중복 검색";
+        lastRowResult = orderStatus.ErrorMultipleSearchProduct;
         throw new Error(lastRowResult);
       }
 
@@ -2757,12 +3013,12 @@ const runBridgePharmOrder = async (
       const n_orderQty = Number(row.order_qty);
 
       if (isNaN(n_stock) || isNaN(n_orderQty)) {
-        lastRowResult = "수량 이상";
+        lastRowResult = orderStatus.ErrorInvalidQty;
         throw new Error(lastRowResult);
       }
 
       if (n_stock <= 0 || n_orderQty > n_stock) {
-        lastRowResult = "재고 부족";
+        lastRowResult = orderStatus.ErrorRackOfStock;
         throw new Error(lastRowResult);
       }
 
@@ -2776,7 +3032,7 @@ const runBridgePharmOrder = async (
       await page.click("#btn_saveBag");
       await new Promise((resolve) => setTimeout(resolve, 1000));
 
-      lastRowResult = "장바구니 전송";
+      lastRowResult = orderStatus.SuccessOrderToCart;
       // 상태 저장
       const result = await updateOrderStatus(
         systemCode,
@@ -2814,7 +3070,7 @@ const runBridgePharmOrder = async (
           error_message: `${lastRowResult}`,
         };
 
-  logger.warn(`Finished HanshinOrder: ${JSON.stringify(ret, null, 2)}`);
+  logger.warn(`Finished BridgePharmOrder: ${JSON.stringify(ret, null, 2)}`);
   return ret;
 };
 
