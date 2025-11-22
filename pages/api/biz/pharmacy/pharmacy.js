@@ -875,7 +875,7 @@ export async function runOrderBySupplier(
   return ret;
 }
 
-// 한신약품
+// 한신약품 (제품명우측옆 규격)
 // https://www.hanshinpharm.com
 // 아이디: chif2000
 비번: 542500;
@@ -1106,7 +1106,7 @@ const runHanshinOrder = async (systemCode, user_id, supplier_params, rows) => {
   return ret;
 };
 
-// 건화약품
+// 건화약품 (제품명우측옆 규격)
 // http://kh-pharm.co.kr
 // 아이디 chif2000
 // 비번 542500
@@ -1381,7 +1381,7 @@ const runKeonHwaOrder = async (systemCode, user_id, supplier_params, rows) => {
   return ret;
 };
 
-//남신약품
+//남신약품 (제품명우측옆 규격)
 // http://namsinp.com/Contents/Main/Main0.asp
 // 아이디 chif2000
 // 비번 542500
@@ -1611,7 +1611,7 @@ const runNamshinOrder = async (systemCode, user_id, supplier_params, rows) => {
   return ret;
 };
 
-// 유팜몰(동원헬스케어)
+// 유팜몰(동원헬스케어) (상품명/구분 우측옆 규격)
 // https://www.upharmmall.co.kr
 // 아이디 chif2000
 // 비번 5425abcd
@@ -1756,14 +1756,14 @@ const runUPharmMallOrder = async (
             : 0;
           if (stockQty > 0) {
             return {
-              insuranceCode: tds[0]?.innerText.trim() || "",
-              manufacturer: tds[1]?.innerText.trim() || "",
-              productName: tds[2]?.innerText.trim() || "",
-              standard: tds[4]?.innerText.trim() || "",
-              price: tds[5]?.innerText.trim() || "",
+              insuranceCode: tds[0]?.innerText.trim() || "", //보험코드
+              manufacturer: tds[1]?.innerText.trim() || "", //제조사
+              productName: tds[2]?.innerText.trim() || "", //제품명
+              standard: tds[4]?.innerText.trim() || "", //규격
+              price: tds[5]?.innerText.trim() || "", //단가
               stock: stockHidden
                 ? parseInt(stockHidden.value.trim().replace(/,/g, ""), 10)
-                : 0,
+                : 0, //재고
               orderInputId: tds[7]?.querySelector("input")?.id || null,
             };
           }
@@ -1847,7 +1847,7 @@ const runUPharmMallOrder = async (
   return ret;
 };
 
-// (주) 훼밀리팜
+// (주) 훼밀리팜 (규격 별도로 분리 또는 이름 내 포함)
 // http://family-pharm.co.kr
 // 아이디 chif2000
 // 비번 542500
@@ -1990,13 +1990,13 @@ const runFamilyPharmOrder = async (
                 trSelector: null, // elementHandle은 page.$eval 밖에서 다시 잡아야 함
                 stock,
                 stockIndex,
-                yakgacd: tr.querySelector("td.yakgacd")?.innerText.trim() || "",
+                yakgacd: tr.querySelector("td.yakgacd")?.innerText.trim() || "", //보험코드
                 manufacturer:
-                  tr.querySelector("td.prodnm")?.innerText.trim() || "",
+                  tr.querySelector("td.prodnm")?.innerText.trim() || "", //제조사
                 productName:
-                  tr.querySelector("td.goodsnm")?.innerText.trim() || "",
-                standard: tr.querySelector("td.spc")?.innerText.trim() || "",
-                price: tr.querySelector("td.prc")?.innerText.trim() || "",
+                  tr.querySelector("td.goodsnm")?.innerText.trim() || "", //제품명
+                standard: tr.querySelector("td.spc")?.innerText.trim() || "", //규격
+                price: tr.querySelector("td.prc")?.innerText.trim() || "", //단가
                 productId:
                   tr.querySelector("input.qtyctr")?.getAttribute("goodscd") ||
                   "",
@@ -2091,7 +2091,7 @@ const runFamilyPharmOrder = async (
   return ret;
 };
 
-// (주)함께하는약품
+// (주)함께하는약품 (제품명우측옆 규격)
 // http://withus2022.com
 // 아이디 chif2000
 // 비번 542500
@@ -2347,7 +2347,7 @@ const runWithUsOrder = async (systemCode, user_id, supplier_params, rows) => {
   return ret;
 };
 
-// 지오팜 약국주문 시스템
+// 지오팜 약국주문 시스템 (제품명우측옆 규격)
 // https://orderpharm.geo-pharm.com
 // 아이디 chif2000
 // 비번 542500
@@ -2488,12 +2488,51 @@ const runGeoPharmOrder = async (
 
       // --- AJAX 로딩 대기: tbody 안에 tr 생길 때까지 ---
 
-      const iframeElement = await page.$("#order_item_view_iframe");
-      const iframe = await iframeElement.contentFrame();
+      // 왼쪽 IFrame 내 테이블 목록 확인
+      const iframeElementLeft = await page.$("#item_list_iframe"); // IFrame 선택
+      const iframeLeft = await iframeElementLeft.contentFrame(); // IFrame 내부 프레임 가져오기
+
+      // IFrame 내부 테이블 tr 선택
+      const rowsResult = await iframeLeft.$$eval("table tr", (trs) => {
+        // 헤더 행 제외
+        return trs
+          .slice(1)
+          .map((tr) => {
+            const cells = tr.querySelectorAll("td");
+
+            return {
+              // 선택 컬럼 체크박스 상태
+              select:
+                cells[0]?.querySelector("input[type='checkbox']")?.checked ||
+                false,
+              manufacturer: cells[1]?.innerText.trim() || "", // 제약사
+              productName: cells[2]?.innerText.trim() || "", // 제품명
+              spec: cells[3]?.innerText.trim() || "", // 규격
+              edi: cells[4]?.innerText.trim() || "", // EDI
+              stock: parseInt(
+                cells[5]?.innerText.trim().replace(/,/g, "") || "0"
+              ), // 재고 숫자
+            };
+          })
+          .filter((item) => item.stock > 0);
+      });
+
+      if (rowsResult.length === 0) {
+        lastRowResult = orderStatus.ErrorNoProductSearch;
+        throw new Error(lastRowResult); // 제품 검색 불가
+      }
+
+      if (rowsResult.length > 1) {
+        // lastRowResult = orderStatus.ErrorMultipleSearchProduct;
+        // throw new Error(lastRowResult); // 제품 중복 검색
+      }
+
+      const iframeElementRight = await page.$("#order_item_view_iframe");
+      const iframeRight = await iframeElementRight.contentFrame();
 
       // 주문수량 입력
       // 2) 프레임 내부 DOM에서 '재고수량' th 옆 td 의 텍스트(숫자) 읽기
-      const stockQtyText = await iframe.evaluate(() => {
+      const stockQtyText = await iframeRight.evaluate(() => {
         // 모든 th를 검사해서 '재고수량' 텍스트를 포함하는 th를 찾음
         const ths = Array.from(document.querySelectorAll("th"));
         const targetTh = ths.find(
@@ -2528,15 +2567,15 @@ const runGeoPharmOrder = async (
         throw new Error(lastRowResult);
       }
 
-      await iframe.waitForSelector(`#item_order_count`, {
+      await iframeLeft.waitForSelector(`#item_order_count`, {
         visible: true,
         timeout: 30000,
       });
 
-      await iframe.type(`#item_order_count`, `${orderQtyInput}`);
+      await iframeLeft.type(`#item_order_count`, `${orderQtyInput}`);
 
       // 주문담기 버튼 클릭
-      await iframe.click("#btn_add_cart");
+      await iframeLeft.click("#btn_add_cart");
       lastRowResult = orderStatus.SuccessOrderToCart;
 
       // 상태 저장
@@ -2580,7 +2619,7 @@ const runGeoPharmOrder = async (
   return ret;
 };
 
-// 지오웹
+// 지오웹 (제품명우측옆 규격)
 // https://order.geoweb.kr
 // 아이디 chif2000
 // 비번 1234abcd
@@ -2813,7 +2852,7 @@ const runGeoWebOrder = async (systemCode, user_id, supplier_params, rows) => {
   return ret;
 };
 
-//브릿지팜
+//브릿지팜 (제품명우측옆 규격)
 // http://bridgepharm.net
 // 아이디 chif2000
 // 비번 1234
