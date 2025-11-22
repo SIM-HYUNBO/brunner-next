@@ -3,7 +3,7 @@ import { useState, useEffect, useRef } from "react";
 import { JsonDatasetManager } from "@/components/workflow/jsonDatasetManager";
 import type { JsonObject } from "@/components/workflow/jsonDatasetManager";
 import * as ReactWindow from "react-window";
-import { Input, Button, Table } from "antd";
+import { Input, Button, Table, Select } from "antd";
 import * as constants from "@/components/core/constants";
 
 export type JsonColumnType = "string" | "number" | "boolean";
@@ -84,18 +84,18 @@ const CellEditor: React.FC<{
 
   if (colType === "boolean") {
     return (
-      <select
+      <Select
         ref={inputRef as any}
         value={String(cellValue)}
-        onChange={(e) => {
-          setCellValue(e.target.value);
-          onUpdate(e.target.value === "true");
+        onChange={(value) => {
+          setCellValue(value);
+          onUpdate(value === "true");
         }}
         className="w-full border-none outline-none"
       >
         <option value="true">true</option>
         <option value="false">false</option>
-      </select>
+      </Select>
     );
   }
 

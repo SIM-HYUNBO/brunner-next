@@ -5,7 +5,7 @@ import { NodePropertyEditor } from "@/components/workflow/nodePropertyEditor";
 import { ScriptEditorModal } from "@/components/workflow/scriptEditorModal";
 import { SqlEditorModal } from "./sqlEditorModal";
 import WorkflowSelectModal from "@/components/workflow/workflowSelectModal";
-import { Input, Button } from "antd";
+import { Input, Button, Select } from "antd";
 import type {
   ScriptNodeDesignData,
   SqlNodeDesignData,
@@ -218,12 +218,12 @@ export const NodePropertyPanel: React.FC<NodePropertyPanelProps> = ({
         <h3 className="font-semibold mb-2">Branch Node</h3>
         <div className="flex items-center space-x-2 mb-2">
           <label>Mode:</label>
-          <select
+          <Select
             className="w-1/2 text-center"
             value={mode}
-            onChange={(e) => {
-              setMode(e.target.value);
-              handleBranchNodeChange("mode", e.target.value);
+            onChange={(value) => {
+              setMode(value);
+              handleBranchNodeChange("mode", value);
             }}
           >
             <option value={constants.workflowBranchNodeMode.Branch}>
@@ -232,7 +232,7 @@ export const NodePropertyPanel: React.FC<NodePropertyPanelProps> = ({
             <option value={constants.workflowBranchNodeMode.Loop}>
               {constants.workflowBranchNodeMode.Loop}
             </option>
-          </select>
+          </Select>
         </div>
 
         {mode === constants.workflowBranchNodeMode.Branch && (

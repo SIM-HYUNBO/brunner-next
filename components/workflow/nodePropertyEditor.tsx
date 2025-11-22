@@ -4,7 +4,7 @@ import * as constants from "@/components/core/constants";
 import type { DataTable } from "@/components/core/commonData";
 import * as commmonFunctions from "@/components/core/commonFunctions";
 import { JsonDatasetEditorModal } from "@/components/workflow/jsonDatasetEditorModal";
-import { Button } from "antd";
+import { Button, Select } from "antd";
 
 interface NodePropertyEditorProps {
   node: Node<any> | null;
@@ -83,17 +83,17 @@ export const NodePropertyEditor: React.FC<NodePropertyEditorProps> = ({
 
       <div className="flex flex-row mt-2 items-center">
         <label>Action Name:</label>
-        <select
+        <Select
           className="flex flex-1 border px-2 py-1 ml-2 mt-1 text-center"
           value={node.data.actionName}
-          onChange={(e) => handleActionChange(e.target.value)}
+          onChange={(value) => handleActionChange(value)}
         >
           {Object.values(constants.workflowActions).map((a) => (
             <option key={a} value={a}>
               {a}
             </option>
           ))}
-        </select>
+        </Select>
       </div>
 
       {/* Inputs/Outputs 버튼 */}

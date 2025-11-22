@@ -3,7 +3,7 @@ import * as constants from "@/components/core/constants";
 import { RequestServer } from "@/components/core/client/requestServer";
 import * as userInfo from "@/components/core/client/frames/userInfo";
 import { useModal } from "@/components/core/client/brunnerMessageBox";
-import { Input, Button, Table } from "antd";
+import { Input, Button, Select, Table } from "antd";
 
 export default function AIModelSelector({ model, setAIModel, apiKey }) {
   const [models, setModels] = useState([]);
@@ -49,9 +49,9 @@ export default function AIModelSelector({ model, setAIModel, apiKey }) {
   return (
     <div>
       <BrunnerMessageBox />
-      <select
+      <Select
         value={model || constants.General.EmptyString}
-        onChange={(e) => setAIModel(e.target.value)}
+        onChange={(value) => setAIModel(value)}
         onFocus={fetchModels}
         disabled={disabled}
         className={`w-full border p-2 rounded mb-2 ${
@@ -72,7 +72,7 @@ export default function AIModelSelector({ model, setAIModel, apiKey }) {
             {m.id}
           </option>
         ))}
-      </select>
+      </Select>
       {error && <div className="text-red-500 text-sm">{error}</div>}
     </div>
   );

@@ -4,7 +4,7 @@ import { useRouter } from "next/router";
 import * as constants from "@/components/core/constants";
 import { useModal } from "@/components/core/client/brunnerMessageBox";
 import Loading from "@/components/core/client/loading";
-import { Button } from "antd";
+import { Button, Select } from "antd";
 
 export default function ResetPasswordContent() {
   const router = useRouter();
@@ -21,7 +21,7 @@ export default function ResetPasswordContent() {
     constants.General.EmptyString
   );
 
-  const changeSystemCodeValue = (e) => setSystemCode(e.target.value);
+  const changeSystemCodeValue = (value) => setSystemCode(value);
   const changeUserIdValue = (e) => setUserId(e.target.value);
   const changePhoneNumberValue = (e) => setPhoneNumber(e.target.value);
   const changeEMailValue = (e) => setEmail(e.target.value);
@@ -122,7 +122,7 @@ export default function ResetPasswordContent() {
           >
             System Code
           </label>
-          <select
+          <Select
             id="systemCode"
             value={systemCode}
             onChange={changeSystemCodeValue}
@@ -133,7 +133,7 @@ export default function ResetPasswordContent() {
                 {key}
               </option>
             ))}
-          </select>
+          </Select>
         </div>
 
         <div className="w-full">

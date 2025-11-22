@@ -7,7 +7,7 @@ import * as constants from "@/components/core/constants";
 import * as userInfo from "@/components/core/client/frames/userInfo";
 import Loading from "@/components/core/client/loading";
 import { useModal } from "@/components/core/client/brunnerMessageBox";
-import { Table, Input, Button } from "antd";
+import { Table, Input, Button, Select } from "antd";
 
 export default function DrugSearchModal({ isOpen, onClose, onSelect }) {
   const { BrunnerMessageBox, openModal } = useModal();
@@ -126,15 +126,15 @@ export default function DrugSearchModal({ isOpen, onClose, onSelect }) {
 
         {/* 검색 */}
         <div className="flex space-x-2 p-6 pb-2 flex-shrink-0">
-          <select
+          <Select
             className="border rounded p-2"
             value={searchType}
-            onChange={(e) => setSearchType(e.target.value)}
+            onChange={(value) => setSearchType(value)}
           >
             <option value="name">Product Name</option>
             <option value="code">Product Code</option>
             <option value="company">Company Name</option>
-          </select>
+          </Select>
           <Input
             className="flex-1"
             placeholder="검색어 입력"

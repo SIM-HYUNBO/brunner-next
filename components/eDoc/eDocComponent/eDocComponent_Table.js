@@ -175,11 +175,11 @@ export function renderProperty(
               className="w-1/5 border border-gray-300 rounded p-1"
               placeholder="폭 (예: 100px, 20%)"
             />
-            <select
+            <Select
               value={col.align || "center"}
-              onChange={(e) => {
+              onChange={(value) => {
                 const newColumns = [...component.runtime_data.columns];
-                newColumns[idx] = { ...newColumns[idx], align: e.target.value };
+                newColumns[idx] = { ...newColumns[idx], align: value };
                 updateRuntimeData("columns", newColumns);
               }}
               className="w-2/5 border border-gray-300 rounded p-1"
@@ -187,7 +187,7 @@ export function renderProperty(
               <option value="left">왼쪽</option>
               <option value="center">가운데</option>
               <option value="right">오른쪽</option>
-            </select>
+            </Select>
           </div>
         ))}
 

@@ -6,7 +6,7 @@ import * as userInfo from "@/components/core/client/frames/userInfo";
 import Loading from "@/components/core/client/loading";
 import DrugSearchModal from "@/components/pharmacy/drugSearchModal";
 import { useModal } from "@/components/core/client/brunnerMessageBox";
-import { Input, Button, Table } from "antd";
+import { Input, Button, Select, Table } from "antd";
 
 const FilteringConditions = React.memo(
   ({
@@ -34,10 +34,10 @@ const FilteringConditions = React.memo(
 
         <div className="flex flex-col">
           <label className="font-medium mb-1">Supplier Name</label>
-          <select
+          <Select
             className="border rounded p-2 w-[200px]"
             value={supplierName}
-            onChange={(e) => setSupplierName(e.target.value)}
+            onChange={(value) => setSupplierName(value)}
           >
             <option value=""></option>
             {supplierList.map((s) => (
@@ -45,7 +45,7 @@ const FilteringConditions = React.memo(
                 {s.supplier_name}
               </option>
             ))}
-          </select>
+          </Select>
         </div>
 
         <Button

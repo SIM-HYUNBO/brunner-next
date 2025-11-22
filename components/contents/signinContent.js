@@ -8,6 +8,7 @@ import * as constants from "@/components/core/constants";
 import Loading from "@/components/core/client/loading";
 import { Button } from "antd";
 import { loadMenu } from "../core/client/frames/dropdownMenu";
+import { Select } from "antd";
 
 // 외부에서 import 가능하도록 export
 
@@ -29,7 +30,7 @@ export default function SigninContent() {
 
   const changeUserIdValue = (e) => setUserId(e.target.value);
   const changePasswordValue = (e) => setPassword(e.target.value);
-  const changeSystemCodeValue = (e) => setSystemCode(e.target.value);
+  const changeSystemCodeValue = (value) => setSystemCode(value);
 
   const requestSignIn = async () => {
     try {
@@ -86,18 +87,18 @@ export default function SigninContent() {
           >
             System Code
           </label>
-          <select
+          <Select
             id="systemCode"
             value={systemCode}
             onChange={changeSystemCodeValue}
-            className="bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 px-3 py-1 leading-8 transition-colors duration-200 ease-in-out"
+            className="w-40 h-12 text-center rounded border focus:ring-2 text-base outline-none leading-8 duration-200 ease-in-out"
           >
             {Object.entries(constants.SystemCode).map(([key, value]) => (
-              <option key={key} value={value}>
+              <option className="text-center" key={key} value={value}>
                 {key}
               </option>
             ))}
-          </select>
+          </Select>
         </div>
 
         <div className="relative mb-4">

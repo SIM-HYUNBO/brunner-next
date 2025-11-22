@@ -1,7 +1,7 @@
 "use strict";
 
 import React from "react";
-import { Input, Button, Table } from "antd";
+import { Input, Button, Select, Table } from "antd";
 
 // ✅ 사용할 한글 + 영문 폰트 리스트
 export const availableFonts = [
@@ -47,9 +47,9 @@ export default function EDocTextStyleEditor({
     <div className="space-y-4">
       <div>
         <label className="block text-sm font-medium mb-1">폰트</label>
-        <select
+        <Select
           value={fontFamily}
-          onChange={(e) => onChange({ fontFamily: e.target.value })}
+          onChange={(value) => onChange({ fontFamily: value })}
           className="w-full border rounded p-2"
         >
           {availableFonts.map((font) => (
@@ -57,7 +57,7 @@ export default function EDocTextStyleEditor({
               {font}
             </option>
           ))}
-        </select>
+        </Select>
       </div>
 
       <div>

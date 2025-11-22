@@ -1,6 +1,6 @@
 "use strict";
 
-import { Input, Button, Table } from "antd";
+import { Input, Button, Select, Table } from "antd";
 
 export default function EDocPagePropertyEditor({
   runtimeData = {},
@@ -51,16 +51,16 @@ export default function EDocPagePropertyEditor({
       </label>
 
       <label>Page Size</label>
-      <select
+      <Select
         value={runtimeData.pageSize || "A4"}
-        onChange={(e) => updateProperty("pageSize", e.target.value)}
+        onChange={(value) => updateProperty("pageSize", value)}
         className="w-full border border-gray-300 rounded p-2"
       >
         <option value="A4">A4</option>
         <option value="A3">A3</option>
         <option value="Letter">Letter</option>
         <option value="Legal">Legal</option>
-      </select>
+      </Select>
 
       <label>Page Margin (px)</label>
       <input

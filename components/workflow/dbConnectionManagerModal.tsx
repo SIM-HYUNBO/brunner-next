@@ -5,7 +5,7 @@ import Loading from "@/components/core/client/loading";
 import { useModal } from "@/components/core/client/brunnerMessageBox";
 import * as userInfo from "@/components/core/client/frames/userInfo";
 import { Rnd } from "react-rnd";
-import { Input, Button, Table } from "antd";
+import { Input, Button, Table, Select } from "antd";
 
 export interface DBConnectionInfo {
   system_code: string;
@@ -292,12 +292,12 @@ export const DBConnectionManagerModal: React.FC<
                   {/* DB 종류 선택 */}
                   <div className="flex items-center gap-2 mb-2">
                     <label className="font-medium text-sm w-24">DB Type</label>
-                    <select
+                    <Select
                       value={editing.type}
-                      onChange={(e) =>
+                      onChange={(value) =>
                         setEditing({
                           ...editing,
-                          type: e.target.value as DBConnectionInfo["type"],
+                          type: value as DBConnectionInfo["type"],
                         })
                       }
                       className="border rounded px-2 py-1 flex-1"
@@ -308,7 +308,7 @@ export const DBConnectionManagerModal: React.FC<
                       <option value={constants.dbType.mysql}>MySQL</option>
                       <option value={constants.dbType.mssql}>MSSQL</option>
                       <option value={constants.dbType.oracle}>Oracle</option>
-                    </select>
+                    </Select>
                   </div>
 
                   {/* 입력 필드 */}

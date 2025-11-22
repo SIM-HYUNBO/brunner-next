@@ -1,7 +1,7 @@
 `use strict`;
 
 import * as constants from "@/components/core/constants";
-import { Input, Button, Table } from "antd";
+import { Input, Button, Select, Table } from "antd";
 
 import * as TextComponent from "@/components/eDoc/eDocComponent/eDocComponent_Text";
 import * as InputComponent from "@/components/eDoc/eDocComponent/eDocComponent_Input";
@@ -76,17 +76,17 @@ export default function EDocComponentPropertyEditor({
   const renderPositionAlignPropertyByPropertyEditor = () => (
     <>
       <label>정렬:</label>
-      <select
+      <Select
         value={component.runtime_data?.positionAlign || "left"}
-        onChange={(e) =>
-          updateRuntimeDataByPropertyEeditor("positionAlign", e.target.value)
+        onChange={(value) =>
+          updateRuntimeDataByPropertyEeditor("positionAlign", value)
         }
         className="w-full border border-gray-300 rounded p-2 mb-2"
       >
         <option value="left">왼쪽</option>
         <option value="center">가운데</option>
         <option value="right">오른쪽</option>
-      </select>
+      </Select>
     </>
   );
 

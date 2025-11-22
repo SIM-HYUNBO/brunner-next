@@ -11,6 +11,7 @@ import * as constants from "@/components/core/constants";
 import Loading from "@/components/core/client/loading";
 import { Button, Input, Table } from "antd";
 import { Rnd } from "react-rnd";
+import { Select } from "antd";
 
 export default function SignupContent() {
   const [loading, setLoading] = useState(false);
@@ -36,7 +37,7 @@ export default function SignupContent() {
   const changePhoneNumberValue = (e) => setPhoneNumber(e.target.value);
   const changeEMailValue = (e) => setEmail(e.target.value);
   const changeRegisterNoValue = (e) => setRegisterNo(e.target.value);
-  const changeSystemCodeValue = (e) => setSystemCode(e.target.value);
+  const changeSystemCodeValue = (value) => setSystemCode(value);
 
   // -------------------------------
   // 사업장 검색 상태
@@ -202,18 +203,18 @@ export default function SignupContent() {
           >
             System Code
           </label>
-          <select
+          <Select
             id="systemCode"
             value={systemCode}
             onChange={changeSystemCodeValue}
-            className="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 px-3 py-1 leading-8 transition-colors duration-200 ease-in-out"
+            className="w-full h-10 bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 px-3 py-1 leading-8 transition-colors duration-200 ease-in-out"
           >
             {Object.entries(constants.SystemCode).map(([key, value]) => (
               <option key={key} value={value}>
                 {key}
               </option>
             ))}
-          </select>
+          </Select>
         </div>
 
         {/* 사용자 유형 선택 */}
@@ -221,11 +222,11 @@ export default function SignupContent() {
           <label htmlFor="userType" className="leading-7 text-sm text-gray-400">
             User Type
           </label>
-          <select
+          <Select
             id="userType"
             value={userType}
-            onChange={(e) => setUserType(e.target.value)}
-            className="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 px-3 py-1 leading-8 transition-colors duration-200 ease-in-out"
+            onChange={(value) => setUserType(value)}
+            className="w-full h-10 bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 px-3 py-1 leading-8 transition-colors duration-200 ease-in-out"
           >
             <option value={constants.UserType.Personal}>
               {constants.UserType.Personal}
@@ -236,7 +237,7 @@ export default function SignupContent() {
             <option value={constants.UserType.Supplier}>
               {constants.UserType.Supplier}
             </option>
-          </select>
+          </Select>
         </div>
 
         {/* ID / Password */}
@@ -438,11 +439,11 @@ export default function SignupContent() {
             <div style={{ padding: 16, overflow: "auto", flex: 1 }}>
               {/* 검색타입 + 검색어 입력 */}
               <div style={{ display: "flex", marginBottom: 8, gap: 8 }}>
-                <select
+                <Select
                   value={searchType}
-                  onChange={(e) => {
+                  onChange={(value) => {
                     setSearchResult([]);
-                    setSearchType(e.target.value);
+                    setSearchType(value);
                   }}
                   style={{
                     padding: "4px 8px",
@@ -456,7 +457,7 @@ export default function SignupContent() {
                   <option value={constants.UserType.Supplier}>
                     {constants.UserType.Supplier}
                   </option>
-                </select>
+                </Select>
 
                 <Input
                   placeholder={
