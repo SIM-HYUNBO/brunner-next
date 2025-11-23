@@ -1971,7 +1971,6 @@ const runFamilyPharmOrder = async (
       // 렌더링 대기
       await new Promise((resolve) => setTimeout(resolve, 1000));
 
-      // --- 조회 결과 파싱 ---
       const searchResultRows = await page.$$eval(
         "table .resultlist tr",
         (trs) =>
@@ -1979,30 +1978,67 @@ const runFamilyPharmOrder = async (
             .map((tr) => {
               const tds = tr.querySelectorAll("td");
 
-              // 재고 td: 클래스 stock
+              // ------------------------
+              // 규격 자동 파싱 함수
+              // ------------------------
+              const parseSpec = (fullName) => {
+                if (!fullName) return { name: "", spec: "" };
+
+                const text = fullName.trim();
+
+                // 패턴1: 괄호 포함된 규격 예: "타이레놀정 (100mg)"
+                const bracketMatch = text.match(/(.*)\((.*?)\)\s*$/);
+                if (bracketMatch) {
+                  return {
+                    name: bracketMatch[1].trim(),
+                    spec: bracketMatch[2].trim(),
+                  };
+                }
+
+                // 패턴2: 숫자+단위(영문, 숫자 조합) 예: "타이레놀정 160mg"
+                const unitMatch = text.match(/^(.*?)[\s_-]*([0-9]+.*)$/);
+                if (unitMatch) {
+                  return {
+                    name: unitMatch[1].trim(),
+                    spec: unitMatch[2].trim(),
+                  };
+                }
+
+                // 규격 없음
+                return { name: text, spec: "" };
+              };
+
+              const productFullName =
+                tr.querySelector("td.goodsnm")?.innerText.trim() || "";
+
+              const { name: parsedProductName, spec: parsedSpec } =
+                parseSpec(productFullName);
+
+              // ------------------------
+              // 재고, 기타 정보
+              // ------------------------
               const stockTd = tr.querySelector("td.stock");
               const stock = Number(stockTd?.innerText.trim()) || 0;
 
-              // 주문수량 input은 재고 td 바로 오른쪽 셀
               const stockIndex = Array.from(tds).indexOf(stockTd);
 
               return {
-                trSelector: null, // elementHandle은 page.$eval 밖에서 다시 잡아야 함
+                trSelector: null,
                 stock,
                 stockIndex,
-                yakgacd: tr.querySelector("td.yakgacd")?.innerText.trim() || "", //보험코드
+                yakgacd: tr.querySelector("td.yakgacd")?.innerText.trim() || "",
                 manufacturer:
-                  tr.querySelector("td.prodnm")?.innerText.trim() || "", //제조사
-                productName:
-                  tr.querySelector("td.goodsnm")?.innerText.trim() || "", //제품명
-                standard: tr.querySelector("td.spc")?.innerText.trim() || "", //규격
-                price: tr.querySelector("td.prc")?.innerText.trim() || "", //단가
+                  tr.querySelector("td.prodnm")?.innerText.trim() || "",
+                productName: parsedProductName, // 파싱된 제품명
+                standard: parsedSpec, // 파싱된 규격
+                price: tr.querySelector("td.prc")?.innerText.trim() || "",
                 productId:
                   tr.querySelector("input.qtyctr")?.getAttribute("goodscd") ||
                   "",
+                originalName: productFullName, // 원본 제품명도 유지
               };
             })
-            .filter((item) => item.stock > 0) // 재고 0 제외
+            .filter((item) => item.stock > 0)
       );
 
       console.log(searchResultRows);
