@@ -72,7 +72,7 @@ export default function HomeContent() {
   Leave your ideas as digital documents.
   Creation begins the moment you start recording.
 
-  Personal use of services is free. 
+  Personal use of Brunner service is free. 
   Sign up to try it out.`}
             />
           </div>
