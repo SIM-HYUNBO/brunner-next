@@ -15,7 +15,7 @@ export default function DrugSearchModal({ isOpen, onClose, onSelect }) {
   const [searchType, setSearchType] = useState("name");
   const [selectedRow, setSelectedRow] = useState(null);
   const [filteredData, setFilteredData] = useState([]);
-  const orderQtyRef = useRef(1);
+  const usedQtyRef = useRef(1);
   const [loading, setLoading] = useState(false);
 
   const [modalHeight, setModalHeight] = useState(500);
@@ -52,7 +52,7 @@ export default function DrugSearchModal({ isOpen, onClose, onSelect }) {
 
   if (!isOpen) return null;
 
-  const bottomAreaHeight = 80; // Order Qty + 버튼 영역
+  const bottomAreaHeight = 80; // Used Qty + 버튼 영역
   const headerSearchHeight = 100; // 헤더 + 검색 영역
   const tableHeight = modalHeight - bottomAreaHeight * 3 - headerSearchHeight;
 
@@ -165,11 +165,11 @@ export default function DrugSearchModal({ isOpen, onClose, onSelect }) {
           />
         </div>
 
-        {/* Order Qty */}
+        {/* Used Qty */}
         <div className="absolute left-0 w-full bottom-16 p-4 flex justify-end space-x-2 border-t">
-          <label className="leading-7 text-sm text-gray-400">Order Qty</label>
+          <label className="leading-7 text-sm text-gray-400">Used Qty</label>
           <input
-            ref={orderQtyRef}
+            ref={usedQtyRef}
             type="number"
             className="px-4 py-2 rounded general-text-bg-color"
             defaultValue={1}
@@ -190,7 +190,7 @@ export default function DrugSearchModal({ isOpen, onClose, onSelect }) {
             disabled={!selectedRow}
             type="primary"
             onClick={() => {
-              if (selectedRow) onSelect(selectedRow, orderQtyRef.current.value);
+              if (selectedRow) onSelect(selectedRow, usedQtyRef.current.value);
               onClose();
             }}
           >

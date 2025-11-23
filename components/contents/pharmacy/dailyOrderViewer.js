@@ -83,7 +83,7 @@ export default function DailyOrderViewer() {
     setShowDrugSearchModal(false);
   };
 
-  const onSelectDrugSearchModal = async (selectedData, orderQty) => {
+  const onSelectDrugSearchModal = async (selectedData, usedQty) => {
     if (!selectedData?.edi_code || selectedData.edi_code === "") {
       openModal(constants.messages.NO_DATA_SELECTED);
       return;
@@ -98,7 +98,7 @@ export default function DailyOrderViewer() {
         productCode: editingRow.values.product_code,
         newProductCode: selectedData.edi_code,
         newProductName: selectedData.item_name,
-        newOrderQty: orderQty,
+        newusedQty: usedQty,
       };
 
       setLoading(true);
@@ -123,7 +123,7 @@ export default function DailyOrderViewer() {
     { Header: "Product Code", accessor: "product_code", type: "text" },
     { Header: "Product Name", accessor: "product_name", type: "text" },
     { Header: "Supplier Name", accessor: "supplier_name", type: "text" },
-    { Header: "Order Qty", accessor: "order_qty", type: "number" },
+    { Header: "Used Qty", accessor: "used_qty", type: "number" },
     { Header: "Inventory Qty", accessor: "current_inventory", type: "number" },
     { Header: "Order Result", accessor: "order_status", type: "text" },
   ];

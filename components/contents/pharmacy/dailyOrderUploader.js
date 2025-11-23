@@ -32,7 +32,7 @@ export function DailyOrderUploader() {
       const supplierCell = worksheet[XLSX.utils.encode_cell({ r: row, c: 3 })];
       const currentInventoryCell =
         worksheet[XLSX.utils.encode_cell({ r: row, c: 4 })];
-      const orderQtyCell = worksheet[XLSX.utils.encode_cell({ r: row, c: 5 })];
+      const usedQtyCell = worksheet[XLSX.utils.encode_cell({ r: row, c: 5 })];
 
       const productCode = productCodeCell ? productCodeCell.v : null;
       const productName = productNameCell ? productNameCell.v : null;
@@ -40,15 +40,15 @@ export function DailyOrderUploader() {
       const currentInventory = currentInventoryCell
         ? currentInventoryCell.v
         : null;
-      const orderQty = orderQtyCell ? orderQtyCell.v : null;
+      const usedQty = usedQtyCell ? usedQtyCell.v : null;
 
-      if (!productName && !supplierName && !orderQty) continue;
+      if (!productName && !supplierName && !usedQty) continue;
 
       result.push({
         productCode,
         productName,
         supplierName,
-        orderQty,
+        usedQty,
         currentInventory,
       });
     }
