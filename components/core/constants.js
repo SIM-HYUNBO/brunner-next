@@ -11,7 +11,6 @@ export const SystemCode = {
 export const UserType = {
   Personal: `Personal`, // 개인
   Pharmacy: `Pharmacy`, // 약국
-  Supplier: `Supplier`, // 도매상
 };
 
 export const modulePrefix = {

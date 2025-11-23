@@ -63,10 +63,7 @@ export default function SignupContent() {
     try {
       setLoading(true);
 
-      const workflowName =
-        searchType === constants.UserType.Pharmacy
-          ? "약국목록조회"
-          : "공급자목록조회";
+      const workflowName = "약국목록조회";
 
       const jResponse = await RequestExecuteWorkflow(
         constants.SystemCode.Brunner,
@@ -96,60 +93,23 @@ export default function SignupContent() {
       setUserType(constants.UserType.Pharmacy);
       setRegisterName(record.bizName || constants.General.EmptyString); // ✅ RegisterName 설정
       setShowBizModal(false);
-    } else if (searchType === constants.UserType.Supplier) {
-      setRegisterNo(record.register_no);
-      setPhoneNumber(record.phone_no);
-      setAddress(record.address || constants.General.EmptyString);
-      setUserType(constants.UserType.Supplier);
-      setRegisterName(record.name || constants.General.EmptyString); // ✅ RegisterName 설정
-      setShowBizModal(false);
     }
   };
 
   // 검색타입에 따라 컬럼 다르게 구성
-  const columns =
-    searchType === constants.UserType.Pharmacy
-      ? [
-          { title: "Pharmacy Name", dataIndex: "bizName", key: "bizName" },
-          { title: "ManageNo", dataIndex: "manageNo", key: "manageNo" },
-          { title: "Address", dataIndex: "address", key: "address" },
-          {
-            title: "Select",
-            render: (_, record) => (
-              <Button type="link" onClick={() => selectBusiness(record)}>
-                선택
-              </Button>
-            ),
-          },
-        ]
-      : [
-          { title: "Supplier Name", dataIndex: "name", key: "name" },
-          { title: "Address", dataIndex: "address", key: "address" },
-          { title: "Phone Number", dataIndex: "phone_no", key: "phone_no" },
-          {
-            title: "Mobile Number",
-            dataIndex: "mobile_phone_no",
-            key: "mobile_phone_no",
-          },
-          {
-            title: "E-Mail Address",
-            dataIndex: "email_addr",
-            key: "email_addr",
-          },
-          {
-            title: "Register Number",
-            dataIndex: "register_no",
-            key: "register_no",
-          },
-          {
-            title: "Select",
-            render: (_, record) => (
-              <Button type="link" onClick={() => selectBusiness(record)}>
-                선택
-              </Button>
-            ),
-          },
-        ];
+  const columns = [
+    { title: "Pharmacy Name", dataIndex: "bizName", key: "bizName" },
+    { title: "ManageNo", dataIndex: "manageNo", key: "manageNo" },
+    { title: "Address", dataIndex: "address", key: "address" },
+    {
+      title: "Select",
+      render: (_, record) => (
+        <Button type="link" onClick={() => selectBusiness(record)}>
+          선택
+        </Button>
+      ),
+    },
+  ];
 
   // 회원가입 요청
   const requestSignup = async () => {
@@ -233,9 +193,6 @@ export default function SignupContent() {
             </option>
             <option value={constants.UserType.Pharmacy}>
               {constants.UserType.Pharmacy}
-            </option>
-            <option value={constants.UserType.Supplier}>
-              {constants.UserType.Supplier}
             </option>
           </Select>
         </div>
@@ -453,9 +410,6 @@ export default function SignupContent() {
                 >
                   <option value={constants.UserType.Pharmacy}>
                     {constants.UserType.Pharmacy}
-                  </option>
-                  <option value={constants.UserType.Supplier}>
-                    {constants.UserType.Supplier}
                   </option>
                 </Select>
 
