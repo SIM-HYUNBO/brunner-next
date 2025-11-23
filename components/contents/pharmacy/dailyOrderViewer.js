@@ -254,7 +254,7 @@ export default function DailyOrderViewer() {
           isOpen={showDrugSearchModal}
           onClose={onCloseDrugSearchModal}
           onSelect={onSelectDrugSearchModal}
-          initialSearchType="Product Code"
+          initialSearchType="code" // code, name, company 중 code로 초기 검색
           initialSearchTerm={editingRow ? editingRow.values.product_code : ""}
           initialUsedQty={editingRow ? editingRow.values.used_qty : 0}
           initialInventoryQty={

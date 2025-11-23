@@ -1,4 +1,4 @@
-import React, { useState, useRef, use, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { Rnd } from "react-rnd";
 import { Resizable } from "react-resizable";
 import "react-resizable/css/styles.css";
@@ -15,33 +15,28 @@ export default function DrugSearchModal({
   onSelect,
   initialSearchType,
   initialSearchTerm,
-  initialUsedQty,
-  initialInventoryQty,
+  initialUsedQty = 1,
+  initialInventoryQty = 0,
 }) {
   const { BrunnerMessageBox, openModal } = useModal();
-  const [searchType, setSearchType] = useState(null);
-  const [searchTerm, setSearchTerm] = useState(null);
+
+  const [searchType, setSearchType] = useState(initialSearchType);
+  const [searchTerm, setSearchTerm] = useState(initialSearchTerm);
+  const [usedQty, setUsedQty] = useState(initialUsedQty);
+  const [inventoryQty, setInventoryQty] = useState(initialInventoryQty);
   const [selectedRow, setSelectedRow] = useState(null);
   const [filteredData, setFilteredData] = useState([]);
-
-  const searchTypeRef = useRef(initialSearchType);
-  const searchTermRef = useRef(initialSearchTerm);
-  const usedQtyRef = useRef(initialUsedQty);
-  const inventoryQtyRef = useRef(initialInventoryQty);
-
   const [loading, setLoading] = useState(false);
 
   const [modalHeight, setModalHeight] = useState(500);
   const [modalWidth, setModalWidth] = useState(800);
   const [columnsWidth, setColumnsWidth] = useState([200, 300, 300]);
 
-  useEffect(() => {
-    searchTypeRef.current = initialSearchType;
-    searchTermRef.current = initialSearchTerm;
-  }, []);
+  const initialX = window.innerWidth / 2 - modalWidth / 2;
+  const initialY = window.innerHeight / 2 - modalHeight / 2;
 
-  const searchDrug = async (searchType, searchTerm) => {
-    if (searchTerm.trim().length < 2) {
+  const searchDrug = async (type, term) => {
+    if (!term || term.trim().length < 2) {
       openModal(
         `${constants.messages.REQUIRED_FIELD} [key-word]. more than 2 characters`
       );
@@ -51,15 +46,15 @@ export default function DrugSearchModal({
       commandName: constants.commands.PHARMACY_SEARCH_DRUG,
       systemCode: userInfo.getCurrentSystemCode(),
       userId: userInfo.getLoginUserId(),
-      searchType,
-      searchTerm,
+      searchType: type,
+      searchTerm: term,
     };
 
     try {
       setLoading(true);
       const jResponse = await RequestServer(jRequest);
       setLoading(false);
-      setFilteredData(jResponse.data.rows || []);
+      setFilteredData(jResponse.data?.rows || []);
       if (jResponse.error_message) openModal(jResponse.error_message);
     } catch (e) {
       setLoading(false);
@@ -68,10 +63,17 @@ export default function DrugSearchModal({
     }
   };
 
+  // 모달 열릴 때 초기 검색
+  useEffect(() => {
+    if (isOpen && initialSearchTerm.trim().length >= 2) {
+      searchDrug(initialSearchType, initialSearchTerm);
+    }
+  }, [isOpen]);
+
   if (!isOpen) return null;
 
-  const bottomAreaHeight = 80; // Used Qty + 버튼 영역
-  const headerSearchHeight = 100; // 헤더 + 검색 영역
+  const bottomAreaHeight = 80;
+  const headerSearchHeight = 100;
   const tableHeight = modalHeight - bottomAreaHeight * 3 - headerSearchHeight;
 
   const handleResize = (index, e, { size }) => {
@@ -79,9 +81,6 @@ export default function DrugSearchModal({
     newCols[index] = size.width;
     setColumnsWidth(newCols);
   };
-
-  const initialX = window.innerWidth / 2 - modalWidth / 2;
-  const initialY = window.innerHeight / 2 - modalHeight / 2;
 
   const resizableTitle = (title, idx) => ({
     title: (
@@ -145,15 +144,15 @@ export default function DrugSearchModal({
         {/* 검색 */}
         <div className="flex space-x-2 p-6 pb-2 flex-shrink-0">
           <Select
-            ref={searchTypeRef}
-            className="border rounded p-2"
             value={searchType}
-            onChange={(value) => setSearchType(value)}
-          >
-            <option value="name">Product Name</option>
-            <option value="code">Product Code</option>
-            <option value="company">Company Name</option>
-          </Select>
+            onChange={setSearchType}
+            style={{ width: 150 }}
+            options={[
+              { value: "name", label: "Product Name" },
+              { value: "code", label: "Product Code" },
+              { value: "company", label: "Company Name" },
+            ]}
+          />
           <Input
             className="flex-1"
             placeholder="검색어 입력"
@@ -187,26 +186,28 @@ export default function DrugSearchModal({
           />
         </div>
 
-        {/* Used Qty */}
-        <div className="absolute left-0 w-full bottom-16 p-4 flex justify-end space-x-2 border-t">
-          <label className="leading-7 text-sm text-gray-400">Used Qty</label>
-          <input
-            ref={usedQtyRef}
-            type="number"
-            className="px-4 py-2 rounded general-text-bg-color"
-            defaultValue={initialUsedQty}
-          />
-        </div>
-        <div className="absolute left-0 w-full bottom-16 p-4 flex justify-end space-x-2 border-t">
-          <label className="leading-7 text-sm text-gray-400">
-            Inventory Qty
-          </label>
-          <input
-            ref={inventoryQtyRef}
-            type="number"
-            className="px-4 py-2 rounded general-text-bg-color"
-            defaultValue={initialInventoryQty}
-          />
+        {/* Used / Inventory Qty */}
+        <div className="absolute left-0 w-full bottom-16 p-4 flex justify-end space-x-4 border-t">
+          <div className="flex items-center space-x-2">
+            <label className="leading-7 text-sm text-gray-400">Used Qty</label>
+            <Input
+              type="number"
+              value={usedQty}
+              onChange={(e) => setUsedQty(e.target.value)}
+              className="w-24"
+            />
+          </div>
+          <div className="flex items-center space-x-2">
+            <label className="leading-7 text-sm text-gray-400">
+              Inventory Qty
+            </label>
+            <Input
+              type="number"
+              value={inventoryQty}
+              onChange={(e) => setInventoryQty(e.target.value)}
+              className="w-24"
+            />
+          </div>
         </div>
 
         {/* 버튼 */}
@@ -223,12 +224,7 @@ export default function DrugSearchModal({
             disabled={!selectedRow}
             type="primary"
             onClick={() => {
-              if (selectedRow)
-                onSelect(
-                  selectedRow,
-                  usedQtyRef.current.value,
-                  inventoryQtyRef.current.value
-                );
+              if (selectedRow) onSelect(selectedRow, usedQty, inventoryQty);
               onClose();
             }}
           >

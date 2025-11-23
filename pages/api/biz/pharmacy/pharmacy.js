@@ -617,6 +617,7 @@ async function updateOrderStatus(
   return update_TB_PHM_DAILY_ORDER_01.rowCount === 1;
 }
 
+// 약품 검색
 const searchDrug = async (txnId, jRequest) => {
   var jResponse = {};
 
