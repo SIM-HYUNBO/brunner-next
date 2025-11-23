@@ -23,7 +23,7 @@ export default function DrugSearchModal({ isOpen, onClose, onSelect }) {
   const [columnsWidth, setColumnsWidth] = useState([200, 300, 300]);
 
   const searchDrug = async (searchType, searchTerm) => {
-    if (searchTerm.trim().length <= 2) {
+    if (searchTerm.trim().length < 2) {
       openModal(
         `${constants.messages.REQUIRED_FIELD} [key-word]. more than 2 characters`
       );
@@ -140,12 +140,15 @@ export default function DrugSearchModal({ isOpen, onClose, onSelect }) {
             placeholder="검색어 입력"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") searchDrug(searchType, searchTerm);
+            }}
           />
           <Button
             type="primary"
             onClick={() => searchDrug(searchType, searchTerm)}
           >
-            검색
+            Search
           </Button>
         </div>
 

@@ -54,7 +54,6 @@ const executeService = async (txnId, jRequest) => {
         break;
       default:
         throw new Error(constants.messages.SERVER_NOT_SUPPORTED_METHOD);
-        break;
     }
   } catch (e) {
     jResponse.error_code = -1;
