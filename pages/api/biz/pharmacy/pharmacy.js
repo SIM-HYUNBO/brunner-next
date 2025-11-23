@@ -19,6 +19,7 @@ export const orderStatus = {
   ErrorMultipleSearchProduct: "제품 중복 검색",
   ErrorInvalidQty: "수량 이상",
   ErrorRackOfStock: "재고 부족",
+  OrderChaned: "주문변경됨",
   SuccessOrderToCart: "장바구니 전송",
 };
 
@@ -701,6 +702,7 @@ const searchDrug = async (txnId, jRequest) => {
   }
 };
 
+// 일일 주문 내용 변경
 const updateDailyOrderOne = async (txnId, jRequest) => {
   var jResponse = {};
 
@@ -784,6 +786,7 @@ const updateDailyOrderOne = async (txnId, jRequest) => {
       jRequest.newProductCode,
       jRequest.newProductName,
       jRequest.newusedQty,
+      orderStatus.OrderChaned,
     ]);
 
     if (updata_TB_PHM_DAILY_ORDER_02.rowCount == 1) {
