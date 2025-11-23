@@ -1046,17 +1046,17 @@ const runHanshinOrder = async (systemCode, user_id, supplier_params, rows) => {
 
       const n_stock = Number(item.stock);
       const n_usedQty = Number(row.used_qty);
-      const n_orderRquiredQty = calculateOrderQty(
+      const n_orderRequiredQty = calculateOrderQty(
         n_usedQty,
         searchResultRows[0].standard
       );
 
-      if (isNaN(n_stock) || isNaN(n_orderRquiredQty)) {
+      if (isNaN(n_stock) || isNaN(n_orderRequiredQty)) {
         lastRowResult = orderStatus.ErrorInvalidQty;
         throw new Error(lastRowResult);
       }
 
-      if (n_stock <= 0 || n_orderRquiredQty > n_stock) {
+      if (n_stock <= 0 || n_orderRequiredQty > n_stock) {
         lastRowResult = orderStatus.ErrorRackOfStock;
         throw new Error(lastRowResult);
       }
@@ -1064,7 +1064,7 @@ const runHanshinOrder = async (systemCode, user_id, supplier_params, rows) => {
       if (qtyId) {
         // 주문수량 입력
         await page.focus(`#${qtyId}`);
-        await page.keyboard.type(String(n_orderRquiredQty));
+        await page.keyboard.type(String(n_orderRequiredQty));
       }
 
       // 장바구니 담기 버튼 클릭
@@ -1325,13 +1325,17 @@ const runKeonHwaOrder = async (systemCode, user_id, supplier_params, rows) => {
 
       const n_stock = Number(item.stock);
       const n_usedQty = Number(row.used_qty);
+      const n_orderRequiredQty = calculateOrderQty(
+        n_usedQty,
+        searchResultRows[0].standard
+      );
 
-      if (isNaN(n_stock) || isNaN(n_usedQty)) {
+      if (isNaN(n_stock) || isNaN(n_orderRequiredQty)) {
         lastRowResult = orderStatus.ErrorInvalidQty;
         throw new Error(lastRowResult);
       }
 
-      if (n_stock <= 0 || n_usedQty > n_stock) {
+      if (n_stock <= 0 || n_orderRequiredQty > n_stock) {
         lastRowResult = orderStatus.ErrorRackOfStock;
         throw new Error(lastRowResult);
       }
@@ -1339,7 +1343,7 @@ const runKeonHwaOrder = async (systemCode, user_id, supplier_params, rows) => {
       if (qtyId) {
         // 주문수량 입력
         await page.focus(`#${qtyId}`);
-        await page.keyboard.type(String(row.used_qty));
+        await page.keyboard.type(String(row.n_orderRequiredQty));
       }
 
       // 장바구니 담기 버튼 클릭
@@ -1555,13 +1559,17 @@ const runNamshinOrder = async (systemCode, user_id, supplier_params, rows) => {
 
       const n_stock = Number(item.stock);
       const n_usedQty = Number(row.used_qty);
+      const n_orderRequiredQty = calculateOrderQty(
+        n_usedQty,
+        searchResultRows[0].standard
+      );
 
-      if (isNaN(n_stock) || isNaN(n_usedQty)) {
+      if (isNaN(n_stock) || isNaN(n_orderRequiredQty)) {
         lastRowResult = orderStatus.ErrorInvalidQty;
         throw new Error(lastRowResult);
       }
 
-      if (n_stock <= 0 || n_usedQty > n_stock) {
+      if (n_stock <= 0 || n_orderRequiredQty > n_stock) {
         lastRowResult = orderStatus.ErrorRackOfStock;
         throw new Error(lastRowResult);
       }
@@ -1569,7 +1577,7 @@ const runNamshinOrder = async (systemCode, user_id, supplier_params, rows) => {
       if (qtyId) {
         // 주문수량 입력
         await page.focus(`#${qtyId}`);
-        await page.keyboard.type(String(row.used_qty));
+        await page.keyboard.type(String(n_orderRequiredQty));
       }
 
       // 장바구니 담기 버튼 클릭
@@ -1754,7 +1762,7 @@ const runUPharmMallOrder = async (
       await page.waitForSelector("#list1 tbody");
 
       // 2) 모든 row 데이터 배열로 추출
-      const rowsResult = await page.$$eval("#list1 tbody tr", (rows) => {
+      const searchResultRows = await page.$$eval("#list1 tbody tr", (rows) => {
         return rows.map((row) => {
           const tds = row.querySelectorAll("td");
           const stockHidden = row.querySelector("input[id^='stocQty']"); // hidden input에서 재고
@@ -1778,20 +1786,24 @@ const runUPharmMallOrder = async (
       });
 
       // 3) 결과 체크
-      if (rowsResult.length === 0) {
+      if (searchResultRows.length === 0) {
         lastRowResult = orderStatus.ErrorNoSearchProduct;
         throw new Error(lastRowResult); // 검색 제품 없음
-      } else if (rowsResult.length > 1) {
+      } else if (searchResultRows.length > 1) {
         lastRowResult = orderStatus.ErrorMultipleSearchProduct;
         throw new Error(lastRowResult); // 중복 제품 검색
       }
 
       const n_usedQty = Number(row.used_qty);
+      const n_orderRequiredQty = calculateOrderQty(
+        n_usedQty,
+        searchResultRows[0].standard
+      );
 
       //
       // 2. 재고 체크
       //
-      if (n_usedQty > rowsResult[0].stock) {
+      if (n_orderRequiredQty > searchResultRows[0].stock) {
         lastRowResult = orderStatus.ErrorRackOfStock;
         throw new Error(lastRowResult);
       }
@@ -1802,7 +1814,7 @@ const runUPharmMallOrder = async (
       // 2) 첫 번째 row의 주문수량 input 가져오기
       const orderInput = await firstRow.$("input[id^='usedQty']");
       await orderInput.click({ clickCount: 3 }); // 기존 값 지우기
-      await orderInput.type(`${n_usedQty}`);
+      await orderInput.type(`${n_orderRequiredQty}`);
 
       // 주문담기 버튼 클릭
       const cartBtn = await firstRow.$('button, input[type="button"]');
@@ -2065,13 +2077,17 @@ const runFamilyPharmOrder = async (
       const item = searchResultRows[0];
       const n_stock = Number(item.stock);
       const n_usedQty = Number(row.used_qty);
+      const n_orderRequiredQty = calculateOrderQty(
+        n_usedQty,
+        searchResultRows[0].standard
+      );
 
-      if (isNaN(n_stock) || isNaN(n_usedQty)) {
+      if (isNaN(n_stock) || isNaN(n_orderRequiredQty)) {
         lastRowResult = orderStatus.ErrorInvalidQty;
         throw new Error(lastRowResult);
       }
 
-      if (n_stock <= 0 || n_usedQty > n_stock) {
+      if (n_stock <= 0 || n_orderRequiredQty > n_stock) {
         lastRowResult = orderStatus.ErrorRackOfStock;
         throw new Error(lastRowResult);
       }
@@ -2088,7 +2104,7 @@ const runFamilyPharmOrder = async (
       // 주문수량 입력
       await qtyInput.focus();
       await qtyInput.click({ clickCount: 3 }); // 기존 값 삭제
-      await qtyInput.type(String(n_usedQty));
+      await qtyInput.type(String(n_orderRequiredQty));
 
       // ----- 장바구니 클릭 -----
       await page.click("a.btn_bag");
@@ -2329,13 +2345,17 @@ const runWithUsOrder = async (systemCode, user_id, supplier_params, rows) => {
 
       const n_stock = Number(item.stock);
       const n_usedQty = Number(row.used_qty);
+      const n_orderRequiredQty = calculateOrderQty(
+        n_usedQty,
+        searchResultRows[0].standard
+      );
 
-      if (isNaN(n_stock) || isNaN(n_usedQty)) {
+      if (isNaN(n_stock) || isNaN(n_orderRequiredQty)) {
         lastRowResult = orderStatus.ErrorInvalidQty;
         throw new Error(lastRowResult);
       }
 
-      if (n_stock <= 0 || n_usedQty > n_stock) {
+      if (n_stock <= 0 || n_orderRequiredQty > n_stock) {
         lastRowResult = orderStatus.ErrorRackOfStock;
         throw new Error(lastRowResult);
       }
@@ -2343,7 +2363,7 @@ const runWithUsOrder = async (systemCode, user_id, supplier_params, rows) => {
       if (qtyId) {
         // 주문수량 입력
         await page.focus(`#${qtyId}`);
-        await page.keyboard.type(String(n_usedQty));
+        await page.keyboard.type(String(n_orderRequiredQty));
       }
 
       // 장바구니 담기 버튼 클릭
@@ -2538,7 +2558,7 @@ const runGeoPharmOrder = async (
       const iframeLeft = await iframeElementLeft.contentFrame(); // IFrame 내부 프레임 가져오기
 
       // IFrame 내부 테이블 tr 선택
-      const rowsResult = await iframeLeft.$$eval("table tr", (trs) => {
+      const searchResultRows = await iframeLeft.$$eval("table tr", (trs) => {
         // 헤더 행 제외
         return trs
           .slice(1)
@@ -2552,7 +2572,7 @@ const runGeoPharmOrder = async (
                 false,
               manufacturer: cells[1]?.innerText.trim() || "", // 제약사
               productName: cells[2]?.innerText.trim() || "", // 제품명
-              spec: cells[3]?.innerText.trim() || "", // 규격
+              standard: cells[3]?.innerText.trim() || "", // 규격
               edi: cells[4]?.innerText.trim() || "", // EDI
               stock: parseInt(
                 cells[5]?.innerText.trim().replace(/,/g, "") || "0"
@@ -2562,12 +2582,12 @@ const runGeoPharmOrder = async (
           .filter((item) => item.stock > 0);
       });
 
-      if (rowsResult.length === 0) {
+      if (searchResultRows.length === 0) {
         lastRowResult = orderStatus.ErrorNoProductSearch;
         throw new Error(lastRowResult); // 제품 검색 불가
       }
 
-      if (rowsResult.length > 1) {
+      if (searchResultRows.length > 1) {
         // lastRowResult = orderStatus.ErrorMultipleSearchProduct;
         // throw new Error(lastRowResult); // 제품 중복 검색
       }
@@ -2596,19 +2616,25 @@ const runGeoPharmOrder = async (
       }
 
       // 숫자만 뽑아서 Number 변환 (예: "4,100" 처리)
-      const stockQty = Number(stockQtyText.replace(/[^0-9]/g, ""));
-      if (Number.isNaN(stockQty)) {
+      const n_stock = Number(stockQtyText.replace(/[^0-9]/g, ""));
+      if (Number.isNaN(n_stock)) {
         throw new Error(
           `재고수량을 숫자로 변환할 수 없습니다: "${stockQtyText}"`
         );
       }
 
       const n_usedQty = Number(row.used_qty);
+      const n_orderRequiredQty = calculateOrderQty(
+        n_usedQty,
+        searchResultRows[0].standard
+      );
 
-      //
-      // 2. 재고 체크
-      //
-      if (n_usedQty > stockQty) {
+      if (isNaN(n_stock) || isNaN(n_orderRequiredQty)) {
+        lastRowResult = orderStatus.ErrorInvalidQty;
+        throw new Error(lastRowResult);
+      }
+
+      if (n_orderRequiredQty > n_stock) {
         lastRowResult = orderStatus.ErrorRackOfStock;
         throw new Error(lastRowResult);
       }
@@ -2791,40 +2817,43 @@ const runGeoWebOrder = async (systemCode, user_id, supplier_params, rows) => {
         // 팝업이 없어도 에러 안나도록 무시
       }
 
-      const rowsResult = await page.$$eval("tr.tr-product-list", (rows) => {
-        return rows
-          .map((row) => {
-            const tds = row.querySelectorAll("td");
+      const searchResultRows = await page.$$eval(
+        "tr.tr-product-list",
+        (rows) => {
+          return rows
+            .map((row) => {
+              const tds = row.querySelectorAll("td");
 
-            const stock = parseInt(tds[5].innerText.trim(), 10); // 재고 TD = index 5
+              const stock = parseInt(tds[5].innerText.trim(), 10); // 재고 TD = index 5
 
-            if (stock > 0) {
-              return {
-                code: tds[1].innerText.trim(), // 보험코드
-                company: tds[2].innerText.trim(), // 제약사
-                name: tds[3].innerText.trim(), // 제품명
-                standard: tds[4].innerText.trim(), // 규격
-                stock: stock, // 재고
-              };
-            }
-            return null;
-          })
-          .filter((item) => item !== null);
-      });
+              if (stock > 0) {
+                return {
+                  code: tds[1].innerText.trim(), // 보험코드
+                  company: tds[2].innerText.trim(), // 제약사
+                  name: tds[3].innerText.trim(), // 제품명
+                  standard: tds[4].innerText.trim(), // 규격
+                  stock: stock, // 재고
+                };
+              }
+              return null;
+            })
+            .filter((item) => item !== null);
+        }
+      );
 
-      if (rowsResult.length === 0) {
+      if (searchResultRows.length === 0) {
         lastRowResult = orderStatus.ErrorNoSearchProduct;
         throw new Error(lastRowResult);
       }
 
-      if (rowsResult.length > 1) {
+      if (searchResultRows.length > 1) {
         lastRowResult = orderStatus.ErrorMultipleSearchProduct;
         throw new Error(lastRowResult);
       }
 
       const rows = await page.$$("tr.tr-product-list");
       const validRows = [];
-      var stockQty = 0;
+      var n_stock = 0;
 
       for (const row of rows) {
         const stockEl = await row.$("td.stock"); // ElementHandle 또는 null
@@ -2833,7 +2862,7 @@ const runGeoWebOrder = async (systemCode, user_id, supplier_params, rows) => {
         // ElementHandle에서 텍스트를 얻을 때는 page.evaluate를 사용
         const stockText = await page.evaluate((el) => el.innerText, stockEl);
         const stock = parseInt(stockText.trim().replace(/,/g, ""), 10) || 0;
-        stockQty = stock;
+        n_stock = stock;
         if (stock > 0) validRows.push(row);
       }
 
@@ -2844,17 +2873,18 @@ const runGeoWebOrder = async (systemCode, user_id, supplier_params, rows) => {
         throw new Error(lastRowResult);
       }
       const n_usedQty = Number(row.used_qty);
+      const n_orderRequiredQty = calculateOrderQty(
+        n_usedQty,
+        searchResultRows[0].standard
+      );
 
-      //
-      // 2. 재고 체크
-      //
-      if (row.used_qty > stockQty) {
-        lastRowResult = orderStatus.ErrorRackOfStock;
+      if (isNaN(n_stock) || isNaN(n_orderRequiredQty)) {
+        lastRowResult = orderStatus.ErrorInvalidQty;
         throw new Error(lastRowResult);
       }
 
       // 주문 수량 입력
-      await page.type("#product-detail-qty", String(n_usedQty));
+      await page.type("#product-detail-qty", String(n_orderRequiredQty));
 
       // 주문담기 버튼 클릭
       await page.click("#product-detail-btn-add-product");
@@ -3099,13 +3129,17 @@ const runBridgePharmOrder = async (
 
       const n_stock = Number(item.stock);
       const n_usedQty = Number(row.used_qty);
+      const n_orderRequiredQty = calculateOrderQty(
+        n_usedQty,
+        searchResultRows[0].standard
+      );
 
-      if (isNaN(n_stock) || isNaN(n_usedQty)) {
+      if (isNaN(n_stock) || isNaN(n_orderRequiredQty)) {
         lastRowResult = orderStatus.ErrorInvalidQty;
         throw new Error(lastRowResult);
       }
 
-      if (n_stock <= 0 || n_usedQty > n_stock) {
+      if (n_stock <= 0 || n_orderRequiredQty > n_stock) {
         lastRowResult = orderStatus.ErrorRackOfStock;
         throw new Error(lastRowResult);
       }
@@ -3113,7 +3147,7 @@ const runBridgePharmOrder = async (
       if (qtyId) {
         // 주문수량 입력
         await page.focus(`#${qtyId}`);
-        await page.keyboard.type(String(row.used_qty));
+        await page.keyboard.type(String(n_orderRequiredQty));
       }
 
       // 장바구니 담기 버튼 클릭
