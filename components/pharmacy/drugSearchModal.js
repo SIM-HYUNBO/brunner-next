@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, use, useEffect } from "react";
 import { Rnd } from "react-rnd";
 import { Resizable } from "react-resizable";
 import "react-resizable/css/styles.css";
@@ -9,18 +9,36 @@ import Loading from "@/components/core/client/loading";
 import { useModal } from "@/components/core/client/brunnerMessageBox";
 import { Table, Input, Button, Select } from "antd";
 
-export default function DrugSearchModal({ isOpen, onClose, onSelect }) {
+export default function DrugSearchModal({
+  isOpen,
+  onClose,
+  onSelect,
+  initialSearchType,
+  initialSearchTerm,
+  initialUsedQty,
+  initialInventoryQty,
+}) {
   const { BrunnerMessageBox, openModal } = useModal();
-  const [searchTerm, setSearchTerm] = useState("");
-  const [searchType, setSearchType] = useState("name");
+  const [searchType, setSearchType] = useState(null);
+  const [searchTerm, setSearchTerm] = useState(null);
   const [selectedRow, setSelectedRow] = useState(null);
   const [filteredData, setFilteredData] = useState([]);
-  const usedQtyRef = useRef(1);
+
+  const searchTypeRef = useRef(initialSearchType);
+  const searchTermRef = useRef(initialSearchTerm);
+  const usedQtyRef = useRef(initialUsedQty);
+  const inventoryQtyRef = useRef(initialInventoryQty);
+
   const [loading, setLoading] = useState(false);
 
   const [modalHeight, setModalHeight] = useState(500);
   const [modalWidth, setModalWidth] = useState(800);
   const [columnsWidth, setColumnsWidth] = useState([200, 300, 300]);
+
+  useEffect(() => {
+    searchTypeRef.current = initialSearchType;
+    searchTermRef.current = initialSearchTerm;
+  }, []);
 
   const searchDrug = async (searchType, searchTerm) => {
     if (searchTerm.trim().length < 2) {
@@ -127,6 +145,7 @@ export default function DrugSearchModal({ isOpen, onClose, onSelect }) {
         {/* 검색 */}
         <div className="flex space-x-2 p-6 pb-2 flex-shrink-0">
           <Select
+            ref={searchTypeRef}
             className="border rounded p-2"
             value={searchType}
             onChange={(value) => setSearchType(value)}
@@ -175,7 +194,18 @@ export default function DrugSearchModal({ isOpen, onClose, onSelect }) {
             ref={usedQtyRef}
             type="number"
             className="px-4 py-2 rounded general-text-bg-color"
-            defaultValue={1}
+            defaultValue={initialUsedQty}
+          />
+        </div>
+        <div className="absolute left-0 w-full bottom-16 p-4 flex justify-end space-x-2 border-t">
+          <label className="leading-7 text-sm text-gray-400">
+            Inventory Qty
+          </label>
+          <input
+            ref={inventoryQtyRef}
+            type="number"
+            className="px-4 py-2 rounded general-text-bg-color"
+            defaultValue={initialInventoryQty}
           />
         </div>
 
@@ -193,7 +223,12 @@ export default function DrugSearchModal({ isOpen, onClose, onSelect }) {
             disabled={!selectedRow}
             type="primary"
             onClick={() => {
-              if (selectedRow) onSelect(selectedRow, usedQtyRef.current.value);
+              if (selectedRow)
+                onSelect(
+                  selectedRow,
+                  usedQtyRef.current.value,
+                  inventoryQtyRef.current.value
+                );
               onClose();
             }}
           >

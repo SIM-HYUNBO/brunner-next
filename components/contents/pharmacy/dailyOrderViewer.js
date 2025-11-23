@@ -83,7 +83,11 @@ export default function DailyOrderViewer() {
     setShowDrugSearchModal(false);
   };
 
-  const onSelectDrugSearchModal = async (selectedData, usedQty) => {
+  const onSelectDrugSearchModal = async (
+    selectedData,
+    usedQty,
+    inventoryQty
+  ) => {
     if (!selectedData?.edi_code || selectedData.edi_code === "") {
       openModal(constants.messages.NO_DATA_SELECTED);
       return;
@@ -250,6 +254,12 @@ export default function DailyOrderViewer() {
           isOpen={showDrugSearchModal}
           onClose={onCloseDrugSearchModal}
           onSelect={onSelectDrugSearchModal}
+          initialSearchType="Product Code"
+          initialSearchTerm={editingRow ? editingRow.values.product_code : ""}
+          initialUsedQty={editingRow ? editingRow.values.used_qty : 0}
+          initialInventoryQty={
+            editingRow ? editingRow.values.current_inventory : 0
+          }
         />
       )}
 
