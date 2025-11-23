@@ -35,7 +35,7 @@ const FilteringConditions = React.memo(
         <div className="flex flex-col">
           <label className="font-medium mb-1">Supplier Name</label>
           <Select
-            className="border rounded p-2 w-[200px]"
+            className="border rounded p-2 w-[200px] h-11"
             value={supplierName}
             onChange={(value) => setSupplierName(value)}
           >

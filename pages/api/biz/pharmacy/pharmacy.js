@@ -1046,13 +1046,17 @@ const runHanshinOrder = async (systemCode, user_id, supplier_params, rows) => {
 
       const n_stock = Number(item.stock);
       const n_usedQty = Number(row.used_qty);
+      const n_orderRquiredQty = calculateOrderQty(
+        n_usedQty,
+        searchResultRows[0].standard
+      );
 
-      if (isNaN(n_stock) || isNaN(n_usedQty)) {
+      if (isNaN(n_stock) || isNaN(n_orderRquiredQty)) {
         lastRowResult = orderStatus.ErrorInvalidQty;
         throw new Error(lastRowResult);
       }
 
-      if (n_stock <= 0 || n_usedQty > n_stock) {
+      if (n_stock <= 0 || n_orderRquiredQty > n_stock) {
         lastRowResult = orderStatus.ErrorRackOfStock;
         throw new Error(lastRowResult);
       }
@@ -1060,7 +1064,7 @@ const runHanshinOrder = async (systemCode, user_id, supplier_params, rows) => {
       if (qtyId) {
         // 주문수량 입력
         await page.focus(`#${qtyId}`);
-        await page.keyboard.type(String(row.used_qty));
+        await page.keyboard.type(String(n_orderRquiredQty));
       }
 
       // 장바구니 담기 버튼 클릭
@@ -1776,16 +1780,18 @@ const runUPharmMallOrder = async (
       // 3) 결과 체크
       if (rowsResult.length === 0) {
         lastRowResult = orderStatus.ErrorNoSearchProduct;
-        throw new Error(lastRowResult); // 입력 제품 없음
+        throw new Error(lastRowResult); // 검색 제품 없음
       } else if (rowsResult.length > 1) {
         lastRowResult = orderStatus.ErrorMultipleSearchProduct;
-        throw new Error(lastRowResult); // 입력 제품 없음
+        throw new Error(lastRowResult); // 중복 제품 검색
       }
+
+      const n_usedQty = Number(row.used_qty);
 
       //
       // 2. 재고 체크
       //
-      if (row.used_qty > rowsResult[0].stock) {
+      if (n_usedQty > rowsResult[0].stock) {
         lastRowResult = orderStatus.ErrorRackOfStock;
         throw new Error(lastRowResult);
       }
@@ -1796,7 +1802,7 @@ const runUPharmMallOrder = async (
       // 2) 첫 번째 row의 주문수량 input 가져오기
       const orderInput = await firstRow.$("input[id^='usedQty']");
       await orderInput.click({ clickCount: 3 }); // 기존 값 지우기
-      await orderInput.type(`${row.used_qty}`);
+      await orderInput.type(`${n_usedQty}`);
 
       // 주문담기 버튼 클릭
       const cartBtn = await firstRow.$('button, input[type="button"]');
@@ -2082,7 +2088,7 @@ const runFamilyPharmOrder = async (
       // 주문수량 입력
       await qtyInput.focus();
       await qtyInput.click({ clickCount: 3 }); // 기존 값 삭제
-      await qtyInput.type(String(row.used_qty));
+      await qtyInput.type(String(n_usedQty));
 
       // ----- 장바구니 클릭 -----
       await page.click("a.btn_bag");
@@ -2337,7 +2343,7 @@ const runWithUsOrder = async (systemCode, user_id, supplier_params, rows) => {
       if (qtyId) {
         // 주문수량 입력
         await page.focus(`#${qtyId}`);
-        await page.keyboard.type(String(row.used_qty));
+        await page.keyboard.type(String(n_usedQty));
       }
 
       // 장바구니 담기 버튼 클릭
@@ -2570,6 +2576,7 @@ const runGeoPharmOrder = async (
       const iframeRight = await iframeElementRight.contentFrame();
 
       // 주문수량 입력
+
       // 2) 프레임 내부 DOM에서 '재고수량' th 옆 td 의 텍스트(숫자) 읽기
       const stockQtyText = await iframeRight.evaluate(() => {
         // 모든 th를 검사해서 '재고수량' 텍스트를 포함하는 th를 찾음
@@ -2596,12 +2603,12 @@ const runGeoPharmOrder = async (
         );
       }
 
-      const usedQtyInput = Number(row.used_qty);
+      const n_usedQty = Number(row.used_qty);
 
       //
       // 2. 재고 체크
       //
-      if (usedQtyInput > stockQty) {
+      if (n_usedQty > stockQty) {
         lastRowResult = orderStatus.ErrorRackOfStock;
         throw new Error(lastRowResult);
       }
@@ -2611,7 +2618,8 @@ const runGeoPharmOrder = async (
         timeout: 30000,
       });
 
-      await iframeLeft.type(`#item_order_count`, `${usedQtyInput}`);
+      // 3. 주문수량 입력
+      await iframeLeft.type(`#item_order_count`, `${n_usedQty}`);
 
       // 주문담기 버튼 클릭
       await iframeLeft.click("#btn_add_cart");
@@ -2835,8 +2843,7 @@ const runGeoWebOrder = async (systemCode, user_id, supplier_params, rows) => {
         lastRowResult = orderStatus.ErrorNoSearchProduct;
         throw new Error(lastRowResult);
       }
-
-      await page.type("#product-detail-qty", String(row.used_qty));
+      const n_usedQty = Number(row.used_qty);
 
       //
       // 2. 재고 체크
@@ -2845,6 +2852,9 @@ const runGeoWebOrder = async (systemCode, user_id, supplier_params, rows) => {
         lastRowResult = orderStatus.ErrorRackOfStock;
         throw new Error(lastRowResult);
       }
+
+      // 주문 수량 입력
+      await page.type("#product-detail-qty", String(n_usedQty));
 
       // 주문담기 버튼 클릭
       await page.click("#product-detail-btn-add-product");
@@ -3166,6 +3176,57 @@ function getEdgePath() {
     console.error("Edge path not found", err);
   }
   return null;
+}
+
+function extractPackSize(standard) {
+  if (!standard) return 0;
+  const normalized = standard
+    .replace(/×/g, "x")
+    .replace(/（/g, "(")
+    .replace(/）/g, ")")
+    .replace(/\s+/g, " ")
+    .trim();
+
+  // 단독 ㉥ -> 1
+  if (/^㉥$/.test(normalized)) return 1;
+
+  // x10, x 10
+  const xMatch = normalized.match(/x\s*([0-9]+)\b/i);
+  if (xMatch) return parseInt(xMatch[1], 10);
+
+  // (10T) 등 괄호 내부
+  const bracketMatch = normalized.match(
+    /\(\s*([0-9]+)\s*(T|정|caps?|ea|ptp|㉥)?\s*\)/i
+  );
+  if (bracketMatch) return parseInt(bracketMatch[1], 10);
+
+  // 숫자+단위 (10T, 2㉥ 등)
+  const unitMatch = normalized.match(/\b([0-9]+)\s*(T|정|caps?|ea|ptp|㉥)\b/i);
+  if (unitMatch) return parseInt(unitMatch[1], 10);
+
+  // ㉥ 포함(숫자 없이) -> 1 (예: "㉥", "약명 ㉥")
+  if (normalized.includes("㉥")) return 1;
+
+  // 가장 첫 숫자(보수적으로 2 이상만 포장단위로 인정)
+  const firstNumMatch = normalized.match(/([0-9]+)(?=(\D|$))/);
+  if (firstNumMatch) {
+    const n = parseInt(firstNumMatch[1], 10);
+    if (n >= 2) return n;
+  }
+
+  // 못 찾음
+  return 0;
+}
+
+function calculateOrderQty(usedQty, standard) {
+  const used = Number(usedQty || 0);
+  const packSize = extractPackSize(standard);
+
+  // packSize === 0 은 '읽지 못함' -> 에러 신호로 -1 반환
+  if (packSize === 0) return -1;
+
+  // 정상: packSize >= 1
+  return Math.ceil(used / packSize);
 }
 
 export { executeService };
