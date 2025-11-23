@@ -85,7 +85,7 @@ export function DailyOrderUploader() {
 
         const jResponse = await RequestServer(jRequest);
 
-        // 요청 결과 확인 (원하면 여기서 오류 처리)
+        // 요청 결과 확인
         if (jResponse.error_code) {
           openModal(`Batch ${i + 1} Failed: ${jResponse.error_message}`);
         }

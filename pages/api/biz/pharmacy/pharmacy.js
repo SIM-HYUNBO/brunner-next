@@ -339,6 +339,7 @@ const selectUserSupplierAll = async (txnId, jRequest) => {
   }
 };
 
+// 일일 주문 업로드
 const uploadDailyOrder = async (txnId, jRequest) => {
   var jResponse = {};
 
@@ -382,8 +383,6 @@ const uploadDailyOrder = async (txnId, jRequest) => {
       return jResponse;
     }
 
-    const uploadHour = jRequest.uploadHour;
-
     sql = await dynamicSql.getSQL(
       jRequest.systemCode,
       `insert_TB_PHM_DAILY_ORDER`,
@@ -393,7 +392,7 @@ const uploadDailyOrder = async (txnId, jRequest) => {
     for (const row of jRequest.excelData) {
       const insert_TB_PHM_DAILY_ORDER_01 = await database.executeSQL(sql, [
         jRequest.userId,
-        uploadHour,
+        jRequest.uploadHour,
         row.productCode,
         row.productName,
         row.supplierName,
@@ -804,6 +803,7 @@ const updateDailyOrderOne = async (txnId, jRequest) => {
   }
 };
 
+// 공급처별 주문 실행
 export async function runOrderBySupplier(
   systemCode,
   user_id,
