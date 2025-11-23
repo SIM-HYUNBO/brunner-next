@@ -891,51 +891,7 @@ const runHanshinOrder = async (systemCode, user_id, supplier_params, rows) => {
   const loginPassword = supplier_params.loginPassword; //= "542500";
 
   // 브라우저를 보면서 작업내용 확인
-  const browser = await puppeteer.launch(
-    process.env.NODE_ENV === "production"
-      ? {
-          headless: true,
-          executablePath: await chromium.executablePath(),
-          args: [
-            "--start-maximized",
-            "--no-sandbox",
-            "--disable-setuid-sandbox",
-            "--disable-extensions",
-            "--disable-popup-blocking",
-            "--disable-client-side-phishing-detection",
-            "--disable-features=SafeBrowsing",
-            "--disable-default-apps",
-            "--disable-sync",
-            "--disable-web-security",
-            "--allow-running-insecure-content",
-            "--ignore-certificate-errors",
-          ],
-        }
-      : {
-          headless: false,
-          executablePath: getEdgePath(),
-          args: [
-            "--start-maximized",
-            "--no-sandbox",
-            "--disable-setuid-sandbox",
-            "--disable-extensions",
-            "--disable-popup-blocking",
-            "--disable-client-side-phishing-detection",
-            "--disable-features=SafeBrowsing",
-            "--disable-default-apps",
-            "--disable-sync",
-            "--disable-web-security",
-            "--allow-running-insecure-content",
-            "--ignore-certificate-errors",
-          ],
-        }
-  );
-
-  const page = await browser.newPage();
-
-  page.on("requestfailed", (request) => {
-    console.log("❌ FAILED:", request.url(), request.failure());
-  });
+  const { browser, page } = await launchBrowser();
 
   var lastRowResult = constants.General.EmptyString;
 
@@ -1028,16 +984,9 @@ const runHanshinOrder = async (systemCode, user_id, supplier_params, rows) => {
       console.log(searchResultRows);
 
       // 조회결과가 1건만 조회되어야 주문 처리 가능 ---
-      if (
-        searchResultRows.length === 0 ||
-        searchResultRows[0].productId === constants.General.EmptyString
-      ) {
-        lastRowResult = orderStatus.ErrorNoSearchProduct;
-        throw new Error(lastRowResult);
-      }
-
-      if (searchResultRows.length > 1) {
-        lastRowResult = orderStatus.ErrorMultipleSearchProduct;
+      var checkResult = await checkSearchResultRows(searchResultRows);
+      if (checkResult != constants.General.EmptyString) {
+        lastRowResult = checkResult;
         throw new Error(lastRowResult);
       }
 
@@ -1047,11 +996,16 @@ const runHanshinOrder = async (systemCode, user_id, supplier_params, rows) => {
       const n_stock = Number(item.stock);
       const n_usedQty = Number(row.used_qty);
       const n_orderRequiredQty = calculateOrderQty(
+        item.productName,
         n_usedQty,
         searchResultRows[0].standard
       );
 
-      if (isNaN(n_stock) || isNaN(n_orderRequiredQty)) {
+      if (
+        isNaN(n_stock) ||
+        isNaN(n_orderRequiredQty) ||
+        n_orderRequiredQty <= 0
+      ) {
         lastRowResult = orderStatus.ErrorInvalidQty;
         throw new Error(lastRowResult);
       }
@@ -1133,51 +1087,7 @@ const runKeonHwaOrder = async (systemCode, user_id, supplier_params, rows) => {
   const loginPassword = supplier_params.loginPassword; //= "542500";
 
   // 브라우저를 보면서 작업내용 확인
-  const browser = await puppeteer.launch(
-    process.env.NODE_ENV === "production"
-      ? {
-          headless: true,
-          executablePath: await chromium.executablePath(),
-          args: [
-            "--start-maximized",
-            "--no-sandbox",
-            "--disable-setuid-sandbox",
-            "--disable-extensions",
-            "--disable-popup-blocking",
-            "--disable-client-side-phishing-detection",
-            "--disable-features=SafeBrowsing",
-            "--disable-default-apps",
-            "--disable-sync",
-            "--disable-web-security",
-            "--allow-running-insecure-content",
-            "--ignore-certificate-errors",
-          ],
-        }
-      : {
-          headless: false,
-          executablePath: getEdgePath(),
-          args: [
-            "--start-maximized",
-            "--no-sandbox",
-            "--disable-setuid-sandbox",
-            "--disable-extensions",
-            "--disable-popup-blocking",
-            "--disable-client-side-phishing-detection",
-            "--disable-features=SafeBrowsing",
-            "--disable-default-apps",
-            "--disable-sync",
-            "--disable-web-security",
-            "--allow-running-insecure-content",
-            "--ignore-certificate-errors",
-          ],
-        }
-  );
-
-  const page = await browser.newPage();
-
-  page.on("requestfailed", (request) => {
-    console.log("❌ FAILED:", request.url(), request.failure());
-  });
+  const { browser, page } = await launchBrowser();
 
   var lastRowResult = constants.General.EmptyString;
 
@@ -1307,16 +1217,9 @@ const runKeonHwaOrder = async (systemCode, user_id, supplier_params, rows) => {
       console.log(searchResultRows);
 
       // 조회결과가 1건만 조회되어야 주문 처리 가능 ---
-      if (
-        searchResultRows.length === 0 ||
-        searchResultRows[0].productId === constants.General.EmptyString
-      ) {
-        lastRowResult = orderStatus.ErrorNoSearchProduct;
-        throw new Error(lastRowResult);
-      }
-
-      if (searchResultRows.length > 1) {
-        lastRowResult = orderStatus.ErrorMultipleSearchProduct;
+      var checkResult = await checkSearchResultRows(searchResultRows);
+      if (checkResult != constants.General.EmptyString) {
+        lastRowResult = checkResult;
         throw new Error(lastRowResult);
       }
 
@@ -1326,11 +1229,16 @@ const runKeonHwaOrder = async (systemCode, user_id, supplier_params, rows) => {
       const n_stock = Number(item.stock);
       const n_usedQty = Number(row.used_qty);
       const n_orderRequiredQty = calculateOrderQty(
+        item.productName,
         n_usedQty,
         searchResultRows[0].standard
       );
 
-      if (isNaN(n_stock) || isNaN(n_orderRequiredQty)) {
+      if (
+        isNaN(n_stock) ||
+        isNaN(n_orderRequiredQty) ||
+        n_orderRequiredQty <= 0
+      ) {
         lastRowResult = orderStatus.ErrorInvalidQty;
         throw new Error(lastRowResult);
       }
@@ -1404,51 +1312,7 @@ const runNamshinOrder = async (systemCode, user_id, supplier_params, rows) => {
   const loginPassword = supplier_params.loginPassword; //= "542500";
 
   // 브라우저를 보면서 작업내용 확인
-  const browser = await puppeteer.launch(
-    process.env.NODE_ENV === "production"
-      ? {
-          headless: true,
-          executablePath: await chromium.executablePath(),
-          args: [
-            "--start-maximized",
-            "--no-sandbox",
-            "--disable-setuid-sandbox",
-            "--disable-extensions",
-            "--disable-popup-blocking",
-            "--disable-client-side-phishing-detection",
-            "--disable-features=SafeBrowsing",
-            "--disable-default-apps",
-            "--disable-sync",
-            "--disable-web-security",
-            "--allow-running-insecure-content",
-            "--ignore-certificate-errors",
-          ],
-        }
-      : {
-          headless: false,
-          executablePath: getEdgePath(),
-          args: [
-            "--start-maximized",
-            "--no-sandbox",
-            "--disable-setuid-sandbox",
-            "--disable-extensions",
-            "--disable-popup-blocking",
-            "--disable-client-side-phishing-detection",
-            "--disable-features=SafeBrowsing",
-            "--disable-default-apps",
-            "--disable-sync",
-            "--disable-web-security",
-            "--allow-running-insecure-content",
-            "--ignore-certificate-errors",
-          ],
-        }
-  );
-
-  const page = await browser.newPage();
-
-  page.on("requestfailed", (request) => {
-    console.log("❌ FAILED:", request.url(), request.failure());
-  });
+  const { browser, page } = await launchBrowser();
 
   var lastRowResult = constants.General.EmptyString;
 
@@ -1541,16 +1405,9 @@ const runNamshinOrder = async (systemCode, user_id, supplier_params, rows) => {
       console.log(searchResultRows);
 
       // 조회결과가 1건만 조회되어야 주문 처리 가능 ---
-      if (
-        searchResultRows.length === 0 ||
-        searchResultRows[0].productId === constants.General.EmptyString
-      ) {
-        lastRowResult = orderStatus.ErrorNoSearchProduct;
-        throw new Error(lastRowResult);
-      }
-
-      if (searchResultRows.length > 1) {
-        lastRowResult = orderStatus.ErrorMultipleSearchProduct;
+      var checkResult = await checkSearchResultRows(searchResultRows);
+      if (checkResult != constants.General.EmptyString) {
+        lastRowResult = checkResult;
         throw new Error(lastRowResult);
       }
 
@@ -1560,11 +1417,16 @@ const runNamshinOrder = async (systemCode, user_id, supplier_params, rows) => {
       const n_stock = Number(item.stock);
       const n_usedQty = Number(row.used_qty);
       const n_orderRequiredQty = calculateOrderQty(
+        item.productName,
         n_usedQty,
         searchResultRows[0].standard
       );
 
-      if (isNaN(n_stock) || isNaN(n_orderRequiredQty)) {
+      if (
+        isNaN(n_stock) ||
+        isNaN(n_orderRequiredQty) ||
+        n_orderRequiredQty <= 0
+      ) {
         lastRowResult = orderStatus.ErrorInvalidQty;
         throw new Error(lastRowResult);
       }
@@ -1652,51 +1514,7 @@ const runUPharmMallOrder = async (
   const loginPassword = supplier_params.loginPassword; //= "542500";
 
   // 브라우저를 보면서 작업내용 확인
-  const browser = await puppeteer.launch(
-    process.env.NODE_ENV === "production"
-      ? {
-          headless: true,
-          executablePath: await chromium.executablePath(),
-          args: [
-            "--start-maximized",
-            "--no-sandbox",
-            "--disable-setuid-sandbox",
-            "--disable-extensions",
-            "--disable-popup-blocking",
-            "--disable-client-side-phishing-detection",
-            "--disable-features=SafeBrowsing",
-            "--disable-default-apps",
-            "--disable-sync",
-            "--disable-web-security",
-            "--allow-running-insecure-content",
-            "--ignore-certificate-errors",
-          ],
-        }
-      : {
-          headless: false,
-          executablePath: getEdgePath(),
-          args: [
-            "--start-maximized",
-            "--no-sandbox",
-            "--disable-setuid-sandbox",
-            "--disable-extensions",
-            "--disable-popup-blocking",
-            "--disable-client-side-phishing-detection",
-            "--disable-features=SafeBrowsing",
-            "--disable-default-apps",
-            "--disable-sync",
-            "--disable-web-security",
-            "--allow-running-insecure-content",
-            "--ignore-certificate-errors",
-          ],
-        }
-  );
-
-  const page = await browser.newPage();
-
-  page.on("requestfailed", (request) => {
-    console.log("❌ FAILED:", request.url(), request.failure());
-  });
+  const { browser, page } = await launchBrowser();
 
   var lastRowResult = constants.General.EmptyString;
 
@@ -1786,16 +1604,15 @@ const runUPharmMallOrder = async (
       });
 
       // 3) 결과 체크
-      if (searchResultRows.length === 0) {
-        lastRowResult = orderStatus.ErrorNoSearchProduct;
-        throw new Error(lastRowResult); // 검색 제품 없음
-      } else if (searchResultRows.length > 1) {
-        lastRowResult = orderStatus.ErrorMultipleSearchProduct;
-        throw new Error(lastRowResult); // 중복 제품 검색
+      var checkResult = await checkSearchResultRows(searchResultRows);
+      if (checkResult != constants.General.EmptyString) {
+        lastRowResult = checkResult;
+        throw new Error(lastRowResult);
       }
 
       const n_usedQty = Number(row.used_qty);
       const n_orderRequiredQty = calculateOrderQty(
+        row.product_name,
         n_usedQty,
         searchResultRows[0].standard
       );
@@ -1885,51 +1702,7 @@ const runFamilyPharmOrder = async (
   const loginPassword = supplier_params.loginPassword; //= "542500";
 
   // 브라우저를 보면서 작업내용 확인
-  const browser = await puppeteer.launch(
-    process.env.NODE_ENV === "production"
-      ? {
-          headless: true,
-          executablePath: await chromium.executablePath(),
-          args: [
-            "--start-maximized",
-            "--no-sandbox",
-            "--disable-setuid-sandbox",
-            "--disable-extensions",
-            "--disable-popup-blocking",
-            "--disable-client-side-phishing-detection",
-            "--disable-features=SafeBrowsing",
-            "--disable-default-apps",
-            "--disable-sync",
-            "--disable-web-security",
-            "--allow-running-insecure-content",
-            "--ignore-certificate-errors",
-          ],
-        }
-      : {
-          headless: false,
-          executablePath: getEdgePath(),
-          args: [
-            "--start-maximized",
-            "--no-sandbox",
-            "--disable-setuid-sandbox",
-            "--disable-extensions",
-            "--disable-popup-blocking",
-            "--disable-client-side-phishing-detection",
-            "--disable-features=SafeBrowsing",
-            "--disable-default-apps",
-            "--disable-sync",
-            "--disable-web-security",
-            "--allow-running-insecure-content",
-            "--ignore-certificate-errors",
-          ],
-        }
-  );
-
-  const page = await browser.newPage();
-
-  page.on("requestfailed", (request) => {
-    console.log("❌ FAILED:", request.url(), request.failure());
-  });
+  const { browser, page } = await launchBrowser();
 
   var lastRowResult = constants.General.EmptyString;
 
@@ -2065,11 +1838,9 @@ const runFamilyPharmOrder = async (
       console.log(searchResultRows);
 
       // 조회 결과 체크
-      if (
-        searchResultRows.length === 0 ||
-        searchResultRows[0].productId === ""
-      ) {
-        lastRowResult = orderStatus.ErrorNoSearchProduct;
+      var checkResult = await checkSearchResultRows(searchResultRows);
+      if (checkResult != constants.General.EmptyString) {
+        lastRowResult = checkResult;
         throw new Error(lastRowResult);
       }
 
@@ -2078,11 +1849,16 @@ const runFamilyPharmOrder = async (
       const n_stock = Number(item.stock);
       const n_usedQty = Number(row.used_qty);
       const n_orderRequiredQty = calculateOrderQty(
+        item.productName,
         n_usedQty,
         searchResultRows[0].standard
       );
 
-      if (isNaN(n_stock) || isNaN(n_orderRequiredQty)) {
+      if (
+        isNaN(n_stock) ||
+        isNaN(n_orderRequiredQty) ||
+        n_orderRequiredQty <= 0
+      ) {
         lastRowResult = orderStatus.ErrorInvalidQty;
         throw new Error(lastRowResult);
       }
@@ -2172,51 +1948,7 @@ const runWithUsOrder = async (systemCode, user_id, supplier_params, rows) => {
   const loginPassword = supplier_params.loginPassword; //= "542500";
 
   // 브라우저를 보면서 작업내용 확인
-  const browser = await puppeteer.launch(
-    process.env.NODE_ENV === "production"
-      ? {
-          headless: true,
-          executablePath: await chromium.executablePath(),
-          args: [
-            "--start-maximized",
-            "--no-sandbox",
-            "--disable-setuid-sandbox",
-            "--disable-extensions",
-            "--disable-popup-blocking",
-            "--disable-client-side-phishing-detection",
-            "--disable-features=SafeBrowsing",
-            "--disable-default-apps",
-            "--disable-sync",
-            "--disable-web-security",
-            "--allow-running-insecure-content",
-            "--ignore-certificate-errors",
-          ],
-        }
-      : {
-          headless: false,
-          executablePath: getEdgePath(),
-          args: [
-            "--start-maximized",
-            "--no-sandbox",
-            "--disable-setuid-sandbox",
-            "--disable-extensions",
-            "--disable-popup-blocking",
-            "--disable-client-side-phishing-detection",
-            "--disable-features=SafeBrowsing",
-            "--disable-default-apps",
-            "--disable-sync",
-            "--disable-web-security",
-            "--allow-running-insecure-content",
-            "--ignore-certificate-errors",
-          ],
-        }
-  );
-
-  const page = await browser.newPage();
-
-  page.on("requestfailed", (request) => {
-    console.log("❌ FAILED:", request.url(), request.failure());
-  });
+  const { browser, page } = await launchBrowser();
 
   var lastRowResult = constants.General.EmptyString;
 
@@ -2327,16 +2059,9 @@ const runWithUsOrder = async (systemCode, user_id, supplier_params, rows) => {
       console.log(searchResultRows);
 
       // 조회결과가 1건만 조회되어야 주문 처리 가능 ---
-      if (
-        searchResultRows.length === 0 ||
-        searchResultRows[0].productId === constants.General.EmptyString
-      ) {
-        lastRowResult = orderStatus.ErrorNoSearchProduct;
-        throw new Error(lastRowResult);
-      }
-
-      if (searchResultRows.length > 1) {
-        lastRowResult = orderStatus.ErrorMultipleSearchProduct;
+      var checkResult = await checkSearchResultRows(searchResultRows);
+      if (checkResult != constants.General.EmptyString) {
+        lastRowResult = checkResult;
         throw new Error(lastRowResult);
       }
 
@@ -2346,11 +2071,16 @@ const runWithUsOrder = async (systemCode, user_id, supplier_params, rows) => {
       const n_stock = Number(item.stock);
       const n_usedQty = Number(row.used_qty);
       const n_orderRequiredQty = calculateOrderQty(
+        item.productName,
         n_usedQty,
         searchResultRows[0].standard
       );
 
-      if (isNaN(n_stock) || isNaN(n_orderRequiredQty)) {
+      if (
+        isNaN(n_stock) ||
+        isNaN(n_orderRequiredQty) ||
+        n_orderRequiredQty <= 0
+      ) {
         lastRowResult = orderStatus.ErrorInvalidQty;
         throw new Error(lastRowResult);
       }
@@ -2438,51 +2168,7 @@ const runGeoPharmOrder = async (
   const loginPassword = supplier_params.loginPassword; //= "542500";
 
   // 브라우저를 보면서 작업내용 확인
-  const browser = await puppeteer.launch(
-    process.env.NODE_ENV === "production"
-      ? {
-          headless: true,
-          executablePath: await chromium.executablePath(),
-          args: [
-            "--start-maximized",
-            "--no-sandbox",
-            "--disable-setuid-sandbox",
-            "--disable-extensions",
-            "--disable-popup-blocking",
-            "--disable-client-side-phishing-detection",
-            "--disable-features=SafeBrowsing",
-            "--disable-default-apps",
-            "--disable-sync",
-            "--disable-web-security",
-            "--allow-running-insecure-content",
-            "--ignore-certificate-errors",
-          ],
-        }
-      : {
-          headless: false,
-          executablePath: getEdgePath(),
-          args: [
-            "--start-maximized",
-            "--no-sandbox",
-            "--disable-setuid-sandbox",
-            "--disable-extensions",
-            "--disable-popup-blocking",
-            "--disable-client-side-phishing-detection",
-            "--disable-features=SafeBrowsing",
-            "--disable-default-apps",
-            "--disable-sync",
-            "--disable-web-security",
-            "--allow-running-insecure-content",
-            "--ignore-certificate-errors",
-          ],
-        }
-  );
-
-  const page = await browser.newPage();
-
-  page.on("requestfailed", (request) => {
-    console.log("❌ FAILED:", request.url(), request.failure());
-  });
+  const { browser, page } = await launchBrowser();
 
   var lastRowResult = constants.General.EmptyString;
 
@@ -2582,14 +2268,10 @@ const runGeoPharmOrder = async (
           .filter((item) => item.stock > 0);
       });
 
-      if (searchResultRows.length === 0) {
-        lastRowResult = orderStatus.ErrorNoProductSearch;
-        throw new Error(lastRowResult); // 제품 검색 불가
-      }
-
-      if (searchResultRows.length > 1) {
-        // lastRowResult = orderStatus.ErrorMultipleSearchProduct;
-        // throw new Error(lastRowResult); // 제품 중복 검색
+      var checkResult = await checkSearchResultRows(searchResultRows);
+      if (checkResult != constants.General.EmptyString) {
+        lastRowResult = checkResult;
+        throw new Error(lastRowResult);
       }
 
       const iframeElementRight = await page.$("#order_item_view_iframe");
@@ -2625,11 +2307,16 @@ const runGeoPharmOrder = async (
 
       const n_usedQty = Number(row.used_qty);
       const n_orderRequiredQty = calculateOrderQty(
+        row.product_name,
         n_usedQty,
         searchResultRows[0].standard
       );
 
-      if (isNaN(n_stock) || isNaN(n_orderRequiredQty)) {
+      if (
+        isNaN(n_stock) ||
+        isNaN(n_orderRequiredQty) ||
+        n_orderRequiredQty <= 0
+      ) {
         lastRowResult = orderStatus.ErrorInvalidQty;
         throw new Error(lastRowResult);
       }
@@ -2639,16 +2326,16 @@ const runGeoPharmOrder = async (
         throw new Error(lastRowResult);
       }
 
-      await iframeLeft.waitForSelector(`#item_order_count`, {
+      await iframeRight.waitForSelector(`#item_order_count`, {
         visible: true,
         timeout: 30000,
       });
 
       // 3. 주문수량 입력
-      await iframeLeft.type(`#item_order_count`, `${n_usedQty}`);
+      await iframeRight.type(`#item_order_count`, `${n_orderRequiredQty}`);
 
       // 주문담기 버튼 클릭
-      await iframeLeft.click("#btn_add_cart");
+      await iframeRight.click("#btn_add_cart");
       lastRowResult = orderStatus.SuccessOrderToCart;
 
       // 상태 저장
@@ -2692,7 +2379,7 @@ const runGeoPharmOrder = async (
   return ret;
 };
 
-// 지오웹 (제품명우측옆 규격)
+// 지오웹 (지오영네트웍스, 제품명우측옆 규격)
 // https://order.geoweb.kr
 // 아이디 chif2000
 // 비번 1234abcd
@@ -2712,51 +2399,8 @@ const runGeoWebOrder = async (systemCode, user_id, supplier_params, rows) => {
   const loginPassword = supplier_params.loginPassword; //= "542500";
 
   // 브라우저를 보면서 작업내용 확인
-  const browser = await puppeteer.launch(
-    process.env.NODE_ENV === "production"
-      ? {
-          headless: true,
-          executablePath: await chromium.executablePath(),
-          args: [
-            "--start-maximized",
-            "--no-sandbox",
-            "--disable-setuid-sandbox",
-            "--disable-extensions",
-            "--disable-popup-blocking",
-            "--disable-client-side-phishing-detection",
-            "--disable-features=SafeBrowsing",
-            "--disable-default-apps",
-            "--disable-sync",
-            "--disable-web-security",
-            "--allow-running-insecure-content",
-            "--ignore-certificate-errors",
-          ],
-        }
-      : {
-          headless: false,
-          executablePath: getEdgePath(),
-          args: [
-            "--start-maximized",
-            "--no-sandbox",
-            "--disable-setuid-sandbox",
-            "--disable-extensions",
-            "--disable-popup-blocking",
-            "--disable-client-side-phishing-detection",
-            "--disable-features=SafeBrowsing",
-            "--disable-default-apps",
-            "--disable-sync",
-            "--disable-web-security",
-            "--allow-running-insecure-content",
-            "--ignore-certificate-errors",
-          ],
-        }
-  );
+  const { browser, page } = await launchBrowser();
 
-  page.on("requestfailed", (request) => {
-    console.log("❌ FAILED:", request.url(), request.failure());
-  });
-
-  const page = await browser.newPage();
   var lastRowResult = constants.General.EmptyString;
 
   // 1️⃣ 로그인
@@ -2841,13 +2485,9 @@ const runGeoWebOrder = async (systemCode, user_id, supplier_params, rows) => {
         }
       );
 
-      if (searchResultRows.length === 0) {
-        lastRowResult = orderStatus.ErrorNoSearchProduct;
-        throw new Error(lastRowResult);
-      }
-
-      if (searchResultRows.length > 1) {
-        lastRowResult = orderStatus.ErrorMultipleSearchProduct;
+      var checkResult = await checkSearchResultRows(searchResultRows);
+      if (checkResult != constants.General.EmptyString) {
+        lastRowResult = checkResult;
         throw new Error(lastRowResult);
       }
 
@@ -2874,11 +2514,16 @@ const runGeoWebOrder = async (systemCode, user_id, supplier_params, rows) => {
       }
       const n_usedQty = Number(row.used_qty);
       const n_orderRequiredQty = calculateOrderQty(
+        row.product_name,
         n_usedQty,
         searchResultRows[0].standard
       );
 
-      if (isNaN(n_stock) || isNaN(n_orderRequiredQty)) {
+      if (
+        isNaN(n_stock) ||
+        isNaN(n_orderRequiredQty) ||
+        n_orderRequiredQty <= 0
+      ) {
         lastRowResult = orderStatus.ErrorInvalidQty;
         throw new Error(lastRowResult);
       }
@@ -2956,69 +2601,10 @@ const runBridgePharmOrder = async (
   const loginPassword = supplier_params.loginPassword; //= "542500";
 
   // 브라우저를 보면서 작업내용 확인
-  const browser = await puppeteer.launch(
-    process.env.NODE_ENV === "production"
-      ? {
-          headless: true,
-          executablePath: await chromium.executablePath(),
-          args: [
-            "--start-maximized",
-            "--no-sandbox",
-            "--disable-setuid-sandbox",
-            "--disable-extensions",
-            "--disable-popup-blocking",
-            "--disable-client-side-phishing-detection",
-            "--disable-features=SafeBrowsing",
-            "--disable-default-apps",
-            "--disable-sync",
-            "--disable-web-security",
-            "--allow-running-insecure-content",
-            "--ignore-certificate-errors",
-          ],
-        }
-      : {
-          headless: false,
-          executablePath: getEdgePath(),
-          args: [
-            "--start-maximized",
-            "--no-sandbox",
-            "--disable-setuid-sandbox",
-            "--disable-extensions",
-            "--disable-popup-blocking",
-            "--disable-client-side-phishing-detection",
-            "--disable-features=SafeBrowsing",
-            "--disable-default-apps",
-            "--disable-sync",
-            "--disable-web-security",
-            "--allow-running-insecure-content",
-            "--ignore-certificate-errors",
-          ],
-        }
-  );
-
-  const page = await browser.newPage();
-
-  page.on("requestfailed", (request) => {
-    console.log("❌ FAILED:", request.url(), request.failure());
-  });
+  const { browser, page } = await launchBrowser();
 
   var lastRowResult = constants.General.EmptyString;
 
-  // 1️⃣ 로그인
-  await page.setRequestInterception(true);
-  page.on("request", (req) => {
-    // 광고/추적으로 분류되는 요청도 전부 허용
-    req.continue();
-  });
-
-  await page.evaluateOnNewDocument(() => {
-    // alert, confirm, prompt 무력화
-    window.alert = () => {};
-    window.confirm = () => true;
-    window.prompt = () => "";
-    // window.open 무력화 (팝업 생성 방지)
-    window.open = () => null;
-  });
   // 1️⃣ 로그인
   await page.goto(loginUrl, { waitUntil: "domcontentloaded" });
 
@@ -3056,7 +2642,7 @@ const runBridgePharmOrder = async (
         throw new Error(lastRowResult); // 입력 제품 없음
       }
 
-      // --- 검색조건 세팅 ---
+      // 검색조건 세팅
       await page.select("#so3", "2"); // 조회조건 중 KD코드 선택
       await page.evaluate((kdCode) => {
         document.querySelector("#tx_physic").value = kdCode;
@@ -3111,16 +2697,9 @@ const runBridgePharmOrder = async (
       console.log(searchResultRows);
 
       // 조회결과가 1건만 조회되어야 주문 처리 가능 ---
-      if (
-        searchResultRows.length === 0 ||
-        searchResultRows[0].productId === constants.General.EmptyString
-      ) {
-        lastRowResult = orderStatus.ErrorNoSearchProduct;
-        throw new Error(lastRowResult);
-      }
-
-      if (searchResultRows.length > 1) {
-        lastRowResult = orderStatus.ErrorMultipleSearchProduct;
+      var checkResult = await checkSearchResultRows(searchResultRows);
+      if (checkResult != constants.General.EmptyString) {
+        lastRowResult = checkResult;
         throw new Error(lastRowResult);
       }
 
@@ -3130,11 +2709,16 @@ const runBridgePharmOrder = async (
       const n_stock = Number(item.stock);
       const n_usedQty = Number(row.used_qty);
       const n_orderRequiredQty = calculateOrderQty(
+        item.productName,
         n_usedQty,
         searchResultRows[0].standard
       );
 
-      if (isNaN(n_stock) || isNaN(n_orderRequiredQty)) {
+      if (
+        isNaN(n_stock) ||
+        isNaN(n_orderRequiredQty) ||
+        n_orderRequiredQty <= 0
+      ) {
         lastRowResult = orderStatus.ErrorInvalidQty;
         throw new Error(lastRowResult);
       }
@@ -3212,8 +2796,9 @@ function getEdgePath() {
   return null;
 }
 
-function extractPackSize(standard) {
+function extractPackSize(productName, standard) {
   if (!standard) return 0;
+
   const normalized = standard
     .replace(/×/g, "x")
     .replace(/（/g, "(")
@@ -3221,40 +2806,51 @@ function extractPackSize(standard) {
     .replace(/\s+/g, " ")
     .trim();
 
-  // 단독 ㉥ -> 1
-  if (/^㉥$/.test(normalized)) return 1;
-
-  // x10, x 10
+  // --- 1) x10, x 10 ---
   const xMatch = normalized.match(/x\s*([0-9]+)\b/i);
   if (xMatch) return parseInt(xMatch[1], 10);
 
-  // (10T) 등 괄호 내부
+  // --- 2) (10T), (10㉥), (10관) ---
   const bracketMatch = normalized.match(
-    /\(\s*([0-9]+)\s*(T|정|caps?|ea|ptp|㉥)?\s*\)/i
+    /\(\s*([0-9]+)\s*(T|정|caps?|ea|ptp|㉥|관)?\s*\)/i
   );
   if (bracketMatch) return parseInt(bracketMatch[1], 10);
 
-  // 숫자+단위 (10T, 2㉥ 등)
-  const unitMatch = normalized.match(/\b([0-9]+)\s*(T|정|caps?|ea|ptp|㉥)\b/i);
-  if (unitMatch) return parseInt(unitMatch[1], 10);
+  // --- 3) 숫자 + 단위 + optional ㉥/관 ---
+  const unitWithBottleOrTube = normalized.match(
+    /\b([0-9]+)\s*(T|정|caps?|ea|ptp|㉥|관)\b/i
+  );
+  if (unitWithBottleOrTube) return parseInt(unitWithBottleOrTube[1], 10);
 
-  // ㉥ 포함(숫자 없이) -> 1 (예: "㉥", "약명 ㉥")
-  if (normalized.includes("㉥")) return 1;
+  // --- 4) "*10관" / "* 10관" / "10관" ---
+  const tubeMatch = normalized.match(/\*?\s*([0-9]+)\s*관\b/);
+  if (tubeMatch) return parseInt(tubeMatch[1], 10);
 
-  // 가장 첫 숫자(보수적으로 2 이상만 포장단위로 인정)
+  // --- 5) 단독 ㉥ -> 1 ---
+  if (/^㉥$/.test(normalized)) return 1;
+
+  // --- 6) 단독 관 -> 1 ---
+  if (/^관$/.test(normalized)) return 1;
+
+  if (productName.includes("(병)")) return 1;
+
+  // --- 7) 규격 중에 관 또는 ㉥ 포함하지만 숫자 없음 -> 1 ---
+  if (normalized.includes("㉥") || normalized.includes("관")) return 1;
+
+  // --- 8) 첫 숫자 (보수적으로 2 이상만 포장단위로 인정) ---
   const firstNumMatch = normalized.match(/([0-9]+)(?=(\D|$))/);
   if (firstNumMatch) {
     const n = parseInt(firstNumMatch[1], 10);
     if (n >= 2) return n;
   }
 
-  // 못 찾음
+  // --- 9) 아무것도 못 찾으면 ---
   return 0;
 }
 
-function calculateOrderQty(usedQty, standard) {
+function calculateOrderQty(productName, usedQty, standard) {
   const used = Number(usedQty || 0);
-  const packSize = extractPackSize(standard);
+  const packSize = extractPackSize(productName, standard);
 
   // packSize === 0 은 '읽지 못함' -> 에러 신호로 -1 반환
   if (packSize === 0) return -1;
@@ -3262,5 +2858,73 @@ function calculateOrderQty(usedQty, standard) {
   // 정상: packSize >= 1
   return Math.ceil(used / packSize);
 }
+
+const launchBrowser = async () => {
+  const browser = await puppeteer.launch(
+    process.env.NODE_ENV === "production"
+      ? {
+          headless: true,
+          executablePath: await chromium.executablePath(),
+          args: [
+            "--start-maximized",
+            "--no-sandbox",
+            "--disable-setuid-sandbox",
+            "--disable-extensions",
+            "--disable-popup-blocking",
+            "--disable-client-side-phishing-detection",
+            "--disable-features=SafeBrowsing",
+            "--disable-default-apps",
+            "--disable-sync",
+            "--disable-web-security",
+            "--allow-running-insecure-content",
+            "--ignore-certificate-errors",
+          ],
+        }
+      : {
+          headless: false,
+          executablePath: getEdgePath(),
+          args: [
+            "--start-maximized",
+            "--no-sandbox",
+            "--disable-setuid-sandbox",
+            "--disable-extensions",
+            "--disable-popup-blocking",
+            "--disable-client-side-phishing-detection",
+            "--disable-features=SafeBrowsing",
+            "--disable-default-apps",
+            "--disable-sync",
+            "--disable-web-security",
+            "--allow-running-insecure-content",
+            "--ignore-certificate-errors",
+          ],
+        }
+  );
+
+  const page = await browser.newPage();
+  page.on("requestfailed", (request) => {
+    console.log("❌ FAILED:", request.url(), request.failure());
+  });
+
+  return { browser, page };
+};
+
+const checkSearchResultRows = async (searchResultRows) => {
+  if (!searchResultRows) throw new Error(constants.messages.NO_DATA_FOUND);
+
+  var lastRowResult = constants.General.EmptyString;
+
+  if (
+    searchResultRows.length === 0 ||
+    searchResultRows[0].productId === constants.General.EmptyString
+  ) {
+    lastRowResult = orderStatus.ErrorNoSearchProduct;
+  }
+
+  if (searchResultRows.length > 1) {
+    lastRowResult = orderStatus.ErrorMultipleSearchProduct;
+  }
+
+  return lastRowResult;
+};
 
 export { executeService };
