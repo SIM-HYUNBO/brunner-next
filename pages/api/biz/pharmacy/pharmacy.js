@@ -771,24 +771,25 @@ const updateDailyOrderOne = async (txnId, jRequest) => {
       }
     }
 
-    var updata_TB_PHM_DAILY_ORDER_02 = null;
+    var update_TB_PHM_DAILY_ORDER_02 = null;
 
     sql = await dynamicSql.getSQL(
       jRequest.systemCode,
       `update_TB_PHM_DAILY_ORDER`,
       2
     );
-    updata_TB_PHM_DAILY_ORDER_02 = await database.executeSQL(sql, [
+    update_TB_PHM_DAILY_ORDER_02 = await database.executeSQL(sql, [
       jRequest.userId,
       jRequest.uploadHour,
       jRequest.productCode,
       jRequest.newProductCode,
       jRequest.newProductName,
-      jRequest.newusedQty,
+      jRequest.newUsedQty,
+      jRequest.newInventoryQty,
       orderStatus.OrderChaned,
     ]);
 
-    if (updata_TB_PHM_DAILY_ORDER_02.rowCount == 1) {
+    if (update_TB_PHM_DAILY_ORDER_02.rowCount == 1) {
       jResponse.error_code = 0;
       jResponse.error_message = constants.messages.SUCCESS_FINISHED;
     } else {

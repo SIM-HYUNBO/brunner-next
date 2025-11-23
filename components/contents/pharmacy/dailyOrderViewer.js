@@ -102,7 +102,8 @@ export default function DailyOrderViewer() {
         productCode: editingRow.values.product_code,
         newProductCode: selectedData.edi_code,
         newProductName: selectedData.item_name,
-        newusedQty: usedQty,
+        newUsedQty: usedQty,
+        newInventoryQty: inventoryQty,
       };
 
       setLoading(true);
