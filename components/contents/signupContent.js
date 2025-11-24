@@ -56,8 +56,8 @@ export default function SignupContent() {
 
   // 사업장 검색
   const searchBusiness = async () => {
-    if (!searchKeyword) {
-      openModal("Input keyword.");
+    if (!searchKeyword || searchKeyword.length < 3) {
+      openModal("Input keyword more than 3 charactors.");
       return;
     }
     try {
@@ -414,11 +414,7 @@ export default function SignupContent() {
                 </Select>
 
                 <Input
-                  placeholder={
-                    searchType === constants.UserType.Pharmacy
-                      ? "Pharmacy Name"
-                      : "Supplier Name"
-                  }
+                  placeholder={"Pharmacy Name"}
                   value={searchKeyword}
                   onChange={(e) => setSearchKeyword(e.target.value)}
                   onKeyDown={(e) => {
@@ -431,11 +427,7 @@ export default function SignupContent() {
               <Table
                 dataSource={searchResult}
                 columns={columns}
-                rowKey={
-                  searchType === constants.UserType.Pharmacy
-                    ? "manageNo"
-                    : "supplierCode"
-                }
+                rowKey={"manageNo"} // 약국 관리번호
                 pagination={false}
                 size="small"
               />
