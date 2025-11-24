@@ -119,16 +119,6 @@ export function renderProperty(
           onChange={(e) => updateRuntimeData("buttonText", e.target.value)}
           className="w-full border border-gray-300 rounded p-2 mb-2"
         />
-        <label>Workflow Description:</label> {/* ✅ 추가 */}
-        <textarea
-          value={component.runtime_data?.workflow}
-          onChange={(e) => updateRuntimeData("workflow", e.target.value)}
-          className="w-full flex-grow border p-2 rounded mb-4 resize-none"
-          placeholder={`{ "steps": [
-              { "actionName": "callApi", "params": { "url": "api/save", "method": ${constants.httpMethod.POST}, "body": { "data": "{{input.data}}" } } },
-              { "actionName": "showToast", "params": { "message": "work complete." } },
-              { "actionName": "navigate", "params":{ "target": "/dashboard" }}]}`}
-        />
         {/* 폭, 줄바꿈, 위치정렬 속성 */}
         {renderWidthProperty()}
         {renderForceNewLineProperty()}
