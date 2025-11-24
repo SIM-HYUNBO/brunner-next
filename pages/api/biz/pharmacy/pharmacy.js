@@ -996,7 +996,7 @@ const runHanshinOrder = async (systemCode, user_id, supplier_params, rows) => {
 
       const n_stock = Number(item.stock);
       const n_usedQty = Number(row.used_qty);
-      const n_orderRequiredQty = calculateOrderQty(
+      const n_orderRequiredQty = calculateOrderRequiredQty(
         item.productName,
         n_usedQty,
         searchResultRows[0].standard
@@ -1229,7 +1229,7 @@ const runKeonHwaOrder = async (systemCode, user_id, supplier_params, rows) => {
 
       const n_stock = Number(item.stock);
       const n_usedQty = Number(row.used_qty);
-      const n_orderRequiredQty = calculateOrderQty(
+      const n_orderRequiredQty = calculateOrderRequiredQty(
         item.productName,
         n_usedQty,
         searchResultRows[0].standard
@@ -1417,7 +1417,7 @@ const runNamshinOrder = async (systemCode, user_id, supplier_params, rows) => {
 
       const n_stock = Number(item.stock);
       const n_usedQty = Number(row.used_qty);
-      const n_orderRequiredQty = calculateOrderQty(
+      const n_orderRequiredQty = calculateOrderRequiredQty(
         item.productName,
         n_usedQty,
         searchResultRows[0].standard
@@ -1604,24 +1604,34 @@ const runUPharmMallOrder = async (
         });
       });
 
-      // 3) 결과 체크
+      // 조회결과가 1건만 조회되어야 주문 처리 가능 ---
       var checkResult = await checkSearchResultRows(searchResultRows);
       if (checkResult != constants.General.EmptyString) {
         lastRowResult = checkResult;
         throw new Error(lastRowResult);
       }
 
+      const item = searchResultRows[0];
+      const { stock } = item;
+      const n_stock = Number(item.stock);
+
       const n_usedQty = Number(row.used_qty);
-      const n_orderRequiredQty = calculateOrderQty(
+      const n_orderRequiredQty = calculateOrderRequiredQty(
         row.product_name,
         n_usedQty,
         searchResultRows[0].standard
       );
 
-      //
-      // 2. 재고 체크
-      //
-      if (n_orderRequiredQty > searchResultRows[0].stock) {
+      if (
+        isNaN(n_stock) ||
+        isNaN(n_orderRequiredQty) ||
+        n_orderRequiredQty <= 0
+      ) {
+        lastRowResult = orderStatus.ErrorInvalidQty;
+        throw new Error(lastRowResult);
+      }
+
+      if (n_stock <= 0 || n_orderRequiredQty > n_stock) {
         lastRowResult = orderStatus.ErrorRackOfStock;
         throw new Error(lastRowResult);
       }
@@ -1849,7 +1859,7 @@ const runFamilyPharmOrder = async (
       const item = searchResultRows[0];
       const n_stock = Number(item.stock);
       const n_usedQty = Number(row.used_qty);
-      const n_orderRequiredQty = calculateOrderQty(
+      const n_orderRequiredQty = calculateOrderRequiredQty(
         item.productName,
         n_usedQty,
         searchResultRows[0].standard
@@ -2071,7 +2081,7 @@ const runWithUsOrder = async (systemCode, user_id, supplier_params, rows) => {
 
       const n_stock = Number(item.stock);
       const n_usedQty = Number(row.used_qty);
-      const n_orderRequiredQty = calculateOrderQty(
+      const n_orderRequiredQty = calculateOrderRequiredQty(
         item.productName,
         n_usedQty,
         searchResultRows[0].standard
@@ -2307,7 +2317,7 @@ const runGeoPharmOrder = async (
       }
 
       const n_usedQty = Number(row.used_qty);
-      const n_orderRequiredQty = calculateOrderQty(
+      const n_orderRequiredQty = calculateOrderRequiredQty(
         row.product_name,
         n_usedQty,
         searchResultRows[0].standard
@@ -2486,35 +2496,15 @@ const runGeoWebOrder = async (systemCode, user_id, supplier_params, rows) => {
         }
       );
 
+      // 1건 조회되는 경우만 처리
       var checkResult = await checkSearchResultRows(searchResultRows);
       if (checkResult != constants.General.EmptyString) {
-        lastRowResult = checkResult;
-        throw new Error(lastRowResult);
+        // lastRowResult = checkResult;
+        // throw new Error(lastRowResult);
       }
-
-      const rows = await page.$$("tr.tr-product-list");
-      const validRows = [];
-      var n_stock = 0;
-
-      for (const row of rows) {
-        const stockEl = await row.$("td.stock"); // ElementHandle 또는 null
-        if (!stockEl) continue;
-
-        // ElementHandle에서 텍스트를 얻을 때는 page.evaluate를 사용
-        const stockText = await page.evaluate((el) => el.innerText, stockEl);
-        const stock = parseInt(stockText.trim().replace(/,/g, ""), 10) || 0;
-        n_stock = stock;
-        if (stock > 0) validRows.push(row);
-      }
-
-      if (validRows.length === 1) {
-        await validRows[0].click();
-      } else {
-        lastRowResult = orderStatus.ErrorNoSearchProduct;
-        throw new Error(lastRowResult);
-      }
+      const n_stock = Number(searchResultRows[0].stock);
       const n_usedQty = Number(row.used_qty);
-      const n_orderRequiredQty = calculateOrderQty(
+      const n_orderRequiredQty = calculateOrderRequiredQty(
         row.product_name,
         n_usedQty,
         searchResultRows[0].standard
@@ -2709,7 +2699,7 @@ const runBridgePharmOrder = async (
 
       const n_stock = Number(item.stock);
       const n_usedQty = Number(row.used_qty);
-      const n_orderRequiredQty = calculateOrderQty(
+      const n_orderRequiredQty = calculateOrderRequiredQty(
         item.productName,
         n_usedQty,
         searchResultRows[0].standard
@@ -2797,67 +2787,56 @@ function getEdgePath() {
   return null;
 }
 
-function extractPackSize(productName, standard) {
-  if (!standard) return 0;
+function parseConsumerQty(standard) {
+  if (!standard) return -1;
 
-  const normalized = standard
+  let s = standard
     .replace(/×/g, "x")
     .replace(/（/g, "(")
     .replace(/）/g, ")")
-    .replace(/\s+/g, " ")
+    .replace(/\s+/g, "")
     .trim();
 
-  // --- 1) x10, x 10 ---
-  const xMatch = normalized.match(/x\s*([0-9]+)\b/i);
-  if (xMatch) return parseInt(xMatch[1], 10);
+  // 1) 정(T)/캡슐(C)/정/포/ea/ptp
+  const pillMatch = s.match(/^(\d+)(T|C|정|caps?|포|ea|ptp)/i);
+  if (pillMatch) return parseInt(pillMatch[1], 10);
 
-  // --- 2) (10T), (10㉥), (10관) ---
-  const bracketMatch = normalized.match(
-    /\(\s*([0-9]+)\s*(T|정|caps?|ea|ptp|㉥|관)?\s*\)/i
-  );
+  // 2) 괄호 (10T) 같은 경우
+  const bracketMatch = s.match(/\((\d+)(T|C|정|caps?|포)?\)/i);
   if (bracketMatch) return parseInt(bracketMatch[1], 10);
 
-  // --- 3) 숫자 + 단위 + optional ㉥/관 ---
-  const unitWithBottleOrTube = normalized.match(
-    /\b([0-9]+)\s*(T|정|caps?|ea|ptp|㉥|관)\b/i
-  );
-  if (unitWithBottleOrTube) return parseInt(unitWithBottleOrTube[1], 10);
+  // 3) *n포
+  const packMatch = s.match(/\*(\d+)(포|ea|입)?/i);
+  if (packMatch) return parseInt(packMatch[1], 10);
 
-  // --- 4) "*10관" / "* 10관" / "10관" ---
-  const tubeMatch = normalized.match(/\*?\s*([0-9]+)\s*관\b/);
+  // 4) *n관 / n관 → 숫자 있으면 그대로
+  const tubeMatch = s.match(/\*?(\d+)\s*관/i);
   if (tubeMatch) return parseInt(tubeMatch[1], 10);
 
-  // --- 5) 단독 ㉥ -> 1 ---
-  if (/^㉥$/.test(normalized)) return 1;
+  // 5) 단독 관 → 1
+  if (/^관$/i.test(s)) return 1;
 
-  // --- 6) 단독 관 -> 1 ---
-  if (/^관$/.test(normalized)) return 1;
+  // 6) ml, g, ㉥ → 1
+  if (/(ml|g|㉥)/i.test(s)) return 1;
 
-  if (productName.includes("(병)")) return 1;
+  // 7) 숫자만 있는 경우 → 1
+  const numberOnly = s.match(/^(\d+)$/);
+  if (numberOnly) return 1;
 
-  // --- 7) 규격 중에 관 또는 ㉥ 포함하지만 숫자 없음 -> 1 ---
-  if (normalized.includes("㉥") || normalized.includes("관")) return 1;
-
-  // --- 8) 첫 숫자 (보수적으로 2 이상만 포장단위로 인정) ---
-  const firstNumMatch = normalized.match(/([0-9]+)(?=(\D|$))/);
-  if (firstNumMatch) {
-    const n = parseInt(firstNumMatch[1], 10);
-    if (n >= 2) return n;
-  }
-
-  // --- 9) 아무것도 못 찾으면 ---
-  return 0;
+  // 8) 아무것도 없으면 기본 1
+  return -1;
 }
 
-function calculateOrderQty(productName, usedQty, standard) {
+// 주문해야 할 수량을 계산
+function calculateOrderRequiredQty(productName, usedQty, standard) {
   const used = Number(usedQty || 0);
-  const packSize = extractPackSize(productName, standard);
+  const consumerQty = parseConsumerQty(standard);
 
-  // packSize === 0 은 '읽지 못함' -> 에러 신호로 -1 반환
-  if (packSize === 0) return -1;
+  // consumerQty === 0 은 '읽지 못함' -> 에러 신호로 -1 반환
+  if (consumerQty < 0) return consumerQty;
 
   // 정상: packSize >= 1
-  return Math.ceil(used / packSize);
+  return Math.ceil(used / consumerQty);
 }
 
 const launchBrowser = async () => {
