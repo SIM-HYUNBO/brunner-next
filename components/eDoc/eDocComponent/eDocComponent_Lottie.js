@@ -2,6 +2,7 @@
 
 import React, { useMemo } from "react";
 import dynamic from "next/dynamic";
+import * as constants from "@/components/core/constants";
 
 const Lottie = dynamic(() => import("lottie-react"), { ssr: false });
 

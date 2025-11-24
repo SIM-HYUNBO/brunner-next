@@ -54,7 +54,7 @@ export default function EDocPagePropertyEditor({
       <Select
         value={runtimeData.pageSize || "A4"}
         onChange={(value) => updateProperty("pageSize", value)}
-        className="w-full border border-gray-300 rounded p-2"
+        className="w-full h-12 border border-gray-300 rounded p-2"
       >
         <option value="A4">A4</option>
         <option value="A3">A3</option>

@@ -3,6 +3,7 @@
 import React from "react";
 import EDocTextStyleEditor from "@/components/eDoc/eDocTextStyleEditor";
 import { Select } from "antd";
+import * as constants from "@/components/core/constants";
 
 export const initDefaultRuntimeData = (defaultRuntimeData) => {
   defaultRuntimeData.placeholder = "여기에 값을 입력하세요";
@@ -69,7 +70,7 @@ export function renderProperty(
         <Select
           value={component.runtime_data?.textAlign || "left"}
           onChange={(e) => updateRuntimeData("textAlign", e.target.value)}
-          className="w-full border border-gray-300 rounded p-2 mb-2"
+          className="w-full h-12 border border-gray-300 rounded p-2 mb-2"
         >
           <option value="left">왼쪽</option>
           <option value="center">가운데</option>

@@ -50,7 +50,7 @@ export default function EDocTextStyleEditor({
         <Select
           value={fontFamily}
           onChange={(value) => onChange({ fontFamily: value })}
-          className="w-full border rounded p-2"
+          className="w-full h-12 border rounded p-2"
         >
           {availableFonts.map((font) => (
             <option key={font} value={font} style={{ fontFamily: font }}>

@@ -1,6 +1,7 @@
 `use strict`;
 
 import React from "react";
+import * as constants from "@/components/core/constants";
 
 export const initDefaultRuntimeData = (defaultRuntimeData) => {
   defaultRuntimeData.src = constants.General.EmptyString;

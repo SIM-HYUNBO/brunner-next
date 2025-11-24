@@ -3,6 +3,7 @@
 import React from "react";
 import EDocTextStyleEditor from "@/components/eDoc/eDocTextStyleEditor";
 import * as constants from "@/components/core/constants";
+import { Select } from "antd";
 
 /**
  * 초기 RuntimeData 생성
@@ -182,7 +183,7 @@ export function renderProperty(
                 newColumns[idx] = { ...newColumns[idx], align: value };
                 updateRuntimeData("columns", newColumns);
               }}
-              className="w-2/5 border border-gray-300 rounded p-1"
+              className="w-2/5 h-12 border border-gray-300 rounded p-1"
             >
               <option value="left">왼쪽</option>
               <option value="center">가운데</option>

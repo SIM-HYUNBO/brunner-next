@@ -49,9 +49,9 @@ export default function AIModelSelector({ model, setAIModel, apiKey }) {
   return (
     <div>
       <BrunnerMessageBox />
-      <Select
+      <select
         value={model || constants.General.EmptyString}
-        onChange={(value) => setAIModel(value)}
+        onChange={(e) => setAIModel(e.target.value)}
         onFocus={fetchModels}
         disabled={disabled}
         className={`w-full border p-2 rounded mb-2 ${
@@ -72,7 +72,7 @@ export default function AIModelSelector({ model, setAIModel, apiKey }) {
             {m.id}
           </option>
         ))}
-      </Select>
+      </select>
       {error && <div className="text-red-500 text-sm">{error}</div>}
     </div>
   );

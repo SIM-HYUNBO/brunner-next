@@ -81,7 +81,7 @@ export default function EDocComponentPropertyEditor({
         onChange={(value) =>
           updateRuntimeDataByPropertyEeditor("positionAlign", value)
         }
-        className="w-full border border-gray-300 rounded p-2 mb-2"
+        className="w-full h-12 border border-gray-300 rounded p-2 mb-2"
       >
         <option value="left">왼쪽</option>
         <option value="center">가운데</option>
