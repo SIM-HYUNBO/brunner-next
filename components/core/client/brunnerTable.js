@@ -88,7 +88,7 @@ const BrunnerTable = forwardRef(
                   title="Edit"
                 >
                   {" "}
-                  <img src="/save-icon.png" alt="Save" className={`w-6 h-6`} />
+                  <img src="/edit-icon.png" alt="Save" className={`w-6 h-6`} />
                 </Button>
               )}
               {deleteRowDataHandler && (
