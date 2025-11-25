@@ -174,7 +174,7 @@ export default function AIInputModal({
       <div
         ref={modalRef}
         className="relative bg-gray-200 dark:bg-gray-800 text-gray-800 dark:text-gray-200
-                   p-6 rounded-2xl shadow-xl cursor-move overflow-hidden flex flex-col"
+                   p-6 rounded-2xl shadow-xl cursor-move flex flex-col"
         style={{
           transform: `translate(${position.x}px, ${position.y}px)`,
           width: `${size.width}px`,
@@ -207,19 +207,21 @@ export default function AIInputModal({
         />
 
         <label className="block mb-2 font-medium">Select Model</label>
-        <AIModelSelector
-          model={aiModel}
-          setAIModel={setAIModel}
-          apiKey={apiKey}
-        />
+        <div onMouseDown={(e) => e.stopPropagation()}>
+          <AIModelSelector
+            model={aiModel}
+            setAIModel={setAIModel}
+            apiKey={apiKey}
+          />
+        </div>
 
-        {aiModel && (
+        {/* {aiModel && (
           <div className="mt-4">
             선택한 모델: <span className="font-mono">{aiModel}</span>
           </div>
-        )}
+        )} */}
 
-        <label className="block mb-2 font-medium">Instructions</label>
+        <label className="block mb-2 mt-4 font-medium">Instructions</label>
         <textarea
           value={instructions}
           onChange={(e) => setInstructions(e.target.value)}

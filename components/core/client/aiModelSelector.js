@@ -3,7 +3,7 @@ import * as constants from "@/components/core/constants";
 import { RequestServer } from "@/components/core/client/requestServer";
 import * as userInfo from "@/components/core/client/frames/userInfo";
 import { useModal } from "@/components/core/client/brunnerMessageBox";
-import { Input, Button, Select, Table } from "antd";
+import { Select } from "antd";
 
 export default function AIModelSelector({ model, setAIModel, apiKey }) {
   const [models, setModels] = useState([]);
@@ -25,18 +25,15 @@ export default function AIModelSelector({ model, setAIModel, apiKey }) {
     setLoading(true);
     setError(constants.General.EmptyString);
     try {
-      var jRequest = {};
-      var jResponse = null;
+      const jRequest = {
+        systemCode: userInfo.getCurrentSystemCode(),
+        commandName: constants.commands.EDOC_AI_GET_MODEL_LIST,
+        userId: userInfo.getLoginUserId(),
+        apiKey,
+      };
 
-      const userId = userInfo.getLoginUserId();
-      jRequest.systemCode = userInfo.getCurrentSystemCode();
-      jRequest.commandName = constants.commands.EDOC_AI_GET_MODEL_LIST;
-      jRequest.userId = userId;
-      jRequest.apiKey = apiKey;
-
-      setLoading(true); // 데이터 로딩 시작
-      jResponse = await RequestServer(jRequest);
-      setModels(jResponse.models);
+      const jResponse = await RequestServer(jRequest);
+      setModels(jResponse.models || []);
     } catch (e) {
       console.error("모델 목록 불러오기 실패:", e);
     } finally {
@@ -49,30 +46,26 @@ export default function AIModelSelector({ model, setAIModel, apiKey }) {
   return (
     <div>
       <BrunnerMessageBox />
-      <select
-        value={model || constants.General.EmptyString}
-        onChange={(e) => setAIModel(e.target.value)}
-        onFocus={fetchModels}
+
+      <Select
+        style={{ width: "100%" }}
+        value={model || undefined}
+        onChange={(value) => setAIModel(value)}
+        onDropdownVisibleChange={(open) => {
+          if (open) fetchModels();
+        }}
         disabled={disabled}
-        className={`w-full border p-2 rounded mb-2 ${
-          disabled
-            ? "bg-gray-100 text-gray-400 cursor-not-allowed"
-            : constants.General.EmptyString
-        }`}
-      >
-        <option value={constants.General.EmptyString} disabled>
-          {disabled
-            ? "API Key를 먼저 입력하세요"
-            : loading
-            ? "불러오는 중..."
-            : "모델을 선택하세요"}
-        </option>
-        {models.map((m) => (
-          <option key={m.id} value={m.id}>
-            {m.id}
-          </option>
-        ))}
-      </select>
+        loading={loading}
+        placeholder={
+          disabled ? "API Key를 먼저 입력하세요" : "모델을 선택하세요"
+        }
+        options={models.map((m) => ({
+          label: m.id,
+          value: m.id,
+        }))}
+        getPopupContainer={(trigger) => trigger.parentNode} // ← 추가!
+      />
+
       {error && <div className="text-red-500 text-sm">{error}</div>}
     </div>
   );
