@@ -20,6 +20,7 @@ export default function EDocument() {
       try {
         setLoading(true);
         const docData = await commonFunctions.getDocumentData(
+          userInfo.getCurrentSystemCode(),
           userInfo.getLoginUserId(),
           documentId
         );
