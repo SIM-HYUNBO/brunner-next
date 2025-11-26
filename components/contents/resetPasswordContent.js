@@ -9,7 +9,7 @@ import { Button, Select } from "antd";
 export default function ResetPasswordContent() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
-  const { BrunnerMessageBox, openModal } = useModal();
+  const { BrunnerMessageBox, openModal, openInputModal } = useModal();
 
   const [systemCode, setSystemCode] = useState(constants.SystemCode.Brunner);
   const [userId, setUserId] = useState(constants.General.EmptyString);

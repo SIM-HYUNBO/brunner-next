@@ -10,7 +10,7 @@ import { Button } from "antd";
 
 export default function SignoutButton({ handleLogout }) {
   const router = useRouter();
-  const { BrunnerMessageBox, openModal } = useModal();
+  const { BrunnerMessageBox, openModal, openInputModal } = useModal();
   const [loading, setLoading] = useState(false);
 
   const requestSignout = async () => {

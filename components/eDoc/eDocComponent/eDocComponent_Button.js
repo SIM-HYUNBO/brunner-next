@@ -22,7 +22,7 @@ const RenderComponent = (props) => {
     pageData,
     documentData,
   } = props;
-  const { BrunnerMessageBox, openModal } = useModal();
+  const { BrunnerMessageBox, openModal, openInputModal } = useModal();
   const [loading, setLoading] = useState(false);
 
   const { buttonText, buttonColor, textColor, padding, borderRadius } =

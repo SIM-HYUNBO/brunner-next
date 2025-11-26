@@ -9,7 +9,7 @@ import GoverningMessage from "@/components/core/client/governingMessage";
 
 const SupplierSettingContent = () => {
   const [loading, setLoading] = useState(false);
-  const { BrunnerMessageBox, openModal } = useModal();
+  const { BrunnerMessageBox, openModal, openInputModal } = useModal();
 
   const tableRef = useRef();
   const [userId, setUserId] = useState(constants.General.EmptyString);

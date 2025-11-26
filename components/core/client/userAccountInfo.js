@@ -7,7 +7,7 @@ import Loading from "@/components/core/client/loading";
 import { Input, Button } from "antd";
 
 const UserAccountInfo = () => {
-  const { BrunnerMessageBox, openModal } = useModal();
+  const { BrunnerMessageBox, openModal, openInputModal } = useModal();
   const [searchUserId, setSearchUserId] = useState("");
   const [userData, setUserData] = useState(null);
   const [loading, setLoading] = useState(false);

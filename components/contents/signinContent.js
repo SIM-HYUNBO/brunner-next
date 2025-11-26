@@ -14,7 +14,7 @@ import { Select } from "antd";
 
 export default function SigninContent() {
   const [loading, setLoading] = useState(false);
-  const { BrunnerMessageBox, openModal } = useModal();
+  const { BrunnerMessageBox, openModal, openInputModal } = useModal();
   const router = useRouter();
 
   const userIdRef = useRef();

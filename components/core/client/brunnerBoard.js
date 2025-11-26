@@ -10,7 +10,7 @@ import { Input, Button, Table } from "antd";
 
 function BrunnerBoard({ boardType }) {
   const [loading, setLoading] = useState(false);
-  const { BrunnerMessageBox, openModal } = useModal();
+  const { BrunnerMessageBox, openModal, openInputModal } = useModal();
   const [posts, setPosts] = useState([]);
   const [postText, setPostText] = useState(constants.General.EmptyString);
 
@@ -360,7 +360,7 @@ function BoardContent({
   // 로딩 & 메시지 박스
   // {
   const [loading, setLoading] = useState(false);
-  const { BrunnerMessageBox, openModal } = useModal();
+  const { BrunnerMessageBox, openModal, openInputModal } = useModal();
   const [commentText, setCommentText] = useState(constants.General.EmptyString);
   const [isEditingPost, setIsEditingPost] = useState(false);
   const [editedPostText, setEditedPostText] = useState(post.post_content);

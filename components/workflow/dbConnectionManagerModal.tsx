@@ -28,7 +28,7 @@ export const DBConnectionManagerModal: React.FC<
   DBConnectionManagerModalProps
 > = ({ open, onOpenChange }) => {
   const [loading, setLoading] = useState(false);
-  const { BrunnerMessageBox, openModal } = useModal();
+  const { BrunnerMessageBox, openModal, openInputModal } = useModal();
   const [connections, setConnections] = useState<DBConnectionInfo[]>([]);
   const [editing, setEditing] = useState<DBConnectionInfo | null>(null);
   const [testing, setTesting] = useState(false);

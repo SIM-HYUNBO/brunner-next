@@ -67,7 +67,7 @@ const FilteringConditions = React.memo(
 );
 
 export default function DailyOrderViewer() {
-  const { BrunnerMessageBox, openModal } = useModal();
+  const { BrunnerMessageBox, openModal, openInputModal } = useModal();
   const tableRef = useRef();
   const [editingRow, setEditingRow] = useState(null);
   const [supplierList, setSupplierList] = useState([]);

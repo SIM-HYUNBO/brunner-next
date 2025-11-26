@@ -31,7 +31,7 @@ import * as LinkTextComponent from "@/components/eDoc/eDocComponent/eDocComponen
 import * as LottieComponent from "@/components/eDoc/eDocComponent/eDocComponent_Lottie";
 
 export default function EDocDesignerContainer({ documentId }) {
-  const { BrunnerMessageBox, openModal } = useModal();
+  const { BrunnerMessageBox, openModal, openInputModal } = useModal();
 
   const [loading, setLoading] = useState(false);
   const [isExportingPdf, setIsExportingPdf] = useState(false);
@@ -182,23 +182,22 @@ export default function EDocDesignerContainer({ documentId }) {
   const toggleMode = () =>
     setMode((prev) => (prev === "design" ? "runtime" : "design"));
 
-  const handleNewDocument = () => {
+  const handleNewDocument = async () => {
     if (!userInfo.isLogin()) {
       openModal(constants.messages.LOGIN_REQUIRED);
       return;
     }
 
-    if (
-      window.confirm(
-        "현재 작업 중인 문서가 저장되지 않을 수 있습니다. 새 문서를 생성하시겠습니까?"
-      )
-    ) {
-      const title = window.prompt("새문서 이름을 입력하세요");
+    const result = await openModal(
+      "현재 작업 중인 문서가 저장되지 않을 수 있습니다. 새 문서를 생성하시겠습니까?"
+    );
+    if (result) {
+      const title = await openInputModal("새문서 이름을 입력하세요");
       setDocumentData({
         id: documentId || null,
         runtime_data: {
-          title: "New Document",
-          description: "신규 문서",
+          title: title,
+          description: title,
           isPublic: false,
           backgroundColor: "#ffffff",
           padding: 1,
@@ -647,22 +646,22 @@ export default function EDocDesignerContainer({ documentId }) {
         >
           <div
             className="bg-white 
-                          semi-bg-color 
-                          rounded-xl 
-                          shadow-xl 
-                          w-96 
-                          max-h-96 
-                          overflow-auto 
-                          p-4
-                          border 
-                          border-gray-200 
-                          dark:border-slate-700"
+                       semi-bg-color 
+                       rounded-xl 
+                       shadow-xl 
+                       w-96 
+                       max-h-96 
+                       overflow-auto 
+                       p-4
+                       border 
+                       border-gray-200 
+                       dark:border-slate-700"
           >
             <h3
               className="text-lg 
-                           font-bold 
-                           mb-4 
-                           general-text-color"
+                         font-bold 
+                         mb-4 
+                         general-text-color"
             >
               문서 선택
             </h3>
@@ -724,47 +723,31 @@ export default function EDocDesignerContainer({ documentId }) {
       </div>
       <div className="flex flex-row h-screen mt-10">
         {/* 좌측 컴포넌트 팔레트 */}
-        <div className="flex flex-row">
-          <aside
-            className={`transition-all 
-                       duration-300 
-                       overflow-auto 
-                       border-r 
-                       general-text-bg-color
-                       ${isLeftPanelOpen ? "w-28" : "w-0"}`}
-          >
-            {isLeftPanelOpen && (
-              <EDocComponentPalette
-                templates={componentTemplates}
-                onAddComponent={handleAddComponent}
-              />
-            )}
-          </aside>
-          {/* 좌측 패널 토글 버튼 (항상 보임, 패널 우측에 겹치도록) */}
-          <Button
-            onClick={() => setIsLeftPanelOpen((prev) => !prev)}
-            className="flex 
-                        flex-col 
-                        items-center 
-                        justify-center 
-                        text-gray-800 
-                        dark:text-gray-200 
-                        bg-transparent z-10"
-          >
-            {isLeftPanelOpen ? "◀" : "▶"}
-          </Button>
+        <div className="flex flex-row items-center">
+          <div className="flex flex-row items-center">
+            <aside
+              className={`flex items-start transition-all duration-300 overflow-auto border-r general-text-bg-color`}
+            >
+              {isLeftPanelOpen && (
+                <EDocComponentPalette
+                  templates={componentTemplates}
+                  onAddComponent={handleAddComponent}
+                />
+              )}
+            </aside>
+            {/* 좌측 패널 토글 버튼 (항상 보임, 패널 우측에 겹치도록) */}
+            <Button
+              onClick={() => setIsLeftPanelOpen((prev) => !prev)}
+              className="flex semi-text-bg-color z-10"
+            >
+              {isLeftPanelOpen ? "◀" : "▶"}
+            </Button>
+          </div>
         </div>
         {/* 중앙 편집 캔버스 */}
         <div className="flex-1 overflow-auto">
           {documentData && (
-            <h1
-              className="text-2xl 
-                          font-bold 
-                          mx-4 
-                          mb-4 
-                          text-center
-                          general-text-color"
-            >
+            <h1 className="text-2xl font-bold mx-4 mb-4 text-center general-text-color">
               {documentData.runtime_data.title || constants.General.EmptyString}
               : {documentData.id}
             </h1>
@@ -783,10 +766,7 @@ export default function EDocDesignerContainer({ documentId }) {
               <>
                 <div
                   key={page.id}
-                  className={`relative 
-                             w-fit 
-                             my-1
-                             mx-auto`}
+                  className={`relative w-fit my-1 mx-auto`}
                   onClick={() => {
                     setCurrentPageIdx(idx);
                     setSelectedComponentId(null);
@@ -796,28 +776,17 @@ export default function EDocDesignerContainer({ documentId }) {
                     <div className="flex flex-row justify-center items-center gap-2 mt-2">
                       <Button
                         onClick={handleMovePageUp}
-                        className="mb-1 px-2 py-1 rounded bg-gray-200 hover:bg-gray-300"
+                        className="mb-1 px-2 py-1 rounded semi-text-bg-color"
                         disabled={currentPageIdx === 0}
                       >
                         ▲
                       </Button>
-                      <div
-                        className="general-text-bg-color 
-                              border
-                              border-gray
-                              text-center
-                              items-center
-                              text-xs 
-                              rounded 
-                              mb-1
-                              select-none 
-                              pointer-events-none"
-                      >
+                      <div className="general-text-bg-color mb-1">
                         p{idx + 1}
                       </div>
                       <Button
                         onClick={handleMovePageDown}
-                        className="mb-1 px-2 py-1 rounded bg-gray-200 hover:bg-gray-300"
+                        className="mb-1 px-2 py-1 rounded semi-text-bg-color"
                         disabled={
                           currentPageIdx === documentData.pages.length - 1
                         }
@@ -856,78 +825,72 @@ export default function EDocDesignerContainer({ documentId }) {
         {isRightPanelOpen && (
           <div
             onMouseDown={handleMouseDown}
-            className="absoulte top-0 left-0 w-1 h-full cursor-col-resize bg-gray-300 hover:bg-gray-400"
+            className="flex absoulte top-0 left-0 w-1 h-full cursor-col-resize bg-gray-300 hover:bg-gray-400"
           />
         )}
-
-        <aside
-          className={`flex flex-col justify-start 
-                     relative general-text-bg-color 
-                     border-gray 
-                     dark:border-gray 
-                     p-4 
-                     overflow-auto 
-                     transition-all 
-                     duration-100`}
-          style={{ width: isRightPanelOpen ? `${rightPanelWidth}px` : "0px" }}
-        >
+        <div className="flex flex-row">
           {/* 우측 패널 토글 버튼 */}
           <Button
             onClick={() => setIsRightPanelOpen((prev) => !prev)}
-            className="absolute top-1/2 left-0 -translate-y-1/2 p-2
-                     text-gray-800 dark:text-gray-200 bg-transparent z-10"
+            className="flex top-1/2 left-0 -translate-y-1/2 p-2
+                     semi-text-bg-color z-10"
           >
             {isRightPanelOpen ? "▶" : "◀"}
           </Button>
-
-          {isRightPanelOpen && (
-            <>
-              <h5 className="flex flex-col items-center text-lg mb-4 general-text-color">
-                Properties
-              </h5>
-              {selectedComponentId !== null &&
-              documentData.pages[currentPageIdx]?.components[
-                selectedComponentId
-              ] ? (
-                <EDocComponentPropertyEditor
-                  component={
-                    documentData.pages[currentPageIdx].components[
-                      selectedComponentId
-                    ]
-                  }
-                  handleUpdateComponent={handleUpdateComponent}
-                />
-              ) : (
-                <>
-                  <EDocDocumentPropertyEditor
-                    runtimeData={documentData.runtime_data}
-                    onChangeRuntimeData={(updatedRuntimeData) =>
-                      setDocumentData((prev) => ({
-                        ...prev,
-                        runtime_data: updatedRuntimeData,
-                      }))
+          <aside
+            className={`flex flex-col justify-start relative general-text-bg-color overflow-auto ${
+              isRightPanelOpen ? "w-[400px]" : "w-[0px]"
+            }`}
+          >
+            {isRightPanelOpen && (
+              <>
+                <h5 className="flex flex-col items-center text-lg mb-4 general-text-color">
+                  Properties
+                </h5>
+                {selectedComponentId !== null &&
+                documentData.pages[currentPageIdx]?.components[
+                  selectedComponentId
+                ] ? (
+                  <EDocComponentPropertyEditor
+                    component={
+                      documentData.pages[currentPageIdx].components[
+                        selectedComponentId
+                      ]
                     }
+                    handleUpdateComponent={handleUpdateComponent}
                   />
-                  <EDocPagePropertyEditor
-                    runtimeData={
-                      documentData.pages[currentPageIdx]?.runtime_data || {}
-                    }
-                    onChangeRuntimeData={(updatedPageRuntimeData) =>
-                      setDocumentData((prev) => {
-                        const updatedPages = [...prev.pages];
-                        updatedPages[currentPageIdx] = {
-                          ...updatedPages[currentPageIdx],
-                          runtime_data: updatedPageRuntimeData,
-                        };
-                        return { ...prev, pages: updatedPages };
-                      })
-                    }
-                  />
-                </>
-              )}
-            </>
-          )}
-        </aside>
+                ) : (
+                  <>
+                    <EDocDocumentPropertyEditor
+                      runtimeData={documentData.runtime_data}
+                      onChangeRuntimeData={(updatedRuntimeData) =>
+                        setDocumentData((prev) => ({
+                          ...prev,
+                          runtime_data: updatedRuntimeData,
+                        }))
+                      }
+                    />
+                    <EDocPagePropertyEditor
+                      runtimeData={
+                        documentData.pages[currentPageIdx]?.runtime_data || {}
+                      }
+                      onChangeRuntimeData={(updatedPageRuntimeData) =>
+                        setDocumentData((prev) => {
+                          const updatedPages = [...prev.pages];
+                          updatedPages[currentPageIdx] = {
+                            ...updatedPages[currentPageIdx],
+                            runtime_data: updatedPageRuntimeData,
+                          };
+                          return { ...prev, pages: updatedPages };
+                        })
+                      }
+                    />
+                  </>
+                )}
+              </>
+            )}
+          </aside>
+        </div>
       </div>
 
       {/* 메시지 박스 */}

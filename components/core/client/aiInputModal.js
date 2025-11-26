@@ -14,7 +14,7 @@ export default function AIInputModal({
   onAIResponse,
 }) {
   const [loading, setLoading] = useState(false);
-  const { BrunnerMessageBox, openModal } = useModal();
+  const { BrunnerMessageBox, openModal, openInputModal } = useModal();
   const [instructions, setInstructions] = useState(
     constants.General.EmptyString
   );

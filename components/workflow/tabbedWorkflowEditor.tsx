@@ -32,7 +32,7 @@ interface Tab {
 }
 
 export function TabbedWorkflowEditor() {
-  const { BrunnerMessageBox, openModal } = useModal();
+  const { BrunnerMessageBox, openModal, openInputModal } = useModal();
 
   const [tabs, setTabs] = useState<Tab[]>([
     {

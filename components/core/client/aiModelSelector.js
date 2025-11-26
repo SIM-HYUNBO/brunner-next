@@ -9,7 +9,7 @@ export default function AIModelSelector({ model, setAIModel, apiKey }) {
   const [models, setModels] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(constants.General.EmptyString);
-  const { BrunnerMessageBox, openModal } = useModal();
+  const { BrunnerMessageBox, openModal, openInputModal } = useModal();
 
   const fetchModels = async () => {
     if (!userInfo.isLogin()) {

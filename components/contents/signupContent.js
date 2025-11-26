@@ -15,7 +15,7 @@ import { Select } from "antd";
 
 export default function SignupContent() {
   const [loading, setLoading] = useState(false);
-  const { BrunnerMessageBox, openModal } = useModal();
+  const { BrunnerMessageBox, openModal, openInputModal } = useModal();
   const router = useRouter();
 
   const [userId, setUserId] = useState(constants.General.EmptyString);

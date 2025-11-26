@@ -7,7 +7,7 @@ import { useModal } from "@/components/core/client/brunnerMessageBox";
 import Loading from "@/components/core/client/loading";
 
 export function DailyOrderUploader() {
-  const { BrunnerMessageBox, openModal } = useModal();
+  const { BrunnerMessageBox, openModal, openInputModal } = useModal();
   const [loading, setLoading] = useState(false);
   const [excelData, setExcelData] = useState([]);
 

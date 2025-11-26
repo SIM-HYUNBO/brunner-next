@@ -71,7 +71,7 @@ const ServiceSQL = () => {
   // 로딩 & 메시지 박스
   // {
   const [loading, setLoading] = useState(false);
-  const { BrunnerMessageBox, openModal } = useModal();
+  const { BrunnerMessageBox, openModal, openInputModal } = useModal();
 
   const editPanelRef = useRef(null); // EditPanel Div 참조
   const [isEditing, setIsEditing] = useState(false);

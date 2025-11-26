@@ -18,7 +18,7 @@ export default function DrugSearchModal({
   initialUsedQty = 1,
   initialInventoryQty = 0,
 }) {
-  const { BrunnerMessageBox, openModal } = useModal();
+  const { BrunnerMessageBox, openModal, openInputModal } = useModal();
 
   const [searchType, setSearchType] = useState(initialSearchType);
   const [searchTerm, setSearchTerm] = useState(initialSearchTerm);
