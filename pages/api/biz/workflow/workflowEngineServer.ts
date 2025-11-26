@@ -34,7 +34,7 @@ type DBConnection =
   | InstanceType<typeof mssqlType.ConnectionPool>
   | oracleType.Connection;
 
-const logger = require("./../../../../components/core/server/winston/logger");
+const logger = require("@/components/core/server/winston/logger");
 
 export type WorkflowContext = Record<string, any> & {
   runWorkflow?: (workflow: any, workflowData: WorkflowContext) => Promise<any>;

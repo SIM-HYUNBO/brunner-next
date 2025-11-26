@@ -1,6 +1,6 @@
 `use strict`;
 
-import logger from "../../../../components/core/server/winston/logger";
+import logger from "@/components/core/server/winston/logger";
 import { Pool } from "pg";
 import * as constants from "@/components/core/constants";
 

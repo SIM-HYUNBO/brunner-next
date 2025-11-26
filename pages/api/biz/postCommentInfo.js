@@ -1,6 +1,6 @@
 `use strict`;
 
-import logger from "../../../components/core/server/winston/logger";
+import logger from "@/components/core/server/winston/logger";
 import * as constants from "@/components/core/constants";
 import * as database from "./database/database";
 import * as db_cor_sql_info from "./dynamicSql";
