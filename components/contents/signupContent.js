@@ -63,12 +63,10 @@ export default function SignupContent() {
     try {
       setLoading(true);
 
-      const workflowName = "약국목록조회";
-
       const jResponse = await RequestExecuteWorkflow(
         constants.SystemCode.Brunner,
         userInfo.getLoginUserId(),
-        workflowName,
+        "약국목록조회",
         constants.transactionMode.System,
         JSON.parse(`{
           "INDATA" : [

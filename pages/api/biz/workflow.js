@@ -335,7 +335,6 @@ const executeService = async (txnId, jRequest) => {
 
         break;
       }
-      // ❌ 정의되지 않은 commandName
       default: {
         throw new Error(constants.messages.SERVER_NOT_SUPPORTED_METHOD);
       }

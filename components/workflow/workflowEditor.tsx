@@ -480,11 +480,13 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
         openModal?.(constants.messages.SUCCESS_SAVED);
         if (onWorkflowChange) onWorkflowChange(jWorkflow.current);
       } else {
-        openModal?.("❌ 저장 실패: " + jResponse.error_message);
+        openModal?.(
+          `${constants.messages.FAILED_TO_SAVE_DATA} : ${jResponse.error_message}`
+        );
       }
     } catch (e) {
       console.error(e);
-      openModal?.("❌ 실행 실패: " + String(e));
+      openModal?.(`${constants.messages.FAILED_TO_SAVE_DATA} : ${String(e)}`);
     }
   };
 
@@ -536,8 +538,9 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
         openModal?.(jResponse.error_message);
       }
     } catch (e) {
-      console.error(e);
-      openModal?.("❌ 실행 실패: " + String(e));
+      openModal?.(
+        `${constants.messages.FAILED_TO_EXECUTE_WORKFLOW} : ${String(e)}`
+      );
     }
   };
 
@@ -627,7 +630,9 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
         openModal?.(jResponse.error_message);
       }
     } catch (e) {
-      openModal?.("❌ 실행 실패: " + String(e));
+      openModal?.(
+        `${constants.messages.FAILED_TO_EXECUTE_WORKFLOW} : ${String(e)}`
+      );
     }
   };
 
@@ -650,7 +655,9 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
       }
     } catch (e) {
       console.error(e);
-      openModal?.("❌ 실행 실패: " + String(e));
+      openModal?.(
+        `${constants.messages.FAILED_TO_EXECUTE_WORKFLOW} : ${String(e)}`
+      );
     }
   };
 

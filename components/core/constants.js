@@ -35,6 +35,7 @@ export const messages = {
   EMAIL_NOT_VALID: `The [email] is not valid.`,
   FAILED_TO_DELETE_DATA: `Failed to delete data.`,
   FAILED_TO_EXECUTE_WORKFLOW: `Failed to execute workflow.`,
+  FAILED_TO_GET_WORKFLOW_LIST: `Failed to get workflow list.`,
   FAILED_TO_INSERT_DATA: `Failed to insert data.`,
   FAILED_TO_SAVE_DATA: `Failed to save data.`,
   FAILED_TO_SAVE_TXN_HISTORY: `Failed to save transaction history.`,

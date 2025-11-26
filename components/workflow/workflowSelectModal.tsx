@@ -55,7 +55,9 @@ const WorkflowSelectModal: React.FC<WorkflowSelectModalProps> = ({
         openModal(jResponse.error_message);
       }
     } catch (e) {
-      openModal("❌ 워크플로우 목록 조회 실패: " + String(e));
+      openModal(
+        `${constants.messages.FAILED_TO_GET_WORKFLOW_LIST} : ${String(e)}`
+      );
     }
   };
 

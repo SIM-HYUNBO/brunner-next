@@ -22,7 +22,9 @@ export default function LottiePlayer({
   }, [jsonString]);
 
   if (!animationData) {
-    return <div style={{ color: "red" }}>❌ 잘못된 JSON 애니메이션 데이터</div>;
+    return (
+      <div style={{ color: "red" }}>잘못된 Lottie Json 애니메이션 데이터</div>
+    );
   }
 
   return (

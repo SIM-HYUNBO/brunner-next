@@ -14,7 +14,7 @@ const nextConfig = {
       },
       {
         protocol: "https",
-        hostname: "s3.us-west-2.amazonaws.com", // ← 오타 수정 (amazononaws ❌)
+        hostname: "s3.us-west-2.amazonaws.com",
       },
     ],
   },
