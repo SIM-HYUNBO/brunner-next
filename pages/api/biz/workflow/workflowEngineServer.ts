@@ -1,8 +1,8 @@
 `use strict`;
 
 import * as constants from "@/components/core/constants";
-import * as database from "../database/database";
-import * as dynamicSql from "../dynamicSql";
+import * as database from "@/pages/api/biz/database/database";
+import * as dynamicSql from "@/pages/api/biz/dynamicSql";
 import type { Connection, Edge, Node, NodeChange, EdgeChange } from "reactflow";
 import * as commonData from "@/components/core/commonData";
 import * as commonFunctions from "@/components/core/commonFunctions";

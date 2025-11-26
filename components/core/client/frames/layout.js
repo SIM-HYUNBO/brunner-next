@@ -1,14 +1,14 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import Header from "./header";
-import Footer from "./footer";
-import BodySection from "@/components/core/client/frames/bodySection";
 import Script from "next/script";
 import Head from "next/head";
-import { RequestServer } from "@/components/core/client/requestServer";
 import * as constants from "@/components/core/constants";
 import * as userInfo from "@/components/core/client/frames/userInfo";
+import Header from "@/components/core/client/frames/header";
+import Footer from "@/components/core/client/frames/footer";
+import BodySection from "@/components/core/client/frames/bodySection";
+import { RequestServer } from "@/components/core/client/requestServer";
 
 export default function Layout({ children }) {
   const GoogleAdScript = () => {

@@ -2,8 +2,8 @@
 
 import React from "react";
 import EDocTextStyleEditor from "@/components/eDoc/eDocTextStyleEditor";
-import { Select } from "antd";
 import * as constants from "@/components/core/constants";
+import { Select } from "antd";
 
 // 기본 runtime 데이터 초기화
 export const initDefaultRuntimeData = (defaultRuntimeData) => {

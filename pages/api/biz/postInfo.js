@@ -3,8 +3,8 @@
 import logger from "@/components/core/server/winston/logger";
 import * as constants from "@/components/core/constants";
 import * as commonFunctions from "@/components/core/commonFunctions";
-import * as database from "./database/database";
-import * as dynamicSql from "./dynamicSql";
+import * as database from "@/pages/api/biz/database/database";
+import * as dynamicSql from "@/pages/api/biz/dynamicSql";
 
 const executeService = async (txnId, jRequest) => {
   var jResponse = {};

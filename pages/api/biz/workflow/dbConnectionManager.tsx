@@ -1,7 +1,7 @@
 // src/engine/db/DBConnectionManager.ts
 import * as constants from "@/components/core/constants";
-import * as database from "./../database/database";
-import * as dynamicSql from "./../dynamicSql";
+import * as database from "@/pages/api/biz/database/database";
+import * as dynamicSql from "@/pages/api/biz/dynamicSql";
 
 import { Pool as PgPool } from "pg";
 import mysql from "mysql2/promise";

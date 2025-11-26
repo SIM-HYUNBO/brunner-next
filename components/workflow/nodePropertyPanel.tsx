@@ -3,7 +3,7 @@ import type { Node } from "reactflow";
 import * as constants from "@/components/core/constants";
 import { NodePropertyEditor } from "@/components/workflow/nodePropertyEditor";
 import { ScriptEditorModal } from "@/components/workflow/scriptEditorModal";
-import { SqlEditorModal } from "./sqlEditorModal";
+import { SqlEditorModal } from "@/components/workflow/sqlEditorModal";
 import WorkflowSelectModal from "@/components/workflow/workflowSelectModal";
 import { Input, Button, Select } from "antd";
 import type {

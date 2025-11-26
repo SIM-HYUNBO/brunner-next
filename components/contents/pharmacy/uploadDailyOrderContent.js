@@ -4,8 +4,8 @@ import { useState, useRef, useEffect } from "react";
 import { useDeviceType } from "@/components/core/commonFunctions";
 import GoverningMessage from "@/components/core/client/governingMessage";
 import LottiePlayer from "@/components/core/client/lottiePlayer";
-import { DailyOrderUploader } from "./dailyOrderUploader";
-import DailyOrderViewer from "./dailyOrderViewer";
+import { DailyOrderUploader } from "@/components/contents/pharmacy/dailyOrderUploader";
+import DailyOrderViewer from "@/components/contents/pharmacy/dailyOrderViewer";
 
 export default function UploadDailyOrderContent() {
   const { isMobile, isTablet } = useDeviceType();

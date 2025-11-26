@@ -1,10 +1,10 @@
 import React, { useEffect, useState, useRef } from "react";
+import { Rnd } from "react-rnd";
 import * as constants from "@/components/core/constants";
+import * as userInfo from "@/components/core/client/frames/userInfo";
 import { RequestServer } from "@/components/core/client/requestServer";
 import Loading from "@/components/core/client/loading";
 import { useModal } from "@/components/core/client/brunnerMessageBox";
-import * as userInfo from "@/components/core/client/frames/userInfo";
-import { Rnd } from "react-rnd";
 import { Input, Button, Table, Select } from "antd";
 
 export interface DBConnectionInfo {

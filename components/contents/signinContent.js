@@ -7,7 +7,7 @@ import { RequestServer } from "@/components/core/client/requestServer";
 import * as constants from "@/components/core/constants";
 import Loading from "@/components/core/client/loading";
 import { Button } from "antd";
-import { loadMenu } from "../core/client/frames/dropdownMenu";
+import { loadMenu } from "@/components/core/client/frames/dropdownMenu";
 import { Select } from "antd";
 
 // 외부에서 import 가능하도록 export

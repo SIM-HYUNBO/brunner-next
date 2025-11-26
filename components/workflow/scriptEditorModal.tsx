@@ -1,11 +1,11 @@
 import React, { useState, useRef, useEffect } from "react";
+import * as constants from "@/components/core/constants";
 import CodeMirror from "@uiw/react-codemirror";
 import { javascript } from "@codemirror/lang-javascript";
 import { githubLight, githubDark } from "@uiw/codemirror-theme-github";
 import { getIsDarkMode } from "@/components/core/client/frames/darkModeToggleButton";
-import type { ScriptNodeDesignData } from "./types/nodeTypes";
+import type { ScriptNodeDesignData } from "@/components/workflow/types/nodeTypes";
 import { Input, Button, Table } from "antd";
-import * as constants from "@/components/core/constants";
 
 interface ScriptEditorModalProps {
   open: boolean;

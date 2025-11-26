@@ -7,8 +7,8 @@ import React, {
   useImperativeHandle,
   forwardRef,
 } from "react";
-import * as constants from "@/components/core/constants";
 import { useTable, useSortBy } from "react-table";
+import * as constants from "@/components/core/constants";
 import { Input, Button, Table } from "antd";
 
 const BrunnerTable = forwardRef(

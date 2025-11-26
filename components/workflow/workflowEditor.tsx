@@ -13,7 +13,7 @@ import {
 } from "reactflow";
 
 import * as commonFunctions from "@/components/core/commonFunctions";
-import * as commonData_WF from "../core/client/commonData_WF";
+import * as commonData_WF from "@/components/core/client/commonData_WF";
 
 import type {
   Connection,
@@ -41,7 +41,7 @@ import {
 } from "@/components/core/client/requestServer";
 import * as userInfo from "@/components/core/client/frames/userInfo";
 import { v4 as uuidv4 } from "uuid";
-import WorkflowSelector from "./workflowSelector";
+import WorkflowSelector from "@/components/workflow/workflowSelector";
 
 import {
   Accordion,
@@ -49,7 +49,7 @@ import {
   AccordionTrigger,
   AccordionContent,
 } from "@/components/core/client/accordion";
-import { WorkflowDataModal } from "./workflowDataModal";
+import { WorkflowDataModal } from "@/components/workflow/workflowDataModal";
 
 interface WorkflowEditorProps {
   // key: string;

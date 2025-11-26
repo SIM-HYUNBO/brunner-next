@@ -2,9 +2,9 @@
 
 import logger from "@/components/core/server/winston/logger";
 import * as constants from "@/components/core/constants";
-import * as database from "./database/database";
-import * as dynamicSql from "./dynamicSql";
-import { DBConnectionManager } from "./workflow/dbConnectionManager";
+import * as database from "@/pages/api/biz/database/database";
+import * as dynamicSql from "@/pages/api/biz/dynamicSql";
+import { DBConnectionManager } from "@/pages/api/biz/workflow/dbConnectionManager";
 
 const executeService = async (txnId, jRequest) => {
   var jResponse = {};

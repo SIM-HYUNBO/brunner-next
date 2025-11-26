@@ -1,6 +1,6 @@
 import * as constants from "@/components/core/constants";
 import type { DataTable, DatasetColumn } from "@/components/core/commonData";
-import type { JsonColumnType } from "./jsonDatasetEditorModal";
+import type { JsonColumnType } from "@/components/workflow/jsonDatasetEditorModal";
 
 export type JsonObject = { [key: string]: any };
 

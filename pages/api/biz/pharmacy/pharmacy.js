@@ -2,8 +2,8 @@
 
 import logger from "@/components/core/server/winston/logger";
 import * as constants from "@/components/core/constants";
-import * as database from "./../database/database";
-import * as dynamicSql from "./../dynamicSql";
+import * as database from "@/pages/api/biz/database/database";
+import * as dynamicSql from "@/pages/api/biz/dynamicSql";
 import * as mailSender from "@/components/core/server/mailSender";
 import bcrypt from "bcryptjs";
 import qs from "qs"; // querystring 변환용

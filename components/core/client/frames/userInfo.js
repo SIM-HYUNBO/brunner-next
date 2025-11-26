@@ -1,10 +1,10 @@
 "use client";
 
-import SignoutButton from "./signoutButton";
-import DarkModeToggleButton from "./darkModeToggleButton";
 import { useState, useEffect } from "react";
-import * as constants from "@/components/core/constants";
 import Link from "next/link";
+import * as constants from "@/components/core/constants";
+import SignoutButton from "@/components/core/client/frames/signoutButton";
+import DarkModeToggleButton from "@/components/core/client/frames/darkModeToggleButton";
 
 export default function UserInfo({ handleLogout }) {
   const [currentSystemCode, setCurrentSystemCode] = useState(undefined);

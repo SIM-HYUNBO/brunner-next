@@ -1,10 +1,10 @@
 import * as React from "react";
 import { useState, useEffect, useRef } from "react";
+import * as ReactWindow from "react-window";
+import * as constants from "@/components/core/constants";
 import { JsonDatasetManager } from "@/components/workflow/jsonDatasetManager";
 import type { JsonObject } from "@/components/workflow/jsonDatasetManager";
-import * as ReactWindow from "react-window";
 import { Input, Button, Table, Select } from "antd";
-import * as constants from "@/components/core/constants";
 
 export type JsonColumnType = "string" | "number" | "boolean";
 type JsonDatasetEditorMode = "schema" | "data";

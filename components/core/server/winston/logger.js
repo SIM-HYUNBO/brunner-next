@@ -1,5 +1,4 @@
 import { createLogger, transports, format, addColors } from "winston";
-// import winstonDaily from "winston-daily-rotate-file";
 
 var alignColorsAndTime = format.combine(
   format.colorize({

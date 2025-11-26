@@ -3,9 +3,9 @@
 import logger from "@/components/core/server/winston/logger";
 import * as constants from "@/components/core/constants";
 import * as commonFunctions from "@/components/core/commonFunctions";
-import { DBConnectionManager } from "./workflow/dbConnectionManager";
-import * as workflowEngineServer from "./workflow/workflowEngineServer";
-import * as dynamicSql from "./dynamicSql";
+import { DBConnectionManager } from "@/pages/api/biz/workflow/dbConnectionManager";
+import * as workflowEngineServer from "@/pages/api/biz/workflow/workflowEngineServer";
+import * as dynamicSql from "@/pages/api/biz/dynamicSql";
 import { WorkflowDataModal } from "@/components/workflow/workflowDataModal";
 
 /**

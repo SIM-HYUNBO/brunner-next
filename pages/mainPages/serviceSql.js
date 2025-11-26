@@ -1,7 +1,7 @@
 `use strict`;
 
 import Layout from "@/components/core/client/frames/layout";
-import ServiceSqlContent from "../../components/contents/serviceSqlContent";
+import ServiceSqlContent from "@/components/contents/serviceSqlContent";
 import useInitTheme from "@/hooks/useInitTheme";
 
 export default function AdminPage() {

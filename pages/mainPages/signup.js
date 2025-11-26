@@ -1,6 +1,6 @@
 `use strict`;
 
-import SignupContent from "../../components/contents/signupContent";
+import SignupContent from "@/components/contents/signupContent";
 import Layout from "@/components/core/client/frames/layout";
 import useInitTheme from "@/hooks/useInitTheme";
 

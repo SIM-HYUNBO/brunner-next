@@ -4,7 +4,7 @@ import { useState, useRef, useEffect } from "react";
 import { useDeviceType } from "@/components/core/commonFunctions";
 import GoverningMessage from "@/components/core/client/governingMessage";
 import LottiePlayer from "@/components/core/client/lottiePlayer";
-import UserAccountInfo from "../core/client/userAccountInfo";
+import UserAccountInfo from "@/components/core/client/userAccountInfo";
 
 export default function UserAccountContent() {
   const { isMobile, isTablet } = useDeviceType();

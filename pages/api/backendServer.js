@@ -3,17 +3,16 @@
 import logger from "@/components/core/server/winston/logger";
 import * as constants from "@/components/core/constants";
 import * as commonFunctions from "@/components/core/commonFunctions";
-import * as database from "./biz/database/database";
-import * as dynamicSql from "./biz/dynamicSql";
-import * as security from "./biz/security";
-import * as postInfo from "./biz/postInfo";
-import * as postCommentInfo from "./biz/postCommentInfo";
+import * as database from "@/pages/api/biz/database/database";
+import * as dynamicSql from "@/pages/api/biz/dynamicSql";
+import * as security from "@/pages/api/biz/security";
+import * as postInfo from "@/pages/api/biz/postInfo";
+import * as postCommentInfo from "@/pages/api/biz/postCommentInfo";
 import * as edocComponentTemplate from "./biz/eDoc/eDocComponentTemplate";
-import * as edocDocument from "./biz/eDoc/eDocDocument";
-import * as edocCustom from "./biz/eDoc/eDocCustom";
-import * as workflow from "./biz/workflow";
-
-import * as pharmacy from "./biz/pharmacy/pharmacy";
+import * as edocDocument from "@/pages/api/biz/eDoc/eDocDocument";
+import * as edocCustom from "@/pages/api/biz/eDoc/eDocCustom";
+import * as workflow from "@/pages/api/biz/workflow";
+import * as pharmacy from "@/pages/api/biz/pharmacy/pharmacy";
 
 export const config = {
   api: {

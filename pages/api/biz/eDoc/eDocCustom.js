@@ -3,8 +3,8 @@
 import logger from "@/components/core/server/winston/logger";
 import * as constants from "@/components/core/constants";
 import * as commonFunctions from "@/components/core/commonFunctions";
-import * as database from "../database/database";
-import * as dynamicSql from "../dynamicSql";
+import * as database from "@/pages/api/biz/database/database";
+import * as dynamicSql from "@/pages/api/biz/dynamicSql";
 
 // 사용자가 eDocDesigner로 만든 화면에서 백엔드를 호출한 경우 처리한다.
 // 커스텀 서비스 처리 로직의 일반화가 중요하다.

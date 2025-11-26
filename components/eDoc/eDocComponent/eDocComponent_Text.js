@@ -1,9 +1,9 @@
 `use strict`;
 
 import React from "react";
-import EDocTextStyleEditor from "@/components/eDoc/eDocTextStyleEditor";
 import * as constants from "@/components/core/constants";
 import { Select } from "antd";
+import EDocTextStyleEditor from "@/components/eDoc/eDocTextStyleEditor";
 
 export const initDefaultRuntimeData = (defaultRuntimeData) => {
   defaultRuntimeData.content = "여기에 텍스트를 설정하세요";
