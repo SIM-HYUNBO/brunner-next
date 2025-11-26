@@ -1,12 +1,9 @@
 `use strict`;
 
-import useInitTheme from "@/hooks/useInitTheme";
 import Layout from "@/components/core/client/frames/layout";
 import UserAccountContent from "@/components/contents/userAccountContent";
 
 export default function UserAccount() {
-  useInitTheme();
-
   return (
     <>
       <UserAccountContent />

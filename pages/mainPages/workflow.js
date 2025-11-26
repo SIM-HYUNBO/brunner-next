@@ -1,12 +1,9 @@
 `use strict`;
 
-import useInitTheme from "@/hooks/useInitTheme";
 import Layout from "@/components/core/client/frames/layout";
 import WorkflowContent from "@/components/contents/workflowContent";
 
 export default function Workflow() {
-  useInitTheme();
-
   return (
     <>
       <WorkflowContent />

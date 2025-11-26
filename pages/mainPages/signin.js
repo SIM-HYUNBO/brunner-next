@@ -1,12 +1,9 @@
 `use strict`;
 
-import useInitTheme from "@/hooks/useInitTheme";
 import Layout from "@/components/core/client/frames/layout";
 import SigninContent from "@/components/contents/signinContent";
 
 export default function Signin() {
-  useInitTheme();
-
   return (
     <>
       <SigninContent />

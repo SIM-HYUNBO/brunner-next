@@ -1,11 +1,8 @@
 `use strict`;
 
-import useInitTheme from "@/hooks/useInitTheme";
 import Layout from "@/components/core/client/frames/layout";
 import SupplierSettingContent from "@/components/contents/pharmacy/supplierSettingContent";
 export default function SupplierSetting() {
-  useInitTheme();
-
   return (
     <>
       <SupplierSettingContent />

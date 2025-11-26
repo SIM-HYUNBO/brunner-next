@@ -1,12 +1,9 @@
 `use strict`;
 
-import useInitTheme from "@/hooks/useInitTheme";
 import Layout from "@/components/core/client/frames/layout";
 import UploadDailyOrderContent from "@/components/contents/pharmacy/uploadDailyOrderContent";
 
 export default function ExcelUpload() {
-  useInitTheme();
-
   return (
     <>
       <UploadDailyOrderContent />

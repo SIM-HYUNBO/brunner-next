@@ -1,11 +1,9 @@
 `use strict`;
-import useInitTheme from "@/hooks/useInitTheme";
+
 import Layout from "@/components/core/client/frames/layout";
 import ResetPasswordContent from "@/components/contents/resetPasswordContent";
 
 export default function ResetPassword() {
-  useInitTheme();
-
   return (
     <>
       <ResetPasswordContent />

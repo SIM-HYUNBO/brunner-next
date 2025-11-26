@@ -1,12 +1,9 @@
 `use strict`;
 
-import useInitTheme from "@/hooks/useInitTheme";
 import Layout from "@/components/core/client/frames/layout";
 import ContactContent from "@/components/contents/contactContent";
 
 export default function Contact() {
-  useInitTheme();
-
   return (
     <>
       <ContactContent />
