@@ -89,7 +89,7 @@ const upsertOne = async (txnId, jRequest) => {
       // INSERT
       const sql = await dynamicSql.getSQL(
         jRequest.systemCode,
-        "insert_TB_DOC_DOCUMENT",
+        "insert_BRUNNER.TB_DOC_DOCUMENT",
         1
       );
       const insertResult = await database.executeSQL(sql, [
@@ -113,7 +113,7 @@ const upsertOne = async (txnId, jRequest) => {
       // UPDATE
       const sql = await dynamicSql.getSQL(
         jRequest.systemCode,
-        "update_TB_DOC_DOCUMENT",
+        "update_BRUNNER.TB_DOC_DOCUMENT",
         1
       );
       const updateResult = await database.executeSQL(sql, [
@@ -161,7 +161,7 @@ const selectOne = async (txnId, jRequest) => {
     // ✅ TB_DOC_DOCUMENT에서 pages 포함 가져오기
     const sql = await dynamicSql.getSQL(
       jRequest.systemCode,
-      "select_TB_DOC_DOCUMENT",
+      "select_BRUNNER.TB_DOC_DOCUMENT",
       1
     );
     const select_TB_DOC_DOCUMENT = await database.executeSQL(sql, [
@@ -210,7 +210,7 @@ const deleteOne = async (txnId, jRequest) => {
     // TB_DOC_DOCUMENT 삭제만 수행
     const sql = await dynamicSql.getSQL(
       jRequest.systemCode,
-      "delete_TB_DOC_DOCUMENT",
+      "delete_BRUNNER.TB_DOC_DOCUMENT",
       1
     );
     const delete_TB_DOC_DOCUMENT = await database.executeSQL(sql, [
@@ -240,7 +240,7 @@ const selectUserAll = async (txnId, jRequest) => {
     var sql = null;
     sql = await dynamicSql.getSQL(
       jRequest.systemCode,
-      "select_TB_DOC_DOCUMENT",
+      "select_BRUNNER.TB_DOC_DOCUMENT",
       2
     );
     var select_TB_DOC_DOCUMENT = await database.executeSQL(sql, [
@@ -272,7 +272,7 @@ const selectAdminAll = async (txnId, jRequest) => {
     var sql = null;
     sql = await dynamicSql.getSQL(
       jRequest.systemCode,
-      "select_TB_DOC_DOCUMENT",
+      "select_BRUNNER.TB_DOC_DOCUMENT",
       3
     );
     var select_TB_DOC_DOCUMENT = await database.executeSQL(sql, [

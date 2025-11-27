@@ -557,7 +557,7 @@ const sendEMailAuthCode = async (txnId, jRequest) => {
         // 해당 인증코드를 DB에 저장
         var sql = await dynamicSql.getSQL(
           jRequest.systemCode,
-          `update_TB_COR_USER_MST`,
+          `update_BRUNNER.TB_COR_USER_MST`,
           2
         );
         var update_TB_COR_USER_MST_02 = await database.executeSQL(sql, [

@@ -33,7 +33,7 @@ const selectAll = async (txnId, jRequest) => {
     var sql = null;
     sql = await dynamicSql.getSQL(
       jRequest.systemCode,
-      "select_TB_DOC_COMPONENT_TEMPLATE",
+      "select_BRUNNER.TB_DOC_COMPONENT_TEMPLATE",
       1
     );
     var select_TB_DOC_COMPONENT_TEMPLATE = await database.executeSQL(sql, [
