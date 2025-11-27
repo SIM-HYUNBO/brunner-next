@@ -93,22 +93,22 @@ const generateTxnId = async () => {
 
 let isReady = false;
 let readyPromise = null;
-let serviceSql = null;
+let dynamicSqlList = null;
 
 export async function initializeServer() {
   if (isReady) return Promise.resolve(); // 이미 초기화가 완료되었으면 그냥 통과
   if (readyPromise) return readyPromise; // 이미 초기화가 시작되었으면 실행중인 함수 promise 반환
 
-  logger.info("Loading Service SQL ...");
+  logger.info("Loading Dynamic SQL ...");
 
   // 즉시 실행 async 함수로 Promise 생성
   readyPromise = (async () => {
-    if (!process.serviceSql) {
-      process.serviceSql = await dynamicSql.loadAll();
-      serviceSql = process.serviceSql;
-      logger.info(`Service SQL loaded: ${serviceSql?.size}`);
+    if (!process.dynamicSql) {
+      process.dynamicSql = await dynamicSql.loadAll();
+      dynamicSqlList = process.dynamicSql;
+      logger.info(`Dynamic SQL loaded: ${dynamicSqlList?.size}`);
     } else {
-      serviceSql = process.serviceSql;
+      dynamicSqlList = process.dynamicSql;
     }
 
     isReady = true; // 초기화 완료 표시

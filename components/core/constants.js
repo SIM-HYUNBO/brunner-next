@@ -60,7 +60,7 @@ export const messages = {
   SERVER_NOT_SUPPORTED_MODULE: `Not supported module`,
   SERVER_NOW_INITIALIZING: `Server is now initializing...`,
   SERVER_NO_COMMAND_NAME: `No commandName provided in request.`,
-  SERVER_SQL_NOT_LOADED: `Service SQL not loaded.`,
+  SERVER_SQL_NOT_LOADED: `Dynamic SQL not loaded.`,
   SIGNOUT: `Do you want to signout now?`,
   SUCCESS_ADDED: `Successfully added.`,
   SUCCESS_APPLIED: `Successfully applied.`,

@@ -153,7 +153,7 @@ async function updateOne(systemCode, txnId, jRequest) {
         jResponse.error_message = constants.messages.EMPTY_STRING;
       } else {
         jResponse.error_code = -3;
-        jResponse.error_message = `Failed to update serviceSQL.\n`;
+        jResponse.error_message = `Failed to update dynamicSql.\n`;
       }
     } else if (jRequest.action === "Create") {
       sql = await dynamicSql.getSQL(
@@ -174,7 +174,7 @@ async function updateOne(systemCode, txnId, jRequest) {
         jResponse.error_message = constants.messages.EMPTY_STRING;
       } else {
         jResponse.error_code = -3;
-        jResponse.error_message = `Failed to create serviceSQL.\n`;
+        jResponse.error_message = `Failed to create dynamicSql.\n`;
       }
     }
   } catch (e) {
@@ -255,7 +255,7 @@ async function deleteOne(systemCode, txnId, jRequest) {
       jResponse.error_message = constants.messages.EMPTY_STRING;
     } else {
       jResponse.error_code = -3;
-      jResponse.error_message = `Failed to delete serviceSQL.\n`;
+      jResponse.error_message = `Failed to delete dynamicSql.\n`;
     }
   } catch (e) {
     logger.error(e);
@@ -269,8 +269,8 @@ async function deleteOne(systemCode, txnId, jRequest) {
 async function loadAll() {
   try {
     // 이미 로딩했으면 로딩 안하고 성공 리턴
-    if (process && process.serviceSql && process.serviceSql.size > 0) {
-      return process.serviceSql;
+    if (process && process.dynamicSql && process.dynamicSql.size > 0) {
+      return process.dynamicSql;
     }
 
     logger.warn(`Start loading service queries.\n`);
@@ -293,8 +293,8 @@ async function loadAll() {
           row.sql_content
         );
       });
-      process.serviceSql = loadedSQLs;
-      return process.serviceSql.size;
+      process.dynamicSql = loadedSQLs;
+      return process.dynamicSql.size;
     } else {
       throw new Error(constants.messages.SERVER_SQL_NOT_LOADED);
     }
@@ -309,13 +309,13 @@ async function loadAll() {
         dynamicSql
       );
     }
-    return process.serviceSql;
+    return process.dynamicSql;
   }
 }
 
 const getSQL = async (systemCode, sqlName, sqlSeq) => {
   try {
-    var sql = process.serviceSql.get(`${systemCode}_${sqlName}_${sqlSeq}`);
+    var sql = process.dynamicSql.get(`${systemCode}_${sqlName}_${sqlSeq}`);
     if (!sql) throw new Error(constants.messages.DATABASE_FAILED);
     return sql;
   } catch (e) {
@@ -325,7 +325,7 @@ const getSQL = async (systemCode, sqlName, sqlSeq) => {
 
 const setSQL = async (systemCode, sqlName, sqlSeq, sqlContent) => {
   try {
-    var sql = process.serviceSql.set(
+    var sql = process.dynamicSql.set(
       `${systemCode}_${sqlName}_${sqlSeq}`,
       sqlContent
     );
@@ -337,7 +337,7 @@ const setSQL = async (systemCode, sqlName, sqlSeq, sqlContent) => {
 
 const deleteSQL = async (systemCode, sqlName, sqlSeq) => {
   try {
-    var sql = process.serviceSql.delete(`${systemCode}_${sqlName}_${sqlSeq}`);
+    var sql = process.dynamicSql.delete(`${systemCode}_${sqlName}_${sqlSeq}`);
     return sql;
   } catch (e) {
     throw e;

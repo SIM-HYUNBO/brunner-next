@@ -19,8 +19,8 @@ export async function getDropdownMenuItems() {
     items.push({ label: adminSectionLabel, type: "section" });
     items.push(
       {
-        label: "Service SQL",
-        href: "/mainPages/serviceSql",
+        label: "Dynamic SQL",
+        href: "/mainPages/dynamicSql",
         type: "item",
         parent: "Admin's pages",
       },
