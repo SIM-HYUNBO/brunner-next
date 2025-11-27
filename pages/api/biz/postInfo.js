@@ -58,7 +58,7 @@ const selectAll = async (txnId, jRequest) => {
     var sql = null;
     sql = await dynamicSql.getSQL(
       jRequest.systemCode,
-      "select_TB_COR_POST_INFO",
+      "select_BRUNNER.TB_COR_POST_INFO",
       1
     );
     var select_TB_COR_POST_INFO = await database.executeSQL(sql, [
@@ -71,7 +71,7 @@ const selectAll = async (txnId, jRequest) => {
 
       sql = await dynamicSql.getSQL(
         jRequest.systemCode,
-        "select_TB_COR_POST_COMMENT_INFO",
+        "select_BRUNNER.TB_COR_POST_COMMENT_INFO",
         1
       );
       var select_TB_COR_POST_COMMENT_INFO = await database.executeSQL(sql, [
@@ -112,7 +112,7 @@ const insertOne = async (txnId, jRequest) => {
     var sql = null;
     sql = await dynamicSql.getSQL(
       jRequest.systemCode,
-      "insert_TB_COR_POST_INFO",
+      "insert_BRUNNER.TB_COR_POST_INFO",
       1
     );
 
@@ -127,7 +127,7 @@ const insertOne = async (txnId, jRequest) => {
     if (insert_TB_COR_POST_INFO_01.rowCount === 1) {
       sql = await dynamicSql.getSQL(
         jRequest.systemCode,
-        "select_TB_COR_POST_INFO",
+        "select_BRUNNER.TB_COR_POST_INFO",
         2
       );
       var select_TB_COR_POST_INFO_02 = await database.executeSQL(sql, [
@@ -161,7 +161,7 @@ const updateOne = async (txnId, jRequest) => {
     var sql = null;
     sql = await dynamicSql.getSQL(
       jRequest.systemCode,
-      "update_TB_COR_POST_INFO",
+      "update_BRUNNER.TB_COR_POST_INFO",
       1
     );
     var update_TB_COR_POST_INFO_01 = await database.executeSQL(sql, [
@@ -204,7 +204,7 @@ const deleteOne = async (txnId, jRequest) => {
     var sql = null;
     sql = await dynamicSql.getSQL(
       jRequest.systemCode,
-      "delete_TB_COR_POST_INFO",
+      "delete_BRUNNER.TB_COR_POST_INFO",
       1
     );
     var delete_TB_COR_POST_INFO_01 = await database.executeSQL(sql, [
@@ -216,7 +216,7 @@ const deleteOne = async (txnId, jRequest) => {
     if (delete_TB_COR_POST_INFO_01.rowCount === 1) {
       sql = await dynamicSql.getSQL(
         jRequest.systemCode,
-        "delete_TB_COR_POST_COMMENT_INFO",
+        "delete_BRUNNER.TB_COR_POST_COMMENT_INFO",
         1
       );
       var delete_TB_COR_POST_INFO_01 = await database.executeSQL(sql, [

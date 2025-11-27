@@ -308,7 +308,7 @@ export class DBConnectionManager {
     try {
       const sql = await dynamicSql.getSQL(
         "00",
-        "select_TB_COR_WORKFLOW_DBCONNECTIONS",
+        "select_BRUNNER.TB_COR_WORKFLOW_DBCONNECTIONS",
         1
       );
       const sqlResult = await database.executeSQL(sql, [systemCode]); // 필요 시 파라미터 사용
@@ -331,7 +331,7 @@ export class DBConnectionManager {
     try {
       const sql = await dynamicSql.getSQL(
         "00",
-        "insert_TB_COR_WORKFLOW_DBCONNECTIONS",
+        "insert_BRUNNER.TB_COR_WORKFLOW_DBCONNECTIONS",
         1
       );
       sqlResult = await database.executeSQL(sql, [
@@ -369,7 +369,7 @@ export class DBConnectionManager {
     try {
       var sql = await dynamicSql.getSQL(
         "00",
-        "update_TB_COR_WORKFLOW_DBCONNECTIONS",
+        "update_BRUNNER.TB_COR_WORKFLOW_DBCONNECTIONS",
         1
       );
       var sqlResult = await database.executeSQL(sql, [
@@ -410,7 +410,7 @@ export class DBConnectionManager {
     try {
       const sql = await dynamicSql.getSQL(
         "00",
-        "delete_TB_COR_WORKFLOW_DBCONNECTIONS",
+        "delete_BRUNNER.TB_COR_WORKFLOW_DBCONNECTIONS",
         1
       );
       const sqlResult = await database.executeSQL(sql, [dbConnectionId]);

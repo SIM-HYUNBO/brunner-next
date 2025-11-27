@@ -185,7 +185,7 @@ const saveTxnHistoryAsync = (
 
       const sql = await dynamicSql.getSQL(
         systemCode,
-        "insert_TB_COR_TXN_HIST",
+        "insert_BRUNNER.TB_COR_TXN_HIST",
         1
       );
       await database.executeSQL(sql, [

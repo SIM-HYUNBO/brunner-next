@@ -1127,7 +1127,7 @@ export async function saveWorkflow(
 
   var sql = await dynamicSql.getSQL(
     systemCode,
-    `select_TB_COR_WORKFLOW_MST`,
+    `select_BRUNNER.TB_COR_WORKFLOW_MST`,
     1
   );
   var select_TB_COR_WORKFLOW_MST: any = await database.executeSQL(sql, [
@@ -1182,7 +1182,7 @@ export async function deleteWorkflow(
 
   var sql = await dynamicSql.getSQL(
     systemCode,
-    `select_TB_COR_WORKFLOW_MST`,
+    `select_BRUNNER.TB_COR_WORKFLOW_MST`,
     1
   );
   var select_TB_COR_WORKFLOW_MST: any = await database.executeSQL(sql, [
@@ -1196,7 +1196,11 @@ export async function deleteWorkflow(
     result.error_message = constants.messages.NO_DATA_FOUND;
   } else {
     // delete
-    sql = await dynamicSql.getSQL(systemCode, `delete_TB_COR_WORKFLOW_MST`, 1);
+    sql = await dynamicSql.getSQL(
+      systemCode,
+      `delete_BRUNNER.TB_COR_WORKFLOW_MST`,
+      1
+    );
 
     delete_TB_COR_WORKFLOW_MST_01 = await database.executeSQL(sql, [
       systemCode,
@@ -1272,7 +1276,7 @@ export async function getWorkflowList(systemCode: string, userId: string) {
     // 워크플로우 목록 조회 쿼리 (DB 구조에 맞게 수정 가능)
     const sql = await dynamicSql.getSQL(
       systemCode,
-      `select_TB_COR_WORKFLOW_MST`,
+      `select_BRUNNER.TB_COR_WORKFLOW_MST`,
       2
     );
 
@@ -1302,7 +1306,7 @@ export async function getWorkflowByIdOrName(
     // 1️⃣ SQL 조회
     const sql = await dynamicSql.getSQL(
       systemCode,
-      "select_TB_COR_WORKFLOW_MST",
+      "select_BRUNNER.TB_COR_WORKFLOW_MST",
       1
     );
     const dbResult: any = await database.executeSQL(sql, [

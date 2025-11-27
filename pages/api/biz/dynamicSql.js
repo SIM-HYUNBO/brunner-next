@@ -37,9 +37,13 @@ async function selectAll(systemCode, txnId, jRequest) {
   try {
     var SQLs = [];
 
-    var sql = await dynamicSql.getSQL(systemCode, `select_TB_COR_SQL_INFO`, 1);
+    var sql = await dynamicSql.getSQL(
+      systemCode,
+      `select_BRUNNER.TB_COR_SQL_INFO`,
+      1
+    );
 
-    const sql_result = await database.executeSQL(sql, []);
+    const sql_result = await database.executeSQL(sql, [systemCode]);
 
     if (sql_result) {
       sql_result.rows.forEach((row) => {
@@ -97,7 +101,7 @@ async function updateOne(systemCode, txnId, jRequest) {
 
     var sql = await dynamicSql.getSQL(
       jRequest.systemCode,
-      `select_TB_COR_SQL_INFO`,
+      `select_BRUNNER.TB_COR_SQL_INFO`,
       2
     );
     var select_TB_COR_SQL_INFO_02 = await database.executeSQL(sql, [
@@ -126,7 +130,7 @@ async function updateOne(systemCode, txnId, jRequest) {
     if (jRequest.action === "Update") {
       sql = await dynamicSql.getSQL(
         jRequest.systemCode,
-        `update_TB_COR_SQL_INFO`,
+        `update_BRUNNER.TB_COR_SQL_INFO`,
         1
       );
       var update_TB_COR_SQL_INFO_01 = await database.executeSQL(sql, [
@@ -154,7 +158,7 @@ async function updateOne(systemCode, txnId, jRequest) {
     } else if (jRequest.action === "Create") {
       sql = await dynamicSql.getSQL(
         jRequest.systemCode,
-        `insert_TB_COR_SQL_INFO`,
+        `insert_BRUNNER.TB_COR_SQL_INFO`,
         1
       );
       var insert_TB_COR_SQL_INFO_01 = await database.executeSQL(sql, [
@@ -213,7 +217,7 @@ async function deleteOne(systemCode, txnId, jRequest) {
 
     var sql = await dynamicSql.getSQL(
       jRequest.systemCode,
-      `select_TB_COR_SQL_INFO`,
+      `select_BRUNNER.TB_COR_SQL_INFO`,
       2
     );
     var select_TB_COR_SQL_INFO_02 = await database.executeSQL(sql, [
@@ -230,7 +234,7 @@ async function deleteOne(systemCode, txnId, jRequest) {
 
     sql = await dynamicSql.getSQL(
       jRequest.systemCode,
-      `delete_TB_COR_SQL_INFO`,
+      `delete_BRUNNER.TB_COR_SQL_INFO`,
       1
     );
     var delete_TB_COR_SQL_INFO_01 = await database.executeSQL(sql, [

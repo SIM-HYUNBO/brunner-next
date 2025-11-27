@@ -85,7 +85,7 @@ const upsertSupplierOne = async (txnId, jRequest) => {
 
     var sql = await dynamicSql.getSQL(
       jRequest.systemCode,
-      `select_TB_COR_USER_MST`,
+      `select_BRUNNER.TB_COR_USER_MST`,
       1
     );
     var select_TB_COR_USER_MST_01 = await database.executeSQL(sql, [
@@ -110,7 +110,7 @@ const upsertSupplierOne = async (txnId, jRequest) => {
 
     sql = await dynamicSql.getSQL(
       jRequest.systemCode,
-      `select_TB_PHM_SUPPLIER_INFO`,
+      `select_PHARMACY.TB_PHM_SUPPLIER_INFO`,
       1
     );
 
@@ -134,7 +134,7 @@ const upsertSupplierOne = async (txnId, jRequest) => {
     if (isInsert) {
       sql = await dynamicSql.getSQL(
         jRequest.systemCode,
-        `insert_TB_PHM_SUPPLIER_INFO`,
+        `insert_PHARMACY.TB_PHM_SUPPLIER_INFO`,
         1
       );
       upsert_TB_PHM_SUPPLIER_INFO_01 = await database.executeSQL(sql, [
@@ -146,7 +146,7 @@ const upsertSupplierOne = async (txnId, jRequest) => {
     } else {
       sql = await dynamicSql.getSQL(
         jRequest.systemCode,
-        `update_TB_PHM_SUPPLIER_INFO`,
+        `update_PHARMACY.TB_PHM_SUPPLIER_INFO`,
         1
       );
       upsert_TB_PHM_SUPPLIER_INFO_01 = await database.executeSQL(sql, [
@@ -194,7 +194,7 @@ const deleteSupplierOne = async (txnId, jRequest) => {
 
     var sql = await dynamicSql.getSQL(
       jRequest.systemCode,
-      `select_TB_COR_USER_MST`,
+      `select_BRUNNER.TB_COR_USER_MST`,
       1
     );
     var select_TB_COR_USER_MST_01 = await database.executeSQL(sql, [
@@ -219,7 +219,7 @@ const deleteSupplierOne = async (txnId, jRequest) => {
 
     sql = await dynamicSql.getSQL(
       jRequest.systemCode,
-      `select_TB_PHM_SUPPLIER_INFO`,
+      `select_PHARMACY.TB_PHM_SUPPLIER_INFO`,
       1
     );
 
@@ -245,7 +245,7 @@ const deleteSupplierOne = async (txnId, jRequest) => {
 
     sql = await dynamicSql.getSQL(
       jRequest.systemCode,
-      `delete_TB_PHM_SUPPLIER_INFO`,
+      `delete_PHARMACY.TB_PHM_SUPPLIER_INFO`,
       1
     );
     delete_TB_PHM_SUPPLIER_INFO_01 = await database.executeSQL(sql, [
@@ -290,7 +290,7 @@ const selectUserSupplierAll = async (txnId, jRequest) => {
 
     var sql = await dynamicSql.getSQL(
       jRequest.systemCode,
-      `select_TB_COR_USER_MST`,
+      `select_BRUNNER.TB_COR_USER_MST`,
       1
     );
     var select_TB_COR_USER_MST_01 = await database.executeSQL(sql, [
@@ -314,7 +314,7 @@ const selectUserSupplierAll = async (txnId, jRequest) => {
 
     sql = await dynamicSql.getSQL(
       jRequest.systemCode,
-      `select_TB_PHM_SUPPLIER_INFO`,
+      `select_PHARMACY.TB_PHM_SUPPLIER_INFO`,
       2
     );
 
@@ -361,7 +361,7 @@ const uploadDailyOrder = async (txnId, jRequest) => {
 
     var sql = await dynamicSql.getSQL(
       jRequest.systemCode,
-      `select_TB_COR_USER_MST`,
+      `select_BRUNNER.TB_COR_USER_MST`,
       1
     );
     var select_TB_COR_USER_MST_01 = await database.executeSQL(sql, [
@@ -385,7 +385,7 @@ const uploadDailyOrder = async (txnId, jRequest) => {
 
     sql = await dynamicSql.getSQL(
       jRequest.systemCode,
-      `insert_TB_PHM_DAILY_ORDER`,
+      `insert_PHARMACY.TB_PHM_DAILY_ORDER`,
       1
     );
 
@@ -432,7 +432,7 @@ const viewDailyOrder = async (txnId, jRequest) => {
 
     var sql = await dynamicSql.getSQL(
       jRequest.systemCode,
-      `select_TB_COR_USER_MST`,
+      `select_BRUNNER.TB_COR_USER_MST`,
       1
     );
     var select_TB_COR_USER_MST_01 = await database.executeSQL(sql, [
@@ -456,7 +456,7 @@ const viewDailyOrder = async (txnId, jRequest) => {
 
     sql = await dynamicSql.getSQL(
       jRequest.systemCode,
-      `select_TB_PHM_DAILY_ORDER`,
+      `select_PHARMACY.TB_PHM_DAILY_ORDER`,
       1
     );
 
@@ -505,7 +505,7 @@ const automaticOrder = async (txnId, jRequest) => {
     // ===== 사용자 조회 =====
     let sql = await dynamicSql.getSQL(
       jRequest.systemCode,
-      `select_TB_COR_USER_MST`,
+      `select_BRUNNER.TB_COR_USER_MST`,
       1
     );
     const userResult = await database.executeSQL(sql, [
@@ -524,7 +524,7 @@ const automaticOrder = async (txnId, jRequest) => {
     // 건건이 자동 주문
     sql = await dynamicSql.getSQL(
       jRequest.systemCode,
-      `select_TB_PHM_DAILY_ORDER`,
+      `select_PHARMACY.TB_PHM_DAILY_ORDER`,
       1
     );
 
@@ -542,7 +542,7 @@ const automaticOrder = async (txnId, jRequest) => {
 
     sql = await dynamicSql.getSQL(
       jRequest.systemCode,
-      `select_TB_PHM_SUPPLIER_INFO`,
+      `select_PHARMACY.TB_PHM_SUPPLIER_INFO`,
       1
     );
 
@@ -602,7 +602,7 @@ async function updateOrderStatus(
 ) {
   const sql = await dynamicSql.getSQL(
     systemCode,
-    `update_TB_PHM_DAILY_ORDER`,
+    `update_PHARMACY.TB_PHM_DAILY_ORDER`,
     1
   );
 
@@ -639,7 +639,7 @@ const searchDrug = async (txnId, jRequest) => {
 
     var sql = await dynamicSql.getSQL(
       jRequest.systemCode,
-      `select_TB_COR_USER_MST`,
+      `select_BRUNNER.TB_COR_USER_MST`,
       1
     );
     var select_TB_COR_USER_MST_01 = await database.executeSQL(sql, [
@@ -675,7 +675,7 @@ const searchDrug = async (txnId, jRequest) => {
 
     sql = await dynamicSql.getSQL(
       jRequest.systemCode,
-      `select_TB_PHM_DRUG_INFO`,
+      `select_PHARMACY.TB_PHM_DRUG_INFO`,
       1
     );
 
@@ -723,7 +723,7 @@ const updateDailyOrderOne = async (txnId, jRequest) => {
 
     var sql = await dynamicSql.getSQL(
       jRequest.systemCode,
-      `select_TB_COR_USER_MST`,
+      `select_BRUNNER.TB_COR_USER_MST`,
       1
     );
     var select_TB_COR_USER_MST_01 = await database.executeSQL(sql, [
@@ -748,7 +748,7 @@ const updateDailyOrderOne = async (txnId, jRequest) => {
 
     sql = await dynamicSql.getSQL(
       jRequest.systemCode,
-      `select_TB_PHM_DAILY_ORDER`,
+      `select_PHARMACY.TB_PHM_DAILY_ORDER`,
       2
     );
 
@@ -775,7 +775,7 @@ const updateDailyOrderOne = async (txnId, jRequest) => {
 
     sql = await dynamicSql.getSQL(
       jRequest.systemCode,
-      `update_TB_PHM_DAILY_ORDER`,
+      `update_PHARMACY.TB_PHM_DAILY_ORDER`,
       2
     );
     update_TB_PHM_DAILY_ORDER_02 = await database.executeSQL(sql, [
