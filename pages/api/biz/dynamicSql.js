@@ -39,7 +39,7 @@ async function selectAll(systemCode, txnId, jRequest) {
 
     var sql = await dynamicSql.getSQL(systemCode, `select_TB_COR_SQL_INFO`, 1);
 
-    const sql_result = await database.executeSQL(sql, []);
+    const sql_result = await database.executeSQL(sql, [systemCode]);
 
     if (sql_result) {
       sql_result.rows.forEach((row) => {
