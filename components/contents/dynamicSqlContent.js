@@ -1,12 +1,12 @@
 `use strict`;
 
 import { useDeviceType } from "@/components/core/commonFunctions";
-import ServiceSQL from "@/components/core/client/serviceSQL";
+import DynamicSQL from "@/components/core/client/dynamicSQL";
 import * as userInfo from "@/components/core/client/frames/userInfo";
 import LottiePlayer from "@/components/core/client/lottiePlayer";
 import { Input, Button, Table } from "antd";
 
-export default function ServiceSqlContent() {
+export default function DynamicSqlContent() {
   const { isMobile, isTablet } = useDeviceType();
 
   return (
@@ -14,7 +14,7 @@ export default function ServiceSqlContent() {
       <div>
         {userInfo?.isAdminUser() && (
           <>
-            <h2 className={`page-title`}>Service SQL</h2>
+            <h2 className={`page-title`}>Dynamic SQL</h2>
             {!isMobile && (
               <div className={`items-center`}>
                 <LottiePlayer
@@ -27,7 +27,7 @@ export default function ServiceSqlContent() {
               </div>
             )}
             <div className={`flex justify-center w-full`}>
-              <ServiceSQL />
+              <DynamicSQL />
             </div>
           </>
         )}

@@ -67,7 +67,7 @@ const AutoResizeTextarea = forwardRef(
   }
 );
 
-const ServiceSQL = () => {
+const DynamicSQL = () => {
   // 로딩 & 메시지 박스
   // {
   const [loading, setLoading] = useState(false);
@@ -84,26 +84,26 @@ const ServiceSQL = () => {
     sql_seq: constants.General.EmptyString,
     sql_content: constants.General.EmptyString,
   });
-  var [currentServiceSQL, setCurrentServiceSQL] = useState(null);
+  var [currentDynamicSQL, setCurrentDynamicSQL] = useState(null);
 
   // Fetch queries from API
   useEffect(() => {
     fetchSQLList();
   }, []);
 
-  var editingServiceSQL;
+  var editingDynamicSQL;
 
   // Handle form input changes
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    editingServiceSQL = {
+    editingDynamicSQL = {
       system_code: name === "system_code" ? value : sqlInput.system_code,
       sql_name: name === "sql_name" ? value : sqlInput.sql_name,
       sql_seq: name === "sql_seq" ? value : sqlInput.sql_seq,
       sql_content: name === "sql_content" ? value : sqlInput.sql_content,
     };
 
-    setSqlInput((prevForm) => editingServiceSQL);
+    setSqlInput((prevForm) => editingDynamicSQL);
   };
 
   const fetchSQLList = async () => {
@@ -132,7 +132,7 @@ const ServiceSQL = () => {
         sql_seq: constants.General.EmptyString,
         sql_content: constants.General.EmptyString,
       });
-      setCurrentServiceSQL(null);
+      setCurrentDynamicSQL(null);
       setIsEditing(false);
       setIsCreating(false);
     } catch (e) {
@@ -181,7 +181,7 @@ const ServiceSQL = () => {
       sql_seq: constants.General.EmptyString,
       sql_content: constants.General.EmptyString,
     });
-    setCurrentServiceSQL({
+    setCurrentDynamicSQL({
       system_code: constants.General.EmptyString,
       sql_name: constants.General.EmptyString,
       sql_seq: constants.General.EmptyString,
@@ -199,7 +199,7 @@ const ServiceSQL = () => {
       sql_content: userQueryItem.sql_content,
     });
 
-    setCurrentServiceSQL(userQueryItem);
+    setCurrentDynamicSQL(userQueryItem);
 
     setIsEditing(true);
 
@@ -242,7 +242,7 @@ const ServiceSQL = () => {
                           focus:ring-blue-500 
                           focus:ring-opacity-50`}
       >
-        {currentServiceSQL ? "Update" : "Create"}
+        {currentDynamicSQL ? "Update" : "Create"}
       </Button>
     );
   };
@@ -557,4 +557,4 @@ const ServiceSQL = () => {
   );
 };
 
-export default ServiceSQL;
+export default DynamicSQL;
