@@ -143,7 +143,13 @@ const BrunnerTable = forwardRef(
     };
 
     const TableTitleArea = () => {
-      return <h2 className={`page-title`}>{tableTitle}</h2>;
+      return (
+        <h2
+          className={`text-3xl my-10 font-medium text-green-700 dark:text-green-500`}
+        >
+          {tableTitle}
+        </h2>
+      );
     };
 
     const TableConditionArea = () => {
