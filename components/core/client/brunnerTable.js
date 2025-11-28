@@ -155,19 +155,7 @@ const BrunnerTable = forwardRef(
     };
 
     const TableConditionArea = () => {
-      return (
-        <>
-          {FilteringConditions && <FilteringConditions />}
-
-          <div
-            className={`flex 
-                       justify-end 
-                       w-full 
-                       p-4 
-                       bg-gray-100 dark-bg-color`}
-          ></div>
-        </>
-      );
+      return <>{FilteringConditions && <FilteringConditions />}</>;
     };
 
     const TableBodyArea = () => {
@@ -204,31 +192,38 @@ const BrunnerTable = forwardRef(
                          mt-2`}
           >
             <thead className="semi-text-bg-color">
-              {headerGroups.map((headerGroup) => (
-                <tr {...headerGroup.getHeaderGroupProps()}>
-                  {headerGroup.headers.map((column) => (
-                    <th
-                      {...column.getHeaderProps({
-                        className: `text-center 
-                                ${
-                                  column.headerClassName
-                                    ? column.headerClassName
-                                    : constants.General.EmptyString
-                                }`,
-                      })}
-                    >
-                      {column.render("Header")}
-                      <span>
-                        {column.isSorted
-                          ? column.isSortedDesc
-                            ? " 🔽"
-                            : " 🔼"
-                          : constants.General.EmptyString}
-                      </span>
-                    </th>
-                  ))}
-                </tr>
-              ))}
+              {headerGroups.map((headerGroup) => {
+                const { key, ...restHeaderProps } =
+                  headerGroup.getHeaderGroupProps(); // key 제거
+                return (
+                  <tr key={key} {...restHeaderProps}>
+                    {headerGroup.headers.map((column) => {
+                      const { key: colKey, ...restColProps } =
+                        column.getHeaderProps({
+                          className: `text-center 
+                    ${
+                      column.headerClassName
+                        ? column.headerClassName
+                        : constants.General.EmptyString
+                    }`,
+                        });
+
+                      return (
+                        <th key={colKey} {...restColProps}>
+                          {column.render("Header")}
+                          <span>
+                            {column.isSorted
+                              ? column.isSortedDesc
+                                ? " 🔽"
+                                : " 🔼"
+                              : constants.General.EmptyString}
+                          </span>
+                        </th>
+                      );
+                    })}
+                  </tr>
+                );
+              })}
             </thead>
             <tbody {...getTableBodyProps()}>
               {rows.map((row) => {
@@ -373,7 +368,7 @@ const BrunnerTable = forwardRef(
       };
 
       return (
-        <div className={`mb-2 table w-full border mt-5 p-2`}>
+        <div className={`mb-2 table w-full border p-2`}>
           {columnHeaders.map(
             (header) =>
               !header.input_hidden && (

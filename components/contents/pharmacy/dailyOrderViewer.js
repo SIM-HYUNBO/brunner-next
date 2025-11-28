@@ -19,23 +19,23 @@ const FilteringConditions = React.memo(
     onOrder,
   }) => {
     return (
-      <div className="flex flex-wrap items-end gap-4">
-        <div className="flex flex-col">
+      <div className="flex flex-col w-full flex-wrap mt-5 items-start gap-4">
+        <div className="flex flex-row items-center">
           <label className="font-medium mb-1">
             Order Date <span className="text-red-500">*</span>
           </label>
           <input
             type="date"
-            className="border rounded p-2"
+            className="border rounded ml-2 p-2"
             value={orderDate}
             onChange={(e) => setOrderDate(e.target.value)}
           />
         </div>
 
-        <div className="flex flex-col">
+        <div className="flex flex-row items-center">
           <label className="font-medium mb-1">Supplier Name</label>
           <Select
-            className="border rounded p-2 w-[200px] h-11"
+            className="border rounded p-2 w-[200px] h-14 ml-2"
             value={supplierName}
             onChange={(value) => setSupplierName(value)}
           >
@@ -47,20 +47,21 @@ const FilteringConditions = React.memo(
             ))}
           </Select>
         </div>
+        <div className="flex flex-row items-center justify-between w-full">
+          <Button
+            onClick={onSearch}
+            className="bg-indigo-500 text-white px-4 py-2 rounded hover:bg-indigo-600"
+          >
+            Search
+          </Button>
 
-        <Button
-          onClick={onSearch}
-          className="bg-indigo-500 text-white px-4 py-2 rounded hover:bg-indigo-600"
-        >
-          Search
-        </Button>
-
-        <Button
-          onClick={onOrder}
-          className="bg-indigo-500 text-white px-4 py-2 rounded hover:bg-indigo-600"
-        >
-          Order
-        </Button>
+          <Button
+            onClick={onOrder}
+            className="bg-indigo-500 text-white px-4 py-2 rounded hover:bg-indigo-600"
+          >
+            Order
+          </Button>
+        </div>
       </div>
     );
   }
