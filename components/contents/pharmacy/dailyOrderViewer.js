@@ -85,7 +85,7 @@ export default function DailyOrderViewer() {
 
   const onSelectDrugSearchModal = async (
     selectedData,
-    usedQty,
+    soldQty,
     inventoryQty
   ) => {
     if (!selectedData?.edi_code || selectedData.edi_code === "") {
@@ -102,7 +102,7 @@ export default function DailyOrderViewer() {
         productCode: editingRow.values.product_code,
         newProductCode: selectedData.edi_code,
         newProductName: selectedData.item_name,
-        newUsedQty: usedQty,
+        newSoldQty: soldQty,
         newInventoryQty: inventoryQty,
       };
 
@@ -128,7 +128,7 @@ export default function DailyOrderViewer() {
     { Header: "Product Code", accessor: "product_code", type: "text" },
     { Header: "Product Name", accessor: "product_name", type: "text" },
     { Header: "Supplier Name", accessor: "supplier_name", type: "text" },
-    { Header: "Used Qty", accessor: "used_qty", type: "number" },
+    { Header: "Sold Qty", accessor: "sold_qty", type: "number" },
     { Header: "Inventory Qty", accessor: "current_inventory", type: "number" },
     { Header: "Order Result", accessor: "order_status", type: "text" },
   ];
@@ -257,7 +257,7 @@ export default function DailyOrderViewer() {
           onSelect={onSelectDrugSearchModal}
           initialSearchType="code" // code, name, company 중 code로 초기 검색
           initialSearchTerm={editingRow ? editingRow.values.product_code : ""}
-          initialUsedQty={editingRow ? editingRow.values.used_qty : 0}
+          initialSoldQty={editingRow ? editingRow.values.sold_qty : 0}
           initialInventoryQty={
             editingRow ? editingRow.values.current_inventory : 0
           }

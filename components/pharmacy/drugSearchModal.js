@@ -15,14 +15,14 @@ export default function DrugSearchModal({
   onSelect,
   initialSearchType,
   initialSearchTerm,
-  initialUsedQty = 1,
+  initialSoldQty = 1,
   initialInventoryQty = 0,
 }) {
   const { BrunnerMessageBox, openModal, openInputModal } = useModal();
 
   const [searchType, setSearchType] = useState(initialSearchType);
   const [searchTerm, setSearchTerm] = useState(initialSearchTerm);
-  const [usedQty, setUsedQty] = useState(initialUsedQty);
+  const [soldQty, setSoldQty] = useState(initialSoldQty);
   const [inventoryQty, setInventoryQty] = useState(initialInventoryQty);
   const [selectedRow, setSelectedRow] = useState(null);
   const [filteredData, setFilteredData] = useState([]);
@@ -186,14 +186,14 @@ export default function DrugSearchModal({
           />
         </div>
 
-        {/* Used / Inventory Qty */}
+        {/* Sold / Inventory Qty */}
         <div className="absolute left-0 w-full bottom-16 p-4 flex justify-end space-x-4 border-t">
           <div className="flex items-center space-x-2">
-            <label className="leading-7 text-sm text-gray-400">Used Qty</label>
+            <label className="leading-7 text-sm text-gray-400">Sold Qty</label>
             <Input
               type="number"
-              value={usedQty}
-              onChange={(e) => setUsedQty(e.target.value)}
+              value={soldQty}
+              onChange={(e) => setSoldQty(e.target.value)}
               className="w-24"
             />
           </div>
@@ -224,7 +224,7 @@ export default function DrugSearchModal({
             disabled={!selectedRow}
             type="primary"
             onClick={() => {
-              if (selectedRow) onSelect(selectedRow, usedQty, inventoryQty);
+              if (selectedRow) onSelect(selectedRow, soldQty, inventoryQty);
               onClose();
             }}
           >

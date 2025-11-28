@@ -396,7 +396,7 @@ const uploadDailyOrder = async (txnId, jRequest) => {
         row.productCode,
         row.productName,
         row.supplierName,
-        row.usedQty,
+        row.soldQty,
         row.currentInventory,
       ]);
     }
@@ -784,7 +784,7 @@ const updateDailyOrderOne = async (txnId, jRequest) => {
       jRequest.productCode,
       jRequest.newProductCode,
       jRequest.newProductName,
-      jRequest.newUsedQty,
+      jRequest.newSoldQty,
       jRequest.newInventoryQty,
       orderStatus.OrderChaned,
     ]);
@@ -995,10 +995,10 @@ const runHanshinOrder = async (systemCode, user_id, supplier_params, rows) => {
       const { stock, quantityInput: qtyId } = item;
 
       const n_stock = Number(item.stock);
-      const n_usedQty = Number(row.used_qty);
+      const n_soldQty = Number(row.sold_qty);
       const n_orderRequiredQty = calculateOrderRequiredQty(
         item.productName,
-        n_usedQty,
+        n_soldQty,
         searchResultRows[0].standard
       );
 
@@ -1228,10 +1228,10 @@ const runKeonHwaOrder = async (systemCode, user_id, supplier_params, rows) => {
       const { stock, quantityInput: qtyId } = item;
 
       const n_stock = Number(item.stock);
-      const n_usedQty = Number(row.used_qty);
+      const n_soldQty = Number(row.sold_qty);
       const n_orderRequiredQty = calculateOrderRequiredQty(
         item.productName,
-        n_usedQty,
+        n_soldQty,
         searchResultRows[0].standard
       );
 
@@ -1416,10 +1416,10 @@ const runNamshinOrder = async (systemCode, user_id, supplier_params, rows) => {
       const { stock, quantityInput: qtyId } = item;
 
       const n_stock = Number(item.stock);
-      const n_usedQty = Number(row.used_qty);
+      const n_soldQty = Number(row.sold_qty);
       const n_orderRequiredQty = calculateOrderRequiredQty(
         item.productName,
-        n_usedQty,
+        n_soldQty,
         searchResultRows[0].standard
       );
 
@@ -1615,10 +1615,10 @@ const runUPharmMallOrder = async (
       const { stock } = item;
       const n_stock = Number(item.stock);
 
-      const n_usedQty = Number(row.used_qty);
+      const n_soldQty = Number(row.sold_qty);
       const n_orderRequiredQty = calculateOrderRequiredQty(
         row.product_name,
-        n_usedQty,
+        n_soldQty,
         searchResultRows[0].standard
       );
 
@@ -1640,7 +1640,7 @@ const runUPharmMallOrder = async (
       const firstRow = await page.$("#list1 tbody tr:first-child");
 
       // 2) 첫 번째 row의 주문수량 input 가져오기
-      const orderInput = await firstRow.$("input[id^='usedQty']");
+      const orderInput = await firstRow.$("input[id^='soldQty']");
       await orderInput.click({ clickCount: 3 }); // 기존 값 지우기
       await orderInput.type(`${n_orderRequiredQty}`);
 
@@ -1858,10 +1858,10 @@ const runFamilyPharmOrder = async (
       // 첫 번째 아이템만 처리
       const item = searchResultRows[0];
       const n_stock = Number(item.stock);
-      const n_usedQty = Number(row.used_qty);
+      const n_soldQty = Number(row.sold_qty);
       const n_orderRequiredQty = calculateOrderRequiredQty(
         item.productName,
-        n_usedQty,
+        n_soldQty,
         searchResultRows[0].standard
       );
 
@@ -2080,10 +2080,10 @@ const runWithUsOrder = async (systemCode, user_id, supplier_params, rows) => {
       const { stock, quantityInput: qtyId } = item;
 
       const n_stock = Number(item.stock);
-      const n_usedQty = Number(row.used_qty);
+      const n_soldQty = Number(row.sold_qty);
       const n_orderRequiredQty = calculateOrderRequiredQty(
         item.productName,
-        n_usedQty,
+        n_soldQty,
         searchResultRows[0].standard
       );
 
@@ -2316,10 +2316,10 @@ const runGeoPharmOrder = async (
         );
       }
 
-      const n_usedQty = Number(row.used_qty);
+      const n_soldQty = Number(row.sold_qty);
       const n_orderRequiredQty = calculateOrderRequiredQty(
         row.product_name,
-        n_usedQty,
+        n_soldQty,
         searchResultRows[0].standard
       );
 
@@ -2503,10 +2503,10 @@ const runGeoWebOrder = async (systemCode, user_id, supplier_params, rows) => {
         // throw new Error(lastRowResult);
       }
       const n_stock = Number(searchResultRows[0].stock);
-      const n_usedQty = Number(row.used_qty);
+      const n_soldQty = Number(row.sold_qty);
       const n_orderRequiredQty = calculateOrderRequiredQty(
         row.product_name,
-        n_usedQty,
+        n_soldQty,
         searchResultRows[0].standard
       );
 
@@ -2698,10 +2698,10 @@ const runBridgePharmOrder = async (
       const { stock, quantityInput: qtyId } = item;
 
       const n_stock = Number(item.stock);
-      const n_usedQty = Number(row.used_qty);
+      const n_soldQty = Number(row.sold_qty);
       const n_orderRequiredQty = calculateOrderRequiredQty(
         item.productName,
-        n_usedQty,
+        n_soldQty,
         searchResultRows[0].standard
       );
 
@@ -2787,58 +2787,6 @@ function getEdgePath() {
   return null;
 }
 
-function parseConsumerQty(standard) {
-  if (!standard) return -1;
-
-  let s = standard
-    .replace(/×/g, "x")
-    .replace(/（/g, "(")
-    .replace(/）/g, ")")
-    .replace(/\s+/g, "")
-    .trim();
-
-  // 1) 정(T)/캡슐(C)/정/포/ea/ptp
-  const pillMatch = s.match(/^(\d+)(T|C|정|caps?|포|ea|ptp)/i);
-  if (pillMatch) return parseInt(pillMatch[1], 10);
-
-  // 2) 괄호 (10T) 같은 경우
-  const bracketMatch = s.match(/\((\d+)(T|C|정|caps?|포)?\)/i);
-  if (bracketMatch) return parseInt(bracketMatch[1], 10);
-
-  // 3) *n포
-  const packMatch = s.match(/\*(\d+)(포|ea|입)?/i);
-  if (packMatch) return parseInt(packMatch[1], 10);
-
-  // 4) *n관 / n관 → 숫자 있으면 그대로
-  const tubeMatch = s.match(/\*?(\d+)\s*관/i);
-  if (tubeMatch) return parseInt(tubeMatch[1], 10);
-
-  // 5) 단독 관 → 1
-  if (/^관$/i.test(s)) return 1;
-
-  // 6) ml, g, ㉥ → 1
-  if (/(ml|g|㉥)/i.test(s)) return 1;
-
-  // 7) 숫자만 있는 경우 → 1
-  const numberOnly = s.match(/^(\d+)$/);
-  if (numberOnly) return 1;
-
-  // 8) 아무것도 없으면 기본 1
-  return -1;
-}
-
-// 주문해야 할 수량을 계산
-function calculateOrderRequiredQty(productName, usedQty, standard) {
-  const used = Number(usedQty || 0);
-  const consumerQty = parseConsumerQty(standard);
-
-  // consumerQty === 0 은 '읽지 못함' -> 에러 신호로 -1 반환
-  if (consumerQty < 0) return consumerQty;
-
-  // 정상: packSize >= 1
-  return Math.ceil(used / consumerQty);
-}
-
 const launchBrowser = async () => {
   const browser = await puppeteer.launch(
     process.env.NODE_ENV === "production"
@@ -2906,5 +2854,58 @@ const checkSearchResultRows = async (searchResultRows) => {
 
   return lastRowResult;
 };
+
+// 규격을 보고 소매 판매 수량을 구함
+function parseConsumerQty(standard) {
+  if (!standard) return -1;
+
+  let s = standard
+    .replace(/×/g, "x")
+    .replace(/（/g, "(")
+    .replace(/）/g, ")")
+    .replace(/\s+/g, "")
+    .trim();
+
+  // 1) 정(T)/캡슐(C)/정/포/ea/ptp
+  const pillMatch = s.match(/^(\d+)(T|C|정|caps?|포|ea|ptp)/i);
+  if (pillMatch) return parseInt(pillMatch[1], 10);
+
+  // 2) 괄호 (10T) 같은 경우
+  const bracketMatch = s.match(/\((\d+)(T|C|정|caps?|포)?\)/i);
+  if (bracketMatch) return parseInt(bracketMatch[1], 10);
+
+  // 3) *n포
+  const packMatch = s.match(/\*(\d+)(포|ea|입)?/i);
+  if (packMatch) return parseInt(packMatch[1], 10);
+
+  // 4) *n관 / n관 → 숫자 있으면 그대로
+  const tubeMatch = s.match(/\*?(\d+)\s*관/i);
+  if (tubeMatch) return parseInt(tubeMatch[1], 10);
+
+  // 5) 단독 관 → 1
+  if (/^관$/i.test(s)) return 1;
+
+  // 6) ml, g, ㉥ → 1
+  if (/(ml|g|㉥)/i.test(s)) return 1;
+
+  // 7) 숫자만 있는 경우 → 1
+  const numberOnly = s.match(/^(\d+)$/);
+  if (numberOnly) return 1;
+
+  // 8) 아무것도 없으면 기본 1
+  return -1;
+}
+
+// 주문 예정 수량을 계산
+function calculateOrderRequiredQty(productName, soldQty, standard) {
+  const used = Number(soldQty || 0);
+  const consumerQty = parseConsumerQty(standard);
+
+  // consumerQty === 0 은 '읽지 못함' -> 에러 신호로 -1 반환
+  if (consumerQty < 0) return consumerQty;
+
+  // 정상: packSize >= 1
+  return Math.ceil(used / consumerQty);
+}
 
 export { executeService };

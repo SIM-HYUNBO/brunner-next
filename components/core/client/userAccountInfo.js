@@ -13,7 +13,6 @@ const UserAccountInfo = () => {
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
 
-  // 🔥 프로필 이미지 신규 추가
   const [profilePreview, setProfilePreview] = useState(null); // 화면 미리보기용
   const [profileFile, setProfileFile] = useState(null); // 서버 전송용
 
