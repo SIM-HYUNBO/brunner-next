@@ -145,7 +145,7 @@ const BrunnerTable = forwardRef(
     const TableTitleArea = () => {
       return (
         <h2
-          className={`text-3xl mt-5 font-medium text-green-700 dark:text-green-500`}
+          className={`text-3xl mt-10 font-medium text-green-700 dark:text-green-500`}
         >
           {tableTitle}
         </h2>
