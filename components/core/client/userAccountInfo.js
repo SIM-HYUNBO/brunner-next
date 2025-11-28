@@ -21,10 +21,8 @@ const UserAccountInfo = () => {
   const loginUserId = userInfo.getLoginUserId();
 
   useEffect(() => {
-    if (!isAdmin) {
-      setSearchUserId(loginUserId);
-      searchUserInfo(userInfo.getCurrentSystemCode(), loginUserId);
-    }
+    setSearchUserId(loginUserId);
+    searchUserInfo(userInfo.getCurrentSystemCode(), loginUserId);
   }, []);
 
   const searchUserInfo = async (systemCode, userId) => {

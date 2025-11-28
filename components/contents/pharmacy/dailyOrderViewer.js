@@ -272,7 +272,7 @@ export default function DailyOrderViewer() {
         fetchTableDataHandler={fetchTableData}
         editRowDataHandler={editRowData}
         actionRowDataHandler={orderByRow}
-        actionTitle="Order"
+        actionButtonTooltip="Order"
       />
     </div>
   );

@@ -22,7 +22,9 @@ const BrunnerTable = forwardRef(
       editRowDataHandler,
       deleteRowDataHandler,
       actionRowDataHandler,
-      actionTitle,
+      actionButtonTooltip,
+      editButtonTooltip,
+      deleteButtonTooltip,
     },
     ref
   ) => {
@@ -85,7 +87,7 @@ const BrunnerTable = forwardRef(
                 <Button
                   onClick={() => editRowDataHandler(row)}
                   className={`p-2 rounded`}
-                  title="Edit"
+                  title={editButtonTooltip ?? "Edit"}
                 >
                   {" "}
                   <img src="/edit-icon.png" alt="Save" className={`w-6 h-6`} />
@@ -95,7 +97,7 @@ const BrunnerTable = forwardRef(
                 <Button
                   onClick={() => deleteRowDataHandler(row)}
                   className={`p-2 rounded`}
-                  title="Delete"
+                  title={deleteButtonTooltip ?? "Delete"}
                 >
                   <img
                     src="/delete-icon.png"
@@ -108,7 +110,7 @@ const BrunnerTable = forwardRef(
                 <Button
                   onClick={() => actionRowDataHandler(row)}
                   className={`p-2 rounded`}
-                  title={actionTitle ?? "Action"}
+                  title={actionButtonTooltip ?? "Action"}
                 >
                   <img
                     src="/action-icon.png"
