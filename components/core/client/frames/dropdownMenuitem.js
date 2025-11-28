@@ -39,9 +39,12 @@ export async function getDropdownMenuItems() {
     );
   }
 
-  var documentList = await commonFunctions.getAdminDocumentList(
-    userInfo.getCurrentSystemCode()
-  );
+  var documentList;
+  if (userInfo.getCurrentSystemCode()) {
+    documentList = await commonFunctions.getAdminDocumentList(
+      userInfo.getCurrentSystemCode()
+    );
+  }
 
   documentList &&
     documentList.forEach((doc) => {
