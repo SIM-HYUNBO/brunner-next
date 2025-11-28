@@ -26,7 +26,10 @@ export default function UploadDailyOrderContent() {
   // 파일 내용 읽기
   const handleFileChange = async (e) => {
     const excelFile = e.target.files?.[0];
-    if (!excelFile) return;
+    if (!excelFile) {
+      setFileData(null);
+      return;
+    }
 
     const data = await excelFile.arrayBuffer();
     const workbook = XLSX.read(data, { type: "array" });
