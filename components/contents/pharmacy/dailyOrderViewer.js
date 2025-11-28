@@ -73,7 +73,9 @@ export default function DailyOrderViewer() {
   const [editingRow, setEditingRow] = useState(null);
   const [supplierList, setSupplierList] = useState([]);
 
-  const [orderDate, setOrderDate] = useState("");
+  const [orderDate, setOrderDate] = useState(
+    new Date().toISOString().split("T")[0]
+  );
   const [supplierName, setSupplierName] = useState("");
 
   const [loading, setLoading] = useState(false);
