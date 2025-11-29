@@ -1,9 +1,4 @@
-# *
 User-agent: *
 Allow: /
 
-# Host
-Host: https://brunner.co.kr/
-
-# Sitemaps
-Sitemap: https://brunner.co.kr/sitemap.xml
+Sitemap: https://www.brunner.co.kr/sitemap.xml
