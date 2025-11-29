@@ -308,7 +308,7 @@ export const DBConnectionManagerModal: React.FC<
                           type: value as DBConnectionInfo["type"],
                         })
                       }
-                      className="border rounded px-2 py-1 flex-1"
+                      className="border rounded px-2 py-1 flex-1 h-12"
                     >
                       <option value={constants.dbType.postgres}>
                         PostgreSQL
