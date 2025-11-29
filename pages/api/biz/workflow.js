@@ -85,7 +85,9 @@ const executeService = async (txnId, jRequest) => {
       }
       // ✅ 1. DB 연결정보 전체 조회
       case constants.commands.WORKFLOW_SELECT_DB_CONNECTIONS_ALL: {
-        const result = await DBConnectionManager.getInstance().list();
+        const result = await DBConnectionManager.getInstance()
+          .list()
+          .filter((config) => config.system_code === jRequest.systemCode);
         jResponse.connections = result;
         break;
       }
