@@ -115,6 +115,7 @@ const executeService = async (txnId, jRequest) => {
       // ✅ 4. 연결정보 삭제
       case constants.commands.WORKFLOW_DELETE_DB_CONNECTION_ONE: {
         const result = await DBConnectionManager.getInstance().remove(
+          jRequest.systemCode,
           jRequest.id
         );
 

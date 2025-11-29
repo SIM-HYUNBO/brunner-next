@@ -126,14 +126,19 @@ export class DBConnectionManager {
   }
 
   // ✅ 연결정보 삭제
-  async remove(id: string) {
+  async remove(systemCode: string, id: string) {
     const poolObj = this.pools.get(id);
     if (poolObj) {
       await this.closePool(poolObj);
     }
     this.dbConnectionConfig.delete(id);
     this.pools.delete(id);
-    const result = await this.deleteDBConnection(id, database, dynamicSql);
+    const result = await this.deleteDBConnection(
+      systemCode,
+      id,
+      database,
+      dynamicSql
+    );
     return result;
   }
 
@@ -307,7 +312,7 @@ export class DBConnectionManager {
     const jResponse: any = {};
     try {
       const sql = await dynamicSql.getSQL(
-        "00",
+        systemCode,
         "select_BRUNNER.TB_COR_WORKFLOW_DBCONNECTIONS",
         1
       );
@@ -330,7 +335,7 @@ export class DBConnectionManager {
 
     try {
       const sql = await dynamicSql.getSQL(
-        "00",
+        dbConnectionConfig.system_code,
         "insert_BRUNNER.TB_COR_WORKFLOW_DBCONNECTIONS",
         1
       );
@@ -368,7 +373,7 @@ export class DBConnectionManager {
     var result: any = {};
     try {
       var sql = await dynamicSql.getSQL(
-        "00",
+        dbConnectionConfig.system_code,
         "update_BRUNNER.TB_COR_WORKFLOW_DBCONNECTIONS",
         1
       );
@@ -402,6 +407,7 @@ export class DBConnectionManager {
 
   // ✅ DB 연결정보 삭제
   async deleteDBConnection(
+    systemCode: string,
     dbConnectionId: any,
     database: any,
     dynamicSql: any
@@ -409,15 +415,18 @@ export class DBConnectionManager {
     const result: any = {};
     try {
       const sql = await dynamicSql.getSQL(
-        "00",
+        systemCode,
         "delete_BRUNNER.TB_COR_WORKFLOW_DBCONNECTIONS",
         1
       );
-      const sqlResult = await database.executeSQL(sql, [dbConnectionId]);
+      const sqlResult = await database.executeSQL(sql, [
+        systemCode,
+        dbConnectionId,
+      ]);
 
       if (sqlResult.rowCount === 1) {
         result.error_code = 0;
-        result.error_message = constants.messages.EMPTY_STRING;
+        result.error_message = constants.messages.SUCCESS_FINISHED;
       } else {
         result.error_code = -1;
         result.error_message = constants.messages.FAILED_TO_DELETE_DATA;

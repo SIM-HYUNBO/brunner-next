@@ -57,7 +57,9 @@ export default function HomeContent() {
       }
     }
 
-    getRandomPublicDocumentId(userInfo.getCurrentSystemCode() ?? "00");
+    getRandomPublicDocumentId(
+      userInfo.getCurrentSystemCode() ?? constants.SystemCode.Brunner
+    );
   }, []);
 
   return (

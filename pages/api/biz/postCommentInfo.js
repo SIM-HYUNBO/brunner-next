@@ -41,7 +41,7 @@ const insertOne = async (txnId, jRequest) => {
     var coommentId = commonFunctions.generateUUID();
     var sql = null;
     sql = await db_cor_sql_info.getSQL(
-      "00",
+      jRequest.systemCode,
       "insert_BRUNNER.TB_COR_POST_COMMENT_INFO",
       1
     );
@@ -56,7 +56,7 @@ const insertOne = async (txnId, jRequest) => {
     if (insert_TB_COR_POST_COMMENT_INFO_01.rowCount === 1) {
       sql = null;
       sql = await db_cor_sql_info.getSQL(
-        "00",
+        jRequest.systemCode,
         "select_BRUNNER.TB_COR_POST_COMMENT_INFO",
         2
       );
@@ -97,7 +97,7 @@ const updateOne = async (txnId, jRequest) => {
 
     var sql = null;
     sql = await db_cor_sql_info.getSQL(
-      "00",
+      jRequest.systemCode,
       "update_BRUNNER.TB_COR_POST_COMMENT_INFO",
       2
     );
@@ -140,7 +140,7 @@ const deleteOne = async (txnId, jRequest) => {
 
     var sql = null;
     sql = await db_cor_sql_info.getSQL(
-      "00",
+      jRequest.systemCode,
       "delete_BRUNNER.TB_COR_POST_COMMENT_INFO",
       2
     );

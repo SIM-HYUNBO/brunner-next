@@ -127,6 +127,7 @@ export const DBConnectionManagerModal: React.FC<
     try {
       const jRequest = {
         commandName: constants.commands.WORKFLOW_DELETE_DB_CONNECTION_ONE,
+        systemCode: userInfo.getCurrentSystemCode(),
         id,
       };
 
