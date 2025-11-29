@@ -111,19 +111,26 @@ export const DBConnectionManagerModal: React.FC<
         };
         editingRef.current = savedConnection;
         setEditing(savedConnection);
-        alert(`${editingRef.current.name} 저장 완료`);
+        openModal(
+          `${editingRef.current.name} ${constants.messages.SUCCESS_SAVED}`
+        );
         loadConnections();
       } else {
-        alert("저장 실패: " + jResponse.error_message);
+        openModal(
+          `${constants.messages.FAILED_TO_SAVE_DATA} ${jResponse.error_message}`
+        );
       }
     } catch (e) {
-      alert("저장 실패: " + (e as Error).message);
-      console.error(e);
+      openModal(
+        `${constants.messages.FAILED_TO_SAVE_DATA} ${(e as Error).message}`
+      );
     }
   };
 
   const handleDelete = async (id: string) => {
-    if (!confirm("이 연결정보를 삭제할까요?")) return;
+    const confirm = await openModal("이 연결정보를 삭제할까요?");
+    if (!confirm) return;
+
     try {
       const jRequest = {
         commandName: constants.commands.WORKFLOW_DELETE_DB_CONNECTION_ONE,
@@ -134,13 +141,13 @@ export const DBConnectionManagerModal: React.FC<
       const jResponse = await RequestServer(jRequest);
 
       if (jResponse.error_code === 0) {
-        alert("삭제 완료");
+        openModal("삭제 완료");
         loadConnections();
       } else {
-        alert("삭제 실패: " + jResponse.error_message);
+        openModal("삭제 실패: " + jResponse.error_message);
       }
     } catch (e) {
-      alert("삭제 실패: " + (e as Error).message);
+      openModal("삭제 실패: " + (e as Error).message);
       console.error(e);
     }
   };
@@ -156,12 +163,12 @@ export const DBConnectionManagerModal: React.FC<
       const jResponse = await RequestServer(jRequest);
 
       if (jResponse.error_code === 0) {
-        alert("연결 성공");
+        openModal("연결 성공");
       } else {
-        alert("연결 실패: " + jResponse.error_message);
+        openModal("연결 실패: " + jResponse.error_message);
       }
     } catch (e) {
-      alert("테스트 실패: " + (e as Error).message);
+      openModal("테스트 실패: " + (e as Error).message);
       console.error(e);
     } finally {
       setTesting(false);

@@ -44,17 +44,17 @@ const SupplierSettingContent = () => {
       // 수정
       try {
         await axios.put(`/api/supplier-info/${editingSupplier.id}`, data);
-        alert("수정 완료");
+        openModal("수정 완료");
       } catch (e) {
-        alert("수정 실패");
+        openModal("수정 실패");
       }
     } else {
       // 생성
       try {
         await axios.post("/api/supplier-info", data);
-        alert("공급처 등록 완료");
+        openModal("공급처 등록 완료");
       } catch (e) {
-        alert("등록 실패");
+        openModal("등록 실패");
       }
     }
 
@@ -85,13 +85,13 @@ const SupplierSettingContent = () => {
   const handleDelete = async (id) => {
     try {
       await axios.delete(`/api/supplier-info/${id}`);
-      alert("삭제 완료");
+      openModal("삭제 완료");
       // 삭제 후 목록 새로고침
       // const response = await axios.get("/api/supplier-info");
       setSupplierList(response.data);
     } catch (e) {
       console.error("Error deleting supplier:", e);
-      alert("삭제 실패");
+      openModal("삭제 실패");
     }
   };
 
