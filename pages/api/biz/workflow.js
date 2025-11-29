@@ -85,9 +85,9 @@ const executeService = async (txnId, jRequest) => {
       }
       // ✅ 1. DB 연결정보 전체 조회
       case constants.commands.WORKFLOW_SELECT_DB_CONNECTIONS_ALL: {
-        const result = await DBConnectionManager.getInstance()
-          .list()
-          .filter((config) => config.system_code === jRequest.systemCode);
+        const result = await DBConnectionManager.getInstance().list(
+          jRequest.systemCode
+        );
         jResponse.connections = result;
         break;
       }
@@ -186,7 +186,7 @@ const executeService = async (txnId, jRequest) => {
           txNode = new workflowEngineServer.TransactionNode();
 
           // 트랜잭션 시작
-          await txNode.start(workflowData);
+          await txNode.start(systemCode, workflowData);
           const txInstances = Array.from(txNode.txContexts.values());
 
           // -----------------------

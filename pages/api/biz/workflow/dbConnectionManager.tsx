@@ -14,6 +14,7 @@ import oracledb from "oracledb";
 
 export type DBType = "postgres" | "mysql" | "mssql" | "oracle";
 export interface DBConnectionConfig {
+  system_code: string;
   id: string;
   name: string;
   type: DBType;
@@ -50,7 +51,7 @@ export class DBConnectionManager {
     return (globalThis as any)._dbConnectionManager;
   }
 
-  private dbConnectionConfig: Map<string, DBConnectionConfig> = new Map();
+  private dbConnectionConfigs: Map<string, DBConnectionConfig> = new Map();
   private pools: Map<string, DBConnectionPool> = new Map();
 
   async loadAllFromDatabase(
@@ -71,11 +72,11 @@ export class DBConnectionManager {
   // ✅ 연결정보 등록
   async register(config: DBConnectionConfig, onlyLoad: boolean = false) {
     var result = null;
-    if (this.dbConnectionConfig.has(config.id)) {
+    if (this.dbConnectionConfigs.has(config.id)) {
       result = await this.update(config);
     } else {
       const pool = await this.createPool(config);
-      this.dbConnectionConfig.set(config.id, config);
+      this.dbConnectionConfigs.set(config.id, config);
       this.pools.set(config.id, { name: config.name, type: config.type, pool });
 
       console.log(`onlyload =${onlyLoad}`);
@@ -88,12 +89,12 @@ export class DBConnectionManager {
 
   // ✅ 연결정보 수정
   async update(config: DBConnectionConfig) {
-    if (!this.dbConnectionConfig.has(config.id)) {
+    if (!this.dbConnectionConfigs.has(config.id)) {
       throw new Error(`DB connection with ID ${config.id} not found`);
     }
 
     // 기존 연결정보 가져오기
-    const existingConfig = this.dbConnectionConfig.get(config.id)!;
+    const existingConfig = this.dbConnectionConfigs.get(config.id)!;
 
     // 필요한 경우 연결 풀 교체 (host, port, username, password, database 등 핵심 정보가 바뀐 경우)
     const needNewPool =
@@ -119,7 +120,7 @@ export class DBConnectionManager {
     }
 
     // connections Map 업데이트 (부분 필드 업데이트 가능)
-    this.dbConnectionConfig.set(config.id, { ...existingConfig, ...config });
+    this.dbConnectionConfigs.set(config.id, { ...existingConfig, ...config });
 
     // DB에 업데이트
     return await this.updateDBConnection(config, database, dynamicSql);
@@ -131,7 +132,7 @@ export class DBConnectionManager {
     if (poolObj) {
       await this.closePool(poolObj);
     }
-    this.dbConnectionConfig.delete(id);
+    this.dbConnectionConfigs.delete(id);
     this.pools.delete(id);
     const result = await this.deleteDBConnection(
       systemCode,
@@ -143,8 +144,10 @@ export class DBConnectionManager {
   }
 
   // ✅ 등록된 연결정보 목록 조회
-  list(): DBConnectionConfig[] {
-    return Array.from(this.dbConnectionConfig.values());
+  list(systemCode: string): DBConnectionConfig[] {
+    return Array.from(this.dbConnectionConfigs.values()).filter(
+      (config) => config.system_code === systemCode
+    );
   }
 
   // ✅ 연결 획득
@@ -220,7 +223,9 @@ export class DBConnectionManager {
           user: config.username,
           password: config.password,
           database: config.database_name,
-          ssl: true,
+          ssl: {
+            rejectUnauthorized: false,
+          },
           max: 10,
         });
 
@@ -452,19 +457,19 @@ export class DBConnectionManager {
 
     if (isUUID) {
       // ID로 먼저 조회
-      config = this.dbConnectionConfig.get(idOrName) ?? null;
+      config = this.dbConnectionConfigs.get(idOrName) ?? null;
 
       // ID로 못 찾으면 이름으로 재검색
       if (!config) {
         config =
-          Array.from(this.dbConnectionConfig.values()).find(
+          Array.from(this.dbConnectionConfigs.values()).find(
             (c) => c.name === idOrName
           ) ?? null;
       }
     } else {
       // UUID가 아니면 이름으로 검색
       config =
-        Array.from(this.dbConnectionConfig.values()).find(
+        Array.from(this.dbConnectionConfigs.values()).find(
           (c) => c.name === idOrName
         ) ?? null;
     }

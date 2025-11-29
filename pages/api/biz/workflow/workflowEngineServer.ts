@@ -868,7 +868,11 @@ export class WorkflowInstance {
 export class TransactionNode {
   txContexts: Map<string, TransactionContext> = new Map();
 
-  async start(workflow: any, dbConnections?: Map<string, any>) {
+  async start(
+    systemCode: string,
+    workflow: any,
+    dbConnections?: Map<string, any>
+  ) {
     const dbManager = DBConnectionManager.getInstance();
 
     // ① workflow.dbConnections 있으면 사용, 없으면 dbManager.list()에서 풀 정보 가져오기
@@ -887,7 +891,7 @@ export class TransactionNode {
             ])
           )
         : Object.fromEntries(
-            dbManager.list().map((conn) => [
+            dbManager.list(systemCode).map((conn) => [
               conn.id,
               { dbType: conn.type as DBType, connectionName: conn.name }, // 타입 단언
             ])
@@ -903,7 +907,9 @@ export class TransactionNode {
         connection = dbConnections.get(connectionId);
 
         // pools에서 name 가져오기
-        const poolInfo = dbManager.list().find((c) => c.id === connectionId);
+        const poolInfo = dbManager
+          .list(systemCode)
+          .find((c) => c.id === connectionId);
         if (poolInfo) connectionName = poolInfo.name;
 
         this.txContexts.set(connectionId, {
@@ -947,7 +953,9 @@ export class TransactionNode {
         }
 
         // pools에서 name 가져오기
-        const poolInfo = dbManager.list().find((c) => c.id === connectionId);
+        const poolInfo = dbManager
+          .list(systemCode)
+          .find((c) => c.id === connectionId);
         if (poolInfo) connectionName = poolInfo.name;
 
         this.txContexts.set(connectionId, {
@@ -1138,7 +1146,11 @@ export async function saveWorkflow(
   var upsert_TB_COR_WORKFLOW_MST_01: any = null;
   if (select_TB_COR_WORKFLOW_MST.rowCount > 0) {
     // update
-    sql = await dynamicSql.getSQL(systemCode, `update_TB_COR_WORKFLOW_MST`, 1);
+    sql = await dynamicSql.getSQL(
+      systemCode,
+      `update_BRUNNER.TB_COR_WORKFLOW_MST`,
+      1
+    );
 
     upsert_TB_COR_WORKFLOW_MST_01 = await database.executeSQL(sql, [
       systemCode,
@@ -1148,7 +1160,11 @@ export async function saveWorkflow(
     ]);
   } else {
     // insert
-    sql = await dynamicSql.getSQL(systemCode, `insert_TB_COR_WORKFLOW_MST`, 1);
+    sql = await dynamicSql.getSQL(
+      systemCode,
+      `insert_BRUNNER.TB_COR_WORKFLOW_MST`,
+      1
+    );
 
     upsert_TB_COR_WORKFLOW_MST_01 = await database.executeSQL(sql, [
       systemCode,
