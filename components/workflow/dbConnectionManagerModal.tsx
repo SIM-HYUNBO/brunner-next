@@ -354,16 +354,16 @@ export const DBConnectionManagerModal: React.FC<
 
                   <div className="flex justify-end gap-2 mt-2">
                     <Button
-                      onClick={() => setEditing(null)}
-                      className="medium-text-bg-color px-3 py-1 rounded border"
-                    >
-                      Cancel
-                    </Button>
-                    <Button
                       onClick={handleSave}
                       className="px-3 py-1 rounded medium-text-bg-color"
                     >
                       Save
+                    </Button>
+                    <Button
+                      onClick={() => setEditing(null)}
+                      className="medium-text-bg-color px-3 py-1 rounded border"
+                    >
+                      Cancel
                     </Button>
                   </div>
                 </div>
