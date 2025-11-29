@@ -82,6 +82,11 @@ export class DBConnectionManager {
       console.log(`onlyload =${onlyLoad}`);
       if (!onlyLoad) {
         result = await this.insertDBConnection(config, database, dynamicSql);
+      } else {
+        result = {
+          error_code: 0,
+          error_message: constants.messages.SUCCESS_FINISHED,
+        };
       }
     }
     return result;
