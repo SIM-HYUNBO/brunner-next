@@ -63,16 +63,20 @@ export default function SignupContent() {
     try {
       setLoading(true);
 
+      const inputData = {
+        INDATA: [
+          {
+            name: `"${searchKeyword}"`,
+          },
+        ],
+      };
+
       const jResponse = await RequestExecuteWorkflow(
-        constants.SystemCode.Brunner,
+        userInfo.getCurrentSystemCode(),
         userInfo.getLoginUserId(),
         "약국목록조회",
         constants.transactionMode.System,
-        JSON.parse(`{
-          "INDATA" : [
-            {"name" : "${searchKeyword}"}
-          ]
-        }`)
+        inputData
       );
 
       setSearchResult(jResponse.jWorkflow?.data?.run?.outputs?.OUTDATA || []);
