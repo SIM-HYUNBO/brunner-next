@@ -19,7 +19,7 @@ function BrunnerBoard({ boardType }) {
     try {
       const jRequest = {
         commandName: constants.commands.POST_INFO_SELECT_ALL,
-        systemCode: userInfo.getCurrentSystemCode(),
+        systemCode: userInfo.getCurrentSystemCode() ?? "00",
         postInfo: { postType: boardType },
       };
       // setLoading(true);

@@ -15,7 +15,7 @@ export default function EDocContent({ argDocumentId, argDocumentData }) {
     async function fetchDocData(documentId) {
       if (!documentId) return; // id 없으면 실행 안 함
       const docData = await commonFunctions.getDocumentData(
-        userInfo.getCurrentSystemCode(),
+        userInfo.getCurrentSystemCode() ?? "00",
         userInfo.getLoginUserId(),
         documentId
       );
