@@ -29,6 +29,7 @@ export default function UserInfo({ handleLogout }) {
         ) {
           localStorage.removeItem("userInfo");
           router.push("/mainPages/signin");
+          await handleLogout();
           return;
         }
 
