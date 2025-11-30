@@ -2892,7 +2892,6 @@ function parseConsumerQty(standard) {
   const numberOnly = s.match(/^(\d+)$/);
   if (numberOnly) return 1;
 
-  // 8) 아무것도 없으면 기본 1
   return -1;
 }
 
@@ -2906,6 +2905,36 @@ function calculateOrderRequiredQty(productName, soldQty, standard) {
 
   // 정상: packSize >= 1
   return Math.ceil(used / consumerQty);
+}
+
+// 주문 예정 수량 계산 (재고 기반)
+function calculateOrderRequiredQty(
+  productName,
+  currentStockQty,
+  safetyStockQty,
+  standard
+) {
+  const stock = Number(currentStockQty || 0);
+  const safety = Number(safetyStockQty || 0);
+
+  // consumerQty: 1개 주문시 재고 증가 수량
+  // 타이레놀 500mg 10정 1박스(pack) :10(정)
+  // 판매는 정(낱개) 단위, 주문은 박스 단위
+  const consumerQty = parseConsumerQty(standard);
+
+  // consumerQty === 0 은 '읽지 못함' -> 에러 -1 반환
+  if (consumerQty <= 0) return consumerQty;
+
+  // 재고가 이미 안전재고 이상이면 주문 필요 없음
+  if (stock >= safety) return 0;
+
+  // 부족 수량 계산
+  const shortage = safety - stock;
+
+  // consumerQty 기준 주문 필요한 수량 계산
+  const orderQty = Math.ceil(shortage / consumerQty);
+
+  return orderQty;
 }
 
 export { executeService };
