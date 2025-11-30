@@ -21,8 +21,12 @@ export default function UserInfo({ handleLogout }) {
       if (userInfoStr) {
         const userInfo = JSON.parse(userInfoStr);
 
-        // 경과시간 체크
-        if (userInfo._txnId && getElapsedSeconds(userInfo._txnId) > 60) {
+        // 마지막 사용시간 경과시간 체크 (1시간)
+        if (
+          userInfo &&
+          userInfo._txnId &&
+          getElapsedSeconds(userInfo._txnId) > 1 * (60 * 60 * 60)
+        ) {
           localStorage.removeItem("userInfo");
           router.push("/mainPages/signin");
           return;
