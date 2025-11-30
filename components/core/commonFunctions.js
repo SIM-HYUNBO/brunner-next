@@ -18,6 +18,24 @@ export function isJsonObject(obj) {
   return obj && typeof obj === "object" && !Array.isArray(obj);
 }
 
+/**
+ * 트랜잭션 ID 생성
+ */
+export async function generateTxnId() {
+  // 브라우저용: 현재 시간 + 랜덤 숫자 조합
+  const now = new Date();
+  const yyyy = now.getUTCFullYear();
+  const mm = String(now.getUTCMonth() + 1).padStart(2, "0");
+  const dd = String(now.getUTCDate()).padStart(2, "0");
+  const hh = String(now.getUTCHours()).padStart(2, "0");
+  const min = String(now.getUTCMinutes()).padStart(2, "0");
+  const ss = String(now.getUTCSeconds()).padStart(2, "0");
+  const ms = String(now.getUTCMilliseconds()).padStart(3, "0");
+
+  const randomPart = Math.floor(Math.random() * 1e6); // 6자리 랜덤
+  return `${yyyy}${mm}${dd}${hh}${min}${ss}${ms}${randomPart}`;
+}
+
 export function generateUUID() {
   // Public Domain/MIT
   return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, function (c) {

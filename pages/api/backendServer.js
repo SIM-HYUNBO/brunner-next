@@ -49,7 +49,7 @@ export default async (req, res) => {
     jRequest = JSON.parse(rawBody);
   }
 
-  const txnId = await generateTxnId();
+  const txnId = await commonFunctions.generateTxnId();
   jRequest._txnId = txnId;
   const commandName = jRequest.commandName || constants.General.EmptyString;
 
@@ -77,18 +77,6 @@ export default async (req, res) => {
     res.json(jResponse);
     logger.warn(`END TXN ${commandName} in ${durationMs} ms`);
   }
-};
-
-/**
- * 트랜잭션 ID 생성
- */
-const generateTxnId = async () => {
-  const now = new Date();
-  const currentDateTime = now
-    .toISOString()
-    .replace(/[-:.TZ]/g, constants.General.EmptyString);
-  const hrtime = process.hrtime();
-  return `${currentDateTime}${hrtime[0]}${hrtime[1]}`;
 };
 
 let isReady = false;

@@ -3,29 +3,62 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import * as constants from "@/components/core/constants";
+import * as commonFunctions from "@/components/core/commonFunctions";
+import { useRouter } from "next/router";
 import SignoutButton from "@/components/core/client/frames/signoutButton";
 import DarkModeToggleButton from "@/components/core/client/frames/darkModeToggleButton";
 
 export default function UserInfo({ handleLogout }) {
+  const router = useRouter();
   const [currentSystemCode, setCurrentSystemCode] = useState(undefined);
   const [userName, setUserName] = useState(constants.General.EmptyString);
   const [profileImage, setProfileImage] = useState(undefined);
 
   // 최초 렌더링 시 userInfo 로딩
   useEffect(() => {
-    if (typeof window !== "undefined") {
-      try {
-        const userInfoStr = localStorage.getItem("userInfo");
-        if (userInfoStr) {
-          const userInfo = JSON.parse(userInfoStr);
-          setUserName(userInfo?.userName || constants.General.EmptyString);
-          setProfileImage(userInfo?.profileImageBase64);
+    const checkUserInfo = async () => {
+      const userInfoStr = localStorage.getItem("userInfo");
+      if (userInfoStr) {
+        const userInfo = JSON.parse(userInfoStr);
+
+        // 경과시간 체크
+        if (userInfo._txnId && getElapsedSeconds(userInfo._txnId) > 60) {
+          localStorage.removeItem("userInfo");
+          router.push("/mainPages/signin");
+          return;
         }
-      } catch (e) {
-        console.error("Invalid userInfo JSON:", e);
+
+        // 정상 렌더링: _txnId 갱신 (사용중에 로그아웃 되지 않도록)
+        const newTxnId = await commonFunctions.generateTxnId();
+        userInfo._txnId = newTxnId;
+        localStorage.setItem("userInfo", JSON.stringify(userInfo));
+
+        // 상태 업데이트
+        setUserName(userInfo?.userName || constants.General.EmptyString);
+        setProfileImage(userInfo?.profileImageBase64);
       }
-    }
+    };
+
+    checkUserInfo();
   }, []);
+
+  function getElapsedSeconds(txnId) {
+    if (!txnId) return 0;
+
+    // 앞 14자리만 사용: YYYYMMDDHHMMSS
+    const y = parseInt(txnId.slice(0, 4), 10);
+    const m = parseInt(txnId.slice(4, 6), 10) - 1; // JS 월은 0~11
+    const d = parseInt(txnId.slice(6, 8), 10);
+    const h = parseInt(txnId.slice(8, 10), 10);
+    const min = parseInt(txnId.slice(10, 12), 10);
+    const s = parseInt(txnId.slice(12, 14), 10);
+
+    const txnDateUTC = new Date(Date.UTC(y, m, d, h, min, s));
+    const nowUTC = new Date(Date.now()); // 현재 시간
+    const elapsedMs = nowUTC.getTime() - txnDateUTC.getTime();
+
+    return Math.floor(elapsedMs / 1000); // 초 단위
+  }
 
   return (
     <div className="relative w-full h-8 mt-1">
