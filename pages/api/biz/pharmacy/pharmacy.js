@@ -996,7 +996,7 @@ const runHanshinOrder = async (systemCode, user_id, supplier_params, rows) => {
 
       const n_stock = Number(item.stock);
       const n_soldQty = Number(row.sold_qty);
-      const n_orderRequiredQty = calculateOrderRequiredQty(
+      const n_orderRequiredQty = calculateOrderRequiredQtyBySoldQty(
         item.productName,
         n_soldQty,
         searchResultRows[0].standard
@@ -1229,7 +1229,7 @@ const runKeonHwaOrder = async (systemCode, user_id, supplier_params, rows) => {
 
       const n_stock = Number(item.stock);
       const n_soldQty = Number(row.sold_qty);
-      const n_orderRequiredQty = calculateOrderRequiredQty(
+      const n_orderRequiredQty = calculateOrderRequiredQtyBySoldQty(
         item.productName,
         n_soldQty,
         searchResultRows[0].standard
@@ -1417,7 +1417,7 @@ const runNamshinOrder = async (systemCode, user_id, supplier_params, rows) => {
 
       const n_stock = Number(item.stock);
       const n_soldQty = Number(row.sold_qty);
-      const n_orderRequiredQty = calculateOrderRequiredQty(
+      const n_orderRequiredQty = calculateOrderRequiredQtyBySoldQty(
         item.productName,
         n_soldQty,
         searchResultRows[0].standard
@@ -1616,7 +1616,7 @@ const runUPharmMallOrder = async (
       const n_stock = Number(item.stock);
 
       const n_soldQty = Number(row.sold_qty);
-      const n_orderRequiredQty = calculateOrderRequiredQty(
+      const n_orderRequiredQty = calculateOrderRequiredQtyBySoldQty(
         row.product_name,
         n_soldQty,
         searchResultRows[0].standard
@@ -1859,7 +1859,7 @@ const runFamilyPharmOrder = async (
       const item = searchResultRows[0];
       const n_stock = Number(item.stock);
       const n_soldQty = Number(row.sold_qty);
-      const n_orderRequiredQty = calculateOrderRequiredQty(
+      const n_orderRequiredQty = calculateOrderRequiredQtyBySoldQty(
         item.productName,
         n_soldQty,
         searchResultRows[0].standard
@@ -2081,7 +2081,7 @@ const runWithUsOrder = async (systemCode, user_id, supplier_params, rows) => {
 
       const n_stock = Number(item.stock);
       const n_soldQty = Number(row.sold_qty);
-      const n_orderRequiredQty = calculateOrderRequiredQty(
+      const n_orderRequiredQty = calculateOrderRequiredQtyBySoldQty(
         item.productName,
         n_soldQty,
         searchResultRows[0].standard
@@ -2317,7 +2317,7 @@ const runGeoPharmOrder = async (
       }
 
       const n_soldQty = Number(row.sold_qty);
-      const n_orderRequiredQty = calculateOrderRequiredQty(
+      const n_orderRequiredQty = calculateOrderRequiredQtyBySoldQty(
         row.product_name,
         n_soldQty,
         searchResultRows[0].standard
@@ -2504,7 +2504,7 @@ const runGeoWebOrder = async (systemCode, user_id, supplier_params, rows) => {
       }
       const n_stock = Number(searchResultRows[0].stock);
       const n_soldQty = Number(row.sold_qty);
-      const n_orderRequiredQty = calculateOrderRequiredQty(
+      const n_orderRequiredQty = calculateOrderRequiredQtyBySoldQty(
         row.product_name,
         n_soldQty,
         searchResultRows[0].standard
@@ -2699,7 +2699,7 @@ const runBridgePharmOrder = async (
 
       const n_stock = Number(item.stock);
       const n_soldQty = Number(row.sold_qty);
-      const n_orderRequiredQty = calculateOrderRequiredQty(
+      const n_orderRequiredQty = calculateOrderRequiredQtyBySoldQty(
         item.productName,
         n_soldQty,
         searchResultRows[0].standard
@@ -2896,7 +2896,7 @@ function parseConsumerQty(standard) {
 }
 
 // 주문 예정 수량을 계산
-function calculateOrderRequiredQty(productName, soldQty, standard) {
+function calculateOrderRequiredQtyBySoldQty(productName, soldQty, standard) {
   const used = Number(soldQty || 0);
   const consumerQty = parseConsumerQty(standard);
 
@@ -2908,7 +2908,7 @@ function calculateOrderRequiredQty(productName, soldQty, standard) {
 }
 
 // 주문 예정 수량 계산 (재고 기반)
-function calculateOrderRequiredQty(
+function calculateOrderRequiredQtyByStockQty(
   productName,
   currentStockQty,
   safetyStockQty,
