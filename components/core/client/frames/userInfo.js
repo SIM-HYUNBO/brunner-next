@@ -25,7 +25,7 @@ export default function UserInfo({ handleLogout }) {
         if (
           userInfo &&
           userInfo._txnId &&
-          getElapsedSeconds(userInfo._txnId) > 1 * (60 * 60 * 60)
+          getElapsedSeconds(userInfo._txnId) > 1 * (60 * 60)
         ) {
           localStorage.removeItem("userInfo");
           router.push("/mainPages/signin");
