@@ -998,11 +998,11 @@ const runHanshinOrder = async (systemCode, user_id, supplier_params, rows) => {
       const n_stock = Number(item.stock);
       const n_currentInventoryQty = Number(row.current_inventory_qty);
       const n_safeInventoryQty = Number(row.safe_inventory_qty);
-      const n_orderRequiredQty = calculateOrderRequiredQtyByStockQty(
+      const n_orderRequiredQty = calculateOrderRequiredQty(
         item.productName,
+        searchResultRows[0].standard,
         n_currentInventoryQty,
-        n_safeInventoryQty,
-        searchResultRows[0].standard
+        n_safeInventoryQty
       );
 
       if (
@@ -1233,11 +1233,11 @@ const runKeonHwaOrder = async (systemCode, user_id, supplier_params, rows) => {
       const n_stock = Number(item.stock);
       const n_currentInventoryQty = Number(row.current_inventory_qty);
       const n_safeInventoryQty = Number(row.safe_inventory_qty);
-      const n_orderRequiredQty = calculateOrderRequiredQtyByStockQty(
+      const n_orderRequiredQty = calculateOrderRequiredQty(
         item.productName,
+        searchResultRows[0].standard,
         n_currentInventoryQty,
-        n_safeInventoryQty,
-        searchResultRows[0].standard
+        n_safeInventoryQty
       );
 
       if (isNaN(n_stock) || isNaN(n_orderRequiredQty)) {
@@ -1424,11 +1424,11 @@ const runNamshinOrder = async (systemCode, user_id, supplier_params, rows) => {
 
       const n_currentInventoryQty = Number(row.current_inventory_qty);
       const n_safeInventoryQty = Number(row.safe_inventory_qty);
-      const n_orderRequiredQty = calculateOrderRequiredQtyByStockQty(
+      const n_orderRequiredQty = calculateOrderRequiredQty(
         item.productName,
+        searchResultRows[0].standard,
         n_currentInventoryQty,
-        n_safeInventoryQty,
-        searchResultRows[0].standard
+        n_safeInventoryQty
       );
 
       if (isNaN(n_stock) || isNaN(n_orderRequiredQty)) {
@@ -1591,26 +1591,25 @@ const runUPharmMallOrder = async (
 
       // 2) 모든 row 데이터 배열로 추출
       const searchResultRows = await page.$$eval("#list1 tbody tr", (rows) => {
-        return rows.map((row) => {
-          const tds = row.querySelectorAll("td");
-          const stockHidden = row.querySelector("input[id^='stocQty']"); // hidden input에서 재고
-          const stockQty = stockHidden
-            ? parseInt(stockHidden.value.trim().replace(/,/g, ""), 10)
-            : 0;
-          if (stockQty > 0) {
+        return rows
+          .map((row) => {
+            const tds = row.querySelectorAll("td");
+            const stockHidden = row.querySelector("input[id^='stocQty']");
+            const stockQty = stockHidden
+              ? parseInt(stockHidden.value.trim().replace(/,/g, ""), 10)
+              : 0;
+
             return {
-              insuranceCode: tds[0]?.innerText.trim() || "", //보험코드
-              manufacturer: tds[1]?.innerText.trim() || "", //제조사
-              productName: tds[2]?.innerText.trim() || "", //제품명
-              standard: tds[4]?.innerText.trim() || "", //규격
-              price: tds[5]?.innerText.trim() || "", //단가
-              stock: stockHidden
-                ? parseInt(stockHidden.value.trim().replace(/,/g, ""), 10)
-                : 0, //재고
+              insuranceCode: tds[0]?.innerText.trim() || "",
+              manufacturer: tds[1]?.innerText.trim() || "",
+              productName: tds[2]?.innerText.trim() || "",
+              standard: tds[4]?.innerText.trim() || "",
+              price: tds[5]?.innerText.trim() || "",
+              stock: stockQty,
               orderInputId: tds[7]?.querySelector("input")?.id || null,
             };
-          }
-        });
+          })
+          .filter((item) => item.stock > 0); // stock 0인 항목 제외
       });
 
       // 조회결과가 1건만 조회되어야 주문 처리 가능 ---
@@ -1626,11 +1625,11 @@ const runUPharmMallOrder = async (
 
       const n_currentInventoryQty = Number(row.current_inventory_qty);
       const n_safeInventoryQty = Number(row.safe_inventory_qty);
-      const n_orderRequiredQty = calculateOrderRequiredQtyByStockQty(
+      const n_orderRequiredQty = calculateOrderRequiredQty(
         row.product_name,
+        searchResultRows[0].standard,
         n_currentInventoryQty,
-        n_safeInventoryQty,
-        searchResultRows[0].standard
+        n_safeInventoryQty
       );
 
       if (isNaN(n_stock) || isNaN(n_orderRequiredQty)) {
@@ -1652,7 +1651,7 @@ const runUPharmMallOrder = async (
       const firstRow = await page.$("#list1 tbody tr:first-child");
 
       // 2) 첫 번째 row의 주문수량 input 가져오기
-      const orderInput = await firstRow.$("input[id^='soldQty']");
+      const orderInput = await firstRow.$("input[id^='orderQty']");
       await orderInput.click({ clickCount: 3 }); // 기존 값 지우기
       await orderInput.type(`${n_orderRequiredQty}`);
 
@@ -1873,11 +1872,11 @@ const runFamilyPharmOrder = async (
 
       const n_currentInventoryQty = Number(row.current_inventory_qty);
       const n_safeInventoryQty = Number(row.safe_inventory_qty);
-      const n_orderRequiredQty = calculateOrderRequiredQtyByStockQty(
+      const n_orderRequiredQty = calculateOrderRequiredQty(
         item.productName,
+        searchResultRows[0].standard,
         n_currentInventoryQty,
-        n_safeInventoryQty,
-        searchResultRows[0].standard
+        n_safeInventoryQty
       );
 
       if (isNaN(n_stock) || isNaN(n_orderRequiredQty)) {
@@ -2098,11 +2097,11 @@ const runWithUsOrder = async (systemCode, user_id, supplier_params, rows) => {
 
       const n_currentInventoryQty = Number(row.current_inventory_qty);
       const n_safeInventoryQty = Number(row.safe_inventory_qty);
-      const n_orderRequiredQty = calculateOrderRequiredQtyByStockQty(
+      const n_orderRequiredQty = calculateOrderRequiredQty(
         item.productName,
+        searchResultRows[0].standard,
         n_currentInventoryQty,
-        n_safeInventoryQty,
-        searchResultRows[0].standard
+        n_safeInventoryQty
       );
 
       if (isNaN(n_stock) || isNaN(n_orderRequiredQty)) {
@@ -2337,11 +2336,11 @@ const runGeoPharmOrder = async (
 
       const n_currentInventoryQty = Number(row.current_inventory_qty);
       const n_safeInventoryQty = Number(row.safe_inventory_qty);
-      const n_orderRequiredQty = calculateOrderRequiredQtyByStockQty(
+      const n_orderRequiredQty = calculateOrderRequiredQty(
         row.product_name,
+        searchResultRows[0].standard,
         n_currentInventoryQty,
-        n_safeInventoryQty,
-        searchResultRows[0].standard
+        n_safeInventoryQty
       );
 
       if (isNaN(n_stock) || isNaN(n_orderRequiredQty)) {
@@ -2527,11 +2526,11 @@ const runGeoWebOrder = async (systemCode, user_id, supplier_params, rows) => {
       const n_stock = Number(searchResultRows[0].stock);
       const n_currentInventoryQty = Number(row.current_inventory_qty);
       const n_safeInventoryQty = Number(row.safe_inventory_qty);
-      const n_orderRequiredQty = calculateOrderRequiredQtyByStockQty(
+      const n_orderRequiredQty = calculateOrderRequiredQty(
         row.product_name,
+        searchResultRows[0].standard,
         n_currentInventoryQty,
-        n_safeInventoryQty,
-        searchResultRows[0].standard
+        n_safeInventoryQty
       );
 
       if (isNaN(n_stock) || isNaN(n_orderRequiredQty)) {
@@ -2725,11 +2724,11 @@ const runBridgePharmOrder = async (
       const n_stock = Number(item.stock);
       const n_currentInventoryQty = Number(row.current_inventory_qty);
       const n_safeInventoryQty = Number(row.safe_inventory_qty);
-      const n_orderRequiredQty = calculateOrderRequiredQtyByStockQty(
+      const n_orderRequiredQty = calculateOrderRequiredQty(
         item.productName,
+        searchResultRows[0].standard,
         n_currentInventoryQty,
-        n_safeInventoryQty,
-        searchResultRows[0].standard
+        n_safeInventoryQty
       );
 
       if (isNaN(n_stock) || isNaN(n_orderRequiredQty)) {
@@ -2883,74 +2882,23 @@ const checkSearchResultRows = async (searchResultRows) => {
   return lastRowResult;
 };
 
-// 규격을 보고 소매 판매 수량을 구함
-function parseConsumerQty(standard) {
-  if (!standard) return -1;
-
-  let s = standard
-    .replace(/×/g, "x")
-    .replace(/（/g, "(")
-    .replace(/）/g, ")")
-    .replace(/\s+/g, "")
-    .trim();
-
-  // 기존 로직 그대로 유지
-
-  // ㉥ → 1
-  if (/(㉥)/i.test(s)) return 1;
-
-  // 1) 정(T)/캡슐(C)/정/포/ea/ptp
-  const pillMatch = s.match(/^(\d+)(T|C|정|caps?|포|ea|ptp)/i);
-  if (pillMatch) return parseInt(pillMatch[1], 10);
-
-  // 2) 괄호 (10T)
-  const bracketMatch = s.match(/\((\d+)(T|C|정|caps?|포)?\)/i);
-  if (bracketMatch) return parseInt(bracketMatch[1], 10);
-
-  // ⭐ 추가: 용량/수량 복합형 (ex: 10mg/100T)
-  const comboMatch = s.match(/\/(\d+)(T|C|정|caps?|포|ea|ptp)/i);
-  if (comboMatch) return parseInt(comboMatch[1], 10);
-
-  // 3) *n포
-  const packMatch = s.match(/\*(\d+)(포|ea|입)?/i);
-  if (packMatch) return parseInt(packMatch[1], 10);
-
-  // 4) *n관 / n관
-  const tubeMatch = s.match(/\*?(\d+)\s*관/i);
-  if (tubeMatch) return parseInt(tubeMatch[1], 10);
-
-  // 5) 관 단독 → 1
-  if (/^관$/i.test(s)) return 1;
-
-  // 6) 숫자만 → 1
-  const numberOnly = s.match(/^(\d+)$/);
-  if (numberOnly) return 1;
-
-  return -1;
-}
-
 // 주문 예정 수량 계산 (재고 기반)
-function calculateOrderRequiredQtyByStockQty(
+function calculateOrderRequiredQty(
   productName,
-  currentStockQty,
-  safetyStockQty,
-  standard
+  standard,
+  currentInventoryQty, // 현재고
+  safetyInventoryQty // 안전재고
 ) {
-  const stock = Number(currentStockQty || 0);
-  const safety = Number(safetyStockQty || 0);
+  const stock = Number(currentInventoryQty || 0);
+  const safety = Number(safetyInventoryQty || 0);
 
-  // consumerQty: 1개 주문시 재고 증가 수량
-  // 타이레놀 500mg 10정 1박스(pack) :10(정)
-  // 판매는 정(낱개) 단위, 주문은 박스 단위
-  const consumerQty = parseConsumerQty(standard);
-
-  // consumerQty === 0 은 '읽지 못함' -> 에러 -1 반환
-  if (consumerQty <= 0) return consumerQty;
+  // 재고 수량은 주문하는 수량과 동일한 단위로 관리
+  const consumerQty = 1;
 
   // 재고가 이미 안전재고 이상이면 주문 필요 없음
   if (stock >= safety) return 0;
 
-  // 부족 수량 계산
+  // 부족한 수량 계산
   const shortage = safety - (stock < 0 ? 0 : stock);
 
   // consumerQty 기준 주문 필요한 수량 계산
