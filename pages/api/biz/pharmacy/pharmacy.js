@@ -2894,29 +2894,35 @@ function parseConsumerQty(standard) {
     .replace(/\s+/g, "")
     .trim();
 
-  // 1) ml, g, ㉥ → 1
-  if (/(ml|g|㉥)/i.test(s)) return 1;
+  // 기존 로직 그대로 유지
+
+  // ㉥ → 1
+  if (/(㉥)/i.test(s)) return 1;
 
   // 1) 정(T)/캡슐(C)/정/포/ea/ptp
   const pillMatch = s.match(/^(\d+)(T|C|정|caps?|포|ea|ptp)/i);
   if (pillMatch) return parseInt(pillMatch[1], 10);
 
-  // 2) 괄호 (10T) 같은 경우
+  // 2) 괄호 (10T)
   const bracketMatch = s.match(/\((\d+)(T|C|정|caps?|포)?\)/i);
   if (bracketMatch) return parseInt(bracketMatch[1], 10);
+
+  // ⭐ 추가: 용량/수량 복합형 (ex: 10mg/100T)
+  const comboMatch = s.match(/\/(\d+)(T|C|정|caps?|포|ea|ptp)/i);
+  if (comboMatch) return parseInt(comboMatch[1], 10);
 
   // 3) *n포
   const packMatch = s.match(/\*(\d+)(포|ea|입)?/i);
   if (packMatch) return parseInt(packMatch[1], 10);
 
-  // 4) *n관 / n관 → 숫자 있으면 그대로
+  // 4) *n관 / n관
   const tubeMatch = s.match(/\*?(\d+)\s*관/i);
   if (tubeMatch) return parseInt(tubeMatch[1], 10);
 
-  // 5) 단독 관 → 1
+  // 5) 관 단독 → 1
   if (/^관$/i.test(s)) return 1;
 
-  // 7) 숫자만 있는 경우 → 1
+  // 6) 숫자만 → 1
   const numberOnly = s.match(/^(\d+)$/);
   if (numberOnly) return 1;
 
