@@ -47,22 +47,23 @@ export default function UploadDailyOrderContent() {
       const supplierCell = worksheet[XLSX.utils.encode_cell({ r: row, c: 3 })];
       const currentInventoryCell =
         worksheet[XLSX.utils.encode_cell({ r: row, c: 4 })];
-      const soldQtyCell = worksheet[XLSX.utils.encode_cell({ r: row, c: 5 })];
+      const safeInventoryQtyCell =
+        worksheet[XLSX.utils.encode_cell({ r: row, c: 5 })];
 
       const productCode = productCodeCell?.v ?? null;
       const productName = productNameCell?.v ?? null;
       const supplierName = supplierCell?.v ?? null;
-      const currentInventory = currentInventoryCell?.v ?? null;
-      const soldQty = soldQtyCell?.v ?? null;
+      const currentInventoryQty = currentInventoryCell?.v ?? null;
+      const safeInventoryQty = safeInventoryQtyCell?.v ?? null;
 
-      if (!productName && !supplierName && !soldQty) continue;
+      if (!productName && !supplierName && !safeInventoryQty) continue;
 
       result.push({
         productCode,
         productName,
         supplierName,
-        soldQty,
-        currentInventory,
+        safeInventoryQty,
+        currentInventoryQty,
       });
     }
 

@@ -20,6 +20,7 @@ export const orderStatus = {
   ErrorInvalidQty: "수량 이상",
   ErrorRackOfStock: "재고 부족",
   OrderChaned: "주문변경됨",
+  OrderNoRequired: "주문불필요",
   SuccessOrderToCart: "장바구니 전송",
 };
 
@@ -396,7 +397,7 @@ const uploadDailyOrder = async (txnId, jRequest) => {
         row.productCode,
         row.productName,
         row.supplierName,
-        row.soldQty,
+        row.safeInventoryQty,
         row.currentInventory,
       ]);
     }
@@ -784,7 +785,7 @@ const updateDailyOrderOne = async (txnId, jRequest) => {
       jRequest.productCode,
       jRequest.newProductCode,
       jRequest.newProductName,
-      jRequest.newSoldQty,
+      jRequest.newSafeInventoryQty,
       jRequest.newInventoryQty,
       orderStatus.OrderChaned,
     ]);
@@ -995,10 +996,12 @@ const runHanshinOrder = async (systemCode, user_id, supplier_params, rows) => {
       const { stock, quantityInput: qtyId } = item;
 
       const n_stock = Number(item.stock);
-      const n_soldQty = Number(row.sold_qty);
-      const n_orderRequiredQty = calculateOrderRequiredQtyBySoldQty(
+      const n_currentInventoryQty = Number(row.current_inventory_qty);
+      const n_safeInventoryQty = Number(row.safe_inventory_qty);
+      const n_orderRequiredQty = calculateOrderRequiredQtyByStockQty(
         item.productName,
-        n_soldQty,
+        n_currentInventoryQty,
+        n_safeInventoryQty,
         searchResultRows[0].standard
       );
 
@@ -1228,19 +1231,22 @@ const runKeonHwaOrder = async (systemCode, user_id, supplier_params, rows) => {
       const { stock, quantityInput: qtyId } = item;
 
       const n_stock = Number(item.stock);
-      const n_soldQty = Number(row.sold_qty);
-      const n_orderRequiredQty = calculateOrderRequiredQtyBySoldQty(
+      const n_currentInventoryQty = Number(row.current_inventory_qty);
+      const n_safeInventoryQty = Number(row.safe_inventory_qty);
+      const n_orderRequiredQty = calculateOrderRequiredQtyByStockQty(
         item.productName,
-        n_soldQty,
+        n_currentInventoryQty,
+        n_safeInventoryQty,
         searchResultRows[0].standard
       );
 
-      if (
-        isNaN(n_stock) ||
-        isNaN(n_orderRequiredQty) ||
-        n_orderRequiredQty <= 0
-      ) {
+      if (isNaN(n_stock) || isNaN(n_orderRequiredQty)) {
         lastRowResult = orderStatus.ErrorInvalidQty;
+        throw new Error(lastRowResult);
+      }
+
+      if (n_orderRequiredQty <= 0) {
+        lastRowResult = orderStatus.OrderNoRequired;
         throw new Error(lastRowResult);
       }
 
@@ -1414,21 +1420,24 @@ const runNamshinOrder = async (systemCode, user_id, supplier_params, rows) => {
 
       const item = searchResultRows[0];
       const { stock, quantityInput: qtyId } = item;
-
       const n_stock = Number(item.stock);
-      const n_soldQty = Number(row.sold_qty);
-      const n_orderRequiredQty = calculateOrderRequiredQtyBySoldQty(
+
+      const n_currentInventoryQty = Number(row.current_inventory_qty);
+      const n_safeInventoryQty = Number(row.safe_inventory_qty);
+      const n_orderRequiredQty = calculateOrderRequiredQtyByStockQty(
         item.productName,
-        n_soldQty,
+        n_currentInventoryQty,
+        n_safeInventoryQty,
         searchResultRows[0].standard
       );
 
-      if (
-        isNaN(n_stock) ||
-        isNaN(n_orderRequiredQty) ||
-        n_orderRequiredQty <= 0
-      ) {
+      if (isNaN(n_stock) || isNaN(n_orderRequiredQty)) {
         lastRowResult = orderStatus.ErrorInvalidQty;
+        throw new Error(lastRowResult);
+      }
+
+      if (n_orderRequiredQty <= 0) {
+        lastRowResult = orderStatus.OrderNoRequired;
         throw new Error(lastRowResult);
       }
 
@@ -1615,19 +1624,22 @@ const runUPharmMallOrder = async (
       const { stock } = item;
       const n_stock = Number(item.stock);
 
-      const n_soldQty = Number(row.sold_qty);
-      const n_orderRequiredQty = calculateOrderRequiredQtyBySoldQty(
+      const n_currentInventoryQty = Number(row.current_inventory_qty);
+      const n_safeInventoryQty = Number(row.safe_inventory_qty);
+      const n_orderRequiredQty = calculateOrderRequiredQtyByStockQty(
         row.product_name,
-        n_soldQty,
+        n_currentInventoryQty,
+        n_safeInventoryQty,
         searchResultRows[0].standard
       );
 
-      if (
-        isNaN(n_stock) ||
-        isNaN(n_orderRequiredQty) ||
-        n_orderRequiredQty <= 0
-      ) {
+      if (isNaN(n_stock) || isNaN(n_orderRequiredQty)) {
         lastRowResult = orderStatus.ErrorInvalidQty;
+        throw new Error(lastRowResult);
+      }
+
+      if (n_orderRequiredQty <= 0) {
+        lastRowResult = orderStatus.OrderNoRequired;
         throw new Error(lastRowResult);
       }
 
@@ -1858,19 +1870,23 @@ const runFamilyPharmOrder = async (
       // 첫 번째 아이템만 처리
       const item = searchResultRows[0];
       const n_stock = Number(item.stock);
-      const n_soldQty = Number(row.sold_qty);
-      const n_orderRequiredQty = calculateOrderRequiredQtyBySoldQty(
+
+      const n_currentInventoryQty = Number(row.current_inventory_qty);
+      const n_safeInventoryQty = Number(row.safe_inventory_qty);
+      const n_orderRequiredQty = calculateOrderRequiredQtyByStockQty(
         item.productName,
-        n_soldQty,
+        n_currentInventoryQty,
+        n_safeInventoryQty,
         searchResultRows[0].standard
       );
 
-      if (
-        isNaN(n_stock) ||
-        isNaN(n_orderRequiredQty) ||
-        n_orderRequiredQty <= 0
-      ) {
+      if (isNaN(n_stock) || isNaN(n_orderRequiredQty)) {
         lastRowResult = orderStatus.ErrorInvalidQty;
+        throw new Error(lastRowResult);
+      }
+
+      if (n_orderRequiredQty <= 0) {
+        lastRowResult = orderStatus.OrderNoRequired;
         throw new Error(lastRowResult);
       }
 
@@ -2078,21 +2094,24 @@ const runWithUsOrder = async (systemCode, user_id, supplier_params, rows) => {
 
       const item = searchResultRows[0];
       const { stock, quantityInput: qtyId } = item;
-
       const n_stock = Number(item.stock);
-      const n_soldQty = Number(row.sold_qty);
-      const n_orderRequiredQty = calculateOrderRequiredQtyBySoldQty(
+
+      const n_currentInventoryQty = Number(row.current_inventory_qty);
+      const n_safeInventoryQty = Number(row.safe_inventory_qty);
+      const n_orderRequiredQty = calculateOrderRequiredQtyByStockQty(
         item.productName,
-        n_soldQty,
+        n_currentInventoryQty,
+        n_safeInventoryQty,
         searchResultRows[0].standard
       );
 
-      if (
-        isNaN(n_stock) ||
-        isNaN(n_orderRequiredQty) ||
-        n_orderRequiredQty <= 0
-      ) {
+      if (isNaN(n_stock) || isNaN(n_orderRequiredQty)) {
         lastRowResult = orderStatus.ErrorInvalidQty;
+        throw new Error(lastRowResult);
+      }
+
+      if (n_orderRequiredQty <= 0) {
+        lastRowResult = orderStatus.OrderNoRequired;
         throw new Error(lastRowResult);
       }
 
@@ -2316,19 +2335,22 @@ const runGeoPharmOrder = async (
         );
       }
 
-      const n_soldQty = Number(row.sold_qty);
-      const n_orderRequiredQty = calculateOrderRequiredQtyBySoldQty(
+      const n_currentInventoryQty = Number(row.current_inventory_qty);
+      const n_safeInventoryQty = Number(row.safe_inventory_qty);
+      const n_orderRequiredQty = calculateOrderRequiredQtyByStockQty(
         row.product_name,
-        n_soldQty,
+        n_currentInventoryQty,
+        n_safeInventoryQty,
         searchResultRows[0].standard
       );
 
-      if (
-        isNaN(n_stock) ||
-        isNaN(n_orderRequiredQty) ||
-        n_orderRequiredQty <= 0
-      ) {
+      if (isNaN(n_stock) || isNaN(n_orderRequiredQty)) {
         lastRowResult = orderStatus.ErrorInvalidQty;
+        throw new Error(lastRowResult);
+      }
+
+      if (n_orderRequiredQty <= 0) {
+        lastRowResult = orderStatus.OrderNoRequired;
         throw new Error(lastRowResult);
       }
 
@@ -2503,19 +2525,22 @@ const runGeoWebOrder = async (systemCode, user_id, supplier_params, rows) => {
         // throw new Error(lastRowResult);
       }
       const n_stock = Number(searchResultRows[0].stock);
-      const n_soldQty = Number(row.sold_qty);
-      const n_orderRequiredQty = calculateOrderRequiredQtyBySoldQty(
+      const n_currentInventoryQty = Number(row.current_inventory_qty);
+      const n_safeInventoryQty = Number(row.safe_inventory_qty);
+      const n_orderRequiredQty = calculateOrderRequiredQtyByStockQty(
         row.product_name,
-        n_soldQty,
+        n_currentInventoryQty,
+        n_safeInventoryQty,
         searchResultRows[0].standard
       );
 
-      if (
-        isNaN(n_stock) ||
-        isNaN(n_orderRequiredQty) ||
-        n_orderRequiredQty <= 0
-      ) {
+      if (isNaN(n_stock) || isNaN(n_orderRequiredQty)) {
         lastRowResult = orderStatus.ErrorInvalidQty;
+        throw new Error(lastRowResult);
+      }
+
+      if (n_orderRequiredQty <= 0) {
+        lastRowResult = orderStatus.OrderNoRequired;
         throw new Error(lastRowResult);
       }
 
@@ -2698,19 +2723,22 @@ const runBridgePharmOrder = async (
       const { stock, quantityInput: qtyId } = item;
 
       const n_stock = Number(item.stock);
-      const n_soldQty = Number(row.sold_qty);
-      const n_orderRequiredQty = calculateOrderRequiredQtyBySoldQty(
+      const n_currentInventoryQty = Number(row.current_inventory_qty);
+      const n_safeInventoryQty = Number(row.safe_inventory_qty);
+      const n_orderRequiredQty = calculateOrderRequiredQtyByStockQty(
         item.productName,
-        n_soldQty,
+        n_currentInventoryQty,
+        n_safeInventoryQty,
         searchResultRows[0].standard
       );
 
-      if (
-        isNaN(n_stock) ||
-        isNaN(n_orderRequiredQty) ||
-        n_orderRequiredQty <= 0
-      ) {
+      if (isNaN(n_stock) || isNaN(n_orderRequiredQty)) {
         lastRowResult = orderStatus.ErrorInvalidQty;
+        throw new Error(lastRowResult);
+      }
+
+      if (n_orderRequiredQty <= 0) {
+        lastRowResult = orderStatus.OrderNoRequired;
         throw new Error(lastRowResult);
       }
 
@@ -2866,6 +2894,9 @@ function parseConsumerQty(standard) {
     .replace(/\s+/g, "")
     .trim();
 
+  // 1) ml, g, ㉥ → 1
+  if (/(ml|g|㉥)/i.test(s)) return 1;
+
   // 1) 정(T)/캡슐(C)/정/포/ea/ptp
   const pillMatch = s.match(/^(\d+)(T|C|정|caps?|포|ea|ptp)/i);
   if (pillMatch) return parseInt(pillMatch[1], 10);
@@ -2885,26 +2916,11 @@ function parseConsumerQty(standard) {
   // 5) 단독 관 → 1
   if (/^관$/i.test(s)) return 1;
 
-  // 6) ml, g, ㉥ → 1
-  if (/(ml|g|㉥)/i.test(s)) return 1;
-
   // 7) 숫자만 있는 경우 → 1
   const numberOnly = s.match(/^(\d+)$/);
   if (numberOnly) return 1;
 
   return -1;
-}
-
-// 주문 예정 수량을 계산
-function calculateOrderRequiredQtyBySoldQty(productName, soldQty, standard) {
-  const used = Number(soldQty || 0);
-  const consumerQty = parseConsumerQty(standard);
-
-  // consumerQty === 0 은 '읽지 못함' -> 에러 신호로 -1 반환
-  if (consumerQty < 0) return consumerQty;
-
-  // 정상: packSize >= 1
-  return Math.ceil(used / consumerQty);
 }
 
 // 주문 예정 수량 계산 (재고 기반)
@@ -2929,7 +2945,7 @@ function calculateOrderRequiredQtyByStockQty(
   if (stock >= safety) return 0;
 
   // 부족 수량 계산
-  const shortage = safety - stock;
+  const shortage = safety - (stock < 0 ? 0 : stock);
 
   // consumerQty 기준 주문 필요한 수량 계산
   const orderQty = Math.ceil(shortage / consumerQty);
