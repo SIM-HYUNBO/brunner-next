@@ -66,13 +66,13 @@ export default function SignupContent() {
       const inputData = {
         INDATA: [
           {
-            name: `"${searchKeyword}"`,
+            name: `${searchKeyword}`,
           },
         ],
       };
 
       const jResponse = await RequestExecuteWorkflow(
-        userInfo.getCurrentSystemCode(),
+        systemCode,
         userInfo.getLoginUserId(),
         "약국목록조회",
         constants.transactionMode.System,
