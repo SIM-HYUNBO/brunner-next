@@ -230,7 +230,7 @@ export default function DailyOrderViewer() {
       setLoading(true);
       const jResponse = await RequestServer(jRequest);
       setLoading(false);
-      if (jResponse?.error_message) openModal(jResponse.error_message);
+      if (jResponse?.error_message) await openModal(jResponse.error_message);
       return jResponse.data?.rows || [];
     } catch (e) {
       setLoading(false);
