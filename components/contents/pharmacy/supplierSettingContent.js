@@ -44,17 +44,17 @@ const SupplierSettingContent = () => {
       // 수정
       try {
         await axios.put(`/api/supplier-info/${editingSupplier.id}`, data);
-        openModal("수정 완료");
+        await openModal("수정 완료");
       } catch (e) {
-        openModal("수정 실패");
+        await openModal("수정 실패");
       }
     } else {
       // 생성
       try {
         await axios.post("/api/supplier-info", data);
-        openModal("공급처 등록 완료");
+        await openModal("공급처 등록 완료");
       } catch (e) {
-        openModal("등록 실패");
+        await openModal("등록 실패");
       }
     }
 
@@ -85,13 +85,13 @@ const SupplierSettingContent = () => {
   const handleDelete = async (id) => {
     try {
       await axios.delete(`/api/supplier-info/${id}`);
-      openModal("삭제 완료");
+      await openModal("삭제 완료");
       // 삭제 후 목록 새로고침
       // const response = await axios.get("/api/supplier-info");
       setSupplierList(response.data);
     } catch (e) {
       console.error("Error deleting supplier:", e);
-      openModal("삭제 실패");
+      await openModal("삭제 실패");
     }
   };
 
@@ -130,7 +130,7 @@ const SupplierSettingContent = () => {
       setLoading(false);
 
       if (jResponse.error_code !== 0) {
-        openModal(jResponse.error_message);
+        await openModal(jResponse.error_message);
         return [];
       }
 
@@ -140,7 +140,7 @@ const SupplierSettingContent = () => {
       }));
     } catch (e) {
       setLoading(false);
-      openModal(e.message);
+      await openModal(e.message);
       return [];
     }
   };
@@ -165,10 +165,10 @@ const SupplierSettingContent = () => {
       const jResponse = await RequestServer(jRequest);
       setLoading(false);
 
-      openModal(jResponse.error_message);
+      await openModal(jResponse.error_message);
     } catch (e) {
       setLoading(false);
-      openModal(e.message);
+      await openModal(e.message);
     }
 
     tableRef.current.refreshTableData();
@@ -193,10 +193,10 @@ const SupplierSettingContent = () => {
       const jResponse = await RequestServer(jRequest);
       setLoading(false);
 
-      openModal(jResponse.error_message || "수정 완료");
+      await openModal(jResponse.error_message || "수정 완료");
     } catch (e) {
       setLoading(false);
-      openModal(e.message);
+      await openModal(e.message);
     }
 
     // 테이블 새로고침
@@ -219,10 +219,10 @@ const SupplierSettingContent = () => {
       const jResponse = await RequestServer(jRequest);
       setLoading(false);
 
-      openModal(jResponse.error_message);
+      await jResponse.error_message;
     } catch (e) {
       setLoading(false);
-      openModal(e.message);
+      await openModal(e.message);
     }
 
     tableRef.current.refreshTableData();

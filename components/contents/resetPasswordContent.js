@@ -42,10 +42,10 @@ export default function ResetPasswordContent() {
       setLoading(true);
       const jResponse = await RequestServer(jRequest);
       setLoading(false);
-      openModal(jResponse.error_message);
+      await openModal(jResponse.error_message);
     } catch (e) {
       setLoading(false);
-      openModal(e.message);
+      await openModal(e.message);
     }
   };
 
@@ -71,7 +71,7 @@ export default function ResetPasswordContent() {
       }
     } catch (e) {
       setLoading(false);
-      openModal(e.message);
+      await openModal(e.message);
     }
   };
 
@@ -97,7 +97,7 @@ export default function ResetPasswordContent() {
       }
     } catch (e) {
       setLoading(false);
-      openModal(e.message);
+      await openModal(e.message);
     }
   };
 

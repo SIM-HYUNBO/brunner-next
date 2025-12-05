@@ -46,7 +46,7 @@ const RenderComponent = (props) => {
       const workflowData = JSON.parse(workflow);
       await runWorkflow(workflowData, { contextData: documentData });
     } catch (e) {
-      openModal(
+      await openModal(
         `${constants.messages.FAILED_TO_EXECUTE_WORKFLOW}\n ${e.message}`
       );
     }

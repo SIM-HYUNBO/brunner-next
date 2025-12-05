@@ -80,11 +80,11 @@ export const DBConnectionManagerModal: React.FC<
       if (jResponse.error_code === 0) {
         setConnections(jResponse.connections);
       } else {
-        openModal(jResponse.error_message);
+        await openModal(jResponse.error_message);
       }
     } catch (e) {
       setLoading(false);
-      openModal((e as Error).message);
+      await openModal((e as Error).message);
       console.error(e);
     }
   };
@@ -111,17 +111,17 @@ export const DBConnectionManagerModal: React.FC<
         };
         editingRef.current = savedConnection;
         setEditing(savedConnection);
-        openModal(
+        await openModal(
           `${editingRef.current.name} ${constants.messages.SUCCESS_SAVED}`
         );
         loadConnections();
       } else {
-        openModal(
+        await openModal(
           `${constants.messages.FAILED_TO_SAVE_DATA} ${jResponse.error_message}`
         );
       }
     } catch (e) {
-      openModal(
+      await openModal(
         `${constants.messages.FAILED_TO_SAVE_DATA} ${(e as Error).message}`
       );
     }
@@ -141,13 +141,13 @@ export const DBConnectionManagerModal: React.FC<
       const jResponse = await RequestServer(jRequest);
 
       if (jResponse.error_code === 0) {
-        openModal("삭제 완료");
+        await openModal("삭제 완료");
         loadConnections();
       } else {
-        openModal("삭제 실패: " + jResponse.error_message);
+        await openModal("삭제 실패: " + jResponse.error_message);
       }
     } catch (e) {
-      openModal("삭제 실패: " + (e as Error).message);
+      await openModal("삭제 실패: " + (e as Error).message);
       console.error(e);
     }
   };
@@ -163,12 +163,12 @@ export const DBConnectionManagerModal: React.FC<
       const jResponse = await RequestServer(jRequest);
 
       if (jResponse.error_code === 0) {
-        openModal("연결 성공");
+        await openModal("연결 성공");
       } else {
-        openModal("연결 실패: " + jResponse.error_message);
+        await openModal("연결 실패: " + jResponse.error_message);
       }
     } catch (e) {
-      openModal("테스트 실패: " + (e as Error).message);
+      await openModal("테스트 실패: " + (e as Error).message);
       console.error(e);
     } finally {
       setTesting(false);

@@ -30,11 +30,11 @@ function BrunnerBoard({ boardType }) {
       if (jResponse.error_code === 0) {
         setPosts(jResponse.postList);
       } else {
-        openModal(jResponse.error_message);
+        await openModal(jResponse.error_message);
       }
     } catch (e) {
       setLoading(false);
-      openModal(e.message);
+      await openModal(e.message);
     }
   };
 
@@ -76,12 +76,12 @@ function BrunnerBoard({ boardType }) {
           setPosts([jResponse.postInfo, ...posts]);
           setPostText(constants.General.EmptyString);
         } else {
-          openModal(jResponse.error_message);
+          await openModal(jResponse.error_message);
         }
       }
     } catch (e) {
       setLoading(false);
-      openModal(e.message);
+      await openModal(e.message);
     }
   };
 
@@ -93,7 +93,7 @@ function BrunnerBoard({ boardType }) {
 
       const userId = userInfo.getLoginUserId();
       if (!userId) {
-        openModal(constants.messages.NO_PERMISSION);
+        await openModal(constants.messages.NO_PERMISSION);
         return;
       }
 
@@ -121,11 +121,11 @@ function BrunnerBoard({ boardType }) {
         );
         setPosts(updatedPosts);
       } else {
-        openModal(jResponse.error_message);
+        await openModal(jResponse.error_message);
       }
     } catch (e) {
       setLoading(false);
-      openModal(e.message);
+      await openModal(e.message);
     }
   };
 
@@ -137,7 +137,7 @@ function BrunnerBoard({ boardType }) {
 
       const userId = userInfo.getLoginUserId();
       if (!userId) {
-        openModal(constants.messages.NO_PERMISSION);
+        await openModal(constants.messages.NO_PERMISSION);
         return;
       }
 
@@ -157,11 +157,11 @@ function BrunnerBoard({ boardType }) {
         const updatedPosts = posts.filter((post) => post.post_id !== postId);
         setPosts(updatedPosts);
       } else {
-        openModal(jResponse.error_message);
+        await openModal(jResponse.error_message);
       }
     } catch (e) {
       setLoading(false);
-      openModal(e.message);
+      await openModal(e.message);
     }
   };
 
@@ -196,10 +196,10 @@ function BrunnerBoard({ boardType }) {
         });
         setPosts(updatedPosts);
       } else {
-        openModal(jResponse.error_message);
+        await openModal(jResponse.error_message);
       }
     } catch (e) {
-      openModal(e.message);
+      await openModal(e.message);
     }
   };
 
@@ -211,7 +211,7 @@ function BrunnerBoard({ boardType }) {
 
       const userId = userInfo.getLoginUserId();
       if (!userId) {
-        openModal(constants.messages.NO_PERMISSION);
+        await openModal(constants.messages.NO_PERMISSION);
         return;
       }
 
@@ -242,10 +242,10 @@ function BrunnerBoard({ boardType }) {
         });
         setPosts(updatedPosts);
       } else {
-        openModal(jResponse.error_message);
+        await openModal(jResponse.error_message);
       }
     } catch (e) {
-      openModal(e.message);
+      await openModal(e.message);
     }
   };
 
@@ -257,7 +257,7 @@ function BrunnerBoard({ boardType }) {
 
       const userId = userInfo.getLoginUserId();
       if (!userId) {
-        openModal(constants.messages.NO_PERMISSION);
+        await openModal(constants.messages.NO_PERMISSION);
         return;
       }
 
@@ -284,7 +284,7 @@ function BrunnerBoard({ boardType }) {
         });
         setPosts(updatedPosts);
       } else {
-        openModal(jResponse.error_message);
+        await openModal(jResponse.error_message);
       }
     } catch (e) {
       console.error(
@@ -463,7 +463,7 @@ function BoardContent({
               onClick={() => {
                 const userId = userInfo.getLoginUserId();
                 if (!userId) {
-                  openModal(constants.messages.NO_PERMISSION);
+                  await openModal(constants.messages.NO_PERMISSION);
                   return;
                 }
                 setIsEditingPost(true);
@@ -493,7 +493,7 @@ function BoardContent({
               onClick={() => {
                 const userId = userInfo.getLoginUserId();
                 if (!userId) {
-                  openModal(constants.messages.NO_PERMISSION);
+                  await openModal(constants.messages.NO_PERMISSION);
                   return;
                 }
                 handleDeletePost();
@@ -564,7 +564,7 @@ function BoardContent({
                     onClick={() => {
                       const userId = userInfo.getLoginUserId();
                       if (!userId) {
-                        openModal(constants.messages.NO_PERMISSION);
+                        await openModal(constants.messages.NO_PERMISSION);
                         return;
                       }
                       setEditingCommentId(comment.comment_id);
@@ -595,7 +595,7 @@ function BoardContent({
                     onClick={() => {
                       const userId = userInfo.getLoginUserId();
                       if (!userId) {
-                        openModal(constants.messages.NO_PERMISSION);
+                        await openModal(constants.messages.NO_PERMISSION);
                         return;
                       }
                       handleDeleteComment(comment.comment_id);

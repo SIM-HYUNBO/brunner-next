@@ -13,7 +13,7 @@ export default function AIModelSelector({ model, setAIModel, apiKey }) {
 
   const fetchModels = async () => {
     if (!userInfo.isLogin()) {
-      openModal(constants.messages.LOGIN_REQUIRED);
+      await openModal(constants.messages.LOGIN_REQUIRED);
       return;
     }
 

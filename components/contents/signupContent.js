@@ -57,7 +57,7 @@ export default function SignupContent() {
   // 사업장 검색
   const searchBusiness = async () => {
     if (!searchKeyword || searchKeyword.length < 3) {
-      openModal("Input keyword more than 3 charactors.");
+      await openModal("Input keyword more than 3 charactors.");
       return;
     }
     try {
@@ -81,7 +81,7 @@ export default function SignupContent() {
 
       setSearchResult(jResponse.jWorkflow?.data?.run?.outputs?.OUTDATA || []);
     } catch (e) {
-      openModal(e.message);
+      await openModal(e.message);
     } finally {
       setLoading(false);
     }
@@ -136,11 +136,11 @@ export default function SignupContent() {
         const result = await openModal(constants.messages.SUCCESS_SIGNUP);
         if (result) router.push("/mainPages/signin");
       } else {
-        openModal(jResponse.error_message);
+        await openModal(jResponse.error_message);
       }
     } catch (e) {
       setLoading(false);
-      openModal(e.message);
+      await openModal(e.message);
     }
   };
 

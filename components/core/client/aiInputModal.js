@@ -68,7 +68,7 @@ export default function AIInputModal({
 
   useEffect(() => {
     if (!userInfo.isLogin()) {
-      openModal(constants.messages.LOGIN_REQUIRED);
+      await openModal(constants.messages.LOGIN_REQUIRED);
       return;
     }
   }, [onClose]);
@@ -126,12 +126,12 @@ export default function AIInputModal({
 
   const handleRequest = async () => {
     if (!userInfo.isLogin()) {
-      openModal(constants.messages.LOGIN_REQUIRED);
+      await openModal(constants.messages.LOGIN_REQUIRED);
       return;
     }
 
     if (!apiKey.trim() || !instructions || !aiModel) {
-      openModal(
+      await openModal(
         `${constants.messages.REQUIRED_FIELD} 
         [apiKey, instructions, aiModel]`
       );

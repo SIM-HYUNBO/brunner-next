@@ -39,7 +39,7 @@ export default function DrugSearchModal({
 
   const searchDrug = async (type, term) => {
     if (!term || term.trim().length < 2) {
-      openModal(
+      await openModal(
         `${constants.messages.REQUIRED_FIELD} [key-word]. more than 2 characters`
       );
       return;
@@ -60,7 +60,7 @@ export default function DrugSearchModal({
       if (jResponse.error_message) openModal(jResponse.error_message);
     } catch (e) {
       setLoading(false);
-      openModal(e.message);
+      await openModal(e.message);
       console.error(`message:${e.message}\n stack:${e.stack}`);
     }
   };

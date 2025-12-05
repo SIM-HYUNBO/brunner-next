@@ -92,7 +92,7 @@ export default function DailyOrderViewer() {
     inventoryQty
   ) => {
     if (!selectedData?.edi_code || selectedData.edi_code === "") {
-      openModal(constants.messages.NO_DATA_SELECTED);
+      await openModal(constants.messages.NO_DATA_SELECTED);
       return;
     }
 
@@ -114,7 +114,7 @@ export default function DailyOrderViewer() {
       setLoading(false);
 
       if (jResponse && jResponse.error_message) {
-        openModal(jResponse.error_message);
+        await openModal(jResponse.error_message);
         tableRef.current.refreshTableData();
       }
     }
@@ -180,7 +180,7 @@ export default function DailyOrderViewer() {
       return jResponse.data?.rows || [];
     } catch (e) {
       setLoading(false);
-      openModal(e.message);
+      await openModal(e.message);
     }
   };
 
@@ -211,7 +211,7 @@ export default function DailyOrderViewer() {
       return jResponse.data?.rows || [];
     } catch (e) {
       setLoading(false);
-      openModal(e.message);
+      await openModal(e.message);
     }
   };
 
@@ -234,7 +234,7 @@ export default function DailyOrderViewer() {
       return jResponse.data?.rows || [];
     } catch (e) {
       setLoading(false);
-      openModal(e.message);
+      await openModal(e.message);
     }
   };
 

@@ -102,15 +102,15 @@ export default function UploadDailyOrderContent() {
         const jResponse = await RequestServer(jRequest);
 
         if (jResponse.error_code) {
-          openModal(
+          await openModal(
             `Batch ${i + 1} Failed: ${jResponse.error_message || "Unknown"}`
           );
         }
       }
 
-      openModal(constants.messages.SUCCESS_FINISHED);
+      await openModal(constants.messages.SUCCESS_FINISHED);
     } catch (e) {
-      openModal(e.message);
+      await openModal(e.message);
     } finally {
       setLoading(false);
     }

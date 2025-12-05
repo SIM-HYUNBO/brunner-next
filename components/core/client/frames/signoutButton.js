@@ -28,7 +28,7 @@ export default function SignoutButton({ handleLogout }) {
       handleLogout?.();
       router.push("/");
     } else {
-      openModal(jResponse.error_message || "Sign-out failed.");
+      await openModal(jResponse.error_message || "Sign-out failed.");
     }
   };
 

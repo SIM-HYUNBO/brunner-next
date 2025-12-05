@@ -58,11 +58,11 @@ export default function SigninContent() {
 
         router.push("/");
       } else {
-        openModal(jResponse.error_message);
+        await openModal(jResponse.error_message);
       }
     } catch (e) {
       setLoading(false);
-      openModal(e.message);
+      await openModal(e.message);
     }
   };
 

@@ -123,7 +123,7 @@ const DynamicSQL = () => {
       if (jResponse.error_code === 0) {
         setQueries(jResponse.data);
       } else {
-        openModal(jResponse.error_message);
+        await openModal(jResponse.error_message);
       }
 
       setSqlInput({
@@ -137,7 +137,7 @@ const DynamicSQL = () => {
       setIsCreating(false);
     } catch (e) {
       setLoading(false); // 데이터 로딩 끝
-      openModal(e.message);
+      await openModal(e.message);
     }
   };
 
@@ -165,11 +165,11 @@ const DynamicSQL = () => {
       setLoading(false); // 데이터 로딩 끝
 
       if (jResponse.error_code === 0) {
-        openModal(constants.messages.SUCCESS_SAVED);
+        await openModal(constants.messages.SUCCESS_SAVED);
         fetchSQLList();
       } else openModal(jResponse.error_message);
     } catch (e) {
-      openModal(e.message);
+      await openModal(e.message);
       console.error(`message:${e.message}\n stack:${e.stack}\n`);
     }
   };
@@ -267,11 +267,11 @@ const DynamicSQL = () => {
       setLoading(false); // 데이터 로딩 끝
 
       if (jResponse.error_code === 0) {
-        openModal(constants.messages.SUCCESS_DELETED);
+        await openModal(constants.messages.SUCCESS_DELETED);
         fetchSQLList();
       } else openModal(jResponse.error_message);
     } catch (e) {
-      openModal(e.message);
+      await openModal(e.message);
       console.error(`message:${e.message}\n stack:${e.stack}\n`);
     }
   };

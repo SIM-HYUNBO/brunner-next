@@ -52,10 +52,10 @@ const WorkflowSelectModal: React.FC<WorkflowSelectModalProps> = ({
       if (jResponse.error_code === 0 && Array.isArray(jResponse.list.rows)) {
         setWorkflows(jResponse.list.rows);
       } else {
-        openModal(jResponse.error_message);
+        await openModal(jResponse.error_message);
       }
     } catch (e) {
-      openModal(
+      await openModal(
         `${constants.messages.FAILED_TO_GET_WORKFLOW_LIST} : ${String(e)}`
       );
     }

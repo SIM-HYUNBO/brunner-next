@@ -184,7 +184,7 @@ export default function EDocDesignerContainer({ documentId }) {
 
   const handleNewDocument = async () => {
     if (!userInfo.isLogin()) {
-      openModal(constants.messages.LOGIN_REQUIRED);
+      await openModal(constants.messages.LOGIN_REQUIRED);
       return;
     }
 
@@ -223,7 +223,7 @@ export default function EDocDesignerContainer({ documentId }) {
 
   const handleOpenDocument = async () => {
     if (!userInfo.isLogin()) {
-      openModal(constants.messages.LOGIN_REQUIRED);
+      await openModal(constants.messages.LOGIN_REQUIRED);
       return;
     }
 
@@ -258,7 +258,7 @@ export default function EDocDesignerContainer({ documentId }) {
 
   const handleSaveDocument = async () => {
     if (!userInfo.isLogin()) {
-      openModal(constants.messages.LOGIN_REQUIRED);
+      await openModal(constants.messages.LOGIN_REQUIRED);
       return;
     }
 
@@ -283,17 +283,17 @@ export default function EDocDesignerContainer({ documentId }) {
     setLoading(false);
 
     if (jResponse.error_code === 0) {
-      openModal(constants.messages.SUCCESS_SAVED);
+      await openModal(constants.messages.SUCCESS_SAVED);
       setDocumentData(jResponse.documentData);
       setCurrentPageIdx(0);
     } else {
-      openModal(jResponse.error_message);
+      await openModal(jResponse.error_message);
     }
   };
 
   const handleDeleteDocument = async () => {
     if (!userInfo.isLogin()) {
-      openModal(constants.messages.LOGIN_REQUIRED);
+      await openModal(constants.messages.LOGIN_REQUIRED);
       return;
     }
 
@@ -311,7 +311,7 @@ export default function EDocDesignerContainer({ documentId }) {
     setLoading(false);
 
     if (jResponse.error_code === 0) {
-      openModal(constants.messages.SUCCESS_DELETED);
+      await openModal(constants.messages.SUCCESS_DELETED);
       setDocumentData({
         id: null,
         pages: [
@@ -342,7 +342,7 @@ export default function EDocDesignerContainer({ documentId }) {
 
   const handleAddPage = () => {
     if (!userInfo.isLogin()) {
-      openModal(constants.messages.LOGIN_REQUIRED);
+      await openModal(constants.messages.LOGIN_REQUIRED);
       return;
     }
 
@@ -362,12 +362,12 @@ export default function EDocDesignerContainer({ documentId }) {
 
   const handleDeleteCurrentPage = async () => {
     if (!userInfo.isLogin()) {
-      openModal(constants.messages.LOGIN_REQUIRED);
+      await openModal(constants.messages.LOGIN_REQUIRED);
       return;
     }
 
     if (documentData.pages.length === 1) {
-      openModal(constants.messages.MINIUM_PAGE_COUNT);
+      await openModal(constants.messages.MINIUM_PAGE_COUNT);
       return;
     }
     const confirm = await openModal(
@@ -390,7 +390,7 @@ export default function EDocDesignerContainer({ documentId }) {
 
   const handleAddComponent = (component) => {
     if (!userInfo.isLogin()) {
-      openModal(constants.messages.LOGIN_REQUIRED);
+      await openModal(constants.messages.LOGIN_REQUIRED);
       return;
     }
 
@@ -510,7 +510,7 @@ export default function EDocDesignerContainer({ documentId }) {
 
   const handleExportPdf = async () => {
     if (!userInfo.isLogin()) {
-      openModal(constants.messages.LOGIN_REQUIRED);
+      await openModal(constants.messages.LOGIN_REQUIRED);
       return;
     }
 
@@ -538,7 +538,7 @@ export default function EDocDesignerContainer({ documentId }) {
 
     setDocumentData(newDoc);
     setCurrentPageIdx(0);
-    openModal("문서가 자동 생성되었습니다!");
+    await openModal("문서가 자동 생성되었습니다!");
   };
 
   const handleDocumentListClick = (doc) => {
