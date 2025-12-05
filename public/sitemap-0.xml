@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:news="http://www.google.com/schemas/sitemap-news/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml" xmlns:mobile="http://www.google.com/schemas/sitemap-mobile/1.0" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1" xmlns:video="http://www.google.com/schemas/sitemap-video/1.1">
-<url><loc>https://brunner.co.kr</loc><lastmod>2025-11-28T12:02:44.439Z</lastmod><changefreq>daily</changefreq><priority>1</priority></url>
-<url><loc>https://brunner.co.kr/mainPages/contact</loc><lastmod>2025-11-28T12:02:44.440Z</lastmod><changefreq>daily</changefreq><priority>1</priority></url>
-<url><loc>https://brunner.co.kr/mainPages/dynamicSql</loc><lastmod>2025-11-28T12:02:44.440Z</lastmod><changefreq>daily</changefreq><priority>1</priority></url>
-<url><loc>https://brunner.co.kr/mainPages/eDocDesigner</loc><lastmod>2025-11-28T12:02:44.440Z</lastmod><changefreq>daily</changefreq><priority>1</priority></url>
-<url><loc>https://brunner.co.kr/mainPages/resetPassword</loc><lastmod>2025-11-28T12:02:44.440Z</lastmod><changefreq>daily</changefreq><priority>1</priority></url>
-<url><loc>https://brunner.co.kr/mainPages/signin</loc><lastmod>2025-11-28T12:02:44.440Z</lastmod><changefreq>daily</changefreq><priority>1</priority></url>
-<url><loc>https://brunner.co.kr/mainPages/signup</loc><lastmod>2025-11-28T12:02:44.440Z</lastmod><changefreq>daily</changefreq><priority>1</priority></url>
-<url><loc>https://brunner.co.kr/mainPages/userAccount</loc><lastmod>2025-11-28T12:02:44.440Z</lastmod><changefreq>daily</changefreq><priority>1</priority></url>
-<url><loc>https://brunner.co.kr/mainPages/workflow</loc><lastmod>2025-11-28T12:02:44.440Z</lastmod><changefreq>daily</changefreq><priority>1</priority></url>
-<url><loc>https://brunner.co.kr/pharmacy/dailyOrder</loc><lastmod>2025-11-28T12:02:44.440Z</lastmod><changefreq>daily</changefreq><priority>1</priority></url>
-<url><loc>https://brunner.co.kr/pharmacy/supplierSetting</loc><lastmod>2025-11-28T12:02:44.440Z</lastmod><changefreq>daily</changefreq><priority>1</priority></url>
+<url><loc>https://brunner.co.kr</loc><lastmod>2025-12-05T14:22:18.768Z</lastmod><changefreq>daily</changefreq><priority>1</priority></url>
+<url><loc>https://brunner.co.kr/mainPages/contact</loc><lastmod>2025-12-05T14:22:18.771Z</lastmod><changefreq>daily</changefreq><priority>1</priority></url>
+<url><loc>https://brunner.co.kr/mainPages/dynamicSql</loc><lastmod>2025-12-05T14:22:18.771Z</lastmod><changefreq>daily</changefreq><priority>1</priority></url>
+<url><loc>https://brunner.co.kr/mainPages/eDocDesigner</loc><lastmod>2025-12-05T14:22:18.771Z</lastmod><changefreq>daily</changefreq><priority>1</priority></url>
+<url><loc>https://brunner.co.kr/mainPages/resetPassword</loc><lastmod>2025-12-05T14:22:18.771Z</lastmod><changefreq>daily</changefreq><priority>1</priority></url>
+<url><loc>https://brunner.co.kr/mainPages/signin</loc><lastmod>2025-12-05T14:22:18.771Z</lastmod><changefreq>daily</changefreq><priority>1</priority></url>
+<url><loc>https://brunner.co.kr/mainPages/signup</loc><lastmod>2025-12-05T14:22:18.771Z</lastmod><changefreq>daily</changefreq><priority>1</priority></url>
+<url><loc>https://brunner.co.kr/mainPages/userAccount</loc><lastmod>2025-12-05T14:22:18.771Z</lastmod><changefreq>daily</changefreq><priority>1</priority></url>
+<url><loc>https://brunner.co.kr/mainPages/workflow</loc><lastmod>2025-12-05T14:22:18.771Z</lastmod><changefreq>daily</changefreq><priority>1</priority></url>
+<url><loc>https://brunner.co.kr/pharmacy/dailyOrder</loc><lastmod>2025-12-05T14:22:18.771Z</lastmod><changefreq>daily</changefreq><priority>1</priority></url>
+<url><loc>https://brunner.co.kr/pharmacy/supplierSetting</loc><lastmod>2025-12-05T14:22:18.771Z</lastmod><changefreq>daily</changefreq><priority>1</priority></url>
 </urlset>

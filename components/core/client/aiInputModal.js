@@ -66,7 +66,7 @@ export default function AIInputModal({
 
   const handleMouseUp = () => setDragging(false);
 
-  useEffect(() => {
+  useEffect(async () => {
     if (!userInfo.isLogin()) {
       await openModal(constants.messages.LOGIN_REQUIRED);
       return;

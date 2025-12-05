@@ -340,7 +340,7 @@ export default function EDocDesignerContainer({ documentId }) {
     } else openModal(jResponse.error_message);
   };
 
-  const handleAddPage = () => {
+  const handleAddPage = async () => {
     if (!userInfo.isLogin()) {
       await openModal(constants.messages.LOGIN_REQUIRED);
       return;
@@ -388,7 +388,7 @@ export default function EDocDesignerContainer({ documentId }) {
     setCurrentPageIdx(currentPageIdx > 0 ? currentPageIdx - 1 : 0);
   };
 
-  const handleAddComponent = (component) => {
+  const handleAddComponent = async (component) => {
     if (!userInfo.isLogin()) {
       await openModal(constants.messages.LOGIN_REQUIRED);
       return;

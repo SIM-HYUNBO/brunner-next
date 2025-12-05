@@ -460,7 +460,7 @@ function BoardContent({
         {!isEditingPost && (
           <>
             <Button
-              onClick={() => {
+              onClick={async () => {
                 const userId = userInfo.getLoginUserId();
                 if (!userId) {
                   await openModal(constants.messages.NO_PERMISSION);
@@ -490,7 +490,7 @@ function BoardContent({
               </svg>
             </Button>
             <Button
-              onClick={() => {
+              onClick={async () => {
                 const userId = userInfo.getLoginUserId();
                 if (!userId) {
                   await openModal(constants.messages.NO_PERMISSION);
@@ -561,7 +561,7 @@ function BoardContent({
               {editingCommentId !== comment.comment_id && (
                 <>
                   <Button
-                    onClick={() => {
+                    onClick={async () => {
                       const userId = userInfo.getLoginUserId();
                       if (!userId) {
                         await openModal(constants.messages.NO_PERMISSION);
@@ -592,7 +592,7 @@ function BoardContent({
                     </svg>
                   </Button>
                   <Button
-                    onClick={() => {
+                    onClick={async () => {
                       const userId = userInfo.getLoginUserId();
                       if (!userId) {
                         await openModal(constants.messages.NO_PERMISSION);
