@@ -2872,7 +2872,7 @@ const checkSearchResultRows = async (searchResultRows) => {
     searchResultRows.length === 0 ||
     searchResultRows[0].productId === constants.General.EmptyString
   ) {
-    lastRowResult = orderStatus.ErrorNoSearchProduct;
+    lastRowResult = orderStatus.ErrorNoProductSearch;
   }
 
   if (searchResultRows.length > 1) {
