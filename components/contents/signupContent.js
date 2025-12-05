@@ -385,7 +385,7 @@ export default function SignupContent() {
                 borderBottom: "1px solid #ccc",
               }}
             >
-              Find Pharmacy or Supplier
+              Find Pharmacy
               <button
                 style={{ float: "right" }}
                 onClick={() => setShowBizModal(false)}
