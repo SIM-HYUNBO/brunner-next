@@ -10,6 +10,7 @@ import React, {
 import { useTable, useSortBy } from "react-table";
 import * as constants from "@/components/core/constants";
 import { Input, Button, Table } from "antd";
+import * as XLSX from "xlsx"; // ← 상단 import 필요
 
 const BrunnerTable = forwardRef(
   (
@@ -431,12 +432,55 @@ const BrunnerTable = forwardRef(
       setTableDataRef(tableData);
     };
 
+    const handleExcelDownload = () => {
+      if (!tableData || tableData.length === 0) {
+        return;
+      }
+
+      // 컬럼: hidden 제외 + actions 제외
+      const visibleHeaders = columns.filter(
+        (col) => !col.hidden && col.id !== "actions"
+      );
+
+      // 헤더
+      const headerRow = visibleHeaders.map((col) => col.Header);
+
+      // 데이터 변환
+      const body = tableData.map((row, rowIndex) =>
+        visibleHeaders.map((col) => {
+          if (col.id === "no") return rowIndex + 1;
+          const val = row[col.accessor];
+          // datetime-local 값이면 문자열로 포맷
+          if (col.type === "datetime-local" && val) {
+            return new Date(val).toLocaleString();
+          }
+          return val ?? "";
+        })
+      );
+
+      const aoa = [headerRow, ...body];
+      const worksheet = XLSX.utils.aoa_to_sheet(aoa);
+
+      const workbook = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(workbook, worksheet, tableTitle || "Sheet1");
+
+      XLSX.writeFile(workbook, `${tableTitle || "Table"}.xlsx`);
+    };
+
     return (
       <>
         <div>
           <div className={`w-full px-1`}>
             <TableTitleArea />
             <TableConditionArea />
+            <div className="flex justify-end mt-2">
+              <Button
+                onClick={handleExcelDownload}
+                className="bg-blue-600 text-white px-3 py-1 rounded"
+              >
+                Excel Download
+              </Button>
+            </div>
             <TableBodyArea />
             <TableInputDataArea />
           </div>

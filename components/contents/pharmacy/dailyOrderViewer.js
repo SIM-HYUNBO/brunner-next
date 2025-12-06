@@ -125,6 +125,7 @@ export default function DailyOrderViewer() {
       Header: "No",
       accessor: "rowNumber",
       type: "number",
+      id: "no",
       Cell: ({ row }) => row.index + 1, // 0부터 시작하니까 +1
     },
     { Header: "Order Date", accessor: "upload_hour", type: "text" },
