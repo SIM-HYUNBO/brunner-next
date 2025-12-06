@@ -2519,9 +2519,9 @@ const runGeoWebOrder = async (systemCode, user_id, supplier_params, rows) => {
 
       // 1건 조회되는 경우만 처리
       var checkResult = await checkSearchResultRows(searchResultRows);
-      if (checkResult != constants.General.EmptyString) {
-        // lastRowResult = checkResult;
-        // throw new Error(lastRowResult);
+      if (checkResult !== constants.General.EmptyString) {
+        lastRowResult = checkResult;
+        throw new Error(lastRowResult);
       }
       const n_stock = Number(searchResultRows[0].stock);
       const n_currentInventoryQty = Number(row.current_inventory_qty);
@@ -2866,6 +2866,7 @@ const launchBrowser = async () => {
 const checkSearchResultRows = async (searchResultRows) => {
   if (!searchResultRows) throw new Error(constants.messages.NO_DATA_FOUND);
 
+  // 한건이 정상 조회된 경우만 공백으로 리턴
   var lastRowResult = constants.General.EmptyString;
 
   if (
