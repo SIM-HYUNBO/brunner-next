@@ -557,7 +557,8 @@ const automaticOrder = async (txnId, jRequest) => {
       for (const rowSupplierInfo of select_TB_PHM_SUPPLIER_INFO_01.rows) {
         const filteredRows = select_TB_PHM_DAILY_ORDER_01.rows.filter(
           (rowDailyOrder) => {
-            const matchStatus = rowDailyOrder.order_status !== "장바구니 전송"; // 완료된 주문은 제외
+            const matchStatus =
+              rowDailyOrder.order_status !== orderStatus.SuccessOrderToCart; // 완료된 주문은 제외
             const matchSupplier =
               rowDailyOrder.supplier_name === rowSupplierInfo.supplier_name;
             const matchProduct =
@@ -1005,12 +1006,13 @@ const runHanshinOrder = async (systemCode, user_id, supplier_params, rows) => {
         n_safeInventoryQty
       );
 
-      if (
-        isNaN(n_stock) ||
-        isNaN(n_orderRequiredQty) ||
-        n_orderRequiredQty <= 0
-      ) {
+      if (isNaN(n_stock) || isNaN(n_orderRequiredQty)) {
         lastRowResult = orderStatus.ErrorInvalidQty;
+        throw new Error(lastRowResult);
+      }
+
+      if (n_orderRequiredQty <= 0) {
+        lastRowResult = orderStatus.OrderNoRequired;
         throw new Error(lastRowResult);
       }
 
@@ -1514,7 +1516,7 @@ const runUPharmMallOrder = async (
   if (rows.length === 0) {
     ret = {
       error_code: 0,
-      error_message: `${constants.messages.SUCCESS_FINISHED}`,
+      error_message: `${orderStatus.ErrorNoInputProduct}`,
     };
     return ret;
   }
